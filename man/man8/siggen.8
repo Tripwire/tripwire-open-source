@@ -1,0 +1,81 @@
+'\" t
+.\" Do not move or remove previous line.
+.\" Used by some man commands to know that tbl should be used.
+.nh
+.TH SIGGEN 8 "1 July 2000"
+.SH NAME
+siggen \- signature gathering routine for Tripwire
+.SH SYNOPSIS
+.B siggen
+.RI "[ " "options..." " ]"
+.IR file1 " [ " "file2..." " ] "
+
+.I Options:
+.RS +0.5i
+.TS
+;
+lbw(0.8i) lb.
+-t	--terse
+-h	--hexadecimal
+-a	--all
+-C	--CRC32
+-M	--MD5
+-S	--SHA
+-H	--HAVAL
+.TE
+.RE
+.SH DESCRIPTION
+.PP
+\fBsiggen\fP is a utility that displays the hash function values 
+for the specified files.
+.SH OPTIONS
+.TP
+.BI \(hyt ", " --terse
+Terse mode.
+Prints requested hashes for a given file on one line, delimited
+by spaces, with no extraneous information.
+.TP
+.BI \(hyh ", " --hexadecimal
+Display results in hexadecimal rather than base64 notation.
+.TP
+.BI \(hya ", " --all
+Display all hash function values (default).
+.TP
+.BI \(hyC ", " --CRC32
+Display CRC-32, POSIX 1003.2 compliant 32-bit Cyclic Redundancy 
+Check.
+.TP
+.BI \(hyM ", " --MD5
+Display MD5, the RSA Data Security, Inc. Message Digest Algorithm.
+.TP
+.BI \(hyS ", " --SHA
+Display SHA, \fITripwire\fP's implementation of the
+NIST Secure Hash Standard, SHS (NIST FIPS 180).
+.TP
+.BI \(hyH ", " --HAVAL
+Display Haval value, a 128-bit hash code.
+.TP
+.IR file1 " [ " "file2... " ]
+List of filesystem objects for which to display values.
+.SH VERSION INFORMATION
+This man page describes
+.B siggen
+version 2.4.
+.SH AUTHORS
+Tripwire, Inc.
+.SH COPYING PERMISSIONS
+Permission is granted to make and distribute verbatim copies of this man page provided the copyright notice and this permission notice are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this man page under the conditions for verbatim copying, provided that the entire resulting derived work is distributed under the terms of a permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
+.PP
+Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+.SH SEE ALSO
+.BR twintro (8),
+.BR tripwire (8),
+.BR twadmin (8),
+.BR twprint (8),
+.BR twconfig (4),
+.BR twpolicy (4),
+.BR twfiles (5)

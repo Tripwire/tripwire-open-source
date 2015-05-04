@@ -1,0 +1,355 @@
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+#                    Policy file for Red Hat Linux                           # #
+#                                                                            ##
+##############################################################################
+
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+# Global Variable Definitions                                                # #
+#                                                                            # #
+# These are defined at install time by the installation script.  You may     # #
+# Manually edit these if you are using this file directly and not from the   # #
+# installation script itself.                                                # #
+#                                                                            ##
+##############################################################################
+
+@@section GLOBAL
+TWROOT=;
+TWBIN=;
+TWPOL=;
+TWDB=;
+TWSKEY=;
+TWLKEY=;
+TWREPORT=;
+HOSTNAME=;
+
+  ##############################################################################
+ #  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+Device        = +pugsdr-intlbamcCMSH ;
+Dynamic       = +pinugtd-srlbamcCMSH ;
+Growing       = +pinugtdl-srbamcCMSH ;
+IgnoreAll     = -pinugtsdrlbamcCMSH ;
+IgnoreNone    = +pinugtsdrbamcCMSH-l ;
+ReadOnly      = +pinugtsdbmCM-rlacSH ;
+Temporary     = +pugt ;
+
+@@section FS 
+
+  ########################################
+ #                                      ##
+######################################## #
+#                                      # #
+#  Tripwire Binaries and Data Files    # #
+#                                      ##
+########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries",
+)
+{
+  $(TWBIN)/siggen                      -> $(ReadOnly) ;
+  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
+  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
+  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files",
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(Dynamic) -i ;
+  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
+  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
+  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  RPM Checksum Files                          # #
+#                                              ##
+################################################
+(
+  rulename = "RPM Checksum Files",
+)
+{
+  /var/lib/rpm                  -> $(ReadOnly);
+  /var/lib/rpm/__db.001         -> $(Dynamic) ;
+  /var/lib/rpm/__db.002         -> $(Dynamic) ;
+  /var/lib/rpm/__db.003         -> $(Dynamic) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Global Configuration Files (/etc/)          # #
+#                                              ##
+################################################
+(
+  rulename = "Global Configuration Files",
+)
+{
+  /etc                           -> $(IgnoreNone) -SHa ;
+  /etc/adjtime                   -> $(Dynamic) ;
+  /etc/aliases.db                -> $(Dynamic) ;
+  /etc/bashrc                    -> $(Dynamic) ;
+  /etc/csh.cshrc                 -> $(Dynamic) ;
+  /etc/csh.login                 -> $(Dynamic) ;
+  /etc/mail/statistics           -> $(Growing) ;
+  /etc/profile                   -> $(Dynamic) -i ;
+  /etc/mtab                      -> $(Dynamic) -i ;
+  /etc/rc.d                      -> $(IgnoreNone) -SHa ;
+  /etc/sysconfig                 -> $(IgnoreNone) -SHa ;
+  /etc/sysconfig/hwconf          -> $(Dynamic) -m ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Boot Files and Mount Points              # #
+#                                              ##
+################################################
+(
+  rulename = "OS Boot Files and Mount Points",
+)
+{
+  /boot                         -> $(ReadOnly) ;
+  /cdrom                        -> $(Dynamic) ;
+  /floppy                       -> $(Dynamic) ;
+  /mnt                          -> $(Dynamic) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#   OS Devices and Misc Directories            # #
+#                                              ##
+################################################
+(
+  rulename = "OS Devices and Misc Directories",
+)
+{
+  /dev                          -> $(Device) ;
+  /initrd                       -> $(Dynamic) ;
+  /opt                          -> $(Dynamic) ;
+  /lost+found                   -> $(Dynamic) ;
+  /var/lost+found               -> $(Dynamic) ;
+  /home/lost+found              -> $(Dynamic) ;
+  !/dev/pts ;			 # Ignore this file
+  !/dev/shm ;			 # Ignore this file
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Binaries and Libraries                   # #   
+#                                              ##
+################################################
+(
+  rulename = "OS Binaries and Libraries",
+)
+{
+  /bin                          -> $(ReadOnly) ;
+  /lib                          -> $(ReadOnly) ;
+  /sbin                         -> $(ReadOnly) ;
+  /usr/bin                      -> $(ReadOnly) ;
+  /usr/lib                      -> $(ReadOnly) ;
+  /usr/libexec                  -> $(ReadOnly) ;
+  /usr/sbin                     -> $(ReadOnly) ;
+  /usr/X11R6/lib                -> $(ReadOnly) ;
+}
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  User Binaries and Libraries                 # #   
+#                                              ##
+################################################
+(
+  rulename = "User Binaries and Libraries",
+)
+{
+  !/home/local;
+  /usr/local                    -> $(ReadOnly) ;
+  /usr/local/bin                -> $(ReadOnly) ;
+  /usr/local/doc                -> $(ReadOnly) ;
+  /usr/local/etc                -> $(ReadOnly) ;
+  /usr/local/games              -> $(ReadOnly) ;
+  /usr/local/include            -> $(ReadOnly) ;
+  /usr/local/lib                -> $(ReadOnly) ;
+  /usr/local/libexec            -> $(ReadOnly) ;
+  /usr/local/man                -> $(ReadOnly) ;
+  /usr/local/sbin               -> $(ReadOnly) ;
+  /usr/local/share              -> $(ReadOnly) ;
+  /usr/local/src                -> $(ReadOnly) ;
+  /usr/local/sysinfo            -> $(ReadOnly) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Root Directory and Files                    # #
+#                                              ##
+################################################
+(
+  rulename = "Root Directory and Files",
+)
+{
+  /root                         -> $(IgnoreNone) -SHa ;
+  /root/.bashrc                 -> $(Dynamic) ;
+  /root/.bash_history           -> $(Dynamic) ;
+  #/root/.bash_logout            -> $(Dynamic) ;
+  /root/.bash_profile           -> $(Dynamic) ;
+  /root/.cshrc                  -> $(Dynamic) ;
+  #/root/.enlightenment          -> $(Dynamic) ;
+  #/root/.esd-auth               -> $(Dynamic) ;
+  !/root/.gconf ;
+  !/root/.gconfd ;
+  #/root/.gnome                  -> $(Dynamic) ;
+  #/root/.gnome-desktop          -> $(Dynamic) ;
+  #/root/.gnome2                 -> $(Dynamic) ;
+  #/root/.gtkrc                  -> $(Dynamic) ;
+  #/root/.gtkrc-1.2-gnome2       -> $(Dynamic) ;
+  #/root/.metacity               -> $(Dynamic) ;
+  #/root/.nautilus               -> $(Dynamic) ;
+  #/root/.rhn-applet.conf        -> $(Dynamic) ;
+  #/root/.tcshrc                 -> $(Dynamic) ;
+  #/root/.xauth                  -> $(Dynamic) ;
+  #/root/.ICEauthority           -> $(Dynamic) ;
+  #/root/.Xauthority             -> $(Dynamic) -i ;
+  #/root/.Xresources             -> $(Dynamic) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Temporary Directories                       # #
+#                                              ##
+################################################
+(
+  rulename = "Temporary Directories",
+)
+{
+  /usr/tmp                      -> $(Temporary) ;
+  /var/tmp                      -> $(Temporary) ;
+  /tmp                          -> $(Temporary) ;
+  #/tmp/.fam-socket              -> $(Temporary) ;
+  #/tmp/.ICE-unix                -> $(Temporary) ;
+  #/tmp/.X11-unix                -> $(Temporary) ;
+  !/tmp/orbit-root ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System Boot Changes                         # #
+#                                              ##
+################################################
+(
+  rulename = "System Boot Changes",
+)
+{
+  /.autofsck                    -> $(Dynamic) -m ;
+  /var/cache/man/whatis         -> $(Growing) ;
+  /var/lib/logrotate.status     -> $(Growing) ;
+  #/var/lib/nfs/statd            -> $(Growing) ;
+  !/var/lib/random-seed ;
+  #/var/lib/slocate/slocate.db    -> $(Growing) -is ;
+  /var/lock/subsys                -> $(Dynamic) -i ;
+  /var/log                        -> $(Growing) -i ;
+  !/var/log/sa;
+  !/var/log/cisco;
+  /var/run                        -> $(Dynamic) -i ;
+  /etc/cron.daily                 -> $(Growing);
+  /etc/cron.weekly                -> $(Growing);
+  /etc/cron.monthly               -> $(Growing);
+  /var/spool/mail                 -> $(Growing);
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Monitor Filesystems                         # #
+#                                              ##
+################################################
+(
+  rulename = "Monitor Filesystems",
+)
+{
+  /                             -> $(ReadOnly) ;
+  /home                         -> $(ReadOnly) ;  # Modify as needed
+  /usr                          -> $(ReadOnly) ;
+  /var                          -> $(ReadOnly) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#   Proc Filesystem                            # #
+#                                              ##
+################################################
+(
+   rulename = "Proc Filesystem",
+)
+{
+   !/proc ;                           # Ignore most of this directory
+}

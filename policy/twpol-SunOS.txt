@@ -1,0 +1,314 @@
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+#                        Policy file for Solaris 8                           # #
+#                                                                            ##
+##############################################################################
+
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+# Global Variable Definitions                                                # #
+#                                                                            # #
+# These are defined at install time by the installation script.  You may     # #
+# manually edit these if you are using this file directly and not from the   # #
+# installation script itself.                                                # #
+#                                                                            ##
+##############################################################################
+
+
+@@section GLOBAL
+TWROOT=;
+TWBIN=;
+TWPOL=;
+TWDB=;
+TWSKEY=;
+TWLKEY=;
+TWREPORT=;
+HOSTNAME=;
+
+
+  ##############################################################################
+ #  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+Device        = +pugsdr-intlbamcCMSH ;
+Dynamic       = +pinugtd-srlbamcCMSH ;
+Growing       = +pinugtdl-srbamcCMSH ;
+IgnoreAll     = -pinugtsdrlbamcCMSH ;
+IgnoreNone    = +pinugtsdrbamcCMSH-l ;
+ReadOnly      = +pinugtsdbmCM-rlacSH ;
+Temporary     = +pugt ;
+
+@@section FS 
+
+  ########################################
+ #                                      ##
+######################################## #
+#                                      # #
+#  Tripwire Binaries and Data Files    # #
+#                                      ##
+########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries",
+)
+{
+  $(TWBIN)/siggen                      -> $(ReadOnly) ;
+  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
+  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
+  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files",
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(Dynamic) -i ;
+  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
+  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
+  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+
+  # In this configuration /usr/local is a symbolic link to /home/local.
+  # We want to ignore the following directories since they are already
+  # scanned using the real directory or mount point.  Otherwise we see
+  # duplicates in the reports.
+
+  !/home/local ;		 # Ignore since /home already scanned
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Boot and Configuration Files             # #
+#                                              ##
+################################################
+(
+  rulename = "OS Boot and Configuration Files",
+)
+{
+  /etc                          -> $(IgnoreNone) -SHa ;
+  /kernel		        -> $(ReadOnly) ;
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Mount Points                                   # #
+#                                                 ##
+###################################################
+(
+  rulename = "Mount Points",
+)
+{
+  /                             -> $(ReadOnly) ;
+  /cdrom                        -> $(Dynamic) ;
+  /home                         -> $(ReadOnly) ;
+  /mnt                          -> $(Dynamic) ;
+  /usr                          -> $(ReadOnly) ;
+  /var                          -> $(ReadOnly) ;
+  /opt                          -> $(ReadOnly) ;
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Misc Top-Level Directories                     # #
+#                                                 ##
+###################################################
+(
+  rulename = "Misc Top-Level Directories",
+)
+{
+  /lost+found                   -> $(ReadOnly) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#   System Devices                             # #
+#                                              ##
+################################################
+(
+  rulename = "System Devices",
+)
+{
+  /dev                          -> $(Device) ;
+  /devices                      -> $(Device) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Binaries and Libraries                   # #   
+#                                              ##
+################################################
+(
+  rulename = "OS Binaries and Libraries",
+)
+{
+  /sbin                         -> $(ReadOnly) ;
+  /usr/bin                      -> $(ReadOnly) ;
+  /usr/lib                      -> $(ReadOnly) ;
+  /usr/sbin                     -> $(ReadOnly) ;
+  /usr/openwin/bin              -> $(ReadOnly) ;
+  /usr/openwin/lib              -> $(ReadOnly) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Root Directory and Files                    # #
+#                                              ##
+################################################
+(
+  rulename = "Root Directory and Files",
+)
+{
+  ! /.netscape/cache ; 
+  /.bash_history	         -> $(ReadOnly) -smbCM;
+  /.sh_history                   -> $(Dynamic) ;
+  /.Xauthority                   -> $(ReadOnly) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Temporary Directories                       # #
+#                                              ##
+################################################
+(
+  rulename = "Temporary Directories",
+)
+{
+  /tmp                          -> $(Temporary) ;
+  /var/tmp                      -> $(Temporary) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System Doors and Misc Mounts                # #
+#                                              ##
+################################################
+(
+  rulename = "System Doors and Misc Mounts",
+)
+{
+  !/etc/mnttab ;
+  !/etc/.name_service_door ;
+  !/etc/sysevent/syseventconfd_event_service ;
+  !/etc/sysevent/sysevent_door ;
+  !/etc/sysevent/piclevent_door ;
+  !/dev/fd ;
+  !/net ;
+  !/proc ;
+  !/var/run ;
+  !/var/run/syslog_door ;
+  !/vol ;
+  !/xfn ;
+
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System FIFOs                                # #
+#                                              ##
+################################################
+(
+  rulename = "System FIFOs",
+)
+{
+  !/etc/cron.d/FIFO ;
+  !/etc/initpipe ;
+  !/etc/saf/_cmdpipe ;
+  !/etc/saf/_sacpipe ;
+  !/etc/saf/zsmon/_pmpipe ;
+  !/etc/utmppipe ;
+  !/var/spool/lp/fifos/FIFO ;
+  !/tmp/.removable ;
+  !/tmp/.X11-pipe/X0 ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System and Boot Changes                     # #
+#                                              ##
+################################################
+(
+  rulename = "System and Boot Changes",
+)
+{
+  /etc/.pwd.lock		   -> $(ReadOnly) -cm;
+  /etc/coreadm.conf		   -> $(ReadOnly) -cm;
+  /var/adm                         -> $(Growing) -i;
+  #/var/backups                    -> $(Dynamic) -i ;
+  /var/cron/log                    -> $(Growing) -i ;
+  #/var/db/host.random             -> $(ReadOnly) -mCM ;
+  #/var/db/locate.database         -> $(ReadOnly) -misCM ;
+  /var/log                         -> $(Growing) -i ;
+  #/var/run                        -> $(Dynamic) -i ;
+  #/var/mail                       -> $(Growing) ;
+  #/var/msgs/bounds                -> $(ReadOnly) -smbCM ;
+  !/var/sendmail ;
+  !/var/spool/clientmqueue ;
+  !/var/spool/mqueue ;
+  #!/var/tmp/vi.recover ;           # perl script periodically removes this
+
+}

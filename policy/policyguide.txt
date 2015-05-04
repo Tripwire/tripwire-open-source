@@ -1,0 +1,215 @@
+# Demonstration policy file for Linux and Unix
+
+# Tripwire, Inc. is not responsible for the accuracy
+# of this file or its relevance to your system.  This file is provided
+# only as a starting point and example. We highly encourage you to
+# use this file to create a new policy file that suits the security needs
+# and eccentricities of your own machine.
+
+# This policy file contains individually valid rules to demonstrate all 
+# current language features created for the Tripwire 2.3 release.
+
+
+# This is a comment. Tripwire treats all text following a "#" as a comment.
+
+/etc/hosts -> +pinugs;                  # This is a very basic rule.
+                                        # Tripwire will alert you if any of
+                                        # the specified properties for
+                                        # the file /etc/hosts are modified.
+
+!/etc/init.d ;                          # The "!" indicates a stop point.
+                                        # The directory /etc/init.d will
+                                        # not be scanned.
+
+!/etc/netmasks ;                        # Stop point on a file.  Tripwire
+                                        # will not scan /etc/netmasks
+
+"/home/fred/big file" -> +pingus;       # Double quotes can be used to
+                                        # protect special cases such as
+                                        # filenames with spaces and escaped
+                                        # characters.
+"/home/emu/o\163trich" -> +s;           # Escaped octal character
+"/home/emu/\x64odo" -> +m;              # Escaped hex character
+"/home/emu/blue\'jay" -> +c;            # Escaped character
+
+
+# The following rules demonstrate a scan using each of the individual
+# property selection masks.
+
+/etc/passwd -> +a;                      # Access timestamp
+/etc/passwd -> +b;                      # Number of blocks
+/etc/passwd -> +c;                      # Inode timestamp (create/modify)
+/etc/passwd -> +d;                      # Inode storage disk device number
+/etc/passwd -> +g;                      # File owner's group ID
+/etc/passwd -> +i;                      # Inode number
+/etc/passwd -> +m;                      # Modification timestamp
+/etc/passwd -> +n;                      # inode reference count
+/etc/passwd -> +p;                      # Permissions and file mode bits
+/etc/passwd -> +r;                      # Device Number
+/etc/passwd -> +s;                      # File size
+/etc/passwd -> +t;                      # File Type
+/etc/passwd -> +u;                      # File owner's user ID
+/etc/passwd -> +l;                      # File is increasing in size
+/etc/passwd -> +C;                      # CRC-32 hash value
+/etc/passwd -> +M;                      # MD5 hash value
+/etc/passwd -> +S;                      # SHA hash value
+/etc/passwd -> +H;                      # Haval signature value
+
+# Rules can be given specific attributes which influence how tripwire
+# behaves either while scanning or when it detects an infraction.
+
+/etc -> +ug (recurse=false);            # The recurse attribute controls
+                                        # recursive scanning of the
+                                        # contents of a directory.  In this
+                                        # case, recurse is set to false, so
+                                        # tripwire will scan the /etc
+                                        # directory but not its contents.
+
+/etc -> +ug (rulename=software);        # Setting a rulename allows you to
+                                        # associate a rule or set of rules
+                                        # with a specific name.  This can
+                                        # help you to sort data in your
+                                        # Tripwire reports. For this rule,
+                                        # any infraction in the /etc
+                                        # directory will appear as part of
+                                        # the "software" section of the
+                                        # report.
+
+/etc -> +ug (emailto=admin@domain.com); # The emailto attribute will cause
+                                        # Tripwire to send email to a
+                                        # specified user if the indicated
+                                        # rule is broken.  In this case,
+                                        # admin@domain.com will receive a
+                                        # tripwire report if someone
+                                        # changes the user or group id on
+                                        # any file in the /etc directory.
+
+/etc -> +ug (emailto="admin@domain.com webmaster@domain.com")
+					# you can use quotes to email to
+                                        # more than one person.
+
+
+/etc -> +ug (severity=50);              # You can set the severity of a
+                                        # rule so that you can quickly scan
+                                        # through a report to find the
+                                        # most critical changes.
+
+# Setting variables is a good way to easily change the parameters for
+# several rules at once.
+
+param1 = +SMCH;                         # Set variable param1.
+dir1 = /etc/inet;                       # Set variable dir1
+DIR1 = /etc/init.d;                     # Variables are case sensitive
+
+$(dir1) -> +tbamc;                      # Rule using directory substitution
+                                        # or "left Hand substitution"
+
+/etc/inet -> $(param1);                 # Rule using selection mask
+                                        # substitution or "Right Hand
+                                        # substitution".
+
+$(DIR1) -> $(param1);                   # It is also possible to do a
+                                        # double substitution.
+
+# Tripwire also provides several predefined variables.
+
+/etc/httpd/weblog -> $(Growing);        # The Growing variable is intended
+                                        # for files that should only grow,
+                                        # such as the web log in this
+                                        # example.  Growing uses the
+                                        # following masks:  +pinugtdl
+
+/etc/passwd -> $(IgnoreNone);           # IgnoreNone should be used on
+                                        # critical files such as passwd.
+                                        # It checks all file attributes:
+                                        # +pinusgamctdbCMSH
+
+/home/fred/mytextfile -> $(IgnoreAll);  # If you want to track a file's
+                                        # presence or absence but do
+                                        # not care about its properties,
+                                        # use IgnoreAll.  IgnoreAll ignores
+                                        # all attributes: pinusglamctdbCMSH
+
+/usr/httpd/index.html -> $(ReadOnly);   # ReadOnly is good for files that
+                                        # are widely available but are
+                                        # intended to be read-only.
+                                        # Attributes: +pinugsmtdbCM
+
+/home/fred -> $(Dynamic);               # Dynamic is good for monitoring
+                                        # user directories and files that
+                                        # tend to be dynamic in behavior.
+                                        # Attributes:  +pinugtd
+
+/dev/null -> $(Device);                 # Device is appropriate for checking
+                                        # system devices and any other
+                                        # files that may be important, but
+                                        # should be relatively static and
+                                        # accessed often:  +pugs
+
+# Directives are useful if you want to use one policy across your network
+# servers, but also require special rules for each machine.
+
+@@ifhost salmon                         # The following rule will only run
+/etc -> +abcdgimnpstul;                 # will only run if the server name
+                                        # is salmon.
+@@else
+/bin -> +abcdgimnpstul;                 # All other servers will run this
+@@endif                                 # rule.
+
+# Directives can also be nested:
+
+@@ifhost crayfish
+/etc/passwd -> $(Growing);              # Will only check /etc/passwd if
+                                        # your hostname is crayfish.
+@@else                                  # Otherwise it will check if your
+     @@ifhost salmon                    # hostname is salmon.  If so it
+     /etc/passwd -> $(IgnoreAll);       # will ignore passwd.
+     @@endif                            # If your server has any other name
+     /etc/passwd -> $(IgnoreNone);      # then passwd is fully examined.
+@@endif
+
+# The following examples demonstrate more complicated uses of Tripwire that
+# are more likely to be seen in a real environment.
+
+# Trailing rules:  These are typical of the rule format used in most of
+# this file.  This is by far the most common usage.
+
+/home/fred/specialfile -> asd (emailto=fred@domain.com, Rulename=special, severity=50);
+/home/fred/generalworkfile -> bm (Rulename=work, severity=60);
+/home/fred/myreport -> CSH (Rulename=report, severity=75);
+/home/fred/mypresentation.data -> Mpi (Rulename=urgent, severity=90);
+
+# Preceding rules:  These are extremely helpful if you wish to apply a rule
+# to a large group of files or directories.
+
+(Rulename=standard, severity=30)
+{
+     /home/fred -> lgu;
+     /home/jane -> CHM;
+     /home/project/report.file -> $(Growing);
+}
+
+#=============================================================================
+#
+# Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
+# Inc. All rights reserved.
+#
+# Linux is a registered trademark of Linus Torvalds.
+#
+# UNIX is a registered trademark of The Open Group.
+#
+#=============================================================================
+#
+# Permission is granted to make and distribute verbatim copies of this document
+# provided the copyright notice and this permission notice are preserved on all
+# copies.
+#
+# Permission is granted to copy and distribute modified versions of this
+# document under the conditions for verbatim copying, provided that the entire
+# resulting derived work is distributed under the terms of a permission notice
+# identical to this one.
+#
+# Permission is granted to copy and distribute translations of this document
+# into another language, under the above conditions for modified versions,
+# except that this permission notice may be stated in a translation approved by
+# Tripwire, Inc.

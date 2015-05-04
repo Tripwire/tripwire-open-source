@@ -1,0 +1,169 @@
+/*
+///////////////////////////////////////////////////////////////////////////////
+// parser.grammar -- yacc grammar for parsing policy language
+//
+
+    INTERESTING STUFF:
+    ---------------------
+    * all whitespace is removed from input
+    * there exist predefined variables (all vars are case-sensitive)
+    * there exist predefined attributes ("emailto", "severity", "rulename") (not case-sensitive)
+    * token "@@END" is taken as the logical end of policy file
+    * "->" is now the fconame/specmask separator
+    * attribute lists now contain comma-separated attributes
+    * quoted strings use C++-style escaping (char (e.g. \n, \"), hex (e.g. \x8E230A), oct(e.g. \271) )
+
+    TODO: UNICODE
+*/
+
+%start policy
+%%
+
+/*-----------------------------------------------------------------------------
+ * policy rules
+ *
+ * these productions are responsible for creating the list of rules.  each completed rule
+ * is added to either the "omit list" or the "rule list"
+ *
+ */
+
+policy      
+            : statement_list
+            ;
+           
+
+statement_list
+            : statement_list statement
+            | statement
+            ;
+
+opt_statement_list
+            : statement_list
+            | /* empty */
+            ;
+
+statement   
+            : variable_assignment TWP_SEMICOLON            
+            | rule TWP_SEMICOLON
+            | TWP_SEMICOLON
+            | directive_block
+            ;
+
+/*-----------------------------------------------------------------------------
+ * directives
+ */
+
+directive_block
+            : TWP_IFHOST host_name_list opt_statement_list opt_else_host TWP_ENDIF
+            | TWP_ERROR string
+            | TWP_ECHO string
+            ;
+
+host_name_list
+            : host_name_list TWP_OROR host_name
+            | host_name
+            ;
+
+opt_else_host
+            : TWP_ELSE opt_statement_list
+            | /* empty */
+            ;
+
+
+/*-----------------------------------------------------------------------------
+ * variable assignment
+ */
+
+variable_assignment
+            : TWP_DOLLAR TWP_LPAREN string TWP_RPAREN TWP_EQUALS string
+            ;
+
+
+/*-----------------------------------------------------------------------------
+ * rules
+ */
+
+rule
+            : fco_name TWP_RARROW spec_masks
+            | TWP_BANG fco_name                         /* stop point */            
+            ;
+
+spec_masks
+            : prop_vector opt_spec_attributes
+            ;
+
+
+/*-----------------------------------------------------------------------------
+ * attributes
+ */
+
+opt_spec_attributes
+            : TWP_LPAREN attribute_list_with_opt_trailing_semicolon TWP_RPAREN
+            | /* empty */ 
+            ;
+
+attribute_list_with_opt_trailing_semicolon
+            : attribute_list opt_semicolon
+            ;
+
+attribute_list
+            : attribute_list TWP_COMMA attribute
+            | attribute
+            ;
+attribute
+            : attribute_name attribute_value            
+            ;
+
+opt_semicolon
+            : TWP_SEMICOLON
+            | /* empty */
+            ;
+
+
+/*-----------------------------------------------------------------------------
+ * properties
+ */
+
+prop_vector
+            : prop_vector_item prop_vector
+            | prop_vector_item
+            ;
+
+prop_vector_item
+            : string
+            ;
+
+/*-----------------------------------------------------------------------------
+ * variables
+ */
+
+variable
+            : TWP_DOLLAR TWP_LPAREN string TWP_RPAREN
+            ;
+
+/*-----------------------------------------------------------------------------
+ * strings
+ */
+
+attribute_name
+            : string
+            ;
+
+attribute_value
+            : string
+            ;
+
+fco_name    
+            : string
+            ;            
+
+host_name
+            : string
+            ;            
+
+string
+            : TWP_STRING
+            | variable
+            ;
+
+%%

@@ -1,0 +1,19 @@
+Open Source Tripwire Maintainers:
+
+tripwire@frlinux.net
+
+Previous Maintainer:
+
+itripn@users.sourceforge.net
+
+
+Community Contributors:
+
+Paul Herman (www.frenchfries.net/paul/tripwire): Paul is almost solely
+responsible for the meat of the 2.4.0.1 release. His work on the autoconf
+and gcc 3.x support (among other things) has contributed to a much more
+portable code base, and an easier place to start for adding additional
+features. 
+
+David LaPalomento: David kindly provided precompiled binaries on Red Hat
+Enterprise Linux AS release 4 (Nahant Update 3) on IA-64.

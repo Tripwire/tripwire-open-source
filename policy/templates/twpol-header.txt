@@ -1,0 +1,90 @@
+# identifier:	tripwire IDS policy input file
+# host:		Fedora Core release 1 (Yarrow)
+# version:	2.4.3
+# maintainer:	FRLinux <tripwire[AT]frlinux.net>
+# validator:	unvalidated
+# date:		Wed Sep 21 13:50:21 UTC 2011
+
+# description:
+# This is an example Tripwire Policy input file. It is intended as  the
+# starting point to creating your own custom Tripwire Policy. Referring
+# to it, as well as the Tripwire Policy Guide, should give  you  enough
+# information to make a good custom Tripwire Policy  that  better  fits
+# your configuration and security needs. This text version will be used
+# by tripwire as input to create a proprietary type of  file  called  a
+# Tripwire Policy file, which will then be signed for further security.
+# It is recommended that once you complete the creation of  the  Policy
+# file, you move this plaintext version to a secure location  (possibly
+# on removable media) or encrypt the file using a tool such as GPG. You
+# should also do this for the  Tripwire  plaintext  configuration  file
+# (twcfg.txt) once you have finished setting up the Policy.
+#
+# Note that this file is tuned to an  "everything"  install  of  Fedora
+# Linux. If run unmodified,  this  file  should  create  no  errors  on
+# database creation, or violations on  a  subsequent  integrity  check.
+# However, it is impossible for there to be one  policy  file  for  all
+# machines, so this existing one errs on the  side  of  security.  Your
+# Linux configuration will most likely differ from the one  our  policy
+# file was tuned to, and will therefore require  some  editing  of  the
+# default Tripwire Policy file. The example policy  file  is  best  run
+# with "Loose Directory Checking" enabled.
+#
+# Set LOOSEDIRECTORYCHECKING=TRUE in the Tripwire Configuration file.
+#
+# Note - legacy entries (which are  commented  out)  are  included  for
+# historical reasons only, and  are  overdue  for  removal.  They  will
+# likely disappear from future releases.
+#
+# The following info is only really useful for  non-RPM  distributions:
+#
+# Email support is not included and must be added to this file. Add the
+# "emailto=" to the rule directive section of each rule  (add  a  comma
+# after the "severity=" line and add  an  "emailto="  and  include  the
+# email addresses you want the violation reports to go  to).  Addresses
+# are semi-colon delimited.
+#
+# If you installed from the Fedora RPM, a cron job has already been set
+# up for you. Tripwire will perform an integrity check once  every day,
+# and the generated report will be emailed to root. In this  case,  you
+# do not need to perform the steps in the previous paragraph.
+
+# policy:
+
+
+# Global Variable Definitions
+
+@@section GLOBAL
+TWROOT=/usr/sbin;
+TWBIN=/usr/sbin;
+TWPOL="/etc/tripwire";
+TWDB="/var/lib/tripwire";
+TWSKEY="/etc/tripwire";
+TWLKEY="/etc/tripwire";
+TWREPORT="/var/lib/tripwire/report";
+HOSTNAME=dub6041;
+
+@@section FS
+SEC_CRIT      = $(IgnoreNone)-SHa ;  # Critical files that cannot change
+SEC_SUID      = $(IgnoreNone)-SHa ;  # Binaries with the SUID or SGID flags set
+SEC_BIN       = $(ReadOnly) ;        # Binaries that should not change
+SEC_CONFIG    = $(Dynamic) ;         # Config files that are changed infrequently but accessed often
+SEC_LOG       = $(Growing) ;         # Files that grow, but that should never change ownership
+SEC_INVARIANT = +tpug ;              # Directories that should never change permission or ownership
+SIG_LOW       = 33 ;                 # Non-critical files that are of minimal security impact
+SIG_MED       = 66 ;                 # Non-critical files that are of significant security impact
+SIG_HI        = 100 ;                # Critical files that are significant points of vulnerability
+
+
+# Commonly accessed directories that should remain static with  regards
+# to owner and group.
+
+(
+  rulename = "Invariant Directories",
+  severity = $(SIG_MED)
+)
+{
+  /                                    -> $(SEC_INVARIANT) (recurse = 0) ;
+  /home                                -> $(SEC_INVARIANT) (recurse = 0) ;
+  /etc                                 -> $(SEC_INVARIANT) (recurse = 0) ;
+}
+

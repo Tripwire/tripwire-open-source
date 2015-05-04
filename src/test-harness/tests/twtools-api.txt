@@ -1,0 +1,160 @@
+
+Introduction
+============
+
+
+All of these functions take a hash (map), and expect certain keys to
+be there. For instance, createDir() expects 'dir' to be a key in the
+hash, and it's value is the name of the directory to create.
+
+Note that you can create anonymous hashes quite easily in order to
+call these functions:
+
+     CreateDir( { dir => "$twrootdir/temp"} );
+
+Another example is createHardLink(), which expects:
+
+     CreateHardLink( { target => "parent.txt", file => "child.txt" } );
+
+
+Note that files and directories are _ALWAYS_ created relative to
+$twtools::twrootdir.
+
+
+API
+===
+
+CreateDir(%);
+
+        Creates the directory named by the 'dir' key in the passed in
+        hash. Note it uses "system("mkdir -p")" to do the work, so it
+        will create all intermediate directories as well (the -p).
+
+        Example:
+
+             CreateDir( { dir => "temp"} );
+                
+
+
+MakeBigger(%);
+
+        Expects the key 'file' to name the file make larger. It
+        increases the size simply by appending the file name to the
+        end of the file. If the key 'dir' exists, it is prepended to
+        the file path. 
+
+        Example:
+
+             MakeBigger( { file => "bigger.txt" } );
+             MakeBigger( { file => "bigger.txt", dir => "temp" } );
+
+MakeSmaller(%);
+
+
+        Expects the key 'file' to name the file make smaller. It
+        decreases the size simply by echoing nothing into the file,
+        i.e. the size is guarenteed to be 0 afterwards. If the key
+        'dir' exists, it is prepended to the file path.
+
+        Example:
+
+             MakeSmaller( { file => "smaller.txt" } );
+             MakeSmaller( { file => "smaller.txt", dir => "temp"} );
+
+        
+RemoveFile(%);
+
+
+        Expects the key 'file' to name the file to remove. The file is
+        removed forcibly ("rm -rf"). If the key 'dir' exists, it is
+        prepended to the file path.
+
+        Example:
+
+             RemoveFile( { file => "byebye.txt" } );
+             RemoveFile( { file => "byebye.txt", dir => "temp"} );
+
+
+Chmod(%);
+
+        Expects the key 'file' for the file name, and 'perms' for the
+        new permissions. Uses "system("chmod")" to do it's work, not
+        the built in perl chmod function. If the key 'dir' exists, it
+        is prepended to the file path.
+
+        Example:
+
+              Chmod( { file => "change.txt", perms => "a+r-w" } );
+              Chmod( { file => "change.txt", dir => "temp", perms => "a+r-w" } );
+
+
+CreateHardLink(%);
+
+        Expects the keys 'target' and 'file', and uses "system("ln
+        -f")" to do it's work.
+
+        Example:
+
+              CreateHardLink( { target => "parent.txt", file => "child.txt" } );
+
+
+CreateSymLink(%);
+
+        Expects the keys 'target' and 'file', and uses "system("ln
+        -sf")" to do it's work.
+
+        Example:
+
+              CreateSymLink( { target => "parent.txt", file => "child.txt" } );
+
+
+Access(%);
+
+        Expects the key 'file', and simply "cat's" the file to
+        /dev/null so that the last accessed timestamp is updated.  If
+        the key 'dir' exists, it is prepended to the file path.
+
+        Example:
+
+               Access( { file => "$twrootdir/readme.txt" } );
+               Access( { file => "readme.txt", dir => "temp" } );
+
+
+CreateTestFile(%);
+
+        Expects the key 'file', and optionally the key 'dir'. If 'dir'
+        is not there, it will simply create the file by echoing the
+        value of the key 'contents' into into the file. If 'dir' is
+        there, it will prepend 'dir' to the name of the file. Note
+        that the directory structure indicated by 'dir' must already
+        be there.
+
+        Example:
+
+               CreateTestFile( { file => "test.txt", contents => "testing" } );
+               CreateTestFile( { file => "test.txt", contents => "testing", dir => "temp" } );
+
+UpdateDatabase(%):
+
+		Executes "tripwire -m u <params>"
+		Optional parameters include:
+			report      -- name of report file to use
+			secure-mode -- specify a string passed with --secure-mode. 
+			               Can be "low" or "high"; default is low
+
+RunIntegrityCheck(%):
+
+		Executes "tripwire --check <params>"
+		Optional parameters include:
+			report -- name of report file to generate
+			
+
+
+CreateDefaultConfig
+SignConfigFile                     
+InitializeDatabase                 
+RunReport                          
+AnalyzeReport                      
+GenerateKeys
+GeneratePolicyFile
+

@@ -1,0 +1,85 @@
+
+# test weird file names
+/lost+found	->		+p							;
+/l-o_st+fo/und	->	+ping	(l-o_st+fo/und2 l-o_st+fo/und3) ;
+
+# test variables
+$(ReadOnly) = ping;
+/simplevar	->	$(ReadOnly) ;
+/var	    ->	$(ReadOnly)-p ;
+
+# test line continuations
+c:/test		->		+p							;
+
+/turd    \
+    ->\
+    +p
+    ;
+
+# test quoted strings
+"/qfoo"		->		+p							;
+"/Program Files"    ->		+p					;
+"  /lots o' spaces      "    ->		+p			;
+"  colon: semicolon; quote' "    ->		+p	    ;
+
+# test attributes
+/namedattr2	-> +p ( name1 value1; name2 value2; ) ;
+/namedattr	-> +p (name1 value1; ) ;
+
+# test propvector
+c:/test		->		+p							;
+
+/test		->		+p							;
+/test		->		+p-p						;
+/test		->		+pinugs-am					;
+/test		->		+pinugs---am				;
+/test		->		+pinugs-+-am				;
+
+
+# attributes and props
+/namedattr3	->	+pinug		( name1 value1; name2 value2; ) ;
+/namedattr4	->	+pinug		(name1 value1; ) ;
+
+# simple default policy
+/simple		->	+ppp;
+
+
+# omit with space seperation
+! /omit ;
+
+# omit with no space separation
+ !/omit ;
+
+# multiple attributes
+/namedattr	->	+pinug		(emailreport on; emailsendto genek; name3 val3; name4 val4; name5 val5; ) ;
+
+
+@@END
+# the following isn't implemented yet
+#########################################3
+
+# multiple specmasks
+/conditions		->	{
+						xxx ->		+pinug ;
+						yyy ->		+pinug ;
+						zzz ->		+pinug ;
+						default ->	+pinug ;
+					};
+
+# attributes on specifers
+/conditions		->	{
+						xxx ->		+pinug		(inside1 name1 ;) ;
+						yyy ->		+pinug ;
+						zzz ->		+pinug ;
+						default ->	+pinug ;
+					};
+
+
+# hard ones
+
+/conditions		->	{
+						xxx ->		+pinug		(inside1 name1 ;) ;
+						yyy ->		$(poo)+pinug ;
+						zzz ->		+pinug ( inside1 name1 ; outside name2);
+						default ->	$(turd)-p ;
+					};

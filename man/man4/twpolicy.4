@@ -1,0 +1,548 @@
+.\" Macros added by addw@phcomp.co.uk for those systems where the an
+.\" troff macro package doesn't know about .Ps & .Pe.
+.\" Note it is assumed that CW is a constant width font.
+.\" Ps - Start display text
+.de Ps
+.nf
+.in +0.5i
+.ft CW
+..
+.\" Pe - end of display text
+.de Pe
+.fi
+.in -0.5i
+.ft 1
+..
+.\"
+.\" Macros added by TSS.
+.\" Nf - no fill, use constant width font
+.\" Fi - fill, restore previous font
+.\" Register Ni holds indent to use for Nf sections in points.
+.nr Ni 36
+.de Nf
+.nr OF \\n(.f
+.nr OS \\n(.s
+.ps \\n(.s-1
+.ft CW
+.in +\\n(Nip
+.nf
+..
+.de Fi
+.fi
+.ft \\n(OF
+.ps \\n(OS
+.in -\\n(Nip
+..
+.\"
+.nh
+.ad l
+.TH TWPOLICY 4 "1 July 2000"
+.SH NAME
+twpolicy \- \fITripwire\fP policy file reference
+.SH DESCRIPTION
+.PP
+The policy file describes system objects to be monitored by
+\fITripwire\fP, and specifies what properties for each object should be
+collected and stored in the database file.  Each object in the policy
+file is associated with a property mask, which describes what changes
+to the file or directory \fITripwire\fP should monitor, and which ones
+can safely be ignored.  By customizing the various aspects of the
+policy file, the system administrator can very closely control how
+\fITripwire\fP checks the integrity of any system.
+.PP
+During installation, an encoded and signed policy file (\fItw.pol\fP)
+will be created in the \fI/etc/tripwire\fP directory,
+and a plain text copy of this policy file (\fItwpol.txt\fP) will be
+generated in the same directory.  An additional text file
+(\fIpolicyguide.txt\fP) illustrates all of the features of the policy
+language.  Both of the text files are heavily commented and can be used 
+as a reference during policy file creation.
+.PP
+A new policy file is first created using the
+\fBtwadmin\ \(hy\(hycreate\(hypolfile\fP
+command.  With this command, the
+user can designate an existing plain text file as the current policy
+file.  Using the current site key and passphrase, the new configuration
+file is encoded, signed and saved.
+.PP
+Once the initial policy file has been generated, any changes should be
+made with the \fBtripwire\ \(hy\(hyupdate\(hypolicy\fP command, rather
+than by simply overwriting the policy file with the
+\fBtwadmin\ \(hy\(hycreate\(hypolfile\fP command.  This is an important
+.ie n distinction\(hy\(hywhen
+.el distinction\(emwhen
+a new policy file is created, the \fITripwire\fP
+database must be re-initialized.  If an intruder has modified files
+since the last integrity check, these changes will not be detected, and
+will be included as part of the new "baseline" database.
+.\"
+.SH COMPONENTS OF THE POLICY FILE
+The basic components of policy files are comments, rules, directives, 
+and variables.  Each of these components is described in greater detail
+below.
+.SS Comments
+In a policy file, any text following a '#', up to the next line break,
+is considered a comment.  Example:
+.PP
+.Nf
+# This is a comment.
+/bin  ->  $(ReadOnly);  # A comment can go here, too.
+.Fi
+.\"
+.SS Rules
+Policy rules determine whether and to what extent \fITripwire\fP will
+check particular files and directories.  There are two kinds of policy
+rules recognized by \fITripwire\fP:
+.PP
+1) Normal rules define which properties of a particular file or
+directory tree \fITripwire\fP scans.
+.br
+2) Stop points tell \fITripwire\fP not to scan a particular file or
+directory.
+.SS Normal Rules
+The format for a normal rule is:
+.br
+.in +\n(Nip 
+\fIobject_name\fP    ->    \fIproperty_mask\fP;	
+.in
+.PP
+where the \fIobject_name\fP is the fully qualified pathname for a
+directory or file, and \fIproperty_mask\fP
+specifies what properties of an object to examine or ignore.
+The '\(hy>' token separates the pathname and the property mask.
+Whitespace must separate the object name and '\(hy>' token.
+A semicolon must terminate the rule.  If the
+pathname specified is a directory, the directory and all of its
+descendants will be scanned with the indicated property mask.  If the
+pathname refers to an individual file, only that file will be scanned
+with the specified property mask.  Examples:
+.PP
+.Nf
+# Defines Tripwire behavior for entire /bin directory tree.
+/bin   ->   $(ReadOnly);
+
+# Defines Tripwire behavior for a single file.  In this case,
+# Tripwire watches for all properties of hostname.hme0.
+/etc/hostname.hme0    ->    $(IgnoreNone) -ar;
+
+# Scan the entire /etc directory tree using mask1, except the
+# file /etc/passwd, which should be scanned using mask2.
+/etc        ->  $(mask1);
+/etc/passwd ->  $(mask2);
+.Fi
+.PP
+Only one rule may be associated with any given object.  If any object
+has more than one rule in a policy file, \fITripwire\fP will print an
+error message and exit without scanning any files.  For example:
+.PP
+.Nf
+# This is an example of an illegal construct.
+/usr/bin   ->   $(mask3);
+/usr/bin   ->   $(mask4);
+.Fi
+.PP   
+.\"
+.SS Object Names
+In this document, policy file objects are fully qualified pathnames of
+files and directories.  Environment variables are not allowed for
+security reasons.  Examples:
+.PP   
+.Nf
+/etc         # valid object name.
+/etc/passwd  # valid object name.
+$HOME        # not valid.
+.Fi
+.\"
+.SS Property Masks
+Property masks designate which \fITripwire\fP properties of a given
+object should be examined.  A property mask consists of a series of
+single-character symbols, each of which may be preceded by an optional
+plus or minus sign.  Each character symbol stands for a particular
+\fITripwire\fP property to be examined during integrity checking.  If
+the character is preceded by a plus, checking is done for that
+property; if preceded by a minus, checking is not done for that
+property.  For example:
+.PP
+.Nf
+\+p          # compare permissions.
+\-p          # ignore permissions.
+.Fi
+.PP
+Each rule in the policy file must have a property mask.  Examples:
+.PP
+.Nf
+/etc        ->    $(IgnoreAll);     #valid property mask.
+/etc        ->    +p-p;             #valid property mask.
+/etc        ->    ;                 #invalid property mask.
+.Fi
+.PP
+Characters in a property mask without a preceding plus or minus sign
+are assumed to be plus.  If a property is not specified in the property
+mask, it is ignored, which is equivalent to turning it off with
+the minus sign.  Examples:
+.PP
+.Nf
+# Examine permissions and link count.
+# All three of the following are equivalent.
++p+n
+pn
+pn-g
+.Fi
+.PP
+Characters used in property masks, with descriptions:
+.PP
+.Nf
+\-     Ignore the following properties	
+\+     Record and check the following properties
+a     Access timestamp 
+b     Number of blocks allocated
+c     Inode timestamp (create/modify)
+d     ID of device on which inode resides
+g     File owner's group ID
+i     Inode number
+l     File is increasing in size (a "growing file")
+m     Modification timestamp
+n     Number of links (inode reference count)
+p     Permissions and file mode bits
+.if t r     ID of device pointed to by inode (valid only for device objects)
+.if n r     ID of device pointed to by inode
+.if n \      (valid only for device objects)
+s     File size
+t     File type
+u     File owner's user ID
+C     CRC-32 hash value
+H     Haval hash value
+M     MD5 hash value
+S     SHA hash value
+.Fi
+.\"
+.SS Stop Points
+Stop points are used to specify specific files or directories that
+\fITripwire\fP should not scan.  The syntax for stop points is:
+.br
+.in +\n(Nip
+.nf
+\&!  \fIobject_name\fP  ;    
+.fi
+.in
+For example:
+.Nf
+!/etc/init.d;   
+# The directory /etc/init.d will not be scanned.
+
+/etc   ->   $(ReadOnly);
+!/etc/rc.d;
+!/etc/mnttab;
+# Scan all of /etc, but do not scan two particular  
+# files in the /etc hierarchy.
+.Fi
+.\"
+.SS Rule Attributes
+Rule attributes work with normal rules to modify their behavior or
+provide additional information.  Multiple attributes can be assigned to
+each rule.  Rule attributes are not case-sensitive.
+Rule attributes may be applied to a single rule
+using the following syntax:
+.br
+.in +\n(Nip
+\fIobject_name\fP -> \fIproperty_mask\fP (\fIrule attribute\fP = \fIvalue\fP);
+.in
+For example:
+.Nf
+/usr/lib -> $(ReadOnly) (emailto = admin@foo.com, severity = 80);
+#This rule will notify the admin if any violations of the 
+#rule occur and designate the severity as 80.
+.Fi
+.PP
+Rule attributes can also be specified for a group of rules,
+using the format:
+.br
+.in +\n(Nip
+(\fIattribute list\fP)
+.br
+{
+.in +\n(Nip
+\fIrule list\fP;
+.in -\n(Nip
+}
+.in -\n(Nip
+For example:
+.Nf
+(emailto = admin@foo.com, severity = 80)
+{
+     /usr/lib  ->  $(ReadOnly);
+}
+.Fi
+is equivalent to the attribute example above.
+.PP
+The following four rule attributes are supported by \fITripwire\fP:
+./"
+.IP \f(CWrulename\fP 15
+The \f(CWrulename\fP attribute is used to associate a rule or set
+of rules with a specific name.  In a report file, this name will be
+associated with violations to the specified rule.  This feature is
+useful if you want to track certain objects within a large
+\fITripwire\fP database.  For instance, if you associate the rule name
+"watchme" with important files, you can sort through the \fITripwire\fP
+report using "watchme" as a sorting key.
+.br
+Example:
+.Nf
+/etc -> +ug (rulename=watchme);
+.Fi
+./"
+.IP \f(CWemailto\fP 15
+The \f(CWemailto\fP attribute associates one or more email addresses
+with a rule or group of rules.  When an integrity check is run with the
+.B \(hy\(hyemail\(hyreport
+option and a rule is violated, a report of that violation will be sent
+to the specified email address(es), using the report format specified
+by the
+.\" Do not remove the \fR at the start of the following line.
+.\" Formatting weirdness results otherwise on AIX.
+\fR\f(CWEMAILREPORTLEVEL\fP variable in the configuration file.
+.br
+Example:
+.Nf
+/etc -> +ug (emailto=admin@domain.com);
+.Fi
+.IP
+To specify multiple email addresses, include them as a quoted,
+semicolon-delimited list.
+.Nf
+.if n .in -\n(Nip
+/etc -> +ug (emailto="admin@foo.com;admin2@foo.com");
+.if n .in +\n(Nip
+.Fi
+./"
+.IP \f(CWseverity\fP 15
+The \f(CWseverity\fP attribute associates a numeric severity level with
+a rule.  When \fITripwire\fP is run in Integrity Checking mode, it is
+possible to specify that only rules exceeding a certain severity level
+are used.  The default severity level is 0, and values can range from 0
+to 1,000,000.
+.br
+Example:
+.Nf
+/etc -> +ug (severity=50);
+.Fi
+./"
+.IP \f(CWrecurse\fP 15
+The \f(CWrecurse\fP attribute specifies how a rule will scan
+directories. Valid values for \f(CWrecurse\fP are \fItrue\fR,
+\fIfalse\fR, or a number from -1 to 1,000,000. If \fR\f(CWrecurse\fP is set
+to \fItrue\fR (or\ \(hy1), tripwire will recursively scan the entire
+contents of the directory (both files and subdirectories). When
+\fR\f(CWrecurse\fP is set to \fIfalse\fR (or\ 0), and the rule refers to a
+directory, \fITripwire\fP will scan the inode of the directory but none
+of the files or subdirectories contained therein.  For positive
+\fR\f(CWrecurse\fP value \fIn\fR, the rule will monitor all objects up to
+\fIn\fR levels below the start point. Stop points within the recursed
+directory still apply, and will prevent the specified file or directory
+from being scanned.
+.IP 
+When a rule refers to a file, specifying the \f(CWrecurse\fP attribute
+has no 
+.ie n effect\(hy\(hyfiles
+.el effect\(emfiles
+will be scanned no matter what value is given for
+\f(CWrecurse\fP. The default value for \f(CWrecurse\fP is \fItrue\fR.
+.br
+Example:
+.Nf
+/etc -> +ug (recurse=2);
+.Fi
+./"
+.SS Directives
+\fITripwire\fP supports a small number of directives that allow
+conditional interpretation of the policy file and certain diagnostic
+and debugging operations.  The primary purpose of directives is to
+support sharing of a policy file among multiple machines.  Directives
+use the following syntax:
+.br
+.in +\n(Nip
+.nf
+@@  \fIdirective_name\fP  [\fIarguments\fP]
+.fi
+.in
+.PP
+Where the directive name is one of the directives listed below:
+.PP
+.Nf
+@@section  # Designates a section of the policy file.
+
+@@ifhost   # Allow conditional interpretation
+@@else     # of the policy file.
+@@endif  
+
+@@print    # Print a message to standard output.
+@@error    # Print a message to standard output and then exit.
+
+@@end      # Marks the logical end-of-file.
+.Fi
+.PP
+The @@section directive is used to designate sections of the policy
+file that are OS-specific.  With \fITripwire 2.4\fP, valid
+arguments for the @@section directive are
+.\" Do not remove the \fR at the start of the following line.
+.\" Formatting weirdness results otherwise on AIX.
+\fR\f(CWFS\fP
+and \f(CWGLOBAL\fP. If no @@section
+directive is specified, \f(CWFS\fP will be assumed.
+If the argument to the @@section directive is either
+\f(CWNTFS\fP or \f(CWNTREG\fP (which have meaning only on
+Windows NT systems), 
+\fITripwire\fP will skip all policy file text down to the
+next valid @@section directive.  Any other argument will
+cause an error.
+.PP
+The @@ifhost, @@else, and @@endif directives are used to allow
+conditional interpretation of the policy file. With the @@ifhost
+directive, multiple hostnames can be expressed as arguments, but they
+must be separated by an '||', interpreted as the logical 'OR'.  This example illustrates how one might employ directives to use one policy file with multiple hosts.
+.PP
+.Nf
+@@ifhost spock || kirk
+   /bin   ->   $(ReadOnly);
+@@endif
+
+@@ifhost chekov || uhura
+   /usr/bin   ->   +pinug;
+@@else
+   /usr/bin   ->   +pinugsmC;
+@@endif
+.Fi
+.PP
+The @@print and @@error directives are intended for debugging and remote
+diagnostics.  The syntax for these commands is:
+.br
+.in +\n(Nip
+.nf
+@@print  "\fIstring\fP"
+@@error  "\fIstring\fP"
+.fi
+.in
+.PP
+The @@print directive prints \fIstring\fP to \fIstdout\fP, while the
+@@error directive prints \fIstring\fP to \fIstdout\fP and causes the
+calling program to exit with a non-zero status.
+.PP
+The @@end directive marks the end of the policy file.  Any text
+appearing after this directive will be ignored by \fITripwire\fP.
+.\"
+.SS Variables
+For user convenience, \fITripwire\fP's policy file supports variables
+for string substitution.  Variables can be defined anywhere between
+rules.  The syntax for variable definition is:
+.br
+.in +\n(Nip
+.nf
+\fIvariable\fP  =  \fIvalue\fP;
+.fi
+.in
+.PP
+Variable substitution is legal anywhere that a string could appear.
+The syntax for variable substitution is:
+.br
+.in +\n(Nip
+.nf
+$(  \fIvariable\fP  )
+.fi
+.in
+.PP
+Examples of variable definition and variable substitution on the left,
+right, and both sides of rules.  Note that variable names are
+case sensitive.
+.PP
+.Nf
+param1 = +SMCH;         	# Set variable param1.
+dir1   = /etc/inet;     	# Set variable dir1.
+DIR1   = /etc/init.d;   	# Variables are case sensitive.
+$(dir1)   -> +tbamc;    	# Left hand substitution.
+/etc/inet -> $(param1); 	# Right hand substitution.
+$(DIR1)   -> $(param1); 	# Double substitution.
+.Fi
+.PP
+A number of variables are predefined by \fITripwire\fP and may not be
+changed.  These variables represent different ways that files can
+change, and can be used on the right side of rules to design a policy
+file quickly.
+.IP ReadOnly 15
+ReadOnly is good for files that are widely available but are intended
+to be read-only.
+.br
+Value:
+.ft CW
+.ps \n(.s-1
+\+pinugtsdbmCM\(hyrlacSH
+.ps \n(.s+1
+.ft
+.IP Dynamic 15
+Dynamic is good for monitoring user directories and files that tend to
+be dynamic in behavior.
+.br
+Value:
+.ft CW
+.ps \n(.s-1
++pinugtd\(hysrlbamcCMSH
+.ps \n(.s+1
+.ft
+.IP Growing 15
+The Growing variable is intended for files that should only get larger.  
+.br
+Value:
+.ft CW
+.ps \n(.s-1
+\+pinugtdl\(hysrbamcCMSH 
+.ps \n(.s+1
+.ft
+.IP Device 15 
+Device is good for devices or other files that \fITripwire\fP should not 
+attempt to open.
+.br
+Value:
+.ft CW
+.ps \n(.s-1
+\+pugsdr\(hyintlbamcCMSH
+.ps \n(.s+1
+.ft R
+.IP IgnoreAll 15
+IgnoreAll tracks a file's presence or absence, but doesn't check any 
+other properties. 
+.br
+Value:
+.ft CW
+.ps \n(.s-1
+\(hypinugtsdrlbamcCMSH
+.ps \n(.s+1
+.ft
+.IP IgnoreNone 15
+IgnoreNone turns on all properties and provides a convenient starting point for defining your own property masks.  (For\ example,\ \f(CWmymask\ =\ $(IgnoreNone)\ -ar;\fP)
+.br
+Value:
+.ft CW
+.ps \n(.s-1
+\+pinugtsdrbamcCMSH\(hyl
+.ps \n(.s+1             
+.ft
+.SH VERSION INFORMATION
+This man page describes
+.IR "Tripwire 2.4" "."
+.SH AUTHORS
+Tripwire, Inc.
+.SH COPYING PERMISSIONS
+Permission is granted to make and distribute verbatim copies of this man page provided the copyright notice and this permission notice are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this man page under the conditions for verbatim copying, provided that the entire resulting derived work is distributed under the terms of a permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
+.PP
+Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+.SH SEE ALSO
+.BR twintro (8),
+.BR tripwire (8),
+.BR twadmin (8),
+.BR twprint (8),
+.BR siggen (8),
+.BR twconfig (4),
+.BR twfiles (5)

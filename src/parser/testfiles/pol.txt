@@ -1,0 +1,100 @@
+/test		->		+p;
+/test2		->		+p-p						; 
+/test3		->		+pinugs-am					;
+/test4		->		+pinugs---am				;
+/test5		->		+pinugs-+-am				;
+
+# test weird file names
+"/lost+\"found\""	->		+p 						;
+
+# test quoted strings
+"/q\n\xAfoo"		->		+p							;
+
+# simple default policy
+/simple		->		+ppp;
+
+# variable
+$(poo) = pinug;
+/simplevar	->	$(poo) ;
+
+$(turd) = /test6;
+$(turd) -> $(poo);
+
+# named attributes
+/namedattr		->		+pinug		(name /namedattr ) ;
+
+# multiple attributes
+/namedattr2	->	 +pinug		(emailreport on, emailsendto genek, name /namedattr2, name4 val4, name5 val5 );
+
+# test line continuations
+/turd    \
+    ->\
+    +p
+    ;
+@@EnD
+
+/test		->		+p;
+"/te\x73t2"		->		+p-p						; 
+"/te\163t3"		->		+pinugs-am					;
+"c:\\te\163t3\\"		->		+pinugs-am					;
+"c:\\te\"as\163t3\\"		->		+pinugs-am					;
+"/te\163t3"		->		+pinugs-am					;
+"/te\163t3"		->		+pinugs-am					;
+/test4		->		+pinugs---am				;
+/test5		->		$(ReadOnly)s-+-am				;
+
+# test weird file names
+/lost+found	->		+p		;	
+
+# test quoted strings
+"/qfoo"		->		+p							;
+			;
+
+# simple default policy
+/simple		->	+ppp;
+
+# variable
+$(poo) = pinug;
+/simplevar	->	$(poo) ;
+$(turd) = /test6;
+$(turd) -> $(poo);
+
+# omit with space seperation
+! /omit ;
+
+# omit with no space separation
+ !/omit ;
+
+# named attributes
+/namedattr	->	+pinug		(name1 value1) ;
+
+# multiple attributes
+/namedattr2	->	+pinug		(emailreport on; emailsendto genek; name3 val3; name4 val4; name5 val5 ) ;
+
+# test line continuations
+/turd    \
+    ->\
+    +p
+    ;
+
+@@END
+# the following isn't implemented yet
+#########################################3
+
+# attributes on specifers
+/conditions			{
+						xxx:		+pinug		(inside1 name1 ;) ;
+						yyy:		+pinug ;
+						zzz:		+pinug ;
+						default:	+pinug ;
+					};
+
+
+
+# multiple specmasks
+/conditions			{
+						xxx:		+pinug ;
+						yyy:		+pinug ;
+						zzz:		+pinug ;
+						default:	+pinug ;
+					};

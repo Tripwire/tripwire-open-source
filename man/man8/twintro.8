@@ -1,0 +1,112 @@
+.\" Macros added by addw@phcomp.co.uk for those systems where the an
+.\" troff macro package doesn't know about .Ps & .Pe.
+.\" Note it is assumed that CW is a constant width font.
+.\" Ps - Start display text
+.de Ps
+.nf
+.in +0.5i
+.ft CW
+..
+.\" Pe - end of display text
+.de Pe
+.fi
+.in -0.5i
+.ft 1
+..
+.\"
+.nh
+.ad l
+.TH TWINTRO 8 "1 July 2000"
+.SH NAME
+twintro \- introduction to \fITripwire\fP software
+.SH DESCRIPTION
+.PP
+\fITripwire 2.4\fP is a file integrity assessment product for Linux networks.  Rather than preventing an intruder or virus
+from attacking system files, \fITripwire\fP detects intrusions when
+they do occur. By comparing system files and directories against a
+previously stored "baseline" database, \fITripwire\fP finds any
+additions, deletions, or changes to specified properties.  This allows
+the system administrator to determine the extent of the problem and
+begin necessary damage control.
+.PP
+After \fITripwire\fP is installed on a system, the following four
+commands are used:
+.RS 0.3i
+.ie n .HP
+.el .PP
+.BR tripwire (8)
+is used for most of the basic operations of the
+software.  This includes creation of the \fITripwire\fP database, and
+checking the integrity of the filesystem against that database.
+.ie n .HP
+.el .PP
+.BR twadmin (8)
+is used to create, encode, and sign \fITripwire\fP policy,
+configuration, and key files, and
+for various administrative functions.
+.ie n .HP
+.el .PP
+.BR twprint (8)
+prints \fITripwire\fP database and report files in
+a plain text format.
+.ie n .HP
+.el .PP
+.BR siggen (8)
+is a file utility that displays hash
+values for files.
+.RE
+.PP
+In addition to the command references listed above, the following three
+man pages provide information on important components of the
+\fITripwire\fP package.
+.RS 0.3i
+.ie n .HP
+.el .PP
+.BR twfiles (5)
+provides an overview of the various files created and
+used by \fITripwire\fP, including default locations and settings.
+.ie n .HP
+.el .PP
+.BR twconfig (4)
+explains the configuration file, which is used to set
+system-specific information that affects \fITripwire\fP operation.
+.ie n .HP
+.el .PP
+.BR twpolicy (4)
+explains the policy file, which specifies the files
+and directories \fITripwire\fP should check, and how they should be
+scanned.
+.RE
+.PP
+Using the  
+.B \(hy\(hyhelp
+flag with any \fITripwire\fP command
+(e.g.\ \fBtripwire\ \(hy\(hyhelp\fP) will print a short summary of the
+command modes for that command.  If a mode selector is also specified
+(e.g.\ \fBtripwire\ \(hy\(hycheck\ \(hy\(hyhelp\fP), a mode\(hyspecific
+usage message will be displayed.  Using the \fBall\fP argument with the
+\fB--help\fP flag (e.g.\ \fBtripwire\ \(hy\(hyhelp\ all\fP) will print
+detailed usage messages for all modes of the specified command.
+.SH VERSION INFORMATION
+This man page describes
+.IR "Tripwire 2.4" "."
+.SH AUTHORS
+Tripwire, Inc.
+.SH COPYING PERMISSIONS
+Permission is granted to make and distribute verbatim copies of this man page provided the copyright notice and this permission notice are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this man page under the conditions for verbatim copying, provided that the entire resulting derived work is distributed under the terms of a permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
+.PP
+Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+.SH SEE ALSO
+.BR tripwire (8),
+.BR twadmin (8),
+.BR twprint (8),
+.BR siggen (8),
+.BR twconfig (4),
+.BR twpolicy (4),
+.BR twfiles (5)
+.PP
+.IR "The Design and Implementation of Tripwire: A \s-1UNIX\s0 File Integrity Checker" by Gene Kim and Eugene Spafford.  Purdue Technical Report CSD-TR-93-071.

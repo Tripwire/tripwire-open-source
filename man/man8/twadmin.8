@@ -1,0 +1,558 @@
+'\" t
+.\" Do not move or remove previous line.
+.\" Used by some man commands to know that tbl should be used.
+.\"
+.\" Macro added by TSS.
+.\" The command mode descriptions run together visually, so
+.\" macro Hr draws a horizontal rule to give some separation
+.\" between modes.  Register Vs dithers the amount of vertical
+.\" space before the rule, in lines.
+.nr Vs 1
+.de Hr
+.ne \\n(Vs+2
+.sp \\n(Vsli
+.nr Oi \\n(.i
+.in 0
+\\l'\\n(.lu'
+.in \\n(.iu
+..
+.ad l
+.TH TWADMIN 8 "1 July 2000"
+.SH NAME
+twadmin \- Tripwire administrative and utility tool
+.SH SYNOPSIS
+.B twadmin
+.RB "{ " "-m F" " | " "--create-cfgfile" " } "
+.I " options... "
+.if n .br
+.if n .ti +.5i
+.I "configfile.txt"
+.br
+.B twadmin
+.RB "{ " "-m f" " | " "--print-cfgfile" " } "
+.RI "[ " options... " ]"
+.br
+.B twadmin
+.RB "{ " "-m P" " | " "--create-polfile" " } "
+.RI "[ " options... " ] "
+.if n .br
+.if n .ti +.5i
+.I "policyfile.txt"
+.br
+.B twadmin
+.RB "{ " "-m p" " | " "--print-polfile" " } "
+.RI "[ " options... " ]"
+.br
+.B twadmin
+.RB "{ " "-m R" " | " "--remove-encryption" " } "
+.RI "[ " options... " ] "
+.if n .br
+.if n .ti +.5i
+.IR file1 " [ " file2... " ]"
+.br
+.B twadmin
+.RB "{ " "-m E" " | " "--encrypt" " } "
+.RI "[ " options... " ] "
+.if n .br
+.if n .ti +.5i
+.IR file1 " [ " file2... " ]"
+.br
+.B twadmin
+.RB "{ " "-m e" " | " "--examine" " } "
+.RI "[ " options... " ] "
+.if n .br
+.if n .ti +.5i
+.IR file1 " [ " file2... " ]"
+.br
+.B twadmin
+.RB "{ " "-m G" " | " "--generate-keys" " } "
+.I options...
+.br
+.B twadmin
+.RB "{ " "-m C" " | " "--change-passphrases" " } "
+.I options...
+.br
+.SH DESCRIPTION
+.PP
+The \fBtwadmin\fR utility is used to perform certain administrative
+functions related to \fITripwire\fR files and configuration options.
+Specifically, \fBtwadmin\fR allows encoding, decoding,
+signing, and verification of
+\fITripwire\fR files, and provides a means to generate and change
+local and site keys.
+.\" *****************************************
+.SS Creating a configuration file (--create-cfgfile)
+This command mode designates an existing text file as the new
+configuration file for \fITripwire\fR.
+The plain text configuration
+file must be specified on the command line.
+Using the site key, the new configuration file
+is encoded and saved.
+.\" *****************************************
+.SS Printing a configuration file (--print-cfgfile)
+This command mode prints the specified encoded and signed
+configuration file in clear-text form to standard output.  
+.\" *****************************************
+.SS Replacing a policy file (--create-polfile)
+This command mode designates an existing text file as the new
+policy file for \fITripwire\fR.
+The plain text policy file must be specified on the 
+command line.
+Using the site key, the new policy file is encoded and saved.  
+.\" *****************************************
+.SS Printing a policy file (--print-polfile)
+This command mode prints the
+specified encoded and signed policy file
+in clear-text form to standard output.  
+.\" *****************************************
+.SS Removing encryption from a file (--remove-encryption)
+This command mode allows the user to remove signing from signed
+configuration, policy, database, or report files.  Multiple
+files may be specified on the command line. The
+user will need to enter the appropriate local or site keyfile,
+or both if a combination of files is to be verified. Even with the
+cryptographic signing removed, these files will be in a binary encoded
+(non-human-readable) form.
+.\" *****************************************
+.SS Encrypting a file (--encrypt)
+This command mode allows the user to sign
+configuration, policy, database files, or reports.
+Multiple files may be specified on the command line.
+The files will be signed using either the site or local key,
+as appropriate for the type of file.  
+To automate the process, the passphrase for the key
+files can be included on the command line.
+.\" *****************************************
+.hy 0
+.SS "Examining the signing status of a file (\(hy\(hyexamine)"
+.hy 1
+This command allows the user to examine the listed files
+and print a report of their signing status.  This report
+displays the filename, file type, whether or not a file is
+signed, and what key (if any) is used to sign it.  
+.\" *****************************************
+.SS Generating keys (--generate-keys)
+This command mode generates site and/or local key files with
+names specified by the user.
+.\" *****************************************
+.SS Changing passphrases (--change-passphrases)
+This command reencrypts the private part of the
+site and/or local key files using the key filenames and passphrases
+specified by the user.
+.\" *****************************************
+.if \n(.t<700 .bp
+.SH OPTIONS
+.\" *****************************************
+.SS Creating a configuration file:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m F	--create-cfgfile
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+-e	--no-encryption
+.TE
+.I configfile.txt
+.RE
+.TP
+.BR "\(hym F" ", " "--create-cfgfile"
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Specify the destination of the encoded (and optionally signed)
+configuration file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file to encode and sign the new
+configuration file.
+Exactly one of (\fB\(hyS\fR) or (\fB\(hye\fP) must be specified.
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specifies passphrase to be used with site key for
+configuration file encoding and signing.
+Valid only in conjunction with (\fB\(hyS\fR).
+.TP
+.BR \(hye ", " --no-encryption
+Do not sign the configuration file being stored.
+The configuration
+file will still be compressed, and will not be human-readable.
+Mutually exclusive with (\fB\(hyQ\fR) and (\fB\(hyS\fR).
+.TP
+.I configfile.txt
+Specifies the text configuration file that will become
+the new configuration file.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Printing a configuration file:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m f	--print-cfgfile
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+.TE
+.RE
+.TP
+.BR "\(hym f" ", " "--print-cfgfile"
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Print the specified configuration file.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Creating a policy file:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m P	--create-polfile
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-p \fIpolfile\fP	--polfile \fIpolfile\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+-e	--no-encryption
+.TE
+.I policyfile.txt
+.RE
+.TP
+.BR "\(hym P" ", " --create-polfile
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode. Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyp " polfile\fR, " --polfile " polfile"
+Specify the destination of the encoded (and optionally signed) policy
+file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file.  Mutually exclusive with (\fB\(hye\fR).  
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specifies passphrase to be used with site key for policy signing.
+Mutually exclusive with (\fB\(hye\fR).
+.TP
+.BR \(hye ", " --no-encryption
+Do not sign the policy file being stored.  The policy
+file will still be compressed, and will not be human-readable.
+Mutually exclusive with (\fB\(hyQ\fR) and (\fB\(hyS\fR).
+.TP
+.I policyfile.txt
+Specifies the text policy file that will become the new 
+policy file.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Printing a policy file:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m p	--print-polfile
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-p \fIpolfile\fP	--polfile \fIpolfile\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+.TE
+.RE
+.TP
+.BR "\(hym p" ", " --print-polfile
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyp " polfile\fR, " --polfile " polfile"
+Print the specified policy file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Removing encryption from a file:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m R	--remove-encryption
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+.TE
+.IR "file1" " [ " "file2..." " ]"
+.RE
+.TP
+.BR "\(hym R" ", " --remove-encryption
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Specify the local keyfile to use to verify database files and reports.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Specify the site keyfile to use to verify configuration
+and policy files.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specify the passphrase to use when verifying with the
+old local keyfile.
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specify the passphrase to use when verifying with the
+old site keyfile.
+.TP
+.IR file1 " [ " file2... " ]"
+List of files from which signing is to be removed.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Encrypting a file:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m E	--encrypt
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+.TE
+.IR "file1" " [ " "file2..." " ]"
+.RE
+.TP
+.BR "\(hym E" ", " --encrypt
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Specify the local keyfile to use to sign database
+files and reports.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Specify the site keyfile to use to sign configuration
+and policy files.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specify the passphrase to use when signing with the 
+local keyfile.
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specify the passphrase to use when signing with the 
+site keyfile.
+.TP
+.IR file1 " [ " file2... " ]"
+List of files to sign using the new key(s).
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS "Examining the encryption status of a file:"
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m e	--examine
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+.TE
+.IR file1 " [ " file2... " ]"
+.RE
+.TP
+.BR "\(hym e" ", " --examine
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Specifies the key to use as a local key.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Specifies the key to use as a site key.
+.TP
+.IR file1 " [ " file2... " ]"
+List of files to examine.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Generating keys:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m G	--generate-keys
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+.TE
+.RE
+.TP
+.BR "\(hym G" ", " --generate-keys
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Generate the local key into the specified file.  At least one of
+(\fB\(hyL\fR) or (\fB\(hyS\fR) must be specified.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Generate the site key into the specified file.  At least one of
+(\fB\(hyS\fR) or (\fB\(hyL\fR) must be specified.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specify local passphrase to be used when generating
+the local key.
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specify site passphrase to be used when generating
+the site key.
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Changing passphrases:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m C	--change-passphrases
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+	--local-passphrase-old \fIpassphraseOld\fP
+	--site-passphrase-old \fIpassphraseOld\fP
+.TE
+.RE
+.TP
+.BR "\(hym C" ", " --change-passphrases
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Change passphrase used to encrypt the private key in the specified localkey
+file.  At least one of (\fB\(hyL\fR) or (\fB\(hyS\fR) must be specified.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Change passphrase used to encrypt the private key in the specified sitekey
+file.  At least one of (\fB\(hyL\fR) or (\fB\(hyS\fR) must be specified.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specify passphrase used to encrypt the private key in the specified localkey
+file.
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specify passphrase used to encrypt the private key in the specified sitekey
+file.
+.TP
+.BI --local-passphrase-old " passphraseOld"
+Specify passphrase used to decrypt the private key in the specified localkey
+file.
+.TP
+.BI --site-passphrase-old " passphraseOld"
+Specify passphrase used to decrypt the private key in the specified sitekey
+file.
+.\" *****************************************
+.SH VERSION INFORMATION
+This man page describes
+.B twadmin
+version 2.4.
+.SH AUTHORS
+Tripwire, Inc.
+.SH COPYING PERMISSIONS
+Permission is granted to make and distribute verbatim copies of this man page provided the copyright notice and this permission notice are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this man page under the conditions for verbatim copying, provided that the entire resulting derived work is distributed under the terms of a permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
+.PP
+Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+.SH SEE ALSO
+.BR twintro (8),
+.BR tripwire (8),
+.BR twprint (8),
+.BR siggen (8),
+.BR twconfig (4),
+.BR twpolicy (4),
+.BR twfiles (5)

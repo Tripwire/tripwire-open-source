@@ -1,0 +1,21 @@
+#!/bin/sh
+#
+# A very cheesy script to prep a release
+#
+
+PRODUCT=tripwire
+VERSION=2.4.2.2
+ARCH=x86
+TYPE=bin
+ROOT_DIR=$PRODUCT-$VERSION-$ARCH-$TYPE
+EXCLUDES=.svn
+
+mkdir $ROOT_DIR
+ln -s ../bin ../contrib ../man ../policy $ROOT_DIR/
+ln -s ../COPYING ../ChangeLog ../INSTALL ../MAINTAINERS $ROOT_DIR/
+ln -s ../TRADEMARK ../COMMERCIAL ../install ../install-sh $ROOT_DIR/
+
+tar jhcf $ROOT_DIR.tar.bz2 $ROOT_DIR --exclude $EXCLUDES
+
+sha1sum $ROOT_DIR.tar.bz2 > $ROOT_DIR.sha1
+sha1sum bin/* >> $ROOT_DIR.sha1

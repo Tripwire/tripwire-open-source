@@ -1,0 +1,4 @@
+( emailreport on ; ) 
+{
+	/foo		->		+pinugs ;
+}

@@ -1,0 +1,135 @@
+# replace your_host with the name of your host.
+# parser will echo YES1 through YES9
+# there's a problem with the parser if it echoes NO
+
+@@ifhost turd
+    @@error NO1
+@@else
+    @@echo +YES1;
+@@endif
+
+@@ifhost crap || your_host||poo
+
+
+    @@ifhost turd
+    
+        @@ifhost your_host
+            @@error +NO2;
+        @@else
+            @@error +NO3;
+        @@endif
+
+            @@error +NO4;
+
+    @@else
+    
+        @@ifhost turd
+            @@error +NO5;
+        @@else
+            @@echo +YES2;
+        @@endif
+
+            @@echo +YES3;
+
+    @@endif
+
+
+
+    @@ifhost your_host
+    
+        @@ifhost your_host
+            @@echo +YES4;
+        @@else
+            @@error +NO6;
+        @@endif
+
+            @@echo +YES5;
+
+    @@else
+    
+        @@ifhost your_host
+            @@error +NO7;
+        @@else
+            @@error +NO8;
+        @@endif
+
+            @@error +NO9;
+
+    @@endif
+
+    @@ifhost your_host
+        @@echo +YES6;
+    @@else
+        @@error +NO10;
+    @@endif
+
+    @@ifhost turd
+        @@error +NO11;
+    @@else
+        @@echo +YES7;
+    @@endif
+
+    
+    @@ifhost your_host || poo
+        @@echo +YES8;
+    @@endif    
+
+    @@ifhost poo || your_host
+        @@echo +YES9;
+    @@endif
+
+    @@ifhost poo
+        @@error +NO12;
+    @@endif
+
+@@else
+
+
+    @@ifhost turd
+    
+        @@ifhost your_host
+            @@error +NO13;
+        @@else
+            @@error +NO14;
+        @@endif
+
+            @@error +NO16;
+
+    @@else
+    
+        @@ifhost turd
+            @@error +NO16;
+        @@else
+            @@error +NO17;
+        @@endif
+
+            @@error +NO18;
+
+    @@endif
+
+    @@ifhost turd
+        @@error +NO19;
+    @@else
+        @@error +NO20;
+    @@endif
+
+    @@ifhost your_host
+        @@error +NO21;
+    @@else
+        @@error +NO22;
+    @@endif
+
+
+    @@ifhost turd
+        @@error +NO23;
+    @@else
+        @@error +NO24;
+    @@endif
+    
+    @@ifhost poo
+        @@error +NO25;
+    @@endif
+
+@@endif
+
+

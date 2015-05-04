@@ -1,0 +1,86 @@
+2011-11-21 Stephane Dudzinski <tripwire@frlinux.net>
+
+	* Bumping version to 2.4.2.2
+	* Updated version revision in reports and all
+	* Added experimental policy creation (see policy/policy_generator_readme.txt)
+	* Fixed report formating and sendmail issues
+	* Added Debian patches for crypto and hostnames
+	* Fixed compiling issue on recent GCC compilers (-fpermissive)
+
+2011-07-14 Stephane Dudzinski <tripwire@frlinux.net>
+
+	* Bumping version to 2.4.2.1
+	* Fixed version numbering and added RPM spec file
+
+2010-03-11 Stephane Dudzinski <tripwire@frlinux.net>
+
+	* Bumping version to 2.4.2
+	* Added patch to fix bug [ 1962485 ] Cannot change or expect-script
+	passphrases - thanks to Ross Tyler (rtyle)
+	* Removed RPM spec file for now, will be fixed in next release
+
+2007-04-16 Ron Forrester <rjf@theforrest.org>
+
+	* Bumping all versions to 2.4.1.2
+	* Fixed bug in install script when sendmail isn't installed
+	  target system.
+	* Removed some non-existent files from installer
+	
+2005-08-18 Ron Forrester <rjf@theforrest.org>
+
+	* Wow, has it been 4+ years? :)
+	
+	* Starting fresh with Paul's autoconf'ed code base
+	
+	* Bumped version number, misc cleanup, etc.
+
+
+2001-02-25  Ron Forrester  <rjf@theforrest.org>
+
+	* Bumped version to 2.3.1.
+	
+	* BSD support, thanks to Paul Herman <pherman@frenchfries.net>.
+	The support was added for FreeBSD 4.2, your mileage may vary on
+	other BSD's.
+	
+	* Fixed long standing bug with recurse=3
+
+	* If TEMPDIRECTORY was missing trailing /, bad things could
+	happen. Tripwire now appends a / if one isn't present. Thanks
+	Jarno.
+
+	* Fixed GLOBALEMAIL bug where no global emails would be sent
+	unless there were emailto attributes somewhere in the policy
+	file. Additionally, reports were being sliced to global
+	recipients, despite the fact that global recipients should get
+	the full report.
+	
+	
+2001-02-03  Ron Forrester  <rjf@theforrest.org>
+
+	* Fixed possible security problem with the handling of temp
+	files. We now open temp files with O_EXCL set to make sure a
+	particular file doesn't already exist. Thanks to Jarno for this
+	suggestion and help via a patch.
+
+	* Added the configuration file variable TEMPDIRECTORY. This
+	variable can be set to the full path to where tripwire should
+	write its temporary files. By default it is /tmp. Because /tmp has
+	to be world writable, this isn't a good place for tripwire to
+	write temporary files. Setting TEMPDIRECTORY to a directory with
+	permissions 700 is much more secure. Updated man page with info on
+	this variable.
+
+	* Added the configuration file variable GLOBALEMAIL. This variable
+	can be set to a list of email addresses which are semi-colon or
+	comma separated. If a report is about to be emailed to addresses
+	reaped from the policy file, it will also be emailed to the
+	addresses in the GLOBALEMAIL list, allowing designation of one or
+	more people to always get email reports. Updated the man page with
+	info on this variable.
+
+	* Began a convention of providing a "Solution:" line to all errors
+	(exceptions) emitted by tripwire. Only the two latest error
+	messages incorporate this convention, but all future ones will as
+	well, and I hope to revist all current errors and retrofit them
+	with Solution: lines as well.

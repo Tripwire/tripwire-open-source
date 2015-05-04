@@ -1,0 +1,577 @@
+'\" t
+.\" Do not move or remove previous line.
+.\" Used by some man commands to know that tbl should be used.
+.\"
+.\" Macros added by addw@phcomp.co.uk for those systems where the an
+.\" troff macro package doesn't know about .Ps & .Pe.
+.\" Note it is assumed that CW is a constant width font.
+.\" Ps - Start display text
+.de Ps
+.nf
+.in +0.5i
+.ft CW
+.ps \\n(.s-1
+..
+.\" Pe - end of display text
+.de Pe
+.fi
+.in -0.5i
+.ft 1
+.ps \\n(OS
+..
+.\" Macro added by TSS.
+.\" The command mode descriptions run together visually, so
+.\" macro Hr draws a horizontal rule to give some separation
+.\" between modes.  Register Vs dithers the amount of vertical
+.\" space before the rule, in lines.
+.nr Vs 1
+.de Hr
+.ne \\n(Vs+2
+.sp \\n(Vsli
+.nr Oi \\n(.i
+.in 0
+\\l'\\n(.lu'
+.in \\n(.iu
+..
+.\"
+.nh
+.ad l
+.TH TRIPWIRE 8 "1 July 2000"
+.SH NAME
+tripwire \- a file integrity checker for \s-1UNIX\s0 systems
+.SH SYNOPSIS
+.B tripwire
+.RB "{ " "-m i" " | " "--init" " } "  
+.RI "[ " options... " ]"
+.br 
+.B tripwire
+.RB "{ " "-m c" " | " "--check" " } "
+.RI "[ " options... " ] "
+.if n .br
+.if n .ti +.5i
+.RI "[ " "object1" " [ " "object2..." " ]]"
+.br
+.B tripwire
+.RB "{ " "-m u" " | " "--update" " } "
+.RI "[ " options... " ]"
+.br
+.B tripwire
+.RB "{ " "-m p" " | " "--update-policy" " } "
+.RI "[ " options... " ]"
+.if n .br
+.if n .ti +.5i
+.I policyfile.txt
+.br
+.B tripwire
+.RB "{ " "-m t" " | " "--test" " } "
+.RI "[ " options... " ]"
+.\"
+.SH DESCRIPTION
+.\"
+.SS Database Initialization Mode 
+Running \fBtripwire\fP in Database Initialization mode is 
+typically one of the first steps in setting up
+\fITripwire\fR for regular operation.  This mode creates a baseline
+database in the location specified by the
+.hy 0
+\fR\f(CWDBFILE\fP
+.hy 1
+variable in the \fITripwire\fP configuration file.  The
+database is essentially a snapshot of the objects residing on the
+system.  During later \fITripwire\fP integrity checks, this database
+serves as the basis for comparison.
+.PP
+When run in Database Initialization mode, \fBtripwire\fP reads the
+policy file, generates a database based on its contents, and then
+cryptographically signs the resulting database.  Options can be entered
+on the command line to specify which policy, configuration, and key
+files are used to create the database.  The filename for the database
+can be specified as well.  If no options are specified, the default
+values from the current configuration file are used.
+.\"
+.\" *****************************************
+.SS Integrity Checking Mode
+After building the \fITripwire\fP database, the next step is typically
+to run \fBtripwire\fP in Integrity Checking mode.  This mode scans the
+system for violations, as specified in the policy file.  Using the
+policy file rules, \fITripwire\fP will compare the state of the current
+file system against the initial baseline database.  An integrity
+checking report is printed to \fIstdout\fP and is saved in the
+location specified by the
+.hy 0
+\fR\f(CWREPORTFILE\fP
+.hy 1
+setting in the \fITripwire\fR configuration file.
+.PP
+The generated report describes each policy file violation in detail,
+depending on whether the specified file system object was added,
+deleted, or changed.  Each report item lists the properties of the
+object as it currently resides on the file system, and, if appropriate,
+the old value stored in the database.  If there are differences between
+the database and the current system, the administrator can either fix
+the problem by replacing the current file with the correct file (e.g.,
+an intruder replaced \fI/bin/login\fP), or update the database to
+reflect the new file (e.g., a fellow system administrator installed a
+new version of \fI/usr/local/bin/emacs\fP).  The (\fB\(hyI\fP or
+\fB\(hy\(hyinteractive\fP) option launches an editor that allows the
+user to update the database quickly.  The Database Update mode of
+\fBtripwire\fP can also be used.
+.\"
+.\" *****************************************
+.SS Database Update Mode
+Running \fBtripwire\fP in Database Update mode allows any differences
+between the database and the current system to be reconciled.  This
+will prevent the violation from showing up in future reports.  If the
+reported change is unexpected and potentially malicious, then the
+changed file should be replaced with the original version.  If there is
+a valid reason for the change, the database must be changed to match
+the current files.
+.PP
+In Database Update mode, the items to be changed are specified in a
+"ballot box" in the plain text report
+that is launched in an editor program.
+The entries to
+be updated are specified by leaving the "x" next to each policy
+violation.  After the user exits the editor and provides the correct 
+local passphrase,
+\fBtripwire\fP will update the database.
+Options to control this operation include the
+.hy 0
+(\fB\(hyZ\fP\ or\ \fB\(hy\(hysecure\(hymode\fP) and (\fB\(hya\fP\ or\ \fB\(hy\(hyaccept\(hyall\fP) flags.
+.hy 1
+.\"
+.\" *****************************************
+.SS Policy Update Mode
+Policy update mode is used by \fBtripwire\fP to change or update the
+policy file and to synchronize an earlier database with new policy
+file information.  The filename of the new clear text version of the
+policy file is specified on the command line.  The new policy file is 
+compared to the existing version, and the database is updated according
+to the new policy rules.  Any changes in the database since the last
+integrity check will be detected and reported.  How these violations
+are interpreted depends on the security mode specified with the
+(\fB\(hyZ\fP or \fB\(hy\(hysecure\(hymode\fP) option.
+In \fBhigh\fP security mode (the default), \fITripwire\fR will print a list of
+violations and exit without making changes to the database.  In
+\fBlow\fP security mode, the violations are still
+reported, but changes to the database are made automatically.
+.PP
+Because the policy and database files are binary-encoded and
+cryptographically signed, the user will be prompted for the site and
+local passphrases to change the policy settings.  After the database is
+successfully updated, the
+database and policy files are re-encoded and signed.
+.\"
+.\" *****************************************
+.SS Test Mode
+Test mode is used to check the operation of the \fITripwire\fR email
+notification system. When run in this mode, \fITripwire\fR will use the
+email notification settings specified in the configuration file to send
+a test email message. If MAILMETHOD is set to SMTP, the SMTPHOST and
+SMTPPORT values will be used to send email.  If MAILMETHOD is set to
+SENDMAIL, the MAILPROGRAM value will be used.  If email notification is
+working correctly, the address specified on the command line will
+receive the following message:
+.PP
+.Ps
+To: user@domain.com 
+From: user <user@domain.com> 
+Subject: Test email message from Tripwire 
+
+If you receive this message, email notification
+from Tripwire is working correctly.
+.Pe
+.PP
+Test mode only tests email notification for the address specified on
+the command-line, and does not check for errors in the syntax used with
+the \f(CWemailto\fP attribute in the policy file.
+.if \n(.t<700 .bp
+.SH OPTIONS
+.\"
+.\" *****************************************
+.SS Database Initialization mode:
+.\"
+.\"
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m i	--init
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-p \fIpolfile\fP	--polfile \fIpolfile\fP
+-d \fIdatabase\fP	--dbfile \fIdatabase\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-e	--no-encryption
+.TE
+.RE
+.TP
+.BR "\(hym i" ", " --init
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyp " polfile\fR, " --polfile " polfile"
+Use the specified policy file.
+.TP
+.BI \(hyd " database\fR, " --dbfile " database"
+Write to the specified database file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file to read the configuration and policy
+files.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Use the specified local key file to write the new database file.
+Mutually exclusive with (\fB\(hye\fR).
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specifies passphrase to be used with local key to sign the new database.
+Mutually exclusive with (\fB\(hye\fR).
+.TP
+.BR \(hye ", " --no-encryption
+Do not sign the database being stored.  
+The database file will still be compressed and will not be
+human-readable.
+Mutually exclusive with (\fB\(hyL\fR) and (\fB\(hyP\fR).
+.\"
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Integrity Checking mode:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m c	--check
+-I	--interactive
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-p \fIpolfile\fP	--polfile \fIpolfile\fP
+-d \fIdatabase\fP	--dbfile \fIdatabase\fP
+-r \fIreport\fP	--twrfile \fIreport\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-n	--no-tty-output
+-V \fIeditor\fP	--visual \fIeditor\fP
+-E	--signed-report
+-i \fIlist\fP	--ignore \fIlist\fP
+-l \fR{ \fIlevel\fR | \fIname\fR }\fP	--severity \fR{ \fIlevel\fR | \fIname\fR }\fP
+-R \fIrule\fP	--rule-name \fIrule\fP
+-x \fIsection\fP	--section \fIsection\fP
+-M	--email-report
+-t \fR{ 0|1|2|3|4 }\fP	--email-report-level \fR{ 0|1|2|3|4 }\fP
+.TE
+.RI "[ " object1 " [ " object2... " ]]"
+.RE
+.TP
+.BR "\(hym c" ", " --check
+Mode selector.
+.TP
+.BR \(hyI ", " --interactive
+At the end of integrity checking, the resulting report is opened
+in an editor where database updates can be easily specified using
+the ballot boxes included in the report.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile
+Use the specified configuration file.
+.TP
+.BI \(hyp " polfile\fR, " --polfile " polfile
+Use the specified policy file.
+.TP
+.BI \(hyd " database\fR, " --dbfile " database"
+Use the specified database file.
+.TP
+.BI \(hyr " report\fR, " --twrfile " report"
+Write the specified report file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file to read the configuration
+and policy files.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Use the specified local key file to read the database
+file and, if (\fB\(hyE\fR) is specified, to write the report file.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specifies passphrase to be used with local key to
+sign the database when (\fB\(hyI\fR) is used, and to
+sign the report when (\fB\(hyE\fR) is used.
+Valid only with (\fB\(hyI\fR) or (\fB\(hyE\fR).
+.TP
+.BR \(hyn ", " --no-tty-output
+Suppress the report from being printed at the console.
+.TP
+.BI \(hyV " editor\fR, " --visual " editor
+Use the specified editor to edit the update ballot boxes.
+Meaningful only with (\fB\(hyI\fP).
+.TP
+.BR \(hyE ", " --signed-report
+Specifies that the \fITripwire\fR report will be signed.  If
+no passphrase is specified on the command line, \fBtripwire\fR
+will prompt for the local passphrase.
+.TP
+.BI \(hyi " list\fR, " --ignore " list
+Do not compute or compare the properties specified in \fIlist\fR.  Any
+of the letter codes (abcdgimnprstulCHMS) specified in propertymasks can
+be excluded.
+Use of this option overrides information from the policy file.
+The format to be used for \fIlist\fP is a double-quoted, comma-delimited list
+of properties (e.g.\ \fI\-\-ignore\ "p,c,m"\fP).
+.TP
+\fB\(hyl \fR{ \fIlevel \fR| \fIname \fR}, \fB--severity \fR{ \fIlevel \fR| \fIname \fR}
+Check only policy rules with severity greater than or equal to
+the given level.  The level may be specified as a number or as a name.
+Severity names are defined as follows:
+.nf
+.ta 0.5iL +1.5iR
+	Low	33
+	Medium	66
+	High	100
+.fi
+Mutually exclusive with (\fB\(hyR\fP).
+.DT
+.TP
+.BI \(hyR " rule\fR, " --rule-name " rule
+Check only the specified policy rule.  Mutually exclusive with
+(\fB\(hyl\fP).
+.TP
+.BI \(hyx " section\fR, " --section " section
+Only check the rules in the specified section of the policy file.  For
+\fITripwire 2.4\fR, \fR\f(CWFS\fP is the only meaningful
+argument for this flag.
+.TP
+.BR \(hyM ", " --email-report
+Specifies that reports be emailed to the recipient(s) designated in the
+policy file.
+.TP
+.BI \(hyt " level\fR, " --email-report-level " level
+Specifies the detail level of email reports, overriding the
+EMAILREPORTLEVEL variable in the configuration file. \fIlevel\fR must
+be a number from 0\ to\ 4.
+Valid only with (\fB\(hyM\fP).
+.TP
+.RI "[ " object1 " [ " object2... " ]]"
+List of files and directories that should be integrity checked.
+Default is all files.  If files are specified for checking, the
+\fB--severity\fR and \fB--rule-name\fR options will be ignored.
+.\"
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Database Update mode:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m u	--update
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-p \fIpolfile\fP	--polfile \fIpolfile\fP
+-d \fIdatabase\fP	--dbfile \fIdatabase\fP
+-r \fIreport\fP	--twrfile \fIreport\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-V \fIeditor\fP	--visual \fIeditor\fP
+-a	--accept-all
+-Z \fR{ low | high }\fP	--secure-mode \fR{ low | high }\fP
+.TE
+.RE
+.TP
+.BR "\(hym u" ", " --update
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile
+Use the specified configuration file.
+.TP
+.BI \(hyp " polfile\fR, " --polfile " polfile
+Use the specified policy file.
+.TP
+.BI \(hyd " database\fR, " --dbfile " database"
+Update the specified database file.
+.TP
+.BI \(hyr " report\fR, " --twrfile " report"
+Read the specified report file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file to read the configuration
+and policy files.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Use the specified local key file to read the database
+file and report file, and to re-write the database file.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specifies passphrase to be used with local key to
+sign the database.
+.TP
+.BI \(hyV " editor\fR, " --visual " editor"
+Use the specified editor to edit the update ballot boxes.  Mutually
+exclusive with (\fB\(hya\fP).
+.TP
+.BR \(hya ", " --accept-all
+Specifies that all the entries in the report file are updated
+without prompting.  Mutually exclusive with (\fB\(hyV\fP).
+.TP
+\fB\(hyZ \fR{ low | high \fR}, \fB--secure-mode \fR{ low | high \fR}
+Specifies the security level, which affects how certain conditions are
+handled when inconsistent information is found between the report file
+and the current database:
+.sp
+High:  In \fBhigh\fP security mode, if a file does not match the
+properties in the report file, Tripwire reports the differences as
+warnings, and exits without changing the database.
+.sp
+Low:  In \fBlow\fP security mode, inconsistencies 
+are reported as warnings, 
+but the changes are still made to the database.
+.\"
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Policy Update mode:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m p	--update-policy
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-p \fIpolfile\fP	--polfile \fIpolfile\fP
+-d \fIdatabase\fP	--dbfile \fIdatabase\fP
+-S \fIsitekey\fP	--site-keyfile \fIsitekey\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-P \fIpassphrase\fP	--local-passphrase \fIpassphrase\fP
+-Q \fIpassphrase\fP	--site-passphrase \fIpassphrase\fP
+-Z \fR{ low | high }\fP	--secure-mode \fR{ low | high }\fP
+.TE
+.I policyfile.txt
+.RE
+.TP
+.BR "\(hym p" ", " --update-policy
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).   
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile
+Use the specified configuration file.
+.TP
+.BI \(hyp " polfile\fR, " --polfile " polfile
+Write the specified policy file.
+.TP
+.BI \(hyd " database\fR, " --dbfile " database"
+Use the specified database file.
+.TP
+.BI \(hyS " sitekey\fR, " --site-keyfile " sitekey"
+Use the specified site key file to read the configuration
+file, and read and write the policy file.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Use the specified local key file to read and write the database
+file.
+.TP
+.BI \(hyP " passphrase\fR, " --local-passphrase " passphrase"
+Specifies passphrase to be used with local key to
+sign the database.
+.TP
+.BI \(hyQ " passphrase\fR, " --site-passphrase " passphrase"
+Specifies passphrase to be used with site key to sign
+the new policy file.
+.TP
+\fB\(hyZ \fR{ low | high \fR}, \fB--secure-mode \fR{ low | high \fR}
+Specifies the security level, which affects how certain conditions are
+handled when the existing filesystem does not match the database
+information.  Since the database produced at the end of a policy update
+becomes the baseline for future integrity checks, this
+consistency-checking ensures that no substantive filesystem changes
+have occurred since the last integrity check.
+.sp
+High:  In \fBhigh\fP security mode, if a file on the filesystem does
+not match the properties in the database file, Tripwire reports the
+differences as warnings, and exits without changing the database or the
+policy file.
+.sp
+Low:  In \fBlow\fP security mode, inconsistencies are reported as
+warnings, but the changes are still made to the database and policy
+file.
+.if \n(.t<700 .bp
+.TP
+.I policyfile.txt
+Specifies the text policy file that will become the new policy file.
+.\"
+.\" *****************************************
+.Hr
+.if \n(.t<700 .bp
+.SS Test mode:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m t	--test
+-e \fIuser@domain.com\fP	--email \fIuser@domain.com\fP
+.TE
+.RE
+.TP
+.BR "\(hym t" ", " --test
+Mode selector.
+.TP
+.BI \(hye " user@domain.com\fR, " --email " user@domain.com"
+Use the specified email address.  This parameter must
+be supplied when test mode is used. Only one address
+may be specified.
+.SH VERSION INFORMATION
+This man page describes
+.B tripwire
+version 2.4
+.SH AUTHORS
+Tripwire, Inc.
+.SH COPYING PERMISSIONS
+Permission is granted to make and distribute verbatim copies of this man page provided the copyright notice and this permission notice are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this man page under the conditions for verbatim copying, provided that the entire resulting derived work is distributed under the terms of a permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
+.PP
+Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+.SH SEE ALSO
+.BR twintro (8),
+.BR twadmin (8),
+.BR twprint (8),
+.BR siggen (8),
+.BR twconfig (4),
+.BR twpolicy (4),
+.BR twfiles (5)
+.PP
+.IR "The Design and Implementation of Tripwire: A \s-1UNIX\s0 File Integrity Checker"
+by Gene Kim and Eugene Spafford.  Purdue Technical Report CSD-TR-93-071.

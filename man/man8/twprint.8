@@ -1,0 +1,148 @@
+'\" t
+.\" Do not move or remove previous line.
+.\" Used by some man commands to know that tbl should be used.
+.ad l
+.TH TWPRINT 8 "1 July 2000"
+.nh
+.SH NAME
+twprint \- Tripwire database and report printer
+.SH SYNOPSIS
+.B twprint
+.RB "{ " "-m r" " | " "--print-report" " } "
+.RI "[ " options... " ]"
+.br
+.B twprint
+.RB "{ " "-m d" " | " "--print-dbfile" " } "
+.RI "[ " options... " ]"
+.if n .br
+.if n .ti +.5i
+.RI " [ " "object1" " [ " "object2..." " ]]"
+.SH DESCRIPTION
+.PP
+Prints \fITripwire\fR database and report files in clear text format.
+.SS Report Printing mode
+.PP
+In Report Printing mode, \fBtwprint\fR verifies and displays the
+contents of a \fITripwire\fR report file (\fI.twr\fR).  If no report is
+specified on the command line,
+the report specified in the
+\f(CWREPORTFILE\fR
+variable in the configuration file will be used.  By default,
+this value includes the date and time to the nearest second.  Because
+this value is constantly changing, \fBtwprint\fR may not be able to
+find the correct report file. For this reason, the (\fB\(hyr\fR or
+\fB--twrfile\fR) flag should be used with the desired report name to
+print a specific report.
+.SS Database Printing mode
+.PP
+This option is used to print a \fITripwire\fR database file in
+human-readable (clear text) form.  In Database Printing mode,
+\fBtwprint\fR verifies and 
+prints the contents of a specified database to \fIstdout\fR.  If no
+database file is specified
+on the command line, the default database specified by the
+\f(CWDBFILE\fR
+variable in the configuration file is used.
+.SH OPTIONS
+.\" *****************************************
+.SS Report printing mode:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m r	--print-report
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-r \fIreport\fP	--twrfile \fIreport\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-t \fR{ 0|1|2|3|4 }\fP	--report-level \fR{ 0|1|2|3|4 }\fP
+.TE
+.RE
+.TP
+.BR "\(hym r" ", " --print-report
+Mode selector.
+.TP
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyr " report\fR, " --twrfile " report"
+Print the specified report file.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Use the specified local key file to perform verification
+with reports which are signed.
+.TP
+.BI \(hyt " level\fR, " --report-level " level
+Specifies the detail level of the printed report, overriding the
+\f(CWREPORTLEVEL\fP variable in the configuration
+file. \fIlevel\fR must be a number from 0\ to\ 4.
+.\" *****************************************
+.SS Database printing mode:
+.RS 0.4i
+.TS
+;
+lbw(1.2i) lb.
+-m d	--print-dbfile
+-v	--verbose
+-s	--silent\fR,\fP --quiet
+-c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
+-d \fIdatabase\fP	--dbfile \fIdatabase\fP
+-L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+.TE
+.RI "[ " "object1" " [ " "object2..." " ]]"
+.RE
+.TP
+.BR "\(hym d" ", " --print-dbfile
+Mode selector.
+.TP 
+.BR \(hyv ", " --verbose
+Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
+.TP 
+.BR \(hys ", " --silent ", " --quiet
+Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).
+.TP
+.BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
+Use the specified configuration file.
+.TP
+.BI \(hyd " database\fR, " --dbfile " database"
+Print the specified database file.
+.TP
+.BI \(hyL " localkey\fR, " --local-keyfile " localkey"
+Use the specified local key file to read the database.
+.TP
+.RI "[ " "object1" " [ " "object2..." " ]]"
+List of filesystem objects in the database to print. If no
+objects are specified, every object in the database will
+be printed. The format for a list of objects is:
+.if n .I "section: objname objname... section: objname..."
+.if t .br
+.if t .I "section: objectname objectname... section: objectname..."
+.SH VERSION INFORMATION
+This man page describes
+.B twprint
+version 2.4.
+.SH AUTHORS
+Tripwire, Inc.
+.SH COPYING PERMISSIONS
+Permission is granted to make and distribute verbatim copies of this man page provided the copyright notice and this permission notice are preserved on all copies.
+.PP
+Permission is granted to copy and distribute modified versions of this man page under the conditions for verbatim copying, provided that the entire resulting derived work is distributed under the terms of a permission notice identical to this one.
+.PP
+Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
+.PP
+Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+.SH SEE ALSO
+.BR twintro (8),
+.BR tripwire (8),
+.BR twadmin (8),
+.BR siggen (8),
+.BR twconfig (4),
+.BR twpolicy (4),
+.BR twfiles (5)
