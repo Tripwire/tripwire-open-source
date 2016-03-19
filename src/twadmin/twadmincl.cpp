@@ -33,6 +33,7 @@
 // twadmincl.cpp -- command line parsing for twadmin
 //
 
+#include <unistd.h>
 #include "stdtwadmin.h"
 
 #include "twadmincl.h"

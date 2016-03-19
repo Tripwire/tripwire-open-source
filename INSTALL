@@ -1,0 +1,8 @@
+Basic install instructions:
+
+git clone https://github.com/Tripwire/tripwire-open-source
+cd tripwire-open-source
+./bootstrap.sh
+./configure
+make
+make install
