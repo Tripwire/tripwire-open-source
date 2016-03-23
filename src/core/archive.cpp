@@ -883,11 +883,10 @@ void cLockedTemporaryFileArchive::OpenReadWrite( const TCHAR* filename, uint32 o
             strTempFile += _T("twtempXXXXXX");  
             iFSServices::GetInstance()->MakeTempFilename( strTempFile );
           }
-        catch( eFSServices& e)
+        catch( eFSServices& fileError)
           {
             TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
-            eArchiveOpen e(strTempFile, errStr);
-            throw e;
+            throw eArchiveOpen(strTempFile, errStr);
           }
       }
     ///////////////////////////////////////////////////////////////////////////////

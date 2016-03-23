@@ -34,6 +34,7 @@
 //
 
 #include "stdtwadmin.h"
+#include <unistd.h>
 
 #include "twadmincl.h"
 #include "twadminstrings.h"

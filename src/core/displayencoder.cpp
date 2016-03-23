@@ -817,8 +817,9 @@ void cEncoder::ValidateSchema() const
 bool cEncoder::OnlyOneCatagoryPerChar() const
 {
     // TODO:BAM - man, is there a better way to do this?
-    TCHAR ach[2] = {0};
     TCHAR ch = std::numeric_limits<TCHAR>::min();
+    TSTRING ach(1,ch);
+
     if( ch != std::numeric_limits<TCHAR>::max() )
     {
         do
@@ -828,8 +829,7 @@ bool cEncoder::OnlyOneCatagoryPerChar() const
             ach[0] = ch;
             for( sack_type::const_iterator atE = m_encodings.begin(); atE != m_encodings.end(); atE++ )
             {
-		TSTRING::const_iterator first(&ach[0]), last(&ach[1]);
-                if( (*atE)->NeedsEncoding( first, last ) )
+	        if( (*atE)->NeedsEncoding( ach.begin(), ach.end() ) )
                 {
                     if( fFailedATest )
                         return false; // each char can only fail one test
