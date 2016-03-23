@@ -74,6 +74,7 @@
 class cFCOName;
 class cFCOReport_i;
 class cFCOReportGenreIter_i;
+class cFCOReportSpecIter;
 class cFCOReportSpecIter_i;
 class cFCOReportChangeIter_i;
 class iFCOSpec;

@@ -258,7 +258,7 @@ bool cMailMessageUtil::ReadDate( TSTRING& strDateBuf )
 }
 
 
-static char* util_Get_IANA_CharSet()
+static const char* util_Get_IANA_CharSet()
 {
     const char* pCP = setlocale( LC_CTYPE, NULL );
 

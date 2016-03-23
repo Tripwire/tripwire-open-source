@@ -79,7 +79,7 @@ void util_SignalHandler( int sig )
 #if IS_UNIX
 void tw_psignal(int sig, const TCHAR *str)
 {
-    TCHAR *siglist[NSIG] = {
+    const TCHAR *siglist[NSIG] = {
         _T("Unknown Signal"),
         _T("Hangup"),
         _T("Interrupt"),

@@ -53,6 +53,7 @@ class cFCOName;
 class iParserGenreUtil
 {
 public:
+    virtual ~iParserGenreUtil() {}
     virtual bool MapStringToProperty( const TSTRING& str, int& propIndex ) const = 0;
         // maps the given string  to an index into a property vector for the genre
     virtual void AddSubTypeProps( cFCOPropVector& v ) const = 0;

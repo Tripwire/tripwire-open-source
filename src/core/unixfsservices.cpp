@@ -172,7 +172,7 @@ void cUnixFSServices::GetHostID( TSTRING& name ) const
 }
 
 // returns "/" for unix and "\\" for win32
-TCHAR  cUnixFSServices::GetPathSeperator() const
+TCHAR  cUnixFSServices::GetPathSeparator() const
 {
     return '/';
 }
@@ -228,9 +228,9 @@ cFSStatArgs::FileType cUnixFSServices::GetFileType(const cFCOName &filename) thr
 
 void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSServices)
 {
-	TCHAR pathname[MAXPATHLEN];
+	TCHAR pathname[iFSServices::TW_MAX_PATH];
 	pathname[0] = '\0';
-	TCHAR* ret = getcwd(pathname, sizeof(TCHAR)*MAXPATHLEN);
+	TCHAR* ret = getcwd(pathname, sizeof(TCHAR)*iFSServices::TW_MAX_PATH);
 
 	if (ret == NULL)
 		throw eFSServicesGeneric( strCurDir, iFSServices::GetInstance()->GetErrString() );
@@ -248,12 +248,12 @@ void cUnixFSServices::ChangeDir( const TSTRING& strDir ) const throw(eFSServices
 TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSServices)
 {
     char* pchTempFileName;
-    char szTemplate[MAXPATHLEN];
+    char szTemplate[iFSServices::TW_MAX_PATH];
     int fd;
 
 #ifdef _UNICODE
     // convert template from wide character to multi-byte string
-    char mbBuf[MAXPATHLEN];
+    char mbBuf[iFSServices::TW_MAX_PATH];
     wcstombs( mbBuf, strName.c_str(), strName.length() + 1 );
     strcpy( szTemplate, mbBuf );
 #else
@@ -588,15 +588,15 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
 	}
 
     // check owner read and write
-	if (perm & S_IREAD)
+	if (perm & S_IRUSR)
 		szPerm[1] = _T('r');
-	if (perm & S_IWRITE)
+	if (perm & S_IWUSR)
 		szPerm[2] = _T('w');
 
     // check owner execute
-	if (perm & S_ISUID && perm & S_IEXEC)
+	if (perm & S_ISUID && perm & S_IXUSR)
 		szPerm[3] = _T('s');
-	else if (perm & S_IEXEC)
+	else if (perm & S_IXUSR)
 		szPerm[3] = _T('x');
 	else if (perm & S_ISUID)
 		szPerm[3] = _T('S');
@@ -792,7 +792,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
 // Returns normal string to append to backup files for this os.
 // (e.g. "~" for unix and ".bak" for winos)
 ///////////////////////////////////////////////////////////////////////////////
-TCHAR* cUnixFSServices::GetStandardBackupExtension() const
+const TCHAR* cUnixFSServices::GetStandardBackupExtension() const
 {
     return _T(".bak");
 }

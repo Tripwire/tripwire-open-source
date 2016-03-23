@@ -62,6 +62,23 @@
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
 
+//Syllable OS doesn't provide swab(), so we'll borrow one from glibc.
+#ifdef __SYLLABLE__
+void swab (const void *bfrom, void *bto, ssize_t n)
+{
+  const char *from = (const char *) bfrom;
+  char *to = (char *) bto;
+
+  n &= ~((ssize_t) 1);
+  while (n > 1)
+    {
+      const char b0 = from[--n], b1 = from[--n];
+      to[n] = b0;
+      to[n + 1] = b1;
+    }
+}
+#endif
+
 // forwards
 static bool NotifyFileType(const cFileHeaderID& id, uint32 version, iUserNotify::VerboseLevel vl);
     // Calls UserNotify(V_VERBOSE, ...) to print out type of file specified in cFileHeaderID.

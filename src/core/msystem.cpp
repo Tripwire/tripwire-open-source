@@ -144,6 +144,12 @@
 #	define MAX_DESC		256
 #endif
 
+#ifdef NOFILE
+#	define TW_NO_DESC          NOFILE
+#else
+#	define TW_NO_DESC          MAX_DESC+1
+#endif
+
 /*
  * in case the subprocess fails to exec the command properly
  */
@@ -919,7 +925,7 @@ int mask;
 		(void) umask(mask);
 		/* close the unused ends of the pipe  */
 		/* and all other files except 0, 1, 2 */
-		for(i = 3; i < NOFILE; i++)
+		for(i = 3; i < TW_NO_DESC; i++)
 			if (fp == NULL || (!fdleave[i] && i != p[0][0]
 					    && i != p[1][1] && i != p[2][1]))
 				(void) close(i);

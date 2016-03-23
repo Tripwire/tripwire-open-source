@@ -45,11 +45,11 @@
 
 enum mAction 
 {
-    UNSTARTED,
-    UNKNOWN,
-    READING,
-    WRITING,
-    FINISHED
+    MA_UNSTARTED,
+    MA_UNKNOWN,
+    MA_READING,
+    MA_WRITING,
+    MA_FINISHED
 };
 
 const int CRYPTO_COMPRESSION_LEVEL = 6;
@@ -109,12 +109,12 @@ cCryptoArchive::cCryptoArchive()
     mpCryptoSink = 0;
     mpCryptoSource = 0;
     mpInflatedBytes = 0;
-    mAction = UNSTARTED;
+    mAction = MA_UNSTARTED;
 }
 
 cCryptoArchive::~cCryptoArchive()
 {
-    ASSERT(mAction == UNSTARTED || mAction == UNKNOWN || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_UNKNOWN || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
     
     delete mpDeflator;
@@ -123,7 +123,7 @@ cCryptoArchive::~cCryptoArchive()
 
 void cCryptoArchive::Start(cArchive* pArchive, iCipher* pCipher)
 {
-    ASSERT(mAction == UNSTARTED || mAction == UNKNOWN || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_UNKNOWN || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
     
     mpArchive = pArchive;
@@ -140,15 +140,15 @@ void cCryptoArchive::Start(cArchive* pArchive, iCipher* pCipher)
     delete mpInflatedBytes;
     mpInflatedBytes = 0;
 
-    mAction = UNKNOWN;
+    mAction = MA_UNKNOWN;
 }
 
 int cCryptoArchive::Write(const void* pSrc, int count)
 {
-    if (mAction == UNKNOWN)
+    if (mAction == MA_UNKNOWN)
     {
         // this is the first write
-        mAction = WRITING;
+        mAction = MA_WRITING;
 
         ASSERT(mpDeflator == 0);
         ASSERT(mpCryptoSink == 0);
@@ -159,7 +159,7 @@ int cCryptoArchive::Write(const void* pSrc, int count)
         mpCryptoSink = new cCryptoSink(mpArchive, mpCipher);
         mpDeflator = new Deflator(CRYPTO_COMPRESSION_LEVEL, mpCryptoSink);
     }
-    else if (mAction != WRITING)
+    else if (mAction != MA_WRITING)
     {
         ASSERT(false);
         throw eArchiveInvalidOp();
@@ -174,10 +174,10 @@ int cCryptoArchive::Read(void* pDest, int count)
 {
     int len;
 
-    if (mAction == UNKNOWN)
+    if (mAction == MA_UNKNOWN)
     {
         // this is the first read
-        mAction = READING;
+        mAction = MA_READING;
 
         ASSERT(mpDeflator == 0);
         ASSERT(mpCryptoSink == 0);
@@ -189,7 +189,7 @@ int cCryptoArchive::Read(void* pDest, int count)
         mpInflator = new Inflator(mpInflatedBytes);
         mpCryptoSource = new cCryptoSource(mpArchive, mpCipher, mpInflator);
     }
-    else if (mAction != READING)
+    else if (mAction != MA_READING)
     {
         ASSERT(false);
         throw eArchiveInvalidOp();
@@ -218,8 +218,8 @@ int cCryptoArchive::Read(void* pDest, int count)
 
 bool cCryptoArchive::EndOfFile()
 {
-    ASSERT(mAction == READING);  // why would you call this if not reading?
-    if (mAction != READING)
+    ASSERT(mAction == MA_READING);  // why would you call this if not reading?
+    if (mAction != MA_READING)
         return true;
 
     // TODO: is this right?
@@ -233,7 +233,7 @@ bool cCryptoArchive::EndOfFile()
 // reads are attempted.
 void cCryptoArchive::Finish()
 {
-    if (mAction == WRITING)
+    if (mAction == MA_WRITING)
     {
         mpDeflator->InputFinished();
         mpCryptoSink->InputFinished();
@@ -241,15 +241,15 @@ void cCryptoArchive::Finish()
         mpDeflator = 0;
         mpCryptoSink = 0; // mpCryptoSink is deleted by ~Deflator()
 
-        mAction = FINISHED;
+        mAction = MA_FINISHED;
     }
-    else if (mAction == READING)
+    else if (mAction == MA_READING)
     {
         delete mpCryptoSource;
         mpCryptoSource = 0;
         mpInflator = 0;  // deleting mpCryptoSource is deleted by ~Inflator()
 
-        mAction = FINISHED;
+        mAction = MA_FINISHED;
     }
     else
     {
@@ -476,7 +476,7 @@ int cNullCryptoArchive::Write(const void* pSrc, int count)
     
 cRSAArchive::cRSAArchive()
 {
-    mAction = UNSTARTED;
+    mAction = MA_UNSTARTED;
     mpArchive = 0;
     mpPublicKey = 0;
     mpPrivateKey = 0;
@@ -486,17 +486,17 @@ cRSAArchive::cRSAArchive()
 
 cRSAArchive::~cRSAArchive()
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
     delete mpIDEA;
 }
 
 void cRSAArchive::SetWrite(cArchive* pDestArchive, const cRSAPublicKey* pPublicKey)
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
 
-    mAction = WRITING;
+    mAction = MA_WRITING;
     mpArchive = pDestArchive;
     mpPublicKey = pPublicKey;
     mpPrivateKey = 0;
@@ -525,10 +525,10 @@ void cRSAArchive::SetWrite(cArchive* pDestArchive, const cRSAPublicKey* pPublicK
 
 void cRSAArchive::SetWrite(cArchive* pDestArchive, const cRSAPrivateKey* pPrivateKey)
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
 
-    mAction = WRITING;
+    mAction = MA_WRITING;
     mpArchive = pDestArchive;
     mpPrivateKey = pPrivateKey;
     mpPublicKey = 0;
@@ -558,21 +558,21 @@ void cRSAArchive::SetWrite(cArchive* pDestArchive, const cRSAPrivateKey* pPrivat
 
 void cRSAArchive::FlushWrite()
 {
-    ASSERT(mAction == WRITING);
-    if (mAction != WRITING)
+    ASSERT(mAction == MA_WRITING);
+    if (mAction != MA_WRITING)
         throw eArchiveInvalidOp();
 
     mCryptoArchive.Finish();
 
-    mAction = FINISHED;
+    mAction = MA_FINISHED;
 }
 
 void cRSAArchive::SetRead(cArchive* pSrcArchive, const cRSAPublicKey* pPublicKey)
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
 
-    mAction = READING;
+    mAction = MA_READING;
     mpArchive = pSrcArchive;
     mpPublicKey = pPublicKey;
     mpPrivateKey = 0;
@@ -599,10 +599,10 @@ void cRSAArchive::SetRead(cArchive* pSrcArchive, const cRSAPublicKey* pPublicKey
 
 void cRSAArchive::SetRead(cArchive* pSrcArchive, const cRSAPrivateKey* pPrivateKey)
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
 
-    mAction = READING;
+    mAction = MA_READING;
     mpArchive = pSrcArchive;
     mpPrivateKey = pPrivateKey;
     mpPublicKey = 0;
@@ -629,8 +629,8 @@ void cRSAArchive::SetRead(cArchive* pSrcArchive, const cRSAPrivateKey* pPrivateK
 
 int cRSAArchive::Read(void* pDest, int count)
 {
-    ASSERT(mAction == READING);
-    if (mAction != READING)
+    ASSERT(mAction == MA_READING);
+    if (mAction != MA_READING)
         throw eArchiveInvalidOp();
 
     return mCryptoArchive.ReadBlob(pDest, count);
@@ -638,8 +638,8 @@ int cRSAArchive::Read(void* pDest, int count)
 
 int cRSAArchive::Write(const void* pSrc, int count)
 {
-    ASSERT(mAction == WRITING);
-    if (mAction != WRITING)
+    ASSERT(mAction == MA_WRITING);
+    if (mAction != MA_WRITING)
         throw eArchiveInvalidOp();
 
     mCryptoArchive.WriteBlob(pSrc, count);
@@ -648,8 +648,8 @@ int cRSAArchive::Write(const void* pSrc, int count)
 
 bool cRSAArchive::EndOfFile()
 {
-    ASSERT(mAction == READING);  // why would you call this if not reading?
-    if (mAction != READING)
+    ASSERT(mAction == MA_READING);  // why would you call this if not reading?
+    if (mAction != MA_READING)
         return true;
 
     return mCryptoArchive.EndOfFile();
@@ -663,7 +663,7 @@ bool cRSAArchive::EndOfFile()
 
 cElGamalSigArchive::cElGamalSigArchive()
 {
-    mAction = UNSTARTED;
+    mAction = MA_UNSTARTED;
     mpArchive = 0;
     mpPublicKey = 0;
     mpPrivateKey = 0;
@@ -672,17 +672,17 @@ cElGamalSigArchive::cElGamalSigArchive()
 
 cElGamalSigArchive::~cElGamalSigArchive()
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
     delete mpElGamal;
 }
 
 void cElGamalSigArchive::SetWrite(cArchive* pDestArchive, const cElGamalSigPrivateKey* pPrivateKey)
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
 
-    mAction = WRITING;
+    mAction = MA_WRITING;
     mpArchive = pDestArchive;
     mpPrivateKey = pPrivateKey;
     mpPublicKey = 0;
@@ -695,21 +695,21 @@ void cElGamalSigArchive::SetWrite(cArchive* pDestArchive, const cElGamalSigPriva
 
 void cElGamalSigArchive::FlushWrite()
 {
-    ASSERT(mAction == WRITING);
-    if (mAction != WRITING)
+    ASSERT(mAction == MA_WRITING);
+    if (mAction != MA_WRITING)
         throw eArchiveInvalidOp();
 
     mCryptoArchive.Finish();
 
-    mAction = FINISHED;
+    mAction = MA_FINISHED;
 }
 
 void cElGamalSigArchive::SetRead(cArchive* pSrcArchive, const cElGamalSigPublicKey* pPublicKey)
 {
-    ASSERT(mAction == UNSTARTED || mAction == FINISHED || mAction == READING);
+    ASSERT(mAction == MA_UNSTARTED || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
 
-    mAction = READING;
+    mAction = MA_READING;
     mpArchive = pSrcArchive;
     mpPublicKey = pPublicKey;
     mpPrivateKey = 0;
@@ -723,8 +723,8 @@ void cElGamalSigArchive::SetRead(cArchive* pSrcArchive, const cElGamalSigPublicK
 
 int cElGamalSigArchive::Read(void* pDest, int count)
 {
-    ASSERT(mAction == READING);
-    if (mAction != READING)
+    ASSERT(mAction == MA_READING);
+    if (mAction != MA_READING)
         throw eArchiveInvalidOp();
 
     return mCryptoArchive.ReadBlob(pDest, count);
@@ -732,8 +732,8 @@ int cElGamalSigArchive::Read(void* pDest, int count)
 
 int cElGamalSigArchive::Write(const void* pSrc, int count)
 {
-    ASSERT(mAction == WRITING);
-    if (mAction != WRITING)
+    ASSERT(mAction == MA_WRITING);
+    if (mAction != MA_WRITING)
         throw eArchiveInvalidOp();
 
     mCryptoArchive.WriteBlob(pSrc, count);
@@ -742,8 +742,8 @@ int cElGamalSigArchive::Write(const void* pSrc, int count)
 
 bool cElGamalSigArchive::EndOfFile()
 {
-    ASSERT(mAction == READING);  // why would you call this if not reading?
-    if (mAction != READING)
+    ASSERT(mAction == MA_READING);  // why would you call this if not reading?
+    if (mAction != MA_READING)
         return true;
 
     return mCryptoArchive.EndOfFile();

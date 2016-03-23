@@ -31,7 +31,9 @@
 //
 #include "stdtwparser.h"
 
-#if defined(__OpenBSD__)        /* OpenBSD's varargs seems wacky */
+// There was a problem with varargs on some combo of old OpenBSD & old compiler.
+// Not needed with current, but it's here if you need it.
+#ifdef TW_OLD_OPENBSD_VARARGS
 # undef va_start
 # ifdef __GNUC__
 #  define va_start(ap, last) \
@@ -40,7 +42,7 @@
 #  define va_start(ap, last) \
         ((ap) = (va_list)&(last) + __va_size(last))
 # endif
-#endif /* __OpenBSD__ */
+#endif // TW_OLD_OPENBSD_VARARGS
 
 /* ..\. -a -o yylex.cpp -D yylex.h -P ..\..\mkslexyacc\etc\yylex.cpp -LC tokens.l */
 #define INITIAL 0

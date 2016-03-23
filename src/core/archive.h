@@ -85,6 +85,8 @@ TSS_EXCEPTION( eArchiveStringTooLong, eArchive );
 class cArchive
 {
 public:
+    virtual ~cArchive() {}
+    
 	// convenience methods
     //
     // Specific Read functions throw(eArchive) if EOF is reached because
