@@ -2,7 +2,7 @@
 %define		path_to_sendmail /usr/sbin/sendmail
 
 Name:		tripwire
-Version:	2.4.2.2
+Version:	2.4.3.0
 Release:	1%{?dist}
 Summary:	IDS (Intrusion Detection System)
 
