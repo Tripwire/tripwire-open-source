@@ -56,7 +56,7 @@
 #	define DEBUG_STR _T("")
 #endif
 
-#define TSS_PRODUCT_NAME _T("Open Soure Tripwire(R) 2.4.3.0.") 
+#define TSS_PRODUCT_NAME _T("Open Source Tripwire(R) 2.4.3.0.") 
 
 #define TSS_COPYRIGHT_NOTICE \
 _T("Open Source Tripwire 2.4 Portions copyright 2000 Tripwire, Inc. Tripwire is a registered\n\
