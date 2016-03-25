@@ -42,6 +42,8 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_YACC
+AC_PROG_LN_S
+AC_PROG_LN
 AC_PATH_PROG(path_to_vi, vi)
 AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
 
@@ -118,7 +120,9 @@ dnl gethostbyname?  Solaris has it somewhere else.
 AC_CHECK_LIB(c, gethostbyname, [:], [
  AC_CHECK_LIB(nsl, gethostbyname, [
   LIBS="-lnsl $LIBS"
-  ], [:]) ])
+  ], [
+    AC_CHECK_LIB(network, gethostbyname, [LIBS="-lnetwork $LIBS"] [:])
+  ]) ])
 
 dnl check for stl library
 AC_LANG_SAVE

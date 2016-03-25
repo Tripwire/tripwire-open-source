@@ -41,7 +41,8 @@ sbin_PROGRAMS = tripwire$(EXEEXT)
 subdir = src/tripwire
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -106,6 +107,8 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@ -L../../lib
 LIBOBJS = @LIBOBJS@
 LIBS = -ltripwire -lcryptlib @LIBS@
+LN = @LN@
+LN_S = @LN@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -114,6 +117,7 @@ PACKAGE_BUGREPORT = @PACKAGE_BUGREPORT@
 PACKAGE_NAME = @PACKAGE_NAME@
 PACKAGE_STRING = @PACKAGE_STRING@
 PACKAGE_TARNAME = @PACKAGE_TARNAME@
+PACKAGE_URL = @PACKAGE_URL@
 PACKAGE_VERSION = @PACKAGE_VERSION@
 PATH_SEPARATOR = @PATH_SEPARATOR@
 RANLIB = @RANLIB@
@@ -423,7 +427,7 @@ uninstall-am: uninstall-info-am uninstall-sbinPROGRAMS
 
 
 all: $(sbin_PROGRAMS)
-	@test -d ../../bin && ln -f $(sbin_PROGRAMS) ../../bin
+	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

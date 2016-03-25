@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
 INCLUDES = -I.. -I../..
-
+LN=@LN@
 DEFAULT_INCLUDES = $(D_INCLUDES)
 
 noinst_LIBRARIES = libcryptlib.a
@@ -15,4 +15,4 @@ DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
 CLEANFILES = ../../lib/libcryptlib.a
 
 all: $(noinst_LIBRARIES)
-	ln -f $(noinst_LIBRARIES) ../../lib/libcryptlib.a
+	$(LN) -f $(noinst_LIBRARIES) ../../lib/libcryptlib.a
