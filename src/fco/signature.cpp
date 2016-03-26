@@ -627,7 +627,7 @@ void cSHASignature::Finit()
 TSTRING cSHASignature::AsString(void) const
 {
     TSTRING ret;
-    char*
+    char* ps_signature; 
     char buf[100];
     int length;
     
