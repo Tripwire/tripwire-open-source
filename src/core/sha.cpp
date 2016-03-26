@@ -319,7 +319,7 @@ void shsFinal(SHS_INFO *shsInfo)
 
     shsTransform( shsInfo );
 #ifndef WORDS_BIGENDIAN 
-    byteReverse( shsInfo->data, SHS_BLOCKSIZE );
+    byteReverse( shsInfo->data, SHS_DIGESTSIZE );
 #endif /* #ifndef WORDS_BIGENDIAN */
     }
 

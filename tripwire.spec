@@ -8,7 +8,7 @@ Summary:	IDS (Intrusion Detection System)
 
 License:	GPL
 Group:		Applications/System
-Source0:	http://download.sourceforge.net/tripwire/tripwire-%{version}-src.tar.bz2
+Source0:	https://github.com/Tripwire/tripwire-open-source/archive/master.zip
 Source1:	tripwire.cron.in
 Source3:	tripwire.gif
 Source4:	twcfg.txt.in
@@ -144,6 +144,16 @@ post
 
 
 %changelog
+2016-03-25 
+* Fri Mar 25 2016 Brian Cox <bcox@tripwire.com> 2.4.3.0
+- Bumping version to 2.4.3.0
+- Compilation fixes for gcc 4.7+ and LLVM/clang (see http://www.linuxfromscratch.org/blfs/view/svn/postlfs/tripwire.html )
+- Absorb fixes from FreeBSD ports patchset (see http://svnweb.freebsd.org/ports/head/security/tripwire/ )
+- Fix handling of SHA hashes when not using OpenSSL impl
+- Update GNU config.guess & config.sub to current versions
+- Compilation fixes for assorted platforms (Mac OS X, OpenBSD, OpenSolaris, Cygwin, Minix 3.x, GNU/Hurd, Haiku, Syllable)  
+- Added script to bump buildys file timestaps, to fix spurious aclocal/automake errors on a fresh clone/untar/etc.
+
 * Mon Nov 21 2011 Stephane Dudzinski <tripwire@frlinux.net> 2.4.2.2
 - Updated spec file
 - Updated version revision in reports and all
