@@ -642,7 +642,6 @@ TSTRING cSHASignature::AsString(void) const
     ret.append(ps_signature);
 #endif
     return ret;
-    //return ret;
 }
 
 TSTRING cSHASignature::AsStringHex() const
@@ -662,6 +661,43 @@ TSTRING cSHASignature::AsStringHex() const
     ret.append(sigStringOut);
     
     return ret;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Copy -- Copies a new sig value from a base pointer
+void cSHASignature::Copy(const iFCOProp* rhs)
+{
+	ASSERT(GetType() == rhs->GetType());
+	for (int i = 0; i<SIG_UINT32_SIZE; ++i)
+		sha_digest[i] = ((static_cast<const cSHASignature*>(rhs))->sha_digest)[i];
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// Serializer Implementation: Read and Write
+void cSHASignature::Read (iSerializer* pSerializer, int32 version)
+{
+	if (version > Version())
+		ThrowAndAssert(eSerializerVersionMismatch(_T("SHA Read")));
+
+	for (int i = 0; i < SIG_UINT32_SIZE; ++i)
+		pSerializer->ReadInt32((int32&)sha_digest[i]);
+}
+
+void cSHASignature::Write(iSerializer* pSerializer) const
+{
+	for (int i = 0; i < SIG_UINT32_SIZE; ++i)
+		pSerializer->WriteInt32(sha_digest[i]);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// IsEqual -- Tests for equality, given a base pointer (iSignature)
+bool cSHASignature::IsEqual(const iSignature& rhs) const
+{
+	if (this == &rhs)
+		return true;
+	else {
+		return (memcmp(sha_digest, ((cSHASignature&)rhs).sha_digest, SIG_UINT32_SIZE * sizeof(uint32)) == 0);
+	}
 }
 
 #else // HAVE_OPENSSL_SHA_H
@@ -704,7 +740,6 @@ TSTRING cSHASignature::AsStringHex() const
     
     return ret;
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Copy -- Copies a new sig value from a base pointer
@@ -742,7 +777,7 @@ bool cSHASignature::IsEqual(const iSignature& rhs) const
 		return (memcmp(mSHAInfo.digest, ((cSHASignature&)rhs).mSHAInfo.digest, SIG_UINT32_SIZE * sizeof(uint32)) == 0);
 	}
 }
-
+#endif
 ///////////////////////////////////////////////////////////////////////////////
 // class cHAVALSignature -- 
 ///////////////////////////////////////////////////////////////////////////////
