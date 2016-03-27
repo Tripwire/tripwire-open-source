@@ -35,7 +35,8 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
 subdir = man/man8
-DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
+DIST_COMMON = $(dist_man_MANS) $(srcdir)/Makefile.am \
+	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.in
@@ -51,7 +52,7 @@ DIST_SOURCES =
 man8dir = $(mandir)/man8
 am__installdirs = "$(DESTDIR)$(man8dir)"
 NROFF = nroff
-MANS = $(man_MANS)
+MANS = $(dist_man_MANS) $(man_MANS)
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
@@ -159,6 +160,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 man_MANS = siggen.8 tripwire.8 twadmin.8 twintro.8 twprint.8
+dist_man_MANS = siggen.8 tripwire.8 twadmin.8 twintro.8 twprint.8
 all: all-am
 
 .SUFFIXES:

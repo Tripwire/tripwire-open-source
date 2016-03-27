@@ -179,6 +179,7 @@ target_os = @target_os@
 target_vendor = @target_vendor@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 SUBDIRS = man src
+EXTRA_DIST = COMMERCIAL MAINTAINERS TRADEMARK touchconfig.sh contrib policy
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
