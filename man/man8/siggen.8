@@ -2,28 +2,25 @@
 .\" Do not move or remove previous line.
 .\" Used by some man commands to know that tbl should be used.
 .nh
-.TH SIGGEN 8 "1 July 2000"
+.TH SIGGEN 8 "19 Feb 2004"
 .SH NAME
 siggen \- signature gathering routine for Tripwire
 .SH SYNOPSIS
 .B siggen
-.RI "[ " "options..." " ]"
-.IR file1 " [ " "file2..." " ] "
-
-.I Options:
-.RS +0.5i
-.TS
-;
-lbw(0.8i) lb.
--t	--terse
--h	--hexadecimal
--a	--all
--C	--CRC32
--M	--MD5
--S	--SHA
--H	--HAVAL
-.TE
-.RE
+[
+.BR -t | --terse
+] [
+.BR -h | --hexadecimal
+] [
+.BR -a | --all
+] [
+.BR -C | --CRC32
+] [
+.BR -S | --SHA
+] [
+.BR -h | --HAVAL
+]
+.IR file1 ,,,
 .SH DESCRIPTION
 .PP
 \fBsiggen\fP is a utility that displays the hash function values 
