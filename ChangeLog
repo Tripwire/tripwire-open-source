@@ -6,11 +6,13 @@
 	(see http://svnweb.freebsd.org/ports/head/security/tripwire/ )
 	* Fix handling of SHA hashes (with and without OpenSSL hash impl.)
 	* Update GNU config.guess & config.sub to current versions
-	* Compilation fixes for assorted platforms
-	(Mac OS X, OpenBSD, OpenSolaris, Cygwin, Minix 3.x, GNU/Hurd, Haiku, Syllable, SkyOS)  
+	* Compilation fixes for various and sundry Posix-esque platforms
+	(Mac OS X, OpenBSD, OpenSolaris, Cygwin, Minix 3.x, GNU/Hurd, MidnightBSD, Haiku, Syllable, SkyOS)  
 	* Added script to bump buildys file timestaps, to fix 
 	spurious aclocal/automake errors on a fresh clone/untar/etc.
-
+	* Update 'make dist' to bundle manpages & policy files
+	* Replace broken RPM spec w/ 'Packaging' doc that explains where to get packaging stuff.
+	
 2011-11-21 Stephane Dudzinski <tripwire@frlinux.net>
 
 	* Bumping version to 2.4.2.2
