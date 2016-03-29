@@ -216,8 +216,12 @@ std::string convert_to_encoded_hex( char ch )
     return sstr.str();
 }
 
+
 std::string util_ConvertMB( const std::string& sIn )
 {
+#if defined(__ANDROID_API__) || defined(__AROS__)
+  return sIn;
+#else
     cDebug d( "cPolicyParser::util_ConvertMB" );
 
     std::string                 sOut;
@@ -265,5 +269,6 @@ std::string util_ConvertMB( const std::string& sIn )
     }
 
     return sOut;
+#endif
 }
 

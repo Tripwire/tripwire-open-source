@@ -62,8 +62,8 @@
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
 
-//Syllable OS doesn't provide swab(), so we'll borrow one from glibc.
-#ifdef __SYLLABLE__
+//Provide a swab() impl. from glibc, for platforms that don't have one
+#if defined(__SYLLABLE__) || defined(__ANDROID_API__)
 void swab (const void *bfrom, void *bto, ssize_t n)
 {
   const char *from = (const char *) bfrom;
