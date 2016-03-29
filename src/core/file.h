@@ -73,7 +73,7 @@ class  cFile
 {
 public:
 #if IS_UNIX
-	typedef int32 File_t;
+	typedef off_t File_t;
 
 #else //WIN32
     typedef int64 File_t;
