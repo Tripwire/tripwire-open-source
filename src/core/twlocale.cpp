@@ -66,6 +66,9 @@ static TSTRING& util_FormatTime( struct tm* ptm, TSTRING& strBuf );
 // PUBLIC METHOD CODE
 //=========================================================================
 
+#ifdef __AROS__
+  #define tzset()
+#endif
 
 void cTWLocale::InitGlobalLocale()
 {
@@ -243,7 +246,6 @@ TSTRING& cTWLocale::FormatTime( int64 t, TSTRING& strBuf )
 {
     // clear return string
     strBuf.erase();
-
     tzset();
     time_t tmpTime = t;
     struct tm * ptm = localtime( &tmpTime );

@@ -66,6 +66,12 @@
 
 #define INVALID_SOCKET -1
 
+#ifdef __AROS__
+ #ifndef HAVE_GETHOSTNAME
+  #define HAVE_GETHOSTNAME 1
+ #endif
+#endif
+
 #ifndef HAVE_GETHOSTNAME
 static int gethostname( char* name, int namelen )
 {
@@ -87,7 +93,6 @@ static int gethostname( char* name, int namelen )
 	}
 }
 #endif
-
 	// Unix does not require us to go though any silly DLL hoops, so we'll
 	// just #define the pointers to functions needed by Windows to be the 
 	// berkely functions.
