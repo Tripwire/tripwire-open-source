@@ -265,31 +265,36 @@ void cFCOName::ParseString(const TCHAR* str)
 
 void cFCOName::ParseString( const TCHAR* pszin )
 {
-	ASSERT( mpPathName != 0);
-	
-    mpPathName->ClearList();
-	
-    TSTRING ats = const_cast<TCHAR *>(pszin + 0);
-    TSTRING::const_iterator at = ats.begin();
-    TSTRING::const_iterator end = at;
-    while ( *end ) ++end;               // NOTE: Find end
+   ASSERT(mpPathName != 0);
+   ASSERT(pszin != 0);
+  
+   mpPathName->ClearList();
+   
+   const TCHAR* at = (pszin + 0);
+   const TCHAR* begin = at;
+   const TCHAR* end = at;
+   int components = 0;
 
-	TSTRING::const_iterator beg = at;
-	while ( at < end )
-	{
-		while ( !(*at == mDelimiter) && at < end )
-            at = *at ? at + 1 : at;
+   while (*end)
+      ++end;  
 
-        if ( at == beg && (*at ? at + 1 : at) >= end && at != ats.begin() )
-            break;
+   while (at < end)
+   {
+      while (!(*at == mDelimiter) && (at < end))
+         at++;
 
-		cFCONameTblNode* pNode = 
-            cFCOName_i::msNameTbl.CreateNode( TSTRING( beg, at ) );
+      TSTRING name(begin, at);      
+      if (name.length() > 0 || components == 0) 
+      {
+         cFCONameTblNode* pNode = 
+            cFCOName_i::msNameTbl.CreateNode(name);
+       
+         mpPathName->mNames.push_back(pNode);
+      }         
 
-        mpPathName->mNames.push_back( pNode );
-		
-        beg = ( at = (*at ? at + 1 : at) );
-	}
+	  components++;
+      begin = (at = tss::strinc(at));
+   }
 }
 
 #endif//RADS_NTMBS_VER
