@@ -37,6 +37,7 @@
 
 #include "core/stdcore.h"
 #include "core/corestrings.h"
+#include "core/file.h"
 
 #if !IS_UNIX //encase this all in an ifdef so it won't cause compile errors
 #error Must be unix for unixfsservices
@@ -177,9 +178,15 @@ TCHAR  cUnixFSServices::GetPathSeparator() const
     return '/';
 }
 
-
+#ifndef __AROS__
 void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const throw(eFSServices)
 {
+#else
+void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const throw(eFSServices)
+{
+	TSTRING strFilename = cArosPath::AsNative(strFilenameC);
+#endif
+
 	//Get all the filenames
 	DIR* dp;
 	dp = opendir( strFilename.c_str() );
@@ -326,8 +333,14 @@ void cUnixFSServices::SetTempDirName(TSTRING& tmpPath) {
 }
 
 
+#ifndef __AROS__
 void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const throw(eFSServices)
 {
+#else
+void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const throw(eFSServices)
+{
+	TSTRING strName = cArosPath::AsNative(strNameC);
+#endif
 	//local variable for obtaining info on file.
 	struct stat statbuf;
 

@@ -73,8 +73,7 @@ class  cFile
 {
 public:
 #if IS_UNIX
-	typedef off_t File_t;
-
+    typedef off_t File_t;
 #else //WIN32
     typedef int64 File_t;
 
@@ -139,6 +138,17 @@ private:
 public:
 	bool		isWritable;	
 };
+
+
+#ifdef __AROS__
+class cArosPath
+{
+public:
+	static TSTRING AsPosix(const TSTRING& in);
+	static TSTRING AsNative(const TSTRING& in);
+};
+#endif
+
 
 #endif //__FILE_H
 
