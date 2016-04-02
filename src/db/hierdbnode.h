@@ -143,7 +143,7 @@ public:
 class cHierRoot : public cHierNode
 {
 public:
-	cHierRoot() : cHierNode( TYPE_ROOT ) {}
+	cHierRoot() : cHierNode( TYPE_ROOT ), mbCaseSensitive(true), mDelimitingChar('/') {}
 
 	cHierAddr	mChild;				// points to a cHierArray or an invalid address
 	bool		mbCaseSensitive;	// determines the case-sensitiveness of lookups, ordering, etc.
@@ -177,10 +177,11 @@ public:
 		}
 		mChild.Read		( arch );
 		int32 cs;
-		arch.ReadInt32	( cs );
+		arch.ReadInt32(cs);
 		mbCaseSensitive = cs ? true : false;
 		TSTRING dc;
-		arch.ReadString	( dc );
+		arch.ReadString(dc);
+
 		if( dc.length() != 1 )
 		{
 			ASSERT( false );
