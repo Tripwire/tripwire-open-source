@@ -55,7 +55,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
 #endif
@@ -403,7 +405,7 @@ void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
     char buf[256];
     if (gethostname(buf, 256) != 0)
     {
-#ifdef SOLARIS_NO_GETHOSTBYNAME
+#if defined(SOLARIS_NO_GETHOSTBYNAME) || defined(_SORTIX_SOURCE)
         strName = buf;
         return;
 #else
@@ -458,6 +460,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     bool    fGotAddress = false;    
     cDebug  d( _T("cUnixFSServices::GetIPAddress") );
 
+#ifndef _SORTIX_SOURCE
     struct utsname utsnameBuf;    
     if( EFAULT != uname( &utsnameBuf) )
     {
@@ -489,6 +492,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     }
     else
         d.TraceError( _T("uname failed") );
+#endif
 
     return( fGotAddress );
 }

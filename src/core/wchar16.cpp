@@ -35,10 +35,13 @@
 // Function and classes dealing with the WCHAR16 type
 //
 #include "stdcore.h"
+#include "config.h"
 #include "wchar16.h"
 #include "debug.h"
 #include <stdexcept> // for stl::out_of_range
-#include <memory.h>
+#ifdef HAVE_MEMORY_H
+# include <memory.h>
+#endif
 
 int wchar16len(const WCHAR16* s)
 {
