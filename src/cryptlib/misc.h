@@ -3,7 +3,11 @@
 
 #include "config.h"
 #include <assert.h>
-#include <memory.h>
+#ifdef HAVE_MEMORY_H
+ #include <memory.h>
+#else
+ #include <string.h>
+#endif
 #include <algorithm>
 
 inline unsigned int bitsToBytes(unsigned int bitCount)

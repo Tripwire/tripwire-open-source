@@ -77,8 +77,13 @@
  *		in "../../include/byteorder.h" to get this information.
  */
 #include "stdcore.h"
+#include "config.h"
 #include <stdio.h>
-#include <memory.h>
+#ifdef HAVE_MEMORY_H
+ #include <memory.h>
+#else
+ #include <string.h>
+#endif
 #include "haval.h"
 #include "debug.h"
 

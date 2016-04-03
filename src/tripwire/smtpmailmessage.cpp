@@ -54,6 +54,10 @@
 #include <arpa/inet.h>
 #include <sys/utsname.h>
 
+#ifdef _SORTIX_SOURCE
+# include <sys/select.h>
+#endif
+
 /* Some systems like Solaris and AIX don't define
  * INADDR_NONE, but it's pretty standard.  If not,
  * then the OS _should_ define it for us.
@@ -187,12 +191,16 @@ long cSMTPMailMessage::GetServerAddress()
 	}
 	else
 	{
+#ifdef _SORTIX_SOURCE
+		return INADDR_NONE;
+#else
 		// do a DNS lookup of the hostname and get the long
 		hostent *ent = mPfnGethostbyname(sNarrowString.c_str());
 		if (!ent)
 			return INADDR_NONE;
 		else
 			return *(long *)ent->h_addr_list[0];
+#endif
 	}
 }
 

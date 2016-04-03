@@ -71,9 +71,12 @@
 /*
  * set, reset environment to be passed to mpopem
  */
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/file.h>
+#ifndef _SORTIX_SOURCE
+# include <sys/file.h>
+#endif
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <time.h>
@@ -87,7 +90,9 @@
 #       include <unistd.h>
 #       include <stdlib.h>
 #endif
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
 #include <assert.h>
 #include "msystem.h"
 
