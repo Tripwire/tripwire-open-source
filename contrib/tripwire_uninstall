@@ -1,0 +1,152 @@
+#!/bin/sh
+set -e
+
+unset NO_CONFIRM
+unset NO_REMOVE
+unset REMOVE_REPORTS
+unset REMOVE_LOGS
+unset REMOVE_DB
+unset REMOVE_KEYS
+unset RM
+
+UNAME=`uname`
+
+help() {
+  cat >&2 << 'HELP'
+
+    tripwire_uninstall [-y] [-N] [ [-R] [-L] [-D] [-K] | [-A] ]
+
+          -y no confirmation (unattended operation)
+          -N dont remove binaries, docs and man pages
+          -A remove everything (logs, reports, db and keys)
+          -R remove reports
+          -L remove logs
+          -D remove db
+          -K remove keys
+
+          -N with -Y is valid
+
+  
+HELP
+}
+
+while [ "$#" != 0 ]; do
+  case "$1" in
+  -y) NO_CONFIRM=1 ;;
+  -N) NO_REMOVE=1 ;;
+  -L) REMOVE_LOGS=1 ;;
+  -D) REMOVE_DB=1 ;;
+  -K) REMOVE_KEYS=1 ;;
+  -A) REMOVE_LOGS=1
+      REMOVE_KEYS=1
+      REMOVE_DB=1
+      ;;
+  *) help ; exit 1
+  esac
+  shift
+done
+
+secure_rm() {
+case $UNAME in
+  Darwin)
+    /usr/bin/srm -vf -- "$@"
+    ;;
+  Linux)
+    /usr/bin/shred -vfu -- "$@"
+    ;;
+  FreeBSD|*)
+    # 3x wipe
+    for FILE in "$@"; do
+      /bin/dd if=/dev/random of="$FILE" bs=1 count=$(/usr/bin/wc -c < "$FILE" | /usr/bin/sed "s/[^0-9]//g")
+      /bin/dd if=/dev/random of="$FILE" bs=1 count=$(/usr/bin/wc -c < "$FILE" | /usr/bin/sed "s/[^0-9]//g")
+      /bin/dd if=/dev/random of="$FILE" bs=1 count=$(/usr/bin/wc -c < "$FILE" | /usr/bin/sed "s/[^0-9]//g")
+    done
+    rm -vf "$@"
+    ;;
+esac
+}
+
+secure_rm_rf() {
+case $UNAME in
+  Darwin)
+    /usr/bin/srm -vrf -- "$@"
+    ;;
+  Linux)
+    /usr/bin/find "$@" -type f -exec /usr/bin/shred -vfu -- {} \;
+    rm -vrf "$@"
+    ;;
+  FreeBSD|*)
+    # 3x wipe
+    /usr/bin/find "$@" -type f | xargs -I% sh -c '/bin/dd if=/dev/random of="%" bs=1 count=$(/usr/bin/wc -c < "%" | /usr/bin/sed "s/[^0-9]//g")'
+    /usr/bin/find "$@" -type f | xargs -I% sh -c '/bin/dd if=/dev/random of="%" bs=1 count=$(/usr/bin/wc -c < "%" | /usr/bin/sed "s/[^0-9]//g")'
+    /usr/bin/find "$@" -type f | xargs -I% sh -c '/bin/dd if=/dev/random of="%" bs=1 count=$(/usr/bin/wc -c < "%" | /usr/bin/sed "s/[^0-9]//g")'
+    rm -vrf "$@"
+    ;;
+esac
+}
+
+
+if [ -n "$NO_CONFIRM" ]; then
+  :; # noop
+else
+  printf "Uninstall tripwire ? [Yn] "
+
+  unset PROMPT
+  read PROMPT
+
+  if [ "$PROMPT" = 'y' ] || [ "$PROMPT" = 'Y' ]; then
+    :; # noop
+  else
+    echo "user cancelled" >&2
+    exit 1
+  fi
+fi
+
+if [ -z "$NO_REMOVE" ]; then
+  echo "removing tripwire binaries, scripts, docs and man pages" >&2
+
+  # binaries
+  secure_rm "TRIPWIRE_ROOT/sbin/siggen"
+  secure_rm "TRIPWIRE_ROOT/sbin/tripwire"
+  secure_rm "TRIPWIRE_ROOT/sbin/twadmin"
+  secure_rm "TRIPWIRE_ROOT/sbin/twprint"
+
+  # scripts
+  secure_rm "TRIPWIRE_ROOT/sbin/tripwire_"*
+
+  # docs
+  secure_rm_rf "TRIPWIRE_ROOT/doc/tripwire"
+
+  # man pages
+  secure_rm "TRIPWIRE_ROOT/share/man/man4/twconfig.4"
+  secure_rm "TRIPWIRE_ROOT/share/man/man4/twpolicy.4"
+  secure_rm "TRIPWIRE_ROOT/share/man/man5/twfiles.5"
+  secure_rm "TRIPWIRE_ROOT/share/man/man8/siggen.8"
+  secure_rm "TRIPWIRE_ROOT/share/man/man8/tripwire.8"
+  secure_rm "TRIPWIRE_ROOT/share/man/man8/twadmin.8"
+  secure_rm "TRIPWIRE_ROOT/share/man/man8/twintro.8"
+  secure_rm "TRIPWIRE_ROOT/share/man/man8/twprint.8"
+fi
+
+
+if [ -n "$REMOVE_REPORTS" ]; then
+  echo "removing tripwire reports" >&2
+  secure_rm "TRIPWIRE_ROOT/lib/tripwire/report"/*.twr
+fi
+
+if [ -n "$REMOVE_LOGS" ]; then
+  echo "removing tripwire logs" >&2
+  secure_rm "TRIPWIRE_LOG_DIR/tripwire_periodic_"*.log
+fi
+
+if [ -n "$REMOVE_DB" ]; then
+  echo "removing tripwire db" >&2
+  secure_rm "TRIPWIRE_ROOT/lib/tripwire"/*.twd*
+fi
+
+if [ -n "$REMOVE_KEYS" ]; then
+  echo "removing tripwire keys" >&2
+  secure_rm "TRIPWIRE_ROOT/etc"/*.key
+fi
+
+echo "finished removing tripwire" >&2

@@ -1,6 +1,10 @@
 Packaging for Open Source Tripwire is maintained by various third parties:
 
- * RPM: http://pkgs.fedoraproject.org/cgit/rpms/tripwire.git/
+ * RPM (Fedora): http://pkgs.fedoraproject.org/cgit/rpms/tripwire.git/
+ 
+ * RPM (OpenSuSE): https://build.opensuse.org/package/show/security/tripwire
+
+ * RPM (AIX): http://www.perzl.org/aix/index.php?n=Main.Tripwire 
 
  * Debian: https://tracker.debian.org/pkg/tripwire
 
@@ -9,6 +13,8 @@ Packaging for Open Source Tripwire is maintained by various third parties:
  * FreeBSD Ports: http://svnweb.freebsd.org/ports/head/security/tripwire/
 
  * FreshPorts (BSD): http://www.freshports.org/security/tripwire
+
+ * MacPorts: https://trac.macports.org/browser/trunk/dports/security/tripwire
 
  * NetBSD pkgsrc: http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/security/tripwire/README.html
    NOTE: At present (March 2016), NetBSD provides the ancient Tripwire 1.2, from the mid-1990s.

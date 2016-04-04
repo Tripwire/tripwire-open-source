@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+#  Tripwire cron script borrowed from Linux and modified for generic situations.
+#  You should of course change path names to suit your environment.
+#
+#  Contributed by Timothy K Ewing <Timothy.Ewing@celera.com>
+#
+HOST_NAME=`uname -n`
+TWCFG_PATH=TRIPWIRE_ETC_DIR
+TWDB_PATH=TRIPWIRE_DB_DIR
+TWROOT_PATH=TRIPWIRE_ROOT
+MAILTO="root"		# Email addresses that should recieve reports
+
+#
+#  Define checks which alert user to misconfiguration or run the check
+#
+if [ ! -e ${TWDB_PATH}/${HOST_NAME}.twd ]; then
+   echo "****   Error: Tripwire database for ${HOST_NAME} not found.  ****"
+   echo "****  Verify tripwire was installed and/or "tripwire --init".  ****"
+else
+   test -f ${TWCFG_PATH}/tw.cfg && ${TWROOT_PATH}/tripwire --check | \
+	mail -s "${HOST_NAME} tripwire-check" ${MAILTO}
+fi

@@ -1,0 +1,6 @@
+#!/bin/sh
+TIMESTAMP=$(/bin/date +%Y-%m-%dT%H:%M:%S%z)
+REPORT="$(find TRIPWIRE_ROOT/lib/tripwire/report -type f | tail -1)"
+read -p "Accept $REPORT ? [accept] " PROMPT
+test "$PROMPT" != 'accept' && exit 1
+time TRIPWIRE_ROOT/sbin/tripwire -m u -a -r "$REPORT" 2>&1 | tee TRIPWIRE_LOG_DIR/tripwire_database-updated-baseline_$TIMESTAMP.log

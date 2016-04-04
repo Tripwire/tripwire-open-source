@@ -1,0 +1,12 @@
+#!/bin/sh
+set -e
+
+if [ $# != 6 ]; then
+  echo "$0 file.in file.out TRIPWIRE_ROOT TRIPWIRE_ETC_DIR TRIPWIRE_DB_DIR TRIPWIRE_LOG_DIR" >&2
+  echo >&2
+  echo "      file.in cannot be the same as file.out" >&2
+  exit 1
+fi
+
+sed "s%TRIPWIRE_ROOT%$3%g;s%TRIPWIRE_ETC_DIR%$4;s%TRIPWIRE_DB_DIR%$5%g;s%TRIPWIRE_LOG_DIR%$6%g" "$1" > "$2"
+test -x "$1" && chmod +x "$2"
