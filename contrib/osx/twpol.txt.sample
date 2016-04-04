@@ -1,0 +1,366 @@
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+#                    Policy file for Mac OS X                                # #
+#                        December 31, 2013                                   # #
+#                                                                            ##
+##############################################################################
+
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+# Global Variable Definitions                                                # #
+#                                                                            # #
+# These are defined at install time by the installation script.  You may     # #
+# manually edit these if you are using this file directly and not from the   # #
+# installation script itself.                                                # #
+#                                                                            ##
+##############################################################################
+
+@@section GLOBAL
+
+TW_ROOT="TRIPWIRE_ROOT"
+TW_DB_DIR="TRIPWIRE_DB_DIR"
+TW_ETC_DIR="TRIPWIRE_ETC_DIR"
+
+TWDOCS="$(TW_ROOT)/doc/tripwire";
+TWBIN="$(TW_ROOT)/sbin";
+TWPOL="$(TW_ETC_DIR)";
+TWDB="$(TW_DB_DIR)";
+TWSKEY="$(TW_ETC_DIR)";
+TWLKEY="$(TW_ETC_DIR)";
+TWREPORT="$(TW_DB_DIR)/report";
+#USER1=frodo ;
+
+
+  ##############################################################################
+ #  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+SEC_DEVICE        = +pugsr-dintlbamcCMSH ;
+SEC_DYNAMIC       = +pinugt-dsrlbamcCMSH ;
+SEC_READONLY      = +pinugtsbmCM-drlacSH ;
+SEC_GROWING       = +pinugtl-dsrbamcCMSH ;
+
+IgnoreAll     = -pinugtsdrlbamcCMSH ;
+IgnoreNone    = +pinugtsdrbamcCMSH-l ;
+Temporary     = +pugt ;
+
+@@section FS 
+
+  ########################################
+ #                                      ##
+######################################## #
+#                                      # #
+#  Tripwire Binaries and Data Files    # #
+#                                      ##
+########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries", severity=100
+)
+{
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files", severity=100
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  # $(TWLKEY)/local.key                  -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(SEC_DYNAMIC)(recurse=0) ;
+
+
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Boot and Configuration Files             # #
+#                                              ##
+################################################
+(
+  rulename = "OS Boot and Configuration Files", severity=100
+)
+{
+ #/mach.sym                               -> $(SEC_READONLY)-im ;
+  /mach_kernel                            -> $(SEC_READONLY) ;
+  /private/etc                            -> $(SEC_READONLY)-m ;
+
+ #/private/etc/appletalk.cfg              -> $(SEC_READONLY)-im ;
+ #/private/etc/appletalk.nvram.en0        -> $(SEC_DYNAMIC) ;
+  /private/etc/cups/certs                 -> $(SEC_DYNAMIC) -i(recurse=0) ;
+ #/private/etc/smb.conf                   -> $(SEC_READONLY)-im ;
+
+  /Library                                -> $(SEC_READONLY) ;
+  /System                                 -> $(SEC_READONLY) ;
+
+  /Library/Printers                       -> $(SEC_READONLY)(recurse=2) ;
+  /Library/Documentation                  -> $(SEC_READONLY)(recurse=2) ;
+  /Library/Filesystems                    -> $(SEC_DYNAMIC)-i ;
+  /Library/"Application Support"          -> $(SEC_DYNAMIC)-im(recurse=2) ;
+
+  /System/Library/Filesystems             -> $(SEC_DYNAMIC)-i ;
+  /System/Library/CoreServices            -> $(SEC_READONLY)-im ;
+  /System/Library/Filesystems/hfs.fs      -> $(SEC_DYNAMIC)(recurse=0) ;
+
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Mount Points                                   # #
+#                                                 ##
+###################################################
+(
+  rulename = "Mount Points", severity=60
+)
+{
+  /                             -> $(SEC_READONLY)(recurse=0) ;
+  /Volumes                      -> $(SEC_READONLY)-M (recurse=0) ;
+  /usr                          -> $(SEC_READONLY)(recurse=0) ;
+
+}
+
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System Devices                              # #
+#                                              ##
+################################################
+(
+  rulename = "System Devices", severity=60
+)
+{
+  /dev                          -> $(SEC_DEVICE)(recurse=0) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Binaries and Libraries                   # #
+#                                              ##
+################################################
+(
+  rulename = "OS Binaries and Libraries", severity=100
+)
+{
+  /bin                          -> $(SEC_READONLY) ;
+  /sbin                         -> $(SEC_READONLY) ;
+  /usr/bin                      -> $(SEC_READONLY) ;
+  /usr/lib                      -> $(SEC_READONLY) ;
+  /usr/libexec                  -> $(SEC_READONLY) ;
+  /usr/sbin                     -> $(SEC_READONLY) ;
+  /usr/X11                      -> $(SEC_READONLY)(recurse=2) ;   # May not be present
+ #/usr/X11/man                  -> $(SEC_DYNAMIC)-i(recurse=1) ;  # May not be present
+  /usr/share                    -> $(SEC_READONLY) ;
+  /usr/share/man                -> $(SEC_DYNAMIC)-i(recurse=1) ;
+
+}
+
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS X Applications                           # #
+#                                              ##
+################################################
+(
+  rulename = "OS Binaries and Libraries", severity=100
+)
+{
+   /Applications                -> $(SEC_READONLY)-im(recurse=2) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Usr Local Files                             # #
+#                                              ##
+################################################
+(
+   rulename = "Usr Local Files", severity=60
+)
+{
+  /usr/local                    -> $(SEC_READONLY) ;
+  /usr/local/sbin               -> $(SEC_READONLY) ;
+  /usr/local/bin                -> $(SEC_READONLY) ;
+  /usr/local/include            -> $(SEC_READONLY) ;
+  /usr/local/opt                -> $(SEC_READONLY) ;
+  /usr/local/libexec            -> $(SEC_READONLY) ;
+  /usr/local/lib                -> $(SEC_READONLY) ;
+  /usr/local/etc                -> $(SEC_READONLY) ;
+  /usr/local/share              -> $(SEC_READONLY) ;
+  /usr/local/man                -> $(SEC_READONLY) ;
+  /usr/local/Frameworks         -> $(SEC_READONLY) ;
+  # Homebrew
+  /usr/local/.git               -> $(SEC_READONLY) ;
+  /usr/local/Cellar             -> $(SEC_READONLY) ;
+}
+
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Temporary Files and Directories             # #
+#                                              ##
+################################################
+(
+  rulename = "Variable System Files", severity=60
+)
+{
+  /private/tmp                                 -> $(SEC_DYNAMIC)-in(recurse=0) ;
+
+  /private/tftpboot                            -> $(SEC_READONLY)-i ;
+
+  /private/var                                 -> $(SEC_READONLY)-i ;
+  /private/var/backups                         -> $(SEC_READONLY)-imc(severity=100) ;
+ #/private/var/backups/local.nidump            -> $(SEC_DYNAMIC) -i(severity=100) ;
+ #/private/var/cron                            -> $(SEC_DYNAMIC) -i ;
+  /private/var/db                              -> $(SEC_READONLY)-im ;
+  /private/var/db/BootCache.playlist           -> $(SEC_DYNAMIC) -i ;
+ #/private/var/db/netinfo/local.nidb/Store.384 -> $(SEC_READONLY)-imc(severity=100) ;
+ #/private/var/db/netinfo/local.nidb/Store.672 -> $(SEC_READONLY)-imc(severity=100) ;
+ #/private/var/db/prebindOnDemandBadFiles      -> $(SEC_DYNAMIC) -i ;
+  /private/var/log                             -> $(SEC_DYNAMIC) -i ;
+ #/private/var/mail                            -> $(SEC_DYNAMIC) ;
+  /private/var/msgs/bounds                     -> $(SEC_READONLY)-smbCM ;
+  /private/var/root/Library/Caches             -> $(SEC_DYNAMIC) -i ;
+  /private/var/run                             -> $(SEC_DYNAMIC) -i(rulename="Running Services") ;
+ #/private/var/slp.regfile                     -> $(SEC_READONLY)-im ;
+ #/private/var/spool/clientmqueue              -> $(SEC_DYNAMIC)(recurse=0) ;
+  /private/var/spool/mqueue                    -> $(SEC_DYNAMIC)(recurse=0) ;
+ #/private/var/spool/lock                      -> $(SEC_DYNAMIC) -i(recurse=1) ;
+  /private/var/spool/cups                      -> $(SEC_DYNAMIC) -i(recurse=0) ;
+  /private/var/tmp                             -> $(SEC_DYNAMIC) -i(recurse=0) ;
+  /private/var/vm                              -> $(SEC_DYNAMIC)(recurse=0) ;
+
+  /Library/Caches                       -> $(SEC_DYNAMIC) -i ;
+  /Library/Logs                         -> $(SEC_DYNAMIC) -i(recurse=1) ;
+  /Library/Preferences                  -> $(SEC_DYNAMIC) -i(recurse=1) ;
+ "/Library/Internet Plug-Ins"           -> $(SEC_DYNAMIC) -i ;
+
+ !/private/var/db/dhcpclient ;
+ !/private/var/db/dhcpd_leases ;
+ !/private/var/db/locate.database ;
+ !/private/var/db/SystemEntropyCache ;
+ !/private/var/db/mds/messages/se_SecurityMessages ;
+ !/private/var/db/samba/secrets.tdb ;
+ !/private/var/db/ntp.drift ;
+ !/private/var/folders ;
+ !/private/var/vm/sleepimage ;
+ !/private/var/vm/swap0 ;
+ !/private/var/vm/swap[1-9][0-9]* ;
+ # Sophos
+ !/Library/Caches/com.sophos.sau ;
+ !/Library/Caches/com.sophos.sxld ;
+}
+
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  User Home Directories                          # #
+#                                                 ##
+###################################################
+(
+  rulename = "Home Directories", severity=60
+)
+{
+  /Users                                      -> $(SEC_READONLY)(recurse=0) ;  # Modify as needed
+
+
+#####
+#
+# USER1 as defined at top of policy
+#
+#####
+
+#  /Users/$(USER1)                                -> $(SEC_READONLY)-mc ;
+#  /Users/$(USER1)/Library/Preferences            -> $(SEC_DYNAMIC)-i ;
+# "/Users/$(USER1)/Library/Recent Servers"        -> $(SEC_DYNAMIC)-i ;
+# "/Users/$(USER1)/Library/Safari"                -> $(SEC_DYNAMIC)-i(recurse=3) ;
+# "/Users/$(USER1)/Library/Spelling"              -> $(SEC_DYNAMIC)-i ;
+# "/Users/$(USER1)/Library/Mail"                  -> $(SEC_DYNAMIC)-i(recurse=2) ;
+# "/Users/$(USER1)/Pictures/iPhoto Library"       -> $(SEC_DYNAMIC)-i(recurse=1) ;
+# "/Users/$(USER1)/Library/Application Support"   -> $(SEC_DYNAMIC)-im(recurse=2) ;
+#  /Users/$(USER1)/Documents                      -> $(SEC_DYNAMIC)(recurse=0) ;
+#  /Users/$(USER1)/Desktop                        -> $(SEC_DYNAMIC)(recurse=0) ;
+
+
+#!"/Users/$(USER1)/Documents/Virtual PC List" ;    # These items are *huge*, and are of little value to scan.
+#!"/Users/$(USER1)/Library/Preferences/Microsoft/Clipboard" ;
+#!"/Users/$(USER1)/Library/Safari/Icons" ;
+#!"/Users/$(USER1)/Music/iTunes" ;
+#!"/Users/$(USER1)/Library/Caches" ;
+#!"/Users/$(USER1)/Library/Cookies" ;
+#!"/Users/$(USER1)/Library/Logs" ;
+#!"/Users/$(USER1)/Library/Folding@home" ;
+#!"/Users/$(USER1)/setiathome" ;
+#!"/Users/$(USER1)/Documents/seti-A" ;
+#!"/Users/$(USER1)/Documents/seti-B" ;
+#!"/Users/$(USER1)/.tcsh_history" ;
+#!"/Users/$(USER1)/.DS_Store" ;
+#!"/Users/$(USER1)/Public/.DS_Store" ;
+#!"/Users/$(USER1)/.jpi_cache" ;
+#!"/Users/$(USER1)/.lpoptions" ;
+#!"/Users/$(USER1)/.Trash" ;
+}

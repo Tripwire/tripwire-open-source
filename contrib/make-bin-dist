@@ -1,21 +1,99 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # A very cheesy script to prep a release
 #
+set -e
 
 PRODUCT=tripwire
 VERSION=2.4.3.0
-ARCH=x86
-TYPE=bin
-ROOT_DIR=$PRODUCT-$VERSION-$ARCH-$TYPE
-EXCLUDES=.svn
 
-mkdir $ROOT_DIR
+platform() {
+  case `uname` in
+    Darwin) echo 'osx' ;;
+    Linux) echo 'linux' ;;
+    FreeBSD) echo 'freebsd' ;;
+    *) echo 'unknown' ;;
+  esac
+}
+
+
+arch() {
+  case "$1" in
+    osx|freebsd|linux)
+      if file bin/tripwire | grep -q '64-bit'; then
+        echo 'x86_64'
+      else
+        echo 'x86'
+      fi
+      ;;
+    *) echo 'unknown'
+  esac
+}
+
+PLATFORM=$(platform)
+ARCH=$(arch $PLATFORM)
+TYPE=bin
+ROOT_DIR=$PRODUCT-$VERSION-$PLATFORM-$ARCH-$TYPE
+EXCLUDES='.svn .git .gitignore'
+
+
+
+EXCLUDES="$(for EXCLUDE in $EXCLUDES; do echo --exclude $EXCLUDE; done)"
+
+SCRIPT_DIR="$(cd `dirname $0`; pwd)"
+SCRIPT_DIR_DOTDOT="$(dirname "$SCRIPT_DIR")"
+
+if ! test -x bin/tripwire* ; then
+  echo "tripwire not ready for release (bins not found in bin/ dir)" >&2
+  exit 1
+fi
+
+trap 'RESULT=$?; rm -rf "$SCRIPT_DIR_DOTDOT/releases/$ROOT_DIR"; exit $RESULT' INT QUIT EXIT TERM ERR
+
+mkdir -p "$SCRIPT_DIR_DOTDOT/releases"
+cd "$SCRIPT_DIR_DOTDOT/releases"
+mkdir "$ROOT_DIR"
 ln -s ../bin ../contrib ../man ../policy $ROOT_DIR/
-ln -s ../COPYING ../ChangeLog ../INSTALL ../MAINTAINERS $ROOT_DIR/
+ln -s ../COPYING ../ChangeLog ../Packaging ../ReadMe-2.4.3 ../MAINTAINERS $ROOT_DIR/
 ln -s ../TRADEMARK ../COMMERCIAL ../install ../install-sh $ROOT_DIR/
 
-tar jhcf $ROOT_DIR.tar.bz2 $ROOT_DIR --exclude $EXCLUDES
+EXTENSIONS=(tar.bz2 tar.gz tar.xz)
+TAR_OPTIONS=(j z J)
 
-sha1sum $ROOT_DIR.tar.bz2 > $ROOT_DIR.sha1
-sha1sum bin/* >> $ROOT_DIR.sha1
+sha1() {
+  sha1sum "$@" || shasum "$@"
+}
+
+sha512() {
+  sha512sum "$@" || shasum -a 512 "$@"
+}
+
+sign() {
+  if which gpg >/dev/null 2>&1; then
+    gpg --detach-sign --output "$1.asc" "$1"
+  else
+    echo "gpg unavailable, release is unsigned !!" >&2
+    exit 1
+  fi
+}
+
+for INDEX in 1 2 3; do
+  EXTENSION="${EXTENSIONS[$INDEX]}"
+  TAR_OPTIONS="${TAR_OPTIONS[$INDEX]}"
+  TARBALL="$ROOT_DIR.${EXTENSION}"
+
+  tar $EXCLUDES -${TAR_OPTIONS}hcf $TARBALL $ROOT_DIR
+
+  sha1 $TARBALL > $ROOT_DIR.sha1
+  sha1 bin/* >> $ROOT_DIR.sha1
+
+  sha512 $TARBALL > $ROOT_DIR.sha512
+  sha512 bin/* >> $ROOT_DIR.sha512
+
+  # sign the tarball
+  sign $TARBALL
+
+  # sign the hashes
+  sign $ROOT_DIR.sha1
+  sign $ROOT_DIR.sha512
+done

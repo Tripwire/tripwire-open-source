@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>org.tripwire.Tripwire</string>
+  <key>Nice</key>
+  <integer>5</integer>
+  <key>ProgramArguments</key>
+  <array>
+    <string>TRIPWIRE_ROOT/sbin/tripwire_periodic_check</string>
+  </array>
+  <key>Disabled</key>
+  <true/>
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StartInterval</key>
+  <integer>3600</integer>
+</dict>
+</plist>

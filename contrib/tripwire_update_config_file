@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# Overwrites TRIPWIRE_ROOT/etc/tw.cfg
+# TRIPWIRE_ROOT/etc/twcfg.txt -> TRIPWIRE_ROOT/etc/tw.cfg
+#
+set -e
+
+if [ ! -e "TRIPWIRE_ROOT/etc/site.key" ]; then
+  echo "Missing TRIPWIRE_ROOT/etc/site.key" >&2
+  echo >&2
+  echo "Run TRIPWIRE_ROOT/sbin/tripwire_set_site_and_local_passphrases first" >&2
+  exit 1
+fi
+
+if [ ! -e "TRIPWIRE_ROOT/etc/twcfg.txt" ]; then
+  echo "Missing TRIPWIRE_ROOT/etc/twcfg.txt" >&2
+  echo >&2
+  echo "Create and customize it for your environment and try again" >&2
+  exit 1
+fi
+
+TRIPWIRE_ROOT/sbin/twadmin --create-cfgfile -S TRIPWIRE_ROOT/etc/site.key TRIPWIRE_ROOT/etc/twcfg.txt

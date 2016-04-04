@@ -10,6 +10,8 @@ itripn@users.sourceforge.net
 
 Community Contributors:
 
+Thom O'Connor (https://github.com/thomoco): Contributed LLVM/clang build fixes.
+
 Paul Herman (www.frenchfries.net/paul/tripwire): Paul is almost solely
 responsible for the meat of the 2.4.0.1 release. His work on the autoconf
 and gcc 3.x support (among other things) has contributed to a much more

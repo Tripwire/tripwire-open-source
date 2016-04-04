@@ -1,0 +1,23 @@
+#!/bin/sh
+#
+# 1. install all tripwire_* scripts from contrib/
+# 2. installs policy and config text files 
+# 3. installs the plist but does not launch it
+#
+set -e
+
+## start config -- edits okay here 
+TRIPWIRE_ROOT="${TRIPWIRE_ROOT-/usr/local}"
+TRIPWIRE_ETC_DIR="${TRIPWIRE_ETC_DIR-/etc}"
+TRIPWIRE_DB_DIR="${TRIPWIRE_DB_DIR-/var/db/tripwire}"
+TRIPWIRE_LOG_DIR="${TRIPWIRE_LOG_DIR-/var/log/tripwire}"
+## end config -- dont edit past here
+
+mkdir -p "$TRIPWIRE_ROOT" "$TRIPWIRE_ETC_DIR" "$TRIPWIRE_DB_DIR" "$TRIPWIRE_LOG_DIR"
+
+THIS_SCRIPT_DIR="$(cd `dirname "$0"`; pwd)"
+GENERATE_FROM_TEMPLATE="${THIS_SCRIPT}/generate_from_template"
+
+for GENERIC_SCRIPT in tripwire_*; do
+  "$GENERATE_FROM_TEMPLATE" $GENERIC_SCRIPT "$TRIPWIRE_ROOT/sbin/$GENERIC_SCRIPT" "$TRIPWIRE_ROOT" "$TRIPWIRE_ETC_DIR" "$TRIPWIRE_DB_DIR" "$TRIPWIRE_LOG_DIR"
+done

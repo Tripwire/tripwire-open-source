@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# 1. install all tripwire_* scripts from contrib/ and contrib/osx/ 
+# 2. installs policy and config text files 
+# 3. installs the plist but does not launch it
+#
+set -e
+
+## start config -- edits okay here 
+TRIPWIRE_ROOT="${TRIPWIRE_ROOT-/usr/local/tripwire}"
+TRIPWIRE_ETC_DIR="${TRIPWIRE_ETC_DIR-$TRIPWIRE_ROOT/etc}"
+TRIPWIRE_DB_DIR="${TRIPWIRE_DB_DIR-$TRIPWIRE_ROOT/lib/tripwire}"
+TRIPWIRE_LOG_DIR="${TRIPWIRE_LOG_DIR-/usr/local/var/log}"
+## end config -- dont edit past here
+export TRIPWIRE_ROOT
+export TRIPWIRE_ETC_DIR
+export TRIPWIRE_DB_DIR
+export TRIPWIRE_LOG_DIR
+
+THIS_SCRIPT_DIR="$(cd `dirname "$0"`; pwd)"
+THIS_SCRIPT_DIR_DOTDOT="$(dirname "$THIS_SCRIPT_DIR")"
+GENERATE_FROM_TEMPLATE="${THIS_SCRIPT_DIR_DOTDOT}/generate_from_template"
+
+"$THIS_SCRIPT_DIR_DOTDOT/generic_install_scripts"
+
+for OSX_SCRIPT in tripwire_*; do
+  "$GENERATE_FROM_TEMPLATE" $OSX_SCRIPT "$TRIPWIRE_ROOT/sbin/$OSX_SCRIPT" "$TRIPWIRE_ROOT" "$TRIPWIRE_ETC_DIR" "$TRIPWIRE_DB_DIR" "$TRIPWIRE_LOG_DIR"
+done
+
+for ETC_FILE_SAMPLE in tw*.txt.sample; do
+  ETC_FILE="$(echo $ETC_FILE | sed 's/\.sample//')"
+  "$GENERATE_FROM_TEMPLATE" $ETC_FILE_SAMPLE "$TRIPWIRE_ETC_DIR/$ETC_FILE" "$TRIPWIRE_ROOT" "$TRIPWIRE_ETC_DIR" "$TRIPWIRE_DB_DIR" "$TRIPWIRE_LOG_DIR"
+done
+
+"$GENERATE_FROM_TEMPLATE" org.tripwire.Tripwire.plist /Library/LaunchDaemons/org.tripwire.Tripwire.plist "$TRIPWIRE_ROOT" "$TRIPWIRE_ETC_DIR" "$TRIPWIRE_DB_DIR" "$TRIPWIRE_LOG_DIR"
