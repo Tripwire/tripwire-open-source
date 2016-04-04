@@ -54,6 +54,10 @@
 
 #define	TIME_MAX	2147483647L	// largest signed 32 bit number
 
+#ifdef __AROS__
+ #define tzset()
+#endif
+
 struct tm* cTimeUtil::TimeToDateGMT( const int64& seconds )
 {
     ASSERT( seconds < TIME_MAX );// this assumes time_t size is 32 bit.  Yikes!

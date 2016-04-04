@@ -304,6 +304,12 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 
     // make sure it exists...
     //
+
+
+#ifdef __AROS__
+    str = cArosPath::AsNative(str);
+#endif
+
     if (access(str.c_str(), F_OK) != 0) {
       TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
       TSTRING tmpStr = _T("Directory: ");

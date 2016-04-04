@@ -77,6 +77,11 @@ void util_SignalHandler( int sig )
 }
 
 #if IS_UNIX
+
+#ifndef NSIG
+  #define NSIG 32
+#endif
+
 void tw_psignal(int sig, const TCHAR *str)
 {
     const TCHAR *siglist[NSIG] = {

@@ -745,7 +745,6 @@ FILE *fp;
 	return(-1);
 }
 
-
 /*
  * like popen but A LOT safer
  * uses file descriptors for all three files
@@ -872,6 +871,10 @@ FILE *fp[];
         return(mfpclose(indx, fp));
 }
 
+#ifdef __AROS__
+ #define fork() vfork()
+#endif
+
 /*
  * signal values
  */
@@ -898,7 +901,6 @@ int mask;
 	register int i;			/* counter in for loop */
 	register int ch_pid;		/* child PID */
 	register int euid, egid;	/* in case reset[gu]id is -1 */
-
 	/*
 	 * create 1 pipe for each of standard input, output, error
 	 */
@@ -994,7 +996,6 @@ int mask;
 					(void) close(p[2][0]);
 		    	}
 	}
-
 	/*
 	 * return child's PID
 	 */
