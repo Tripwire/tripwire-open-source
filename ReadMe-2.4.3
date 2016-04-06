@@ -26,6 +26,7 @@ Linuxes
 - CentOS 7 (amd64) + gcc 4.8.5
 - Ubuntu 14.0.4 (amd64) + gcc 4.x
 - RHEL 3.4 (Itanium) + gcc 3.4.3
+- Alpine Linux 3.3.3 + gcc 5.3.0
 - Android 6.0 + gcc 4.9
 - Raspbian 7 (wheezy) (armv6l) + gcc 4.6.3
 
@@ -38,6 +39,7 @@ BSDs
 - NetBSD 6.0 (x86) + gcc 4.5.1
 - DragonflyBSD 4.4.2 + gcc 5.2.1
 - MidnightBSD 0.7 + gcc 4.2.1
+- HardenedBSD 11.0 + gcc 4.8.5
 
 UNIXes
 - Solaris 10 x86 + gcc 3.4.3
@@ -54,6 +56,7 @@ Other
 - SkyOS 5 (beta 6947) + gcc 4.1.1
 - Sortix 1.0 + gcc 5.3.0
 - Icaros 2.1 (AROS) + gcc 4.6.4
+- MiNT 1.17 (Atari ST/TT) + gcc 4.6.4
 
 Building Notes:
 
@@ -66,10 +69,10 @@ what you expect. For example, even if a program is statically linked with
 glibc, the static glibc code may still load shared libraries behind the
 scenes, for things like iconv character conversion and nsswitch name lookups.
 
-* Recent Android versions may require additional compiler & linker arguments:  
-“-fPIE" in CFLAGS and "-fPIE -pie" in LDFLAGS. It's simplest to add these
-to configure.in and run autoreconf -i instead of hand-editing each Makefile 
-individually.
+* To create PIE (Position-Independent Executable) binaries, add “-fPIE" to CFLAGS 
+and "-fPIE -pie" to LDFLAGS.  This is required by recent Android versions, and 
+may be desirable elsewhere. It's simplest to add these to configure.in and run 
+autoreconf -i instead of hand-editing each Makefile individually.
 
  
 
