@@ -128,7 +128,9 @@ struct cFSStatArgs {
       TY_CHARDEV,
       TY_SYMLINK,
       TY_FIFO,
-      TY_SOCK
+      TY_SOCK,
+      TY_DOOR,
+      TY_PORT
    };
 
    // attr is fs dependent?

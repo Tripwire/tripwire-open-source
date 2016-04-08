@@ -109,6 +109,8 @@ public:
 		FT_SYMLINK,
 		FT_FIFO,
 		FT_SOCK,
+		FT_DOOR,
+		FT_PORT,
 		FT_NUMITEMS
 	};
 

@@ -381,14 +381,21 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     stat.blocks     = statbuf.st_blocks;
 
 	// set the file type
-		 if(S_ISREG(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FILE;
+	if(S_ISREG(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FILE;
 	else if(S_ISDIR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_DIR;
 	else if(S_ISLNK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_SYMLINK;
 	else if(S_ISBLK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
 	else if(S_ISCHR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_CHARDEV;
 	else if(S_ISFIFO(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FIFO;
 	else if(S_ISSOCK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_SOCK;
-	else								stat.mFileType = cFSStatArgs::TY_INVALID;
+#ifdef S_IFDOOR
+	else if(S_ISDOOR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_DOOR;
+#endif
+#ifdef S_IFPORT
+	else if(S_ISPORT(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_PORT;
+#endif
+    
+	else stat.mFileType = cFSStatArgs::TY_INVALID;
 }
 
 void cUnixFSServices::GetMachineName( TSTRING& strName ) const throw( eFSServices )
@@ -589,18 +596,29 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
     {
 	    case S_IFDIR:
 		    szPerm[0] = _T('d');
-        break;
+		    break;
 	    case S_IFCHR:
 		    szPerm[0] = _T('c');
-		break;
+		    break;
 	    case S_IFBLK:
 		    szPerm[0] = _T('b');
-		break;
+		    break;
 	    case S_IFIFO:
 		    szPerm[0] = _T('p');
-		break;
+		    break;
 	    case S_IFLNK:
 		    szPerm[0] = _T('l');
+		    break;
+#ifdef S_IFDOOR
+	    case S_IFDOOR:
+		    szPerm[0] = _T('D');
+		    break
+#endif
+#ifdef S_IFPORT
+	    case S_IFPORT:
+		    szPerm[0] = _T('P');
+		    break;
+#endif
         break;
 	}
 

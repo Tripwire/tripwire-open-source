@@ -53,6 +53,8 @@ TSS_BeginStringIds( fs )
 	STR_FT_SYMLINK,
 	STR_FT_FIFO,
 	STR_FT_SOCK,
+	STR_FT_DOOR,
+	STR_FT_PORT,
 
 	// property names
 	STR_PROP_DEV,
