@@ -259,7 +259,8 @@ public:
     enum OpenFlags
     {
         FA_OPEN_TEXT        = 0x1,
-        FA_OPEN_TRUNCATE    = 0x2
+        FA_OPEN_TRUNCATE    = 0x2,
+        FA_NONBLOCKING      = 0x4   
     };
 
     // TODO: Open should throw

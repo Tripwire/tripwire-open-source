@@ -165,10 +165,13 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 		openmode = (mode_t) 0600; // Make sure only root can read the file
 	}
 
-	if ( flags & OPEN_CREATE )
-		perm |= O_CREAT;
+        if ( flags & OPEN_CREATE )
+            perm |= O_CREAT;
 
-
+#ifdef O_NONBLOCK
+        if( flags & OPEN_NONBLOCKING )
+            perm |= O_NONBLOCK;
+#endif
 	//
 	// actually open the file
 	//

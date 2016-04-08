@@ -295,7 +295,7 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
 				pTheArch = &arch;
                 try 
                 {
-				    arch.OpenRead(strName.c_str());
+				    arch.OpenRead(strName.c_str(), cFileArchive::FA_NONBLOCKING);
                 }
                 catch (eArchive&)
 				{

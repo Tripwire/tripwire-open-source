@@ -17,8 +17,8 @@ chmod 755 install-sh 2> /dev/null
 dnl ###############
 dnl Setup defaults
 dnl ###############
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor -D_LARGEFILE_SOURCE"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor -D_LARGEFILE_SOURCE"}
 
 dnl #####################
 dnl Configuration options

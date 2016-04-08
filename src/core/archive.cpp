@@ -678,6 +678,7 @@ void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
         uint32 flags = cFile::OPEN_READ;
         flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
+        flags |= ( ( openFlags & FA_NONBLOCKING ) ?   cFile::OPEN_NONBLOCKING :0 ); 
 
 		mCurrentFilename = filename;
 		mCurrentFile.Open( filename, flags );
@@ -703,6 +704,7 @@ void cFileArchive::OpenReadWrite(const TCHAR* filename, uint32 openFlags)
         uint32 flags = cFile::OPEN_WRITE;
         flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
+        flags |= ( ( openFlags & FA_NONBLOCKING ) ?   cFile::OPEN_NONBLOCKING :0 ); 
 
 		mCurrentFilename = filename;
 		mCurrentFile.Open( filename, flags );
