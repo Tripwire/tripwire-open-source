@@ -612,7 +612,7 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
 #ifdef S_IFDOOR
 	    case S_IFDOOR:
 		    szPerm[0] = _T('D');
-		    break
+		    break;
 #endif
 #ifdef S_IFPORT
 	    case S_IFPORT:
