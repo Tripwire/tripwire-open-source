@@ -47,7 +47,9 @@
 #include "fileerror.h"
 #endif
 
-
+#ifdef __MINT__ // for off_t
+#include <sys/types.h>
+#endif
 
 //=============================================================================
 // eFile exception class
