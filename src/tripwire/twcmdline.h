@@ -137,7 +137,8 @@ public:
       SITE_PASSPHRASE,
       TEST_EMAIL,
       REPORTLEVEL,
-
+      HEXADECIMAL,
+       
 #ifdef GMMS
       USE_GMMS,
       GMMS_VERBOSITY,

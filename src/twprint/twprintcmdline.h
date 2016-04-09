@@ -89,6 +89,7 @@ public:
 
 		PASSPHRASE,
 		REPORTLEVEL,
+		HEXADECIMAL,
 
 		PARAMS,			// the final parameters
 

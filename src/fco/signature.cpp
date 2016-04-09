@@ -97,6 +97,7 @@ iFCOProp::CmpResult iSignature::Compare(const iFCOProp* rhs, Op op) const
 		return (op == iFCOProp::OP_NE) ? iFCOProp::CMP_TRUE : iFCOProp::CMP_FALSE;
 }
 
+bool cArchiveSigGen::mHex = false;
 
 void cArchiveSigGen::AddSig( iSignature* pSig )
 {
@@ -127,6 +128,16 @@ void cArchiveSigGen::CalculateSignatures( cArchive& a )
     // finalize hash
     for( i = 0; i < mSigList.size(); i++ )
         mSigList[i]->Finit();
+}
+
+bool cArchiveSigGen::Hex()
+{
+    return mHex;
+}
+
+void cArchiveSigGen::SetHex(bool hex)
+{
+    mHex = hex;    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -399,6 +410,9 @@ void cCRC32Signature::Finit()
 //	mCRC
 TSTRING cCRC32Signature::AsString() const
 {
+    if (cArchiveSigGen::Hex())
+        return AsStringHex();
+    
 	TSTRING ret;
 	char *ps_signature;
 	char buf[100];
@@ -505,6 +519,9 @@ void cMD5Signature::Finit()
 // AsString -- Converts to Base64 representation and returns a TSTRING
 TSTRING cMD5Signature::AsString() const
 {
+    if (cArchiveSigGen::Hex())
+        return AsStringHex();
+    
     TSTRING ret;
 	char buf[24];
 	int length;
@@ -626,6 +643,9 @@ void cSHASignature::Finit()
 #ifdef HAVE_OPENSSL_SHA_H
 TSTRING cSHASignature::AsString(void) const
 {
+    if (cArchiveSigGen::Hex())
+        return AsStringHex();
+    
     TSTRING ret;
     char* ps_signature; 
     char buf[100];
@@ -704,6 +724,9 @@ bool cSHASignature::IsEqual(const iSignature& rhs) const
 
 TSTRING cSHASignature::AsString(void) const
 {
+    if (cArchiveSigGen::Hex())
+        return AsStringHex();
+    
     TSTRING ret;
     char* ps_signature;
     char buf[100];
@@ -812,6 +835,9 @@ void cHAVALSignature::Finit()
 // AsString -- Returns Base64 representation of mSignature in a TSTRING
 TSTRING cHAVALSignature::AsString() const
 {
+    if (cArchiveSigGen::Hex())
+        return AsStringHex();
+    
     TSTRING ret;
 	char buf[24];
 	int length;

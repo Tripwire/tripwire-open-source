@@ -53,6 +53,7 @@ lbw(1.2i) lb.
 -m r	--print-report
 -v	--verbose
 -s	--silent\fR,\fP --quiet
+-h	--hexadecimal
 -c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
 -r \fIreport\fP	--twrfile \fIreport\fP
 -L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
@@ -69,6 +70,9 @@ Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
 .BR \(hys ", " --silent ", " --quiet
 Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).
 .TP
+.BR \(hyh ", " --hexadecimal
+Display hash values as hexadecimal.
+.TP 
 .BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
 Use the specified configuration file.
 .TP
@@ -92,6 +96,7 @@ lbw(1.2i) lb.
 -m d	--print-dbfile
 -v	--verbose
 -s	--silent\fR,\fP --quiet
+-h	--hexadecimal
 -c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
 -d \fIdatabase\fP	--dbfile \fIdatabase\fP
 -L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
@@ -108,6 +113,9 @@ Verbose output mode.  Mutually exclusive with (\fB\(hys\fR).
 .BR \(hys ", " --silent ", " --quiet
 Silent output mode.  Mutually exclusive with (\fB\(hyv\fR).
 .TP
+.BR \(hyh ", " --hexadecimal
+Display hash values as hexadecimal.
+.TP 
 .BI \(hyc " cfgfile\fR, " --cfgfile " cfgfile"
 Use the specified configuration file.
 .TP
