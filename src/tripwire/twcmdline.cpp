@@ -409,6 +409,9 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
   else
     pModeInfo->mMailNoViolations = true; // MAILPROGRAM is not required to be specified
 
+  if(cf.Lookup(TSTRING(_T("MAILFROMADDRESS")), str))
+    pModeInfo->mMailFrom = str;
+
   // SYSLOG reporting
   if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
     {
