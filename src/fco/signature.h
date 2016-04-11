@@ -75,6 +75,8 @@
 // TODO: figure out a way to do this without including these headers.
 // pool of objects?
 
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // class iSignatrue -- Interface all signatures will implement.
 ///////////////////////////////////////////////////////////////////////////////
@@ -145,6 +147,9 @@ public:
         // produces signature of archive for all signatures in the list
         // remember to rewind archive!
 
+    static bool Hex();
+    static void SetHex(bool);
+    
 private:    
     // don't let C++ create these functions
     cArchiveSigGen( const cArchiveSigGen& );
@@ -152,6 +157,8 @@ private:
 
     typedef std::vector< iSignature* > container_type;
     container_type mSigList;
+    
+    static bool mHex;
 };
 
 
