@@ -19,6 +19,14 @@ to all files in the tree initially having the same timestamps. The only case whe
 an 'autoreconf -i' is actually required is on SkyOS 5, where SIZEOF_LONG_LONG gets 
 defined incorrectly otherwise.
 
+* Imported a set of contributed scripts from 2.4.2.3 fork (github.com/steakknife/tripwire)
+
+* Fixed large file (>2GB) support for various platforms, including 32-bit Linux.
+
+* Added '-h' argument to display hashes as hex instead of base64 (siggen already allowed this)
+
+* Added the long-requested MAILFROMADDRESS config param for email reporting.
+
 
 The update has been tested on a variety of platforms: 
 
@@ -62,7 +70,11 @@ Other
 Building Notes:
 
 * If cross compiling, a '--disable-openssl' argument must be passed to ./configure,
-since its OpenSSL existence check currently uses an AC_TRY_RUN macro.
+since its OpenSSL existence check currently uses an AC_TRY_RUN macro.  Additionally,
+generated Makefiles don't automagically find the cross-compiler's 'ar' and try to
+use the local one, which fails. Until this is resolved, this can be fixed with a symlink
+named 'ar' pointing at the cross-compiler copy, with a path such that make finds it
+instead of the local 'ar'.
 
 * The '--enable-static' configure argument is not guaranteed to work on all
 platforms, and your mileage may vary. And when it works, it may not be doing
@@ -75,5 +87,9 @@ and "-fPIE -pie" to LDFLAGS.  This is required by recent Android versions, and
 may be desirable elsewhere. It's simplest to add these to configure.in and run 
 autoreconf -i instead of hand-editing each Makefile individually.
 
+* Older versions of Open Source Tripwire reportedly do not build on Tru64 UNIX.
+This is likely to be true with 2.4.3.0 as well, due to the lack of appropriate
+hardware to test it on. If anyone out there has a Tru64 box and wants to fix 
+this, patches are always welcome.
  
 
