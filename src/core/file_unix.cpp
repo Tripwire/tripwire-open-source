@@ -262,7 +262,7 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
     fprintf(stderr, "%d\n", blowupCount);
     #endif
 
-	if (fseek( mpData->mpCurrStream, offset, apiFrom ) != 0)
+    if (fseeko( mpData->mpCurrStream, offset, apiFrom ) != 0)
     {
         #ifdef _DEBUG
         cDebug d("cFile::Seek");
@@ -271,7 +271,7 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
         throw eFileSeek();
     }
 
-	return ftell( mpData->mpCurrStream );
+    return ftello(mpData->mpCurrStream);
 }
 
 ///////////////////////////////////////////////////////////////////////////

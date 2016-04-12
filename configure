@@ -3251,8 +3251,8 @@ ac_config_headers="$ac_config_headers config.h"
 rm -f src/tripwire/syslog.h 2> /dev/null
 chmod 755 install-sh 2> /dev/null
 
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor -D_LARGEFILE_SOURCE"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor -D_LARGEFILE_SOURCE"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 
 # Check whether --enable-static was given.
 if test "${enable_static+set}" = set; then :
