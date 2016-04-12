@@ -10,6 +10,8 @@ Packaging for Open Source Tripwire is maintained by various third parties:
 
  * Gentoo: https://packages.gentoo.org/packages/app-admin/tripwire
 
+ * Chef cookbook: https://github.com/rackspace-cookbooks/rackspace_tripwire
+
  * FreeBSD Ports: http://svnweb.freebsd.org/ports/head/security/tripwire/
 
  * FreshPorts (BSD): http://www.freshports.org/security/tripwire
