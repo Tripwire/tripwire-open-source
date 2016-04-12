@@ -66,6 +66,7 @@
 #include <set>
 #include "fco/parsergenreutil.h" // this is needed to figure out if a path is fully qualified for the current genre.
 #include "tw/fcodatabasefile.h"
+#include "fco/signature.h"
 #include "fco/genreswitcher.h"
 #include "generatedb.h"
 #include "integritycheck.h"
@@ -304,6 +305,12 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 
     // make sure it exists...
     //
+
+
+#ifdef __AROS__
+    str = cArosPath::AsNative(str);
+#endif
+
     if (access(str.c_str(), F_OK) != 0) {
       TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
       TSTRING tmpStr = _T("Directory: ");
@@ -402,6 +409,9 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     }
   else
     pModeInfo->mMailNoViolations = true; // MAILPROGRAM is not required to be specified
+
+  if(cf.Lookup(TSTRING(_T("MAILFROMADDRESS")), str))
+    pModeInfo->mMailFrom = str;
 
   // SYSLOG reporting
   if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
@@ -820,7 +830,8 @@ void cTWModeIC::InitCmdLineParser(cCmdLineParser& cmdLine)
    cmdLine.AddArg(cTWCmdLine::RULE_NAME,     TSTRING(_T("R")), TSTRING(_T("rule-name")),     cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::GENRE_NAME,    TSTRING(_T("x")), TSTRING(_T("section")),       cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::PARAMS,        TSTRING(_T("")),  TSTRING(_T("")),           cCmdLineParser::PARAM_MANY);
-
+   cmdLine.AddArg(cTWCmdLine::HEXADECIMAL,   TSTRING(_T("h")), TSTRING(_T("hexadecimal")),	cCmdLineParser::PARAM_NONE);
+    
    // multiple levels of reporting
    cmdLine.AddArg(cTWCmdLine::REPORTLEVEL,      TSTRING(_T("t")), TSTRING(_T("email-report-level")),  cCmdLineParser::PARAM_ONE);
 
@@ -829,6 +840,8 @@ void cTWModeIC::InitCmdLineParser(cCmdLineParser& cmdLine)
    cmdLine.AddArg(cTWCmdLine::USE_GMMS,      TSTRING(_T("g")), TSTRING(_T("gmms")),       cCmdLineParser::PARAM_NONE);
    cmdLine.AddArg(cTWCmdLine::GMMS_VERBOSITY,   TSTRING(_T("b")), TSTRING(_T("gmms-verbosity")),   cCmdLineParser::PARAM_ONE);
 #endif
+    
+
 
    // mutual exclusion...
    // you can't specify any of these 3 things together...
@@ -958,6 +971,10 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
             ASSERT(iter.NumParams() > 0); 
             mpData->mGenreName = iter.ParamAt(0);
             break;
+         case cTWCmdLine::HEXADECIMAL:
+            cArchiveSigGen::SetHex(true);
+            break;
+              
          case cTWCmdLine::PARAMS:
             {
                // pack all of these onto the files to check list...

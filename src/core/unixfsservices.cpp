@@ -37,6 +37,7 @@
 
 #include "core/stdcore.h"
 #include "core/corestrings.h"
+#include "core/file.h"
 
 #if !IS_UNIX //encase this all in an ifdef so it won't cause compile errors
 #error Must be unix for unixfsservices
@@ -54,7 +55,9 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <sys/time.h>
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
 #ifdef HAVE_SYS_MOUNT_H
 # include <sys/mount.h>
 #endif
@@ -172,14 +175,20 @@ void cUnixFSServices::GetHostID( TSTRING& name ) const
 }
 
 // returns "/" for unix and "\\" for win32
-TCHAR  cUnixFSServices::GetPathSeperator() const
+TCHAR  cUnixFSServices::GetPathSeparator() const
 {
     return '/';
 }
 
-
+#ifndef __AROS__
 void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const throw(eFSServices)
 {
+#else
+void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const throw(eFSServices)
+{
+	TSTRING strFilename = cArosPath::AsNative(strFilenameC);
+#endif
+
 	//Get all the filenames
 	DIR* dp;
 	dp = opendir( strFilename.c_str() );
@@ -228,9 +237,9 @@ cFSStatArgs::FileType cUnixFSServices::GetFileType(const cFCOName &filename) thr
 
 void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSServices)
 {
-	TCHAR pathname[MAXPATHLEN];
+	TCHAR pathname[iFSServices::TW_MAX_PATH];
 	pathname[0] = '\0';
-	TCHAR* ret = getcwd(pathname, sizeof(TCHAR)*MAXPATHLEN);
+	TCHAR* ret = getcwd(pathname, sizeof(TCHAR)*iFSServices::TW_MAX_PATH);
 
 	if (ret == NULL)
 		throw eFSServicesGeneric( strCurDir, iFSServices::GetInstance()->GetErrString() );
@@ -248,12 +257,12 @@ void cUnixFSServices::ChangeDir( const TSTRING& strDir ) const throw(eFSServices
 TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSServices)
 {
     char* pchTempFileName;
-    char szTemplate[MAXPATHLEN];
+    char szTemplate[iFSServices::TW_MAX_PATH];
     int fd;
 
 #ifdef _UNICODE
     // convert template from wide character to multi-byte string
-    char mbBuf[MAXPATHLEN];
+    char mbBuf[iFSServices::TW_MAX_PATH];
     wcstombs( mbBuf, strName.c_str(), strName.length() + 1 );
     strcpy( szTemplate, mbBuf );
 #else
@@ -326,8 +335,14 @@ void cUnixFSServices::SetTempDirName(TSTRING& tmpPath) {
 }
 
 
+#ifndef __AROS__
 void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const throw(eFSServices)
 {
+#else
+void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const throw(eFSServices)
+{
+	TSTRING strName = cArosPath::AsNative(strNameC);
+#endif
 	//local variable for obtaining info on file.
 	struct stat statbuf;
 
@@ -366,14 +381,21 @@ void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const th
     stat.blocks     = statbuf.st_blocks;
 
 	// set the file type
-		 if(S_ISREG(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FILE;
+	if(S_ISREG(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FILE;
 	else if(S_ISDIR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_DIR;
 	else if(S_ISLNK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_SYMLINK;
 	else if(S_ISBLK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
 	else if(S_ISCHR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_CHARDEV;
 	else if(S_ISFIFO(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FIFO;
 	else if(S_ISSOCK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_SOCK;
-	else								stat.mFileType = cFSStatArgs::TY_INVALID;
+#ifdef S_IFDOOR
+	else if(S_ISDOOR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_DOOR;
+#endif
+#ifdef S_IFPORT
+	else if(S_ISPORT(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_PORT;
+#endif
+    
+	else stat.mFileType = cFSStatArgs::TY_INVALID;
 }
 
 void cUnixFSServices::GetMachineName( TSTRING& strName ) const throw( eFSServices )
@@ -390,7 +412,7 @@ void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
     char buf[256];
     if (gethostname(buf, 256) != 0)
     {
-#ifdef SOLARIS_NO_GETHOSTBYNAME
+#if defined(SOLARIS_NO_GETHOSTBYNAME) || defined(_SORTIX_SOURCE)
         strName = buf;
         return;
 #else
@@ -445,6 +467,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     bool    fGotAddress = false;    
     cDebug  d( _T("cUnixFSServices::GetIPAddress") );
 
+#ifndef _SORTIX_SOURCE
     struct utsname utsnameBuf;    
     if( EFAULT != uname( &utsnameBuf) )
     {
@@ -476,6 +499,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     }
     else
         d.TraceError( _T("uname failed") );
+#endif
 
     return( fGotAddress );
 }
@@ -572,31 +596,42 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
     {
 	    case S_IFDIR:
 		    szPerm[0] = _T('d');
-        break;
+		    break;
 	    case S_IFCHR:
 		    szPerm[0] = _T('c');
-		break;
+		    break;
 	    case S_IFBLK:
 		    szPerm[0] = _T('b');
-		break;
+		    break;
 	    case S_IFIFO:
 		    szPerm[0] = _T('p');
-		break;
+		    break;
 	    case S_IFLNK:
 		    szPerm[0] = _T('l');
+		    break;
+#ifdef S_IFDOOR
+	    case S_IFDOOR:
+		    szPerm[0] = _T('D');
+		    break;
+#endif
+#ifdef S_IFPORT
+	    case S_IFPORT:
+		    szPerm[0] = _T('P');
+		    break;
+#endif
         break;
 	}
 
     // check owner read and write
-	if (perm & S_IREAD)
+	if (perm & S_IRUSR)
 		szPerm[1] = _T('r');
-	if (perm & S_IWRITE)
+	if (perm & S_IWUSR)
 		szPerm[2] = _T('w');
 
     // check owner execute
-	if (perm & S_ISUID && perm & S_IEXEC)
+	if (perm & S_ISUID && perm & S_IXUSR)
 		szPerm[3] = _T('s');
-	else if (perm & S_IEXEC)
+	else if (perm & S_IXUSR)
 		szPerm[3] = _T('x');
 	else if (perm & S_ISUID)
 		szPerm[3] = _T('S');
@@ -792,7 +827,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
 // Returns normal string to append to backup files for this os.
 // (e.g. "~" for unix and ".bak" for winos)
 ///////////////////////////////////////////////////////////////////////////////
-TCHAR* cUnixFSServices::GetStandardBackupExtension() const
+const TCHAR* cUnixFSServices::GetStandardBackupExtension() const
 {
     return _T(".bak");
 }

@@ -1,2 +1,2 @@
-#define BUILD_NUM _T("2")
+#define BUILD_NUM _T("0")
 

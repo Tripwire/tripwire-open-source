@@ -54,6 +54,12 @@
 #include "tw/twerrors.h"
 #include "tw/twstrings.h"
 
+#ifdef __AROS__
+  #include <proto/bsdsocket.h>
+  #define openlog(a,b,c)
+  #define closelog()
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // Syslog
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,9 +97,11 @@ void cSyslog::Log(const TCHAR* programName, cSyslog::LogType logType, const TCHA
     const char* msg = message;
 #endif
 
+#ifndef SKYOS // Handle an oddball OS that has syslog.h but doesn't implement the calls.
     openlog(ident, LOG_PID, LOG_USER);
     syslog(LOG_NOTICE, "%s", msg);
     closelog();
+#endif
 
 #elif SUPPORTS_EVENTLOG
 

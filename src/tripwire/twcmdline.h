@@ -137,7 +137,8 @@ public:
       SITE_PASSPHRASE,
       TEST_EMAIL,
       REPORTLEVEL,
-
+      HEXADECIMAL,
+       
 #ifdef GMMS
       USE_GMMS,
       GMMS_VERBOSITY,
@@ -181,6 +182,7 @@ class cTWModeCommon
   unsigned short  mSmtpPort;     // port number of that SMTP host
   TSTRING         mMailProgram;  // full path to executable to use for piped mail
   bool            mMailNoViolations; // Email out reports with no violations?
+  TSTRING         mMailFrom;
     
   cTWModeCommon() :  mVerbosity(1), 
     mLocalProvided(false), 

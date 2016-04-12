@@ -1,0 +1,50 @@
+#!/bin/sh -e
+
+RM='rm -f'
+#RM='echo rm -f'
+
+LOG_START="$1"
+LOG_EXT="$2"
+
+NOW="$(/bin/date +%Y%m%d)"
+NOW_YEAR="$(echo $NOW | cut -c-4)"
+NOW_MONTH="$(echo $NOW | cut -c5-6)"
+NOW_DAY="$(echo $NOW | cut -c7-8)"
+
+LOG_START_LEN="$(echo $LOG_START | wc -c | awk '{print$1}')"
+
+YEARS="$(ls $LOG_START*$LOG_EXT | cut -c$LOG_START_LEN-$[LOG_START_LEN+3] | sort -u)"
+
+for YEAR in $YEARS; do
+  if [ "$YEAR" = "$NOW_YEAR" ]; then
+    # only keep one per day 
+    for MONTH in `seq -f "%02g" 12`; do
+      for DAY in `seq -f "%02g" 31`; do
+        if [ "$NOW_MONTH" = "$MONTH" ] && [ "$NOW_DAY" = "$DAY" ]; then
+          # if now is today, dont prune anything
+          :; 
+        else
+          # save only the first report per day 
+          FILES="$(ls -rt ${LOG_START}${YEAR}-${MONTH}-${DAY}T*${LOG_EXT} 2>/dev/null | tail -n +2)"
+          #FILES="$(ls -rt ${LOG_START}${YEAR}-${MONTH}-${DAY}T*${LOG_EXT} | tail -n +2)"
+          if [ -n "$FILES" ]; then
+            set -x
+            $RM $FILES
+            set +x
+          fi 
+        fi
+      done # DAY
+    done # MONTH
+  else # not current year
+    # only keep one per month
+    for MONTH in `seq -f "%02g" 12`; do
+      FILES="$(ls -rt ${LOG_START}${YEAR}-${MONTH}-*${LOG_EXT} 2>/dev/null | tail -n +2)"
+      #FILES="$(ls -rt ${LOG_START}${YEAR}-${MONTH}-*${LOG_EXT} | tail -n +2)"
+      if [ -n "$FILES" ]; then
+        set -x
+        $RM $FILES
+        set +x
+      fi 
+    done # MONTH
+  fi
+done # YEAR

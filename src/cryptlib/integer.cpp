@@ -13,6 +13,8 @@
 #include "algebra.cpp"
 #include "eprecomp.cpp"
 
+#include <string.h>
+
 #define MAKE_DWORD(lowWord, highWord) ((dword(highWord)<<WORD_BITS) | (lowWord))
 
 union dword_union

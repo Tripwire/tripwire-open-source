@@ -71,9 +71,12 @@
 /*
  * set, reset environment to be passed to mpopem
  */
+#include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/file.h>
+#ifndef _SORTIX_SOURCE
+# include <sys/file.h>
+#endif
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <time.h>
@@ -87,7 +90,9 @@
 #       include <unistd.h>
 #       include <stdlib.h>
 #endif
-#include <sys/param.h>
+#ifdef HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
 #include <assert.h>
 #include "msystem.h"
 
@@ -142,6 +147,12 @@
 #	define MAX_DESC		NFILES
 #else
 #	define MAX_DESC		256
+#endif
+
+#ifdef NOFILE
+#	define TW_NO_DESC          NOFILE
+#else
+#	define TW_NO_DESC          MAX_DESC+1
 #endif
 
 /*
@@ -734,7 +745,6 @@ FILE *fp;
 	return(-1);
 }
 
-
 /*
  * like popen but A LOT safer
  * uses file descriptors for all three files
@@ -861,6 +871,10 @@ FILE *fp[];
         return(mfpclose(indx, fp));
 }
 
+#ifdef __AROS__
+ #define fork() vfork()
+#endif
+
 /*
  * signal values
  */
@@ -887,7 +901,6 @@ int mask;
 	register int i;			/* counter in for loop */
 	register int ch_pid;		/* child PID */
 	register int euid, egid;	/* in case reset[gu]id is -1 */
-
 	/*
 	 * create 1 pipe for each of standard input, output, error
 	 */
@@ -919,7 +932,7 @@ int mask;
 		(void) umask(mask);
 		/* close the unused ends of the pipe  */
 		/* and all other files except 0, 1, 2 */
-		for(i = 3; i < NOFILE; i++)
+		for(i = 3; i < TW_NO_DESC; i++)
 			if (fp == NULL || (!fdleave[i] && i != p[0][0]
 					    && i != p[1][1] && i != p[2][1]))
 				(void) close(i);
@@ -983,7 +996,6 @@ int mask;
 					(void) close(p[2][0]);
 		    	}
 	}
-
 	/*
 	 * return child's PID
 	 */

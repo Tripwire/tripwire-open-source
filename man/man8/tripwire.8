@@ -273,6 +273,7 @@ lbw(1.2i) lb.
 -x \fIsection\fP	--section \fIsection\fP
 -M	--email-report
 -t \fR{ 0|1|2|3|4 }\fP	--email-report-level \fR{ 0|1|2|3|4 }\fP
+-h	--hexadecimal
 .TE
 .RI "[ " object1 " [ " object2... " ]]"
 .RE
@@ -369,6 +370,9 @@ EMAILREPORTLEVEL variable in the configuration file. \fIlevel\fR must
 be a number from 0\ to\ 4.
 Valid only with (\fB\(hyM\fP).
 .TP
+.BR \(hyh ", " --hexadecimal
+Display hash values as hexadecimal in email reports
+.TP 
 .RI "[ " object1 " [ " object2... " ]]"
 List of files and directories that should be integrity checked.
 Default is all files.  If files are specified for checking, the

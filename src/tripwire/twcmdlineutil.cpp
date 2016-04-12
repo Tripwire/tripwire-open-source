@@ -590,9 +590,15 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
                                               cDisplayEncoder::EncodeInline( toAddress ).c_str());
           reportMail->AddRecipient(toAddress);
 
-          TSTRING machineName;
-          iFSServices::GetInstance()->GetMachineNameFullyQualified(machineName);
-          reportMail->SetFrom(TSS_GetString( cTripwire, tripwire::STR_EMAIL_FROM) + machineName);
+          if (!modeCommon->mMailFrom.empty())
+              reportMail->SetFrom(modeCommon->mMailFrom);
+          else	
+	  {
+              TSTRING machineName;
+              iFSServices::GetInstance()->GetMachineNameFullyQualified(machineName);
+              reportMail->SetFrom(TSS_GetString( cTripwire, tripwire::STR_EMAIL_FROM) + machineName);
+	  }		
+
           reportMail->SetFromName(TSS_GetString(cTW, tw::STR_TSS_PRODUCT_NAME));
              
           reportMail->SetSubject( trv.SingleLineReport() );
@@ -729,17 +735,23 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
    // send the report
    try
    {
-        //      set up the cMailMessage class, and send it
-      reportMail->AddRecipient(mAddress);
+       // set up the cMailMessage class, and send it
+       reportMail->AddRecipient(mAddress);
 
-        TSTRING machineName;
-        iFSServices::GetInstance()->GetMachineNameFullyQualified(machineName);
-        reportMail->SetFrom(TSS_GetString( cTripwire, tripwire::STR_EMAIL_FROM) + machineName);
-        reportMail->SetFromName(TSS_GetString(cTW, tw::STR_TSS_PRODUCT_NAME));
+       if (!modeCommon->mMailFrom.empty())
+           reportMail->SetFrom(modeCommon->mMailFrom);
+       else
+       {	
+           TSTRING machineName;
+           iFSServices::GetInstance()->GetMachineNameFullyQualified(machineName);
+           reportMail->SetFrom(TSS_GetString( cTripwire, tripwire::STR_EMAIL_FROM) + machineName);
+       }
+		
+       reportMail->SetFromName(TSS_GetString(cTW, tw::STR_TSS_PRODUCT_NAME));
 
-        reportMail->SetSubject   (TSS_GetString( cTripwire, tripwire::STR_TEST_EMAIL_SUBJECT));
-        reportMail->SetBody      (TSS_GetString( cTripwire, tripwire::STR_TEST_EMAIL_BODY));
-      reportMail->Send();
+       reportMail->SetSubject   (TSS_GetString( cTripwire, tripwire::STR_TEST_EMAIL_SUBJECT));
+       reportMail->SetBody      (TSS_GetString( cTripwire, tripwire::STR_TEST_EMAIL_BODY));
+       reportMail->Send();
    }
    catch(eError& e)
    {

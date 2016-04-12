@@ -5,7 +5,7 @@ dnl
 AC_INIT
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
-AM_INIT_AUTOMAKE(tripwire, 2.4.2.2)
+AM_INIT_AUTOMAKE(tripwire, 2.4.3.0)
 AM_CONFIG_HEADER(config.h)
 
 dnl #################################
@@ -17,8 +17,8 @@ chmod 755 install-sh 2> /dev/null
 dnl ###############
 dnl Setup defaults
 dnl ###############
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wno-non-virtual-dtor"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 
 dnl #####################
 dnl Configuration options
@@ -42,6 +42,8 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_RANLIB
 AC_PROG_YACC
+AC_PROG_LN_S
+AC_PROG_LN
 AC_PATH_PROG(path_to_vi, vi)
 AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
 
@@ -118,7 +120,9 @@ dnl gethostbyname?  Solaris has it somewhere else.
 AC_CHECK_LIB(c, gethostbyname, [:], [
  AC_CHECK_LIB(nsl, gethostbyname, [
   LIBS="-lnsl $LIBS"
-  ], [:]) ])
+  ], [
+    AC_CHECK_LIB(network, gethostbyname, [LIBS="-lnetwork $LIBS"] [:])
+  ]) ])
 
 dnl check for stl library
 AC_LANG_SAVE

@@ -79,6 +79,13 @@
 #include "core/tw_signal.h"			// to ignore SIGPIPE
 #endif
 
+#ifdef __AROS__
+#include <proto/exec.h>
+#include <proto/bsdsocket.h>
+#include <bsdsocket/socketbasetags.h>
+
+static bool aros_socketbase_init();
+#endif
 
 //=============================================================================
 // cTWInit_i
@@ -238,6 +245,9 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     // END:RAD
     // ------------------------------------------------------------
 
+#ifdef __AROS__
+    aros_socketbase_init();
+#endif
 	//
 	// set up the file system services    
 	//
@@ -304,5 +314,28 @@ void cTWInit::Init( const TSTRING& strArgv0 )
 
 
 }
+
+#ifdef __AROS__
+struct Library* SocketBase=0;
+
+bool aros_socketbase_init()
+{
+  if (!(SocketBase = OpenLibrary("bsdsocket.library", 4)))
+  {
+      printf("Failed to load socket library");
+      return 0;
+  }
+
+  if (SocketBaseTags(
+    SBTM_SETVAL(SBTC_ERRNOPTR(sizeof(errno))), (IPTR)&errno,
+    SBTM_SETVAL(SBTC_HERRNOLONGPTR), (IPTR)&errno,
+    TAG_DONE)) 
+  {
+      printf("Failed to init socket library");
+      return 0;
+  }
+  return 1;
+}
+#endif
 
 

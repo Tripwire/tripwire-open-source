@@ -43,8 +43,8 @@ void StreamCipher::ProcessString(byte *outString, const byte *inString, unsigned
 
 void StreamCipher::ProcessString(byte *inoutString, unsigned int length)
 {
-	while(length--)
-		*inoutString++ = ProcessByte(*inoutString);
+    for(;length--; inoutString++)
+        *inoutString = ProcessByte(*inoutString);
 }
 
 bool MessageAuthenticationCode::Verify(const byte *macIn)

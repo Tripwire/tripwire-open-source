@@ -1,0 +1,3 @@
+#!/bin/sh
+# creates TRIPWIRE_ROOT/etc/site.key and TRIPWIRE_ROOT/etc/(hostname)-local.key
+TRIPWIRE_ROOT/sbin/twadmin --generate-keys --local-keyfile TRIPWIRE_ROOT/etc/$(hostname -f)-local.key --site-keyfile TRIPWIRE_ROOT/etc/site.key

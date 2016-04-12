@@ -66,7 +66,9 @@
 //=========================================================================
 
 #if IS_UNIX
-#include <sys/param.h>
+ #if HAVE_SYS_PARAM_H
+  #include <sys/param.h>
+ #endif
 #endif
 
 //=========================================================================
@@ -112,7 +114,7 @@ typedef int64  cFSType;
 //     it is the union of MAX(elem) for all the file systems that we support 
 class cACLElem {
    // TODO this is just a place holder
-   uint32   mUid;
+   // uint32   mUid;
 };
 
 // this class is used only to pass arguments to iFSServices
@@ -126,7 +128,9 @@ struct cFSStatArgs {
       TY_CHARDEV,
       TY_SYMLINK,
       TY_FIFO,
-      TY_SOCK
+      TY_SOCK,
+      TY_DOOR,
+      TY_PORT
    };
 
    // attr is fs dependent?
@@ -177,7 +181,7 @@ TSS_FILE_EXCEPTION( eFSServicesGeneric,   eFSServices );
 class iFSServices 
 {
  public:
-    
+  virtual ~iFSServices() {}
   ///////////////////////////////////////////////////////////////
   // ENUMS
   ///////////////////////////////////////////////////////////////
@@ -203,7 +207,11 @@ class iFSServices
   enum
   {        
 #if IS_UNIX
-    TW_MAX_PATH = MAXPATHLEN
+  #ifdef MAXPATHLEN
+      TW_MAX_PATH = MAXPATHLEN
+  #else
+      TW_MAX_PATH = 1024
+  #endif
 #endif
   };
 
@@ -217,9 +225,9 @@ class iFSServices
   ////////////////////////////////////////
   virtual bool    IsCaseSensitive() const = 0;
   // returns true if the file system is case sensitive
-  virtual TCHAR       GetPathSeperator() const = 0;
+  virtual TCHAR   GetPathSeparator() const = 0;
   // returns "/" for unix and "\\" for win32
-  virtual TCHAR*      GetStandardBackupExtension() const = 0;
+  virtual const TCHAR*      GetStandardBackupExtension() const = 0;
   // returns normal string to append to backup files for this os.
     
   ////////////////////////////////////////
@@ -239,7 +247,7 @@ class iFSServices
     
   virtual void       SetTempDirName( TSTRING& tmpName ) = 0;
   
-  virtual TSTRING&    MakeTempFilename( TSTRING& strName ) const throw( eFSServices ) = 0;
+  virtual TSTRING&   MakeTempFilename( TSTRING& strName ) const throw( eFSServices ) = 0;
   // create temporary file
   //      TSTRING must have the form ("baseXXXXXX"), where the X's are replaced with 
   //      characters to make it a unique file.  There must be at least 6 Xs.
@@ -258,15 +266,15 @@ class iFSServices
   ////////////////////////////////////////
   // minor filesystem functions
   ////////////////////////////////////////
-  virtual void        GetHostID( TSTRING& name ) const = 0;
+  virtual void    GetHostID( TSTRING& name ) const = 0;
 
   virtual void    GetMachineName( TSTRING& name ) const throw(eFSServices) = 0;
 
   virtual void    GetMachineNameFullyQualified( TSTRING& name ) const = 0;
 
-  virtual bool        GetCurrentUserName( TSTRING& tstrName ) const = 0;
+  virtual bool    GetCurrentUserName( TSTRING& tstrName ) const = 0;
 
-  virtual bool        GetIPAddress( uint32& uiIPAddress ) = 0;
+  virtual bool    GetIPAddress( uint32& uiIPAddress ) = 0;
 
 
   ////////////////////////////////////////

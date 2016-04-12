@@ -1,3 +1,29 @@
+2016-04-11 Brian Cox <bcox@tripwire.com>
+	* Bump version to 2.4.3.0
+	* Compilation fixes for gcc 4.7+ and LLVM/clang 
+	(see http://www.linuxfromscratch.org/blfs/view/svn/postlfs/tripwire.html )
+	* Absorb fixes from FreeBSD ports patchset
+	(see http://svnweb.freebsd.org/ports/head/security/tripwire/ )
+	* Fix handling of SHA hashes (with and without OpenSSL hash impl.)
+	* Update GNU config.guess & config.sub to current versions
+	* Compilation fixes for various and sundry Posix-esque platforms
+	(Mac OS X, OpenBSD, OpenSolaris, Cygwin, Minix 3.x, GNU/Hurd, MidnightBSD, Haiku, Syllable, SkyOS, Sortix, MiNT)  
+	* Add script to bump buildys file timestaps, to fix 
+	spurious aclocal/automake errors on a fresh clone/untar/etc.
+	* Update 'make dist' to bundle manpages & policy files
+	* Replace broken RPM spec w/ 'Packaging' doc that explains where to get packaging stuff.
+	* Add contributed files from 2.4.2.3 fork (see below)
+	* Fix large file support on e.g. 32-bit Linux
+	* Add '-h' option to display hashes as hex instead of base64
+	* Add MAILFROMADDRESS config param (see twconfig man page)
+	* Use O_NONBLOCK, to avoid blocking on fifos & mandatory-locked files
+	* Report Solaris door & event port file types correctly
+	
+2014-01-01 Barry Allard <barry.allard@gmail.com>
+
+	* Bumping version to 2.4.2.3
+	* Fixed compilation on clang and gcc compilers
+
 2011-11-21 Stephane Dudzinski <tripwire@frlinux.net>
 
 	* Bumping version to 2.4.2.2

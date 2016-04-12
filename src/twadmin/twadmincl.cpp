@@ -34,6 +34,7 @@
 //
 
 #include "stdtwadmin.h"
+#include <unistd.h>
 
 #include "twadmincl.h"
 #include "twadminstrings.h"
@@ -60,6 +61,23 @@
 #include "util/fileutil.h"
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
+
+//Provide a swab() impl. from glibc, for platforms that don't have one
+#if defined(__SYLLABLE__) || defined(__ANDROID_API__) || defined(_SORTIX_SOURCE)
+void swab (const void *bfrom, void *bto, ssize_t n)
+{
+  const char *from = (const char *) bfrom;
+  char *to = (char *) bto;
+
+  n &= ~((ssize_t) 1);
+  while (n > 1)
+    {
+      const char b0 = from[--n], b1 = from[--n];
+      to[n] = b0;
+      to[n + 1] = b1;
+    }
+}
+#endif
 
 // forwards
 static bool NotifyFileType(const cFileHeaderID& id, uint32 version, iUserNotify::VerboseLevel vl);

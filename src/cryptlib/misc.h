@@ -3,7 +3,16 @@
 
 #include "config.h"
 #include <assert.h>
-#include <memory.h>
+#ifdef HAVE_MEMORY_H
+ #include <memory.h>
+#else
+ #include <string.h>
+#endif
+
+#ifdef __MINT__ // has memory.h, but memset defined in string.h anyway.
+ #include <string.h>
+#endif
+
 #include <algorithm>
 
 inline unsigned int bitsToBytes(unsigned int bitCount)

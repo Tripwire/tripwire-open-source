@@ -1,0 +1,18 @@
+#!/bin/sh
+
+on_battery_power() {
+  case `uname` in
+  Darwin)  pmset -g batt | grep -q discharging
+    *) false
+  esac
+}
+
+if on_battery_power; then
+  echo "Skipping tripwire check due to computer being on battery power" >&2
+  exit 1
+fi
+TIMESTAMP=$(/bin/date +%Y-%m-%dT%H:%M:%S%z)
+time TRIPWIRE_ROOT/sbin/tripwire -m c 2>&1 | tee TRIPWIRE_LOG_DIR/tripwire_periodic_$TIMESTAMP.log
+TRIPWIRE_ROOT/sbin/tripwire_log_rotate "TRIPWIRE_LOG_DIR/tripwire_periodic_" ".log"
+
+## Todo: Automatically groom reports in `TRIPWIRE_DB_DIR/report/*.twr`

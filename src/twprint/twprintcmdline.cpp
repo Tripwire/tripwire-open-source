@@ -66,6 +66,8 @@
 #include "fco/twfactory.h"
 #include "fco/fcospeclist.h"		// cFCOSpecList
 #include "fco/fcopropdisplayer.h"
+#include "fco/signature.h"
+
 #include <set>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -118,6 +120,9 @@ static void InitCmdLineCommon(cCmdLineParser& parser)
     
     // unattended operation
 	parser.AddArg(cTWPrintCmdLine::PASSPHRASE,		TSTRING(_T("P")),	TSTRING(_T("passphrase")),		cCmdLineParser::PARAM_ONE);
+    
+    
+    parser.AddArg(cTWPrintCmdLine::HEXADECIMAL,		TSTRING(_T("h")),	TSTRING(_T("hexadecimal")),		cCmdLineParser::PARAM_NONE);
 
 	// the paramters to the command line ... for now, this will take "many", even though in some
 	// modes, this is not valid to do...
@@ -276,6 +281,9 @@ static void FillOutCmdLineInfo(cTWPrintModeCommon* pModeInfo, const cCmdLinePars
 			    ASSERT(iter.NumParams() > 0);	// should be caught by cmd line parser
 			    pModeInfo->mSiteKeyFile = iter.ParamAt(0);
 			break;
+            case cTWPrintCmdLine::HEXADECIMAL:
+			    cArchiveSigGen::SetHex(true);
+                break;
 		    case cTWPrintCmdLine::PASSPHRASE:
 			{
 				// this bites! I have to make sure it is a narrow char string

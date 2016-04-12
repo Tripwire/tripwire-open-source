@@ -110,7 +110,7 @@ namespace tss
 #if USE_STD_CPP_LOCALE_WORKAROUND
             return std::use_facet( l, pf );
 #else
-            return std::use_facet< FacetT >( l ); pf;  // This is C++ standard
+            return std::use_facet< FacetT >( l ); (void)pf;  // This is C++ standard
 #endif
     }
 }

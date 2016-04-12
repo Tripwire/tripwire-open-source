@@ -114,7 +114,11 @@ int echild();
 #	define GID_RESET	-2		/* reset EGID to RGID */
 #endif
 #ifndef DEF_PATH
-#	define DEF_PATH	"PATH=/bin:/usr/bin:/usr/ucb"  /* default search path */
+#	ifdef __FreeBSD_cc_version
+#		define DEF_PATH	"PATH=/sbin:/usr/sbin:/bin:/usr/bin"  /* default search path */
+#	else
+#		define DEF_PATH "PATH=/bin:/usr/bin:/usr/ucb"	/* default search path */
+#	endif
 #endif
 #ifndef DEF_SHELL
 #	define DEF_SHELL	"SHELL=/bin/sh"	/* default shell */

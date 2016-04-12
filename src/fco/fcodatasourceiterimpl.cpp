@@ -200,10 +200,7 @@ void cFCODataSourceIterImpl::Next()
 iFCO* cFCODataSourceIterImpl::CreateFCO() //throw (eError)				
 {
 	ASSERT( ! Done() );
-
-	if( ! InitializeTypeInfo( *mCurPos ) )
-		return 0;
-
+	InitializeTypeInfo( *mCurPos );
 	(*mCurPos)->AddRef();
 	return *mCurPos;
 }

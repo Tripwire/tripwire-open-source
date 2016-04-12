@@ -49,6 +49,8 @@ TSS_BeginStringtable( cFS )
 	TSS_StringEntry( fs::STR_FT_SYMLINK,			    _T("Symbolic Link") ),
 	TSS_StringEntry( fs::STR_FT_FIFO,				    _T("FIFO") ),
 	TSS_StringEntry( fs::STR_FT_SOCK,				    _T("Socket") ),
+	TSS_StringEntry( fs::STR_FT_DOOR,				    _T("Door") ),
+	TSS_StringEntry( fs::STR_FT_PORT,				    _T("Event Port") ),
 
 	// property names
 	TSS_StringEntry( fs::STR_PROP_DEV,			        _T("Device Number") ),

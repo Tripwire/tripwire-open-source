@@ -75,6 +75,8 @@
 // TODO: figure out a way to do this without including these headers.
 // pool of objects?
 
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // class iSignatrue -- Interface all signatures will implement.
 ///////////////////////////////////////////////////////////////////////////////
@@ -98,7 +100,7 @@ public:
     //
     virtual void        Init  () = 0;
         // call before beginning hashing
-    virtual void        Update( const byte* pbData, int cbDataLen ) = 0;
+    virtual void        Update( const byte* const pbData, int cbDataLen ) = 0;
         // may be called multiple times -- best to call with blocks of size SUGGESTED_BLOCK_SIZE,
         // but can handle any size data.
     virtual void        Finit () = 0;
@@ -145,6 +147,9 @@ public:
         // produces signature of archive for all signatures in the list
         // remember to rewind archive!
 
+    static bool Hex();
+    static void SetHex(bool);
+    
 private:    
     // don't let C++ create these functions
     cArchiveSigGen( const cArchiveSigGen& );
@@ -152,6 +157,8 @@ private:
 
     typedef std::vector< iSignature* > container_type;
     container_type mSigList;
+    
+    static bool mHex;
 };
 
 
@@ -168,7 +175,7 @@ public:
     virtual ~cNullSignature();
 
     virtual void    Init  ();
-    virtual void    Update( const byte* pbData, int cbDataLen );
+    virtual void    Update( const byte* const pbData, int cbDataLen );
     virtual void    Finit ();
     virtual TSTRING AsString() const;
 	virtual TSTRING AsStringHex() const;
@@ -195,7 +202,7 @@ public:
     virtual ~cChecksumSignature();
 
     virtual void    Init  ();
-    virtual void    Update( const byte* pbData, int cbDataLen );
+    virtual void    Update( const byte* const pbData, int cbDataLen );
     virtual void    Finit ();
     virtual TSTRING AsString() const;
 	virtual TSTRING AsStringHex() const;
@@ -223,7 +230,7 @@ public:
     virtual ~cCRC32Signature();
 
     virtual void    Init  ();
-    virtual void    Update( const byte* pbData, int cbDataLen );
+    virtual void    Update( const byte* const pbData, int cbDataLen );
     virtual void    Finit ();
 
     virtual TSTRING AsString() const;
@@ -252,7 +259,7 @@ public:
     virtual ~cMD5Signature();
 
     virtual void    Init  ();
-    virtual void    Update( const byte* pbData, int cbDataLen );
+    virtual void    Update( const byte* const pbData, int cbDataLen );
     virtual void    Finit ();
     virtual TSTRING AsString() const;
 	virtual TSTRING AsStringHex() const;
@@ -281,7 +288,7 @@ public:
 	virtual ~cSHASignature();
 
     virtual void    Init  ();
-    virtual void    Update( const byte* pbData, int cbDataLen );
+    virtual void    Update( const byte* const pbData, int cbDataLen );
     virtual void    Finit ();
 	virtual TSTRING	AsString() const;
 	virtual TSTRING AsStringHex() const;
@@ -291,12 +298,17 @@ public:
 	virtual void	Write(iSerializer* pSerializer) const;
 
 protected:
-	enum { SIG_UINT32_SIZE = SHA_DIGEST_LENGTH/4 };
-
-    SHA_CTX		mSHAInfo;
-
+    
     virtual bool	IsEqual(const iSignature& rhs) const;
+    
+#ifdef HAVE_OPENSSL_SHA_H
+	enum { SIG_UINT32_SIZE = SHA_DIGEST_LENGTH/4 };
+    SHA_CTX		mSHAInfo;
     uint32		sha_digest[SHA_DIGEST_LENGTH/4];
+#else
+    enum { SIG_UINT32_SIZE = 5 };
+    SHS_INFO mSHAInfo;
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -312,7 +324,7 @@ public:
 	virtual ~cHAVALSignature();
 
     virtual void    Init  ();
-    virtual void    Update( const byte* pbData, int cbDataLen );
+    virtual void    Update( const byte* const pbData, int cbDataLen );
     virtual void    Finit ();
 	virtual TSTRING	AsString() const;
 	virtual TSTRING AsStringHex() const;

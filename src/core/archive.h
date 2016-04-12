@@ -85,6 +85,8 @@ TSS_EXCEPTION( eArchiveStringTooLong, eArchive );
 class cArchive
 {
 public:
+    virtual ~cArchive() {}
+    
 	// convenience methods
     //
     // Specific Read functions throw(eArchive) if EOF is reached because
@@ -257,7 +259,8 @@ public:
     enum OpenFlags
     {
         FA_OPEN_TEXT        = 0x1,
-        FA_OPEN_TRUNCATE    = 0x2
+        FA_OPEN_TRUNCATE    = 0x2,
+        FA_NONBLOCKING      = 0x4   
     };
 
     // TODO: Open should throw

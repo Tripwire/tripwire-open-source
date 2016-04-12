@@ -93,7 +93,7 @@ void cFCOName::ClearNameTable()
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName::cFCOName(iFCONameInfo* pNI) : 
-    mpPathName(0)
+    mpPathName(0), mDelimiter('/')
 {
     SetNameInfo(pNI);
 	mpPathName = new cFCOName_i;
@@ -118,7 +118,7 @@ cFCOName::cFCOName(const cFCOName& rhs) :
 }
 
 cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) : 
-    mpPathName(0)
+    mpPathName(0), mDelimiter('/')
 {    
     SetNameInfo(pNI);
 	mpPathName = new cFCOName_i;
@@ -132,7 +132,7 @@ cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) :
 }
 
 cFCOName::cFCOName(const TCHAR* rhs, iFCONameInfo* pNI) : 
-    mpPathName(0)
+    mpPathName(0), mDelimiter('/')
 {
     SetNameInfo(pNI);
 	mpPathName = new cFCOName_i;
@@ -211,88 +211,43 @@ void cFCOName::operator = (const TCHAR* rhs)
 #endif 
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// ParseString
-//		here is how the string is broken down: between every item in 
-//		mpPathName.mNames, there is assumed to be a delimiter. It is assumed there
-//		is no delimiter at the beginning of the path. If there is, or if
-//		double delimiters appear anywhere, that is signified by putting an empty 
-//		string into the list. Any delimiter that appears at the end of the string
-//		is removed (so that /etc/ becomes /etc)
-///////////////////////////////////////////////////////////////////////////////
-
-#define RADS_NTMBS_VER      // Try it out first
-#ifndef RADS_NTMBS_VER
-
-void cFCOName::ParseString(const TCHAR* str)
-{
-	ASSERT(mpPathName);
-	mpPathName->ClearList();
-	int len = _tcslen(str);
-
-	TSTRING			name;
-	const TCHAR* pEnd		= str + len;
-	const TCHAR* pChar		= str;
-
-	// break off the next word to add..
-	const TCHAR* pBegin = pChar;
-	while(pChar < pEnd)
-	{
-		while((*pChar != mDelimiter) && (pChar < pEnd))
-			pChar++;
-		// if pChar == pBegin, then we have an extra delimiter; add it.
-		// TODO -- right now, I will suppress the final delimiter; I don't know if this is the
-		//		right thing to do
-		if(pChar == pBegin)
-		{
-			// NOTE -- there is a special case here -- "/" (the root directory); it will be represented
-			//		as a single empty node. This is handled by the (pChar != str) below.
-			if((pChar + 1 >= pEnd) && (pChar != str))
-				// don't add the trailing slash
-				break;
-			name = _T("");
-		}
-		else	
-			name.assign(pBegin, (pChar - pBegin));
-		cFCONameTblNode* pNode = cFCOName_i::msNameTbl.CreateNode(name);
-		mpPathName->mNames.push_back(pNode);
-		pBegin = ++pChar;
-	}
-}
-
-#else//RADS_NTMBS_VER
-
-
 void cFCOName::ParseString( const TCHAR* pszin )
 {
-	ASSERT( mpPathName != 0);
-	
-    mpPathName->ClearList();
-	
-    TSTRING ats = const_cast<TCHAR *>(pszin + 0);
-    TSTRING::const_iterator at = ats.begin();
-    TSTRING::const_iterator end = at;
-    while ( *end ) ++end;               // NOTE: Find end
+   ASSERT(mpPathName != 0);
+   ASSERT(pszin != 0);
+  
+   mpPathName->ClearList();
+   
+   const TCHAR* at = (pszin + 0);
+   const TCHAR* begin = at;
+   const TCHAR* end = at;
+   int components = 0;
 
-	TSTRING::const_iterator beg = at;
-	while ( at < end )
-	{
-		while ( !(*at == mDelimiter) && at < end )
-            at = *at ? at + 1 : at;
+   while (*end)
+      ++end;  
 
-        if ( at == beg && (*at ? at + 1 : at) >= end && at != ats.begin() )
-            break;
+   while (at < end)
+   {
+      while (*at && !(*at == mDelimiter) && (at < end))
+         at++;
 
-		cFCONameTblNode* pNode = 
-            cFCOName_i::msNameTbl.CreateNode( TSTRING( beg, at ) );
+      TSTRING name(begin, at);      
 
-        mpPathName->mNames.push_back( pNode );
-		
-        beg = ( at = (*at ? at + 1 : at) );
-	}
+      if (name.length() > 0 || components == 0) 
+      {
+         cFCONameTblNode* pNode = 
+            cFCOName_i::msNameTbl.CreateNode(name);
+       
+         mpPathName->mNames.push_back(pNode);
+      }         
+
+      components++;
+      at++;
+      begin=at;
+      //begin = (at = tss::strinc(at));
+   }
 }
 
-#endif//RADS_NTMBS_VER
 
 ///////////////////////////////////////////////////////////////////////////////
 // AsString
@@ -317,14 +272,15 @@ TSTRING	cFCOName::AsString() const
 		return str;
 	}
 	// end ugly root dir hacks ...
-
 	ListType::iterator i = mpPathName->mNames.begin();
 	while(i != mpPathName->mNames.end())
 	{
+		TSTRING current = (*i)->GetString();
 		// the loop is constructed in this odd fashion because I don't want a trailing mDelimiter
-		str += (*i)->GetString();
+		str += current;
 		i++;
-		if(i != mpPathName->mNames.end())
+
+		if(i != mpPathName->mNames.end() && current != "/")
 			str += mDelimiter;
 	}
 	
@@ -411,17 +367,15 @@ void cFCOName::Read(iSerializer* pSerializer, int32 version)
 
 	TSTRING str;
     pSerializer->ReadString(str);
+   
 	int16 dummy = 0;
 
 	// serialize the delimiter
 #ifdef _UNICODE
 	pSerializer->ReadInt16( (int16&)mDelimiter );
 #else
-	pSerializer->ReadInt16( dummy );
-	const wchar_t wc = dummy;
-    size_t N = ::wcstombs( &mDelimiter, &wc, 1 );	
-    if ( N == (size_t)-1 )
-        throw eCharacterEncoding();
+	pSerializer->ReadInt16( dummy ); // delimiter, but it's always '/' anyway in OST.
+        mDelimiter = '/';
 #endif
 
 	// read the case-sensitiveness
@@ -450,8 +404,7 @@ void cFCOName::Write(iSerializer* pSerializer) const
 #ifdef _UNICODE
 	pSerializer->WriteInt16(mDelimiter);
 #else
-	wchar_t wc;
-	mbtowc(&wc, &mDelimiter, 1);
+        unsigned short wc = (unsigned short)'/';
 	pSerializer->WriteInt16(wc);
 #endif
 

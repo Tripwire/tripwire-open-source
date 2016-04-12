@@ -51,6 +51,7 @@
 class cDefaultSpecMask : public iFCOSpecMask
 {
 public:
+        cDefaultSpecMask() {}
 	virtual const TSTRING& GetName() const;
 	virtual bool Accept(const iFCO* pFCO) const;
 private:

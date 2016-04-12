@@ -1,0 +1,95 @@
+What's new in Open Source Tripwire 2.4.3.0:
+
+* This update fixes compilation errors on modern compilers (GCC 4.7+ and LLVM/clang), 
+as well as some additional errors encountered on various platforms.  This is intended
+to supersede patches against 2.4.2.x, e.g. http://www.linuxfromscratch.org/blfs/view/svn/postlfs/tripwire.html
+and the additional changes in the FreeBSD ports tree: http://svnweb.freebsd.org/ports/head/security/tripwire/
+
+* This update also fixes handling of SHA hashes, which appears to have broken when 
+someone added support for using OpenSSL's hash algorithms vs. the ones in the OST tree.
+This resulted in SHA hashes always being reported as 'AAAAAAAAAAAAAAAAA'.  This is 
+now fixed for both with- and without-OpenSSL builds.
+
+* The 2.4.3 tree no longer contains an RPM spec file. Instead, the 'Packaging' file
+points at where current RPM, Debian, & other package configs can be obtained.
+
+* The 'touchconfig.sh' script bumps file timestamps to prevent spurious make errors
+(usually about a missing aclocal-1.8) on a fresh clone/untar/etc., which occur due
+to all files in the tree initially having the same timestamps. The only case where 
+an 'autoreconf -i' is actually required is on SkyOS 5, where SIZEOF_LONG_LONG gets 
+defined incorrectly otherwise.
+
+* Imported a set of contributed scripts from 2.4.2.3 fork (github.com/steakknife/tripwire)
+
+* Fixed large file (>2GB) support for various platforms, including 32-bit Linux.
+
+* Added '-h' argument to display hashes as hex instead of base64 (siggen already allowed this)
+
+* Added the long-requested MAILFROMADDRESS config param for email reporting.
+
+
+The update has been tested on a variety of platforms: 
+
+Linuxes
+- CentOS 7 (amd64) + gcc 4.8.5
+- Ubuntu 14.0.4 (amd64) + gcc 4.x
+- RHEL 3.4 (Itanium) + gcc 3.4.3
+- Alpine Linux 3.3.3 + gcc 5.3.0
+- Android 6.0 (arm) + gcc 4.9
+- Raspbian 7 (wheezy) (armv6l) + gcc 4.6.3
+- openSuSE Tumbleweed (20160408) (i586) + gcc 5.3.1
+
+OSX
+- Mac OS X 10.11 + LLVM 7.0.2 / clang-700.1.81
+
+BSDs
+- FreeBSD 10.2 (amd64) + LLVM/clang
+- OpenBSD 5.8 (amd64 & x86) + gcc 4.2.1
+- NetBSD 6.0 (x86) + gcc 4.5.1
+- DragonflyBSD 4.4.2 + gcc 5.2.1
+- MidnightBSD 0.7 + gcc 4.2.1
+- HardenedBSD 11.0 + gcc 4.8.5
+
+UNIXes
+- Solaris 10 x86 + gcc 3.4.3
+- OpenIndiana 151 + gcc 4.8.5 [an OpenSolaris/illumos distro]
+- AIX 5.2 + gcc 4.3.1
+- HP-UX 11.23 + gcc 4.2.3
+
+Other
+- Minix 3.3.0 + LLVM/clang
+- Debian GNU/Hurd 0.6 + gcc 4.9.2
+- Cygwin 2.4.1 (amd64) + gcc 5.3.0
+- Haiku R1 Alpha 4 + gcc 4
+- Syllable 0.67 + gcc 4.1.2
+- SkyOS 5 (beta 6947) + gcc 4.1.1
+- Sortix 1.0 + gcc 5.3.0
+- Icaros 2.1 (AROS) + gcc 4.6.4
+- MiNT 1.17 (Atari ST/TT) + gcc 4.6.4
+
+Building Notes:
+
+* If cross compiling, a '--disable-openssl' argument must be passed to ./configure,
+since its OpenSSL existence check currently uses an AC_TRY_RUN macro.  Additionally,
+generated Makefiles don't automagically find the cross-compiler's 'ar' and try to
+use the local one, which fails. Until this is resolved, this can be fixed with a symlink
+named 'ar' pointing at the cross-compiler copy, with a path such that make finds it
+instead of the local 'ar'.
+
+* The '--enable-static' configure argument is not guaranteed to work on all
+platforms, and your mileage may vary. And when it works, it may not be doing
+what you expect. For example, even if a program is statically linked with
+glibc, the static glibc code may still load shared libraries behind the
+scenes, for things like iconv character conversion and nsswitch name lookups.
+
+* To create PIE (Position-Independent Executable) binaries, add “-fPIE" to CFLAGS 
+and "-fPIE -pie" to LDFLAGS.  This is required by recent Android versions, and 
+may be desirable elsewhere. It's simplest to add these to configure.in and run 
+autoreconf -i instead of hand-editing each Makefile individually.
+
+* Older versions of Open Source Tripwire reportedly do not build on Tru64 UNIX.
+This is likely to be true with 2.4.3.0 as well, due to the lack of appropriate
+hardware to test it on. If anyone out there has a Tru64 box and wants to fix 
+this, patches are always welcome.
+ 
+

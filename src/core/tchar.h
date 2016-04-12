@@ -125,8 +125,9 @@ typedef std::ifstream                TIFSTREAM;
 #define _T(x) x
 
 // misc...
+#ifndef __cdecl
 #define __cdecl 
-
+#endif
 
 #endif // WIN32
 

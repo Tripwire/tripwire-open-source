@@ -4,6 +4,7 @@ AM_INSTALL_PROGRAM_FLAGS = -m 755
 INCLUDES = -I..
 LIBS = -ltripwire -lcryptlib @LIBS@
 LDFLAGS = @LDFLAGS@ -L../../lib
+LN_S = @LN@
 
 sbin_PROGRAMS = twprint
 twprint_SOURCES = \
@@ -14,5 +15,5 @@ DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
 CLEANFILES = ../../bin/twprint
 
 all: $(sbin_PROGRAMS)
-	@test -d ../../bin && ln -f $(sbin_PROGRAMS) ../../bin
+	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin
 

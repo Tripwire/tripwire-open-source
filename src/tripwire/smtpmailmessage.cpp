@@ -54,6 +54,10 @@
 #include <arpa/inet.h>
 #include <sys/utsname.h>
 
+#ifdef _SORTIX_SOURCE
+# include <sys/select.h>
+#endif
+
 /* Some systems like Solaris and AIX don't define
  * INADDR_NONE, but it's pretty standard.  If not,
  * then the OS _should_ define it for us.
@@ -65,6 +69,12 @@
 #include <unistd.h>
 
 #define INVALID_SOCKET -1
+
+#ifdef __AROS__
+ #ifndef HAVE_GETHOSTNAME
+  #define HAVE_GETHOSTNAME 1
+ #endif
+#endif
 
 #ifndef HAVE_GETHOSTNAME
 static int gethostname( char* name, int namelen )
@@ -87,7 +97,6 @@ static int gethostname( char* name, int namelen )
 	}
 }
 #endif
-
 	// Unix does not require us to go though any silly DLL hoops, so we'll
 	// just #define the pointers to functions needed by Windows to be the 
 	// berkely functions.
@@ -187,12 +196,16 @@ long cSMTPMailMessage::GetServerAddress()
 	}
 	else
 	{
+#ifdef _SORTIX_SOURCE
+		return INADDR_NONE;
+#else
 		// do a DNS lookup of the hostname and get the long
 		hostent *ent = mPfnGethostbyname(sNarrowString.c_str());
 		if (!ent)
 			return INADDR_NONE;
 		else
 			return *(long *)ent->h_addr_list[0];
+#endif
 	}
 }
 

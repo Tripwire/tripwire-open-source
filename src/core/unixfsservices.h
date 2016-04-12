@@ -99,10 +99,10 @@ class cUnixFSServices : public iFSServices
   ////////////////////////////////////////
   virtual bool    IsCaseSensitive() const;
   // returns true if the file system is case sensitive
-  virtual TCHAR*      GetStandardBackupExtension() const;
+  virtual const TCHAR*      GetStandardBackupExtension() const;
   // returns normal string to append to backup files for this os.
   // (e.g. "~" for unix and ".bak" for winos)
-  virtual TCHAR       GetPathSeperator() const;
+  virtual TCHAR       GetPathSeparator() const;
     
   ////////////////////////////////////////
   // process functions

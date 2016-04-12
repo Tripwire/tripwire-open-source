@@ -150,6 +150,11 @@ inline void tss_insert_in_hash( const wc16_string& lhs, const std::string& rhs )
 std::string::const_iterator
 cStringUtil::Convert( std::string& nbs, const wc16_string& dbs )
 {
+#ifdef __AROS__
+    nbs.resize(dbs.length());
+    for (int x=0; x<dbs.length(); ++x)
+        nbs[x] = (unsigned char)dbs[x];
+#else
     cDebug d("cStringUtil::Convert( char, w16 )");
 
     ASSERT( (void*)nbs.c_str() != (void*)dbs.c_str() );
@@ -192,7 +197,7 @@ cStringUtil::Convert( std::string& nbs, const wc16_string& dbs )
         tss_insert_in_hash( dbs, nbs );
     }
 
-
+#endif
     return nbs.begin();
 }
 
@@ -200,6 +205,12 @@ cStringUtil::Convert( std::string& nbs, const wc16_string& dbs )
 wc16_string::const_iterator
 cStringUtil::Convert( wc16_string& dbs, const std::string& nbs )
 {
+#ifdef __AROS__
+    dbs.resize(nbs.length());
+    for (int x=0; x<nbs.length(); x++)
+       dbs[x] = (unsigned short)nbs[x];
+#else
+
     cDebug d("cStringUtil::Convert( w16, char )");
 
     if (nbs.size() != 0)
@@ -231,6 +242,7 @@ cStringUtil::Convert( wc16_string& dbs, const std::string& nbs )
     }
     else
         dbs.resize(0);
+#endif
 
     return dbs.begin();
 }

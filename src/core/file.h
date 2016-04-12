@@ -47,7 +47,9 @@
 #include "fileerror.h"
 #endif
 
-
+#ifdef __MINT__ // for off_t
+#include <sys/types.h>
+#endif
 
 //=============================================================================
 // eFile exception class
@@ -73,8 +75,7 @@ class  cFile
 {
 public:
 #if IS_UNIX
-	typedef int32 File_t;
-
+    typedef off_t File_t;
 #else //WIN32
     typedef int64 File_t;
 
@@ -82,22 +83,22 @@ public:
 
 	enum SeekFrom 
 	{
-		SEEK_BEGIN = 0,
-		SEEK_CURRENT,
-		SEEK_EOF
+            SEEK_BEGIN = 0,
+            SEEK_CURRENT,
+            SEEK_EOF
 	};
 
 	enum OpenFlags
 	{
-		// note that reading from the file is implicit
-		//
-		OPEN_READ			= 0x00000001,	// not needed, but makes calls nice...
-		OPEN_WRITE			= 0x00000002,	// we will be writing to the file
-		OPEN_LOCKED_TEMP	= 0x00000004,	// the file should not be readable by other processes and should be removed when closed
-		OPEN_TRUNCATE		= 0x00000008,	// opens an empty file. creates it if it doesn't exist. Doesn't make much sense without OF_WRITE
-		OPEN_CREATE			= 0x00000010,	// create the file if it doesn't exist; this is implicit if OF_TRUNCATE is set
-		OPEN_TEXT			= 0x00000020,
-		OPEN_EXCLUSIVE			= 0x00000040	// Use O_CREAT | O_EXCL
+            // note that reading from the file is implicit	
+            OPEN_READ          = 0x00000001,	// not needed, but makes calls nice...
+            OPEN_WRITE         = 0x00000002,	// we will be writing to the file
+            OPEN_LOCKED_TEMP   = 0x00000004,	// the file should not be readable by other processes and should be removed when closed
+            OPEN_TRUNCATE      = 0x00000008,	// opens an empty file. creates it if it doesn't exist. Doesn't make much sense without OF_WRITE
+            OPEN_CREATE         = 0x00000010,	// create the file if it doesn't exist; this is implicit if OF_TRUNCATE is set
+            OPEN_TEXT           = 0x00000020,
+            OPEN_EXCLUSIVE      = 0x00000040,	// Use O_CREAT | O_EXCL
+            OPEN_NONBLOCKING    = 0x00000080,    // Use non-blocking i/o [Unix]
 	};
 
 	//Ctor, Dtor, CpyCtor, Operator=:
@@ -139,6 +140,17 @@ private:
 public:
 	bool		isWritable;	
 };
+
+
+#ifdef __AROS__
+class cArosPath
+{
+public:
+	static TSTRING AsPosix(const TSTRING& in);
+	static TSTRING AsNative(const TSTRING& in);
+};
+#endif
+
 
 #endif //__FILE_H
 

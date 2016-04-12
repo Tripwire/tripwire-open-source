@@ -119,8 +119,15 @@ cFile::~cFile()
 ///////////////////////////////////////////////////////////////////////////////
 // Open
 ///////////////////////////////////////////////////////////////////////////////
+
+#ifndef __AROS
 void cFile::Open( const TSTRING& sFileName, uint32 flags )
 {
+#else
+void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
+{
+	TSTRING sFileName = cArosPath::AsNative(sFileNameC);
+#endif
 	mode_t openmode = 0664;
 	if ( mpData->mpCurrStream != NULL )
 		Close();
@@ -158,9 +165,13 @@ void cFile::Open( const TSTRING& sFileName, uint32 flags )
 		openmode = (mode_t) 0600; // Make sure only root can read the file
 	}
 
-	if ( flags & OPEN_CREATE )
-		perm |= O_CREAT;
+        if ( flags & OPEN_CREATE )
+            perm |= O_CREAT;
 
+#ifdef O_NONBLOCK
+        if( flags & OPEN_NONBLOCKING )
+            perm |= O_NONBLOCK;
+#endif
 	//
 	// actually open the file
 	//
@@ -169,6 +180,8 @@ void cFile::Open( const TSTRING& sFileName, uint32 flags )
 	{
 		throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
 	}
+
+#ifndef __AROS__
 	if( flags & OPEN_LOCKED_TEMP )
 	{
 		// unlink this file 
@@ -176,9 +189,10 @@ void cFile::Open( const TSTRING& sFileName, uint32 flags )
         {
             // we weren't able to unlink file, so close handle and fail
             close( fh );
-			throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
+            throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
         }
 	}
+#endif
 
 	//
 	// turn the file handle into a FILE*
@@ -248,7 +262,7 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
     fprintf(stderr, "%d\n", blowupCount);
     #endif
 
-	if (fseek( mpData->mpCurrStream, offset, apiFrom ) != 0)
+    if (fseeko( mpData->mpCurrStream, offset, apiFrom ) != 0)
     {
         #ifdef _DEBUG
         cDebug d("cFile::Seek");
@@ -257,7 +271,7 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
         throw eFileSeek();
     }
 
-	return ftell( mpData->mpCurrStream );
+    return ftello(mpData->mpCurrStream);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -369,3 +383,31 @@ void cFile::Truncate( File_t offset ) // throw(eFile)
 		throw( eFileTrunc( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) );
 }
 
+
+#ifdef __AROS__
+TSTRING cArosPath::AsPosix( const TSTRING& in )
+{
+	if (in[0] == '/')
+		return in;
+
+	TSTRING out = '/' + in;
+	std::replace(out.begin(), out.end(), ':', '/');
+
+	return out;
+}
+
+TSTRING cArosPath::AsNative( const TSTRING& in )
+{
+	if (in[0] != '/')
+		return in;
+
+	int x;
+	for (x=1; in[x] == '/' && x<in.length(); x++);
+
+	TSTRING out = in.substr(x); 
+	TSTRING::size_type t = out.find_first_of('/');
+	out[t] = ':';
+
+	return out;
+} 
+#endif

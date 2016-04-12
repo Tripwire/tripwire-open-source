@@ -41,6 +41,7 @@
 
 #include "fsparserutil.h"
 #include "core/fsservices.h"
+#include "core/file.h"
 #include "fspropset.h"
 #include "fsstrings.h"
 #include "fco/fcopropvector.h"
@@ -135,6 +136,10 @@ void cFSParserUtil::InterpretFCOName( const std::list<TSTRING>& l, cFCOName& nam
     TSTRING strT;
     for( std::list<TSTRING>::const_iterator i = l.begin(); i != l.end(); i++ )
         strT += *i;
+
+#ifdef __AROS__
+    strT = cArosPath::AsPosix(strT);
+#endif
 
     // let cFCOName handle interpretation
     nameOut = strT;

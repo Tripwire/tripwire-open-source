@@ -43,14 +43,15 @@
 #if IS_UNIX
 namespace //unique
 {
-
-	TCHAR* _itot( int value, TCHAR* string, int radix)
+	TCHAR* tw_itot( int value, TCHAR* string, int radix)
 	{
 		_stprintf( string, "%d", value );
 		return string;
 	}
 }
-#endif
+#else
+  #define tw_itot _itot
+#endif //IS_UNIX
 
 eInternal::eInternal(TCHAR* sourceFile, int lineNum)
 :   eError(_T(""))
@@ -60,7 +61,7 @@ eInternal::eInternal(TCHAR* sourceFile, int lineNum)
     mMsg = _T("File: ");
     mMsg += sourceFile;
     mMsg += _T(" Line: ");
-    mMsg += _itot(lineNum, buf, 10);
+    mMsg += tw_itot(lineNum, buf, 10);
 }
 
 //=============================================================================
