@@ -150,8 +150,9 @@ public:
 
 class iMimeEncoding
 {
-    public:
-
+public:
+        virtual ~iMimeEncoding() {}
+    
         virtual
         std::string 
         Encode( const std::string& sIn, 
@@ -173,7 +174,9 @@ class iMimeEncoding
 // TODO:BAM -- convert ToBase64 to Encode
 class cBase64Encoding : public iMimeEncoding
 {
-    public:
+public:
+        virtual ~cBase64Encoding() {}
+    
         virtual
         std::string 
         Encode( const std::string& sIn, 
@@ -191,7 +194,9 @@ class cBase64Encoding : public iMimeEncoding
 
 class cQuotedPrintableEncoding : public iMimeEncoding
 {
-    public:
+public:
+        virtual ~cQuotedPrintableEncoding() {}
+    
         virtual
         std::string 
         Encode( const std::string& sIn, 

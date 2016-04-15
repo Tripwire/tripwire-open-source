@@ -59,6 +59,8 @@ public:
 	{
 		return _T('/');
 	}
+    
+    virtual ~cUnixNameInfo() {}
 };
 
 

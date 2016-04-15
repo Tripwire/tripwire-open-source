@@ -155,6 +155,8 @@ public:
         E_OUTPUT_STREAM_FORMAT	= 706,
 		E_NUMITEMS
 	};
+    
+    virtual ~iSerializer() {}
 };
 
 

@@ -62,9 +62,7 @@ public:
 		// (b) returning that object in their implementation of GetType()
 		// You can use the macros below to simplify the process
 
-    #ifdef _SUNPRO
-    ~iTyped();
-    #endif
+    virtual ~iTyped() {}
 };
 
 //////////////////////////////////////////////

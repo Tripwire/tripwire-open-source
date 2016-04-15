@@ -82,9 +82,7 @@ public:
 	virtual void Write(iSerializer* pSerializer) const	= 0;				// throw (eSerializer, eArchive)
 		// objects implement these methods to read and write themselves to a serializer. 
 
-    #ifdef _SUNPRO
-    ~iSerializable();
-    #endif
+    virtual ~iSerializable() {}
 };
 
 class iTypedSerializable : public iTyped, public iSerializable
@@ -101,9 +99,7 @@ public:
 	static int16 MajorVersion(int32 version) { return (int16)((uint32)version >> 16); }
 	static int16 MinorVersion(int32 version) { return (int16)version; }
 
-    #ifdef _SUNPRO
-    ~iTypedSerializable();
-    #endif
+    virtual ~iTypedSerializable() {}
 };
 
 //////////////////////////////

@@ -117,10 +117,9 @@ class iCodeConverter
 
     protected:
 
-        iCodeConverter() 
-        {
-        };
-
+        iCodeConverter() {}
+        virtual ~iCodeConverter() {}
+    
     private:
 
         static iCodeConverter* CreateConverter();
@@ -170,7 +169,7 @@ class cIconvConverter : public iCodeConverter
         virtual int  Convert( ntdbs_t, size_t, const_ntmbs_t, size_t );
 
         cIconvConverter();
-        ~cIconvConverter();
+        virtual ~cIconvConverter();
 
     private:
         void Init();
@@ -189,7 +188,7 @@ class cDoubleIconvConverter : public iCodeConverter
         virtual int  Convert( ntdbs_t, size_t, const_ntmbs_t, size_t );
 
         cDoubleIconvConverter();
-        ~cDoubleIconvConverter();
+        virtual ~cDoubleIconvConverter();
 
     private:
 
@@ -221,6 +220,8 @@ class cWcharIs32BitUcs2Converterer : public iCodeConverter
 public:    
     virtual int  Convert( ntmbs_t, size_t, const_ntdbs_t, size_t );
     virtual int  Convert( ntdbs_t, size_t, const_ntmbs_t, size_t );
+    
+    virtual ~cWcharIs32BitUcs2Converterer() {}
 };
 
 #endif // WCHAR_IS_32_BITS
@@ -239,6 +240,8 @@ class cWcharIs16BitUcs2Converterer : public iCodeConverter
 public:    
     virtual int  Convert( ntmbs_t, size_t, const_ntdbs_t, size_t );
     virtual int  Convert( ntdbs_t, size_t, const_ntmbs_t, size_t );
+    
+    virtual ~cWcharIs16BitUcs2Converterer() {}
 };
 
 #endif // WCHAR_IS_16_BITS
@@ -250,6 +253,8 @@ class cGoodEnoughConverterer : public iCodeConverter
 public:    
     virtual int  Convert( ntmbs_t, size_t, const_ntdbs_t, size_t );
     virtual int  Convert( ntdbs_t, size_t, const_ntmbs_t, size_t );
+    
+    virtual ~cGoodEnoughConverterer() {}
 };
 
 
