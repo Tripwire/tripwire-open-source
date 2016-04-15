@@ -67,9 +67,9 @@
 // UTILITY METHODS
 //////////////////////////////////////////////////////////////////////////////////////////////////
 //
-static void util_PrintFCO(const iFCO* pFCO, iFCOPropDisplayer * pPropDisplayer);
+//static void util_PrintFCO(const iFCO* pFCO, iFCOPropDisplayer * pPropDisplayer);
 static void util_InitBlockArray( cBlockRecordArray& block );
-static void util_MapHierRoot( std::map< std::pair< int, int>, int > dbMap );
+//static void util_MapHierRoot( std::map< std::pair< int, int>, int > dbMap );
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // Insulated implementation:

@@ -81,10 +81,12 @@ void cGenreSpecListPair::SetSpecList(const cFCOSpecList& speclist)
 //=============================================================================
 
 cGenreSpecListVector::cGenreSpecListVector()
+  : std::vector<cGenreSpecListPair>()
 {
 }
 
-cGenreSpecListVector::cGenreSpecListVector(const cGenreSpecListVector& rhs)
+cGenreSpecListVector::cGenreSpecListVector(const cGenreSpecListVector& rhs) 
+  : std::vector<cGenreSpecListPair>()
 {
     *this = rhs;
 }

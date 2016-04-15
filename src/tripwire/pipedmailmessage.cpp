@@ -86,8 +86,6 @@ bool cPipedMailMessage::Send()
     // Get Body and Attachments
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    bool allOK = true;
-
     // get body
     std::string sNBody = cStringUtil::TstrToStr( mstrBody );
 
@@ -96,7 +94,6 @@ bool cPipedMailMessage::Send()
     if( ! GetAttachmentsAsString( sAttachments ) )
     {
         sAttachments.erase();
-        allOK = false;
     }
     
     std::string sSend = sNBody + sAttachments;

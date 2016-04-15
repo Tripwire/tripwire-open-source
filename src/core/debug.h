@@ -190,33 +190,33 @@ inline int cDebug::GetDebugLevel()
 
 #else // DEBUG
 
-inline      cDebug::cDebug          (const char *pLabel) {}
+inline      cDebug::cDebug          (const char *) {}
 inline      cDebug::~cDebug         () {}
-inline      cDebug::cDebug          (const cDebug& rhs) {}
-inline void cDebug::TraceAlways		(const char *format, ...) {}
-inline void cDebug::TraceError		(const char *format, ...) {}
-inline void cDebug::TraceWarning	(const char *format, ...) {}
-inline void cDebug::TraceDebug		(const char *format, ...) {}
-inline void cDebug::TraceDetail		(const char *format, ...) {}
-inline void cDebug::TraceNever		(const char *format, ...) {}
-inline void cDebug::TraceAlways		(const wchar_t *format, ...) {}
-inline void cDebug::TraceError		(const wchar_t *format, ...) {}
-inline void cDebug::TraceWarning	(const wchar_t *format, ...) {}
-inline void cDebug::TraceDebug		(const wchar_t *format, ...) {}
-inline void cDebug::TraceDetail		(const wchar_t *format, ...) {}
-inline void cDebug::TraceNever		(const wchar_t *format, ...) {}
-inline void	cDebug::TraceVaArgs		(int iDebugLevel, const char *format,	va_list &args) {}
-inline void	cDebug::TraceVaArgs		(int iDebugLevel, const wchar_t *format, va_list &args) {}
-inline void cDebug::Trace           (int levelNum, const char* format, ...) {}
-inline void cDebug::Trace           (int levelNum, const wchar_t* format, ...) {}
-inline bool cDebug::AddOutTarget	(OutTarget target) { return false; }
-inline bool cDebug::RemoveOutTarget	(OutTarget target) { return false; }
-inline bool cDebug::HasOutTarget	(OutTarget target) { return false; }
-inline bool cDebug::SetOutputFile	(const char* filename) { return false; }
-inline void cDebug::SetDebugLevel	(int level) {}
+inline      cDebug::cDebug          (const cDebug&) {}
+inline void cDebug::TraceAlways		(const char *, ...) {}
+inline void cDebug::TraceError		(const char *, ...) {}
+inline void cDebug::TraceWarning	(const char *, ...) {}
+inline void cDebug::TraceDebug		(const char *, ...) {}
+inline void cDebug::TraceDetail		(const char *, ...) {}
+inline void cDebug::TraceNever		(const char *, ...) {}
+inline void cDebug::TraceAlways		(const wchar_t *, ...) {}
+inline void cDebug::TraceError		(const wchar_t *, ...) {}
+inline void cDebug::TraceWarning	(const wchar_t *, ...) {}
+inline void cDebug::TraceDebug		(const wchar_t *, ...) {}
+inline void cDebug::TraceDetail		(const wchar_t *, ...) {}
+inline void cDebug::TraceNever		(const wchar_t *, ...) {}
+inline void cDebug::TraceVaArgs		(int, const char *, va_list &) {}
+inline void cDebug::TraceVaArgs		(int, const wchar_t *, va_list &) {}
+inline void cDebug::Trace           (int, const char*, ...) {}
+inline void cDebug::Trace           (int, const wchar_t*, ...) {}
+inline bool cDebug::AddOutTarget	(OutTarget) { return false; }
+inline bool cDebug::RemoveOutTarget	(OutTarget) { return false; }
+inline bool cDebug::HasOutTarget	(OutTarget) { return false; }
+inline bool cDebug::SetOutputFile	(const char*) { return false; }
+inline void cDebug::SetDebugLevel	(int) {}
 inline int  cDebug::GetDebugLevel	(void) { return 0; }
-inline void cDebug::DebugOut	    ( const char* lpOutputString, ... ) {}
-inline void cDebug::DebugOut	    ( const wchar_t* lpOutputString, ... ) {}
+inline void cDebug::DebugOut	    ( const char*, ... ) {}
+inline void cDebug::DebugOut	    ( const wchar_t*, ... ) {}
 
 #endif // DEBUG
 

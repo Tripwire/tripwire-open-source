@@ -2688,6 +2688,8 @@ static bool NotifyEncryptionType(cFileHeader::Encoding encoding, iUserNotify::Ve
     case cFileHeader::ASYM_ENCRYPTION:
         iUserNotify::GetInstance()->Notify(vl, TSS_GetString(cTWAdmin, twadmin::STR_ENCRYPT_TYPE_ASYM).c_str());
         return true;
+    default:
+        ASSERT("Unexpeced encryption type");
     }
 
     iUserNotify::GetInstance()->Notify(vl, TSS_GetString(cTWAdmin, twadmin::STR_ENCRYPT_TYPE_UNK).c_str());
