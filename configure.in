@@ -17,8 +17,8 @@ chmod 755 install-sh 2> /dev/null
 dnl ###############
 dnl Setup defaults
 dnl ###############
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 
 dnl #####################
 dnl Configuration options

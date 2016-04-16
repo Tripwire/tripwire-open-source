@@ -88,6 +88,9 @@ private:
     //
     virtual int GetMax() { return LIMIT_MAX; };
     virtual int GetMin() { return LIMIT_MIN; };
+
+public:
+    virtual ~cInterpretInt() {}
 };
 
 ///////////////////////////////////////////////
@@ -104,6 +107,9 @@ private:
 
     virtual int GetMax() { return LIMIT_MAX; };
     virtual int GetMin() { return LIMIT_MIN; };
+
+public:
+    virtual ~cSeverityLimits() {}
 };
 
 ///////////////////////////////////////////////
@@ -120,6 +126,9 @@ private:
     
     virtual int GetMax() { return LIMIT_MAX; };
     virtual int GetMin() { return LIMIT_MIN; };
+
+public:
+    virtual ~cRecurseDepthLimits() {}
 };
 
 #endif //__TWLIMITS_H

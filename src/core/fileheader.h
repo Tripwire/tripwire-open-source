@@ -86,7 +86,7 @@ inline cFileHeaderID::cFileHeaderID(const TCHAR* id)
 
 inline
 cFileHeaderID::cFileHeaderID( const cFileHeaderID& rhs ) :
-    mIDLen( rhs.mIDLen ) 
+    iSerializable(), mIDLen( rhs.mIDLen ) 
 {
     memcpy( mID, rhs.mID, MAXBYTES );
 }

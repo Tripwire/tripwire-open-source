@@ -45,7 +45,7 @@ int cFCOPropVector::msBitlength(sizeof (uint32) * 8);
 ///////////////////////////////////////////////////////////////////////////////
 // Constructor -- Sets mSize.  Default = 32.
 ///////////////////////////////////////////////////////////////////////////////
-cFCOPropVector::cFCOPropVector(int size)
+cFCOPropVector::cFCOPropVector(int size) : iSerializable()
 {
 	mSize = 32;
 	mMask = 0;
@@ -65,7 +65,7 @@ cFCOPropVector::~cFCOPropVector()
 ///////////////////////////////////////////////////////////////////////////////
 // Copy Constructor
 ///////////////////////////////////////////////////////////////////////////////
-cFCOPropVector::cFCOPropVector(const cFCOPropVector &rhs)
+cFCOPropVector::cFCOPropVector(const cFCOPropVector &rhs) : iSerializable()
 {
 	mSize = rhs.mSize;
 	mMask = rhs.mMask;

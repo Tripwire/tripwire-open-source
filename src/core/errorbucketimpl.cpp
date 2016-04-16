@@ -56,7 +56,6 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
             (cDisplayEncoder::Flags) ( cDisplayEncoder::NON_ROUNDTRIP | 
                                        cDisplayEncoder::ALLOW_WHITESPACE ) );
 	TSTRING errStr;
-    int len;
 
 	//
 	// if the ID is zero, just return.
@@ -86,7 +85,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
         errStr = strm.str();
     }
 
-    len = errStr.length(); // save for later
+    //int len = errStr.length(); // save for later
     TCERR << errStr;
 
     // "First Part" error string

@@ -145,7 +145,8 @@ cFileHeader::cFileHeader()
 }
 
 cFileHeader::cFileHeader(const cFileHeader& rhs)
-:   mID(rhs.mID),
+:   iSerializable(),
+    mID(rhs.mID),
     mVersion(rhs.mVersion),
     mEncoding(rhs.mEncoding)
 {

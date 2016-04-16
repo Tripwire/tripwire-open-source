@@ -55,11 +55,10 @@
 // METHOD CODE
 //=========================================================================
 
-cFSDataSourceIter::cFSDataSourceIter()
+cFSDataSourceIter::cFSDataSourceIter() : cFCODataSourceIterImpl(), mDev(0)
 {
 	// set the case sensitiveness of the parent...
 	//
-    mDev = 0;
 	mParentName.SetCaseSensitive( iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive() );
 }
 
@@ -67,7 +66,7 @@ cFSDataSourceIter::~cFSDataSourceIter()
 {
 }
 
-cFSDataSourceIter::cFSDataSourceIter( const cFSDataSourceIter& rhs )
+cFSDataSourceIter::cFSDataSourceIter( const cFSDataSourceIter& rhs ) : cFCODataSourceIterImpl(), mDev(0)
 {
 	// set the case sensitiveness of the parent...
 	//

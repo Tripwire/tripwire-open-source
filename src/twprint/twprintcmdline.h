@@ -121,6 +121,8 @@ public:
 		// Returns a TSTRING that describes specific usage for a derived mode.
 	virtual cTWPrintCmdLine::CmdLineArgs GetModeID() = 0;
     virtual void SetConfigFile( TSTRING configFilePath ) = 0;
+    
+    virtual ~iTWMode() {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -56,6 +56,8 @@ class iFCOSpecHelper;
 class iFCOSpec : public iSerRefCountObj
 {
 public:
+    virtual ~iFCOSpec() {}
+    
 	virtual const TSTRING& GetName() const = 0;
 		// returns the name of this FCOSpec
 	virtual void SetName(const TSTRING& name) = 0;
@@ -120,13 +122,14 @@ public:
 class iFCOSpecMask
 {
 public:
-	virtual const TSTRING& GetName() const = 0;
+    virtual ~iFCOSpecMask() {}
+    virtual const TSTRING& GetName() const = 0;
 		// return the name of this mask
 
-	virtual bool Accept(const iFCO* pFCO) const = 0;
+    virtual bool Accept(const iFCO* pFCO) const = 0;
 		// returns true if the fco matches the criterion in the SpecMask
 
-	static const iFCOSpecMask* GetDefaultMask();
+    static const iFCOSpecMask* GetDefaultMask();
 		// returns the "default mask" that all iFCOSpecs must have. The default
 		// mask matches every FCO and is called "Default". There is no need to 
 		// destroy the returned pointer
@@ -136,7 +139,7 @@ public:
 // inline implementation
 inline const cFCOPropVector& iFCOSpec::GetPropVector(const iFCO* pFCO) const
 {
-	return GetPropVector(GetSpecMask(pFCO));
+    return GetPropVector(GetSpecMask(pFCO));
 }
 
 

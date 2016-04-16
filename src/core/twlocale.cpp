@@ -57,10 +57,12 @@
 //=========================================================================
 // UTIL FUNCTION PROTOTYPES
 //=========================================================================
-
 static TSTRING& util_FormatTimeC( struct tm* ptm, TSTRING& strBuf );
-static TSTRING& util_FormatTimeCPlusPlus( struct tm* ptm, TSTRING& strBuf );
 static TSTRING& util_FormatTime( struct tm* ptm, TSTRING& strBuf );
+
+#if !USES_CLIB_DATE_FUNCTION
+static TSTRING& util_FormatTimeCPlusPlus( struct tm* ptm, TSTRING& strBuf );
+#endif
 
 //=========================================================================
 // PUBLIC METHOD CODE
@@ -281,6 +283,7 @@ TSTRING& util_FormatTime( struct tm* ptm, TSTRING& strBuf )
 }
 
 
+#if !USES_CLIB_DATE_FUNCTION
 TSTRING& util_FormatTimeCPlusPlus( struct tm* ptm, TSTRING& strBuf )
 {
     ASSERT( ptm );
@@ -299,6 +302,7 @@ TSTRING& util_FormatTimeCPlusPlus( struct tm* ptm, TSTRING& strBuf )
     strBuf = sstr.str();
     return strBuf;
 }
+#endif
 
 
 TSTRING& util_FormatTimeC( struct tm* ptm, TSTRING& strBuf )

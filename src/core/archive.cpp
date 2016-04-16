@@ -237,7 +237,7 @@ int64 cArchive::Copy(cArchive* pFrom, int64 amt)
 
 	while(amtLeft > 0)
 	{
-		int64 amtToRead = amtLeft > BUF_SIZE ? BUF_SIZE : amtLeft;
+		int64 amtToRead = amtLeft > (int64)BUF_SIZE ? (int64)BUF_SIZE : amtLeft;
 		int64 amtRead = pFrom->ReadBlob(buf, static_cast<int>( amtToRead ) );
 		amtLeft -= amtRead;
 		WriteBlob(buf, static_cast<int>( amtRead ) );

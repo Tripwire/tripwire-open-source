@@ -75,7 +75,7 @@
 static bool PopNextLine( TSTRING& fileIn, TSTRING& sLine, int& nLine );
 static bool IsReturnChar( TCHAR tch );
 static bool IsComment( const TSTRING& sLine );
-static void GetKeyValuePair( const TSTRING& sLine, TSTRING& sKey, TSTRING& sVal ); // throw( eConfigFile );
+//static void GetKeyValuePair( const TSTRING& sLine, TSTRING& sKey, TSTRING& sVal ); // throw( eConfigFile );
 static TSTRING& util_MakeTripwireDateString( TSTRING& strBuf );
 
 //=========================================================================

@@ -58,9 +58,9 @@
 //=========================================================================
 
 static std::string  util_ConvertMB( const std::string& sIn );
-static bool         util_ReadMBCharAsSBString( std::stringstream& ss, std::string& strCh );
+//static bool         util_ReadMBCharAsSBString( std::stringstream& ss, std::string& strCh );
 static std::string  convert_to_encoded_hex( char ch );
-static std::string  util_Output512Chars( const std::string& s );
+//static std::string  util_Output512Chars( const std::string& s );
     // don't want to pass debug a string over 1024, so play it safe with 512
 
 //=========================================================================

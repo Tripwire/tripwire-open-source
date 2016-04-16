@@ -82,6 +82,8 @@ public:
     virtual bool DisplayStringToFCOName( const TSTRING& str, cFCOName& name ) const = 0;    
         // this function converts strings from FCONameToDisplayString back into an fconame
         // returns false if can't convert.
+    
+    virtual ~iFCONameTranslator() {}
 };
 
 #endif //__FCONAMETRANSLATOR_H

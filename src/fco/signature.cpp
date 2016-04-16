@@ -523,24 +523,22 @@ TSTRING cMD5Signature::AsString() const
         return AsStringHex();
     
     TSTRING ret;
-	char buf[24];
-	int length;
+    char buf[24];
 
     ASSERT( sizeof( uint8 ) == sizeof( byte ) ); /* everything breaks otherwise */
-	btob64((byte*)md5_digest, buf, SIG_BYTE_SIZE*8);
+    btob64((byte*)md5_digest, buf, SIG_BYTE_SIZE*8);
 		//converting to base64 representation.
-	length = strlen(buf);
 
 #ifdef _UNICODE		//making it TSTRING sensitive
-	ret.resize(length);
-	mbstowcs((TCHAR*) ret.data(), buf, length);
+    int length;
+    length = strlen(buf);
+    ret.resize(length);
+    mbstowcs((TCHAR*) ret.data(), buf, length);
 #else
-	ret.append(buf);
+    ret.append(buf);
 #endif
     
-	return ret;
-    //return ret;
-		//ret holds base64 representation of digest.
+    return ret;
 }
 
 TSTRING cMD5Signature::AsStringHex() const
@@ -649,13 +647,13 @@ TSTRING cSHASignature::AsString(void) const
     TSTRING ret;
     char* ps_signature; 
     char buf[100];
-    int length;
     
     ps_signature = btob64((uint8*)sha_digest, buf, SIG_UINT32_SIZE*sizeof(uint32)*8);
     //converting to base64 representation.
-    length = strlen(ps_signature);
-    
+
 #ifdef _UNICODE                //making it TSTRING sensitive
+    int length;
+    length = strlen(ps_signature);
     ret.resize(length);
     mbstowcs((TCHAR*) ret.data(), ps_signature, length);
 #else
@@ -839,23 +837,21 @@ TSTRING cHAVALSignature::AsString() const
         return AsStringHex();
     
     TSTRING ret;
-	char buf[24];
-	int length;
+    char buf[24];
 
-	btob64((byte*)mSignature, buf, 128);
-		//converting to base64 representation.
-	length = strlen(buf);
+    btob64((byte*)mSignature, buf, 128);
+    //converting to base64 representation.
 
 #ifdef _UNICODE		//making it TSTRING sensitive
-	ret.resize(length);
-	mbstowcs((TCHAR*) ret.data(), buf, length);
+    int length;
+    length = strlen(buf);
+    ret.resize(length);
+    mbstowcs((TCHAR*) ret.data(), buf, length);
 #else
-	ret.append(buf);
+    ret.append(buf);
 #endif
     
-	return ret;
-    //return ret;
-		//ret holds base64 representation of digest.
+    return ret;
 }
 
 TSTRING cHAVALSignature::AsStringHex() const 

@@ -93,7 +93,7 @@ void cFCOName::ClearNameTable()
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName::cFCOName(iFCONameInfo* pNI) : 
-    mpPathName(0), mDelimiter('/')
+    iTypedSerializable(), mpPathName(0), mDelimiter('/')
 {
     SetNameInfo(pNI);
 	mpPathName = new cFCOName_i;
@@ -105,6 +105,7 @@ cFCOName::cFCOName(iFCONameInfo* pNI) :
 }
 
 cFCOName::cFCOName(const cFCOName& rhs) :
+    iTypedSerializable(),
 	mpPathName(rhs.mpPathName),
 	mDelimiter(rhs.mDelimiter),
 	mbCaseSensitive(rhs.mbCaseSensitive)
@@ -117,8 +118,8 @@ cFCOName::cFCOName(const cFCOName& rhs) :
 #endif 
 }
 
-cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) : 
-    mpPathName(0), mDelimiter('/')
+cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) :
+    iTypedSerializable(), mpPathName(0), mDelimiter('/')
 {    
     SetNameInfo(pNI);
 	mpPathName = new cFCOName_i;
@@ -132,7 +133,7 @@ cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) :
 }
 
 cFCOName::cFCOName(const TCHAR* rhs, iFCONameInfo* pNI) : 
-    mpPathName(0), mDelimiter('/')
+    iTypedSerializable(), mpPathName(0), mDelimiter('/')
 {
     SetNameInfo(pNI);
 	mpPathName = new cFCOName_i;
