@@ -191,6 +191,7 @@ int cFSPropSet::GetNumFSProps()
 // ctors. dtor, operator=
 ///////////////////////////////////////////////////////////////////////////////
 cFSPropSet::cFSPropSet() :
+    iFCOPropSet(),
 	mValidProps(cFSPropSet::PROP_NUMITEMS),
     mUndefinedProps(cFSPropSet::PROP_NUMITEMS)
 {
@@ -203,6 +204,7 @@ cFSPropSet::~cFSPropSet()
 }
 
 cFSPropSet::cFSPropSet(const cFSPropSet& rhs) :
+    iFCOPropSet(),
 	mValidProps(cFSPropSet::PROP_NUMITEMS)
 {
 	*this = rhs;

@@ -63,7 +63,7 @@ inline static const cFCOIterImpl* CreateIterator(const cFCOSetImpl* pSet)
 ///////////////////////////////////////////////////////////////////////////////
 // ctor and dtor
 ///////////////////////////////////////////////////////////////////////////////
-cFCOSetImpl::cFCOSetImpl()
+cFCOSetImpl::cFCOSetImpl() : iFCOSet()
 {
 }
 
@@ -72,7 +72,7 @@ cFCOSetImpl::~cFCOSetImpl()
 	Clear();
 }
 
-cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs)
+cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs) : iFCOSet()
 {
 	*this = rhs;
 }

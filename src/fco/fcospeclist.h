@@ -150,7 +150,8 @@ protected:
     mutable std::list<cFCOSpecList::PairType>::iterator mIter;
 };
 
-inline cFCOSpecList::cFCOSpecList(const cFCOSpecList& rhs)
+inline cFCOSpecList::cFCOSpecList(const cFCOSpecList& rhs) 
+    : iTypedSerializable()
 {
     *this = rhs;
 }

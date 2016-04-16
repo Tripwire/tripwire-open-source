@@ -61,6 +61,7 @@ cFCOSpecImpl::cFCOSpecImpl(const TSTRING& name, void* pSrc, iFCOSpecHelper* pHel
 }
 
 cFCOSpecImpl::cFCOSpecImpl() :
+    iFCOSpec(),
 	mName(_T("Unnamed_FCOSpecImpl")),
 	mpHelper(0)
 {
@@ -72,6 +73,7 @@ cFCOSpecImpl::cFCOSpecImpl() :
 }
 
 cFCOSpecImpl::cFCOSpecImpl(const cFCOSpecImpl& rhs) :
+    iFCOSpec(),
 	mpHelper(0)
 {
 	*this = rhs;

@@ -78,7 +78,8 @@ cDbDataSourceIter::cDbDataSourceIter(cHierDatabase* pDb, int genreNum )
 // cDbDataSourceIter
 ///////////////////////////////////////////////////////////////////////////////
 cDbDataSourceIter::cDbDataSourceIter( const cDbDataSourceIter& rhs )
-:	mDbIter			( rhs.mDbIter ),
+:	iFCODataSourceIter(),
+    mDbIter			( rhs.mDbIter ),
 	mFCOCreateFunc	( rhs.mFCOCreateFunc ),
     mFlags          ( rhs.mFlags ),
     mpErrorBucket   ( rhs.mpErrorBucket )
