@@ -17,8 +17,10 @@ lib/
 **/tripwire
 **/twadmin
 **/twprint
+**/twtest
 **/siggen.exe
 **/tripwire.exe
 **/twadmin.exe
 **/twprint.exe
+**/twtest.exe
 releases/

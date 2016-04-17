@@ -102,7 +102,7 @@ void TestFSDataSourceIter()
 	try
 	{
 		// go to my temp directory and iterate over everything!
-		iter.SeekToFCO( cFCOName(_T("d:/test")) );
+		iter.SeekToFCO( cFCOName(_T("/tmp")) );
 		//
 		// print out everything below the iterator
 		//

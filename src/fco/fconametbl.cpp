@@ -216,7 +216,9 @@ void cFCONameTbl::Clear()
 	cHashTableIter<const TCHAR*, cFCONameTblNode*, cCharCmp> iter(mTable);
 	for(iter.SeekBegin(); ! iter.Done(); iter.Next())
 	{
-		iter.Val()->Release();
+	  cFCONameTblNode* p = iter.Val();
+	  if (p)
+	    p->Release();
 	}
 
 	mTable.Clear();

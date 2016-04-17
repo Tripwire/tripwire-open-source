@@ -95,12 +95,17 @@ void TestObjectPool()
 		else
 		{
 			// free
-			int idx = rand() % vAlloced.size();
-			std::vector<void*>::iterator vi = vAlloced.begin() + idx;
-			void* pGone = *vi;
-			d.TraceDebug("Removing %p\n", pGone);
-			pool.Free(pGone);
-			vAlloced.erase(vi);
+   		        int randval = rand();
+			int vsize = vAlloced.size();
+                        if (vsize) 
+			{
+			  int idx = randval % vsize;
+			  std::vector<void*>::iterator vi = vAlloced.begin() + idx;
+			  void* pGone = *vi;
+			  d.TraceDebug("Removing %p\n", pGone);
+			  pool.Free(pGone);
+			  vAlloced.erase(vi);
+                        }
 		}
 	}
 	

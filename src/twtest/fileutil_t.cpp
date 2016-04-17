@@ -50,7 +50,7 @@ void TestFileUtil()
 
   TSTRING source, dest;
 
-  source = _T("/etc/disktab");
+  source = _T("/etc/hosts");
   dest = _T("/tmp/dest");
   bool blah = cFileUtil::Copy(source, dest);
   (void)blah;
