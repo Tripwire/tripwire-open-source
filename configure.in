@@ -431,5 +431,6 @@ src/twprint/Makefile
 src/twadmin/Makefile
 src/siggen/Makefile
 src/tripwire/Makefile
+src/twtest/Makefile
 ])
 AC_OUTPUT

@@ -5,7 +5,7 @@ INCLUDES = -I..
 noinst_LIBRARIES = libcore.a
 libcore_a_SOURCES = \
    file_unix.cpp unixfsservices.cpp					\
-   charutil_t.cpp displayencoder_t.cpp archive.cpp charutil.cpp		\
+   archive.cpp charutil.cpp		\
    cmdlineparser.cpp codeconvert.cpp core.cpp coreerrors.cpp		\
    corestrings.cpp crc32.cpp debug.cpp displayencoder.cpp		\
    displayutil.cpp error.cpp errorbucketimpl.cpp errortable.cpp		\
