@@ -14,7 +14,7 @@
 
 @SET_MAKE@
 
-SOURCES = $(libcore_a_SOURCES)
+SOURCES = $(twtest_SOURCES)
 
 srcdir = @srcdir@
 top_srcdir = @top_srcdir@
@@ -37,7 +37,8 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 host_triplet = @host@
-subdir = src/core
+sbin_PROGRAMS = twtest$(EXEEXT)
+subdir = src/twtest
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
@@ -47,29 +48,40 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LIBRARIES = $(noinst_LIBRARIES)
-AR = ar
-ARFLAGS = cru
-libcore_a_AR = $(AR) $(ARFLAGS)
-am_libcore_a_OBJECTS = file_unix.$(OBJEXT) unixfsservices.$(OBJEXT) \
-	archive.$(OBJEXT) charutil.$(OBJEXT) cmdlineparser.$(OBJEXT) \
-	codeconvert.$(OBJEXT) core.$(OBJEXT) coreerrors.$(OBJEXT) \
-	corestrings.$(OBJEXT) crc32.$(OBJEXT) debug.$(OBJEXT) \
-	displayencoder.$(OBJEXT) displayutil.$(OBJEXT) error.$(OBJEXT) \
-	errorbucketimpl.$(OBJEXT) errortable.$(OBJEXT) \
-	errorutil.$(OBJEXT) fileerror.$(OBJEXT) fileheader.$(OBJEXT) \
-	fsservices.$(OBJEXT) growheap.$(OBJEXT) hashtable.$(OBJEXT) \
-	haval.$(OBJEXT) msystem.$(OBJEXT) ntmbs.$(OBJEXT) \
-	objectpool.$(OBJEXT) refcountobj.$(OBJEXT) \
-	serializable.$(OBJEXT) serializer.$(OBJEXT) \
-	serializerimpl.$(OBJEXT) serializerutil.$(OBJEXT) \
-	serstring.$(OBJEXT) srefcountobj.$(OBJEXT) \
-	srefcounttbl.$(OBJEXT) stdcore.$(OBJEXT) stringutil.$(OBJEXT) \
-	timebomb.$(OBJEXT) timeconvert.$(OBJEXT) tw_signal.$(OBJEXT) \
-	twlimits.$(OBJEXT) twlocale.$(OBJEXT) unixexcept.$(OBJEXT) \
-	usernotify.$(OBJEXT) usernotifystdout.$(OBJEXT) utf8.$(OBJEXT) \
-	wchar16.$(OBJEXT)
-libcore_a_OBJECTS = $(am_libcore_a_OBJECTS)
+am__installdirs = "$(DESTDIR)$(sbindir)"
+sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(sbin_PROGRAMS)
+am_twtest_OBJECTS = archive_t.$(OBJEXT) charutil_t.$(OBJEXT) \
+	cmdlineparser_t.$(OBJEXT) codeconvert_t.$(OBJEXT) \
+	configfile_t.$(OBJEXT) cryptoarchive_t.$(OBJEXT) \
+	crytpo_t.$(OBJEXT) dbdatasource_t.$(OBJEXT) debug_t.$(OBJEXT) \
+	displayencoder_t.$(OBJEXT) error_t.$(OBJEXT) \
+	errorbucketimpl_t.$(OBJEXT) fcocompare_t.$(OBJEXT) \
+	fcodatabasefile_t.$(OBJEXT) fconame_t.$(OBJEXT) \
+	fconametbl_t.$(OBJEXT) fconametranslator_t.$(OBJEXT) \
+	fcopropimpl_t.$(OBJEXT) fcopropvector_t.$(OBJEXT) \
+	fcoreport_t.$(OBJEXT) fcosetimpl_t.$(OBJEXT) \
+	fcospec_t.$(OBJEXT) fcospecattr_t.$(OBJEXT) \
+	fcospechelper_t.$(OBJEXT) fcospeclist_t.$(OBJEXT) \
+	fcospecutil_t.$(OBJEXT) file_t.$(OBJEXT) \
+	fileheader_t.$(OBJEXT) fileutil_t.$(OBJEXT) \
+	fsdatasourceiter_t.$(OBJEXT) fsobject_t.$(OBJEXT) \
+	fspropcalc_t.$(OBJEXT) fspropdisplayer_t.$(OBJEXT) \
+	fspropset_t.$(OBJEXT) fsspec_t.$(OBJEXT) genre_t.$(OBJEXT) \
+	genrespeclist_t.$(OBJEXT) genreswitcher_t.$(OBJEXT) \
+	growheap_t.$(OBJEXT) hashtable_t.$(OBJEXT) keyfile_t.$(OBJEXT) \
+	objectpool_t.$(OBJEXT) platform_t.$(OBJEXT) \
+	policyparser_t.$(OBJEXT) refcountobj_t.$(OBJEXT) \
+	resources_t.$(OBJEXT) serializer_t.$(OBJEXT) \
+	serializerimpl_t.$(OBJEXT) signature_t.$(OBJEXT) \
+	srefcountobj_t.$(OBJEXT) stdtest.$(OBJEXT) \
+	stringencoder_t.$(OBJEXT) tasktimer_t.$(OBJEXT) \
+	tchar_t.$(OBJEXT) test.$(OBJEXT) textreportviewer_t.$(OBJEXT) \
+	twlocale_t.$(OBJEXT) twutil_t.$(OBJEXT) types_t.$(OBJEXT) \
+	unixfsservices_t.$(OBJEXT) usernotifystdout_t.$(OBJEXT) \
+	wchar16_t.$(OBJEXT)
+twtest_OBJECTS = $(am_twtest_OBJECTS)
+twtest_LDADD = $(LDADD)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp =
 am__depfiles_maybe =
@@ -78,8 +90,12 @@ CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 CXXLD = $(CXX)
 CXXLINK = $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) \
 	-o $@
-SOURCES = $(libcore_a_SOURCES)
-DIST_SOURCES = $(libcore_a_SOURCES)
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+CCLD = $(CC)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(twtest_SOURCES)
+DIST_SOURCES = $(twtest_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -114,11 +130,11 @@ INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
-LDFLAGS = @LDFLAGS@
+LDFLAGS = @LDFLAGS@ -L../../lib
 LIBOBJS = @LIBOBJS@
-LIBS = @LIBS@
+LIBS = -ltripwire -lcryptlib @LIBS@
 LN = @LN@
-LN_S = @LN_S@
+LN_S = @LN@
 LTLIBOBJS = @LTLIBOBJS@
 MAKEINFO = @MAKEINFO@
 OBJEXT = @OBJEXT@
@@ -188,25 +204,75 @@ target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
 AUTOMAKE_OPTIONS = foreign no-dependencies
+AM_INSTALL_PROGRAM_FLAGS = -m 755
 INCLUDES = -I..
-noinst_LIBRARIES = libcore.a
-libcore_a_SOURCES = \
-   file_unix.cpp unixfsservices.cpp					\
-   archive.cpp charutil.cpp		\
-   cmdlineparser.cpp codeconvert.cpp core.cpp coreerrors.cpp		\
-   corestrings.cpp crc32.cpp debug.cpp displayencoder.cpp		\
-   displayutil.cpp error.cpp errorbucketimpl.cpp errortable.cpp		\
-   errorutil.cpp fileerror.cpp fileheader.cpp fsservices.cpp		\
-   growheap.cpp hashtable.cpp haval.cpp msystem.cpp ntmbs.cpp		\
-   objectpool.cpp refcountobj.cpp serializable.cpp serializer.cpp	\
-   serializerimpl.cpp serializerutil.cpp serstring.cpp			\
-   srefcountobj.cpp srefcounttbl.cpp stdcore.cpp stringutil.cpp		\
-   timebomb.cpp timeconvert.cpp tw_signal.cpp twlimits.cpp twlocale.cpp	\
-   unixexcept.cpp usernotify.cpp usernotifystdout.cpp utf8.cpp		\
-   wchar16.cpp
+twtest_SOURCES = \
+archive_t.cpp \
+charutil_t.cpp \
+cmdlineparser_t.cpp \
+codeconvert_t.cpp \
+configfile_t.cpp \
+cryptoarchive_t.cpp \
+crytpo_t.cpp \
+dbdatasource_t.cpp \
+debug_t.cpp \
+displayencoder_t.cpp \
+error_t.cpp \
+errorbucketimpl_t.cpp \
+fcocompare_t.cpp \
+fcodatabasefile_t.cpp \
+fconame_t.cpp \
+fconametbl_t.cpp \
+fconametranslator_t.cpp \
+fcopropimpl_t.cpp \
+fcopropvector_t.cpp \
+fcoreport_t.cpp \
+fcosetimpl_t.cpp \
+fcospec_t.cpp \
+fcospecattr_t.cpp \
+fcospechelper_t.cpp \
+fcospeclist_t.cpp \
+fcospecutil_t.cpp \
+file_t.cpp \
+fileheader_t.cpp \
+fileutil_t.cpp \
+fsdatasourceiter_t.cpp \
+fsobject_t.cpp \
+fspropcalc_t.cpp \
+fspropdisplayer_t.cpp \
+fspropset_t.cpp \
+fsspec_t.cpp \
+genre_t.cpp \
+genrespeclist_t.cpp \
+genreswitcher_t.cpp \
+growheap_t.cpp \
+hashtable_t.cpp \
+keyfile_t.cpp \
+objectpool_t.cpp \
+platform_t.cpp \
+policyparser_t.cpp \
+refcountobj_t.cpp \
+resources_t.cpp \
+serializer_t.cpp \
+serializerimpl_t.cpp \
+signature_t.cpp \
+srefcountobj_t.cpp \
+stdtest.cpp \
+stdtest.h \
+stringencoder_t.cpp \
+tasktimer_t.cpp \
+tchar_t.cpp \
+test.cpp \
+test.h \
+textreportviewer_t.cpp \
+twlocale_t.cpp \
+twutil_t.cpp \
+types_t.cpp \
+unixfsservices_t.cpp \
+usernotifystdout_t.cpp \
+wchar16_t.cpp
 
-libcore_a_LIBADD = @CORE_CRYPT_O@
-libcore_a_DEPENDENCIES = @CORE_CRYPT_O@
+CLEANFILES = ../../bin/twtest
 all: all-am
 
 .SUFFIXES:
@@ -220,9 +286,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/core/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/twtest/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/core/Makefile
+	  $(AUTOMAKE) --foreign  src/twtest/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -240,13 +306,32 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+install-sbinPROGRAMS: $(sbin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	test -z "$(sbindir)" || $(mkdir_p) "$(DESTDIR)$(sbindir)"
+	@list='$(sbin_PROGRAMS)'; for p in $$list; do \
+	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  if test -f $$p \
+	  ; then \
+	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(sbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(sbindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(sbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(sbindir)/$$f" || exit 1; \
+	  else :; fi; \
+	done
 
-clean-noinstLIBRARIES:
-	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
-libcore.a: $(libcore_a_OBJECTS) $(libcore_a_DEPENDENCIES) 
-	-rm -f libcore.a
-	$(libcore_a_AR) libcore.a $(libcore_a_OBJECTS) $(libcore_a_LIBADD)
-	$(RANLIB) libcore.a
+uninstall-sbinPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(sbin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f '$(DESTDIR)$(sbindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(sbindir)/$$f"; \
+	done
+
+clean-sbinPROGRAMS:
+	-test -z "$(sbin_PROGRAMS)" || rm -f $(sbin_PROGRAMS)
+twtest$(EXEEXT): $(twtest_OBJECTS) $(twtest_DEPENDENCIES) 
+	@rm -f twtest$(EXEEXT)
+	$(CXXLINK) $(twtest_LDFLAGS) $(twtest_OBJECTS) $(twtest_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -338,8 +423,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile $(PROGRAMS)
 installdirs:
+	for dir in "$(DESTDIR)$(sbindir)"; do \
+	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -357,6 +445,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-rm -f $(CONFIG_CLEAN_FILES)
@@ -366,7 +455,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
+clean-am: clean-generic clean-sbinPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -385,7 +474,7 @@ info-am:
 
 install-data-am:
 
-install-exec-am:
+install-exec-am: install-sbinPROGRAMS
 
 install-info: install-info-am
 
@@ -409,22 +498,22 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am
+uninstall-am: uninstall-info-am uninstall-sbinPROGRAMS
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-noinstLIBRARIES ctags distclean distclean-compile \
+	clean-sbinPROGRAMS ctags distclean distclean-compile \
 	distclean-generic distclean-tags distdir dvi dvi-am html \
 	html-am info info-am install install-am install-data \
 	install-data-am install-exec install-exec-am install-info \
-	install-info-am install-man install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
+	install-info-am install-man install-sbinPROGRAMS install-strip \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-info-am
+	uninstall-am uninstall-info-am uninstall-sbinPROGRAMS
 
 
-all: $(noinst_LIBRARIES)
-	$(AR) ru ../../lib/libtripwire.a $(libcore_a_OBJECTS) $(libcore_a_LIBADD)
+all: $(sbin_PROGRAMS)
+	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

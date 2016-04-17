@@ -6682,7 +6682,7 @@ fi
 
 
 
-ac_config_files="$ac_config_files Makefile man/Makefile man/man4/Makefile man/man5/Makefile man/man8/Makefile src/Makefile src/cryptlib/Makefile src/core/Makefile src/db/Makefile src/fco/Makefile src/fs/Makefile src/tw/Makefile src/twcrypto/Makefile src/twparser/Makefile src/util/Makefile src/twprint/Makefile src/twadmin/Makefile src/siggen/Makefile src/tripwire/Makefile"
+ac_config_files="$ac_config_files Makefile man/Makefile man/man4/Makefile man/man5/Makefile man/man8/Makefile src/Makefile src/cryptlib/Makefile src/core/Makefile src/db/Makefile src/fco/Makefile src/fs/Makefile src/tw/Makefile src/twcrypto/Makefile src/twparser/Makefile src/util/Makefile src/twprint/Makefile src/twadmin/Makefile src/siggen/Makefile src/tripwire/Makefile src/twtest/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -7418,6 +7418,7 @@ do
     "src/twadmin/Makefile") CONFIG_FILES="$CONFIG_FILES src/twadmin/Makefile" ;;
     "src/siggen/Makefile") CONFIG_FILES="$CONFIG_FILES src/siggen/Makefile" ;;
     "src/tripwire/Makefile") CONFIG_FILES="$CONFIG_FILES src/tripwire/Makefile" ;;
+    "src/twtest/Makefile") CONFIG_FILES="$CONFIG_FILES src/twtest/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
