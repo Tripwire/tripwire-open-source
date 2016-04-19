@@ -605,6 +605,12 @@ for i in $loosefiles; do
        	fi
 done
 
+#Make extra sure we don't install the unit test binary to sbin
+if  [ -e "$TWBIN/twtest" ] ; then
+  rm -f "$TWBIN/twtest"
+fi
+
+
 ##=======================================================
 ## Files are now present on user's system.
 ## Begin Tripwire configuration.
