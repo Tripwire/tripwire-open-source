@@ -1,3 +1,10 @@
+2016-04-20 Brian Cox <bcox@tripwire.com>
+	* Bump version to 2.4.3.1
+	* Revive old 'twtest' unit test suite (such as it is); move _t.cpp files into twtest dir.
+	* Fix -Wnarrowing warnings in yyparse.cpp - GCC 6 would treat these as errors.
+	* Build with -Wextra to enable more warnings.
+	* Fix a variety of other compiler warnings, some exposed by -Wextra, others preexisting.
+	
 2016-04-11 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.0
 	* Compilation fixes for gcc 4.7+ and LLVM/clang 
