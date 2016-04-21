@@ -619,7 +619,7 @@ char *cmd;
 #endif
 {
 	const char *argv[5];			/* argument list */
-	register char *p;		/* temoporary pointers */
+	register const char *p;		/* temoporary pointers */
 	register const char* shptr;		/* the program to be run */
 	register int i;			/* index number of child */
 
@@ -672,7 +672,7 @@ char *mode;
 #endif
 {
 	const char *argv[5];			/* argument list */
-	register char *p;		/* temoporary pointers */
+	register const char *p;		/* temoporary pointers */
 	register const char *shptr;		/* the program to be run */
 	FILE *fpa[3];			/* process communication descriptors */
 	register int indx;		/* index number of child */
@@ -759,7 +759,7 @@ FILE *fpa[];
 #endif
 {
 	const char *argv[5];			/* argument list */
-	register char *p;		/* temoporary pointers */
+	register const char *p;		/* temoporary pointers */
 	register const char *shptr;		/* the program to be run */
 	register int indx;		/* index number of child */
 

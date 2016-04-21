@@ -76,6 +76,9 @@
  *	- byte-order is discovered at compile time.  we use the information
  *		in "../../include/byteorder.h" to get this information.
  */
+
+#pragma GCC diagnostic ignored "-Wparentheses"
+
 #include "stdcore.h"
 #include "config.h"
 #include <stdio.h>

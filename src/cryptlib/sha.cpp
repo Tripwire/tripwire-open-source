@@ -83,8 +83,8 @@ void SHA::Final(byte *hash)
    for this information */
 
 #ifdef NEW_SHA
-  #define expand(W,i) ( W[ i & 15 ] = rotl( (W[i&15] ^ W[i-14&15] ^ \
-											 W[i-8&15] ^ W[i-3&15]), 1U) )
+  #define expand(W,i) ( W[ i & 15 ] = rotl( (W[i&15] ^ W[(i-14)&15] ^ \
+											 W[(i-8)&15] ^ W[(i-3)&15]), 1U) )
 #else
   #define expand(W,i) ( W[ i & 15 ] ^= W[ i - 14 & 15 ] ^ W[ i - 8 & 15 ] ^ W[ i - 3 & 15 ] )
 #endif /* NEW_SHA */
