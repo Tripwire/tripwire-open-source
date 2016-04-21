@@ -136,7 +136,7 @@ void cPolicyParser::Execute( cGenreSpecListVector& policy, cErrorBucket* pError 
 // it doesn't look at any args following pszErr
 // Only call this with fully formatted message
 // Parser will ALWAYS call the narrow-char version, so special case Unicode compile
-void tw_yy_scan::yyerror( char* pszErr, ... )  //throw( eParserHelper )
+void tw_yy_scan::yyerror( const char* pszErr, ... )  //throw( eParserHelper )
 {
     TOSTRINGSTREAM  ssError;        // final error string
 

@@ -80,7 +80,7 @@ public:
 
     virtual int	yygetc() { return mIn.get(); };
     
-	virtual void yyerror( char *pszErr, ... );  //throw( eParserHelper )
+	virtual void yyerror( const char *pszErr, ... );  //throw( eParserHelper )
 	    // this is the MKS error function.  But, since some operating systems (e.g. like AIX)
         // don't offer a vnsprintf, so there's no way we can safely output the error 
         // from the va_arg list to a string without possible buffer overflow.

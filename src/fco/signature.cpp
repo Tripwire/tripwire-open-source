@@ -552,7 +552,7 @@ TSTRING cMD5Signature::AsStringHex() const
 
 	for(int i = 0; i < SIG_BYTE_SIZE; ++i)
 	{
-		_stprintf(stringBuffer, _T("%02lx"), dbuf[i]);
+		_stprintf(stringBuffer, _T("%02lx"), (unsigned long)dbuf[i]);
 		_tcscat(sigStringOut, stringBuffer);
 	}
 	ret.append(sigStringOut);

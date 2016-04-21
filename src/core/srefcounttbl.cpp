@@ -66,7 +66,7 @@ int cSerRefCountTable::Lookup(const iSerRefCountObj* pObj)
 	// pay no attention to this cast :-)
 	itr = mObjToIdTbl.find(const_cast<iSerRefCountObj*>(pObj));
 
-    return itr == mObjToIdTbl.end() ? NULL : itr->second;
+    return (itr == mObjToIdTbl.end()) ? 0 : itr->second;
 }
 
 // find object for specified id.  returns NULL if not in table

@@ -56,21 +56,21 @@
  */
 #ifdef __STDC__
 void le_clobber(void);
-int le_set(char *);
-int le_unset(char *);
+int le_set(const char*);
+int le_unset(const char*);
 int le_umask(int);
 int le_openfd(int);
 int le_closefd(int);
 int le_euid(int);
 int le_egid(int);
-int msystem(char *);
-FILE *mpopen(char *, char *);
+int msystem(const char*);
+FILE *mpopen(const char*, const char*);
 int mpclose(FILE *);
-int mfpopen(char *, FILE *[]);
+int mfpopen(const char*, FILE *[]);
 int mfpclose(int, FILE *[]);
-int mxfpopen(char *[], FILE *[]);
+int mxfpopen(const char*[], FILE *[]);
 int mxfpclose(int, FILE *[]);
-int schild(char *, char *[], char *[], FILE *[], int);
+int schild(const char*, const char*[], const char*[], FILE *[], int);
 int echild(int);
 #else
 void le_clobber();

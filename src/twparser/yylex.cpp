@@ -624,7 +624,7 @@ yy_scan::~yy_scan()
 
 // Print error message, showing current line number
 void
-yy_scan::yyerror(char *fmt, ...)
+yy_scan::yyerror(const char *fmt, ...)
 {
 	va_list va;
 
@@ -977,9 +977,7 @@ yy_scan::yylex()
                             std::string strError;
                             strError = FormatSyntaxError( yytext[0], "The global section only accepts statements of the form:\n variable = value;\n" );
 
-                            // MKS defines yyerror with char*, for some stupid reason,
-                            // so cast it away
-                            yyerror( const_cast<char*>( strError.c_str() ) ); 
+                            yyerror( strError.c_str()); 
 						} /* catches anything that cannot be deemed a variable definition and exits. */
 	break;
 	case 12:
@@ -1145,9 +1143,7 @@ yy_scan::yylex()
                         std::string strError;
                         strError = FormatSyntaxError( yytext[0] );
                         
-                        // MKS defines yyerror with char*, for some stupid reason,
-                        // so cast it away
-                        yyerror( const_cast<char*>( strError.c_str() ) );
+                        yyerror( strError.c_str() );
                     } /* catches anything else that's not in here and quits */
 	break;
 

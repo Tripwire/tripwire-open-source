@@ -130,16 +130,16 @@ public:
 
 	virtual int	yywrap() { return 1; }	// EOF processing
 
-	virtual void	yyerror(char *,...);	// print error message
+	virtual void	yyerror(const char *,...);	// print error message
 
 	virtual void	output(int c) { putc(c, yyout); }
 
 #ifdef YYEXIT
-	virtual void	YY_FATAL(char * msg) {	// print message and set error flag
+	virtual void	YY_FATAL(const char * msg) {	// print message and set error flag
 		yyerror(msg); yyLexFatal = 1;
 	}
 #else // YYEXIT
-	virtual void	YY_FATAL(char * msg) {	// print message and stop
+	virtual void	YY_FATAL(const char * msg) {	// print message and stop
 		yyerror(msg); exit(1);
 	}
 #endif // YYEXIT

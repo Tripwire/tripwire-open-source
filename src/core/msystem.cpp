@@ -167,7 +167,7 @@
  * to add to it, just stick the new environment variables
  * at the end of the array; the program does the rest automatically
  */
-char *nvfix[] = {			/* these MUST be set or reset */
+const char* nvfix[] = {			/* these MUST be set or reset */
 	DEF_PATH,				/* a safe path */
 	DEF_SHELL,				/* a safe shell */
 	DEF_IFS,				/* a safe IFS */
@@ -215,7 +215,7 @@ char *getenv();				/* get variable from environment */
 #	endif
 #else
 #	ifdef __STDC__
-	static char *strdup(char *str)
+	static char *strdup(char* str)
 #	else
 	static char *strdup(str)
 	char *str;
@@ -239,7 +239,7 @@ char *getenv();				/* get variable from environment */
  * (if space already allocated) increase the allocation by PTR_INC
  */
 #ifdef __STDC__
-static char **c2alloc(char **old, int *sz_alloc)
+static char **c2alloc(const char**old, int *sz_alloc)
 #else
 static char **c2alloc(old, sz_alloc)
 char **old;
@@ -257,8 +257,8 @@ int *sz_alloc;
 		/* success! copy the old and free it, if appropriate */
 		if (old != NULL){
 			for(i = 0; i < *sz_alloc; i++)
-				x.cpp[i] = old[i];
-			x.cpp = old;
+			    x.cpp[i] = (char*)old[i];
+			x.cpp = (char**)old;
 			(void) free(x.vp);
 		}
 		/* now have PTR_INC more room */
@@ -310,7 +310,7 @@ void le_clobber()
 	 */
 	if (envp != NULL){
 		/* it's defined -- is it fixed? */
-		if (envp != nvfix){
+		if (envp != (char**)nvfix){
 			/* no -- usual walk the list crud */
 			for(i = 0; envp[i] != NULL; i++)
 				(void) free(envp[i]);
@@ -331,7 +331,7 @@ void le_clobber()
  * get a pointer to the environment element
  */
 #ifdef __STDC__
-static int le_getenv(char *var)
+static int le_getenv(const char* var)
 #else
 static int le_getenv(var)
 char *var;
@@ -352,7 +352,7 @@ char *var;
 	for(i = 0; envp[i] != NULL; i++){
 		/* compare */
 		p = envp[i];
-		q = var;
+		q = (char*)var;
 		while(*p && *q && *p == *q)
 			p++, q++;
 		/* have we a match? */
@@ -372,7 +372,7 @@ char *var;
  * set an environment variable
  */ 
 #ifdef __STDC__
-int le_set(char *env)
+int le_set(const char* env)
 #else
 int le_set(env)
 char *env;
@@ -385,7 +385,7 @@ char *env;
 	 * seeif youneed to create the environment list
 	 */
 	if (sz_envp == 0){
-		if ((envp = c2alloc(envp, &sz_envp)) == NULL){
+	        if ((envp = c2alloc((const char**)envp, &sz_envp)) == NULL){
 			ERMSG("ran out of memory");
 			return(SE_NOMEM);
 		}
@@ -428,7 +428,7 @@ char *env;
 	/*
 	 * if it isn't defined, see if you need to create the environment list
 	 */
-	if (nend == sz_envp && (envp = c2alloc(envp, &sz_envp)) == NULL){
+	if (nend == sz_envp && (envp = c2alloc((const char**)envp, &sz_envp)) == NULL){
 		ERMSG("ran out of memory");
 		return(SE_NOMEM);
 	}
@@ -457,7 +457,7 @@ char *env;
  * clear a current environment variable
  */
 #ifdef __STDC__
-int le_unset(char *env)
+int le_unset(const char* env)
 #else
 int le_unset(env)
 char *env;
@@ -578,13 +578,13 @@ int gid;
  * get the shell to use for the subcommand
  */
 #ifdef __STDC__
-static char *shellenv(void)
+static const char *shellenv(void)
 #else
-static char *shellenv()
+static const char *shellenv()
 #endif
 {
 	register int i;		/* counter in a for loop */
-	register char *shptr;	/* points to shell name */
+	register const char *shptr;	/* points to shell name */
 
 	/*
 	 * error check; should never happen
@@ -612,15 +612,15 @@ static char *shellenv()
  * like system but A LOT safer
  */ 
 #ifdef __STDC__
-int msystem(char *cmd)
+int msystem(const char* cmd)
 #else
 int msystem(cmd)
 char *cmd;
 #endif
 {
-	char *argv[5];			/* argument list */
+	const char *argv[5];			/* argument list */
 	register char *p;		/* temoporary pointers */
-	register char *shptr;		/* the program to be run */
+	register const char* shptr;		/* the program to be run */
 	register int i;			/* index number of child */
 
 	/*
@@ -645,7 +645,7 @@ char *cmd;
 	/*
 	 * run it
 	 */
-        if ((i = schild(shptr, argv, envp, (FILE **) NULL, octmask)) < 0)
+        if ((i = schild(shptr, (const char**)argv, (const char**)envp, (FILE **) NULL, octmask)) < 0)
                 return(127);
 	return(echild(i));
 }
@@ -664,16 +664,16 @@ static struct popenfunc {	/* association of pid, file pointer */
  * like popen but A LOT safer
  */ 
 #ifdef __STDC__
-FILE *mpopen(char *cmd, char *mode)
+FILE *mpopen(const char* cmd, const char* mode)
 #else
 FILE *mpopen(cmd, mode)
 char *cmd;
 char *mode;
 #endif
 {
-	char *argv[5];			/* argument list */
+	const char *argv[5];			/* argument list */
 	register char *p;		/* temoporary pointers */
-	register char *shptr;		/* the program to be run */
+	register const char *shptr;		/* the program to be run */
 	FILE *fpa[3];			/* process communication descriptors */
 	register int indx;		/* index number of child */
 
@@ -706,7 +706,7 @@ char *mode;
 	/*
 	 * run it
 	 */
-        if ((pfunc[indx].pid = schild(shptr, argv, envp, fpa, octmask)) < 0)
+        if ((pfunc[indx].pid = schild(shptr, (const char**)argv, (const char**)envp, fpa, octmask)) < 0)
                 return(NULL);
 	return(pfunc[indx].fp = ((*mode == 'w') ? fpa[0] : fpa[1]));
 }
@@ -751,16 +751,16 @@ FILE *fp;
  * (0, 1, 2)
  */ 
 #ifdef __STDC__
-int mfpopen(char *cmd, FILE *fpa[])
+int mfpopen(const char* cmd, FILE *fpa[])
 #else
 int mfpopen(cmd, fpa)
 char *cmd;
 FILE *fpa[];
 #endif
 {
-	char *argv[5];			/* argument list */
+	const char *argv[5];			/* argument list */
 	register char *p;		/* temoporary pointers */
-	register char *shptr;		/* the program to be run */
+	register const char *shptr;		/* the program to be run */
 	register int indx;		/* index number of child */
 
 	/*
@@ -788,7 +788,7 @@ FILE *fpa[];
 	/*
 	 * run it
 	 */
-        if ((pfunc[indx].pid = schild(shptr, argv, envp, fpa, octmask)) < 0)
+        if ((pfunc[indx].pid = schild(shptr, (const char**)argv, (const char**)envp, fpa, octmask)) < 0)
                 return(-1);
 	return(indx);
 }
@@ -831,7 +831,7 @@ FILE *fp[];
  * uses arg vector, not command, and file descriptors 0, 1, 2
  */
 #ifdef __STDC__
-int mxfpopen(char *argv[], FILE *fpa[])
+int mxfpopen(const char* argv[], FILE *fpa[])
 #else
 int mxfpopen(argv, fpa)
 char *argv[];
@@ -852,7 +852,7 @@ FILE *fpa[];
         /*
          * run it
          */
-        if ((pfunc[indx].pid = schild(argv[0], argv, envp, fpa, octmask)) < 0)
+        if ((pfunc[indx].pid = schild(argv[0], argv, (const char**)envp, fpa, octmask)) < 0)
                 return(-1);
         return(indx);
 }
@@ -887,7 +887,7 @@ static tw_sighandler_t savesig[MAX_SIGNAL];
  * to omask
  */
 #ifdef __STDC__
-int schild(char *cmd, char **argp, char **envptr, FILE *fp[], int mask)
+int schild(const char* cmd, const char** argp, const char** envptr, FILE *fp[], int mask)
 #else
 int schild(cmd, argp, envptr, fp, mask)
 char *cmd;
@@ -954,7 +954,7 @@ int mask;
 			(void) close(p[2][1]);
 		    }
 		    /* exec the command and environment */
-		    (void) execve(cmd, argp, envptr);
+		    (void) execve(cmd, (char* const*)argp, (char* const*)envptr);
 		    /* should never happen ... */
 		    _exit(EXIT_BAD);
 	 }
