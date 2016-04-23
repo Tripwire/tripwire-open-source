@@ -4,7 +4,8 @@
 	* Fix -Wnarrowing warnings in yyparse.cpp - GCC 6 would treat these as errors.
 	* Build with -Wextra to enable more warnings.
 	* Fix a variety of other compiler warnings, some exposed by -Wextra, others preexisting.
-	
+	* Replace remaining tabs w/ 4 spaces. Mixing the 2 styles can now cause GCC 6 'misleading indentation' warnings.
+
 2016-04-11 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.0
 	* Compilation fixes for gcc 4.7+ and LLVM/clang 
