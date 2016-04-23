@@ -41,56 +41,56 @@ class iFCOVisitor;
 class iFCOSet;
 class cErrorBucket;
 
-	// cErrorBucket error numbers...
-/*	// the prop calculator owns all error numbers from 200-299
-	enum ErrorNum
-	{
-		ERR_STAT_FAIL			= 200,
+    // cErrorBucket error numbers...
+/*  // the prop calculator owns all error numbers from 200-299
+    enum ErrorNum
+    {
+        ERR_STAT_FAIL           = 200,
         ERR_GET_ACL_FAIL        = 201,
-		ERR_NUM_ERRORS
-	};
+        ERR_NUM_ERRORS
+    };
 */
 
 
 class iFCOPropCalc
 {
 public:
-	virtual void					SetPropVector(const cFCOPropVector& pv) = 0;
-	virtual const cFCOPropVector&	GetPropVector() const = 0;
-		// gets and sets the property vector that indicates what properties the
-		// calculator will evaluate for each fco that it visits
+    virtual void                    SetPropVector(const cFCOPropVector& pv) = 0;
+    virtual const cFCOPropVector&   GetPropVector() const = 0;
+        // gets and sets the property vector that indicates what properties the
+        // calculator will evaluate for each fco that it visits
 
-	virtual iFCOVisitor*		GetVisitor() = 0;
-	virtual const iFCOVisitor*	GetVisitor() const = 0;
-		// returns 'this' if the class that implements this interface also implements
-		// iFCOVisitor, which will almost always be the case. Otherwise, these methods
-		// should return NULL
+    virtual iFCOVisitor*        GetVisitor() = 0;
+    virtual const iFCOVisitor*  GetVisitor() const = 0;
+        // returns 'this' if the class that implements this interface also implements
+        // iFCOVisitor, which will almost always be the case. Otherwise, these methods
+        // should return NULL
 
-	virtual void					SetErrorBucket(cErrorBucket* pBucket)				= 0;
-	virtual const cErrorBucket*		GetErrorBucket()							const	= 0;
+    virtual void                    SetErrorBucket(cErrorBucket* pBucket)               = 0;
+    virtual const cErrorBucket*     GetErrorBucket()                            const   = 0;
 
-	// this enum lists all the ways that the prop calc can behave when calculating a property
-	// that already has a valid value in an fco. The default behavior is PROP_LEAVE
-	enum CollisionAction 
-	{
-		PROP_OVERWRITE,		// overwite the existing value with a newly calculated one 
-		PROP_LEAVE,			// leave the existing property value (default)
-		PROP_NUMITEMS
-	};
-	virtual CollisionAction GetCollisionAction()			const = 0;
-	virtual void			SetCollisionAction(CollisionAction a) = 0;
-		// these methods get and set the collision action for the property calculator
+    // this enum lists all the ways that the prop calc can behave when calculating a property
+    // that already has a valid value in an fco. The default behavior is PROP_LEAVE
+    enum CollisionAction 
+    {
+        PROP_OVERWRITE,     // overwite the existing value with a newly calculated one 
+        PROP_LEAVE,         // leave the existing property value (default)
+        PROP_NUMITEMS
+    };
+    virtual CollisionAction GetCollisionAction()            const = 0;
+    virtual void            SetCollisionAction(CollisionAction a) = 0;
+        // these methods get and set the collision action for the property calculator
 
     
     enum CalcFlags
-	{
-		DO_NOT_MODIFY_PROPERTIES = 0x00000001  // reset any properties that may have been altered due to measurement
-	};
-	virtual int     GetCalcFlags() const = 0;
-	virtual void    SetCalcFlags(int i) = 0;
-		// any calculation flags needed for calculation.
+    {
+        DO_NOT_MODIFY_PROPERTIES = 0x00000001  // reset any properties that may have been altered due to measurement
+    };
+    virtual int     GetCalcFlags() const = 0;
+    virtual void    SetCalcFlags(int i) = 0;
+        // any calculation flags needed for calculation.
 
-	virtual ~iFCOPropCalc() {}
+    virtual ~iFCOPropCalc() {}
 
 };
 

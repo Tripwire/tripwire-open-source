@@ -93,21 +93,21 @@ TSS_REGISTER_ERROR( eICBadSevVal(),                 _T("Invalid severity level s
 TSS_REGISTER_ERROR( eICInappropriateGenre(),        _T("Inappropriate section specified on the command line.") );
 TSS_REGISTER_ERROR( eICDifferentUsers(),            _T("Current user differs from one who created database.") );
 TSS_REGISTER_ERROR( eICMismatchingParams(),         _T("Mismatch in specified command line parameters: ") );
-TSS_REGISTER_ERROR( eTWInvalidConfigFileKey(),		_T("Configuration file contains an invalid variable.") );
-TSS_REGISTER_ERROR( eTWPassForUnencryptedDb(), 		_T("Passphrase specified for an unencrypted database file.") );
+TSS_REGISTER_ERROR( eTWInvalidConfigFileKey(),      _T("Configuration file contains an invalid variable.") );
+TSS_REGISTER_ERROR( eTWPassForUnencryptedDb(),      _T("Passphrase specified for an unencrypted database file.") );
 
 // General TW
 TSS_REGISTER_ERROR( eTWHelpInvalidModeSwitch(),     _T("Invalid mode parameter to help: ") );
 TSS_REGISTER_ERROR( eTWInitialization(),            _T("Tripwire initialization error.") );
-TSS_REGISTER_ERROR( eTWInvalidReportLevel(),		_T("Invalid reporting level specified.\nValid levels: [0-4]\n") );
-TSS_REGISTER_ERROR( eTWInvalidReportLevelCfg(),		_T("Invalid reporting level in configuration file\nValid levels: [0-4]\n") );
-TSS_REGISTER_ERROR( eTWInvalidPortNumber(),		    _T("Invalid SMTP port number.\nValid ports: [0-65535]\n") );
+TSS_REGISTER_ERROR( eTWInvalidReportLevel(),        _T("Invalid reporting level specified.\nValid levels: [0-4]\n") );
+TSS_REGISTER_ERROR( eTWInvalidReportLevelCfg(),     _T("Invalid reporting level in configuration file\nValid levels: [0-4]\n") );
+TSS_REGISTER_ERROR( eTWInvalidPortNumber(),         _T("Invalid SMTP port number.\nValid ports: [0-65535]\n") );
 TSS_REGISTER_ERROR( eTWInvalidTempDirectory(),      _T("Cannot access temp directory.") );
 
 // GMMS
-TSS_REGISTER_ERROR( eGmmsError(),				    _T("GMMS error.") );
-TSS_REGISTER_ERROR( eGmmsCouldntOpenPipe(),			_T("GMMS executable not found: ") );
-TSS_REGISTER_ERROR( eGmmsCouldntWritePipe(),		_T("There was a problem writing to gmms: ") );
-TSS_REGISTER_ERROR( eGmmsCmdFailed(),				_T("GMMS exited with non-zero status: ") );
+TSS_REGISTER_ERROR( eGmmsError(),                   _T("GMMS error.") );
+TSS_REGISTER_ERROR( eGmmsCouldntOpenPipe(),         _T("GMMS executable not found: ") );
+TSS_REGISTER_ERROR( eGmmsCouldntWritePipe(),        _T("There was a problem writing to gmms: ") );
+TSS_REGISTER_ERROR( eGmmsCmdFailed(),               _T("GMMS exited with non-zero status: ") );
 
 TSS_END_ERROR_REGISTRATION()

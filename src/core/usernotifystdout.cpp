@@ -38,19 +38,19 @@
 ///////////////////////////////////////////////////////////////////////////////
 void cUserNotifyStdout::HandleNotify( int level, const TCHAR* format, va_list& args )
 {
-	if(GetVerboseLevel() < level)
-		return;
+    if(GetVerboseLevel() < level)
+        return;
 
-	// all verbose output now goes to stderr
-	if(level < iUserNotify::V_VERBOSE)
-	{
-		_vtprintf(format, args);
-		fflush( stdout );
-	}
+    // all verbose output now goes to stderr
+    if(level < iUserNotify::V_VERBOSE)
+    {
+        _vtprintf(format, args);
+        fflush( stdout );
+    }
     else
-	{
-		_vftprintf(stderr, format, args);
-		fflush( stderr );
-	}
+    {
+        _vftprintf(stderr, format, args);
+        fflush( stderr );
+    }
 }
 

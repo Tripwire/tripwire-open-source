@@ -48,13 +48,13 @@ class cFCODBHeaderInfo;
 
 //=============================================================================
 // cFCODatabaseUtil -- A Utility class for cFCODatabase Objects.  Contains static 
-//		functions for calculating and storing system properties before saving a 
-//		database object.
+//      functions for calculating and storing system properties before saving a 
+//      database object.
 //=============================================================================
 class cFCODatabaseUtil 
 {
 public:
-	 static void CalculateHeader( 
+     static void CalculateHeader( 
                                   cFCODbHeader&     dbHeader, 
                                   const TSTRING&    policyFilename,
                                   const TSTRING&    configFilename,
@@ -63,7 +63,7 @@ public:
                                   int64             createTime,
                                   int64             lastDBUpdateTime  
                                 );
-		//Calculates and gathers header data, stores results in header.
+        //Calculates and gathers header data, stores results in header.
 private:
 };
 

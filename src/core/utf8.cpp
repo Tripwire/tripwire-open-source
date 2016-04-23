@@ -97,7 +97,7 @@ wchar_t* cUTF8::allocate( const char* in ) THROW( std::bad_alloc )
     
     //--Convert
 
-	out[0] = 0x00;                                          // NOTE: Just in case we fail
+    out[0] = 0x00;                                          // NOTE: Just in case we fail
     #ifdef _DEBUG
     //size_t nWritten = 
     #endif
@@ -107,8 +107,8 @@ wchar_t* cUTF8::allocate( const char* in ) THROW( std::bad_alloc )
 #ifdef _INTEG2                                              // Verify Output
     if ( nWritten == 0 )
     {
-	    cDebug d( "cUTF8::allocate" );
-		d.TraceError( "MultiByteToWideChar failed with %x\n", ::GetLastError() );
+        cDebug d( "cUTF8::allocate" );
+        d.TraceError( "MultiByteToWideChar failed with %x\n", ::GetLastError() );
     }
 
     ASSERT( out && TSS_IsValidString( out, nWritten ) );
@@ -119,7 +119,7 @@ wchar_t* cUTF8::allocate( const char* in ) THROW( std::bad_alloc )
 
 char* cUTF8::allocate( const wchar_t* in ) THROW( std::bad_alloc )
 {
-	ASSERT( in /*&& TSS_IsValidString( in ) */);            // Verify Input
+    ASSERT( in /*&& TSS_IsValidString( in ) */);            // Verify Input
 
     // Allocate required size
     size_t N = ::WideCharToMultiByte( CP_UTF8, 0, in, -1,0,0,0,0 );
@@ -128,7 +128,7 @@ char* cUTF8::allocate( const wchar_t* in ) THROW( std::bad_alloc )
     
     //--Convert
 
-	out[0] = 0x00;                                          // NOTE: Just in case we fail
+    out[0] = 0x00;                                          // NOTE: Just in case we fail
     #ifdef _DEBUG
     //size_t nWritten = 
     #endif
@@ -138,8 +138,8 @@ char* cUTF8::allocate( const wchar_t* in ) THROW( std::bad_alloc )
 #ifdef _INTEG2                                              // Verify Output
     if ( nWritten == 0 )
     {
-		cDebug d( "cUTF8::allocate" );
-		d.TraceError( "WideCharToMultiByte failed with %x\n", ::GetLastError() );
+        cDebug d( "cUTF8::allocate" );
+        d.TraceError( "WideCharToMultiByte failed with %x\n", ::GetLastError() );
     }
 
     ASSERT( out /*&& TSS_IsValidString( out, nWritten ) */);
@@ -148,5 +148,5 @@ char* cUTF8::allocate( const wchar_t* in ) THROW( std::bad_alloc )
     return out;
 }
 
-#endif	//_UNICODE
+#endif  //_UNICODE
 

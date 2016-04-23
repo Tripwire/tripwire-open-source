@@ -54,34 +54,34 @@ TSS_EXCEPTION( eUpdateDbChangedFCO, eUpdateDb );
 class cUpdateDb
 {
 public:
-	cUpdateDb( cHierDatabase& db, cFCOReport& report, cErrorBucket* pBucket );
+    cUpdateDb( cHierDatabase& db, cFCOReport& report, cErrorBucket* pBucket );
 
-	bool Execute( uint32 flags = 0 );
-		// returns false if there were any conflicts in updating
-		// the database
-		// TODO -- what kind of exceptions can come up from here?
+    bool Execute( uint32 flags = 0 );
+        // returns false if there were any conflicts in updating
+        // the database
+        // TODO -- what kind of exceptions can come up from here?
 
     enum Flags
     {
-        FLAG_REPLACE_PROPS	        = 0x00000001,
-			// if this flag is passed to execute, then them
-			// database's FCO's property set is completely
-			// replaced with the reports property set.
-			// (That means that invalid properties in the
-			// report will be invalidated in the database.
-			// This behavior is only desireable right now for
-			// policy update, when we want to get rid of stale
-			// information)
+        FLAG_REPLACE_PROPS          = 0x00000001,
+            // if this flag is passed to execute, then them
+            // database's FCO's property set is completely
+            // replaced with the reports property set.
+            // (That means that invalid properties in the
+            // report will be invalidated in the database.
+            // This behavior is only desireable right now for
+            // policy update, when we want to get rid of stale
+            // information)
         FLAG_ERASE_FOOTPRINTS_UD    = 0x00000002
-			// when this flag is set, UpdateDb will attempt
-			// undo any inadvertant modifications it may make
-			// when executing.
-	};
+            // when this flag is set, UpdateDb will attempt
+            // undo any inadvertant modifications it may make
+            // when executing.
+    };
 
 private:
-	cHierDatabase&		mDb;
-	cFCOReport&			mReport;
-	cErrorBucket*		mpBucket;
+    cHierDatabase&      mDb;
+    cFCOReport&         mReport;
+    cErrorBucket*       mpBucket;
 };
 
 #endif

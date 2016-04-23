@@ -31,7 +31,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 // tw_signal.h -- a wrapper around signal(), needed because of linux 
-//		build issues
+//      build issues
 //
 #ifndef __TW_SIGNAL_H
 #define __TW_SIGNAL_H
@@ -39,7 +39,7 @@
 #include <signal.h>
 
 #ifdef HAVE_SIGNUM_H
-#include <signum.h>		// the signal number constants
+#include <signum.h>     // the signal number constants
 #endif
 #ifdef HAVE_BITS_SIGNUM_H
 #include <bits/signum.h>
@@ -50,7 +50,7 @@ typedef void (*tw_sighandler_t)(int);
 }
 
 tw_sighandler_t tw_signal(int sig, tw_sighandler_t pFunc);
-int    			tw_raise (int sig);
+int             tw_raise (int sig);
 
 ///////////////////////////////////////////////////////////////////////////////
 // tw_sigign -- wrapper around tw_signal(XXX, SIG_IGN)

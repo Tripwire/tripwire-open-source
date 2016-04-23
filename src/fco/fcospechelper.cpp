@@ -48,7 +48,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 void iFCOSpecHelper::Read (iSerializer* pSerializer, int32 version)
 {
-	// read the start point
+    // read the start point
     pSerializer->ReadObject(&mStartPoint);
 }
 
@@ -57,7 +57,7 @@ void iFCOSpecHelper::Read (iSerializer* pSerializer, int32 version)
 ///////////////////////////////////////////////////////////////////////////////
 void iFCOSpecHelper::Write(iSerializer* pSerializer) const
 {
-	// write the start point
+    // write the start point
     pSerializer->WriteObject(&mStartPoint);
 }
 
@@ -73,9 +73,9 @@ IMPLEMENT_TYPEDSERIALIZABLE(cFCOSpecStopPointSet, _T("cFCOSpecStopPointSet"), 0,
 // cFCOSpecStopPointSet
 ///////////////////////////////////////////////////////////////////////////////
 cFCOSpecStopPointSet::cFCOSpecStopPointSet()
-:	mRecurseDepth( cFCOSpecStopPointSet::RECURSE_INFINITE )
+:   mRecurseDepth( cFCOSpecStopPointSet::RECURSE_INFINITE )
 {
-	
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -83,21 +83,21 @@ cFCOSpecStopPointSet::cFCOSpecStopPointSet()
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOSpecStopPointSet::ContainsFCO(const cFCOName& name) const
 {
-	// make sure name is at or below start point
-	cFCOName::Relationship rel = name.GetRelationship(GetStartPoint());
-	if((rel != cFCOName::REL_BELOW) && (rel != cFCOName::REL_EQUAL))
-		return false;
+    // make sure name is at or below start point
+    cFCOName::Relationship rel = name.GetRelationship(GetStartPoint());
+    if((rel != cFCOName::REL_BELOW) && (rel != cFCOName::REL_EQUAL))
+        return false;
 
-	// chack all the stop points
+    // chack all the stop points
     std::set<cFCOName>::const_iterator itr;
     for (itr = mStopPoints.begin(); itr != mStopPoints.end(); ++itr)
     {
-		rel = name.GetRelationship(*itr);
-		if((rel == cFCOName::REL_BELOW) || (rel == cFCOName::REL_EQUAL))
-			return false;
+        rel = name.GetRelationship(*itr);
+        if((rel == cFCOName::REL_BELOW) || (rel == cFCOName::REL_EQUAL))
+            return false;
     }
 
-	return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,50 +105,50 @@ bool cFCOSpecStopPointSet::ContainsFCO(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecStopPointSet::SetStartPoint(const cFCOName& startPoint)
 {
-	cDebug d("cFCOSpecStopPointSet::SetStartPoint");
+    cDebug d("cFCOSpecStopPointSet::SetStartPoint");
 
-	// make sure the start point is above all stop points...
-	std::set<cFCOName>::iterator i;
-	for(i = mStopPoints.begin(); i != mStopPoints.end(); ++i)
-	{	
-		if(i->GetRelationship(startPoint) != cFCOName::REL_BELOW)
-		{
-			TOSTRINGSTREAM str;
-			str << "Bad start point [" 
-				<< iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( startPoint ) 
-				<< "] added to spec with stop point "
-				<< iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( *i ) 
-				<< std::ends;
+    // make sure the start point is above all stop points...
+    std::set<cFCOName>::iterator i;
+    for(i = mStopPoints.begin(); i != mStopPoints.end(); ++i)
+    {   
+        if(i->GetRelationship(startPoint) != cFCOName::REL_BELOW)
+        {
+            TOSTRINGSTREAM str;
+            str << "Bad start point [" 
+                << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( startPoint ) 
+                << "] added to spec with stop point "
+                << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( *i ) 
+                << std::ends;
 
-			d.TraceError("%s\n", str.str().c_str());
+            d.TraceError("%s\n", str.str().c_str());
             throw eSerializerInputStreamFmt(str.str().c_str());
-		}
-	}
+        }
+    }
 
-	// ok, it is acceptable to add this 
-	inherited::SetStartPoint(startPoint);
+    // ok, it is acceptable to add this 
+    inherited::SetStartPoint(startPoint);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ShouldStopDescent -- this returns true if we have just crossed the 
-//		"boundary" between what is in and what is out of the spec's set. For
-//		StopPointSets, this means that the fco name matches a stop point
+//      "boundary" between what is in and what is out of the spec's set. For
+//      StopPointSets, this means that the fco name matches a stop point
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOSpecStopPointSet::ShouldStopDescent(const cFCOName& name) const 
 {
-	cDebug d("cFCOSpecStopPointSet::ShouldStopDescent");
-	//
-	// first, check the recurse depth...
-	//
-	if( GetRecurseDepth() != RECURSE_INFINITE )
-	{
-		if( (name.GetSize() - mStartPoint.GetSize()) > GetRecurseDepth() )
-			return true;
-	}
-	
+    cDebug d("cFCOSpecStopPointSet::ShouldStopDescent");
+    //
+    // first, check the recurse depth...
+    //
+    if( GetRecurseDepth() != RECURSE_INFINITE )
+    {
+        if( (name.GetSize() - mStartPoint.GetSize()) > GetRecurseDepth() )
+            return true;
+    }
+    
 
-	std::set<cFCOName>::const_iterator i = mStopPoints.find(name);
-	return (i != mStopPoints.end());
+    std::set<cFCOName>::const_iterator i = mStopPoints.find(name);
+    return (i != mStopPoints.end());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -156,16 +156,16 @@ bool cFCOSpecStopPointSet::ShouldStopDescent(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecStopPointSet::TraceContents(int dl) const
 {
-	cDebug d("cFCOSpecStopPointSet::TraceContents");
-	if(dl == -1)
-		dl = cDebug::D_DEBUG;
+    cDebug d("cFCOSpecStopPointSet::TraceContents");
+    if(dl == -1)
+        dl = cDebug::D_DEBUG;
 
-	d.Trace(dl, _T("Start Point:\t%s\n"), mStartPoint.AsString().c_str());
-	for(std::set<cFCOName>::const_iterator i = mStopPoints.begin();
-		i != mStopPoints.end(); ++i)
-	{
-		d.Trace(dl, _T("Stop Point :\t%s\n"), i->AsString().c_str());
-	}
+    d.Trace(dl, _T("Start Point:\t%s\n"), mStartPoint.AsString().c_str());
+    for(std::set<cFCOName>::const_iterator i = mStopPoints.begin();
+        i != mStopPoints.end(); ++i)
+    {
+        d.Trace(dl, _T("Stop Point :\t%s\n"), i->AsString().c_str());
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -173,60 +173,60 @@ void cFCOSpecStopPointSet::TraceContents(int dl) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecStopPointSet::Add(const cFCOName& name)
 {
-	cDebug d("cFCOSpecImpl::AddStopPoint");
+    cDebug d("cFCOSpecImpl::AddStopPoint");
 
-	// first, make sure this stop point is below the start point
-	if(name.GetRelationship(mStartPoint) != cFCOName::REL_BELOW)
-	{
-		d.TraceError("Attempt to add stop point that is not below start point!\n");
-		d.TraceError("\tstart point = %s stop point = %s\n", mStartPoint.AsString().c_str(), name.AsString().c_str());
+    // first, make sure this stop point is below the start point
+    if(name.GetRelationship(mStartPoint) != cFCOName::REL_BELOW)
+    {
+        d.TraceError("Attempt to add stop point that is not below start point!\n");
+        d.TraceError("\tstart point = %s stop point = %s\n", mStartPoint.AsString().c_str(), name.AsString().c_str());
 
-		TOSTRINGSTREAM str;
-		str << "Attempt to add stop point that is not below start point!" 
-			<< " start point = " 
-			<< iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( mStartPoint )
-			<< " stop point = "  
-			<< iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( name )
-			<< std::ends;
+        TOSTRINGSTREAM str;
+        str << "Attempt to add stop point that is not below start point!" 
+            << " start point = " 
+            << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( mStartPoint )
+            << " stop point = "  
+            << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay( name )
+            << std::ends;
 
-		d.TraceError(_T("%s\n"), str.str().c_str());
-		throw eSerializerInputStreamFmt(str.str().c_str());
-	}
+        d.TraceError(_T("%s\n"), str.str().c_str());
+        throw eSerializerInputStreamFmt(str.str().c_str());
+    }
 
     std::set<cFCOName>::iterator i;
-  	for(i = mStopPoints.begin(); i != mStopPoints.end(); )
-	{
-		cFCOName::Relationship rel = name.GetRelationship(*i);
-		switch(rel)
-		{
-		case cFCOName::REL_EQUAL:
-			d.TraceDebug(_T("Attempt to add stop point %s that already exists in spec %s\n"), name.AsString().c_str(), mStartPoint.AsString().c_str());
-			return;
-		case cFCOName::REL_BELOW:
-			d.TraceDebug(_T("Attempt to add stop point %s to spec %s, but stop point %s already exists!\n"), 
-				name.AsString().c_str(), mStartPoint.AsString().c_str(), i->AsString().c_str());
-			return;
-		case cFCOName::REL_ABOVE:	
-			// this stop point will replace the encountered stop point, so remove it!
-			d.TraceDebug(_T("Attempt to add stop point %s to spec %s, so removing stop point %s\n"), 
-							name.AsString().c_str(), mStartPoint.AsString().c_str(), i->AsString().c_str());
-			// we have to be careful we don't decrement past the beginning of the set!
-			if(i == mStopPoints.begin())
-			{
-				mStopPoints.erase(i);
-				i = mStopPoints.begin();
-			}
-			else
-				mStopPoints.erase(i++);
-			break;
+    for(i = mStopPoints.begin(); i != mStopPoints.end(); )
+    {
+        cFCOName::Relationship rel = name.GetRelationship(*i);
+        switch(rel)
+        {
+        case cFCOName::REL_EQUAL:
+            d.TraceDebug(_T("Attempt to add stop point %s that already exists in spec %s\n"), name.AsString().c_str(), mStartPoint.AsString().c_str());
+            return;
+        case cFCOName::REL_BELOW:
+            d.TraceDebug(_T("Attempt to add stop point %s to spec %s, but stop point %s already exists!\n"), 
+                name.AsString().c_str(), mStartPoint.AsString().c_str(), i->AsString().c_str());
+            return;
+        case cFCOName::REL_ABOVE:   
+            // this stop point will replace the encountered stop point, so remove it!
+            d.TraceDebug(_T("Attempt to add stop point %s to spec %s, so removing stop point %s\n"), 
+                            name.AsString().c_str(), mStartPoint.AsString().c_str(), i->AsString().c_str());
+            // we have to be careful we don't decrement past the beginning of the set!
+            if(i == mStopPoints.begin())
+            {
+                mStopPoints.erase(i);
+                i = mStopPoints.begin();
+            }
+            else
+                mStopPoints.erase(i++);
+            break;
 
-		default:
-			i++;
-		}
-	}
+        default:
+            i++;
+        }
+    }
 
-	// finally, insert the name
-	mStopPoints.insert(name);
+    // finally, insert the name
+    mStopPoints.insert(name);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -234,17 +234,17 @@ void cFCOSpecStopPointSet::Add(const cFCOName& name)
 ///////////////////////////////////////////////////////////////////////////////
 iFCOSpecHelper* cFCOSpecStopPointSet::Clone() const
 {
-	cFCOSpecStopPointSet* pNew = new cFCOSpecStopPointSet;
+    cFCOSpecStopPointSet* pNew = new cFCOSpecStopPointSet;
 
-	pNew->mStartPoint = mStartPoint;
+    pNew->mStartPoint = mStartPoint;
 
-	std::set<cFCOName>::const_iterator itr;
+    std::set<cFCOName>::const_iterator itr;
     for (itr = mStopPoints.begin(); itr != mStopPoints.end(); ++itr)
     {
-		pNew->Add(*itr);
+        pNew->Add(*itr);
     }
 
-	return pNew;
+    return pNew;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -252,19 +252,19 @@ iFCOSpecHelper* cFCOSpecStopPointSet::Clone() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecStopPointSet::Read (iSerializer* pSerializer, int32 version)
 {
-	// read the start point
+    // read the start point
     //pSerializer->ReadObject(&mStartPoint);
-	inherited::Read(pSerializer, version);
+    inherited::Read(pSerializer, version);
 
-	// read all the stop points	
-	int32 size;
+    // read all the stop points 
+    int32 size;
     pSerializer->ReadInt32(size);
-	ASSERT(size >= 0);
+    ASSERT(size >= 0);
     for (int i = 0; i < size; ++i)
     {
         cFCOName fcoName;
         pSerializer->ReadObject(&fcoName);
-		mStopPoints.insert(fcoName);
+        mStopPoints.insert(fcoName);
     }
 
 }
@@ -274,16 +274,16 @@ void cFCOSpecStopPointSet::Read (iSerializer* pSerializer, int32 version)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecStopPointSet::Write(iSerializer* pSerializer) const
 {
-	// write the start point
+    // write the start point
     //pSerializer->WriteObject(&mStartPoint);
-	inherited::Write(pSerializer);
+    inherited::Write(pSerializer);
 
-	// write all the stop points
+    // write all the stop points
     pSerializer->WriteInt32(mStopPoints.size());
     std::set<cFCOName>::const_iterator itr;
     for (itr = mStopPoints.begin(); itr != mStopPoints.end(); ++itr)
     {
-		pSerializer->WriteObject(&(*itr));
+        pSerializer->WriteObject(&(*itr));
     }
 }
 
@@ -293,27 +293,27 @@ void cFCOSpecStopPointSet::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 iFCOSpecHelper::CompareResult cFCOSpecStopPointSet::Compare(const iFCOSpecHelper* pRhs) const
 {
-	// if different types, order on mType address :-)
-	if(pRhs->GetType() != GetType())
-		return ((&pRhs->GetType() < &GetType()) ? CMP_LT : CMP_GT);
+    // if different types, order on mType address :-)
+    if(pRhs->GetType() != GetType())
+        return ((&pRhs->GetType() < &GetType()) ? CMP_LT : CMP_GT);
 
-	const cFCOSpecStopPointSet* pStopPtSet = static_cast<const cFCOSpecStopPointSet*>(pRhs);
-	if(GetStartPoint() != pStopPtSet->GetStartPoint())
-		return ((GetStartPoint() < pStopPtSet->GetStartPoint()) ? CMP_LT : CMP_GT);
+    const cFCOSpecStopPointSet* pStopPtSet = static_cast<const cFCOSpecStopPointSet*>(pRhs);
+    if(GetStartPoint() != pStopPtSet->GetStartPoint())
+        return ((GetStartPoint() < pStopPtSet->GetStartPoint()) ? CMP_LT : CMP_GT);
 
-	if(GetSize() != pStopPtSet->GetSize())
-		return ((GetSize() < pStopPtSet->GetSize()) ? CMP_LT : CMP_GT);
+    if(GetSize() != pStopPtSet->GetSize())
+        return ((GetSize() < pStopPtSet->GetSize()) ? CMP_LT : CMP_GT);
 
-	std::set<cFCOName>::const_iterator	myIter	= mStopPoints.begin(),
-										rhsIter = pStopPtSet->mStopPoints.begin();
-	for(; myIter != mStopPoints.end(); myIter++, rhsIter++)
-	{
-		if(*myIter != *rhsIter)
-			return ((*myIter < *rhsIter) ? CMP_LT : CMP_GT);
-	}
+    std::set<cFCOName>::const_iterator  myIter  = mStopPoints.begin(),
+                                        rhsIter = pStopPtSet->mStopPoints.begin();
+    for(; myIter != mStopPoints.end(); myIter++, rhsIter++)
+    {
+        if(*myIter != *rhsIter)
+            return ((*myIter < *rhsIter) ? CMP_LT : CMP_GT);
+    }
 
-	// they must be equal! 
-	return CMP_EQ;
+    // they must be equal! 
+    return CMP_EQ;
 }
 
 //#############################################################################
@@ -326,7 +326,7 @@ IMPLEMENT_TYPEDSERIALIZABLE(cFCOSpecNoChildren, _T("cFCOSpecNoChildren"), 0, 1)
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOSpecNoChildren::ContainsFCO(const cFCOName& name) const
 {
-	return (name == GetStartPoint());
+    return (name == GetStartPoint());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -334,9 +334,9 @@ bool cFCOSpecNoChildren::ContainsFCO(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 iFCOSpecHelper* cFCOSpecNoChildren::Clone() const
 {
-	iFCOSpecHelper* pNew = new cFCOSpecNoChildren;
-	pNew->SetStartPoint(GetStartPoint());
-	return pNew;
+    iFCOSpecHelper* pNew = new cFCOSpecNoChildren;
+    pNew->SetStartPoint(GetStartPoint());
+    return pNew;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -344,8 +344,8 @@ iFCOSpecHelper* cFCOSpecNoChildren::Clone() const
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOSpecNoChildren::ShouldStopDescent(const cFCOName& name) const
 {
-	// we should stop for everything except the start point...
-	return ( name != GetStartPoint() );
+    // we should stop for everything except the start point...
+    return ( name != GetStartPoint() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -353,7 +353,7 @@ bool cFCOSpecNoChildren::ShouldStopDescent(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecNoChildren::Read (iSerializer* pSerializer, int32 version)
 {
-	inherited::Read(pSerializer, version);
+    inherited::Read(pSerializer, version);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -361,7 +361,7 @@ void cFCOSpecNoChildren::Read (iSerializer* pSerializer, int32 version)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecNoChildren::Write(iSerializer* pSerializer) const
 {
-	inherited::Write(pSerializer);
+    inherited::Write(pSerializer);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -369,14 +369,14 @@ void cFCOSpecNoChildren::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 iFCOSpecHelper::CompareResult cFCOSpecNoChildren::Compare(const iFCOSpecHelper* pRhs) const
 {
-	// if different types, order on mType address :-)
-	if(pRhs->GetType() != GetType())
-		return ((&pRhs->GetType() < &GetType()) ? CMP_LT : CMP_GT);
+    // if different types, order on mType address :-)
+    if(pRhs->GetType() != GetType())
+        return ((&pRhs->GetType() < &GetType()) ? CMP_LT : CMP_GT);
 
-	if(GetStartPoint() != pRhs->GetStartPoint())
-		return ((GetStartPoint() < pRhs->GetStartPoint()) ? CMP_LT : CMP_GT);
+    if(GetStartPoint() != pRhs->GetStartPoint())
+        return ((GetStartPoint() < pRhs->GetStartPoint()) ? CMP_LT : CMP_GT);
 
-	return CMP_EQ;
+    return CMP_EQ;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -384,11 +384,11 @@ iFCOSpecHelper::CompareResult cFCOSpecNoChildren::Compare(const iFCOSpecHelper* 
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecNoChildren::TraceContents(int dl) const
 {
-	cDebug d("cFCOSpecNoChildren::TraceContents");
-	if(dl == -1)
-		dl = cDebug::D_DEBUG;
+    cDebug d("cFCOSpecNoChildren::TraceContents");
+    if(dl == -1)
+        dl = cDebug::D_DEBUG;
 
-	d.Trace(dl, "Single FCO Spec (all children are stop points): %s\n", mStartPoint.AsString().c_str());
+    d.Trace(dl, "Single FCO Spec (all children are stop points): %s\n", mStartPoint.AsString().c_str());
 }
 
 

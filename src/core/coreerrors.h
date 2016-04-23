@@ -42,7 +42,7 @@
 #include "core/errortable.h"
 
 TSS_DECLARE_ERROR_REGISTRATION( core )
-	
+    
 
 #endif//__COREERRORS_H
 

@@ -46,8 +46,8 @@ void TestGenreSwitcher()
 {
 #pragma message( __FILE__ "(1) : TODO - implement this test file")
 #if 0
-  	cDebug d("TestGenreSwitcher");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestGenreSwitcher");
+    d.TraceDebug("Entering...\n");
 
     // normally we use the cGenreSwitcher::GetInstance() interface
     // to get access the class singleton.  But for testing purposes 

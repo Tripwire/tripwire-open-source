@@ -50,8 +50,8 @@ int gFCOSpecImplDestroyed = 0;
 // ctor and dtor
 ///////////////////////////////////////////////////////////////////////////////
 cFCOSpecImpl::cFCOSpecImpl(const TSTRING& name, void* pSrc, iFCOSpecHelper* pHelper) :
-	mName(name),
-	mpHelper(pHelper)
+    mName(name),
+    mpHelper(pHelper)
 {
 #ifdef _DEBUG
     ++gFCOSpecImplCreated;
@@ -62,8 +62,8 @@ cFCOSpecImpl::cFCOSpecImpl(const TSTRING& name, void* pSrc, iFCOSpecHelper* pHel
 
 cFCOSpecImpl::cFCOSpecImpl() :
     iFCOSpec(),
-	mName(_T("Unnamed_FCOSpecImpl")),
-	mpHelper(0)
+    mName(_T("Unnamed_FCOSpecImpl")),
+    mpHelper(0)
 {
 #ifdef _DEBUG
     ++gFCOSpecImplCreated;
@@ -74,9 +74,9 @@ cFCOSpecImpl::cFCOSpecImpl() :
 
 cFCOSpecImpl::cFCOSpecImpl(const cFCOSpecImpl& rhs) :
     iFCOSpec(),
-	mpHelper(0)
+    mpHelper(0)
 {
-	*this = rhs;
+    *this = rhs;
 #ifdef _DEBUG
     ++gFCOSpecImplCreated;
     cDebug d("cFCOSpecImpl::cFCOSpecImpl()");
@@ -92,7 +92,7 @@ cFCOSpecImpl::~cFCOSpecImpl()
     d.TraceDetail("Deleted cFCOSpecImpl(%p) creat=%d dest=%d\n", this, gFCOSpecImplCreated, gFCOSpecImplDestroyed);
 #endif
 
-	delete mpHelper;
+    delete mpHelper;
 }
 
 IMPLEMENT_SERREFCOUNT(cFCOSpecImpl, _T("cFCOSpecImpl"), 0, 1);
@@ -102,18 +102,18 @@ IMPLEMENT_SERREFCOUNT(cFCOSpecImpl, _T("cFCOSpecImpl"), 0, 1);
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecImpl::operator=(const cFCOSpecImpl& rhs)
 {
-	mName				= rhs.mName;
-	mPropVector			= rhs.mPropVector;
-	mpHelper			= rhs.mpHelper ? rhs.mpHelper->Clone() : 0;
+    mName               = rhs.mName;
+    mPropVector         = rhs.mPropVector;
+    mpHelper            = rhs.mpHelper ? rhs.mpHelper->Clone() : 0;
 }
 ///////////////////////////////////////////////////////////////////////////////
 // Clone -- make a copy of this spec
 ///////////////////////////////////////////////////////////////////////////////
 iFCOSpec* cFCOSpecImpl::Clone() const
 {
-	cFCOSpecImpl* pNewSpec = new cFCOSpecImpl(mName);
-	*pNewSpec = *this;
-	return pNewSpec;
+    cFCOSpecImpl* pNewSpec = new cFCOSpecImpl(mName);
+    *pNewSpec = *this;
+    return pNewSpec;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,88 +121,88 @@ iFCOSpec* cFCOSpecImpl::Clone() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecImpl::TraceContents(int dl) const
 {
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
 
-	cDebug d("cFCOSpecImpl::TraceContents");
-	d.Trace(dl, _T("FCOSpecImpl     :\t%s\n"), mName.c_str());
-	mPropVector.TraceContents(dl);
-	if(mpHelper)
-		mpHelper->TraceContents(dl);
-	else
-		d.Trace(dl, _T("<NULL spec helper>\n") );
+    cDebug d("cFCOSpecImpl::TraceContents");
+    d.Trace(dl, _T("FCOSpecImpl     :\t%s\n"), mName.c_str());
+    mPropVector.TraceContents(dl);
+    if(mpHelper)
+        mpHelper->TraceContents(dl);
+    else
+        d.Trace(dl, _T("<NULL spec helper>\n") );
 
-	// NOTE -- tracing out the data source associated with this spec has no
-	//		real value -- mdb
+    // NOTE -- tracing out the data source associated with this spec has no
+    //      real value -- mdb
 }
 
 const TSTRING& cFCOSpecImpl::GetName() const 
 {
-	return mName;
+    return mName;
 }
 
 void cFCOSpecImpl::SetName(const TSTRING& name)
 {
-	mName = name;
+    mName = name;
 }
 
 const cFCOName& cFCOSpecImpl::GetStartPoint() const 
 {
-	ASSERT(mpHelper != 0);
-	return mpHelper->GetStartPoint();
+    ASSERT(mpHelper != 0);
+    return mpHelper->GetStartPoint();
 }
 
-void cFCOSpecImpl::SetStartPoint	(const cFCOName& name) 
+void cFCOSpecImpl::SetStartPoint    (const cFCOName& name) 
 {
-	cDebug d("cFCOSpecImpl::SetStartPoint");
+    cDebug d("cFCOSpecImpl::SetStartPoint");
 
-	ASSERT(mpHelper != 0);
-	mpHelper->SetStartPoint(name);
+    ASSERT(mpHelper != 0);
+    mpHelper->SetStartPoint(name);
 }
 
 const cFCOPropVector& cFCOSpecImpl::GetPropVector(const iFCOSpecMask* pFCOSpecMask) const 
 {
-	// NOTE: for now, there will only be one property vector associated with a given specifier
-	return mPropVector;
+    // NOTE: for now, there will only be one property vector associated with a given specifier
+    return mPropVector;
 }
 
 bool cFCOSpecImpl::SetPropVector(const iFCOSpecMask* pMask, const cFCOPropVector& vector)
 {
-	// for now, the default mask is the only mask the spec has.
-	if(pMask != iFCOSpecMask::GetDefaultMask())
-		return false;
+    // for now, the default mask is the only mask the spec has.
+    if(pMask != iFCOSpecMask::GetDefaultMask())
+        return false;
 
-	mPropVector = vector;
-	return true;
+    mPropVector = vector;
+    return true;
 }
 
 const iFCOSpecMask* cFCOSpecImpl::GetSpecMask(const iFCO* pFCO) const 
 {
-	// for now, I will just return the default property mask
-	return iFCOSpecMask::GetDefaultMask();
+    // for now, I will just return the default property mask
+    return iFCOSpecMask::GetDefaultMask();
 }
 
 
 void cFCOSpecImpl::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("FS Spec Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("FS Spec Read")));
 
     pSerializer->ReadString(mName);
     mPropVector.Read(pSerializer);
 
-	// read the helper
-	mpHelper = (iFCOSpecHelper*)pSerializer->ReadObjectDynCreate();
+    // read the helper
+    mpHelper = (iFCOSpecHelper*)pSerializer->ReadObjectDynCreate();
 }
 
 void cFCOSpecImpl::Write(iSerializer* pSerializer) const
 {
-	ASSERT(mpHelper != 0);
+    ASSERT(mpHelper != 0);
 
     pSerializer->WriteString(mName);
     mPropVector.Write(pSerializer);
 
-	pSerializer->WriteObjectDynCreate(mpHelper);
+    pSerializer->WriteObjectDynCreate(mpHelper);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -210,9 +210,9 @@ void cFCOSpecImpl::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOSpecImpl::SpecContainsFCO(const cFCOName& name) const
 {
-	ASSERT(mpHelper != 0);
-	
-	return mpHelper->ContainsFCO(name);
+    ASSERT(mpHelper != 0);
+    
+    return mpHelper->ContainsFCO(name);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -220,8 +220,8 @@ bool cFCOSpecImpl::SpecContainsFCO(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOSpecImpl::ShouldStopDescent( const cFCOName& name ) const 
 {
-	ASSERT(mpHelper != 0);
-	return mpHelper->ShouldStopDescent( name );
+    ASSERT(mpHelper != 0);
+    return mpHelper->ShouldStopDescent( name );
 }
 
 

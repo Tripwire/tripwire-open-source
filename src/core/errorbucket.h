@@ -47,32 +47,32 @@ class eError;
 
 ///////////////////////////////////////////////////////////////////////////////
 // cErrorBucket -- contains an interface that handles error reporting, and 
-//		contains a link to a child bucket. Each concrete implementation of the 
-//		cErrorBucket interface will perform its own specific task related to the
-//		error's occurence (print to stderr, store in a queue, etc) and then forward
-//		the error on to its child link. The parent bucket does not own the destruction 
-//		of the pointer to the child bucket.
+//      contains a link to a child bucket. Each concrete implementation of the 
+//      cErrorBucket interface will perform its own specific task related to the
+//      error's occurence (print to stderr, store in a queue, etc) and then forward
+//      the error on to its child link. The parent bucket does not own the destruction 
+//      of the pointer to the child bucket.
 ///////////////////////////////////////////////////////////////////////////////
 class cErrorBucket
 {
 public:
-	cErrorBucket();
-	virtual ~cErrorBucket() {}
+    cErrorBucket();
+    virtual ~cErrorBucket() {}
 
-	virtual void AddError(const eError& error);
-		// add an error to the bucket
+    virtual void AddError(const eError& error);
+        // add an error to the bucket
 
-	cErrorBucket* GetChild();
-		// returns the bucket that the current bucket is chained to, or 
-		// NULL if nothing is attached to it.
-	cErrorBucket* SetChild(cErrorBucket* pNewChild);
-		// sets the child link of this bucket; returns the old link value
+    cErrorBucket* GetChild();
+        // returns the bucket that the current bucket is chained to, or 
+        // NULL if nothing is attached to it.
+    cErrorBucket* SetChild(cErrorBucket* pNewChild);
+        // sets the child link of this bucket; returns the old link value
 
 protected:
-	virtual void HandleError(const eError& error) = 0;
-		// override this to implement error handling functionality specific to
-		// the derived class
-	cErrorBucket* mpChild;
+    virtual void HandleError(const eError& error) = 0;
+        // override this to implement error handling functionality specific to
+        // the derived class
+    cErrorBucket* mpChild;
 };
 
 //#############################################################################
@@ -82,20 +82,20 @@ protected:
 // cErrorBucket
 ///////////////////
 inline cErrorBucket::cErrorBucket() :
-	mpChild(0)
+    mpChild(0)
 {
 }
 
 inline cErrorBucket* cErrorBucket::GetChild()
 {
-	return mpChild;
+    return mpChild;
 }
 
 inline cErrorBucket* cErrorBucket::SetChild(cErrorBucket* pNewChild)
 {
-	cErrorBucket* pOldChild = mpChild;
-	mpChild = pNewChild;
-	return pOldChild;
+    cErrorBucket* pOldChild = mpChild;
+    mpChild = pNewChild;
+    return pOldChild;
 }
 
 #endif

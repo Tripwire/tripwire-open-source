@@ -39,49 +39,49 @@
 
 static void TraceSpecAttr(const cFCOSpecAttr* pAttr, cDebug d)
 {
-	d.TraceDebug("--- Printing contents ---\n");
-	d.TraceDebug(_T("Name: %s Severity: %d\n"), pAttr->GetName().c_str(), pAttr->GetSeverity());
-	d.TraceDebug("Email addresses:\n");
+    d.TraceDebug("--- Printing contents ---\n");
+    d.TraceDebug(_T("Name: %s Severity: %d\n"), pAttr->GetName().c_str(), pAttr->GetSeverity());
+    d.TraceDebug("Email addresses:\n");
 
-	cFCOSpecAttrEmailIter i(*pAttr);
-	for(i.SeekBegin(); ! i.Done(); i.Next())
-	{
-		d.TraceDebug(_T("\t%s\n"), i.EmailAddress().c_str());
-	}
+    cFCOSpecAttrEmailIter i(*pAttr);
+    for(i.SeekBegin(); ! i.Done(); i.Next())
+    {
+        d.TraceDebug(_T("\t%s\n"), i.EmailAddress().c_str());
+    }
 }
 
 void TestFCOSpecAttr()
 {
-	cDebug d("TestFCOSpecAttr");
-	d.TraceDebug("Entering\n");
-	cFCOSpecAttr* pAttr = new cFCOSpecAttr;
+    cDebug d("TestFCOSpecAttr");
+    d.TraceDebug("Entering\n");
+    cFCOSpecAttr* pAttr = new cFCOSpecAttr;
 
-	pAttr->SetName		(_T("My Name"));		d.TraceDebug("Setting Name     = My Name\n");
-	pAttr->SetSeverity	(53);					d.TraceDebug("Setting Severity = 53\n");
-	pAttr->AddEmail		(_T("dog@bark.com"));	d.TraceDebug("Adding email	   = dog@bark.com\n");
-	pAttr->AddEmail		(_T("cow@moo.com"));	d.TraceDebug("Adding email	   = cow@moo.com\n");
-	pAttr->AddEmail		(_T("cat@meow.com"));	d.TraceDebug("Adding email	   = cat@meow.com\n");
+    pAttr->SetName      (_T("My Name"));        d.TraceDebug("Setting Name     = My Name\n");
+    pAttr->SetSeverity  (53);                   d.TraceDebug("Setting Severity = 53\n");
+    pAttr->AddEmail     (_T("dog@bark.com"));   d.TraceDebug("Adding email     = dog@bark.com\n");
+    pAttr->AddEmail     (_T("cow@moo.com"));    d.TraceDebug("Adding email     = cow@moo.com\n");
+    pAttr->AddEmail     (_T("cat@meow.com"));   d.TraceDebug("Adding email     = cat@meow.com\n");
 
-	// trace contents...
-	TraceSpecAttr(pAttr, d);
+    // trace contents...
+    TraceSpecAttr(pAttr, d);
 
-	// test serialization...
-	d.TraceDebug("Testing Serialization; next output should be the same as the previous\n");
-	cMemoryArchive a;
-	cSerializerImpl s(a, cSerializerImpl::S_WRITE);
-	s.Init();
-	pAttr->Write(&s);
-	s.Finit();
-	a.Seek(0, cBidirArchive::BEGINNING);
-	cFCOSpecAttr* pNew = new cFCOSpecAttr;
-	cSerializerImpl s2(a, cSerializerImpl::S_READ);
-	s2.Init();
-	pNew->Read(&s2);
-	s2.Finit();
+    // test serialization...
+    d.TraceDebug("Testing Serialization; next output should be the same as the previous\n");
+    cMemoryArchive a;
+    cSerializerImpl s(a, cSerializerImpl::S_WRITE);
+    s.Init();
+    pAttr->Write(&s);
+    s.Finit();
+    a.Seek(0, cBidirArchive::BEGINNING);
+    cFCOSpecAttr* pNew = new cFCOSpecAttr;
+    cSerializerImpl s2(a, cSerializerImpl::S_READ);
+    s2.Init();
+    pNew->Read(&s2);
+    s2.Finit();
 
-	// trace contents...
-	TraceSpecAttr(pNew, d);
+    // trace contents...
+    TraceSpecAttr(pNew, d);
 
-	pNew->Release();
-	pAttr->Release();
+    pNew->Release();
+    pAttr->Release();
 }

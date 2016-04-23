@@ -40,79 +40,79 @@
 /*
 static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )
 {
-	if( ! bFirst )
-	{
-		iter.Descend();
-	}
-	d.TraceDebug( "-- Processing directory %s\n", iter.GetCwd().c_str() );
+    if( ! bFirst )
+    {
+        iter.Descend();
+    }
+    d.TraceDebug( "-- Processing directory %s\n", iter.GetCwd().c_str() );
 
-	for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
-	{
-		d.TraceDebug( "Processing entry %s\n", iter.GetName().c_str() );
-		if( iter.CanDescend() )
-		{
-			d.TraceDebug( ">>Descending...\n" );
-			PrintDb(iter, d, false);
-		}
-	}
+    for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
+    {
+        d.TraceDebug( "Processing entry %s\n", iter.GetName().c_str() );
+        if( iter.CanDescend() )
+        {
+            d.TraceDebug( ">>Descending...\n" );
+            PrintDb(iter, d, false);
+        }
+    }
 
-	d.TraceDebug( "-- Done Processing directory %s\n", iter.GetCwd().c_str() );
+    d.TraceDebug( "-- Done Processing directory %s\n", iter.GetCwd().c_str() );
 }
 */
 
 static void PrintIter( cFSDataSourceIter iter, cDebug& d )
 {
-	//
-	//debug stuff
-	//
-	
-	if( ! iter.CanDescend() )
-	{
-		d.TraceError( "Iterator cannot descend; returning!\n");
-		return;
-	}
-	iter.Descend();
+    //
+    //debug stuff
+    //
+    
+    if( ! iter.CanDescend() )
+    {
+        d.TraceError( "Iterator cannot descend; returning!\n");
+        return;
+    }
+    iter.Descend();
     iter.TraceContents();
 
-	for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
-	{
-		iFCO* pFCO = iter.CreateFCO();
-		if( pFCO )
-		{
-			pFCO->TraceContents();
-			pFCO->Release();
-		}
-		else
-		{
-			d.TraceError( "*** Create of FCO failed!\n");
-		}
-		if( iter.CanDescend() )
-		{
-			d.TraceDebug( ">>Descending...\n" );
-			PrintIter(iter, d);
-		}
-	}
+    for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
+    {
+        iFCO* pFCO = iter.CreateFCO();
+        if( pFCO )
+        {
+            pFCO->TraceContents();
+            pFCO->Release();
+        }
+        else
+        {
+            d.TraceError( "*** Create of FCO failed!\n");
+        }
+        if( iter.CanDescend() )
+        {
+            d.TraceDebug( ">>Descending...\n" );
+            PrintIter(iter, d);
+        }
+    }
 }
 
 
 void TestFSDataSourceIter()
 {
-	cFSDataSourceIter	iter;
-	cDebug				d("TestFSDataSourceIter");
-	try
-	{
-		// go to my temp directory and iterate over everything!
-		iter.SeekToFCO( cFCOName(_T("/tmp")) );
-		//
-		// print out everything below the iterator
-		//
-		PrintIter( iter, d );
-	}
-	catch( eError& e )
-	{
-	        d.TraceError( "*** Caught exception %d %s\n", e.GetID(), e.GetMsg().c_str() );
-		TEST( false );
-	}
+    cFSDataSourceIter   iter;
+    cDebug              d("TestFSDataSourceIter");
+    try
+    {
+        // go to my temp directory and iterate over everything!
+        iter.SeekToFCO( cFCOName(_T("/tmp")) );
+        //
+        // print out everything below the iterator
+        //
+        PrintIter( iter, d );
+    }
+    catch( eError& e )
+    {
+            d.TraceError( "*** Caught exception %d %s\n", e.GetID(), e.GetMsg().c_str() );
+        TEST( false );
+    }
 }
 
 

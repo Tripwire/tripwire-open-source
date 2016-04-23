@@ -203,10 +203,10 @@ static bool IsEqualsSign( TSTRING::const_iterator first,
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
 cConfigFile::cConfigFile() :
-	mStringHashTable(HASH_VERY_SMALL), mnLine(1)
+    mStringHashTable(HASH_VERY_SMALL), mnLine(1)
 {
-	// we make the hash table very small (17 slots) because we don't expect very many things
-	// in the config file -- mdb
+    // we make the hash table very small (17 slots) because we don't expect very many things
+    // in the config file -- mdb
 }
 
 cConfigFile::~cConfigFile()
@@ -394,12 +394,12 @@ static bool IsComment( const TSTRING& sLine )
     // while pop next char (updates cur)
     while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
-		if( ! IsWhiteSpace( first, last ) )
-			break;
-	}
+        if( ! IsWhiteSpace( first, last ) )
+            break;
+    }
 
-	// it is a comment if it is an empty line or it starts with a #
-	return( first == end || IsPoundSymbol( first, last ) );
+    // it is a comment if it is an empty line or it starts with a #
+    return( first == end || IsPoundSymbol( first, last ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -414,10 +414,10 @@ static void TrimSpace(TSTRING& s)
     TSTRING::const_iterator         firstNW = end;          // identifies beginning of first non-whitespace character
     TSTRING::const_iterator         firstTW = end;          // identifies beginning of first trailing whitespace character
 
-	// find first non-whitespace char
+    // find first non-whitespace char
     while( cCharUtil::PeekNextChar( cur, end, first, last ) )
     {
-	    if( IsWhiteSpace( first, last ) )
+        if( IsWhiteSpace( first, last ) )
         {
             cCharUtil::PopNextChar( cur, end, first, last );
         }
@@ -435,11 +435,11 @@ static void TrimSpace(TSTRING& s)
     // (first,last] now identify first non-whitespace character
     firstNW = first;
 
-	// find first of trailing whitespace
+    // find first of trailing whitespace
     bool fInWhitespace = false;
     while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
-	    if( IsWhiteSpace( first, last ) )
+        if( IsWhiteSpace( first, last ) )
         {
             if( ! fInWhitespace )
             {
@@ -476,28 +476,28 @@ void cConfigFile::GetKeyValuePair( const TSTRING& sLine, TSTRING& sKey, TSTRING&
 
     while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
-	    if( IsEqualsSign( first, last ) )
+        if( IsEqualsSign( first, last ) )
         {
             break;
         }
     }
 
-	if( first == end )
+    if( first == end )
     {
-		throw eConfigFileNoEq( MakeErrorString() );
+        throw eConfigFileNoEq( MakeErrorString() );
     }
 
 
-	// get the two strings..
-	sKey.assign( sLine.begin(), first );
-	sVal.assign( last, sLine.end() );
-	
-	// trim the white space from the beginning and end...
-	TrimSpace( sKey );
-	TrimSpace( sVal );
+    // get the two strings..
+    sKey.assign( sLine.begin(), first );
+    sVal.assign( last, sLine.end() );
+    
+    // trim the white space from the beginning and end...
+    TrimSpace( sKey );
+    TrimSpace( sVal );
 
     //
-	// find more errors
+    // find more errors
     // 
     // 1. empty key string
     // 2. assignment to a predefined var
@@ -506,44 +506,44 @@ void cConfigFile::GetKeyValuePair( const TSTRING& sLine, TSTRING& sKey, TSTRING&
     //
     TSTRING tstrDummy;
     
-	if( sKey.empty() )
-	{
-		throw eConfigFileNoKey( MakeErrorString() );
-	}
+    if( sKey.empty() )
+    {
+        throw eConfigFileNoKey( MakeErrorString() );
+    }
     else if( IsPredefinedVar( sKey, tstrDummy ) )
-	{
-		throw eConfigFileAssignToPredefVar
-			( MakeErrorString( sKey ) );
-	}
-	else if( sVal.empty() )
-	{
-		cTWUtil::PrintErrorMsg( eConfigFileEmptyVariable( MakeErrorString( sKey ), eError::NON_FATAL ) );
-	}
+    {
+        throw eConfigFileAssignToPredefVar
+            ( MakeErrorString( sKey ) );
+    }
+    else if( sVal.empty() )
+    {
+        cTWUtil::PrintErrorMsg( eConfigFileEmptyVariable( MakeErrorString( sKey ), eError::NON_FATAL ) );
+    }
 
-	// everything went ok.
+    // everything went ok.
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // DoVarSubst()
-//		replaces any $(VAR) with either built-in functions, or in the cfg symbol table
-//		fails if symbol isn't found
+//      replaces any $(VAR) with either built-in functions, or in the cfg symbol table
+//      fails if symbol isn't found
 ///////////////////////////////////////////////////////////////////////////////
 
 void cConfigFile::DoVarSubst( TSTRING& s ) const //throw( eConfigFile )
 {
-	cDebug d("cConfigFile::DoVarSubst()");
-	d.TraceDebug( _T("ORIG: %s\n"), s.c_str() );
+    cDebug d("cConfigFile::DoVarSubst()");
+    d.TraceDebug( _T("ORIG: %s\n"), s.c_str() );
 
     TSTRING sOut;
 
-	// walk through string
-	//		look for $(
-	//			find matching )
-	//			pick out subset
-	//			look up in symbol table
-	//			substitute subset
-	//		continue iterating
+    // walk through string
+    //      look for $(
+    //          find matching )
+    //          pick out subset
+    //          look up in symbol table
+    //          substitute subset
+    //      continue iterating
 
     
     TSTRING::const_iterator         cur = s.begin();    // pointer to working position in s
@@ -583,30 +583,30 @@ void cConfigFile::DoVarSubst( TSTRING& s ) const //throw( eConfigFile )
                 // now get text between parens
                 TSTRING sVarName;
                 sVarName.assign( last, firstRP );
-				d.TraceDebug( _T("symbol = %s\n"), sVarName.c_str() );
+                d.TraceDebug( _T("symbol = %s\n"), sVarName.c_str() );
                 
-				// look up in symbol table
-				TSTRING sVarValue;
-				if( ! IsPredefinedVar( sVarName, sVarValue ) && ! mStringHashTable.Lookup( sVarName, sVarValue ) )
-				{
-					throw eConfigFileUseUndefVar( MakeErrorString( sVarName ) );
-				}
+                // look up in symbol table
+                TSTRING sVarValue;
+                if( ! IsPredefinedVar( sVarName, sVarValue ) && ! mStringHashTable.Lookup( sVarName, sVarValue ) )
+                {
+                    throw eConfigFileUseUndefVar( MakeErrorString( sVarName ) );
+                }
 
                 sOut += sVarValue;
-			}
+            }
             else
             {
                 sOut.append( first, last );
             }
-		}
+        }
         else
         {
             sOut.append( first, last );
         }
-	}
+    }
     while( cCharUtil::PopNextChar( cur, end, first, last ) );
 
-	d.TraceDebug( _T("DONE: %s\n"), sOut.c_str());
+    d.TraceDebug( _T("DONE: %s\n"), sOut.c_str());
     s = sOut;
 }
 
@@ -617,16 +617,16 @@ bool cConfigFile::IsPredefinedVar( const TSTRING& var, TSTRING& val ) const
 
     if( 0 == var.compare( _T("HOSTNAME") ) )
     {
-		fRecognizeVar = true;
+        fRecognizeVar = true;
         try
         {
             iFSServices::GetInstance()->GetMachineName( val);
-			if (val.empty())
-				val = _T("localhost");
+            if (val.empty())
+                val = _T("localhost");
         }
         catch( eFSServices& )
         {
-			val = _T("localhost");
+            val = _T("localhost");
         }
     }
     else if( 0 == var.compare( _T("DATE") ) )
@@ -642,17 +642,17 @@ void cConfigFile::CheckThatAllMandatoryKeyWordsExists() // throw( eConfigFile )
 {
     TSTRING astrMandatoryKeys[] = 
             { 
-				// I don't think ROOT should be manditory, since we don't really use it
-				// for anything -- mdb
-				//_T("ROOT"), 
+                // I don't think ROOT should be manditory, since we don't really use it
+                // for anything -- mdb
+                //_T("ROOT"), 
                 _T("POLFILE"), 
                 _T("DBFILE"), 
                 _T("REPORTFILE"), 
                 _T("SITEKEYFILE"), 
                 _T("LOCALKEYFILE"), 
 #ifdef GMMS
-				_T("GMMS"),
-				_T("GMMSOPTIONS")
+                _T("GMMS"),
+                _T("GMMSOPTIONS")
 #endif
             };
 
@@ -674,9 +674,9 @@ void cConfigFile::CheckThatAllMandatoryKeyWordsExists() // throw( eConfigFile )
     }
 
     if( ! fAllFound )
-	{
-		throw eConfigFileMissReqKey( MakeErrorString( strNotFound, false ) );
-	}
+    {
+        throw eConfigFileMissReqKey( MakeErrorString( strNotFound, false ) );
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -698,7 +698,7 @@ TSTRING cConfigFile::MakeErrorString( const TSTRING& strMsg, bool fShowLineNum )
         strErr << TSS_GetString( cTW, tw::STR_CUR_LINE ) << mnLine;
     }
 
-	return strErr.str();
+    return strErr.str();
 }
 
 TSTRING& util_MakeTripwireDateString( TSTRING& strBuf )

@@ -36,7 +36,7 @@
 /*
  * sha.c
  *
- *	signature function hook for SHA.
+ *  signature function hook for SHA.
  *
  * Gene Kim
  * Purdue University
@@ -175,7 +175,7 @@ void shsTransform(SHS_INFO *shsInfo)
 
     /* Step A.  Copy the data buffer into the local work buffer */
     for( i = 0; i < 16; i++ )
-	W[ i ] = shsInfo->data[ i ];
+    W[ i ] = shsInfo->data[ i ];
 
     /* Step B.  Expand the 16 words into 64 temporary data words */
     expand( 16 ); expand( 17 ); expand( 18 ); expand( 19 ); expand( 20 );
@@ -244,10 +244,10 @@ static void byteReverse(uint32* buffer, int byteCount)
 
     byteCount /= sizeof( uint32 );
     for( count = 0; count < byteCount; count++ )
-	{
-	value = ( buffer[ count ] << 16 ) | ( buffer[ count ] >> 16 );
-	buffer[ count ] = ( ( value & 0xFF00FF00L ) >> 8 ) | ( ( value & 0x00FF00FFL ) << 8 );
-	}
+    {
+    value = ( buffer[ count ] << 16 ) | ( buffer[ count ] >> 16 );
+    buffer[ count ] = ( ( value & 0xFF00FF00L ) >> 8 ) | ( ( value & 0x00FF00FFL ) << 8 );
+    }
     }
 #endif /* #ifndef WORDS_BIGENDIAN */
 
@@ -260,21 +260,21 @@ void shsUpdate(SHS_INFO* shsInfo, uint8* buffer, int count)
     {
     /* Update bitcount */
     if( ( shsInfo->countLo + ( ( uint32 ) count << 3 ) ) < shsInfo->countLo )
-	shsInfo->countHi++; /* Carry from low to high bitCount */
+    shsInfo->countHi++; /* Carry from low to high bitCount */
     shsInfo->countLo += ( ( uint32 ) count << 3 );
     shsInfo->countHi += ( ( uint32 ) count >> 29 );
 
     /* Process data in SHS_BLOCKSIZE chunks */
     while( count >= SHS_BLOCKSIZE )
-	{
-	memcpy( (char *) shsInfo->data, (char *) buffer, SHS_BLOCKSIZE );
+    {
+    memcpy( (char *) shsInfo->data, (char *) buffer, SHS_BLOCKSIZE );
 #ifndef WORDS_BIGENDIAN
-	byteReverse( shsInfo->data, SHS_BLOCKSIZE );
+    byteReverse( shsInfo->data, SHS_BLOCKSIZE );
 #endif /* #ifndef WORDS_BIGENDIAN */
-	shsTransform( shsInfo );
-	buffer += SHS_BLOCKSIZE;
-	count -= SHS_BLOCKSIZE;
-	}
+    shsTransform( shsInfo );
+    buffer += SHS_BLOCKSIZE;
+    count -= SHS_BLOCKSIZE;
+    }
 
     /* Handle any remaining bytes of data.  This should only happen once
        on the final lot of data */
@@ -295,20 +295,20 @@ void shsFinal(SHS_INFO *shsInfo)
 
     /* Pad out to 56 mod 64 */
     if( count > 56 )
-	{
-	/* Two lots of padding:  Pad the first block to 64 bytes */
-	memset( ( char * ) shsInfo->data + count, 0, 64 - count );
+    {
+    /* Two lots of padding:  Pad the first block to 64 bytes */
+    memset( ( char * ) shsInfo->data + count, 0, 64 - count );
 #ifndef WORDS_BIGENDIAN
-	byteReverse( shsInfo->data, SHS_BLOCKSIZE );
+    byteReverse( shsInfo->data, SHS_BLOCKSIZE );
 #endif /* #ifndef WORDS_BIGENDIAN */
-	shsTransform( shsInfo );
+    shsTransform( shsInfo );
 
-	/* Now fill the next block with 56 bytes */
-	memset( (char *) shsInfo->data, 0, 56 );
-	}
+    /* Now fill the next block with 56 bytes */
+    memset( (char *) shsInfo->data, 0, 56 );
+    }
     else
-	/* Pad block to 56 bytes */
-	memset( ( char * ) shsInfo->data + count, 0, 56 - count );
+    /* Pad block to 56 bytes */
+    memset( ( char * ) shsInfo->data + count, 0, 56 - count );
 #ifndef WORDS_BIGENDIAN 
     byteReverse( shsInfo->data, SHS_BLOCKSIZE );
 #endif /* #ifndef WORDS_BIGENDIAN */
@@ -350,14 +350,14 @@ void main()
     shsUpdate( &shsInfo, ( uint8 * ) "abc", 3 );
     shsFinal( &shsInfo );
     if( shsInfo.digest[ 0 ] != 0x0164B8A9L ||
-	shsInfo.digest[ 1 ] != 0x14CD2A5EL ||
-	shsInfo.digest[ 2 ] != 0x74C4F7FFL ||
-	shsInfo.digest[ 3 ] != 0x082C4D97L ||
-	shsInfo.digest[ 4 ] != 0xF1EDF880L )
-	{
-	puts( "Error in SHS implementation" );
-	exit( -1 );
-	}
+    shsInfo.digest[ 1 ] != 0x14CD2A5EL ||
+    shsInfo.digest[ 2 ] != 0x74C4F7FFL ||
+    shsInfo.digest[ 3 ] != 0x082C4D97L ||
+    shsInfo.digest[ 4 ] != 0xF1EDF880L )
+    {
+    puts( "Error in SHS implementation" );
+    exit( -1 );
+    }
 
     /* Now perform time trial, generating MD for 10MB of data.  First,
        initialize the test data */
@@ -370,7 +370,7 @@ void main()
     /* Calculate SHS message digest in TEST_BLOCK_SIZE byte blocks */
     shsInit( &shsInfo );
     for( i = TEST_BLOCKS; i > 0; i-- )
-	shsUpdate( &shsInfo, data, TEST_BLOCK_SIZE );
+    shsUpdate( &shsInfo, data, TEST_BLOCK_SIZE );
     shsFinal( &shsInfo );
 
     /* Get finish time and time difference */

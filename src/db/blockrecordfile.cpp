@@ -42,18 +42,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 static inline void util_InitBlockArray( cBlockRecordArray& block )
 {
-	if( ! block.Initialized() )
-	{
-		block.InitForExistingBlock();
-	}
+    if( ! block.Initialized() )
+    {
+        block.InitForExistingBlock();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ctor
 ///////////////////////////////////////////////////////////////////////////////
 cBlockRecordFile::cBlockRecordFile()
-:	mLastAddedTo( -1 ),
-	mbOpen		( false )
+:   mLastAddedTo( -1 ),
+    mbOpen      ( false )
 {
 }
 
@@ -62,29 +62,29 @@ cBlockRecordFile::cBlockRecordFile()
 ///////////////////////////////////////////////////////////////////////////////
 cBlockRecordFile::~cBlockRecordFile()
 {
-	Close();
+    Close();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Open
 ///////////////////////////////////////////////////////////////////////////////
-void cBlockRecordFile::Open	( const TSTRING& fileName, int numPages, bool bTruncate) //throw (eArchive)
+void cBlockRecordFile::Open ( const TSTRING& fileName, int numPages, bool bTruncate) //throw (eArchive)
 {
-	ASSERT( ! mbOpen );
+    ASSERT( ! mbOpen );
 
-	// first, open the file..
-	//
-	mBlockFile.Open( fileName, numPages, bTruncate );
+    // first, open the file..
+    //
+    mBlockFile.Open( fileName, numPages, bTruncate );
 }
 
 void cBlockRecordFile::Open( cBidirArchive* pArch, int numPages ) //throw (eArchive)
 {
-	ASSERT( ! mbOpen );
-	bool bTruncate = ( pArch->Length() == 0 );
+    ASSERT( ! mbOpen );
+    bool bTruncate = ( pArch->Length() == 0 );
 
-	mBlockFile.Open( pArch, numPages );
+    mBlockFile.Open( pArch, numPages );
 
-	OpenImpl( bTruncate );
+    OpenImpl( bTruncate );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,42 +92,42 @@ void cBlockRecordFile::Open( cBidirArchive* pArch, int numPages ) //throw (eArch
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::OpenImpl( bool bTruncate ) //throw (eArchive)
 {
-	ASSERT( ! mbOpen );
-	//
-	// create the vector of block record arrays...avoid initializing them all
-	//	right now so that we don't page the whole file into memory
-	//
-	mvBlocks.clear();
-	for( int i=0; i < mBlockFile.GetNumBlocks(); i++ )
-	{
-		mvBlocks.push_back( cBlockRecordArray( &mBlockFile, i ) );
-		//
-		// if we are creating a new file, initialize the block for first usage...
-		//
-		if( bTruncate )
-		{
-			mvBlocks.back().InitNewBlock();
-		}
-	}
-	//
-	// use the integrity of the first block as a q&d check for file integrity...
-	//
-	ASSERT( mvBlocks.size() > 0 );
-	if(! mvBlocks.begin()->Initialized() )
-	{
-		mvBlocks.begin()->InitForExistingBlock();
-	}
-	if( ! mvBlocks.begin()->IsClassValid() )
-	{
-		TSTRING str = _T("Bad file format for the Block Record File");
-		throw eArchiveFormat( str );
-	}
-	// set the last item added to to zero (TODO -- is this the right thing to do or
-	// should I store it in the archive?
-	//
-	mLastAddedTo = 0;
+    ASSERT( ! mbOpen );
+    //
+    // create the vector of block record arrays...avoid initializing them all
+    //  right now so that we don't page the whole file into memory
+    //
+    mvBlocks.clear();
+    for( int i=0; i < mBlockFile.GetNumBlocks(); i++ )
+    {
+        mvBlocks.push_back( cBlockRecordArray( &mBlockFile, i ) );
+        //
+        // if we are creating a new file, initialize the block for first usage...
+        //
+        if( bTruncate )
+        {
+            mvBlocks.back().InitNewBlock();
+        }
+    }
+    //
+    // use the integrity of the first block as a q&d check for file integrity...
+    //
+    ASSERT( mvBlocks.size() > 0 );
+    if(! mvBlocks.begin()->Initialized() )
+    {
+        mvBlocks.begin()->InitForExistingBlock();
+    }
+    if( ! mvBlocks.begin()->IsClassValid() )
+    {
+        TSTRING str = _T("Bad file format for the Block Record File");
+        throw eArchiveFormat( str );
+    }
+    // set the last item added to to zero (TODO -- is this the right thing to do or
+    // should I store it in the archive?
+    //
+    mLastAddedTo = 0;
 
-	mbOpen = true;
+    mbOpen = true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -135,10 +135,10 @@ void cBlockRecordFile::OpenImpl( bool bTruncate ) //throw (eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::Close() //throw (eArchive)
 {
-	Flush();
-	mBlockFile.Close();
-	mbOpen = false;
-	mvBlocks.clear();
+    Flush();
+    mBlockFile.Close();
+    mbOpen = false;
+    mvBlocks.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -146,32 +146,32 @@ void cBlockRecordFile::Close() //throw (eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::Flush() //throw (eArchive)
 {
-	mBlockFile.Flush();
+    mBlockFile.Flush();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // AddItem
 ///////////////////////////////////////////////////////////////////////////////
-cBlockRecordFile::tAddr	cBlockRecordFile::AddItem( int8* pData, int dataSize ) //throw (eArchive)
+cBlockRecordFile::tAddr cBlockRecordFile::AddItem( int8* pData, int dataSize ) //throw (eArchive)
 {
-	ASSERT( mbOpen );
+    ASSERT( mbOpen );
 #ifdef _BLOCKFILE_DEBUG
-	AssertValid();
+    AssertValid();
 #endif
-	tAddr rtn(0, 0);
-	//
-	// first, let's find room for this data item...
-	//
-	rtn.mBlockNum = FindRoomForData( dataSize );
-	//
-	// now, insert the data...
-	//
-	rtn.mIndex = mvBlocks[rtn.mBlockNum].AddItem( pData, dataSize, 1 );
-	//
-	// update the last added to pointer and return the location...
-	//
-	mLastAddedTo = rtn.mBlockNum;
-	return rtn;
+    tAddr rtn(0, 0);
+    //
+    // first, let's find room for this data item...
+    //
+    rtn.mBlockNum = FindRoomForData( dataSize );
+    //
+    // now, insert the data...
+    //
+    rtn.mIndex = mvBlocks[rtn.mBlockNum].AddItem( pData, dataSize, 1 );
+    //
+    // update the last added to pointer and return the location...
+    //
+    mLastAddedTo = rtn.mBlockNum;
+    return rtn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -179,33 +179,33 @@ cBlockRecordFile::tAddr	cBlockRecordFile::AddItem( int8* pData, int dataSize ) /
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::RemoveItem( cBlockRecordFile::tAddr dataAddr ) //throw (eArchive)
 {
-	ASSERT( mbOpen );
-	ASSERT( IsValidAddr( dataAddr ) );
+    ASSERT( mbOpen );
+    ASSERT( IsValidAddr( dataAddr ) );
 #ifdef _BLOCKFILE_DEBUG
-	AssertValid();
+    AssertValid();
 #endif
-	
-	mvBlocks[ dataAddr.mBlockNum ].DeleteItem( dataAddr.mIndex );
-	//
-	// remove unneeded blocks at the end...
-	//
-	//TODO -- not implemented yet!
-	/*
-	while( mvBlocks.back().GetNumItems() == 0 )
-	{
-		// if there are >2 blocks, and the back two blocks are both
-		// empty, remove one. We always want to be sure there is at
-		// least one block in the database, and we don't want to remove
-		// single trailing empty blocks because it would perform poorly if 
-		// there were a bunch of additions and removals at the end of the file.
-		if( (mvBlocks.size() > 2) && (mvBlocks[ mvBlocks.size()-2 ].GetNumItems() == 0 )
-		{
-			// TODO -- uncomment these to implement file shrinking...
-			mvBlocks.pop_back();
-			mBlockFile.DestroyLastBlock();
-		}
-	}
-	*/
+    
+    mvBlocks[ dataAddr.mBlockNum ].DeleteItem( dataAddr.mIndex );
+    //
+    // remove unneeded blocks at the end...
+    //
+    //TODO -- not implemented yet!
+    /*
+    while( mvBlocks.back().GetNumItems() == 0 )
+    {
+        // if there are >2 blocks, and the back two blocks are both
+        // empty, remove one. We always want to be sure there is at
+        // least one block in the database, and we don't want to remove
+        // single trailing empty blocks because it would perform poorly if 
+        // there were a bunch of additions and removals at the end of the file.
+        if( (mvBlocks.size() > 2) && (mvBlocks[ mvBlocks.size()-2 ].GetNumItems() == 0 )
+        {
+            // TODO -- uncomment these to implement file shrinking...
+            mvBlocks.pop_back();
+            mBlockFile.DestroyLastBlock();
+        }
+    }
+    */
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -213,42 +213,42 @@ void cBlockRecordFile::RemoveItem( cBlockRecordFile::tAddr dataAddr ) //throw (e
 ///////////////////////////////////////////////////////////////////////////////
 bool cBlockRecordFile::IsValidAddr( cBlockRecordFile::tAddr addr ) //throw (eArchive)
 {
-	ASSERT( mbOpen );
+    ASSERT( mbOpen );
 
-	if( (addr.mBlockNum < 0) || (addr.mBlockNum >= mBlockFile.GetNumBlocks()) )
-		return false;
-	
-	util_InitBlockArray( mvBlocks[ addr.mBlockNum ] );
+    if( (addr.mBlockNum < 0) || (addr.mBlockNum >= mBlockFile.GetNumBlocks()) )
+        return false;
+    
+    util_InitBlockArray( mvBlocks[ addr.mBlockNum ] );
 
-	return ( mvBlocks[ addr.mBlockNum ].IsItemValid( addr.mIndex ) );
+    return ( mvBlocks[ addr.mBlockNum ].IsItemValid( addr.mIndex ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetDataForReading
 ///////////////////////////////////////////////////////////////////////////////
-int8*	cBlockRecordFile::GetDataForReading( cBlockRecordFile::tAddr dataAddr, int32& dataSize ) //throw (eArchive)
+int8*   cBlockRecordFile::GetDataForReading( cBlockRecordFile::tAddr dataAddr, int32& dataSize ) //throw (eArchive)
 {
-	ASSERT( mbOpen );
-	ASSERT( IsValidAddr( dataAddr ) );
+    ASSERT( mbOpen );
+    ASSERT( IsValidAddr( dataAddr ) );
 #ifdef _BLOCKFILE_DEBUG
-	AssertValid();
+    AssertValid();
 #endif
 
-	return ( mvBlocks[ dataAddr.mBlockNum ].GetDataForReading( dataAddr.mIndex, dataSize ) );
+    return ( mvBlocks[ dataAddr.mBlockNum ].GetDataForReading( dataAddr.mIndex, dataSize ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetDataForWriting
 ///////////////////////////////////////////////////////////////////////////////
-int8*	cBlockRecordFile::GetDataForWriting( cBlockRecordFile::tAddr dataAddr, int32& dataSize ) //throw (eArchive)
+int8*   cBlockRecordFile::GetDataForWriting( cBlockRecordFile::tAddr dataAddr, int32& dataSize ) //throw (eArchive)
 {
-	ASSERT( mbOpen );
-	ASSERT( IsValidAddr( dataAddr ) );
+    ASSERT( mbOpen );
+    ASSERT( IsValidAddr( dataAddr ) );
 #ifdef _BLOCKFILE_DEBUG
-	AssertValid();
+    AssertValid();
 #endif
 
-	return ( mvBlocks[ dataAddr.mBlockNum ].GetDataForWriting( dataAddr.mIndex, dataSize ) );
+    return ( mvBlocks[ dataAddr.mBlockNum ].GetDataForWriting( dataAddr.mIndex, dataSize ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -256,48 +256,48 @@ int8*	cBlockRecordFile::GetDataForWriting( cBlockRecordFile::tAddr dataAddr, int
 ///////////////////////////////////////////////////////////////////////////////
 int cBlockRecordFile::FindRoomForData( int32 dataSize ) //throw (eArchive)
 {
-	ASSERT( (dataSize > 0) && (dataSize <= cBlockRecordArray::MAX_DATA_SIZE) );
-	ASSERT( mbOpen );
+    ASSERT( (dataSize > 0) && (dataSize <= cBlockRecordArray::MAX_DATA_SIZE) );
+    ASSERT( mbOpen );
 #ifdef _BLOCKFILE_DEBUG
-	AssertValid();
+    AssertValid();
 #endif
-	cDebug d("cBlockRecordFile::FindRoomForData");
+    cDebug d("cBlockRecordFile::FindRoomForData");
 
-	// first, try the last added to block...
-	//
-	d.TraceDetail( "Looking for room for %d bytes; first trying mLastAddedTo (%d)\n", dataSize, mLastAddedTo );
-	util_InitBlockArray( mvBlocks[mLastAddedTo] );
-	if( mvBlocks[mLastAddedTo].GetAvailableSpace() >= dataSize )
-	{
-		d.TraceDetail( "---Found room in block %d\n", mLastAddedTo );
-		return mLastAddedTo;
-	}
-	//
-	// ok, I guess we will have to iterate through all the blocks...
-	//
-	BlockArray::iterator it;
-	int cnt = 0;
-	for( it = mvBlocks.begin(); it != mvBlocks.end(); it++, cnt++ )
-	{
-		util_InitBlockArray( *it );
-		if( it->GetAvailableSpace() >= dataSize )
-		{
-			d.TraceDetail( "---Found room in block %d\n", cnt );
-			return cnt;
-		}
-	}
-	//
-	// if we got here, then we need to add a new block
-	//
-	d.TraceDetail( "---We need to add new block(%d)\n", cnt);
-	mBlockFile.CreateBlock();
-	ASSERT( (mBlockFile.GetNumBlocks() == (mvBlocks.size()+1)) && (mvBlocks.size() == cnt) );
-	mvBlocks.push_back( cBlockRecordArray( &mBlockFile, cnt ) );
-	mvBlocks.back().InitNewBlock();
+    // first, try the last added to block...
+    //
+    d.TraceDetail( "Looking for room for %d bytes; first trying mLastAddedTo (%d)\n", dataSize, mLastAddedTo );
+    util_InitBlockArray( mvBlocks[mLastAddedTo] );
+    if( mvBlocks[mLastAddedTo].GetAvailableSpace() >= dataSize )
+    {
+        d.TraceDetail( "---Found room in block %d\n", mLastAddedTo );
+        return mLastAddedTo;
+    }
+    //
+    // ok, I guess we will have to iterate through all the blocks...
+    //
+    BlockArray::iterator it;
+    int cnt = 0;
+    for( it = mvBlocks.begin(); it != mvBlocks.end(); it++, cnt++ )
+    {
+        util_InitBlockArray( *it );
+        if( it->GetAvailableSpace() >= dataSize )
+        {
+            d.TraceDetail( "---Found room in block %d\n", cnt );
+            return cnt;
+        }
+    }
+    //
+    // if we got here, then we need to add a new block
+    //
+    d.TraceDetail( "---We need to add new block(%d)\n", cnt);
+    mBlockFile.CreateBlock();
+    ASSERT( (mBlockFile.GetNumBlocks() == (mvBlocks.size()+1)) && (mvBlocks.size() == cnt) );
+    mvBlocks.push_back( cBlockRecordArray( &mBlockFile, cnt ) );
+    mvBlocks.back().InitNewBlock();
 
-	ASSERT( mvBlocks.back().GetAvailableSpace() >= dataSize );
+    ASSERT( mvBlocks.back().GetAvailableSpace() >= dataSize );
 
-	return cnt;
+    return cnt;
 }
 
 
@@ -308,12 +308,12 @@ int cBlockRecordFile::FindRoomForData( int32 dataSize ) //throw (eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::TraceContents(int dl) const
 {
-	// TODO -- this is probably not what I want to do, but it helps me right now...
-	//
-	for( BlockArray::const_iterator i = mvBlocks.begin(); i != mvBlocks.end(); i++ )
-	{
-		i->TraceContents( dl );
-	}
+    // TODO -- this is probably not what I want to do, but it helps me right now...
+    //
+    for( BlockArray::const_iterator i = mvBlocks.begin(); i != mvBlocks.end(); i++ )
+    {
+        i->TraceContents( dl );
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -321,8 +321,8 @@ void cBlockRecordFile::TraceContents(int dl) const
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::AssertValid() const
 {
-	ASSERT( (mLastAddedTo >= 0) && (mLastAddedTo < mvBlocks.size()) );
-	ASSERT( mvBlocks.size() == mBlockFile.GetNumBlocks() );
+    ASSERT( (mLastAddedTo >= 0) && (mLastAddedTo < mvBlocks.size()) );
+    ASSERT( mvBlocks.size() == mBlockFile.GetNumBlocks() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -330,10 +330,10 @@ void cBlockRecordFile::AssertValid() const
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::AssertAllBlocksValid() 
 {
-	for( BlockArray::iterator i = mvBlocks.begin(); i != mvBlocks.end(); i++ )
-	{
-		i->AssertValid();
-	}
+    for( BlockArray::iterator i = mvBlocks.begin(); i != mvBlocks.end(); i++ )
+    {
+        i->AssertValid();
+    }
 }
 
 

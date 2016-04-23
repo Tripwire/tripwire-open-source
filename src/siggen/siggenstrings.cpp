@@ -48,11 +48,11 @@
 
 TSS_BeginStringtable( cSiggen )
 
-	TSS_StringEntry( siggen::STR_SIGGEN_USAGE,
+    TSS_StringEntry( siggen::STR_SIGGEN_USAGE,
                    _T("Usage:  siggen [options] file1 [file2...]\n")
                 _T("\n")
                 _T("  -t                   --terse\n")
-		        _T("  -h                   --hexadecimal\n")
+                _T("  -h                   --hexadecimal\n")
                 _T("  -a                   --all\n")
                 _T("  -C                   --CRC32\n")
                 _T("  -M                   --MD5\n")
@@ -61,9 +61,9 @@ TSS_BeginStringtable( cSiggen )
                 _T("file1 [file 2 ...]\n")
                 _T("\n")
               ),
-	TSS_StringEntry( siggen::STR_SIGGEN_VERSION,        _T("siggen: Display signature function values. \n")),
-    TSS_StringEntry( siggen::STR_ERR_OPEN_FAILED,	    _T("File could not be opened") ),
-    TSS_StringEntry( siggen::STR_ERR_NO_FILE,	        _T("File does not exist") ),
+    TSS_StringEntry( siggen::STR_SIGGEN_VERSION,        _T("siggen: Display signature function values. \n")),
+    TSS_StringEntry( siggen::STR_ERR_OPEN_FAILED,       _T("File could not be opened") ),
+    TSS_StringEntry( siggen::STR_ERR_NO_FILE,           _T("File does not exist") ),
     TSS_StringEntry( siggen::STR_SIGGEN_NOT_REG_FILE,   _T(" is not a regular file; ignoring.") )
     
 TSS_EndStringtable( cSiggen )

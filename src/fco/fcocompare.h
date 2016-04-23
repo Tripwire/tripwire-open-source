@@ -45,61 +45,61 @@ class iFCO;
 class cFCOCompare
 {
 public:
-	enum Result
-	{
-		EQUAL					= 1,
-		PROPS_UNEQUAL			= 2,
-		PROPS_NOT_ALL_VALID		= 4
-	};
+    enum Result
+    {
+        EQUAL                   = 1,
+        PROPS_UNEQUAL           = 2,
+        PROPS_NOT_ALL_VALID     = 4
+    };
 
-	cFCOCompare();
-	cFCOCompare( const cFCOPropVector& propsToCompare);
-	virtual ~cFCOCompare();
+    cFCOCompare();
+    cFCOCompare( const cFCOPropVector& propsToCompare);
+    virtual ~cFCOCompare();
 
-	void					SetPropsToCmp(const cFCOPropVector& pv);
-	const cFCOPropVector&	GetPropsToCmp() const;
-		// gets and sets the property vector that indicates what properties the
-		// object will consider in the comparisons.
+    void                    SetPropsToCmp(const cFCOPropVector& pv);
+    const cFCOPropVector&   GetPropsToCmp() const;
+        // gets and sets the property vector that indicates what properties the
+        // object will consider in the comparisons.
 
-	uint32 Compare(const iFCO* pFco1, const iFCO* pFco2) ; 
-		// compares fco1 and fco2, only considering the properties specified set with 
-		// SetPropsToCmp(). The result of the comparison is a bitmask that is currently either
-		// EQUAL or a combination of PROPS_NOT_ALL_VALID and PROPS_UNEQUAL. You can discover which 
-		// properties caused these return flags with the GetXXXProps() methods below.
-		// NOTE -- in integrity checking, the old fco should be the first parameter and the new fco the
-		// second (to support growing files properly)
+    uint32 Compare(const iFCO* pFco1, const iFCO* pFco2) ; 
+        // compares fco1 and fco2, only considering the properties specified set with 
+        // SetPropsToCmp(). The result of the comparison is a bitmask that is currently either
+        // EQUAL or a combination of PROPS_NOT_ALL_VALID and PROPS_UNEQUAL. You can discover which 
+        // properties caused these return flags with the GetXXXProps() methods below.
+        // NOTE -- in integrity checking, the old fco should be the first parameter and the new fco the
+        // second (to support growing files properly)
 
-	const cFCOPropVector& GetInvalidProps() const;
-		// only meaningful if the last Compare() returned PROPS_NOT_ALL_VALID
-	const cFCOPropVector& GetUnequalProps() const;
-		// only meaningful if the last Compare() returned PROPS_UNEQUAL
+    const cFCOPropVector& GetInvalidProps() const;
+        // only meaningful if the last Compare() returned PROPS_NOT_ALL_VALID
+    const cFCOPropVector& GetUnequalProps() const;
+        // only meaningful if the last Compare() returned PROPS_UNEQUAL
 
 private:
-	cFCOPropVector	mPropsToCmp;
-	cFCOPropVector	mInvalidProps;
-	cFCOPropVector	mUnequalProps;
+    cFCOPropVector  mPropsToCmp;
+    cFCOPropVector  mInvalidProps;
+    cFCOPropVector  mUnequalProps;
 };
 
 /////////////////////////////////////////////////////////////
 // inline implementation
 inline void cFCOCompare::SetPropsToCmp(const cFCOPropVector& pv)
 {
-	mPropsToCmp = pv;
+    mPropsToCmp = pv;
 }
 
 inline const cFCOPropVector& cFCOCompare::GetPropsToCmp() const
 {
-	return mPropsToCmp;
+    return mPropsToCmp;
 }
 
 inline const cFCOPropVector& cFCOCompare::GetInvalidProps() const
 {
-	return mInvalidProps;
+    return mInvalidProps;
 }
 
 inline const cFCOPropVector& cFCOCompare::GetUnequalProps() const
 {
-	return mUnequalProps;
+    return mUnequalProps;
 }
 
 

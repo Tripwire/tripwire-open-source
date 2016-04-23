@@ -51,8 +51,8 @@
 //
 cPipedMailMessage::cPipedMailMessage(TSTRING strSendMailExePath)
 {
-	mstrSendMailExePath = strSendMailExePath;
-	mpFile = NULL;
+    mstrSendMailExePath = strSendMailExePath;
+    mpFile = NULL;
 }
 
 
@@ -71,12 +71,12 @@ cPipedMailMessage::~cPipedMailMessage()
 //
 bool cPipedMailMessage::Send()
 {
-	// Be sure that everything that needs to be set has been set
-	if (!Ready()) 
-	{
-		// the message has not been adequately defined and cannot be sent.
-		return false;
-	}
+    // Be sure that everything that needs to be set has been set
+    if (!Ready()) 
+    {
+        // the message has not been adequately defined and cannot be sent.
+        return false;
+    }
 
     SendInit();
     
@@ -141,7 +141,7 @@ bool cPipedMailMessage::Send()
 
     SendFinit();
 
-	return true;
+    return true;
 }
 
 
@@ -150,20 +150,20 @@ bool cPipedMailMessage::Send()
 ///////////////////////////////////////////////////////////////////////////////
 void cPipedMailMessage::SendInit()// throw( eMailMessageError ) 
 {
-	ASSERT(mpFile == 0);
+    ASSERT(mpFile == 0);
 
-	TSTRING strHeader;
+    TSTRING strHeader;
     strHeader += cStringUtil::StrToTstr( cMailMessage::Create822Header() );
 
 #if !USES_MPOPEN
-	// Call _wpopen under NT
-	// TODO  access the risk of _wpopen under NT
+    // Call _wpopen under NT
+    // TODO  access the risk of _wpopen under NT
     mpFile = _wpopen(mstrSendMailExePath.c_str(), _T("w"));
 #else
-	// call mpopen, our safe version popen
+    // call mpopen, our safe version popen
     mpFile = mpopen( (char*) mstrSendMailExePath.c_str(), _T("w") );
 #endif
-	if(! mpFile)
+    if(! mpFile)
     {
         TOSTRINGSTREAM estr;
         estr << TSS_GetString( cTripwire, tripwire::STR_ERR2_MAIL_MESSAGE_COMMAND ) 
@@ -192,29 +192,29 @@ void cPipedMailMessage::SendString( const TSTRING& s )
 ///////////////////////////////////////////////////////////////////////////////
 void cPipedMailMessage::SendFinit() //throw ( eMailMessageError )
 {
-	if(mpFile)
-	{
+    if(mpFile)
+    {
 #if !USES_MPOPEN
-		int result = fclose( mpFile );
+        int result = fclose( mpFile );
 #else
-		int result = mpclose( mpFile );
+        int result = mpclose( mpFile );
 #endif
-		if( result != 0 )
-		{
+        if( result != 0 )
+        {
             TOSTRINGSTREAM estr;
         estr << TSS_GetString( cTripwire, tripwire::STR_ERR2_MAIL_MESSAGE_COMMAND ) 
                  << mstrSendMailExePath;
 
-			// uh oh! something bad has happened!
-			throw eMailPipedCmdFailed( estr.str() );
-		}	
-	}
-	mpFile = 0;
+            // uh oh! something bad has happened!
+            throw eMailPipedCmdFailed( estr.str() );
+        }   
+    }
+    mpFile = 0;
 }
 
 
 FILE* cPipedMailMessage::GetFilePointer() const
 {
-	return mpFile;
+    return mpFile;
 }
 

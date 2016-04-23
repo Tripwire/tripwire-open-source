@@ -45,7 +45,7 @@
 #include "core/file.h"
 #include "core/errorbucketimpl.h"
 
-#include <fstream>	// for the FileExists() stuff
+#include <fstream>  // for the FileExists() stuff
 
 #if IS_UNIX
 #include <unistd.h>
@@ -238,7 +238,7 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
 bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
 {
 #if IS_UNIX
-	
+    
     enum { BUF_SIZE = 4096 };
     int8 buf[BUF_SIZE];
     int nBytesRead;
@@ -248,7 +248,7 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
     srcFile.Open(src_path.c_str());
     // Create destination file. We'll fix the permissions later.
     destFile.Open(dest_path.c_str(), cFile::OPEN_WRITE|cFile::OPEN_CREATE);
-	
+    
     for (int i = srcFile.GetSize(); i > 0; )
     {
         nBytesRead = srcFile.Read(buf, BUF_SIZE);
@@ -268,7 +268,7 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
     destFile.Close();
 
 #endif
-	
+    
     return true;
 }
 

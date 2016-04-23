@@ -79,10 +79,10 @@ void tw_unexpected_handler()
 static void SiggenInit()
 {
     TSS_Dependency( cSiggen );
-	
-    static cUserNotifyStdout	unStdout;
-    static cErrorTracer			et;
-    static cErrorReporter		er;
+    
+    static cUserNotifyStdout    unStdout;
+    static cErrorTracer         et;
+    static cErrorReporter       er;
 
     //
     // initialize iUserNotify
@@ -94,7 +94,7 @@ static void SiggenInit()
     // set up the file system services    
     //
 #if IS_UNIX
-    static cUnixFSServices	fss;
+    static cUnixFSServices  fss;
 #endif
     iFSServices::SetInstance( &fss );
 
@@ -141,7 +141,7 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         // this is quick and dirty ... just the way I like it :-) -- mdb
         //
         if (_tcscmp(argv[1], _T("--version")) == 0)
-	{
+    {
             TCOUT << TSS_GetString( cTW, tw::STR_VERSION_LONG) << std::endl;
             ret=0;
             goto exit;
@@ -181,7 +181,7 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
             ret = 1;
             goto exit;
         }
-	ret = siggen.Execute();
+    ret = siggen.Execute();
 
     } //end try block
     catch (eError& error)

@@ -105,31 +105,31 @@ typedef unsigned __int64 word64;
 
 #elif defined(_KCC)
 
-	#if defined(_ALPHA)
+    #if defined(_ALPHA)
 
-	typedef unsigned int word;
-	typedef unsigned long dword;
-	#define WORD64_AVAILABLE
-	typedef unsigned long word64;
-	#define W64LIT(x) x##LL
+    typedef unsigned int word;
+    typedef unsigned long dword;
+    #define WORD64_AVAILABLE
+    typedef unsigned long word64;
+    #define W64LIT(x) x##LL
 
-	#elif defined(_IRIX)
+    #elif defined(_IRIX)
 
-	typedef unsigned long word;
-	typedef unsigned long long dword;
-	#define WORD64_AVAILABLE
-	typedef unsigned long long word64;
-	#define W64LIT(x) x##LL
+    typedef unsigned long word;
+    typedef unsigned long long dword;
+    #define WORD64_AVAILABLE
+    typedef unsigned long long word64;
+    #define W64LIT(x) x##LL
 
-	#else
+    #else
 
-	typedef unsigned long word;
-	typedef unsigned long long dword;
-	#define WORD64_AVAILABLE
-	typedef unsigned long long word64;
-	#define W64LIT(x) x##LL
+    typedef unsigned long word;
+    typedef unsigned long long dword;
+    #define WORD64_AVAILABLE
+    typedef unsigned long long word64;
+    #define W64LIT(x) x##LL
 
-	#endif
+    #endif
 
 #elif defined(_SUNPRO)
 

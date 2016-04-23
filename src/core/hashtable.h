@@ -36,7 +36,7 @@
 // operator overloaded in order for this to work.  TSTRINGS will always
 // work as the key value because of the overloaded-template-function 
 //
-//		Note: Any overloaded const byte*() operator must return an 
+//      Note: Any overloaded const byte*() operator must return an 
 // length of key as well.  see cDefaultConvert
 //
 // IMPORTANT -- cDefaultConvert only works for pointers to objects
@@ -63,18 +63,18 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Comparison function objects ... these are used by the hash table to determine
-//		equality. The one defined should work for objects that use op== to define 
-//		equality. There is also a specialization for TSTRINGS. If neither of these
-//		fit your needs, you must pass the hash table your own fn pointer or class
+//      equality. The one defined should work for objects that use op== to define 
+//      equality. There is also a specialization for TSTRINGS. If neither of these
+//      fit your needs, you must pass the hash table your own fn pointer or class
 ///////////////////////////////////////////////////////////////////////////////
 template<class T>
 class cDefaultCompare
 {
 public:
-	bool operator()(const T& lhs, const T& rhs)
-	{
-		return lhs == rhs;
-	}
+    bool operator()(const T& lhs, const T& rhs)
+    {
+        return lhs == rhs;
+    }
 };
 /////////////////////////////////////////////////////////
 // specialization for TSTRINGS
@@ -82,24 +82,24 @@ public:
 template<>
 inline bool cDefaultCompare<TSTRING>::operator()(const TSTRING& lhs, const TSTRING& rhs)
 {
-	return (lhs.compare(rhs) == 0);
+    return (lhs.compare(rhs) == 0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Conversion function objects ... used by the hash table to locate the key in KEY_TYPE
-//		into a byte* and a key length (for hashing purposes). The default implementation 
-//		just does a cast. A specialization is also provided for TSTRINGs.
+//      into a byte* and a key length (for hashing purposes). The default implementation 
+//      just does a cast. A specialization is also provided for TSTRINGs.
 ///////////////////////////////////////////////////////////////////////////////
 template<class T>
 class cDefaultConvert
 {
 public:
-	const byte* operator()(const T& obj, int* const pcbKeyLen)
-	{
+    const byte* operator()(const T& obj, int* const pcbKeyLen)
+    {
         // HACK!  TODO: in the interest of time, I've left this as it is.....
         *pcbKeyLen = sizeof(TCHAR) * _tcslen(obj);
-		return (byte*)obj;
-	}
+        return (byte*)obj;
+    }
 };
 /////////////////////////////////////////////////////////
 // specialization for TSTRINGS
@@ -108,27 +108,27 @@ template<>
 inline const byte* cDefaultConvert<TSTRING>::operator()(const TSTRING& obj, int* const pcbKeyLen )
 {
     *pcbKeyLen = sizeof(TCHAR) * obj.length();
-	return (byte*)obj.c_str();
+    return (byte*)obj.c_str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // cHashTable<KEY, VAL, CMP, CONVERTER>
-//		KEY -- the key you are hashing on 
-//		VAL -- the value you want associated with that key
-//		CMP -- a function object that takes (KEY, KEY) and returns true if they
-//				are equal.
-//		CONVERTER -- function object that takes (KEY, int* pcbKeyLen) and returns a const byte*
+//      KEY -- the key you are hashing on 
+//      VAL -- the value you want associated with that key
+//      CMP -- a function object that takes (KEY, KEY) and returns true if they
+//              are equal.
+//      CONVERTER -- function object that takes (KEY, int* pcbKeyLen) and returns a const byte*
 //              ( points to start of key ) and a byte length (in pcbKeyLen) that tells the hashtable
 //              how long the key is
 ///////////////////////////////////////////////////////////////////////////////
 // these were moved outside of the class because it sucks to have to name the class with template parameters
 // ie -- mTable(cHashTable<TSTRING, int>::MEDIUM
 enum cHashTable_TableSize {
-	HASH_VERY_SMALL = 17,
-	HASH_SMALL		= 2007,
-	HASH_MEDIUM		= 6007,
-	HASH_LARGE		= 13007,
-	HASH_VERY_LARGE	= 49999
+    HASH_VERY_SMALL = 17,
+    HASH_SMALL      = 2007,
+    HASH_MEDIUM     = 6007,
+    HASH_LARGE      = 13007,
+    HASH_VERY_LARGE = 49999
 };
 
 // forward declaration
@@ -141,48 +141,48 @@ class cHashTable
 {
 friend class cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>;
 public:
-	//structure for hash table nodes.
-	struct node {
-		KEY_TYPE nKey;
-		VAL_TYPE nData;
-		node* next;
-	};
+    //structure for hash table nodes.
+    struct node {
+        KEY_TYPE nKey;
+        VAL_TYPE nData;
+        node* next;
+    };
 
-	cHashTable(int tblSize = HASH_MEDIUM);
-	~cHashTable();
+    cHashTable(int tblSize = HASH_MEDIUM);
+    ~cHashTable();
 
-	bool Insert(KEY_TYPE key, VAL_TYPE data_in);
-		// The pointer, data_in, is stored in a node based on string_in's hashing.
-		// 
-		// if (key) already exists in the table, then it's value is replaced by (data_in)
-		// returns true if (key) already existed in table.  otherwise, returns false
-		
-	bool Lookup(KEY_TYPE key, VAL_TYPE& data_out) const;
-	//bool Lookup(TSTRING key, VAL_TYPE& data_out) const;
-		//Lookup returns true if a match is found for string_check.  A reference
-		//to the node in the table that matches string_check is passed back (by ref).
-	bool Remove(KEY_TYPE key);
-		//The node that matches string_out is de-allocated.
+    bool Insert(KEY_TYPE key, VAL_TYPE data_in);
+        // The pointer, data_in, is stored in a node based on string_in's hashing.
+        // 
+        // if (key) already exists in the table, then it's value is replaced by (data_in)
+        // returns true if (key) already existed in table.  otherwise, returns false
+        
+    bool Lookup(KEY_TYPE key, VAL_TYPE& data_out) const;
+    //bool Lookup(TSTRING key, VAL_TYPE& data_out) const;
+        //Lookup returns true if a match is found for string_check.  A reference
+        //to the node in the table that matches string_check is passed back (by ref).
+    bool Remove(KEY_TYPE key);
+        //The node that matches string_out is de-allocated.
 
-	bool Clear(void);
-		//Clears the entire table and sets all node pointers to NULL
-	bool IsEmpty(void) const;
-	uint32 Hash( const KEY_TYPE& key ) const;
-		//The hashing function, taken from old Tripwire
+    bool Clear(void);
+        //Clears the entire table and sets all node pointers to NULL
+    bool IsEmpty(void) const;
+    uint32 Hash( const KEY_TYPE& key ) const;
+        //The hashing function, taken from old Tripwire
     int32 GetNumValues() const { return mValuesInTable; };
         // returns number of table entries filled
 
 #ifdef _DEBUG
-	void TraceDiagnostics() const;
-		// traces hash table statistics 
+    void TraceDiagnostics() const;
+        // traces hash table statistics 
 #endif
 
 private:
-	cHashTable(const cHashTable& rhs);		// not impl
-	void operator=(const cHashTable& rhs);	// not impl
-	
-	node** mTable;
-	int mTableSize;
+    cHashTable(const cHashTable& rhs);      // not impl
+    void operator=(const cHashTable& rhs);  // not impl
+    
+    node** mTable;
+    int mTableSize;
     int32 mValuesInTable;
 };
 
@@ -194,23 +194,23 @@ template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 class cHashTableIter
 {
 public:
-	cHashTableIter(const cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>& hashTbl);
+    cHashTableIter(const cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>& hashTbl);
 
-	void	SeekBegin()		const;
-	bool	Done()			const;
-	void	Next()			const;
+    void    SeekBegin()     const;
+    bool    Done()          const;
+    void    Next()          const;
 
-	const KEY_TYPE& Key()	const;
-	const VAL_TYPE&	Val()	const;
-		  VAL_TYPE&	Val();
+    const KEY_TYPE& Key()   const;
+    const VAL_TYPE& Val()   const;
+          VAL_TYPE& Val();
 
 private:
-	mutable int															 mCurIndex;
-	mutable typename cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::node* mpCurNode;
-    const cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>&		 mHashTable;
+    mutable int                                                          mCurIndex;
+    mutable typename cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::node* mpCurNode;
+    const cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>&         mHashTable;
 
-	// helper function
-	void SeekNextValid() const;
+    // helper function
+    void SeekNextValid() const;
 };
 
 
@@ -223,61 +223,61 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 inline cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::cHashTableIter( const cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>& hashTbl) :
-	mHashTable(hashTbl)
+    mHashTable(hashTbl)
 {
-	SeekBegin();
+    SeekBegin();
 }
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 inline void cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::SeekBegin() const
 {
-	mCurIndex = 0;
-	mpCurNode = mHashTable.mTable[0];
-	if(! mpCurNode)
-		SeekNextValid();
+    mCurIndex = 0;
+    mpCurNode = mHashTable.mTable[0];
+    if(! mpCurNode)
+        SeekNextValid();
 }
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
-inline bool cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Done()	const
+inline bool cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Done()   const
 {
-	return ((mCurIndex < 0) || (mCurIndex >= mHashTable.mTableSize));
+    return ((mCurIndex < 0) || (mCurIndex >= mHashTable.mTableSize));
 }
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
-inline void cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Next()	const
+inline void cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Next()   const
 {
-	SeekNextValid();
+    SeekNextValid();
 }
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 inline void cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::SeekNextValid() const
 {
-	if(mpCurNode)
-		mpCurNode = mpCurNode->next;
-	//mCurIndex++;
-	while((! mpCurNode) && (mCurIndex < mHashTable.mTableSize))
-	{
-		mpCurNode = mHashTable.mTable[++mCurIndex];
-	}
+    if(mpCurNode)
+        mpCurNode = mpCurNode->next;
+    //mCurIndex++;
+    while((! mpCurNode) && (mCurIndex < mHashTable.mTableSize))
+    {
+        mpCurNode = mHashTable.mTable[++mCurIndex];
+    }
 }
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
-inline const KEY_TYPE& cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Key()	const
+inline const KEY_TYPE& cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Key() const
 {
-	ASSERT(! Done());
-	return mpCurNode->nKey;
+    ASSERT(! Done());
+    return mpCurNode->nKey;
 }
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
-inline const VAL_TYPE&	cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Val() const
+inline const VAL_TYPE&  cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Val() const
 {
-	ASSERT(! Done());
-	return mpCurNode->nData;
+    ASSERT(! Done());
+    return mpCurNode->nData;
 }
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 inline VAL_TYPE& cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Val()
 {
-	ASSERT(! Done());
-	return mpCurNode->nData;
+    ASSERT(! Done());
+    return mpCurNode->nData;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -289,98 +289,98 @@ template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::cHashTable(int tblSize)
 {
     mValuesInTable = 0;
-	mTableSize = tblSize;
-	mTable = new node*[mTableSize];
+    mTableSize = tblSize;
+    mTable = new node*[mTableSize];
 
-	for (int i=0; i < mTableSize; ++i)
-		mTable[i] = NULL;
+    for (int i=0; i < mTableSize; ++i)
+        mTable[i] = NULL;
 }
 
 //Destructor steps through table and deallocates all dynamic memory
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::~cHashTable()
 {
-	for (int i=0; i<mTableSize; ++i)
-	{
-		if (mTable[i] != NULL) 
-		{
-			//delete the entire chain:
-			node* curr = mTable[i];
-			node* del;
-			while(curr != NULL) 
-			{
-				del = curr;
-				curr=curr->next;
+    for (int i=0; i<mTableSize; ++i)
+    {
+        if (mTable[i] != NULL) 
+        {
+            //delete the entire chain:
+            node* curr = mTable[i];
+            node* del;
+            while(curr != NULL) 
+            {
+                del = curr;
+                curr=curr->next;
 
-				delete del;
-			}
-		}
-	}
+                delete del;
+            }
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Insert -- Hashes a const TCHAR* to a new index.  Collisions are resolved
-//	using seperate chaining (link lists).
+//  using seperate chaining (link lists).
 ////////////////////////////////////////////////////////////////////////////////
 // General Version:
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 bool cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Insert(KEY_TYPE key, VAL_TYPE d_in)
 {
-	COMPARE_OP	compare;
+    COMPARE_OP  compare;
 
-	int hindex = Hash( key ); 
-	if (mTable[hindex] == NULL) {
-		//open index, perform insert
-		mTable[hindex] = new node;
-		(mTable[hindex])->nKey = key;
-		(mTable[hindex])->next = NULL;
-		(mTable[hindex])->nData = d_in;
+    int hindex = Hash( key ); 
+    if (mTable[hindex] == NULL) {
+        //open index, perform insert
+        mTable[hindex] = new node;
+        (mTable[hindex])->nKey = key;
+        (mTable[hindex])->next = NULL;
+        (mTable[hindex])->nData = d_in;
         mValuesInTable++;
 
-		return false;
-	}
-	else //collision, do linked list insert
-	{
-		// case 1: key already exists in list -- replace existing one
-		// case 2: key does not exist -- add to end of list
-		
-		node* nodeptr = mTable[hindex];
+        return false;
+    }
+    else //collision, do linked list insert
+    {
+        // case 1: key already exists in list -- replace existing one
+        // case 2: key does not exist -- add to end of list
+        
+        node* nodeptr = mTable[hindex];
 
-		bool found = false;
-		while (true) 
-		{
-			if ( compare(nodeptr->nKey, key)) 
-			{
-				// we found a duplicate!
-				found = true;
-				break;
-			}
+        bool found = false;
+        while (true) 
+        {
+            if ( compare(nodeptr->nKey, key)) 
+            {
+                // we found a duplicate!
+                found = true;
+                break;
+            }
 
-			// break if this is the last node in the list
-			if(! nodeptr->next)
-				break;
+            // break if this is the last node in the list
+            if(! nodeptr->next)
+                break;
 
-			// otherwise, keep traversing
-			nodeptr = nodeptr->next;
-		}
-		
-		// add a node if the key was not found
-		if (! found) 
-		{
-			node *prev		= nodeptr;
-			nodeptr			= new node;
-			nodeptr->nKey	= key;
-			nodeptr->next	= NULL;
-			prev->next		= nodeptr;
+            // otherwise, keep traversing
+            nodeptr = nodeptr->next;
+        }
+        
+        // add a node if the key was not found
+        if (! found) 
+        {
+            node *prev      = nodeptr;
+            nodeptr         = new node;
+            nodeptr->nKey   = key;
+            nodeptr->next   = NULL;
+            prev->next      = nodeptr;
             
-			mValuesInTable++;
-		} 
+            mValuesInTable++;
+        } 
 
-		// whether it is a new node or not, set the data to this new value
-		nodeptr->nData = d_in;
+        // whether it is a new node or not, set the data to this new value
+        nodeptr->nData = d_in;
 
-		return found;
-	}
+        return found;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -391,60 +391,60 @@ template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 bool 
 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Lookup(KEY_TYPE key, VAL_TYPE& d_out) const
 {
-	COMPARE_OP compare;
+    COMPARE_OP compare;
 
-	int hindex = Hash( key );
-	if (mTable[hindex] == NULL)
-		return false;
-	else {
-		node* nodeptr = mTable[hindex];
-		while (nodeptr != NULL)
-		{
-			if( compare(nodeptr->nKey, key)) {
-				d_out = nodeptr->nData;
-				return true;
-			}
-			nodeptr = nodeptr->next;
-		}
-	}
-	return false;	//mTable entries exhausted without a match
+    int hindex = Hash( key );
+    if (mTable[hindex] == NULL)
+        return false;
+    else {
+        node* nodeptr = mTable[hindex];
+        while (nodeptr != NULL)
+        {
+            if( compare(nodeptr->nKey, key)) {
+                d_out = nodeptr->nData;
+                return true;
+            }
+            nodeptr = nodeptr->next;
+        }
+    }
+    return false;   //mTable entries exhausted without a match
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // Remove -- Removes a single entry from the hash table.  Returns false if 
-//	the nKey is not found in the table.
+//  the nKey is not found in the table.
 ////////////////////////////////////////////////////////////////////////////////
 // General Version - 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 bool 
 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Remove(KEY_TYPE key)
 {
-	COMPARE_OP compare;
+    COMPARE_OP compare;
 
-	int hindex = Hash( key );
-	if (mTable[hindex] == NULL) {
-		delete (mTable[hindex]);
-		mTable[hindex] = NULL;
-		return true;
-	}
-	else {
-		node* nodeptr = mTable[hindex];
-		node* prev;
-		while(nodeptr != NULL) {
-			prev = nodeptr;
-			if(compare(mTable[hindex]->nKey, key)) 
-			{
-				prev->next = nodeptr->next;
-				delete nodeptr;
-				if (nodeptr == mTable[hindex])
-					mTable[hindex] = NULL;
-				nodeptr = NULL;
-				return true;
-			}//end if
-			nodeptr = nodeptr->next;
-		}//end while
-	}//end else
-	return false; //match was not found, no node deleted
+    int hindex = Hash( key );
+    if (mTable[hindex] == NULL) {
+        delete (mTable[hindex]);
+        mTable[hindex] = NULL;
+        return true;
+    }
+    else {
+        node* nodeptr = mTable[hindex];
+        node* prev;
+        while(nodeptr != NULL) {
+            prev = nodeptr;
+            if(compare(mTable[hindex]->nKey, key)) 
+            {
+                prev->next = nodeptr->next;
+                delete nodeptr;
+                if (nodeptr == mTable[hindex])
+                    mTable[hindex] = NULL;
+                nodeptr = NULL;
+                return true;
+            }//end if
+            nodeptr = nodeptr->next;
+        }//end while
+    }//end else
+    return false; //match was not found, no node deleted
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -454,23 +454,23 @@ template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 bool 
 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Clear(void)
 {
-	for (int i=0; i<mTableSize; ++i)
-	{
-		if (mTable[i] != NULL) {
-			node* curr = mTable[i];
-			node* del;
-			while(curr != NULL) {
-				del = curr;
-				curr=curr->next;
-				delete del;
-				if (del == mTable[i])
-					mTable[i] = NULL;
-				del = NULL;
-				
-			}//end delete chain loop
-		}//end if mTable[i]!= NULL
-	}//end for
-	return (IsEmpty());
+    for (int i=0; i<mTableSize; ++i)
+    {
+        if (mTable[i] != NULL) {
+            node* curr = mTable[i];
+            node* del;
+            while(curr != NULL) {
+                del = curr;
+                curr=curr->next;
+                delete del;
+                if (del == mTable[i])
+                    mTable[i] = NULL;
+                del = NULL;
+                
+            }//end delete chain loop
+        }//end if mTable[i]!= NULL
+    }//end for
+    return (IsEmpty());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -480,10 +480,10 @@ template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 bool 
 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::IsEmpty(void) const
 {
-	bool ret = true;
-	for(int i=0; i< mTableSize; ++i)
-		ret &= (mTable[i] == NULL);
-	return ret;
+    bool ret = true;
+    for(int i=0; i< mTableSize; ++i)
+        ret &= (mTable[i] == NULL);
+    return ret;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -495,10 +495,10 @@ uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash( const KEY_TY
     CONVERTER converter;
     int len;
     const byte* pb = converter( key, &len ); //locates key
-	uint32 hindex;
+    uint32 hindex;
 
     hindex = *pb;
-	while (len-- > 0)
+    while (len-- > 0)
         hindex = ((hindex << 9) ^ *pb++) % mTableSize;
     return hindex;
 }
@@ -508,34 +508,34 @@ uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash( const KEY_TY
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 void cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::TraceDiagnostics() const
 {
-	cDebug d("cHashTable::Diagnostics");
+    cDebug d("cHashTable::Diagnostics");
 
-	int slotsFilled = 0, numItems = 0, numMultiSlot = 0;
-	node* pNode;
+    int slotsFilled = 0, numItems = 0, numMultiSlot = 0;
+    node* pNode;
 
-	for(int i=0; i < mTableSize; i++)
-	{
-		if(mTable[i] != NULL)
-		{
-			slotsFilled++;
-			numItems++;
-			pNode = (mTable[i])->next;
-			if(pNode != NULL)
-				numMultiSlot++;
-			while(pNode)
-			{
-				numItems++;
-				pNode = pNode->next;
-			}
-		}
-	}
+    for(int i=0; i < mTableSize; i++)
+    {
+        if(mTable[i] != NULL)
+        {
+            slotsFilled++;
+            numItems++;
+            pNode = (mTable[i])->next;
+            if(pNode != NULL)
+                numMultiSlot++;
+            while(pNode)
+            {
+                numItems++;
+                pNode = pNode->next;
+            }
+        }
+    }
 
-	d.TraceDebug("---------------Hash Table Statisics---------------\n");
-	d.TraceDebug("-- Number of slots:                        %d\n",			mTableSize);
-	d.TraceDebug("-- Number of items:                        %d\n",			numItems);
-	d.TraceDebug("-- Slots filled:                           %d (%lf %%)\n",slotsFilled,  ((double)slotsFilled  / (double)mTableSize)  * 100.0);
-	d.TraceDebug("-- Slots with >1 item:                     %d (%lf %%)\n",numMultiSlot, ((double)numMultiSlot / (double)slotsFilled) * 100.0);
-	d.TraceDebug("--------------------------------------------------\n");
+    d.TraceDebug("---------------Hash Table Statisics---------------\n");
+    d.TraceDebug("-- Number of slots:                        %d\n",         mTableSize);
+    d.TraceDebug("-- Number of items:                        %d\n",         numItems);
+    d.TraceDebug("-- Slots filled:                           %d (%lf %%)\n",slotsFilled,  ((double)slotsFilled  / (double)mTableSize)  * 100.0);
+    d.TraceDebug("-- Slots with >1 item:                     %d (%lf %%)\n",numMultiSlot, ((double)numMultiSlot / (double)slotsFilled) * 100.0);
+    d.TraceDebug("--------------------------------------------------\n");
 }
 #endif // _DEBUG
 

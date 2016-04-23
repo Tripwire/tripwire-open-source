@@ -47,29 +47,29 @@ class iSerializable;
 // Serializer Base Exception
 ////////////////////////////////////////////////////////////
 TSS_BEGIN_EXCEPTION_NO_CTOR( eSerializer, eError )
-	// TODO: What else to add to this enumeration? Locked File? Temp file?
-	enum DataSourceType {
-		TY_UNDEFINED = 0,
-		TY_FILE,
-		TY_TEMPFILE,
-		TY_MEMORY,
-		TY_PIPE,
-		TY_SOCKET
-	};
+    // TODO: What else to add to this enumeration? Locked File? Temp file?
+    enum DataSourceType {
+        TY_UNDEFINED = 0,
+        TY_FILE,
+        TY_TEMPFILE,
+        TY_MEMORY,
+        TY_PIPE,
+        TY_SOCKET
+    };
 
     eSerializer( const TSTRING& msg, const TSTRING& dataSource = _T(""), DataSourceType paramType = TY_UNDEFINED )
-	:   eError( msg ),
-		    mDataSource( dataSource ),
-		    mSourceType( paramType )
-		    {}
+    :   eError( msg ),
+            mDataSource( dataSource ),
+            mSourceType( paramType )
+            {}
     
-	virtual TSTRING GetMsg() const;
+    virtual TSTRING GetMsg() const;
 
 private:
-	TSTRING mDataSource;
-		// TSTRING indentifier of the datasource associated with a particular error
-		// (if one exists) EX: a filename.
-	DataSourceType mSourceType;
+    TSTRING mDataSource;
+        // TSTRING indentifier of the datasource associated with a particular error
+        // (if one exists) EX: a filename.
+    DataSourceType mSourceType;
 TSS_END_EXCEPTION();
 
 ////////////////////////////////////////////////////////////
@@ -94,67 +94,67 @@ TSS_SERIALIZER_EXCEPTION( eSerializerVersionMismatch );
 TSS_SERIALIZER_EXCEPTION( eSerializerEncryption );
 
 /*
-		E_UNKNOWN_TYPE			= 700,
-		E_INPUT_STREAM_FORMAT	= 701,
-        E_OUTPUT_STREAM_FORMAT	= 706,
-		E_INPUT_STR_TYPEARRAY	= 702,	// bad index in to type array
-		E_ARCHIVE				= 703,
-		E_VERSION_MISMATCH		= 704,
+        E_UNKNOWN_TYPE          = 700,
+        E_INPUT_STREAM_FORMAT   = 701,
+        E_OUTPUT_STREAM_FORMAT  = 706,
+        E_INPUT_STR_TYPEARRAY   = 702,  // bad index in to type array
+        E_ARCHIVE               = 703,
+        E_VERSION_MISMATCH      = 704,
         E_ENCRYPTION_ERROR      = 705,
 */
 
 class iSerializer
 {
 public:
-	// Initializing and closing the archive
-	virtual void Init() = 0;	// throw eSerializer
-		// initializes the serializer; must be called before any reading or writing is done
-	virtual void Finit() = 0;
-		// called after a session of serialization is done; called implicitely by the destructor
-		// if not called explicitely before destruction
+    // Initializing and closing the archive
+    virtual void Init() = 0;    // throw eSerializer
+        // initializes the serializer; must be called before any reading or writing is done
+    virtual void Finit() = 0;
+        // called after a session of serialization is done; called implicitely by the destructor
+        // if not called explicitely before destruction
 
-	//Reading and writing objects Init() should have already been called or all these will fail.
-    virtual void				WriteObjectDynCreate(const iTypedSerializable* pObj) = 0;	// throw (eSerializer, eArchive)
-		// writes an object such that it can be dynamically created when read back in with 
-		// ReadObject. 
-	virtual iTypedSerializable*	ReadObjectDynCreate() = 0;									// throw (eSerializer, eArchive);
-		// reads an object from the archive, returning a pointer to it. The caller is responsible for
-		// deleteing or Release()ing it when done.
-	virtual void				WriteObject(const iTypedSerializable* pObj) = 0;			// throw (eSerializer, eArchive)
-		// writes an object to the archive that will not be dynamically created
-	virtual void				ReadObject(iTypedSerializable* pObj) = 0;					// throw (eSerializer, eArchive)
-		// reads an object that was written with WriteObject()
+    //Reading and writing objects Init() should have already been called or all these will fail.
+    virtual void                WriteObjectDynCreate(const iTypedSerializable* pObj) = 0;   // throw (eSerializer, eArchive)
+        // writes an object such that it can be dynamically created when read back in with 
+        // ReadObject. 
+    virtual iTypedSerializable* ReadObjectDynCreate() = 0;                                  // throw (eSerializer, eArchive);
+        // reads an object from the archive, returning a pointer to it. The caller is responsible for
+        // deleteing or Release()ing it when done.
+    virtual void                WriteObject(const iTypedSerializable* pObj) = 0;            // throw (eSerializer, eArchive)
+        // writes an object to the archive that will not be dynamically created
+    virtual void                ReadObject(iTypedSerializable* pObj) = 0;                   // throw (eSerializer, eArchive)
+        // reads an object that was written with WriteObject()
 
 
-	// writing interface
-	// all of these can throw eArchive
+    // writing interface
+    // all of these can throw eArchive
     virtual void    ReadInt16(int16& ret) = 0;
-	virtual void    ReadInt32(int32& ret) = 0;
+    virtual void    ReadInt32(int32& ret) = 0;
     virtual void    ReadInt64(int64& ret) = 0;
     virtual void    ReadString(TSTRING& ret) = 0;
     virtual int     ReadBlob(void* pBlob, int count) = 0;
     virtual void    WriteInt16(int16 i) = 0;
-	virtual void    WriteInt32(int32 i) = 0;
-	virtual void    WriteInt64(int64 i) = 0;
+    virtual void    WriteInt32(int32 i) = 0;
+    virtual void    WriteInt64(int64 i) = 0;
     virtual void    WriteString(const TSTRING& s) = 0;
     virtual void    WriteBlob(const void* pBlob, int count) = 0;
 
-	virtual TSTRING	GetFileName() const { return _T(""); }
-		// derived classes can implement this to return the file name associated with the serializer.
-		// it is only used in error reporting.
+    virtual TSTRING GetFileName() const { return _T(""); }
+        // derived classes can implement this to return the file name associated with the serializer.
+        // it is only used in error reporting.
 
-	// the error enumeration: 700-799
-	enum ErrorNum
-	{
-		E_UNKNOWN_TYPE			= 700,
-		E_INPUT_STREAM_FORMAT	= 701,
-		E_INPUT_STR_TYPEARRAY	= 702,	// bad index in to type array
-		E_ARCHIVE				= 703,
-		E_VERSION_MISMATCH		= 704,
+    // the error enumeration: 700-799
+    enum ErrorNum
+    {
+        E_UNKNOWN_TYPE          = 700,
+        E_INPUT_STREAM_FORMAT   = 701,
+        E_INPUT_STR_TYPEARRAY   = 702,  // bad index in to type array
+        E_ARCHIVE               = 703,
+        E_VERSION_MISMATCH      = 704,
         E_ENCRYPTION_ERROR      = 705,
-        E_OUTPUT_STREAM_FORMAT	= 706,
-		E_NUMITEMS
-	};
+        E_OUTPUT_STREAM_FORMAT  = 706,
+        E_NUMITEMS
+    };
     
     virtual ~iSerializer() {}
 };

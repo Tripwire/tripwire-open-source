@@ -49,18 +49,18 @@ class cTripwireUtil
 {
 public:
 
-	static void CalcProps( iFCO* pFCO, const iFCOSpec* pSpec, iFCOPropCalc* pCalc, iFCOPropDisplayer* pPD );
-		// this method calculates exactly the properties specified by pSpec (invalidating any extra ones)
-		// for iFCO. It is OK to pass NULL for pPD if you don't want the property calculator run over the fco;
-		// otherwise, InitForFCO() is called after the property calculation is done.
-		// TODO -- I should determine what exceptions will come up from this and document it
+    static void CalcProps( iFCO* pFCO, const iFCOSpec* pSpec, iFCOPropCalc* pCalc, iFCOPropDisplayer* pPD );
+        // this method calculates exactly the properties specified by pSpec (invalidating any extra ones)
+        // for iFCO. It is OK to pass NULL for pPD if you don't want the property calculator run over the fco;
+        // otherwise, InitForFCO() is called after the property calculation is done.
+        // TODO -- I should determine what exceptions will come up from this and document it
 
-	static bool RemoveFCOFromDb( cFCOName name, cDbDataSourceIter& dbIter);
-		// removes the named fco from the passed in database. This asserts that the iterator is not done, 
-		// and gracefully handles the case where there is no fco data associated with the current node.
-		// also, if there is an empty subtree below this node (ie -- hier nodes with no FCO data) this method
-		// will remove them from the database.
-		// this returns true if fco data was actually removed from the database.
+    static bool RemoveFCOFromDb( cFCOName name, cDbDataSourceIter& dbIter);
+        // removes the named fco from the passed in database. This asserts that the iterator is not done, 
+        // and gracefully handles the case where there is no fco data associated with the current node.
+        // also, if there is an empty subtree below this node (ie -- hier nodes with no FCO data) this method
+        // will remove them from the database.
+        // this returns true if fco data was actually removed from the database.
 };
 
 

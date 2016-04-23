@@ -50,45 +50,45 @@ void TestFCOName()
     cGenreSwitcher::GetInstance()->SelectGenre( cGenre::NTFS );
 #endif
 
-	// test the relationship operator...
-	cFCOName above		(_T("/etc"));
-	cFCOName extraDel	(_T("/etc/"));
-	cFCOName below		(_T("/etc/passwd"));
-	cFCOName same		(_T("/etc/passwd"));
-	cFCOName unrel		(_T("/var/spool/mail"));
-	cFCOName caseTest	(_T("/etc/PASsWD"));
-	cFCOName caseTest2	(_T("/etc/passwd/dog"));
-	cFCOName test		(_T("/etcc"));
+    // test the relationship operator...
+    cFCOName above      (_T("/etc"));
+    cFCOName extraDel   (_T("/etc/"));
+    cFCOName below      (_T("/etc/passwd"));
+    cFCOName same       (_T("/etc/passwd"));
+    cFCOName unrel      (_T("/var/spool/mail"));
+    cFCOName caseTest   (_T("/etc/PASsWD"));
+    cFCOName caseTest2  (_T("/etc/passwd/dog"));
+    cFCOName test       (_T("/etcc"));
 
-	TEST(above.GetRelationship(below)	== cFCOName::REL_ABOVE);
-	TEST(below.GetRelationship(above)	== cFCOName::REL_BELOW);
-	TEST(below.GetRelationship(same)	== cFCOName::REL_EQUAL);
-	TEST(unrel.GetRelationship(above)	== cFCOName::REL_UNRELATED);
-	TEST(test.GetRelationship(above)	== cFCOName::REL_UNRELATED);
-	TEST(caseTest.GetRelationship(same)	== cFCOName::REL_UNRELATED);
-	// test the extra delimiter removal...
-	caseTest.SetCaseSensitive(false);
-	caseTest2.SetCaseSensitive(false);
-	same.SetCaseSensitive(false);
-	above.SetCaseSensitive(false);
-	TEST(caseTest.GetRelationship(caseTest2)	== cFCOName::REL_ABOVE);
-	TEST(caseTest.GetRelationship(same)			== cFCOName::REL_EQUAL);
+    TEST(above.GetRelationship(below)   == cFCOName::REL_ABOVE);
+    TEST(below.GetRelationship(above)   == cFCOName::REL_BELOW);
+    TEST(below.GetRelationship(same)    == cFCOName::REL_EQUAL);
+    TEST(unrel.GetRelationship(above)   == cFCOName::REL_UNRELATED);
+    TEST(test.GetRelationship(above)    == cFCOName::REL_UNRELATED);
+    TEST(caseTest.GetRelationship(same) == cFCOName::REL_UNRELATED);
+    // test the extra delimiter removal...
+    caseTest.SetCaseSensitive(false);
+    caseTest2.SetCaseSensitive(false);
+    same.SetCaseSensitive(false);
+    above.SetCaseSensitive(false);
+    TEST(caseTest.GetRelationship(caseTest2)    == cFCOName::REL_ABOVE);
+    TEST(caseTest.GetRelationship(same)         == cFCOName::REL_EQUAL);
 
-	// test push() and pop()
-	cFCOName dog(_T("/a/brown/dog"));
-	cFCOName cat(_T("/a/brown/cat"));
-	TEST(dog.GetSize() == 4);
-	dog.Push(_T("woof"));
-	TEST(dog.AsString().compare(_T("/a/brown/dog/woof")) == 0);
-	TEST(dog.GetSize() == 5);
-	TEST(_tcscmp(dog.Pop(),_T("woof")) == 0);
-	TEST(_tcscmp(dog.Pop(),_T("dog")) == 0);
-	TEST(cat.GetRelationship(dog) == cFCOName::REL_BELOW);
-	TEST(_tcscmp(cat.Pop(),_T("cat")) == 0);
-	TEST(dog.AsString().compare(cat.AsString()) == 0);
-	TEST(dog.GetRelationship(cat) == cFCOName::REL_EQUAL);
+    // test push() and pop()
+    cFCOName dog(_T("/a/brown/dog"));
+    cFCOName cat(_T("/a/brown/cat"));
+    TEST(dog.GetSize() == 4);
+    dog.Push(_T("woof"));
+    TEST(dog.AsString().compare(_T("/a/brown/dog/woof")) == 0);
+    TEST(dog.GetSize() == 5);
+    TEST(_tcscmp(dog.Pop(),_T("woof")) == 0);
+    TEST(_tcscmp(dog.Pop(),_T("dog")) == 0);
+    TEST(cat.GetRelationship(dog) == cFCOName::REL_BELOW);
+    TEST(_tcscmp(cat.Pop(),_T("cat")) == 0);
+    TEST(dog.AsString().compare(cat.AsString()) == 0);
+    TEST(dog.GetRelationship(cat) == cFCOName::REL_EQUAL);
 
-	cFCOName nullName;
+    cFCOName nullName;
     TEST(*nullName.AsString().c_str() == 0);
 
     cFCOName charName(_T("/a/character/name"));
@@ -105,7 +105,7 @@ void TestFCOName()
 
     TCERR << "Multiple TODO tests in fconame_t.cpp" << std::endl;
 #if 0
-	cFCOName name(_T("new name"));
+    cFCOName name(_T("new name"));
     nullName = name;
     //TODO... TEST(_tcscmp(nullName.AsString().c_str(), _T("new name")) == 0);
     
@@ -116,9 +116,9 @@ void TestFCOName()
     {
         cSerializerImpl ser(memArc, cSerializerImpl::S_WRITE);
         ser.Init();
-		ser.WriteObject(&charName);
-		stringName.SetDelimiter(_T('\\'));
-		ser.WriteObject(&stringName);
+        ser.WriteObject(&charName);
+        stringName.SetDelimiter(_T('\\'));
+        ser.WriteObject(&stringName);
         ser.Finit();
     }
     memArc.Seek(0, cBidirArchive::BEGINNING);
@@ -126,16 +126,16 @@ void TestFCOName()
         cSerializerImpl ser(memArc, cSerializerImpl::S_READ);
         cFCOName name1, name2;
         ser.Init();
-		ser.ReadObject(&name1);
-		ser.ReadObject(&name2);
+        ser.ReadObject(&name1);
+        ser.ReadObject(&name2);
         ser.Finit();
 
         TEST(name1.IsEqual(charName));
         TEST(name2.IsEqual(stringName));
-		TEST(! name1.IsCaseSensitive()); 
-		TEST(! name2.IsCaseSensitive()); 
-		TEST(name2.GetDelimiter() == _T('\\')); 
-		TEST(name1.GetDelimiter() == _T('/')); 
+        TEST(! name1.IsCaseSensitive()); 
+        TEST(! name2.IsCaseSensitive()); 
+        TEST(name2.GetDelimiter() == _T('\\')); 
+        TEST(name1.GetDelimiter() == _T('/')); 
     }
 #endif
 }

@@ -43,28 +43,28 @@
 
 void TestFCOSpecList()
 {
-	cDebug d("TestFCOSpecList()");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestFCOSpecList()");
+    d.TraceDebug("Entering...\n");
 
     cFCOSpecList specList;
 
     TEST(specList.IsEmpty());
 
-	cFCOSpecStopPointSet* pStopPts = new cFCOSpecStopPointSet;
+    cFCOSpecStopPointSet* pStopPts = new cFCOSpecStopPointSet;
     iFCOSpec* pSpec = new cFCOSpecImpl(_T("s1"), NULL, pStopPts);
     pSpec->SetStartPoint(cFCOName(_T("AAA")));
     pStopPts->Add(cFCOName(_T("AAA/SSS")));
 
     specList.Add(pSpec);
-	pSpec->Release();	// the list now owns the spec.
+    pSpec->Release();   // the list now owns the spec.
 
     cFCOSpecStopPointSet* pStopPts2 = new cFCOSpecStopPointSet;
-	pSpec = new cFCOSpecImpl(_T("s2"), NULL, pStopPts2);
+    pSpec = new cFCOSpecImpl(_T("s2"), NULL, pStopPts2);
     pSpec->SetStartPoint(cFCOName(_T("AAA")));
     pStopPts2->Add(cFCOName(_T("AAA/TTT")));
 
     specList.Add(pSpec);
-	pSpec->Release();	// the list now owns the spec.
+    pSpec->Release();   // the list now owns the spec.
 
     pSpec = new cFCOSpecImpl(_T("s3"), NULL, new cFCOSpecStopPointSet);
     pSpec->SetStartPoint(cFCOName(_T("AAA")));
@@ -76,19 +76,19 @@ void TestFCOSpecList()
 
     // Test Lookup()
     iFCOSpec* pTmp;
-	TEST((pTmp = specList.Lookup(pSpec))		== pSpec);
-	pTmp->Release();
-    TEST((pTmp = specList.Lookup(pTestSpec))	== pSpec);
-	pTmp->Release();
+    TEST((pTmp = specList.Lookup(pSpec))        == pSpec);
+    pTmp->Release();
+    TEST((pTmp = specList.Lookup(pTestSpec))    == pSpec);
+    pTmp->Release();
 
     // Test iterator and Insert() order
     cFCOSpecListCanonicalIter itr(specList);
     TEST(itr.Spec()->GetName().compare(_T("s3")) == 0);
     
-	pTestSpec->Release();
-	pSpec->Release();
+    pTestSpec->Release();
+    pSpec->Release();
 
-	iFCOSpec* pPrev = NULL;
+    iFCOSpec* pPrev = NULL;
     int i;
     for (itr.SeekBegin(), i = 0; !itr.Done(); itr.Next(), ++i)
     {
@@ -96,11 +96,11 @@ void TestFCOSpecList()
         {
         case 0:
             pPrev = itr.Spec();
-			break;
+            break;
         default:
             TEST(iFCOSpecUtil::FCOSpecLessThan(*pPrev, *itr.Spec()));
             pPrev = itr.Spec();
-			break;
+            break;
         }
     }
 
@@ -126,39 +126,39 @@ void TestFCOSpecList()
         }
     }
 
-	// test serialization
-	cMemoryArchive a;
-	cSerializerImpl s(a, cSerializerImpl::S_WRITE);
-	s.Init();
-	specList.Write(&s);
-	s.Finit();
-	a.Seek(0, cBidirArchive::BEGINNING);
+    // test serialization
+    cMemoryArchive a;
+    cSerializerImpl s(a, cSerializerImpl::S_WRITE);
+    s.Init();
+    specList.Write(&s);
+    s.Finit();
+    a.Seek(0, cBidirArchive::BEGINNING);
 
-	cFCOSpecList newSpecList;
-	cSerializerImpl s2(a, cSerializerImpl::S_READ);
-	s2.Init();
-	newSpecList.Read(&s2);
-	s2.Finit();
+    cFCOSpecList newSpecList;
+    cSerializerImpl s2(a, cSerializerImpl::S_READ);
+    s2.Init();
+    newSpecList.Read(&s2);
+    s2.Finit();
 
-	// now to compare the two spec lists...
-	cFCOSpecListCanonicalIter itr1(specList), itr2(newSpecList);
-	for( itr1.SeekBegin(), itr2.SeekBegin(); ! itr1.Done(); itr1.Next(), itr2.Next() )
-	{
-		TEST(iFCOSpecUtil::FCOSpecEqual(*itr1.Spec(), *itr2.Spec()));
-	}
+    // now to compare the two spec lists...
+    cFCOSpecListCanonicalIter itr1(specList), itr2(newSpecList);
+    for( itr1.SeekBegin(), itr2.SeekBegin(); ! itr1.Done(); itr1.Next(), itr2.Next() )
+    {
+        TEST(iFCOSpecUtil::FCOSpecEqual(*itr1.Spec(), *itr2.Spec()));
+    }
 
-	// test removal...
-	// I know this isn't the most thourough test in the world, but I am in a hurry!
-	d.TraceDebug("Testing removal...\n");
-	cFCOSpecListAddedIter ai(specList);
-	ai.SeekBegin();
-	while(! ai.Done())
-	{
-		d.TraceDebug(_T("Removing spec %s\n"), ai.Spec()->GetName().c_str());
-		ai.Remove();
-	}
-	// better be empty!
-	TEST(specList.IsEmpty());
+    // test removal...
+    // I know this isn't the most thourough test in the world, but I am in a hurry!
+    d.TraceDebug("Testing removal...\n");
+    cFCOSpecListAddedIter ai(specList);
+    ai.SeekBegin();
+    while(! ai.Done())
+    {
+        d.TraceDebug(_T("Removing spec %s\n"), ai.Spec()->GetName().c_str());
+        ai.Remove();
+    }
+    // better be empty!
+    TEST(specList.IsEmpty());
 
     d.TraceDebug("TestFCOSpecList apparently worked fine!\n");
     return;

@@ -40,7 +40,7 @@ class cFCODatabaseFileIter;
 class cDbExplore
 {
 public:
-	static void Execute( cFCODatabaseFileIter& dbIter );
+    static void Execute( cFCODatabaseFileIter& dbIter );
 };
 
 

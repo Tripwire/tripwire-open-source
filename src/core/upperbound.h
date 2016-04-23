@@ -44,7 +44,7 @@
 //                parameters of dissimilar types.  Therefore, *FwdIter need not be
 //                the same type as CmpObjT.  Uses a binary search algorithm.
 //
-// Return type	: FwdIterT          : First element in the sequence [first, last) 
+// Return type  : FwdIterT          : First element in the sequence [first, last) 
 //                                    that is equal to or greater than 'obj' or 
 //                                    'last' if there is no such element.
 //
@@ -60,12 +60,12 @@ template< class FwdIterT, class CmpObjT, class CmpFuncT > FwdIterT UpperBound( F
     int nElemsInSet = 0; 
     FwdIterT iCur = first;
     for (; iCur != last; ++iCur )
-		++nElemsInSet;
+        ++nElemsInSet;
 
     iCur = first;
 
     while( 0 < nElemsInSet )
-	{
+    {
         // go to halfway point
         int iHalfWay = nElemsInSet/2;
         FwdIterT iTemp = iCur;
@@ -75,15 +75,15 @@ template< class FwdIterT, class CmpObjT, class CmpFuncT > FwdIterT UpperBound( F
         if( less( *iTemp, obj ) )
         {
             // start next search set at next elem with half of the last search set's elements
-			iCur = ++iTemp;
+            iCur = ++iTemp;
             nElemsInSet -= iHalfWay + 1; // already searched ( iHalfway + 1 ) elems
         }
-		else
+        else
         {
             // start next search set beginning with half of the last search set's elements
-			nElemsInSet = iHalfWay;
+            nElemsInSet = iHalfWay;
         }
-	}
+    }
 
     return iCur;
 }

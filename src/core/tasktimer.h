@@ -54,42 +54,42 @@ template<class TIME_FN, class TIME_TYPE>
 class cTaskTimer
 {
 public:
-	cTaskTimer(const TSTRING& name) : mName(name), mTotalTime(0), mStartTime(0), mNumStarts(0) {}
-	~cTaskTimer();
+    cTaskTimer(const TSTRING& name) : mName(name), mTotalTime(0), mStartTime(0), mNumStarts(0) {}
+    ~cTaskTimer();
 
-	void				Start();
-	void				Stop();
-	bool				IsRunning()				{ return (mStartTime != 0); }
-	void				Reset()					{ mNumStarts = mStartTime = mTotalTime = 0 }
-	int32				GetTotalTime() const;
-	int32				GetNumTimesStarted() const;	// returns the number of times start() was called
-	const std::string&	GetName() const;
+    void                Start();
+    void                Stop();
+    bool                IsRunning()             { return (mStartTime != 0); }
+    void                Reset()                 { mNumStarts = mStartTime = mTotalTime = 0 }
+    int32               GetTotalTime() const;
+    int32               GetNumTimesStarted() const; // returns the number of times start() was called
+    const std::string&  GetName() const;
 
 private:
-	TSTRING			mName;
-	int32			mTotalTime;
-	TIME_TYPE		mStartTime;
-	int32			mNumStarts;
+    TSTRING         mName;
+    int32           mTotalTime;
+    TIME_TYPE       mStartTime;
+    int32           mNumStarts;
 };
 
 
 #if IS_UNIX
 ///////////////////////////////////////////////////////////////////////////////
 // cUnixTimeFn -- Unix version, inserts proper function call and overloads
-// 		operator()
+//      operator()
 ///////////////////////////////////////////////////////////////////////////////
 #include <ctime>
 class cUnixTimeFn
 {
 public:
-	typedef uint32 DataType;
+    typedef uint32 DataType;
 
-	uint32 operator()()
-	{
-		return time( &dummy_var );
-	}
+    uint32 operator()()
+    {
+        return time( &dummy_var );
+    }
 private:
-	time_t dummy_var;
+    time_t dummy_var;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -105,45 +105,45 @@ typedef cUnixTaskTimer cGenericTaskTimer;
 //-----------------------------------------------------------------------------
 
 template<class TIME_FN, class TIME_TYPE>
-inline void	cTaskTimer<TIME_FN, TIME_TYPE>::Start()
+inline void cTaskTimer<TIME_FN, TIME_TYPE>::Start()
 {
-	ASSERT(! IsRunning());	
-	TIME_FN GetTime;
-	mStartTime = GetTime();
-	mNumStarts++;
+    ASSERT(! IsRunning());  
+    TIME_FN GetTime;
+    mStartTime = GetTime();
+    mNumStarts++;
 }
 
 template<class TIME_FN, class TIME_TYPE>
-inline void	cTaskTimer<TIME_FN, TIME_TYPE>::Stop()
+inline void cTaskTimer<TIME_FN, TIME_TYPE>::Stop()
 {
-	ASSERT(IsRunning());	
-	TIME_FN GetTime;
-	mTotalTime += ( GetTime() - mStartTime );
-	mStartTime = 0;
+    ASSERT(IsRunning());    
+    TIME_FN GetTime;
+    mTotalTime += ( GetTime() - mStartTime );
+    mStartTime = 0;
 }
 
 template<class TIME_FN, class TIME_TYPE>
 inline int32 cTaskTimer<TIME_FN, TIME_TYPE>::GetTotalTime() const
 {
-	return mTotalTime;
+    return mTotalTime;
 }
 
 template<class TIME_FN, class TIME_TYPE>
 inline const std::string& cTaskTimer<TIME_FN, TIME_TYPE>::GetName() const
 {
-	return mName
+    return mName
 }
 
 template<class TIME_FN, class TIME_TYPE>
 inline cTaskTimer<TIME_FN, TIME_TYPE>::~cTaskTimer()
 {
-	// stop the timer if it is currently running
-	if(IsRunning())
-		Stop();
+    // stop the timer if it is currently running
+    if(IsRunning())
+        Stop();
 
-	// trace out the time contents...
-	cDebug d("cTaskTimer");
-	d.TraceDebug("----- Time to execute %s: %d (started %d times)\n", mName.c_str(), mTotalTime, mNumStarts);
+    // trace out the time contents...
+    cDebug d("cTaskTimer");
+    d.TraceDebug("----- Time to execute %s: %d (started %d times)\n", mName.c_str(), mTotalTime, mNumStarts);
 }
 
 

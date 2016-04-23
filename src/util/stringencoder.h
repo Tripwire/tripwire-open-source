@@ -60,8 +60,8 @@ class cCharEncoder
 public:
     cCharEncoder( TCHAR chEncodeMe, TCHAR chEncoded1, TCHAR chEncoded2 );
 
-    void	EncodeChar( TSTRING::const_iterator& i, TSTRING& strToAppendTo );
-    TCHAR	DecodeChar( TSTRING::const_iterator& i, TSTRING::const_iterator& end );
+    void    EncodeChar( TSTRING::const_iterator& i, TSTRING& strToAppendTo );
+    TCHAR   DecodeChar( TSTRING::const_iterator& i, TSTRING::const_iterator& end );
     TCHAR   GetEncodeChar();
 
 private:

@@ -52,12 +52,12 @@ IMPLEMENT_TYPEDSERIALIZABLE(cFCOSetImpl, _T("cFCOSetImpl"), 0, 1)
 ///////////////////////////////////////////////////////////////////////////////
 inline static cFCOIterImpl* CreateIterator(cFCOSetImpl* pSet)
 {
-	return new cFCOIterImpl(pSet);
+    return new cFCOIterImpl(pSet);
 }
 
 inline static const cFCOIterImpl* CreateIterator(const cFCOSetImpl* pSet)
 {
-	return new cFCOIterImpl(pSet);
+    return new cFCOIterImpl(pSet);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,12 +69,12 @@ cFCOSetImpl::cFCOSetImpl() : iFCOSet()
 
 cFCOSetImpl::~cFCOSetImpl()
 {
-	Clear();
+    Clear();
 }
 
 cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs) : iFCOSet()
 {
-	*this = rhs;
+    *this = rhs;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,12 +82,12 @@ cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs) : iFCOSet()
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
 {
-	std::set<cFCONode>::const_iterator i;
-	for(i = rhs.mFCOSet.begin(); i != rhs.mFCOSet.end(); ++i)
-	{
-		i->mpFCO->AddRef();
-		mFCOSet.insert(cFCONode(i->mpFCO));
-	}
+    std::set<cFCONode>::const_iterator i;
+    for(i = rhs.mFCOSet.begin(); i != rhs.mFCOSet.end(); ++i)
+    {
+        i->mpFCO->AddRef();
+        mFCOSet.insert(cFCONode(i->mpFCO));
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -95,14 +95,14 @@ void cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::Clear()
 {
-	// release our grip on all the fcos.
-	std::set<cFCONode>::iterator i;
-	for(i = mFCOSet.begin(); i != mFCOSet.end(); ++i)
-	{
-		i->mpFCO->Release();
-	}
+    // release our grip on all the fcos.
+    std::set<cFCONode>::iterator i;
+    for(i = mFCOSet.begin(); i != mFCOSet.end(); ++i)
+    {
+        i->mpFCO->Release();
+    }
 
-	mFCOSet.clear();
+    mFCOSet.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -115,28 +115,28 @@ bool cFCOSetImpl::IsEmpty() const
 
 ///////////////////////////////////////////////////////////////////////////////
 // Lookup -- TODO: figure out how I can implement const and non-const versions
-//		without duplicating code. 
+//      without duplicating code. 
 ///////////////////////////////////////////////////////////////////////////////
 const iFCOIter* cFCOSetImpl::Lookup(const cFCOName& name) const
 {
-	const cFCOIterImpl* pIter = CreateIterator(this);
-	if(! pIter->SeekToFCO(name))
-	{
-		pIter->DestroyIter();
-		pIter = NULL;
-	}
-	return pIter;
+    const cFCOIterImpl* pIter = CreateIterator(this);
+    if(! pIter->SeekToFCO(name))
+    {
+        pIter->DestroyIter();
+        pIter = NULL;
+    }
+    return pIter;
 }
 
 iFCOIter* cFCOSetImpl::Lookup(const cFCOName& name)
 {
-	cFCOIterImpl* pIter = CreateIterator(this);
-	if(! pIter->SeekToFCO(name))
-	{
-		pIter->DestroyIter();
-		pIter = NULL;
-	}
-	return pIter;
+    cFCOIterImpl* pIter = CreateIterator(this);
+    if(! pIter->SeekToFCO(name))
+    {
+        pIter->DestroyIter();
+        pIter = NULL;
+    }
+    return pIter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,17 +144,17 @@ iFCOIter* cFCOSetImpl::Lookup(const cFCOName& name)
 ///////////////////////////////////////////////////////////////////////////////
 const iFCOIter* cFCOSetImpl::GetIter() const
 {
-	return CreateIterator(this);
+    return CreateIterator(this);
 }
 
 iFCOIter* cFCOSetImpl::GetIter()
 {
-	return CreateIterator(this);
+    return CreateIterator(this);
 }
 
 void cFCOSetImpl::ReturnIter(const cFCOIterImpl* pIter) const
 {
-	delete pIter;
+    delete pIter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -163,14 +163,14 @@ void cFCOSetImpl::ReturnIter(const cFCOIterImpl* pIter) const
 void cFCOSetImpl::Insert(iFCO* pFCO)
 {
 
-	//TODO -- how do I handle the insertion of the same fco into the set?
-	// should it be a no-op, added twice, asserted, or an exception?
-	std::pair<std::set<cFCONode>::iterator, bool> p;
-	p = mFCOSet.insert(cFCONode(pFCO));
-	// if the element already existed in the set, p.second is false.
-	ASSERT(p.second);
-	if(p.second)
-		pFCO->AddRef();
+    //TODO -- how do I handle the insertion of the same fco into the set?
+    // should it be a no-op, added twice, asserted, or an exception?
+    std::pair<std::set<cFCONode>::iterator, bool> p;
+    p = mFCOSet.insert(cFCONode(pFCO));
+    // if the element already existed in the set, p.second is false.
+    ASSERT(p.second);
+    if(p.second)
+        pFCO->AddRef();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -178,21 +178,21 @@ void cFCOSetImpl::Insert(iFCO* pFCO)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Set Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Set Read")));
 
     Clear();
 
     int i;
     int32 size;
-	pSerializer->ReadInt32(size);
+    pSerializer->ReadInt32(size);
     
-	// TODO -- don't assert; throw an exception or noop -- mdb
-	//ASSERT(size >= 0);
+    // TODO -- don't assert; throw an exception or noop -- mdb
+    //ASSERT(size >= 0);
 
     for (i = 0; i < size; ++i)
     {
-		iTypedSerializable* pObj = pSerializer->ReadObjectDynCreate();
+        iTypedSerializable* pObj = pSerializer->ReadObjectDynCreate();
         mFCOSet.insert(static_cast<iFCO*>(pObj));
     }
 }
@@ -202,9 +202,9 @@ void cFCOSetImpl::Write(iSerializer* pSerializer) const
     pSerializer->WriteInt32(mFCOSet.size());
 
     std::set<cFCONode>::const_iterator itr;
-	for( itr = mFCOSet.begin(); itr != mFCOSet.end(); itr++)
-	{
-		pSerializer->WriteObjectDynCreate(itr->mpFCO);
+    for( itr = mFCOSet.begin(); itr != mFCOSet.end(); itr++)
+    {
+        pSerializer->WriteObjectDynCreate(itr->mpFCO);
     }
 }
 
@@ -213,17 +213,17 @@ void cFCOSetImpl::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::TraceContents(int dl) const
 {
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
 
-	cDebug d("cFCOSetImpl::TraceContents");
-	std::set<cFCONode>::const_iterator i;
-	int count = 0;
-	for(i = mFCOSet.begin(); i != mFCOSet.end(); ++i, ++count)
-	{
-		d.Trace(dl, "[FCO %d]\n", count);
-		i->mpFCO->TraceContents(dl);
-	}
+    cDebug d("cFCOSetImpl::TraceContents");
+    std::set<cFCONode>::const_iterator i;
+    int count = 0;
+    for(i = mFCOSet.begin(); i != mFCOSet.end(); ++i, ++count)
+    {
+        d.Trace(dl, "[FCO %d]\n", count);
+        i->mpFCO->TraceContents(dl);
+    }
 }
 
 
@@ -235,17 +235,17 @@ void cFCOSetImpl::TraceContents(int dl) const
 // ctor and dtor
 ///////////////////////////////////////////////////////////////////////////////
 cFCOIterImpl::cFCOIterImpl(cFCOSetImpl* pSet) :
-	mpSet(pSet),
-	mIter()
+    mpSet(pSet),
+    mIter()
 {
-	mIter = mpSet->mFCOSet.begin();
+    mIter = mpSet->mFCOSet.begin();
 }
 
 cFCOIterImpl::cFCOIterImpl(const cFCOSetImpl* pSet) :
-	mpSet((cFCOSetImpl *)pSet),
-	mIter()
+    mpSet((cFCOSetImpl *)pSet),
+    mIter()
 {
-	mIter = mpSet->mFCOSet.begin();
+    mIter = mpSet->mFCOSet.begin();
 }
 
 cFCOIterImpl::~cFCOIterImpl()
@@ -257,69 +257,69 @@ cFCOIterImpl::~cFCOIterImpl()
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOIterImpl::SeekToFCO(const cFCOName& name) const
 {
-	mIter = mpSet->mFCOSet.find(cFCOSetImpl::cFCONode(name));
-	return (mIter != mpSet->mFCOSet.end());
+    mIter = mpSet->mFCOSet.find(cFCOSetImpl::cFCONode(name));
+    return (mIter != mpSet->mFCOSet.end());
 }
 
 
 void cFCOIterImpl::SeekBegin() const
 {
-	ASSERT(mpSet != 0);
-	mIter = mpSet->mFCOSet.begin();
+    ASSERT(mpSet != 0);
+    mIter = mpSet->mFCOSet.begin();
 }
 
 
 bool cFCOIterImpl::Done() const
 {
-	ASSERT(mpSet != 0);
-	return (mIter == mpSet->mFCOSet.end());
+    ASSERT(mpSet != 0);
+    return (mIter == mpSet->mFCOSet.end());
 }
 
 bool cFCOIterImpl::IsEmpty() const
 {
-	ASSERT(mpSet != 0);
-	return (mpSet->mFCOSet.empty());
+    ASSERT(mpSet != 0);
+    return (mpSet->mFCOSet.empty());
 }
 
 void cFCOIterImpl::Next() const
 {
-	ASSERT(mpSet != 0);
-	mIter++;
+    ASSERT(mpSet != 0);
+    mIter++;
 }
 
 
-const iFCO*	cFCOIterImpl::FCO() const
+const iFCO* cFCOIterImpl::FCO() const
 {
-	return mIter->mpFCO;
+    return mIter->mpFCO;
 }
 
 iFCO* cFCOIterImpl::FCO()
 {
-	return mIter->mpFCO;
+    return mIter->mpFCO;
 }
 
 void cFCOIterImpl::Remove()
 {
-	ASSERT(mpSet != 0);
-	ASSERT(mIter != mpSet->mFCOSet.end());
-	mIter->mpFCO->Release();
-	mpSet->mFCOSet.erase(mIter++);
+    ASSERT(mpSet != 0);
+    ASSERT(mIter != mpSet->mFCOSet.end());
+    mIter->mpFCO->Release();
+    mpSet->mFCOSet.erase(mIter++);
 }
 
 
 void cFCOIterImpl::Remove() const
 {
-	ASSERT(mpSet != 0);
-	ASSERT(mIter != mpSet->mFCOSet.end());
-	mIter->mpFCO->Release();
-	mpSet->mFCOSet.erase(mIter++);
+    ASSERT(mpSet != 0);
+    ASSERT(mIter != mpSet->mFCOSet.end());
+    mIter->mpFCO->Release();
+    mpSet->mFCOSet.erase(mIter++);
 }
 
 
 void cFCOIterImpl::DestroyIter() const
 {
-	ASSERT(mpSet != 0);
-	mpSet->ReturnIter(this);
+    ASSERT(mpSet != 0);
+    mpSet->ReturnIter(this);
 }
 
 

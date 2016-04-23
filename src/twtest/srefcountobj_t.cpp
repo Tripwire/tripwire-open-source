@@ -43,7 +43,7 @@
 
 class cSerRefCountObjTest : public iSerRefCountObj
 {
-	DECLARE_SERREFCOUNT()
+    DECLARE_SERREFCOUNT()
 
 public:
     cSerRefCountObjTest();
@@ -51,9 +51,9 @@ public:
 protected:
     ~cSerRefCountObjTest();
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0);		// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);        // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 
 private:
     int mDummyData;
@@ -75,12 +75,12 @@ cSerRefCountObjTest::~cSerRefCountObjTest()
 
 void cSerRefCountObjTest::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("cSerRefCountObjTest::Read()")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("cSerRefCountObjTest::Read()")));
 
-	int32 dummy;
+    int32 dummy;
     pSerializer->ReadInt32(dummy);
-	mDummyData = dummy;
+    mDummyData = dummy;
 }
 
 void cSerRefCountObjTest::Write(iSerializer* pSerializer) const
@@ -96,10 +96,10 @@ void TestSerRefCountObj()
 {
   TCERR << "TODO: TestSerRefCountObj ifdef'd due to internal error" << std::endl;
 #if 0
-	// first, we need to register the object with the serializer class...
-	cSerializerImpl::RegisterSerializableRefCt(CLASS_TYPE(cSerRefCountObjTest), cSerRefCountObjTest::Create);
+    // first, we need to register the object with the serializer class...
+    cSerializerImpl::RegisterSerializableRefCt(CLASS_TYPE(cSerRefCountObjTest), cSerRefCountObjTest::Create);
     
-	cSerRefCountObjTest* pObj1 = new cSerRefCountObjTest;
+    cSerRefCountObjTest* pObj1 = new cSerRefCountObjTest;
     cSerRefCountObjTest* pObj2 = new cSerRefCountObjTest;
     pObj1->AddRef();
     cSerRefCountObjTest* pObj3 = pObj1;
@@ -110,10 +110,10 @@ void TestSerRefCountObj()
     {
         cSerializerImpl    serializer(memarchive, cSerializerImpl::S_WRITE);
         serializer.Init();
-		serializer.WriteObjectDynCreate(pObj1);
-		serializer.WriteObjectDynCreate(pObj2);
-		serializer.WriteObjectDynCreate(pObj3);
-		serializer.WriteObjectDynCreate(pObj4);
+        serializer.WriteObjectDynCreate(pObj1);
+        serializer.WriteObjectDynCreate(pObj2);
+        serializer.WriteObjectDynCreate(pObj3);
+        serializer.WriteObjectDynCreate(pObj4);
         serializer.Finit();
     }
 

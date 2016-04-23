@@ -172,7 +172,7 @@ public:
     // Format( numT n, std::basic_string< CharT >& sBuf )
     //-----------------------------------------------------------------------------
     // EFFECTS: Does all actual formatting for FormatNumber methods
-    //	
+    //  
     static
     std::basic_string< CharT >& 
     Format( numT n, std::basic_string< CharT >& sBuf, bool fCStyleFormatting = false )
@@ -255,8 +255,8 @@ TSTRING& cTWLocale::FormatTime( int64 t, TSTRING& strBuf )
     {
         util_FormatTime( ptm, strBuf );
     }
-	else
-	{
+    else
+    {
         strBuf = TSS_GetString( cCore, core::STR_UNKNOWN_TIME );
     }
 
@@ -311,7 +311,7 @@ TSTRING& util_FormatTimeC( struct tm* ptm, TSTRING& strBuf )
     
     TCHAR achTimeBuf[256];
 
-	/* XXX: This should check (#ifdef) for strftime - PH */
+    /* XXX: This should check (#ifdef) for strftime - PH */
     size_t nbWritten = _tcsftime( achTimeBuf, countof( achTimeBuf ), 
         
     #if IS_MSVC // MSVC uses proprietary '#'

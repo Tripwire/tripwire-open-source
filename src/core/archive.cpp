@@ -32,10 +32,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // archive.cpp -- classes that abstract a raw byte archive
 //
-// cArchive			-- interface for single-direction (one pass) reads and writes
-// cBidirArchive	-- interface for a random-access archive
-// cMemArchive		-- implementation of a bidirectional archive in memory
-// cFileArchive		-- implementation of a bidirectional archive as a file
+// cArchive         -- interface for single-direction (one pass) reads and writes
+// cBidirArchive    -- interface for a random-access archive
+// cMemArchive      -- implementation of a bidirectional archive in memory
+// cFileArchive     -- implementation of a bidirectional archive as a file
 
 #include "stdcore.h"
 #include "archive.h"
@@ -219,34 +219,34 @@ void cArchive::WriteBlob(const void* pBlob, int count) // throw(eArchive)
 
 int32 cArchive::GetStorageSize(const TSTRING& str)
 {
-	int32 size = sizeof(int32);	// the length is always stored
-	//
-	// after the length, all of the characters in the string are written as 16-bit values, 
-	// except for the null character
-	//
-	size += ( str.length() * 2 );
+    int32 size = sizeof(int32); // the length is always stored
+    //
+    // after the length, all of the characters in the string are written as 16-bit values, 
+    // except for the null character
+    //
+    size += ( str.length() * 2 );
 
-	return size;
+    return size;
 }
 
 int64 cArchive::Copy(cArchive* pFrom, int64 amt)
 {
-	enum { BUF_SIZE = 2048 };
-	int8	buf[BUF_SIZE];
-	int64	amtLeft = amt;
+    enum { BUF_SIZE = 2048 };
+    int8    buf[BUF_SIZE];
+    int64   amtLeft = amt;
 
-	while(amtLeft > 0)
-	{
-		int64 amtToRead = amtLeft > (int64)BUF_SIZE ? (int64)BUF_SIZE : amtLeft;
-		int64 amtRead = pFrom->ReadBlob(buf, static_cast<int>( amtToRead ) );
-		amtLeft -= amtRead;
-		WriteBlob(buf, static_cast<int>( amtRead ) );
-		if(amtRead < amtToRead)
-			break;
-	}
+    while(amtLeft > 0)
+    {
+        int64 amtToRead = amtLeft > (int64)BUF_SIZE ? (int64)BUF_SIZE : amtLeft;
+        int64 amtRead = pFrom->ReadBlob(buf, static_cast<int>( amtToRead ) );
+        amtLeft -= amtRead;
+        WriteBlob(buf, static_cast<int>( amtRead ) );
+        if(amtRead < amtToRead)
+            break;
+    }
 
-	// return the amount copied ...
-	return (amt - amtLeft);
+    // return the amount copied ...
+    return (amt - amtLeft);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ void cMemoryArchive::AllocateMemory(int len) // throw(eArchive)
     if (len > mAllocatedLen)
     {
         // grow the buffer
-		// only error if we are in debug mode
+        // only error if we are in debug mode
 #ifdef _DEBUG
         if (len > mMaxAllocatedLen)
             ThrowAndAssert(eArchiveOutOfMem());
@@ -486,9 +486,9 @@ class cFixedMemArchive : public cBidirArchive
 {
 public:
 
-	int8*	mpMemory;
-	int32	mSize;
-	int32	mReadHead;
+    int8*   mpMemory;
+    int32   mSize;
+    int32   mReadHead;
 };
 */
 
@@ -496,18 +496,18 @@ public:
 // cFixedMemArchive
 //-----------------------------------------------------------------------------
 cFixedMemArchive::cFixedMemArchive()
-:	mpMemory	(0),
-	mSize		(0),
-	mReadHead	(0)
+:   mpMemory    (0),
+    mSize       (0),
+    mReadHead   (0)
 {
 }
 
 cFixedMemArchive::cFixedMemArchive( int8* pMem, int32 size )
-:	mpMemory	(0),
-	mSize		(0),
-	mReadHead	(0)
+:   mpMemory    (0),
+    mSize       (0),
+    mReadHead   (0)
 {
-	Attach( pMem, size );
+    Attach( pMem, size );
 }
 
 cFixedMemArchive::~cFixedMemArchive()
@@ -516,9 +516,9 @@ cFixedMemArchive::~cFixedMemArchive()
 
 void cFixedMemArchive::Attach( int8* pMem, int32 size )
 {
-	mpMemory	= pMem;
-	mSize		= size;
-	mReadHead	= 0;
+    mpMemory    = pMem;
+    mSize       = size;
+    mReadHead   = 0;
 }
 
 void cFixedMemArchive::Seek(int64 offset, SeekFrom from)  // throw(eArchive)
@@ -545,28 +545,28 @@ void cFixedMemArchive::Seek(int64 offset, SeekFrom from)  // throw(eArchive)
 
 int64 cFixedMemArchive::CurrentPos() const 
 {
-	return mReadHead;
+    return mReadHead;
 }
 
 int64 cFixedMemArchive::Length() const 
 {
-	return mSize;
+    return mSize;
 }
 
 bool cFixedMemArchive::EndOfFile()
 {
-	return (mReadHead >= mSize);
+    return (mReadHead >= mSize);
 }
 
-int cFixedMemArchive::Read(void* pDest, int count)			// throw(eArchive)
+int cFixedMemArchive::Read(void* pDest, int count)          // throw(eArchive)
 {
-	ASSERT( pDest );
+    ASSERT( pDest );
     if (mReadHead + count > mSize)
-	{
-		count = static_cast<int>( mSize - mReadHead );
-		if (count <= 0)
-			return 0;
-	}
+    {
+        count = static_cast<int>( mSize - mReadHead );
+        if (count <= 0)
+            return 0;
+    }
 
     if (pDest != 0)
         memcpy(pDest, mpMemory + mReadHead, count);
@@ -576,12 +576,12 @@ int cFixedMemArchive::Read(void* pDest, int count)			// throw(eArchive)
     return count;
 }
 
-int cFixedMemArchive::Write(const void* pDest, int count)	// throw(eArchive)
+int cFixedMemArchive::Write(const void* pDest, int count)   // throw(eArchive)
 {
     if (mReadHead + count > mSize)
     {
-		ASSERT( false );
-		throw eArchiveWrite();
+        ASSERT( false );
+        throw eArchiveWrite();
     }
 
     memcpy(mpMemory + mReadHead, pDest, count);
@@ -598,9 +598,9 @@ int cFixedMemArchive::Write(const void* pDest, int count)	// throw(eArchive)
 
 //Ctor -- Initialize member variables to 0 or NULL equivalents.
 cFileArchive::cFileArchive() :
-	mFileSize(0),
-	mReadHead(0),
-	isWritable(false)
+    mFileSize(0),
+    mReadHead(0),
+    isWritable(false)
 {}
 
 cFileArchive::~cFileArchive()
@@ -609,7 +609,7 @@ cFileArchive::~cFileArchive()
 
 bool cFileArchive::EndOfFile()
 {
-	return ( mReadHead >= mFileSize );
+    return ( mReadHead >= mFileSize );
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -618,38 +618,38 @@ bool cFileArchive::EndOfFile()
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::Seek( int64 offset, SeekFrom from) // throw(eArchive)
 {
-	try 
-	{
-		switch (from)
-		{
-		case cBidirArchive::BEGINNING:
-			break;
-		case cBidirArchive::CURRENT:
-			offset = mReadHead + offset;
-			break;
-		case cBidirArchive::END:
-			offset = mFileSize + offset;
-			break;
-		default:
-			throw eArchiveSeek( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
-		}
+    try 
+    {
+        switch (from)
+        {
+        case cBidirArchive::BEGINNING:
+            break;
+        case cBidirArchive::CURRENT:
+            offset = mReadHead + offset;
+            break;
+        case cBidirArchive::END:
+            offset = mFileSize + offset;
+            break;
+        default:
+            throw eArchiveSeek( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
+        }
 
-		if ( offset > mFileSize )
-			throw eArchiveSeek( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
-		mReadHead = offset;
+        if ( offset > mFileSize )
+            throw eArchiveSeek( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
+        mReadHead = offset;
 
-		mCurrentFile.Seek(mReadHead, cFile::SEEK_BEGIN);
-			//This is where the actual read/writehead is set!!
-	}//try
-	catch( eFile& fileError )
-	{
-		throw( eArchiveSeek( mCurrentFilename, fileError.GetDescription() ) );
-	}
+        mCurrentFile.Seek(mReadHead, cFile::SEEK_BEGIN);
+            //This is where the actual read/writehead is set!!
+    }//try
+    catch( eFile& fileError )
+    {
+        throw( eArchiveSeek( mCurrentFilename, fileError.GetDescription() ) );
+    }
 }
 
 int64 cFileArchive::CurrentPos(void) const
 {
-	return mReadHead;
+    return mReadHead;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -657,14 +657,14 @@ int64 cFileArchive::CurrentPos(void) const
 /////////////////////////////////////////////////////////////////////////
 int64 cFileArchive::Length(void) const
 {
-	try 
-	{
-		return mCurrentFile.GetSize();
-	}
-	catch(eFile& fileError)
-	{
-		throw( eArchiveSeek( mCurrentFilename, fileError.GetDescription() ) );
-	}
+    try 
+    {
+        return mCurrentFile.GetSize();
+    }
+    catch(eFile& fileError)
+    {
+        throw( eArchiveSeek( mCurrentFilename, fileError.GetDescription() ) );
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -672,25 +672,25 @@ int64 cFileArchive::Length(void) const
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
 {
-	try 
-	{
+    try 
+    {
         // set up open flags
         uint32 flags = cFile::OPEN_READ;
         flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
         flags |= ( ( openFlags & FA_NONBLOCKING ) ?   cFile::OPEN_NONBLOCKING :0 ); 
 
-		mCurrentFilename = filename;
-		mCurrentFile.Open( filename, flags );
-		isWritable = false;
+        mCurrentFilename = filename;
+        mCurrentFile.Open( filename, flags );
+        isWritable = false;
 
-		mFileSize			= mCurrentFile.GetSize();
-		mReadHead			= mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
-	}
-	catch(eFile& fileError)
-	{
-		throw(eArchiveOpen( mCurrentFilename, fileError.GetDescription() ) );
-	}
+        mFileSize           = mCurrentFile.GetSize();
+        mReadHead           = mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
+    }
+    catch(eFile& fileError)
+    {
+        throw(eArchiveOpen( mCurrentFilename, fileError.GetDescription() ) );
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -698,34 +698,34 @@ void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::OpenReadWrite(const TCHAR* filename, uint32 openFlags)
 {
-	try 
-	{        
+    try 
+    {        
         // set up open flags
         uint32 flags = cFile::OPEN_WRITE;
         flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
         flags |= ( ( openFlags & FA_NONBLOCKING ) ?   cFile::OPEN_NONBLOCKING :0 ); 
 
-		mCurrentFilename = filename;
-		mCurrentFile.Open( filename, flags );
-		isWritable = true;
+        mCurrentFilename = filename;
+        mCurrentFile.Open( filename, flags );
+        isWritable = true;
 
-		mFileSize = mCurrentFile.GetSize();
-		mReadHead = mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
-	}
-	catch(eFile& fileError)
-	{
-		throw( eArchiveOpen( mCurrentFilename, fileError.GetDescription() ) );
-	}
+        mFileSize = mCurrentFile.GetSize();
+        mReadHead = mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
+    }
+    catch(eFile& fileError)
+    {
+        throw( eArchiveOpen( mCurrentFilename, fileError.GetDescription() ) );
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
 // GetCurrentFilename -- Returns the name of the file currently associated
-//		with the FileArchive.
+//      with the FileArchive.
 /////////////////////////////////////////////////////////////////////////
 TSTRING cFileArchive::GetCurrentFilename(void) const
 {
-	return mCurrentFilename;
+    return mCurrentFilename;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -733,18 +733,18 @@ TSTRING cFileArchive::GetCurrentFilename(void) const
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::Close()
 {
-	try 
+    try 
     {
-		mCurrentFile.Close();
-		mFileSize		= 0;
-		mReadHead		= 0;
+        mCurrentFile.Close();
+        mFileSize       = 0;
+        mReadHead       = 0;
 
-		mCurrentFilename = _T("");
-	}
-	catch(eFile& fileError)
-	{
-		throw( eArchive( mCurrentFilename, fileError.GetDescription() ) );
-	}
+        mCurrentFilename = _T("");
+    }
+    catch(eFile& fileError)
+    {
+        throw( eArchive( mCurrentFilename, fileError.GetDescription() ) );
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -753,22 +753,22 @@ void cFileArchive::Close()
 /////////////////////////////////////////////////////////////////////////
 int cFileArchive::Read(void* pDest, int count)
 {
-	try 
+    try 
     {
-	    if ( mReadHead + count > mFileSize )
-		    count = static_cast<int>( mFileSize - mReadHead );
+        if ( mReadHead + count > mFileSize )
+            count = static_cast<int>( mFileSize - mReadHead );
 
-	    if ( pDest != NULL )
-	    {
-		    int nbRead = 
+        if ( pDest != NULL )
+        {
+            int nbRead = 
                 static_cast<int>( mCurrentFile.Read( pDest, count ) );
 
             // 'count' may not be equal to 'nbRead' if the file is open in
             // text mode.
             count = nbRead;
-		    if(count < 0) count = 0;
-	    }
-	    else
+            if(count < 0) count = 0;
+        }
+        else
         {
             int i;
             int32 dummy;
@@ -777,20 +777,20 @@ int cFileArchive::Read(void* pDest, int count)
                 if (i < (int)sizeof(int32))
                 {
                     if (i > 0)
-					    mCurrentFile.Read( &dummy, i );
+                        mCurrentFile.Read( &dummy, i );
                     break;
                 }
-			    mCurrentFile.Read( &dummy, i );
+                mCurrentFile.Read( &dummy, i );
             }
         }
 
-	    mReadHead += count;
-	    return count;
-	}
-	catch( eFile& fileError )
-	{
-		throw( eArchiveRead( mCurrentFilename, fileError.GetDescription() ) );
-	}
+        mReadHead += count;
+        return count;
+    }
+    catch( eFile& fileError )
+    {
+        throw( eArchiveRead( mCurrentFilename, fileError.GetDescription() ) );
+    }
 
 }
 
@@ -841,20 +841,20 @@ int cFileArchive::Write(const void* pDest, int count) // throw(eArchive)
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::Truncate() // throw(eArchive) 
 {
-	ASSERT( mCurrentFile.IsOpen() );
-	ASSERT( mCurrentFile.isWritable );
+    ASSERT( mCurrentFile.IsOpen() );
+    ASSERT( mCurrentFile.isWritable );
 
-	try 
-	{
-		mCurrentFile.Truncate ( mReadHead );
-	}
-	catch( eFile& fileError )
-	{
-		//TODO: create an error number for truncate...
-		throw( eArchiveWrite( mCurrentFilename, fileError.GetDescription() ) );
-	}
+    try 
+    {
+        mCurrentFile.Truncate ( mReadHead );
+    }
+    catch( eFile& fileError )
+    {
+        //TODO: create an error number for truncate...
+        throw( eArchiveWrite( mCurrentFilename, fileError.GetDescription() ) );
+    }
 
-	mFileSize = mReadHead;
+    mFileSize = mReadHead;
 }
 
 
@@ -871,8 +871,8 @@ void cLockedTemporaryFileArchive::OpenReadWrite( const TCHAR* filename, uint32 o
   try {
 
     ASSERT( !mCurrentFile.IsOpen() ); // shouldn't be able to create a new file when we're already open
-    if	  ( mCurrentFile.IsOpen() ) 
-		throw( eArchive( mCurrentFilename, _T("Internal Error") ) );
+    if    ( mCurrentFile.IsOpen() ) 
+        throw( eArchive( mCurrentFilename, _T("Internal Error") ) );
 
 
     ///////////////////////////////////////////////////////////////////////////////

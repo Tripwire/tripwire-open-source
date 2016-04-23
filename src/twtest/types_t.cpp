@@ -39,14 +39,14 @@
 // TestTypes() -- this will simply make sure that all the types are defined properly for the current build
 void TestTypes()
 {
-	TEST(sizeof(int8)		== 1);
-	TEST(sizeof(uint8)		== 1);
-	TEST(sizeof(int16)		== 2);
-	TEST(sizeof(uint16)		== 2);
-	TEST(sizeof(int32)		== 4);
-	TEST(sizeof(uint32)		== 4);
-	TEST(sizeof(int64)		== 8);
-	TEST(sizeof(uint64)		== 8);
-	TEST(sizeof(float32)	== 4);
-	TEST(sizeof(float64)	== 8);
+    TEST(sizeof(int8)       == 1);
+    TEST(sizeof(uint8)      == 1);
+    TEST(sizeof(int16)      == 2);
+    TEST(sizeof(uint16)     == 2);
+    TEST(sizeof(int32)      == 4);
+    TEST(sizeof(uint32)     == 4);
+    TEST(sizeof(int64)      == 8);
+    TEST(sizeof(uint64)     == 8);
+    TEST(sizeof(float32)    == 4);
+    TEST(sizeof(float64)    == 8);
 }

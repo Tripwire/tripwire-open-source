@@ -46,7 +46,7 @@
 #include "core/errorbucketimpl.h"
 #include "core/archive.h"
 
-#include "twadmin.h"		// for package initialization
+#include "twadmin.h"        // for package initialization
 
 #include <exception>
 
@@ -74,15 +74,15 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 {   
 
     
-	int ret = 0;
+    int ret = 0;
 
     if (TimeBombExploded())
         return 1;
 
     cTWInit twInit;
 
-	try 
-	{
+    try 
+    {
         // set unexpected and terminate handlers
         // Note: we do this before Init() in case it attempts to call these handlers
         // TODO: move this into the Init() routine
@@ -90,47 +90,47 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
         twInit.Init( argv[0] );
-		TSS_Dependency( cTWAdmin );
+        TSS_Dependency( cTWAdmin );
 
         // set up the debug output
-	    cDebug::SetDebugLevel( cDebug::D_DEBUG );
+        cDebug::SetDebugLevel( cDebug::D_DEBUG );
 
 
-		// first, get the right mode...
-		std::auto_ptr<iTWAMode> pMode(cTWAdminCmdLine::GetMode(argc, argv));
-		if(! pMode.get())
-		{
-			// no valid mode passed; GetMode will display an appropriate string (include usage statement)
-			ret = 1;
+        // first, get the right mode...
+        std::auto_ptr<iTWAMode> pMode(cTWAdminCmdLine::GetMode(argc, argv));
+        if(! pMode.get())
+        {
+            // no valid mode passed; GetMode will display an appropriate string (include usage statement)
+            ret = 1;
             goto exit;
-		}
+        }
 
         // if version was requested, output version string and exit
         if (pMode.get()->GetModeID() == cTWAdminCmdLine::MODE_VERSION)
-		{
+        {
             TCOUT << TSS_GetString(cTW, tw::STR_VERSION_LONG) << std::endl;
-			ret = 0;
+            ret = 0;
             goto exit;
-		}
+        }
         
-		// process the command line
-		cCmdLineParser cmdLine;
-		pMode->InitCmdLineParser(cmdLine);
+        // process the command line
+        cCmdLineParser cmdLine;
+        pMode->InitCmdLineParser(cmdLine);
 
-		
-		try
-		{
-			cmdLine.Parse(argc, argv);
-		}
-		catch( eError& e )
-		{
-			cTWUtil::PrintErrorMsg(e);
+        
+        try
+        {
+            cmdLine.Parse(argc, argv);
+        }
+        catch( eError& e )
+        {
+            cTWUtil::PrintErrorMsg(e);
             TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
             
             ret = 1;
             goto exit;
-		}
-		
+        }
+        
         #if IS_UNIX
         // erase the command line
         // TODO: it might be a good idea to move this to cTWUtil
@@ -142,11 +142,11 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWAdminCmdLine::HELP))
         {
-			TCOUT<< TSS_GetString(cTWAdmin, twadmin::STR_TWADMIN_VERSION ) << std::endl;
+            TCOUT<< TSS_GetString(cTWAdmin, twadmin::STR_TWADMIN_VERSION ) << std::endl;
             TCOUT<< TSS_GetString(cTW, tw::STR_VERSION) << std::endl;
-			//Output a mode specific usage statement
-			TCOUT<< pMode->GetModeUsage();
-			ret = 1;
+            //Output a mode specific usage statement
+            TCOUT<< pMode->GetModeUsage();
+            ret = 1;
             goto exit;
         }
 
@@ -156,7 +156,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         }
 
         // open up the config file, possibly using the passed in path
-		cConfigFile config;
+        cConfigFile config;
         bool configFileOpened = false;
         cErrorBucketNull errorNull; // don't spit errors to the user
         
@@ -164,14 +164,14 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
             pMode->GetModeID() != cTWAdminCmdLine::MODE_CHANGE_PASSPHRASES && 
             pMode->GetModeID() != cTWAdminCmdLine::MODE_CREATE_CONFIG && 
             pMode->GetModeID() != cTWAdminCmdLine::MODE_PRINT_CONFIG &&
-			pMode->GetModeID() != cTWAdminCmdLine::MODE_HELP)
+            pMode->GetModeID() != cTWAdminCmdLine::MODE_HELP)
         {
             try
             {
-			    //open cfg file
+                //open cfg file
                 TSTRING cfgPath;
                 cTWUtil::OpenConfigFile( config, cmdLine, cTWAdminCmdLine::CFG_FILE, errorNull, cfgPath);
-				pMode->SetCfgFilePath( cfgPath );
+                pMode->SetCfgFilePath( cfgPath );
                 configFileOpened = true;
             }
             catch(eError& error)
@@ -179,26 +179,26 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
                 TSTRING extra;
                 extra += TSS_GetString(cTW, tw::STR_NEWLINE);
                 extra += TSS_GetString(cTWAdmin, twadmin::STR_ERR2_CONFIG_OPEN);
-			    cTWUtil::PrintErrorMsg(error, extra);                                                                   
-			    ret = 1;
+                cTWUtil::PrintErrorMsg(error, extra);                                                                   
+                ret = 1;
                 goto exit;
             }
         }
 
-		// ok, now we can initialize the mode object and have it execute
+        // ok, now we can initialize the mode object and have it execute
         if(! pMode->Init(configFileOpened ? &config : NULL, cmdLine))
-		{
+        {
             TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
-			ret = 1;
+            ret = 1;
             goto exit;
-		}
+        }
 
         ret = pMode->Execute(&twInit.errorQueue);
-	}//end try block
+    }//end try block
 
-	catch (eError& error)
+    catch (eError& error)
     {
-		cTWUtil::PrintErrorMsg(error);
+        cTWUtil::PrintErrorMsg(error);
         ASSERT(false);
         ret = 1;
     }
@@ -230,6 +230,6 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 exit:
 
 
-	return ret;
+    return ret;
 }
 

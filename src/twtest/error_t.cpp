@@ -42,19 +42,19 @@ void TestError()
 //#pragma message( __FILE__ "(1) : TODO - implement this test file")
 
 /*
-	try
-	{
-		std::cout << "Before Exception" << std::endl;
-		std::cout << "Line number before throw: " << __LINE__ << std::endl;
-		THROW_ERROR(53, _T("This is an error!"));
-		std::cout << "After Exception" << std::endl;
-	}
-	catch(eError& e)
-	{
+    try
+    {
+        std::cout << "Before Exception" << std::endl;
+        std::cout << "Line number before throw: " << __LINE__ << std::endl;
+        THROW_ERROR(53, _T("This is an error!"));
+        std::cout << "After Exception" << std::endl;
+    }
+    catch(eError& e)
+    {
         TEST(e.GetErrorNum() == 53);
         TEST(_tcscmp(e.GetMsg().c_str(), _T("This is an error!")) == 0);
-		TCOUT << _T("Exception caught!\n\tErrorNum=") << e.GetErrorNum() << _T("\n\t") << e.GetMsg() << std::endl;
-	}
+        TCOUT << _T("Exception caught!\n\tErrorNum=") << e.GetErrorNum() << _T("\n\t") << e.GetMsg() << std::endl;
+    }
 
     try 
     {

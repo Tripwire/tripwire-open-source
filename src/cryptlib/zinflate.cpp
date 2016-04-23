@@ -61,58 +61,58 @@ const unsigned int WSIZE = 0x8000;
 const unsigned long MAX_CHUNKSIZE = 0x10000L;
 
 Inflator::Inflator(BufferedTransformation *output, BufferedTransformation *bypassed)
-	: Fork(2), slide(WSIZE)
+    : Fork(2), slide(WSIZE)
 {
-	SelectOutPort(1);
-	Attach(bypassed ? bypassed : new BitBucket);
-	SelectOutPort(0);
-	Attach(output);
+    SelectOutPort(1);
+    Attach(bypassed ? bypassed : new BitBucket);
+    SelectOutPort(0);
+    Attach(output);
 
-	wp = 0;
-	bb = 0;
-	bk = 0;
-	afterEnd = false;
+    wp = 0;
+    bb = 0;
+    bk = 0;
+    afterEnd = false;
 }
 
 void Inflator::Put(const byte *inString, unsigned int length)
 {
-	if (afterEnd)
-		AccessPort(1).Put(inString, length);
-	else
-	{
-		inQueue.Put(inString, length);
+    if (afterEnd)
+        AccessPort(1).Put(inString, length);
+    else
+    {
+        inQueue.Put(inString, length);
 
-		while(!afterEnd && inQueue.CurrentSize() >= MAX_CHUNKSIZE)
-			inflate_block(afterEnd);
+        while(!afterEnd && inQueue.CurrentSize() >= MAX_CHUNKSIZE)
+            inflate_block(afterEnd);
 
-		if (afterEnd)
-		{
-			flush_output(wp);
-			if (bk>=8)  // undo too much lookahead
-				AccessPort(1).Put(byte(bb>>(bk-=8)));
+        if (afterEnd)
+        {
+            flush_output(wp);
+            if (bk>=8)  // undo too much lookahead
+                AccessPort(1).Put(byte(bb>>(bk-=8)));
 
-			inQueue.TransferTo(AccessPort(1));
-		}
-	}
+            inQueue.TransferTo(AccessPort(1));
+        }
+    }
 }
 
 void Inflator::InputFinished()
 {
-	while(!afterEnd && inQueue.CurrentSize())
-		inflate_block(afterEnd);
+    while(!afterEnd && inQueue.CurrentSize())
+        inflate_block(afterEnd);
 
-	flush_output(wp);
+    flush_output(wp);
 
-	if (bk>=8)  // undo too much lookahead
-		AccessPort(1).Put(byte(bb>>(bk-=8)));
+    if (bk>=8)  // undo too much lookahead
+        AccessPort(1).Put(byte(bb>>(bk-=8)));
 
-	inQueue.TransferTo(AccessPort(1));
+    inQueue.TransferTo(AccessPort(1));
 }
 
 void Inflator::flush_output(unsigned int w)
 {
-	AccessPort(0).Put(slide, w);
-	wp = 0;
+    AccessPort(0).Put(slide, w);
+    wp = 0;
 }
 
 #define memzero(x, y) memset(x, 0, y)
@@ -127,31 +127,31 @@ void Inflator::flush_output(unsigned int w)
 
 /* Tables for deflate from PKZIP's appnote.txt. */
 const word16 Inflator::border[] = {    /* Order of the bit length code lengths */
-		16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
+        16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15};
 const word16 Inflator::cplens[] = {         /* Copy lengths for literal codes 257..285 */
-		3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
-		35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0};
-		/* note: see note #13 above about the 258 in this list. */
+        3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 23, 27, 31,
+        35, 43, 51, 59, 67, 83, 99, 115, 131, 163, 195, 227, 258, 0, 0};
+        /* note: see note #13 above about the 258 in this list. */
 const word16 Inflator::cplext[] = {         /* Extra bits for literal codes 257..285 */
-		0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
-		3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 99, 99}; /* 99==invalid */
+        0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,
+        3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 0, 99, 99}; /* 99==invalid */
 const word16 Inflator::cpdist[] = {         /* Copy offsets for distance codes 0..29 */
-		1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
-		257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
-		8193, 12289, 16385, 24577};
+        1, 2, 3, 4, 5, 7, 9, 13, 17, 25, 33, 49, 65, 97, 129, 193,
+        257, 385, 513, 769, 1025, 1537, 2049, 3073, 4097, 6145,
+        8193, 12289, 16385, 24577};
 const word16 Inflator::cpdext[] = {         /* Extra bits for distance codes */
-		0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
-		7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
-		12, 12, 13, 13};
+        0, 0, 0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6,
+        7, 7, 8, 8, 9, 9, 10, 10, 11, 11,
+        12, 12, 13, 13};
 
 
 
 /* Macros for inflate() bit peeking and grabbing.
    The usage is:
 
-		NEEDBITS(j)
-		x = b & mask_bits[j];
-		DUMPBITS(j)
+        NEEDBITS(j)
+        x = b & mask_bits[j];
+        DUMPBITS(j)
 
    where NEEDBITS makes sure that b has at least j bits in it, and
    DUMPBITS removes the bits from b.  The macros use the variable k
@@ -178,21 +178,21 @@ const word16 Inflator::cpdext[] = {         /* Extra bits for distance codes */
 
 
 const word16 Inflator::mask_bits[] = {
-	0x0000,
-	0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f, 0x00ff,
-	0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
+    0x0000,
+    0x0001, 0x0003, 0x0007, 0x000f, 0x001f, 0x003f, 0x007f, 0x00ff,
+    0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
 };
 
 byte Inflator::NEXTBYTE()
 {
-	byte b;
-	if (!inQueue.Get(b))
+    byte b;
+    if (!inQueue.Get(b))
 #ifdef THROW_EXCEPTIONS
-		throw UnexpectedEndErr();
+        throw UnexpectedEndErr();
 #else
-		;
+        ;
 #endif
-	return b;
+    return b;
 }
 
 #define NEEDBITS(n) {while(k<(n)){b|=((word32)NEXTBYTE())<<k;k+=8;}}
@@ -272,42 +272,42 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
   memzero(c, sizeof(c));
   p = b;  i = n;
   do {
-	Tracecv(*p, (stderr, (n-i >= ' ' && n-i <= '~' ? "%c %d\n" : "0x%x %d\n"),
-		n-i, *p));
-	c[*p]++;                    /* assume all entries <= BMAX */
-	p++;                      /* Can't combine with above line (Solaris bug) */
+    Tracecv(*p, (stderr, (n-i >= ' ' && n-i <= '~' ? "%c %d\n" : "0x%x %d\n"),
+        n-i, *p));
+    c[*p]++;                    /* assume all entries <= BMAX */
+    p++;                      /* Can't combine with above line (Solaris bug) */
   } while (--i);
   if (c[0] == n)                /* null input--all zero length codes */
   {
-	*t = (huft *)NULL;
-	*m = 0;
-	return 0;
+    *t = (huft *)NULL;
+    *m = 0;
+    return 0;
   }
 
 
   /* Find minimum and maximum length, bound *m by those */
   l = *m;
   for (j = 1; j <= BMAX; j++)
-	if (c[j])
-	  break;
+    if (c[j])
+      break;
   k = j;                        /* minimum code length */
   if ((unsigned)l < j)
-	l = j;
+    l = j;
   for (i = BMAX; i; i--)
-	if (c[i])
-	  break;
+    if (c[i])
+      break;
   g = i;                        /* maximum code length */
   if ((unsigned)l > i)
-	l = i;
+    l = i;
   *m = l;
 
 
   /* Adjust last length count to fill out codes, if needed */
   for (y = 1 << j; j < i; j++, y <<= 1)
-	if ((y -= c[j]) < 0)
-	  return 2;                 /* bad input: more codes than bits */
+    if ((y -= c[j]) < 0)
+      return 2;                 /* bad input: more codes than bits */
   if ((y -= c[i]) < 0)
-	return 2;
+    return 2;
   c[i] += y;
 
 
@@ -315,15 +315,15 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
   x[1] = j = 0;
   p = c + 1;  xp = x + 2;
   while (--i) {                 /* note that i == g from above */
-	*xp++ = (j += *p++);
+    *xp++ = (j += *p++);
   }
 
 
   /* Make a table of values in order of bit lengths */
   p = b;  i = 0;
   do {
-	if ((j = *p++) != 0)
-	  v[x[j]++] = i;
+    if ((j = *p++) != 0)
+      v[x[j]++] = i;
   } while (++i < n);
 
 
@@ -339,88 +339,88 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
   /* go through the bit lengths (k already is bits in shortest code) */
   for (; k <= g; k++)
   {
-	a = c[k];
-	while (a--)
-	{
-	  /* here i is the Huffman code of length k bits for value *p */
-	  /* make tables up to required level */
-	  while (k > w + l)
-	  {
-		h++;
-		w += l;                 /* previous table always l bits */
+    a = c[k];
+    while (a--)
+    {
+      /* here i is the Huffman code of length k bits for value *p */
+      /* make tables up to required level */
+      while (k > w + l)
+      {
+        h++;
+        w += l;                 /* previous table always l bits */
 
-		/* compute minimum size table less than or equal to l bits */
-		z = (z = g - w) > (unsigned)l ? l : z;  /* upper limit on table size */
-		if ((f = 1 << (j = k - w)) > a + 1)     /* try a k-w bit table */
-		{                       /* too few codes for k-w bit table */
-		  f -= a + 1;           /* deduct codes from patterns left */
-		  xp = c + k;
-		  while (++j < z)       /* try smaller tables up to z bits */
-		  {
-			if ((f <<= 1) <= *++xp)
-			  break;            /* enough codes to use up j bits */
-			f -= *xp;           /* else deduct codes from patterns */
-		  }
-		}
-		z = 1 << j;             /* table entries for j-bit table */
+        /* compute minimum size table less than or equal to l bits */
+        z = (z = g - w) > (unsigned)l ? l : z;  /* upper limit on table size */
+        if ((f = 1 << (j = k - w)) > a + 1)     /* try a k-w bit table */
+        {                       /* too few codes for k-w bit table */
+          f -= a + 1;           /* deduct codes from patterns left */
+          xp = c + k;
+          while (++j < z)       /* try smaller tables up to z bits */
+          {
+            if ((f <<= 1) <= *++xp)
+              break;            /* enough codes to use up j bits */
+            f -= *xp;           /* else deduct codes from patterns */
+          }
+        }
+        z = 1 << j;             /* table entries for j-bit table */
 
-		/* allocate and link in new table */
-		if ((q = (struct huft *)malloc((z + 1)*sizeof(struct huft))) ==
-			(struct huft *)NULL)
-		{
-		  if (h)
-			huft_free(u[0]);
-		  return 3;             /* not enough memory */
-		}
-		*t = q + 1;             /* link to list for huft_free() */
-		*(t = &(q->v.t)) = (huft *)NULL;
-		u[h] = ++q;             /* table starts after link */
+        /* allocate and link in new table */
+        if ((q = (struct huft *)malloc((z + 1)*sizeof(struct huft))) ==
+            (struct huft *)NULL)
+        {
+          if (h)
+            huft_free(u[0]);
+          return 3;             /* not enough memory */
+        }
+        *t = q + 1;             /* link to list for huft_free() */
+        *(t = &(q->v.t)) = (huft *)NULL;
+        u[h] = ++q;             /* table starts after link */
 
-		/* connect to last table, if there is one */
-		if (h)
-		{
-		  x[h] = i;             /* save pattern for backing up */
-		  r.b = (byte)l;         /* bits to dump before this table */
-		  r.e = (byte)(16 + j);  /* bits in this table */
-		  r.v.t = q;            /* pointer to this table */
-		  j = i >> (w - l);     /* (get around Turbo C bug) */
-		  u[h-1][j] = r;        /* connect to last table */
-		}
-	  }
+        /* connect to last table, if there is one */
+        if (h)
+        {
+          x[h] = i;             /* save pattern for backing up */
+          r.b = (byte)l;         /* bits to dump before this table */
+          r.e = (byte)(16 + j);  /* bits in this table */
+          r.v.t = q;            /* pointer to this table */
+          j = i >> (w - l);     /* (get around Turbo C bug) */
+          u[h-1][j] = r;        /* connect to last table */
+        }
+      }
 
-	  /* set up table entry in r */
-	  r.b = (byte)(k - w);
-	  if (p >= v + n)
-		r.e = 99;               /* out of values--invalid code */
-	  else if (*p < s)
-	  {
-		r.e = (byte)(*p < 256 ? 16 : 15);    /* 256 is end-of-block code */
-		r.v.n = (word16)(*p);             /* simple code is just the value */
-	p++;                           /* one compiler does not like *p++ */
-	  }
-	  else
-	  {
-		r.e = (byte)e[*p - s];   /* non-simple--look up in lists */
-		r.v.n = d[*p++ - s];
-	  }
+      /* set up table entry in r */
+      r.b = (byte)(k - w);
+      if (p >= v + n)
+        r.e = 99;               /* out of values--invalid code */
+      else if (*p < s)
+      {
+        r.e = (byte)(*p < 256 ? 16 : 15);    /* 256 is end-of-block code */
+        r.v.n = (word16)(*p);             /* simple code is just the value */
+    p++;                           /* one compiler does not like *p++ */
+      }
+      else
+      {
+        r.e = (byte)e[*p - s];   /* non-simple--look up in lists */
+        r.v.n = d[*p++ - s];
+      }
 
-	  /* fill code-like entries with r */
-	  f = 1 << (k - w);
-	  for (j = i >> w; j < z; j += f)
-		q[j] = r;
+      /* fill code-like entries with r */
+      f = 1 << (k - w);
+      for (j = i >> w; j < z; j += f)
+        q[j] = r;
 
-	  /* backwards increment the k-bit code i */
-	  for (j = 1 << (k - 1); i & j; j >>= 1)
-		i ^= j;
-	  i ^= j;
+      /* backwards increment the k-bit code i */
+      for (j = 1 << (k - 1); i & j; j >>= 1)
+        i ^= j;
+      i ^= j;
 
-	  /* backup over finished tables */
-	  while ((i & ((1 << w) - 1)) != x[h])
-	  {
-		h--;                    /* don't need to update q */
-		w -= l;
-	  }
-	}
+      /* backup over finished tables */
+      while ((i & ((1 << w) - 1)) != x[h])
+      {
+        h--;                    /* don't need to update q */
+        w -= l;
+      }
+    }
   }
 
 
@@ -442,9 +442,9 @@ int Inflator::huft_free(huft *t)
   p = t;
   while (p != (huft *)NULL)
   {
-	q = (--p)->v.t;
-	free((char*)p);
-	p = q;
+    q = (--p)->v.t;
+    free((char*)p);
+    p = q;
   }
   return 0;
 }
@@ -473,76 +473,76 @@ int Inflator::inflate_codes(huft *tl, huft *td, int bl, int bd)
   md = mask_bits[bd];
   for (;;)                      /* do until end of block */
   {
-	NEEDBITS((unsigned)bl)
-	if ((e = (t = tl + ((unsigned)b & ml))->e) > 16)
-	  do {
-		if (e == 99)
-		  return 1;
-		DUMPBITS(t->b)
-		e -= 16;
-		NEEDBITS(e)
-	  } while ((e = (t = t->v.t + ((unsigned)b & mask_bits[e]))->e) > 16);
-	DUMPBITS(t->b)
-	if (e == 16)                /* then it's a literal */
-	{
-	  slide[w++] = (byte)t->v.n;
-	  Tracevv((stderr, "%c", slide[w-1]));
-	  if (w == WSIZE)
-	  {
-		flush_output(w);
-		w = 0;
-	  }
-	}
-	else                        /* it's an EOB or a length */
-	{
-	  /* exit if end of block */
-	  if (e == 15)
-		break;
+    NEEDBITS((unsigned)bl)
+    if ((e = (t = tl + ((unsigned)b & ml))->e) > 16)
+      do {
+        if (e == 99)
+          return 1;
+        DUMPBITS(t->b)
+        e -= 16;
+        NEEDBITS(e)
+      } while ((e = (t = t->v.t + ((unsigned)b & mask_bits[e]))->e) > 16);
+    DUMPBITS(t->b)
+    if (e == 16)                /* then it's a literal */
+    {
+      slide[w++] = (byte)t->v.n;
+      Tracevv((stderr, "%c", slide[w-1]));
+      if (w == WSIZE)
+      {
+        flush_output(w);
+        w = 0;
+      }
+    }
+    else                        /* it's an EOB or a length */
+    {
+      /* exit if end of block */
+      if (e == 15)
+        break;
 
-	  /* get length of block to copy */
-	  NEEDBITS(e)
-	  n = t->v.n + ((unsigned)b & mask_bits[e]);
-	  DUMPBITS(e);
+      /* get length of block to copy */
+      NEEDBITS(e)
+      n = t->v.n + ((unsigned)b & mask_bits[e]);
+      DUMPBITS(e);
 
-	  /* decode distance of block to copy */
-	  NEEDBITS((unsigned)bd)
-	  if ((e = (t = td + ((unsigned)b & md))->e) > 16)
-		do {
-		  if (e == 99)
-			return 1;
-		  DUMPBITS(t->b)
-		  e -= 16;
-		  NEEDBITS(e)
-		} while ((e = (t = t->v.t + ((unsigned)b & mask_bits[e]))->e) > 16);
-	  DUMPBITS(t->b)
-	  NEEDBITS(e)
-	  d = w - t->v.n - ((unsigned)b & mask_bits[e]);
-	  DUMPBITS(e)
-	  Tracevv((stderr,"\\[%d,%d]", w-d, n));
+      /* decode distance of block to copy */
+      NEEDBITS((unsigned)bd)
+      if ((e = (t = td + ((unsigned)b & md))->e) > 16)
+        do {
+          if (e == 99)
+            return 1;
+          DUMPBITS(t->b)
+          e -= 16;
+          NEEDBITS(e)
+        } while ((e = (t = t->v.t + ((unsigned)b & mask_bits[e]))->e) > 16);
+      DUMPBITS(t->b)
+      NEEDBITS(e)
+      d = w - t->v.n - ((unsigned)b & mask_bits[e]);
+      DUMPBITS(e)
+      Tracevv((stderr,"\\[%d,%d]", w-d, n));
 
-	  /* do the copy */
-	  do {
-		n -= (e = (e = WSIZE - ((d &= WSIZE-1) > w ? d : w)) > n ? n : e);
+      /* do the copy */
+      do {
+        n -= (e = (e = WSIZE - ((d &= WSIZE-1) > w ? d : w)) > n ? n : e);
 #if !defined(NOMEMCPY) && !defined(DEBUG)
-		if (w - d >= e)         /* (this test assumes unsigned comparison) */
-		{
-		  memcpy(slide + w, slide + d, e);
-		  w += e;
-		  d += e;
-		}
-		else                      /* do it slow to avoid memcpy() overlap */
+        if (w - d >= e)         /* (this test assumes unsigned comparison) */
+        {
+          memcpy(slide + w, slide + d, e);
+          w += e;
+          d += e;
+        }
+        else                      /* do it slow to avoid memcpy() overlap */
 #endif /* !NOMEMCPY */
-		  do {
-			slide[w++] = slide[d++];
-		Tracevv((stderr, "%c", slide[w-1]));
-		  } while (--e);
-		if (w == WSIZE)
-		{
-		  flush_output(w);
-		  w = 0;
-		}
-	  } while (n);
-	}
+          do {
+            slide[w++] = slide[d++];
+        Tracevv((stderr, "%c", slide[w-1]));
+          } while (--e);
+        if (w == WSIZE)
+        {
+          flush_output(w);
+          w = 0;
+        }
+      } while (n);
+    }
   }
 
 
@@ -583,21 +583,21 @@ int Inflator::inflate_stored()
   DUMPBITS(16)
   NEEDBITS(16)
   if (n != (unsigned)((~b) & 0xffff))
-	return 1;                   /* error in compressed data */
+    return 1;                   /* error in compressed data */
   DUMPBITS(16)
 
 
   /* read and output the compressed data */
   while (n--)
   {
-	NEEDBITS(8)
-	slide[w++] = (byte)b;
-	if (w == WSIZE)
-	{
-	  flush_output(w);
-	  w = 0;
-	}
-	DUMPBITS(8)
+    NEEDBITS(8)
+    slide[w++] = (byte)b;
+    if (w == WSIZE)
+    {
+      flush_output(w);
+      w = 0;
+    }
+    DUMPBITS(8)
   }
 
 
@@ -625,32 +625,32 @@ int Inflator::inflate_fixed()
 
   /* set up literal table */
   for (i = 0; i < 144; i++)
-	l[i] = 8;
+    l[i] = 8;
   for (; i < 256; i++)
-	l[i] = 9;
+    l[i] = 9;
   for (; i < 280; i++)
-	l[i] = 7;
+    l[i] = 7;
   for (; i < 288; i++)          /* make a complete, but wrong code set */
-	l[i] = 8;
+    l[i] = 8;
   bl = 7;
   if ((i = huft_build(l, 288, 257, cplens, cplext, &tl, &bl)) != 0)
-	return i;
+    return i;
 
 
   /* set up distance table */
   for (i = 0; i < 30; i++)      /* make an incomplete code set */
-	l[i] = 5;
+    l[i] = 5;
   bd = 5;
   if ((i = huft_build(l, 30, 0, cpdist, cpdext, &td, &bd)) > 1)
   {
-	huft_free(tl);
-	return i;
+    huft_free(tl);
+    return i;
   }
 
 
   /* decompress until an end-of-block code */
   if (inflate_codes(tl, td, bl, bd))
-	return 1;
+    return 1;
 
 
   /* free the decoding tables, return */
@@ -705,27 +705,27 @@ int Inflator::inflate_dynamic()
 #else
   if (nl > 286 || nd > 30)
 #endif
-	return 1;                   /* bad lengths */
+    return 1;                   /* bad lengths */
 
 
   /* read in bit-length-code lengths */
   for (j = 0; j < nb; j++)
   {
-	NEEDBITS(3)
-	ll[border[j]] = (unsigned)b & 7;
-	DUMPBITS(3)
+    NEEDBITS(3)
+    ll[border[j]] = (unsigned)b & 7;
+    DUMPBITS(3)
   }
   for (; j < 19; j++)
-	ll[border[j]] = 0;
+    ll[border[j]] = 0;
 
 
   /* build decoding table for trees--single level, 7 bit lookup */
   bl = 7;
   if ((i = huft_build(ll, 19, 19, NULL, NULL, &tl, &bl)) != 0)
   {
-	if (i == 1)
-	  huft_free(tl);
-	return i;                   /* incomplete code set */
+    if (i == 1)
+      huft_free(tl);
+    return i;                   /* incomplete code set */
   }
 
 
@@ -735,44 +735,44 @@ int Inflator::inflate_dynamic()
   i = l = 0;
   while ((unsigned)i < n)
   {
-	NEEDBITS((unsigned)bl)
-	j = (td = tl + ((unsigned)b & m))->b;
-	DUMPBITS(j)
-	j = td->v.n;
-	if (j < 16)                 /* length of code in bits (0..15) */
-	  ll[i++] = l = j;          /* save last length in l */
-	else if (j == 16)           /* repeat last length 3 to 6 times */
-	{
-	  NEEDBITS(2)
-	  j = 3 + ((unsigned)b & 3);
-	  DUMPBITS(2)
-	  if ((unsigned)i + j > n)
-		return 1;
-	  while (j--)
-		ll[i++] = l;
-	}
-	else if (j == 17)           /* 3 to 10 zero length codes */
-	{
-	  NEEDBITS(3)
-	  j = 3 + ((unsigned)b & 7);
-	  DUMPBITS(3)
-	  if ((unsigned)i + j > n)
-		return 1;
-	  while (j--)
-		ll[i++] = 0;
-	  l = 0;
-	}
-	else                        /* j == 18: 11 to 138 zero length codes */
-	{
-	  NEEDBITS(7)
-	  j = 11 + ((unsigned)b & 0x7f);
-	  DUMPBITS(7)
-	  if ((unsigned)i + j > n)
-		return 1;
-	  while (j--)
-		ll[i++] = 0;
-	  l = 0;
-	}
+    NEEDBITS((unsigned)bl)
+    j = (td = tl + ((unsigned)b & m))->b;
+    DUMPBITS(j)
+    j = td->v.n;
+    if (j < 16)                 /* length of code in bits (0..15) */
+      ll[i++] = l = j;          /* save last length in l */
+    else if (j == 16)           /* repeat last length 3 to 6 times */
+    {
+      NEEDBITS(2)
+      j = 3 + ((unsigned)b & 3);
+      DUMPBITS(2)
+      if ((unsigned)i + j > n)
+        return 1;
+      while (j--)
+        ll[i++] = l;
+    }
+    else if (j == 17)           /* 3 to 10 zero length codes */
+    {
+      NEEDBITS(3)
+      j = 3 + ((unsigned)b & 7);
+      DUMPBITS(3)
+      if ((unsigned)i + j > n)
+        return 1;
+      while (j--)
+        ll[i++] = 0;
+      l = 0;
+    }
+    else                        /* j == 18: 11 to 138 zero length codes */
+    {
+      NEEDBITS(7)
+      j = 11 + ((unsigned)b & 0x7f);
+      DUMPBITS(7)
+      if ((unsigned)i + j > n)
+        return 1;
+      while (j--)
+        ll[i++] = 0;
+      l = 0;
+    }
   }
 
 
@@ -789,32 +789,32 @@ int Inflator::inflate_dynamic()
   bl = lbits;
   if ((i = huft_build(ll, nl, 257, cplens, cplext, &tl, &bl)) != 0)
   {
-	if (i == 1) {
+    if (i == 1) {
 //      fprintf(stderr, " incomplete literal tree\n");
-	  huft_free(tl);
-	}
-	return i;                   /* incomplete code set */
+      huft_free(tl);
+    }
+    return i;                   /* incomplete code set */
   }
   bd = dbits;
   if ((i = huft_build(ll + nl, nd, 0, cpdist, cpdext, &td, &bd)) != 0)
   {
-	if (i == 1) {
+    if (i == 1) {
 //      fprintf(stderr, " incomplete distance tree\n");
 #ifdef PKZIP_BUG_WORKAROUND
-	  i = 0;
-	}
+      i = 0;
+    }
 #else
-	  huft_free(td);
-	}
-	huft_free(tl);
-	return i;                   /* incomplete code set */
+      huft_free(td);
+    }
+    huft_free(tl);
+    return i;                   /* incomplete code set */
 #endif
   }
 
 
   /* decompress until an end-of-block code */
   if (inflate_codes(tl, td, bl, bd))
-	return 1;
+    return 1;
 
 
   /* free the decoding tables, return */
@@ -860,22 +860,22 @@ int Inflator::inflate_block(bool &e)
   /* inflate that block type */
   switch (t)
   {
-	case 0:
-		status = inflate_stored();
-		break;
-	case 1:
-		status = inflate_fixed();
-		break;
-	case 2:
-		status = inflate_dynamic();
-		break;
-	default:
-		status = 2;
+    case 0:
+        status = inflate_stored();
+        break;
+    case 1:
+        status = inflate_fixed();
+        break;
+    case 2:
+        status = inflate_dynamic();
+        break;
+    default:
+        status = 2;
   }
 #ifdef THROW_EXCEPTIONS
-	if (status)
-		throw Err("Inflator: error decompressing block");
+    if (status)
+        throw Err("Inflator: error decompressing block");
 #endif
-	return status;
+    return status;
 }
 

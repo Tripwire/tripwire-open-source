@@ -42,8 +42,8 @@ void TestGenre()
   TCERR << "TODO: genreswitcher_t.cpp test ifdef'd due to unhandled exception" << std::endl;
 
 #if 0
-  	cDebug d("TestGenre");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestGenre");
+    d.TraceDebug("Entering...\n");
 
     TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(0x00020001)) == 0x00020001);
     TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(0x00010001)) == 0x00010001);

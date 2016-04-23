@@ -76,8 +76,8 @@ public:
     virtual bool        SeekTo( const TCHAR* shortName );
     virtual bool        IsCaseSensitive() const;
     
-	virtual int         GetIterFlags() const;
-	virtual void        SetIterFlags(int i);
+    virtual int         GetIterFlags() const;
+    virtual void        SetIterFlags(int i);
 
     
     //
@@ -122,8 +122,8 @@ protected:
           // inserts the fco into peers.  Peers sorted in increasing order by name of the FCO. 
           // Uses binary search to find location into which to insert.
           // mCurPos is not guaranteed to be valid after this call due to possible list reallocation.
-		  // If an entry with the same name already exists, the fco is not added, an error is added to the error
-		  // bucket, and false is returned. Otherwise, true is always returned.
+          // If an entry with the same name already exists, the fco is not added, an error is added to the error
+          // bucket, and false is returned. Otherwise, true is always returned.
 
     void SeekToPeerByName( const TCHAR* pchName );
           // seeks the iter to the peer with this name.  Done() will be true if the function cannot find the peer
@@ -139,27 +139,27 @@ protected:
     //
     virtual void GetChildrenNames( const TSTRING& strParentName, std::vector<TSTRING>& vChildrenNames ) = 0;
         // retrieves the names of all the children of the named parent
-		// strParent name is of the form returned by cFCOName::AsString. Note that it is not very efficient
-		// to do it this way for registry objects -- 4 Mar 99 mdb
+        // strParent name is of the form returned by cFCOName::AsString. Note that it is not very efficient
+        // to do it this way for registry objects -- 4 Mar 99 mdb
     
-	virtual iFCO* CreateObject(const cFCOName& name, bool bCreatingPeers ) = 0;
+    virtual iFCO* CreateObject(const cFCOName& name, bool bCreatingPeers ) = 0;
         // this method is called when creating the heirarchy.  at minimum it needs to create an empty iFCO
         // with the correct name.  if NULL is returned, the iterator does not go any deeper into the FCO.
         // you may also use this call to set some properties of the FCO.  For instance,
         // FS will record the device number of a file if we are creating peers, and it's CreateObject will 
         // fail if it's peers have a different device number.
         // Must set the object type in this function
-		//
-		// If bCreatingPeers is false, then this method needs to verify that the object actually exists, and 
-		// return 0 if it does not. (if bCreatingPeers is true, we got the name from the OS, so we assume it
-		// exists)
+        //
+        // If bCreatingPeers is false, then this method needs to verify that the object actually exists, and 
+        // return 0 if it does not. (if bCreatingPeers is true, we got the name from the OS, so we assume it
+        // exists)
 
-	virtual bool InitializeTypeInfo(iFCO* pFCO) = 0;
-		// initializes the minimal amout of information about the fco to know what "type" it is. If any OS calls
-		// fail, the error bucket should be filled up and false should be returned.
-		//
-		// this method should check whether the properties are already valid and do nothing if they already are;
-		// this has the potential to be called multiple times, so we need to be efficient.
+    virtual bool InitializeTypeInfo(iFCO* pFCO) = 0;
+        // initializes the minimal amout of information about the fco to know what "type" it is. If any OS calls
+        // fail, the error bucket should be filled up and false should be returned.
+        //
+        // this method should check whether the properties are already valid and do nothing if they already are;
+        // this has the potential to be called multiple times, so we need to be efficient.
 
 
 };
@@ -170,12 +170,12 @@ protected:
 
 inline int cFCODataSourceIterImpl::GetIterFlags() const
 {
-	return mFlags;
+    return mFlags;
 }
 
 inline void cFCODataSourceIterImpl::SetIterFlags( int i )
 {
-	mFlags = i;
+    mFlags = i;
 }
 
 #endif //__FCODATASOURCEITERIMPL_H

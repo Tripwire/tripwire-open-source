@@ -55,9 +55,9 @@ inline
 void TestStringUtil()
 {
 #if USING_NTDBS_STUFF
-	cDebug db("Test std::char_traits<dbchar_t>");
+    cDebug db("Test std::char_traits<dbchar_t>");
 
-	db.TraceAlways("Entering...\n");
+    db.TraceAlways("Entering...\n");
 
     tss::dbstring a;
     tss::dbstring b;
@@ -143,7 +143,7 @@ void TestStringUtil()
     //std::string  TstrToStr( const TSTRING& tstr );
     //TSTRING      StrToTstr( const std::string& str );
     //TSTRING      WstrToTstr( const wc16_string& src );
-	//wc16_string  TstrToWstr( const TSTRING& tstr );
+    //wc16_string  TstrToWstr( const TSTRING& tstr );
 
     // test Null assignments
     singleStr = cStringUtil::TstrToStr( tStrNull ); 

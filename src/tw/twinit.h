@@ -51,9 +51,9 @@ public:
     void Init( const TSTRING& strArgv0 );
         // may throw exceptions
     
-	cErrorQueue	    errorQueue;
+    cErrorQueue     errorQueue;
 private:    
 
-	cTWInit_i*	    mpData;
+    cTWInit_i*      mpData;
 };
 

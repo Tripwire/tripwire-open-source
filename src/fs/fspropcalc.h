@@ -33,7 +33,7 @@
 // fspropcalc.h
 //
 // cFSPropCalc -- an FS fco visitor that "calculates" (or evaluates, populates, ...)
-//					the fco's properties
+//                  the fco's properties
 #ifndef __FSPROPCALC_H
 #define __FSPROPCALC_H
 
@@ -47,29 +47,29 @@
 #include "fco/fcopropvector.h"
 #endif
 
-TSS_EXCEPTION( eFSPropCalc,				    eError )
-//TSS_EXCEPTION( eFSPropCalcResetAccessTime,	eFSPropCalc ) // this was never used
+TSS_EXCEPTION( eFSPropCalc,                 eError )
+//TSS_EXCEPTION( eFSPropCalcResetAccessTime,    eFSPropCalc ) // this was never used
 
 class cFSPropCalc : public iFCOPropCalc, public iFSVisitor
 {
 public:
-	cFSPropCalc();
-	virtual ~cFSPropCalc();
+    cFSPropCalc();
+    virtual ~cFSPropCalc();
 
-	// from iFSVisitor
-	virtual void VisitFSObject(cFSObject& obj);
+    // from iFSVisitor
+    virtual void VisitFSObject(cFSObject& obj);
 
-	// from iFCOPropCalc
-	virtual void					SetPropVector(const cFCOPropVector& pv);
-	virtual const cFCOPropVector&	GetPropVector() const;
-	virtual iFCOVisitor*			GetVisitor();
-	virtual const iFCOVisitor*		GetVisitor() const;
+    // from iFCOPropCalc
+    virtual void                    SetPropVector(const cFCOPropVector& pv);
+    virtual const cFCOPropVector&   GetPropVector() const;
+    virtual iFCOVisitor*            GetVisitor();
+    virtual const iFCOVisitor*      GetVisitor() const;
 
-	virtual void					SetErrorBucket(cErrorBucket* pBucket)				;
-	virtual const cErrorBucket*		GetErrorBucket()							const	;
+    virtual void                    SetErrorBucket(cErrorBucket* pBucket)               ;
+    virtual const cErrorBucket*     GetErrorBucket()                            const   ;
 
-	virtual CollisionAction			GetCollisionAction()			const;
-	virtual void					SetCollisionAction(CollisionAction a);
+    virtual CollisionAction         GetCollisionAction()            const;
+    virtual void                    SetCollisionAction(CollisionAction a);
 
     virtual int                     GetCalcFlags() const;
     virtual void                    SetCalcFlags( int i );
@@ -77,20 +77,20 @@ private:
     cFSPropCalc( const cFSPropCalc& );
     void operator =( const cFSPropCalc& );
 
-	cFCOPropVector					mPropVector;
-	iFCOPropCalc::CollisionAction	mCollAction;
+    cFCOPropVector                  mPropVector;
+    iFCOPropCalc::CollisionAction   mCollAction;
     int                             mCalcFlags;
-	cErrorBucket*					mpErrorBucket;
+    cErrorBucket*                   mpErrorBucket;
 };
 
 inline int cFSPropCalc::GetCalcFlags() const
 {
-	return mCalcFlags;
+    return mCalcFlags;
 }
 
 inline void cFSPropCalc::SetCalcFlags( int i )
 {
-	mCalcFlags = i;
+    mCalcFlags = i;
 }
 
 

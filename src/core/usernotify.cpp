@@ -49,7 +49,7 @@
 iUserNotify* iUserNotify::mpInstance = 0;
 
 iUserNotify::iUserNotify(int verboseLevel) :
-	mVerboseLevel(verboseLevel)
+    mVerboseLevel(verboseLevel)
 {
 }
 
@@ -59,12 +59,12 @@ iUserNotify::~iUserNotify()
 
 void iUserNotify::SetVerboseLevel(int level)
 {
-	mVerboseLevel = level;
+    mVerboseLevel = level;
 }
 
 int iUserNotify::GetVerboseLevel() const
 {
-	return mVerboseLevel;
+    return mVerboseLevel;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,8 +74,8 @@ void iUserNotify::NotifySilent( const TCHAR* format, ... )
 {
     va_list args;
     va_start(args, format);
-	HandleNotify( V_SILENT, format, args );
-	va_end(args);
+    HandleNotify( V_SILENT, format, args );
+    va_end(args);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,8 +85,8 @@ void iUserNotify::NotifyNormal( const TCHAR* format, ... )
 {
     va_list args;
     va_start(args, format);
-	HandleNotify( V_NORMAL, format, args );
-	va_end(args);
+    HandleNotify( V_NORMAL, format, args );
+    va_end(args);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,8 +96,8 @@ void iUserNotify::NotifyVerbose( const TCHAR* format, ... )
 {
     va_list args;
     va_start(args, format);
-	HandleNotify( V_VERBOSE, format, args );
-	va_end(args);
+    HandleNotify( V_VERBOSE, format, args );
+    va_end(args);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -107,8 +107,8 @@ void iUserNotify::Notify(int verboseLevel, const TCHAR* format, ...)
 {
     va_list args;
     va_start(args, format);
-	HandleNotify( verboseLevel, format, args );
-	va_end(args);
+    HandleNotify( verboseLevel, format, args );
+    va_end(args);
 }
 
 

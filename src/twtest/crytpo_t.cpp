@@ -52,18 +52,18 @@ void TestCrypto()
 
 
 #ifdef _IDEA_ENCRYPTION
-	///////////////////////////////////////////////////////////////////////////
-	// IDEA test
-	{
-	memset(crypt, 0, COUNT + 1024);
-	memset(dest, 0, COUNT);
+    ///////////////////////////////////////////////////////////////////////////
+    // IDEA test
+    {
+    memset(crypt, 0, COUNT + 1024);
+    memset(dest, 0, COUNT);
 
     cIDEA crypter;
     
     // we use buf for when the end of the source doesn't fall on a 
     // blocksize boundry.
     TEST(crypter.GetBlockSizePlain() < 32);
-	TEST(crypter.GetBlockSizeCipher() < 32);
+    TEST(crypter.GetBlockSizeCipher() < 32);
     char buf[32];
 
     // encrypt the phrase
@@ -99,34 +99,34 @@ void TestCrypto()
     }
 
     TEST(memcmp(source, dest, COUNT) == 0);
-	}
+    }
 #endif
 
 #ifdef _RSA_ENCRYPTION
-	///////////////////////////////////////////////////////////////////////////
-	// RSA test
-	{
+    ///////////////////////////////////////////////////////////////////////////
+    // RSA test
+    {
     int i, j;
 
     memset(crypt, 0, COUNT + 1024);
-	memset(dest, 0, COUNT);
+    memset(dest, 0, COUNT);
 
     cRSA crypter(cRSA::KEY2048);
     
     // we use buf for when the end of the source doesn't fall on a 
     // blocksize boundry.
     TEST(crypter.GetBlockSizePlain() < BUFSIZE);
-	TEST(crypter.GetBlockSizeCipher() < BUFSIZE);
+    TEST(crypter.GetBlockSizeCipher() < BUFSIZE);
     char buf[BUFSIZE];
 
-	cRSAPublicKey* pPublic;
-	cRSAPrivateKey* pPrivate;
+    cRSAPublicKey* pPublic;
+    cRSAPrivateKey* pPrivate;
 
     crypter.GenerateKeys(pPrivate, pPublic);
 
     // save the keys to a data stream and read back in
     cRSAPublicKey* pPublic2;
-	cRSAPrivateKey* pPrivate2;
+    cRSAPrivateKey* pPrivate2;
 
     ASSERT(pPublic->GetWriteLen() < BUFSIZE);
     pPublic->Write(buf);
@@ -212,7 +212,7 @@ void TestCrypto()
 
     // zero out things and try signing and verifying
     memset(crypt, 0, COUNT + 1024);
-	memset(dest, 0, COUNT);
+    memset(dest, 0, COUNT);
 
     // sign the phrase
     crypter.SetSigning(pPrivate);
@@ -266,37 +266,37 @@ void TestCrypto()
     TEST(memcmp(source, dest, COUNT) == 0);
 
     delete pPublic;
-	delete pPrivate;
-	}
+    delete pPrivate;
+    }
 #endif
 
 
     ///////////////////////////////////////////////////////////////////////////
-	// El Gamal test
-	{
+    // El Gamal test
+    {
     int i, j;
 
     TCOUT << _T("El Gamal test\n");
     
     memset(crypt, 0, COUNT + 1024);
-	memset(dest, 0, COUNT);
+    memset(dest, 0, COUNT);
 
     cElGamalSig crypter(cElGamalSig::KEY512);
     
     // we use buf for when the end of the source doesn't fall on a 
     // blocksize boundry.
     TEST(crypter.GetBlockSizePlain() < BUFSIZE);
-	TEST(crypter.GetBlockSizeCipher() < BUFSIZE);
+    TEST(crypter.GetBlockSizeCipher() < BUFSIZE);
     char buf[BUFSIZE];
 
-	cElGamalSigPublicKey* pPublic;
-	cElGamalSigPrivateKey* pPrivate;
+    cElGamalSigPublicKey* pPublic;
+    cElGamalSigPrivateKey* pPrivate;
 
     crypter.GenerateKeys(pPrivate, pPublic);
 
     // save the keys to a data stream and read back in
     cElGamalSigPublicKey* pPublic2;
-	cElGamalSigPrivateKey* pPrivate2;
+    cElGamalSigPrivateKey* pPrivate2;
 
     ASSERT(pPublic->GetWriteLen() < BUFSIZE);
     pPublic->Write(buf);
@@ -312,7 +312,7 @@ void TestCrypto()
 
     // zero out things and try signing and verifying
     memset(crypt, 0, COUNT + 1024);
-	memset(dest, 0, COUNT);
+    memset(dest, 0, COUNT);
 
     TCOUT << _T("El Gamal Signing...\n");
 
@@ -406,7 +406,7 @@ void TestCrypto()
     }
 
     delete pPublic;
-	delete pPrivate;
-	}
+    delete pPrivate;
+    }
 }
 

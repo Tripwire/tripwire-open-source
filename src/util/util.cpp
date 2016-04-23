@@ -43,8 +43,8 @@ TSS_ImplementPackage( cUtil )
 
 cUtil::cUtil()
 {
-	TSS_Dependency( cCore );
-	TSS_REGISTER_PKG_ERRORS( util )
+    TSS_Dependency( cCore );
+    TSS_REGISTER_PKG_ERRORS( util )
 }
 
 //-----------------------------------------------------------------------------

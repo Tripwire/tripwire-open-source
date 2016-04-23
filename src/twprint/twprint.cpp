@@ -58,7 +58,7 @@ TSS_ImplementPackage( cTWPrint )
 // POSTCONDITIONS:
 //
 // COMPLEXITY:
-//	Constant
+//  Constant
 //
 cTWPrint::cTWPrint()
 {
@@ -66,7 +66,7 @@ cTWPrint::cTWPrint()
     // set up dependencies
     //
     TSS_Dependency( cTW );
-	TSS_REGISTER_PKG_ERRORS	( twprint );
+    TSS_REGISTER_PKG_ERRORS ( twprint );
 }
 
 // eof: twprint.cpp

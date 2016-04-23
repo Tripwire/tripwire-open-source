@@ -90,8 +90,8 @@ class cFCOReportSpecIter;
 
 class cFCOReport : public iTypedSerializable
 {
-	DECLARE_TYPEDSERIALIZABLE()
-	friend class cFCOReportSpecIter; 
+    DECLARE_TYPEDSERIALIZABLE()
+    friend class cFCOReportSpecIter; 
     friend class cFCOReportUtil;
     friend class cFCOReportGenreIter;
 public:
@@ -104,27 +104,27 @@ public:
         // Add a spec to the report.  The report will save copies of all three of these
         // objects in its internal data structure.
         // If pSpec, pAttr, and pIter are all NULL, an empty genre is added to report
-		// if pIter is passed in, it will be updated to point at the newly added spec.
+        // if pIter is passed in, it will be updated to point at the newly added spec.
         // if genre is not in this report, it will be added
         // if this spec overlaps another spec, an eInternal will be thrown
 
     void AddChangedFCO(const cFCOReportSpecIter& iter, const iFCO* pOldFCO, const iFCO* pNewFCO, const cFCOPropVector& changedProps);
         // For the spec pointed to by the iter, add a changed FCO pair and property vector.  
 
-	const	cErrorQueue* GetErrorQueue() const;
-			cErrorQueue* GetErrorQueue();
-		// returns a pointer to the report's error queue. The caller is free to iterate over the errors, remove all the 
-		// errors, or chain an error bucket to or from the report's error queue.
+    const   cErrorQueue* GetErrorQueue() const;
+            cErrorQueue* GetErrorQueue();
+        // returns a pointer to the report's error queue. The caller is free to iterate over the errors, remove all the 
+        // errors, or chain an error bucket to or from the report's error queue.
  
     int GetNumSpecs(cGenre::Genre genre) const;
-		// returns the number of specs in the report; these can be iterated over using the iterators below.
+        // returns the number of specs in the report; these can be iterated over using the iterators below.
         // returns 0 if genre is not in report
 
-	void    TraceContents(int dl = -1) const;
+    void    TraceContents(int dl = -1) const;
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
       
     static const cFileHeaderID& GetFileHeaderID();
         // Return a cFileHeaderID for all databases
@@ -135,7 +135,7 @@ protected:
 
 ///////////////////////////////////////////////////////////////////////////////
 // iterator classes -- iterates over all the specs in the report and returns 
-//		refrences to all the spec's related data
+//      refrences to all the spec's related data
 ///////////////////////////////////////////////////////////////////////////////
 class cFCOReportGenreIter
 {
@@ -143,30 +143,30 @@ class cFCOReportGenreIter
     friend class cFCOReportSpecIter;
     friend class cFCOReportChangeIter;
 public:
-	explicit cFCOReportGenreIter(const cFCOReport& report);
-	cFCOReportGenreIter(const cFCOReportGenreIter& rhs);
-	~cFCOReportGenreIter();
+    explicit cFCOReportGenreIter(const cFCOReport& report);
+    cFCOReportGenreIter(const cFCOReportGenreIter& rhs);
+    ~cFCOReportGenreIter();
 
-	void operator=(const cFCOReportGenreIter& rhs);
+    void operator=(const cFCOReportGenreIter& rhs);
 
-	// iteration methods
-	void SeekBegin()	const;
-	void Next()			const;
-	bool Done()			const;
+    // iteration methods
+    void SeekBegin()    const;
+    void Next()         const;
+    bool Done()         const;
     
     bool SeekToGenre(cGenre::Genre genre);
-		// seeks to specific genre.  Returns false if genre does not exist in report
+        // seeks to specific genre.  Returns false if genre does not exist in report
 
-	void	Remove();
-		// removes the entire genre from report
-	
-	// access to data
-    cGenre::Genre			GetGenre()		    const;
+    void    Remove();
+        // removes the entire genre from report
+    
+    // access to data
+    cGenre::Genre           GetGenre()          const;
         // Get current genre
     cFCOReportGenreHeader&  GetGenreHeader()    const;
     
 private:
-	cFCOReportGenreIter_i* mpData;
+    cFCOReportGenreIter_i* mpData;
 };
 
 class cFCOReportSpecIter
@@ -182,78 +182,78 @@ public:
     cFCOReportSpecIter(const cFCOReportGenreIter& genreIter);
         // thorws eInternal if genreIter is not at a valid genre or is Done()
 
-	cFCOReportSpecIter(const cFCOReportSpecIter& rhs);
-	~cFCOReportSpecIter();
+    cFCOReportSpecIter(const cFCOReportSpecIter& rhs);
+    ~cFCOReportSpecIter();
 
-	void operator=(const cFCOReportSpecIter& rhs);
+    void operator=(const cFCOReportSpecIter& rhs);
 
-	// iteration methods
-	void SeekBegin()	const;
-	void Next()			const;
-	bool Done()			const;
+    // iteration methods
+    void SeekBegin()    const;
+    void Next()         const;
+    bool Done()         const;
 
-	bool SeekToSpec(const iFCOSpec* pSpec);
-		// seeks to the first spec that equals the passed in one; returns false
-		// and seeks to end if not found.
+    bool SeekToSpec(const iFCOSpec* pSpec);
+        // seeks to the first spec that equals the passed in one; returns false
+        // and seeks to end if not found.
 
-	void	Remove();
-		// removes the spec and all fcos associated wit hit. Behavior is undefined if (Done() == true).
-		// after the erase, the iterator points to the next element in the list
-	
-	// access to data
-	const iFCOSpec*			GetSpec()		const;
-	const cFCOSpecAttr*		GetAttr()		const;
-	const cErrorQueue*		GetErrorQueue() const;
-	cErrorQueue*			GetErrorQueue();
-	const iFCOSet*			GetAddedSet()	const;
-	iFCOSet*				GetAddedSet();
-	const iFCOSet*			GetRemovedSet()	const;
-	iFCOSet*				GetRemovedSet();
+    void    Remove();
+        // removes the spec and all fcos associated wit hit. Behavior is undefined if (Done() == true).
+        // after the erase, the iterator points to the next element in the list
+    
+    // access to data
+    const iFCOSpec*         GetSpec()       const;
+    const cFCOSpecAttr*     GetAttr()       const;
+    const cErrorQueue*      GetErrorQueue() const;
+    cErrorQueue*            GetErrorQueue();
+    const iFCOSet*          GetAddedSet()   const;
+    iFCOSet*                GetAddedSet();
+    const iFCOSet*          GetRemovedSet() const;
+    iFCOSet*                GetRemovedSet();
 
-	int						GetNumChanged() const;
-		// returns the number of fcos in the changed list.
-		// you access the members of the list by using the iterator below...
+    int                     GetNumChanged() const;
+        // returns the number of fcos in the changed list.
+        // you access the members of the list by using the iterator below...
     
     void                    SetObjectsScanned( int nObjectsScanned );
     int                     GetObjectsScanned() const;
 
 private:
-	cFCOReportSpecIter_i* mpData;
-	// TODO -- if it turns out that we are creating a lot of these, we should consider
-	// making a pool of them.
+    cFCOReportSpecIter_i* mpData;
+    // TODO -- if it turns out that we are creating a lot of these, we should consider
+    // making a pool of them.
 };
 
 class cFCOReportChangeIter
 {
 public:
-	cFCOReportChangeIter(const cFCOReportSpecIter& specIter);
-	cFCOReportChangeIter();
-	cFCOReportChangeIter(const cFCOReportChangeIter& rhs);
-	~cFCOReportChangeIter();
+    cFCOReportChangeIter(const cFCOReportSpecIter& specIter);
+    cFCOReportChangeIter();
+    cFCOReportChangeIter(const cFCOReportChangeIter& rhs);
+    ~cFCOReportChangeIter();
 
-	void operator=(const cFCOReportChangeIter& rhs);
-	void SetSpecIter(const cFCOReportSpecIter& specIter);
-		// assocaite this iterator with a different spec. We will assert 
-		// that specIter.Done() is not true.
+    void operator=(const cFCOReportChangeIter& rhs);
+    void SetSpecIter(const cFCOReportSpecIter& specIter);
+        // assocaite this iterator with a different spec. We will assert 
+        // that specIter.Done() is not true.
 
-	void	Remove();
-		// removes the the change entry pointed at by this iter. Behavior is undefined if (Done() == true).
-		// after the erase, the iterator points to the next element in the list
-	
-	// iteration methods
-	void SeekBegin()	const;
-	void Next()			const;
-	bool Done()			const;
+    void    Remove();
+        // removes the the change entry pointed at by this iter. Behavior is undefined if (Done() == true).
+        // after the erase, the iterator points to the next element in the list
+    
+    // iteration methods
+    void SeekBegin()    const;
+    void Next()         const;
+    bool Done()         const;
 
-	// access to data...
-	const iFCO*				GetOld() const;
-	const iFCO*				GetNew() const;
-	const cFCOPropVector&	GetChangeVector() const;
+    // access to data...
+    const iFCO*             GetOld() const;
+    const iFCO*             GetNew() const;
+    const cFCOPropVector&   GetChangeVector() const;
 
 private:
-	cFCOReportChangeIter_i* mpData;
-	// TODO -- if it turns out that we are creating a lot of these, we should consider
-	// making a pool of them.
+    cFCOReportChangeIter_i* mpData;
+    // TODO -- if it turns out that we are creating a lot of these, we should consider
+    // making a pool of them.
 };
 
 #endif //__FCOREPORT_H

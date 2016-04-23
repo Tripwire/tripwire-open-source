@@ -94,7 +94,7 @@ void tw_yy_scan::output( int c )
 ///////////////////////////////////////////////////////////////////////////////
 // Check -- only checks syntax and basic semantics.
 //
-//			on failure, it will throw an error
+//          on failure, it will throw an error
 ///////////////////////////////////////////////////////////////////////////////
 void cPolicyParser::Check( cErrorBucket* pError ) //throw(eError);
 {
@@ -102,10 +102,10 @@ void cPolicyParser::Check( cErrorBucket* pError ) //throw(eError);
     cParserHelper::SetParseOnly( true );
     
     std::basic_stringstream<char> in( ConvertMultibyte( mIn ) );
-	tw_yy_scan lexer( in );
+    tw_yy_scan lexer( in );
 
-	// start the parsing
-	if ( mParser.yyparse( &lexer ) != 0 )
+    // start the parsing
+    if ( mParser.yyparse( &lexer ) != 0 )
         throw eParseFailed( _T("") );
 
     cParserHelper::Finit( NULL );
@@ -114,18 +114,18 @@ void cPolicyParser::Check( cErrorBucket* pError ) //throw(eError);
 ///////////////////////////////////////////////////////////////////////////////
 // Execute -- attempts to parse input to create list of fcospecs
 //
-//			on failure, it will throw an error (binding failed, or parse error)
-//			on success, the list will be populated
+//          on failure, it will throw an error (binding failed, or parse error)
+//          on success, the list will be populated
 ///////////////////////////////////////////////////////////////////////////////
 void cPolicyParser::Execute( cGenreSpecListVector& policy, cErrorBucket* pError ) //throw( eParserHelper )
 {
     cParserHelper::Init( pError );
 
     std::basic_stringstream<char> in( ConvertMultibyte( mIn ) );
-	tw_yy_scan lexer( in );
+    tw_yy_scan lexer( in );
 
-	// start the parsing
-	if ( mParser.yyparse( &lexer ) != 0 )
+    // start the parsing
+    if ( mParser.yyparse( &lexer ) != 0 )
         throw eParseFailed( _T("") );
 
     cParserHelper::Finit( &policy );

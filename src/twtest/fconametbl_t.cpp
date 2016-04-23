@@ -36,28 +36,28 @@
 
 void TestFCONameTbl()
 {
-	cDebug d("TestFCONameTbl()");
+    cDebug d("TestFCONameTbl()");
 
-	cFCONameTbl nameTbl;
+    cFCONameTbl nameTbl;
 
-	cFCONameTblNode* pNode1 = nameTbl.CreateNode(_T("aBc"));
-	cFCONameTblNode* pNode2 = nameTbl.CreateNode(_T("Abc"));
-	cFCONameTblNode* pNode3 = nameTbl.CreateNode(_T("abc"));
-	cFCONameTblNode* pNode4 = nameTbl.CreateNode(_T("def"));
-	cFCONameTblNode* pNode5 = nameTbl.CreateNode(_T("dEf"));
+    cFCONameTblNode* pNode1 = nameTbl.CreateNode(_T("aBc"));
+    cFCONameTblNode* pNode2 = nameTbl.CreateNode(_T("Abc"));
+    cFCONameTblNode* pNode3 = nameTbl.CreateNode(_T("abc"));
+    cFCONameTblNode* pNode4 = nameTbl.CreateNode(_T("def"));
+    cFCONameTblNode* pNode5 = nameTbl.CreateNode(_T("dEf"));
 
-	TEST(*pNode1						!= *pNode2);
-	TEST(*pNode5						!= *pNode4);
-	TEST(*pNode1->GetLowercaseNode()	== *pNode3);
-	TEST(*pNode2->GetLowercaseNode()	== *pNode3);
-	TEST(*pNode3->GetLowercaseNode()	== *pNode3);
-	TEST(*pNode4->GetLowercaseNode()	== *pNode4);
-	TEST(*pNode5->GetLowercaseNode()	== *pNode4);
+    TEST(*pNode1                        != *pNode2);
+    TEST(*pNode5                        != *pNode4);
+    TEST(*pNode1->GetLowercaseNode()    == *pNode3);
+    TEST(*pNode2->GetLowercaseNode()    == *pNode3);
+    TEST(*pNode3->GetLowercaseNode()    == *pNode3);
+    TEST(*pNode4->GetLowercaseNode()    == *pNode4);
+    TEST(*pNode5->GetLowercaseNode()    == *pNode4);
 
 
-	pNode1->Release();
-	pNode2->Release();
-	pNode3->Release();
-	pNode4->Release();
-	pNode5->Release();
+    pNode1->Release();
+    pNode2->Release();
+    pNode3->Release();
+    pNode4->Release();
+    pNode5->Release();
 }

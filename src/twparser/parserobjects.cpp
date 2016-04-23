@@ -79,7 +79,7 @@ cParseRule::SetAttrList(cParseNamedAttrList *pattr)
 
 ///////////////////////////////////////////////////////////////////////////////
 // SetSpecMaskList
-//			attaches cParseSpecMaskList to this structure
+//          attaches cParseSpecMaskList to this structure
 ///////////////////////////////////////////////////////////////////////////////
 void
 cParseRule::SetSpecMaskList(cParseSpecMaskList *pmasks)
@@ -90,7 +90,7 @@ cParseRule::SetSpecMaskList(cParseSpecMaskList *pmasks)
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetNumSpecMasks
-//			returns number of specmasks in list (excluding default)
+//          returns number of specmasks in list (excluding default)
 ///////////////////////////////////////////////////////////////////////////////
 int
 cParseRule::GetNumSpecMasks() const
@@ -98,13 +98,13 @@ cParseRule::GetNumSpecMasks() const
     // empty list?
     if (mpSpecMaskList == NULL)
         return 0;
-	
+    
     return mpSpecMaskList->mList.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetNumNamedAttrs
-//			returns number of named attributes in list
+//          returns number of named attributes in list
 ///////////////////////////////////////////////////////////////////////////////
 int
 cParseRule::GetNumNamedAttrs() const
@@ -112,13 +112,13 @@ cParseRule::GetNumNamedAttrs() const
     // empty list?
     if (mpAttrList == NULL)
         return 0;
-	
+    
     return mpAttrList->mList.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dump
-//			dumps out all the contents of the parse node, including children
+//          dumps out all the contents of the parse node, including children
 ///////////////////////////////////////////////////////////////////////////////
 
 void
@@ -197,7 +197,7 @@ void
 cParseSpecMask::Dump(cDebug &d) const
 {
     d.TraceDebug("    condition=(%s), propvector=:\n", msCondition.c_str(), msPV.c_str() );
-	
+    
     // dump list of attributes
     if (mpAttrList)
         mpAttrList->Dump(d);

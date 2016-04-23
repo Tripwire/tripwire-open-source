@@ -592,12 +592,12 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
 
           if (!modeCommon->mMailFrom.empty())
               reportMail->SetFrom(modeCommon->mMailFrom);
-          else	
-	  {
+          else  
+      {
               TSTRING machineName;
               iFSServices::GetInstance()->GetMachineNameFullyQualified(machineName);
               reportMail->SetFrom(TSS_GetString( cTripwire, tripwire::STR_EMAIL_FROM) + machineName);
-	  }		
+      }     
 
           reportMail->SetFromName(TSS_GetString(cTW, tw::STR_TSS_PRODUCT_NAME));
              
@@ -741,12 +741,12 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
        if (!modeCommon->mMailFrom.empty())
            reportMail->SetFrom(modeCommon->mMailFrom);
        else
-       {	
+       {    
            TSTRING machineName;
            iFSServices::GetInstance()->GetMachineNameFullyQualified(machineName);
            reportMail->SetFrom(TSS_GetString( cTripwire, tripwire::STR_EMAIL_FROM) + machineName);
        }
-		
+        
        reportMail->SetFromName(TSS_GetString(cTW, tw::STR_TSS_PRODUCT_NAME));
 
        reportMail->SetSubject   (TSS_GetString( cTripwire, tripwire::STR_TEST_EMAIL_SUBJECT));

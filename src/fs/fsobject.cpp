@@ -49,26 +49,26 @@ IMPLEMENT_SERREFCOUNT(cFSObject, _T("FSObject"), 0, 1)
 
 // Debug stuff
 #ifdef _DEBUG
-static int gNumFSObjectCreate	= 0;
-static int gNumFSObjectDestroy	= 0;
+static int gNumFSObjectCreate   = 0;
+static int gNumFSObjectDestroy  = 0;
 
 void cFSObject::TraceStats() 
 {
-	cDebug d("cFSObject::TraceStats");
+    cDebug d("cFSObject::TraceStats");
 
-	d.TraceDebug("cFSObject Stats:\n\tNum Created:\t%d\n\tNum Destroyed:\t%d\n", 
-			gNumFSObjectCreate, gNumFSObjectDestroy);
+    d.TraceDebug("cFSObject Stats:\n\tNum Created:\t%d\n\tNum Destroyed:\t%d\n", 
+            gNumFSObjectCreate, gNumFSObjectDestroy);
 }
 
 
 class cFSNameStatPrinter
 {
 public:
-	~cFSNameStatPrinter()
-	{
-		cDebug d("cFSNameStatPrinter");
-		d.TraceDebug("*** Num fs objects created: %d Num destroyed: %d ***\n", gNumFSObjectCreate, gNumFSObjectDestroy );
-	}
+    ~cFSNameStatPrinter()
+    {
+        cDebug d("cFSNameStatPrinter");
+        d.TraceDebug("*** Num fs objects created: %d Num destroyed: %d ***\n", gNumFSObjectCreate, gNumFSObjectDestroy );
+    }
 
 } gFSNameStatPrinter;
 
@@ -76,10 +76,10 @@ public:
 
 
 cFSObject::cFSObject(const cFCOName& name) :
-	mName(name)
+    mName(name)
 {
 #ifdef _DEBUG
-	gNumFSObjectCreate++;
+    gNumFSObjectCreate++;
 #endif
 }
 
@@ -87,25 +87,25 @@ cFSObject::cFSObject() :
     mName(_T("undefined"))
 {
 #ifdef _DEBUG
-	gNumFSObjectCreate++;
+    gNumFSObjectCreate++;
 #endif
 }
 
 cFSObject::~cFSObject()
 {
 #ifdef _DEBUG
-	gNumFSObjectDestroy++;
+    gNumFSObjectDestroy++;
 #endif
 }
 
 const cFCOName& cFSObject::GetName() const 
 {
-	return mName;
+    return mName;
 }
 
 void cFSObject::SetName(const cFCOName& name) 
 {
-	mName = name;
+    mName = name;
 }
 
 
@@ -114,15 +114,15 @@ void cFSObject::SetName(const cFCOName& name)
 ///////////////////////////////////////////////////////////////////////////////
 uint32 cFSObject::GetCaps() const 
 {
-	uint32 cap = mName.GetSize() > 1 ? CAP_CAN_HAVE_PARENT : 0;
+    uint32 cap = mName.GetSize() > 1 ? CAP_CAN_HAVE_PARENT : 0;
 
     ASSERT( GetFSPropSet().GetValidVector().ContainsItem( cFSPropSet::PROP_FILETYPE ) );
-	if( GetFSPropSet().GetFileType() == cFSPropSet::FT_DIR )
-	{
-		cap |= CAP_CAN_HAVE_CHILDREN;
-	}
+    if( GetFSPropSet().GetFileType() == cFSPropSet::FT_DIR )
+    {
+        cap |= CAP_CAN_HAVE_CHILDREN;
+    }
 
-	return cap;
+    return cap;
 }
 
 
@@ -131,14 +131,14 @@ uint32 cFSObject::GetCaps() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFSObject::TraceContents(int dl) const
 {
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
 
-	cDebug d("cFSObject::TraceContents");
+    cDebug d("cFSObject::TraceContents");
 
-	d.Trace(dl, _T("%s\n"), GetName().AsString().c_str());
-	// trace the property set's stats
-	GetPropSet()->TraceContents(dl);
+    d.Trace(dl, _T("%s\n"), GetName().AsString().c_str());
+    // trace the property set's stats
+    GetPropSet()->TraceContents(dl);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -146,12 +146,12 @@ void cFSObject::TraceContents(int dl) const
 ///////////////////////////////////////////////////////////////////////////////
 const iFCOPropSet* cFSObject::GetPropSet() const
 {
-	return &mPropSet;
+    return &mPropSet;
 }
 
 iFCOPropSet* cFSObject::GetPropSet()
 {
-	return &mPropSet;
+    return &mPropSet;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -159,11 +159,11 @@ iFCOPropSet* cFSObject::GetPropSet()
 ///////////////////////////////////////////////////////////////////////////////
 iFCO* cFSObject::Clone() const 
 {
-	cFSObject* pNew = new cFSObject(GetName());
-	// copy all the properties...
-	pNew->GetFSPropSet() = GetFSPropSet();
-	// note that we don't get the children...
-	return pNew;
+    cFSObject* pNew = new cFSObject(GetName());
+    // copy all the properties...
+    pNew->GetFSPropSet() = GetFSPropSet();
+    // note that we don't get the children...
+    return pNew;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -171,28 +171,28 @@ iFCO* cFSObject::Clone() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFSObject::AcceptVisitor(iFCOVisitor* pVisitor) 
 {
-	// first, make sure this is the right type...
-	ASSERT(pVisitor->GetType() == iFSVisitor::mType);
-	iFSVisitor* pfsv = static_cast<iFSVisitor*>(pVisitor);
-	pfsv->VisitFSObject(*this);
+    // first, make sure this is the right type...
+    ASSERT(pVisitor->GetType() == iFSVisitor::mType);
+    iFSVisitor* pfsv = static_cast<iFSVisitor*>(pVisitor);
+    pfsv->VisitFSObject(*this);
 }
 
 
 void cFSObject::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("File System Object")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("File System Object")));
 
-	
-	pSerializer->ReadObject(&mName);
-	pSerializer->ReadObject(&mPropSet);
+    
+    pSerializer->ReadObject(&mName);
+    pSerializer->ReadObject(&mPropSet);
 }
 
 void cFSObject::Write(iSerializer* pSerializer) const
 {
 
-	pSerializer->WriteObject(&mName);
-	pSerializer->WriteObject(&mPropSet);
+    pSerializer->WriteObject(&mName);
+    pSerializer->WriteObject(&mPropSet);
 }
 
 

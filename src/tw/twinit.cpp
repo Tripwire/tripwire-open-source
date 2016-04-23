@@ -76,7 +76,7 @@
 #include "fs/fs.h" // object initialization
 #if IS_UNIX
 #include "core/unixfsservices.h"
-#include "core/tw_signal.h"			// to ignore SIGPIPE
+#include "core/tw_signal.h"         // to ignore SIGPIPE
 #endif
 
 #ifdef __AROS__
@@ -97,10 +97,10 @@ public:
    ~cTWInit_i();
         // both shouldn't throw exceptions
 
-    iFSServices*		pFSServices;
-	cUserNotifyStdout	unStdout;
-	cErrorTracer		et;
-	cErrorReporter		er;
+    iFSServices*        pFSServices;
+    cUserNotifyStdout   unStdout;
+    cErrorTracer        et;
+    cErrorReporter      er;
 };
 
 cTWInit_i::cTWInit_i()
@@ -122,29 +122,29 @@ cTWInit_i::~cTWInit_i()
 ///////////////////////////////////////////////////////////////////////////////
 static void RegisterAllSerializable()
 {
-	// Reference count objects
-	cSerializerImpl::RegisterSerializableRefCt	(CLASS_TYPE(cFSObject),					cFSObject::Create);
-	cSerializerImpl::RegisterSerializableRefCt	(CLASS_TYPE(cFCOSpecImpl),				cFCOSpecImpl::Create);
-	cSerializerImpl::RegisterSerializableRefCt	(CLASS_TYPE(cFCOSpecAttr),				cFCOSpecAttr::Create);
+    // Reference count objects
+    cSerializerImpl::RegisterSerializableRefCt  (CLASS_TYPE(cFSObject),                 cFSObject::Create);
+    cSerializerImpl::RegisterSerializableRefCt  (CLASS_TYPE(cFCOSpecImpl),              cFCOSpecImpl::Create);
+    cSerializerImpl::RegisterSerializableRefCt  (CLASS_TYPE(cFCOSpecAttr),              cFCOSpecAttr::Create);
 
-	// Non-reference count objects
- 	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCODatabaseFile),		    cFCODatabaseFile::Create);
-	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cErrorQueue),				cErrorQueue::Create);
-	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCOName),					cFCOName::Create);
-	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCOReport),				cFCOReport::Create);
-	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCOSetImpl),				cFCOSetImpl::Create);
-	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCOSpecStopPointSet),		cFCOSpecStopPointSet::Create);
-	cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCOSpecNoChildren),		cFCOSpecNoChildren::Create);
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cSerializableNString),		cSerializableNString::Create);
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cSerializableWString),		cSerializableWString::Create);
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cHeaderInfo),				cHeaderInfo::Create);
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCODbHeader),				cFCODbHeader::Create);
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFCOReportHeader),			cFCOReportHeader::Create);
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFSPropSet),				cFSPropSet::Create);
+    // Non-reference count objects
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCODatabaseFile),          cFCODatabaseFile::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cErrorQueue),               cErrorQueue::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCOName),                  cFCOName::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCOReport),                cFCOReport::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCOSetImpl),               cFCOSetImpl::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCOSpecStopPointSet),      cFCOSpecStopPointSet::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCOSpecNoChildren),        cFCOSpecNoChildren::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cSerializableNString),      cSerializableNString::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cSerializableWString),      cSerializableWString::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cHeaderInfo),               cHeaderInfo::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCODbHeader),              cFCODbHeader::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFCOReportHeader),          cFCOReportHeader::Create);
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFSPropSet),                cFSPropSet::Create);
 
-	// prop displayers
-    cSerializerImpl::RegisterSerializable		(CLASS_TYPE(cFSPropDisplayer),			cFSPropDisplayer::Create);
-	
+    // prop displayers
+    cSerializerImpl::RegisterSerializable       (CLASS_TYPE(cFSPropDisplayer),          cFSPropDisplayer::Create);
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ static void RegisterAllSerializable()
 ///////////////////////////////////////////////////////////////////////////////
 static bool SetExeDir( const TSTRING& strArgv0 )
 {
-	ASSERT( ! strArgv0.empty() );
+    ASSERT( ! strArgv0.empty() );
 
     // record executable directory
     TSTRING strFullPath;
@@ -170,11 +170,11 @@ static bool SetExeDir( const TSTRING& strArgv0 )
     else // error
     {
         ASSERT( false );
-		cSystemInfo::SetExeDir(_T(""));
-		return false;
+        cSystemInfo::SetExeDir(_T(""));
+        return false;
     }
 
-	return true;
+    return true;
 }
 
 
@@ -191,13 +191,13 @@ cTWInit::cTWInit()
 ///////////////////////////////////////////////////////////////////////////////
 cTWInit::~cTWInit()
 {
-	delete mpData;
+    delete mpData;
 
-	//
-	// clear out the fco name tbl 
-	// this helps the mem leak quest...
-	//
-	cFCOName::ClearNameTable();
+    //
+    // clear out the fco name tbl 
+    // this helps the mem leak quest...
+    //
+    cFCOName::ClearNameTable();
 
 }
 
@@ -206,15 +206,15 @@ cTWInit::~cTWInit()
 ///////////////////////////////////////////////////////////////////////////////
 void cTWInit::Init( const TSTRING& strArgv0 )
 {
-	// package initialization...
-	//
-	TSS_Dependency( cTW );  // initialize all packages on program startup (exes 
+    // package initialization...
+    //
+    TSS_Dependency( cTW );  // initialize all packages on program startup (exes 
                             // should call this function (cTWInit::Init) on startup
 
     // we require 8-bit bytes for some functionality
     ASSERT( sizeof( byte ) == sizeof( uint8 ) );
 
-	//
+    //
     // set debug level 
     // NOTE:BAM -- this is also being set in cCore::cCore() because
     // things in that constructor need to have a debug output as well.
@@ -248,21 +248,21 @@ void cTWInit::Init( const TSTRING& strArgv0 )
 #ifdef __AROS__
     aros_socketbase_init();
 #endif
-	//
-	// set up the file system services    
-	//
+    //
+    // set up the file system services    
+    //
 #if IS_UNIX
     mpData->pFSServices = new cUnixFSServices;
 #endif
     ASSERT( mpData->pFSServices != 0 );
-	iFSServices::SetInstance( mpData->pFSServices );
+    iFSServices::SetInstance( mpData->pFSServices );
             
-	//
+    //
     // save directory in which this executable resides
     //
     SetExeDir( strArgv0 );
 
-	//
+    //
     // save current time
     //
     cSystemInfo::SetExeStartTime( cTimeUtil::GetTime() );
@@ -272,43 +272,43 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     // ...switch to it
     cGenreSwitcher::GetInstance()->SelectGenre( cGenreSwitcher::GetInstance()->GetDefaultGenre() );
 
-	// initialize iUserNotify
-	iUserNotify::SetInstance( &mpData->unStdout );
-	iUserNotify::GetInstance()->SetVerboseLevel(iUserNotify::V_NORMAL);
+    // initialize iUserNotify
+    iUserNotify::SetInstance( &mpData->unStdout );
+    iUserNotify::GetInstance()->SetVerboseLevel(iUserNotify::V_NORMAL);
 
     // register serializable objects
     RegisterAllSerializable();
 
-	// set up an error bucket that will spit things to stderr
-	mpData->et.SetChild( &mpData->er );
-	errorQueue.SetChild( &mpData->et );
+    // set up an error bucket that will spit things to stderr
+    mpData->et.SetChild( &mpData->er );
+    errorQueue.SetChild( &mpData->et );
 
 #if IS_UNIX
-	// ignore SIGPIPE
-	tw_sigign(SIGPIPE);	//TODO: somebody add comment here!
+    // ignore SIGPIPE
+    tw_sigign(SIGPIPE); //TODO: somebody add comment here!
 
-	// We'll install handlers for each signal that would cause a core dump.
-	// the disposition will still be to exit, just without producing a core file.
-	// I'll emit an error statement that indicates the interrupt before the exit 
-	// call.
-	tw_HandleSignal( SIGBUS );	// Handle Bus error signals without dumping core...
-	tw_HandleSignal( SIGSEGV );	// Segmentation fault
-	tw_HandleSignal( SIGQUIT );	// Quit signal - issued from terminal (CTRL-\)
-	tw_HandleSignal( SIGILL );	// Illegal instruction - probably won't be an issue.
+    // We'll install handlers for each signal that would cause a core dump.
+    // the disposition will still be to exit, just without producing a core file.
+    // I'll emit an error statement that indicates the interrupt before the exit 
+    // call.
+    tw_HandleSignal( SIGBUS );  // Handle Bus error signals without dumping core...
+    tw_HandleSignal( SIGSEGV ); // Segmentation fault
+    tw_HandleSignal( SIGQUIT ); // Quit signal - issued from terminal (CTRL-\)
+    tw_HandleSignal( SIGILL );  // Illegal instruction - probably won't be an issue.
 #ifndef _DEBUG
-	tw_HandleSignal( SIGTRAP );	// We don't want to mess up the debugger in debug builds...
+    tw_HandleSignal( SIGTRAP ); // We don't want to mess up the debugger in debug builds...
 #endif
-	tw_HandleSignal( SIGABRT );	// Supposedly we can only get this signal by calling abort()
-								// ourselves, but to be on the safe side...
+    tw_HandleSignal( SIGABRT ); // Supposedly we can only get this signal by calling abort()
+                                // ourselves, but to be on the safe side...
 #ifdef SIGEMT
-	tw_HandleSignal( SIGEMT );	// Emulator trap.
+    tw_HandleSignal( SIGEMT );  // Emulator trap.
 #endif
 #ifdef SIGSYS
-	tw_HandleSignal( SIGSYS );	// Bad system call.
+    tw_HandleSignal( SIGSYS );  // Bad system call.
 #endif
-	tw_HandleSignal( SIGFPE );	// Floating point exception.
-	tw_HandleSignal( SIGXCPU );	// CPU time exceeded.  Might very well be an issue for us.
-	tw_HandleSignal( SIGXFSZ );	// File size limit exceeded.
+    tw_HandleSignal( SIGFPE );  // Floating point exception.
+    tw_HandleSignal( SIGXCPU ); // CPU time exceeded.  Might very well be an issue for us.
+    tw_HandleSignal( SIGXFSZ ); // File size limit exceeded.
 
 #endif
 

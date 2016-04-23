@@ -59,7 +59,7 @@ cFCODataSourceIterImpl::cFCODataSourceIterImpl()
 
 cFCODataSourceIterImpl::~cFCODataSourceIterImpl()
 {
-	ClearList();
+    ClearList();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,34 +67,34 @@ cFCODataSourceIterImpl::~cFCODataSourceIterImpl()
 ///////////////////////////////////////////////////////////////////////////////
 cFCODataSourceIterImpl& cFCODataSourceIterImpl::operator=( const cFCODataSourceIterImpl& rhs )
 {
-	ClearList();
-	mPeers			= rhs.mPeers;
-	mParentName		= rhs.mParentName;
-	mpErrorBucket	= rhs.mpErrorBucket;
+    ClearList();
+    mPeers          = rhs.mPeers;
+    mParentName     = rhs.mParentName;
+    mpErrorBucket   = rhs.mpErrorBucket;
     mFlags          = rhs.mFlags;
-	//
-	// we need to addref all of the fcos we just got...
-	//
-	for( FCOList::const_iterator i = mPeers.begin(); i != mPeers.end(); i++ )
-	{
-		(*i)->AddRef();
-	}
-	//
-	// figuring out where to put the iterator is a little trickier...
-	// TODO -- if we ever change the mPeers data structure from a vector, this will
-	//		have to change (luckily, the compiler should catch this!)
-	//
-	if( rhs.Done() )
-	{
-		mCurPos = mPeers.end();
-	}
-	else
-	{
-		int offset = rhs.mCurPos - rhs.mPeers.begin();
-		mCurPos = mPeers.begin() + offset;
-	}
+    //
+    // we need to addref all of the fcos we just got...
+    //
+    for( FCOList::const_iterator i = mPeers.begin(); i != mPeers.end(); i++ )
+    {
+        (*i)->AddRef();
+    }
+    //
+    // figuring out where to put the iterator is a little trickier...
+    // TODO -- if we ever change the mPeers data structure from a vector, this will
+    //      have to change (luckily, the compiler should catch this!)
+    //
+    if( rhs.Done() )
+    {
+        mCurPos = mPeers.end();
+    }
+    else
+    {
+        int offset = rhs.mCurPos - rhs.mPeers.begin();
+        mCurPos = mPeers.begin() + offset;
+    }
 
-	return *this;
+    return *this;
 }
 
 
@@ -103,9 +103,9 @@ cFCODataSourceIterImpl& cFCODataSourceIterImpl::operator=( const cFCODataSourceI
 ///////////////////////////////////////////////////////////////////////////////
 const TCHAR* cFCODataSourceIterImpl::GetShortName() const 
 {
-	ASSERT( ! Done() );
+    ASSERT( ! Done() );
 
-	return ( (*mCurPos)->GetName().GetShortName() );
+    return ( (*mCurPos)->GetName().GetShortName() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,9 +113,9 @@ const TCHAR* cFCODataSourceIterImpl::GetShortName() const
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName cFCODataSourceIterImpl::GetName() const 
 {
-	ASSERT( ! Done() );
-	
-	return ( (*mCurPos)->GetName() );
+    ASSERT( ! Done() );
+    
+    return ( (*mCurPos)->GetName() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -123,7 +123,7 @@ cFCOName cFCODataSourceIterImpl::GetName() const
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName cFCODataSourceIterImpl::GetParentName() const 
 {
-	return mParentName;	
+    return mParentName; 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -131,19 +131,19 @@ cFCOName cFCODataSourceIterImpl::GetParentName() const
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCODataSourceIterImpl::AtRoot() const //throw (eError) 
 {
-	return ( mParentName.GetSize() == 0 );	
+    return ( mParentName.GetSize() == 0 );  
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // CanDescend
 ///////////////////////////////////////////////////////////////////////////////
-bool cFCODataSourceIterImpl::CanDescend() const	//throw (eError) 
+bool cFCODataSourceIterImpl::CanDescend() const //throw (eError) 
 {
-	ASSERT( ! Done() );
-	if( Done() )
-	{
-		return false;
-	}
+    ASSERT( ! Done() );
+    if( Done() )
+    {
+        return false;
+    }
 
     return ( (*mCurPos)->GetCaps() & iFCO::CAP_CAN_HAVE_CHILDREN );
 }
@@ -153,10 +153,10 @@ bool cFCODataSourceIterImpl::CanDescend() const	//throw (eError)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::Descend() //throw (eError) 
 {
-	ASSERT( CanDescend() );
-	
-	mParentName = GetName();
-	GeneratePeers( );
+    ASSERT( CanDescend() );
+    
+    mParentName = GetName();
+    GeneratePeers( );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -164,106 +164,106 @@ void cFCODataSourceIterImpl::Descend() //throw (eError)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::Ascend() //throw (eError) 
 {
-	ASSERT( ! AtRoot() );
-	
-	cFCOName name = mParentName;
-	SeekToFCO( name );	// I do this because SeekToFCO modifies mCwd and takes a reference parameter.
+    ASSERT( ! AtRoot() );
+    
+    cFCOName name = mParentName;
+    SeekToFCO( name );  // I do this because SeekToFCO modifies mCwd and takes a reference parameter.
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // SeekBegin
 ///////////////////////////////////////////////////////////////////////////////
-void cFCODataSourceIterImpl::SeekBegin()		
+void cFCODataSourceIterImpl::SeekBegin()        
 {
-	mCurPos = mPeers.begin();	
+    mCurPos = mPeers.begin();   
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Done
 ///////////////////////////////////////////////////////////////////////////////
-bool cFCODataSourceIterImpl::Done() const	
+bool cFCODataSourceIterImpl::Done() const   
 {
-	return ( mCurPos == mPeers.end() );
+    return ( mCurPos == mPeers.end() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Next
 ///////////////////////////////////////////////////////////////////////////////
-void cFCODataSourceIterImpl::Next()			
+void cFCODataSourceIterImpl::Next()         
 {
-	mCurPos++;
+    mCurPos++;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // CreateFCO
 ///////////////////////////////////////////////////////////////////////////////
-iFCO* cFCODataSourceIterImpl::CreateFCO() //throw (eError)				
+iFCO* cFCODataSourceIterImpl::CreateFCO() //throw (eError)              
 {
-	ASSERT( ! Done() );
-	InitializeTypeInfo( *mCurPos );
-	(*mCurPos)->AddRef();
-	return *mCurPos;
+    ASSERT( ! Done() );
+    InitializeTypeInfo( *mCurPos );
+    (*mCurPos)->AddRef();
+    return *mCurPos;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // SeekToFCO
 ///////////////////////////////////////////////////////////////////////////////
-void cFCODataSourceIterImpl::SeekToFCO(const cFCOName& name, bool bCreatePeers) // throw (eFCODataSourceIter)	
+void cFCODataSourceIterImpl::SeekToFCO(const cFCOName& name, bool bCreatePeers) // throw (eFCODataSourceIter)   
 {
-	ASSERT( name.GetSize() > 0 );
-	ASSERT( name.IsCaseSensitive() == IsCaseSensitive() );
+    ASSERT( name.GetSize() > 0 );
+    ASSERT( name.IsCaseSensitive() == IsCaseSensitive() );
 
-	//
-	// get the parent name and pop the short child name
-	//
-	cFCOName parentName = name;
-	
+    //
+    // get the parent name and pop the short child name
+    //
+    cFCOName parentName = name;
+    
     parentName.Pop();   // RAD:05/10/1999 -- Used to assign result to "shortname"
 
-	if( parentName.GetSize() == 0 )
-	{
-		// we are going to the root directory...
-		// note that we are not responsible for iterating over the root nodes (for example,
-		//		all of the drive letters in NT or all the hive names in the registry)
-		//
-		mParentName.Clear(); 
-		ClearList();
-		iFCO* pObj = CreateObject( name, bCreatePeers );
-		if( ! pObj )
-		{
-			// error creating object; just return.
-			return;
-		}
+    if( parentName.GetSize() == 0 )
+    {
+        // we are going to the root directory...
+        // note that we are not responsible for iterating over the root nodes (for example,
+        //      all of the drive letters in NT or all the hive names in the registry)
+        //
+        mParentName.Clear(); 
+        ClearList();
+        iFCO* pObj = CreateObject( name, bCreatePeers );
+        if( ! pObj )
+        {
+            // error creating object; just return.
+            return;
+        }
 
-		InsertIntoPeers( pObj );
-		mCurPos = mPeers.begin();
-		return;
-	}
-	else
-	{
-		// if we are not creating our peers, simply create the single object and return...
-		//
-		if( ! bCreatePeers )
-		{
-			ClearList();
-			mParentName = parentName;
-			iFCO* pNewObj = CreateObject( name, false );
-			if( pNewObj )
-			{
+        InsertIntoPeers( pObj );
+        mCurPos = mPeers.begin();
+        return;
+    }
+    else
+    {
+        // if we are not creating our peers, simply create the single object and return...
+        //
+        if( ! bCreatePeers )
+        {
+            ClearList();
+            mParentName = parentName;
+            iFCO* pNewObj = CreateObject( name, false );
+            if( pNewObj )
+            {
                 InsertIntoPeers( pNewObj );
-				mCurPos = mPeers.begin();
-			}
-			return;
-		}
-		//
-		// otherwise, load up everything. Note that we can't do the if(parentName == mParentName) optimization
-		//		because if you do a SeekToFCO( c:/foo, false) and then a SeekToFCO( c:/bar, true), it won't work
-		//		correctly -- 27 Jan 99 mdb
-		//
-		mParentName = parentName;
-		ClearList();
-		GeneratePeers();
-	}
+                mCurPos = mPeers.begin();
+            }
+            return;
+        }
+        //
+        // otherwise, load up everything. Note that we can't do the if(parentName == mParentName) optimization
+        //      because if you do a SeekToFCO( c:/foo, false) and then a SeekToFCO( c:/bar, true), it won't work
+        //      correctly -- 27 Jan 99 mdb
+        //
+        mParentName = parentName;
+        ClearList();
+        GeneratePeers();
+    }
 
     SeekToPeerByName( (*mCurPos)->GetName().GetShortName() );
 }
@@ -273,7 +273,7 @@ void cFCODataSourceIterImpl::SeekToFCO(const cFCOName& name, bool bCreatePeers) 
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCODataSourceIterImpl::IsCaseSensitive() const 
 {
-	return mParentName.IsCaseSensitive();	
+    return mParentName.IsCaseSensitive();   
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,13 +281,13 @@ bool cFCODataSourceIterImpl::IsCaseSensitive() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::ClearList()
 {
-	for( mCurPos = mPeers.begin(); mCurPos != mPeers.end(); mCurPos++ )
-	{
-		(*mCurPos)->Release();
-	}
+    for( mCurPos = mPeers.begin(); mCurPos != mPeers.end(); mCurPos++ )
+    {
+        (*mCurPos)->Release();
+    }
 
-	mPeers.clear();
-	mCurPos = mPeers.end();
+    mPeers.clear();
+    mCurPos = mPeers.end();
 }
 
 
@@ -296,44 +296,44 @@ void cFCODataSourceIterImpl::ClearList()
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::GeneratePeers()
 {
-	///TODO -- BIG BIG TODO -- I need to implement some lazy evaluation for these
-	// fcos so that when I seek to a start point, I don't stat everything in the 
-	// same directory as myself.
-	// NOTE: This might be alleviated by differentiating between seeks that need 
-	//		peers and ones that do not (or maybe lazy evaluation of the peers)
+    ///TODO -- BIG BIG TODO -- I need to implement some lazy evaluation for these
+    // fcos so that when I seek to a start point, I don't stat everything in the 
+    // same directory as myself.
+    // NOTE: This might be alleviated by differentiating between seeks that need 
+    //      peers and ones that do not (or maybe lazy evaluation of the peers)
 
-	ClearList();
+    ClearList();
 
-	// 
-	// read all of the children of the parent...
-	//
-	std::vector<TSTRING> vChildrenNames;
+    // 
+    // read all of the children of the parent...
+    //
+    std::vector<TSTRING> vChildrenNames;
     GetChildrenNames( mParentName.AsString(), vChildrenNames );
 
-	//
-	// insert the children into the set...
-	//
-	std::vector<TSTRING>::iterator i;
-	cFCOName curName = mParentName;
-	for( i = vChildrenNames.begin(); i != vChildrenNames.end(); i++)
-	{
-		curName.Push( *i );
-		
-		iFCO* pNewObj = CreateObject( curName, true );
-		if( pNewObj )
-		{
+    //
+    // insert the children into the set...
+    //
+    std::vector<TSTRING>::iterator i;
+    cFCOName curName = mParentName;
+    for( i = vChildrenNames.begin(); i != vChildrenNames.end(); i++)
+    {
+        curName.Push( *i );
+        
+        iFCO* pNewObj = CreateObject( curName, true );
+        if( pNewObj )
+        {
             if( ! InsertIntoPeers( pNewObj ) )
-			{
-				// no need for an error msg; that is handled by InsertIntoPeers;
-				// just release the object.
-				//
-				pNewObj->Release();
-			}
-		}
-		curName.Pop();
-	}
+            {
+                // no need for an error msg; that is handled by InsertIntoPeers;
+                // just release the object.
+                //
+                pNewObj->Release();
+            }
+        }
+        curName.Pop();
+    }
 
-	mCurPos	= mPeers.begin();
+    mCurPos = mPeers.begin();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -360,19 +360,19 @@ bool cFCODataSourceIterImpl::SeekTo( const TCHAR* shortName )
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::TraceContents(int dl) const
 {
-	if( dl == -1 )
-		dl = cDebug::D_DEBUG;
+    if( dl == -1 )
+        dl = cDebug::D_DEBUG;
 
-	cDebug d("cFCODataSourceIterImpl::TraceContents");
+    cDebug d("cFCODataSourceIterImpl::TraceContents");
 
-	d.Trace( dl, "FCO Iterator; parent = %s\n", mParentName.AsString().c_str() );
-	d.Trace( dl, "---- Peers ---- (current has a * by it)\n" );
-	int cnt = 0;
-	for( FCOList::const_iterator iter = mPeers.begin(); iter != mPeers.end(); iter++, cnt++ )
-	{
-		d.Trace( dl, "[%d]%c\t:%s\n", cnt, iter == mCurPos ? _T('*') : _T(' '), (*iter)->GetName().AsString().c_str() );
-	}
-	d.Trace( dl, "--------------- \n" );
+    d.Trace( dl, "FCO Iterator; parent = %s\n", mParentName.AsString().c_str() );
+    d.Trace( dl, "---- Peers ---- (current has a * by it)\n" );
+    int cnt = 0;
+    for( FCOList::const_iterator iter = mPeers.begin(); iter != mPeers.end(); iter++, cnt++ )
+    {
+        d.Trace( dl, "[%d]%c\t:%s\n", cnt, iter == mCurPos ? _T('*') : _T(' '), (*iter)->GetName().AsString().c_str() );
+    }
+    d.Trace( dl, "--------------- \n" );
 }
 
 
@@ -386,21 +386,21 @@ bool cFCODataSourceIterImpl::InsertIntoPeers( iFCO* pFCO )
     FCOList::iterator i = UpperBound( pFCO->GetName().GetShortName() );
     
     if( i != mPeers.end() )
-	{
-		// never insert two objects that have the same name...
-		//
-		if( REL_EQ == Compare( pFCO->GetName().GetShortName(), (*i)->GetName().GetShortName() ) )
-		{
-			mpErrorBucket->AddError( eFCODataSourceIterDupeFCO( pFCO->GetName().AsString(), eError::NON_FATAL ) );
-			return false;
-		}
-		else
-	        mPeers.insert( i, pFCO );
-	}
+    {
+        // never insert two objects that have the same name...
+        //
+        if( REL_EQ == Compare( pFCO->GetName().GetShortName(), (*i)->GetName().GetShortName() ) )
+        {
+            mpErrorBucket->AddError( eFCODataSourceIterDupeFCO( pFCO->GetName().AsString(), eError::NON_FATAL ) );
+            return false;
+        }
+        else
+            mPeers.insert( i, pFCO );
+    }
     else
         mPeers.push_back( pFCO );
 
-    return true;	
+    return true;    
 }
 
 ///////////////////////////////////////////////////////////////////////////////

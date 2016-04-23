@@ -42,8 +42,8 @@
 
 TSS_BEGIN_ERROR_REGISTRATION( fco )
 
-TSS_REGISTER_ERROR( eFCODataSourceIter(),			_T("Data source error.") )
-TSS_REGISTER_ERROR( eFCODataSourceIterDupeFCO(),	_T("Duplicate object encountered.") )
+TSS_REGISTER_ERROR( eFCODataSourceIter(),           _T("Data source error.") )
+TSS_REGISTER_ERROR( eFCODataSourceIterDupeFCO(),    _T("Duplicate object encountered.") )
 
 TSS_END_ERROR_REGISTRATION()
 

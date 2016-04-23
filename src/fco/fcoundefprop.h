@@ -49,27 +49,27 @@
 class cFCOUndefinedProp : public iFCOProp
 {
 public:
-	DECLARE_TYPEDSERIALIZABLE()		// type information
+    DECLARE_TYPEDSERIALIZABLE()     // type information
 
-	static cFCOUndefinedProp* GetInstance();
+    static cFCOUndefinedProp* GetInstance();
         // access to the singleton
-	
-	// from iFCOProp
-	virtual TSTRING AsString() const;
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
-	virtual void Copy(const iFCOProp* rhs);
+    
+    // from iFCOProp
+    virtual TSTRING AsString() const;
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
+    virtual void Copy(const iFCOProp* rhs);
 
 private:    
 
     friend struct cFCOUndefinedPropProxy;
 
     cFCOUndefinedProp();
-	virtual ~cFCOUndefinedProp();
+    virtual ~cFCOUndefinedProp();
         // don't new or construct these on the stack 
 
     // iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eInternal)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eInternal)
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eInternal)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eInternal)
         // These functions should never be called, and they will throw and eInternal if they are.
 };
 

@@ -88,7 +88,7 @@ public:
     const byte* operator()( const wc16_string& s, int* const pcbKeyLen )
     {
         *pcbKeyLen = sizeof(WCHAR16) * s.length();
-	    return (byte*)s.c_str();
+        return (byte*)s.c_str();
     }
 };
 
@@ -97,7 +97,7 @@ class tss_hash_key_compare
 public:
     bool operator()( const wc16_string& lhs, const wc16_string& rhs )
     {
-	    return ( lhs.compare( rhs ) == 0 );
+        return ( lhs.compare( rhs ) == 0 );
     }
 };
 
@@ -506,12 +506,12 @@ void cMBUCS2Cache::Add(mbchar_t* pMBchar, int mblen, dbchar_t ucs2)
 static inline const byte* tss_hash_key_convert()( const TCHAR* psz, int* const pcbKeyLen )
 {
     *pcbKeyLen = sizeof(TCHAR) * _tcslen( psz );
-	return (byte*)psz;
+    return (byte*)psz;
 }
 
 static inline bool tss_hash_key_compare()( const TCHAR* lhs, const TCHAR* rhs )
 {
-	return ( _tcscmp( lhs, rhs ) == 0 );
+    return ( _tcscmp( lhs, rhs ) == 0 );
 }
 
 cHashTable< dbchar_t*,

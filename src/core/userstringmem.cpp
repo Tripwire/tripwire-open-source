@@ -73,7 +73,7 @@ const TCHAR* cUserStringMemBased::GetString(int stringID) const
     {
         // mCurrentStringSet is invallid
         ASSERT(false); 
-		return _T("<Bad String Set>");
+        return _T("<Bad String Set>");
     }
 
     StringSet::const_iterator stringItr;
@@ -84,7 +84,7 @@ const TCHAR* cUserStringMemBased::GetString(int stringID) const
     {
         // string not found
         ASSERT(false);
-		return _T("<Missing String>");
+        return _T("<Missing String>");
     }
 
     return stringItr->second;

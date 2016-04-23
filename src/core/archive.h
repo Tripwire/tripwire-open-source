@@ -32,10 +32,10 @@
 ///////////////////////////////////////////////////////////////////////////////
 // archive.h -- classes that abstract a raw byte archive
 //
-// cArchive			-- interface for single-direction (one pass) reads and writes
-// cBidirArchive	-- interface for a random-access archive
-// cMemArchive		-- implementation of a bidirectional archive in memory
-// cFileArchive		-- implementation of a bidirectional archive as a file
+// cArchive         -- interface for single-direction (one pass) reads and writes
+// cBidirArchive    -- interface for a random-access archive
+// cMemArchive      -- implementation of a bidirectional archive in memory
+// cFileArchive     -- implementation of a bidirectional archive as a file
 
 #ifndef __ARCHIVE_H
 #define __ARCHIVE_H
@@ -56,26 +56,26 @@
 //=============================================================================
 // eArchive exception classes
 //=============================================================================
-TSS_FILE_EXCEPTION( eArchive,			eFileError );
-TSS_FILE_EXCEPTION( eArchiveOpen,		eArchive );
-TSS_FILE_EXCEPTION( eArchiveWrite,		eArchive );
-TSS_FILE_EXCEPTION( eArchiveRead,		eArchive );
-TSS_FILE_EXCEPTION( eArchiveEOF,		eArchive );
-TSS_FILE_EXCEPTION( eArchiveSeek,		eArchive );
-TSS_FILE_EXCEPTION( eArchiveMemmap,		eArchive );
-TSS_FILE_EXCEPTION( eArchiveOutOfMem,	eArchive );
-TSS_FILE_EXCEPTION( eArchiveInvalidOp,	eArchive );
-TSS_FILE_EXCEPTION( eArchiveFormat,		eArchive );
+TSS_FILE_EXCEPTION( eArchive,           eFileError );
+TSS_FILE_EXCEPTION( eArchiveOpen,       eArchive );
+TSS_FILE_EXCEPTION( eArchiveWrite,      eArchive );
+TSS_FILE_EXCEPTION( eArchiveRead,       eArchive );
+TSS_FILE_EXCEPTION( eArchiveEOF,        eArchive );
+TSS_FILE_EXCEPTION( eArchiveSeek,       eArchive );
+TSS_FILE_EXCEPTION( eArchiveMemmap,     eArchive );
+TSS_FILE_EXCEPTION( eArchiveOutOfMem,   eArchive );
+TSS_FILE_EXCEPTION( eArchiveInvalidOp,  eArchive );
+TSS_FILE_EXCEPTION( eArchiveFormat,     eArchive );
 TSS_FILE_EXCEPTION( eArchiveNotRegularFile, eArchive );
-TSS_BEGIN_EXCEPTION( eArchiveCrypto,		eArchive )
+TSS_BEGIN_EXCEPTION( eArchiveCrypto,        eArchive )
 
-	virtual TSTRING GetMsg() const;
-		// eCryptoArchive appends a special string to the end of
-		// all exception messages
+    virtual TSTRING GetMsg() const;
+        // eCryptoArchive appends a special string to the end of
+        // all exception messages
 TSS_END_EXCEPTION()
 TSS_EXCEPTION( eArchiveStringTooLong, eArchive );
 
-//		throw( eArchiveOpen( cErrorUtil::MakeFileError( fileError.GetMsg(), strTempFile ) ) );
+//      throw( eArchiveOpen( cErrorUtil::MakeFileError( fileError.GetMsg(), strTempFile ) ) );
 
 
 //=============================================================================
@@ -87,7 +87,7 @@ class cArchive
 public:
     virtual ~cArchive() {}
     
-	// convenience methods
+    // convenience methods
     //
     // Specific Read functions throw(eArchive) if EOF is reached because
     // if the caller is requesting a certain amount of data to be present, 
@@ -101,33 +101,33 @@ public:
     // All write functions throw exceptions for unexpected events like 
     // running out of memory or disk space.
     //
-	void        ReadInt16(int16& ret); // throw(eArchive)
-	void        ReadInt32(int32& ret); // throw(eArchive)
+    void        ReadInt16(int16& ret); // throw(eArchive)
+    void        ReadInt32(int32& ret); // throw(eArchive)
     void        ReadInt64(int64& ret); // throw(eArchive)
     void        ReadString(TSTRING& ret); // throw(eArchive)
     int         ReadBlob(void* pBlob, int count);
-	void        WriteInt16(int16 i); // throw(eArchive)
-	void        WriteInt32(int32 i); // throw(eArchive)
-	void        WriteInt64(int64 i); // throw(eArchive)
+    void        WriteInt16(int16 i); // throw(eArchive)
+    void        WriteInt32(int32 i); // throw(eArchive)
+    void        WriteInt64(int64 i); // throw(eArchive)
     void        WriteString(TSTRING s); // throw(eArchive)
     void        WriteBlob(const void* pBlob, int count); // throw(eArchive)
 
-	static int32 GetStorageSize(const TSTRING& str);
-		// this method calculates how many bytes the given string will take up in the archive and returns
-		// that value
-		// NOTE -- if the implementation of ReadString() or WriteString() ever changes, this method will also
-		//			need to change.
+    static int32 GetStorageSize(const TSTRING& str);
+        // this method calculates how many bytes the given string will take up in the archive and returns
+        // that value
+        // NOTE -- if the implementation of ReadString() or WriteString() ever changes, this method will also
+        //          need to change.
 
-	int64		Copy(cArchive* pFrom, int64 amt); // throw(eArchive)
-		// this method copies amt bytes from pFrom to itself, throwing an eArchive if anything goes wrong.
+    int64       Copy(cArchive* pFrom, int64 amt); // throw(eArchive)
+        // this method copies amt bytes from pFrom to itself, throwing an eArchive if anything goes wrong.
 
     // only makes sense to call for reading archives
     virtual bool EndOfFile() = 0;
 
 protected:
-	// overrides
-	virtual int Read(void* pDest, int count) = 0;
-	virtual int Write(const void* pDest, int count) = 0; // throw(eArchive);
+    // overrides
+    virtual int Read(void* pDest, int count) = 0;
+    virtual int Write(const void* pDest, int count) = 0; // throw(eArchive);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ public:
 
             void    Truncate(); // set the length to the current pos
 
-			int8*	GetMemory() const { return mpMemory; }
+            int8*   GetMemory() const { return mpMemory; }
 
 protected:
     int8*   mpMemory;
@@ -211,50 +211,50 @@ protected:
     int     mLogicalSize;
     int     mReadHead;
 
-	virtual int     Read(void* pDest, int count);
-	virtual int     Write(const void* pDest, int count); // throw(eArchive)
+    virtual int     Read(void* pDest, int count);
+    virtual int     Write(const void* pDest, int count); // throw(eArchive)
     virtual void    AllocateMemory(int len); // throw(eArchive)
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // cFixedMemArchive -- a memory archive that operates on a fixed-sized block of
-//		memory that has already been allocated
+//      memory that has already been allocated
 ///////////////////////////////////////////////////////////////////////////////
 class cFixedMemArchive : public cBidirArchive
 {
 public:
-	cFixedMemArchive();
-	cFixedMemArchive( int8* pMem, int32 size );
-	virtual ~cFixedMemArchive();
+    cFixedMemArchive();
+    cFixedMemArchive( int8* pMem, int32 size );
+    virtual ~cFixedMemArchive();
 
-	void Attach( int8* pMem, int32 size );
-		// this method associates the archive with pMem and sets the size of the
-		// archive. Unlike cMemoryArchive, this may never grow or shrink in size.
+    void Attach( int8* pMem, int32 size );
+        // this method associates the archive with pMem and sets the size of the
+        // archive. Unlike cMemoryArchive, this may never grow or shrink in size.
 
-	//-----------------------------------
-	// cBidirArchive interface
-	//-----------------------------------
-    virtual void    Seek		(int64 offset, SeekFrom from) ; // throw(eArchive);
-    virtual int64   CurrentPos	() const ;
-    virtual int64   Length		() const ;
+    //-----------------------------------
+    // cBidirArchive interface
+    //-----------------------------------
+    virtual void    Seek        (int64 offset, SeekFrom from) ; // throw(eArchive);
+    virtual int64   CurrentPos  () const ;
+    virtual int64   Length      () const ;
     virtual bool    EndOfFile();
 protected:
-	//-----------------------------------
-	// cArchive interface
-	//-----------------------------------
-	virtual int Read(void* pDest, int count);			// throw(eArchive)
-	virtual int Write(const void* pDest, int count);	// throw(eArchive)
+    //-----------------------------------
+    // cArchive interface
+    //-----------------------------------
+    virtual int Read(void* pDest, int count);           // throw(eArchive)
+    virtual int Write(const void* pDest, int count);    // throw(eArchive)
 
-	int8*	mpMemory;
-	int32	mSize;
-	int32	mReadHead;
+    int8*   mpMemory;
+    int32   mSize;
+    int32   mReadHead;
 };
 
 class cFileArchive : public cBidirArchive
 {
 public:
-	cFileArchive();
-	virtual ~cFileArchive();
+    cFileArchive();
+    virtual ~cFileArchive();
 
     enum OpenFlags
     {
@@ -264,34 +264,34 @@ public:
     };
 
     // TODO: Open should throw
-	virtual void	OpenRead(const TCHAR* filename, uint32 openFlags = 0 );
-	virtual void	OpenReadWrite(const TCHAR* filename, uint32 openFlags = FA_OPEN_TRUNCATE );
-		// opens a file for reading or writing; the file is always created if it doesn't exist,
-		// and is truncated to zero length if truncateFile is set to true;
-	TSTRING			GetCurrentFilename(void) const;
-	virtual void	Close(void);
+    virtual void    OpenRead(const TCHAR* filename, uint32 openFlags = 0 );
+    virtual void    OpenReadWrite(const TCHAR* filename, uint32 openFlags = FA_OPEN_TRUNCATE );
+        // opens a file for reading or writing; the file is always created if it doesn't exist,
+        // and is truncated to zero length if truncateFile is set to true;
+    TSTRING         GetCurrentFilename(void) const;
+    virtual void    Close(void);
             void    Truncate(); // throw(eArchive) // set the length to the current pos
 
-	//-----------------------------------
-	// cBidirArchive interface
-	//-----------------------------------
-	virtual bool	EndOfFile();
-	virtual void	Seek(int64 offset, SeekFrom from); // throw(eArchive)
-	virtual int64	CurrentPos() const;
-	virtual int64	Length() const;	
+    //-----------------------------------
+    // cBidirArchive interface
+    //-----------------------------------
+    virtual bool    EndOfFile();
+    virtual void    Seek(int64 offset, SeekFrom from); // throw(eArchive)
+    virtual int64   CurrentPos() const;
+    virtual int64   Length() const; 
  
-	
+    
 protected:
-	int64			mFileSize;	//Size of FileArchive
-	int64			mReadHead;	//Current position of read/write head
-	//-----------------------------------
-	// cArchive interface
-	//-----------------------------------
-	virtual int     Read(void* pDest, int count);
-	virtual int     Write(const void* pDest, int count);	//throw(eArchive)
-	bool			isWritable;
-	cFile			mCurrentFile;
-	TSTRING			mCurrentFilename;						//current file
+    int64           mFileSize;  //Size of FileArchive
+    int64           mReadHead;  //Current position of read/write head
+    //-----------------------------------
+    // cArchive interface
+    //-----------------------------------
+    virtual int     Read(void* pDest, int count);
+    virtual int     Write(const void* pDest, int count);    //throw(eArchive)
+    bool            isWritable;
+    cFile           mCurrentFile;
+    TSTRING         mCurrentFilename;                       //current file
 };
 
 ///////////////////////////////////////////////////////////////
@@ -305,15 +305,15 @@ protected:
 class cLockedTemporaryFileArchive : public cFileArchive
 {
 public:
-	virtual void	OpenReadWrite		( const TCHAR* filename = NULL, uint32 openFlags = FA_OPEN_TRUNCATE );
-		// creates the file.  filename must not exist on the file system.  
+    virtual void    OpenReadWrite       ( const TCHAR* filename = NULL, uint32 openFlags = FA_OPEN_TRUNCATE );
+        // creates the file.  filename must not exist on the file system.  
         // if filename is NULL, the class will create and use a temporary file.
         // truncateFile has no meaning
-	//virtual void	OpenReadWriteThrow	( const TCHAR* filename = NULL, bool truncateFile = true ) throw (eArchive);
-		// this is the same as OpenReadWrite, except an exception is thrown on error (of type 
-		// cArchive::ERR_OPEN_FAILED)
+    //virtual void  OpenReadWriteThrow  ( const TCHAR* filename = NULL, bool truncateFile = true ) throw (eArchive);
+        // this is the same as OpenReadWrite, except an exception is thrown on error (of type 
+        // cArchive::ERR_OPEN_FAILED)
 
-	virtual void	Close();
+    virtual void    Close();
         // close and delete the file
 private:
     // open for read only makes no sense if we're always creating the file, 

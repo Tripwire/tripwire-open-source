@@ -114,12 +114,12 @@ typedef std::ifstream                TIFSTREAM;
 #define _tcsncmp    strncmp
 
 // other abstractions
-#define TUNLINK	unlink
+#define TUNLINK unlink
 
 // string representation
 #if defined(_T)
    // run it right over with a bulldozer, tripwire doesn't seem
-   // to use ctype.h's _T	-PH
+   // to use ctype.h's _T   -PH
 #undef _T
 #endif
 #define _T(x) x

@@ -48,7 +48,7 @@
 
 TSS_BeginPackage( cTWPrint )
 
-	TSS_DECLARE_STRINGTABLE;
+    TSS_DECLARE_STRINGTABLE;
     
     public:
         cTWPrint();

@@ -214,13 +214,13 @@ static void Test(int testID)
     case 49: TestTWUtil(); break;
     case 50: TestFSPropDisplayer(); break;
     case 52: TestGenre(); break;        
-	case 53: TestFSDataSourceIter(); break;
-	//case 54: TestGenerateDb(); break;
-	//case 55: TestHierDatabaseInteractive(); break;
+    case 53: TestFSDataSourceIter(); break;
+    //case 54: TestGenerateDb(); break;
+    //case 55: TestHierDatabaseInteractive(); break;
     case 56: TestGenreSwitcher(); break;
-	case 57: TestDbDataSource(); break;
+    case 57: TestDbDataSource(); break;
     case 58: TestGenreSpecList(); break;
-	//case 59: TestIntegrityCheck(); break;
+    //case 59: TestIntegrityCheck(); break;
     case 65: TestWchar16(); break;        
     case 66: TestStringEncoder(); break;        
 #ifdef TSS_TEST
@@ -231,12 +231,12 @@ static void Test(int testID)
       //case 71: TestBlockFile(); break;
       //case 72: TestBlockRecordArray(); break;
       //case 73: TestHierDatabaseInteractive(); break;
-	case 74: TestFileUtil(); break;
+    case 74: TestFileUtil(); break;
     case 75: TestTWLocale(); break; 
     case 76: TestFCONameTranslator(); break; 
     case 77: TestStringUtil(); break; 
     case 78: TestCodeConverter(); break; 
-	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ cTest::cTest()
     TSS_Dependency( cUtil );
 
 // no erros excluivly for test package
-//	TSS_REGISTER_PKG_ERRORS( test )
+//  TSS_REGISTER_PKG_ERRORS( test )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -293,11 +293,11 @@ int _tmain(int argc, TCHAR** argv)
         cTWInit twInit;
         twInit.Init( argv[0] );
 
-	    // set up the debug output
+        // set up the debug output
         cDebug::AddOutTarget(cDebug::OUT_STDOUT);
-		//cDebug::SetDebugLevel(cDebug::D_NEVER);
-	    cDebug::SetDebugLevel(cDebug::D_DETAIL);
-		//cDebug::SetDebugLevel(cDebug::D_DEBUG);
+        //cDebug::SetDebugLevel(cDebug::D_NEVER);
+        cDebug::SetDebugLevel(cDebug::D_DETAIL);
+        //cDebug::SetDebugLevel(cDebug::D_DEBUG);
         
         int i;
 
@@ -311,24 +311,24 @@ int _tmain(int argc, TCHAR** argv)
             for (i = 1; i < argc; ++i)
                 Test(_ttoi(argv[i]));    // Note: if atoi returns 0, Test() will handle it fine.
             
-	} 
+    } 
     catch (eError& error)
     {        
-		cTWUtil::PrintErrorMsg(error);
+        cTWUtil::PrintErrorMsg(error);
         ASSERT(false);
     }
     catch (...)
     {        
-		TCERR << _T("Unhandled exception caught!");
+        TCERR << _T("Unhandled exception caught!");
         ASSERT(false);
     }
 
-	// make sure all the refrence counted objects have been destroyed
+    // make sure all the refrence counted objects have been destroyed
     // this test always fails because of the static cFCONameTbl
-	//TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
+    //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
 
     // force user to hit <CR>
-	
+    
     return 1;
 }
 

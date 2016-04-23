@@ -50,15 +50,15 @@
 class iCipher
 {
 public:
-	virtual ~iCipher() {}
+    virtual ~iCipher() {}
 
-	enum EncryptionDir { ENCRYPT, DECRYPT };
+    enum EncryptionDir { ENCRYPT, DECRYPT };
 
-	virtual int  GetBlockSizePlain() = 0;
-	virtual int  GetBlockSizeCipher() = 0;
-		// return the size of data blocks this crypter works on.
-	virtual void ProcessBlock(const void* indata, void* outdata) = 0; // throw eArchive
-		// process a block of data.  indata and outdata may be the same memory
+    virtual int  GetBlockSizePlain() = 0;
+    virtual int  GetBlockSizeCipher() = 0;
+        // return the size of data blocks this crypter works on.
+    virtual void ProcessBlock(const void* indata, void* outdata) = 0; // throw eArchive
+        // process a block of data.  indata and outdata may be the same memory
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -71,10 +71,10 @@ public:
     virtual ~cNullCipher() {}
 
     virtual int  GetBlockSizePlain();
-	virtual int  GetBlockSizeCipher();
-		// return the size of data blocks for plaintext and cipertext
-	virtual void ProcessBlock(const void* indata, void* outdata);
-		// process a block of data.  indata and outdata may be the same memory
+    virtual int  GetBlockSizeCipher();
+        // return the size of data blocks for plaintext and cipertext
+    virtual void ProcessBlock(const void* indata, void* outdata);
+        // process a block of data.  indata and outdata may be the same memory
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,19 +87,19 @@ class cHashedKey128;
 class cIDEA : public iCipher
 {
 public:
-	cIDEA();
-	virtual ~cIDEA();
+    cIDEA();
+    virtual ~cIDEA();
 
-	void SetKey(iCipher::EncryptionDir dir, const cHashedKey128& key);
+    void SetKey(iCipher::EncryptionDir dir, const cHashedKey128& key);
 
-	virtual int  GetBlockSizePlain();
-	virtual int  GetBlockSizeCipher();
-		// return the size of data blocks for plaintext and cipertext
-	virtual void ProcessBlock(const void* indata, void* outdata);
-		// process a block of data.  indata and outdata may be the same memory
+    virtual int  GetBlockSizePlain();
+    virtual int  GetBlockSizeCipher();
+        // return the size of data blocks for plaintext and cipertext
+    virtual void ProcessBlock(const void* indata, void* outdata);
+        // process a block of data.  indata and outdata may be the same memory
 
 protected:
-	cIDEA_i* mpData;
+    cIDEA_i* mpData;
 };
 #endif // _IDEA_ENCRYPTION
 
@@ -112,19 +112,19 @@ class cHashedKey192;
 class cTripleDES : public iCipher
 {
 public:
-	cTripleDES();
-	virtual ~cTripleDES();
+    cTripleDES();
+    virtual ~cTripleDES();
 
-	void SetKey(iCipher::EncryptionDir dir, const cHashedKey192& key);
+    void SetKey(iCipher::EncryptionDir dir, const cHashedKey192& key);
 
-	virtual int  GetBlockSizePlain();
-	virtual int  GetBlockSizeCipher();
-		// return the size of data blocks for plaintext and cipertext
-	virtual void ProcessBlock(const void* indata, void* outdata);
-		// process a block of data.  indata and outdata may be the same memory
+    virtual int  GetBlockSizePlain();
+    virtual int  GetBlockSizeCipher();
+        // return the size of data blocks for plaintext and cipertext
+    virtual void ProcessBlock(const void* indata, void* outdata);
+        // process a block of data.  indata and outdata may be the same memory
 
 protected:
-	cTripleDES_i* mpData;
+    cTripleDES_i* mpData;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -139,35 +139,35 @@ class cRSAPrivateKey;
 class cRSA : public iCipher
 {
 public:
-	enum KeySize 
+    enum KeySize 
     { 
         KEY256 = 256, 
         KEY512 = 512, 
         KEY1024 = 1024, 
         KEY2048 = 2048
     };
-	
-	cRSA(KeySize keysize);
+    
+    cRSA(KeySize keysize);
     cRSA(const cRSAPublicKey& publicKey);     // read keysize from key
     cRSA(const cRSAPrivateKey& privateKey);   // ditto
-	virtual ~cRSA();
+    virtual ~cRSA();
 
-	void SetEncrypting(const cRSAPublicKey* pKey);
-	void SetDecrypting(const cRSAPrivateKey* pKey);
+    void SetEncrypting(const cRSAPublicKey* pKey);
+    void SetDecrypting(const cRSAPrivateKey* pKey);
     void SetSigning(const cRSAPrivateKey* pKey);
     void SetVerifying(const cRSAPublicKey* pKey);
 
-	virtual int  GetBlockSizePlain();
-	virtual int  GetBlockSizeCipher();
-		// return the size of data blocks for plaintext and cipertext
-	virtual void ProcessBlock(const void* indata, void* outdata);
-		// process a block of data.  indata and outdata may be the same memory
+    virtual int  GetBlockSizePlain();
+    virtual int  GetBlockSizeCipher();
+        // return the size of data blocks for plaintext and cipertext
+    virtual void ProcessBlock(const void* indata, void* outdata);
+        // process a block of data.  indata and outdata may be the same memory
 
-	void GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic);
-		// generate public and private keys.  Caller is responsible for deleting these keys when done
+    void GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic);
+        // generate public and private keys.  Caller is responsible for deleting these keys when done
 
 protected:
-	cRSA_i* mpData;
+    cRSA_i* mpData;
 
 private:
     void Init(KeySize keysize);
@@ -180,44 +180,44 @@ class cRSAPublicKey_i;
 
 class cRSAPrivateKey
 {
-	friend class cRSA;
+    friend class cRSA;
     friend class cRSAPublicKey;
 public:
-	cRSAPrivateKey(void* pDataStream);
-	~cRSAPrivateKey();
+    cRSAPrivateKey(void* pDataStream);
+    ~cRSAPrivateKey();
 
-	int		GetWriteLen() const;
-	void	Write(void* pDataStream) const;
+    int     GetWriteLen() const;
+    void    Write(void* pDataStream) const;
 
 protected:
-	cRSAPrivateKey_i*	mpData;
+    cRSAPrivateKey_i*   mpData;
 
 private:
-	cRSAPrivateKey(); // cRSA should be used to generate keys
+    cRSAPrivateKey(); // cRSA should be used to generate keys
 };
 
 // cRSAPublicKey
 
 class cRSAPublicKey
 {
-	friend class cRSA;
+    friend class cRSA;
 public:
-	cRSAPublicKey(void* pDataStream);
-	cRSAPublicKey(const cRSAPrivateKey& privateKey);
-	~cRSAPublicKey();
+    cRSAPublicKey(void* pDataStream);
+    cRSAPublicKey(const cRSAPrivateKey& privateKey);
+    ~cRSAPublicKey();
 
-	int		GetWriteLen() const;
-	void	Write(void* pDataStream) const;
+    int     GetWriteLen() const;
+    void    Write(void* pDataStream) const;
 
 #ifdef _DEBUG
     void TraceContents();
 #endif
 
 protected:
-	cRSAPublicKey_i*	mpData;
+    cRSAPublicKey_i*    mpData;
 
 private:
-	cRSAPublicKey(); // cRSA should be used to generate keys
+    cRSAPublicKey(); // cRSA should be used to generate keys
 };
 
 #endif // _RSA_ENCRYPTION
@@ -241,33 +241,33 @@ class cElGamalSigPrivateKey;
 class cElGamalSig : public iCipher
 {
 public:
-	enum KeySize 
+    enum KeySize 
     { 
         KEY256 = 256, 
         KEY512 = 512, 
         KEY1024 = 1024, 
         KEY2048 = 2048
     };
-	
-	cElGamalSig(KeySize keysize);
+    
+    cElGamalSig(KeySize keysize);
     cElGamalSig(const cElGamalSigPublicKey& publicKey);     // read keysize from key
     cElGamalSig(const cElGamalSigPrivateKey& privateKey);   // ditto
-	virtual ~cElGamalSig();
+    virtual ~cElGamalSig();
 
     void SetSigning(const cElGamalSigPrivateKey* pKey);
     void SetVerifying(const cElGamalSigPublicKey* pKey);
 
-	virtual int  GetBlockSizePlain();
-	virtual int  GetBlockSizeCipher();
-		// return the size of data blocks for plaintext and cipertext
-	virtual void ProcessBlock(const void* indata, void* outdata);
-		// process a block of data.  indata and outdata may be the same memory
+    virtual int  GetBlockSizePlain();
+    virtual int  GetBlockSizeCipher();
+        // return the size of data blocks for plaintext and cipertext
+    virtual void ProcessBlock(const void* indata, void* outdata);
+        // process a block of data.  indata and outdata may be the same memory
 
-	void GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPublicKey*& retPublic);
-		// generate public and private keys.  Caller is responsible for deleting these keys when done
+    void GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPublicKey*& retPublic);
+        // generate public and private keys.  Caller is responsible for deleting these keys when done
 
 protected:
-	cElGamalSig_i* mpData;
+    cElGamalSig_i* mpData;
 
 private:
     void Init(KeySize keysize);
@@ -282,34 +282,34 @@ class cElGamalSigPublicKey_i;
 
 class cElGamalSigPrivateKey
 {
-	friend class cElGamalSig;
+    friend class cElGamalSig;
     friend class cElGamalSigPublicKey;
 public:
-	cElGamalSigPrivateKey(void* pDataStream);
-	~cElGamalSigPrivateKey();
+    cElGamalSigPrivateKey(void* pDataStream);
+    ~cElGamalSigPrivateKey();
 
-	int		GetWriteLen() const;
-	void	Write(void* pDataStream) const;
+    int     GetWriteLen() const;
+    void    Write(void* pDataStream) const;
 
 protected:
-	cElGamalSigPrivateKey_i*	mpData;
+    cElGamalSigPrivateKey_i*    mpData;
 
 private:
-	cElGamalSigPrivateKey(); // cElGamal should be used to generate keys
+    cElGamalSigPrivateKey(); // cElGamal should be used to generate keys
 };
 
 // cElGamalSigPublicKey
 
 class cElGamalSigPublicKey
 {
-	friend class cElGamalSig;
+    friend class cElGamalSig;
 public:
-	cElGamalSigPublicKey(void* pDataStream);
-	cElGamalSigPublicKey(const cElGamalSigPrivateKey& privateKey);
-	~cElGamalSigPublicKey();
+    cElGamalSigPublicKey(void* pDataStream);
+    cElGamalSigPublicKey(const cElGamalSigPrivateKey& privateKey);
+    ~cElGamalSigPublicKey();
 
-	int		GetWriteLen() const;
-	void	Write(void* pDataStream) const;
+    int     GetWriteLen() const;
+    void    Write(void* pDataStream) const;
 
     bool    IsEqual(const cElGamalSigPublicKey& rhs) const;
         // This is used to make sure the key used to sign the config
@@ -320,10 +320,10 @@ public:
 #endif
 
 protected:
-	cElGamalSigPublicKey_i*	mpData;
+    cElGamalSigPublicKey_i* mpData;
 
 private:
-	cElGamalSigPublicKey(); // cElGamal should be used to generate keys
+    cElGamalSigPublicKey(); // cElGamal should be used to generate keys
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -332,27 +332,27 @@ private:
 class cHashedKey128
 {
 public:
-	cHashedKey128(const TSTRING& data);
-	cHashedKey128(void* pData, int dataLen);
-	~cHashedKey128();
+    cHashedKey128(const TSTRING& data);
+    cHashedKey128(void* pData, int dataLen);
+    ~cHashedKey128();
 
-	const int8* GetKey() const;
+    const int8* GetKey() const;
 
-	static int GetWriteLen();
-	void	   Write(void* pDataStream);
+    static int GetWriteLen();
+    void       Write(void* pDataStream);
 
 protected:
     enum { KEYLEN = 16, BUFSIZE = 20};
 
-	int8	mKey[BUFSIZE];
+    int8    mKey[BUFSIZE];
 };
 
 inline const int8* cHashedKey128::GetKey() const
 {
-	return mKey;
+    return mKey;
 }
 
-inline int	cHashedKey128::GetWriteLen()
+inline int  cHashedKey128::GetWriteLen()
 {
     return KEYLEN;
 }
@@ -368,27 +368,27 @@ inline void cHashedKey128::Write(void* pDataStream)
 class cHashedKey192
 {
 public:
-	cHashedKey192(const TSTRING& data);
-	cHashedKey192(void* pData, int dataLen);
-	~cHashedKey192();
+    cHashedKey192(const TSTRING& data);
+    cHashedKey192(void* pData, int dataLen);
+    ~cHashedKey192();
 
-	const int8* GetKey() const;
+    const int8* GetKey() const;
 
-	static int GetWriteLen();
-	void	   Write(void* pDataStream);
+    static int GetWriteLen();
+    void       Write(void* pDataStream);
 
 protected:
     enum { KEYLEN = 24 };
 
-	int8	mKey[KEYLEN];
+    int8    mKey[KEYLEN];
 };
 
 inline const int8* cHashedKey192::GetKey() const
 {
-	return mKey;
+    return mKey;
 }
 
-inline int	cHashedKey192::GetWriteLen()
+inline int  cHashedKey192::GetWriteLen()
 {
     return KEYLEN;
 }

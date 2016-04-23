@@ -43,8 +43,8 @@ void TestGenreSpecList()
 #pragma message( __FILE__ "(1) : TODO - implement this test file")
 #if 0
 
-  	cDebug d("TestGenreSpecList");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestGenreSpecList");
+    d.TraceDebug("Entering...\n");
 
     // cGenreSpecListPair 
     cGenreSpecListPair gslPair;

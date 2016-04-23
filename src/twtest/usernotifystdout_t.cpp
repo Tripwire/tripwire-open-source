@@ -39,7 +39,7 @@
 
 void TestUserNotifyStdout()
 {
-	cDebug d("TestUserNotifyStdout");
-	d.TraceError("Implement this!\n");
-	TEST(false);
+    cDebug d("TestUserNotifyStdout");
+    d.TraceError("Implement this!\n");
+    TEST(false);
 }

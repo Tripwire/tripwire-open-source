@@ -91,8 +91,8 @@
 
 //--PACKAGE Helpers
 
-#define TSS_Package( pkg )	\
-    pkg::GetInstance()		                    // Access "the" Package obj
+#define TSS_Package( pkg )  \
+    pkg::GetInstance()                          // Access "the" Package obj
 
 #define TSS_Dependency( pkg ) \
     TSS_Package( pkg )            // Declare a Package Depend.
@@ -100,7 +100,7 @@
 
 
 #define TSS_BeginPackage( pkg ) \
-	class pkg : public cPackageBase_< TCHAR >	\
+    class pkg : public cPackageBase_< TCHAR >   \
     { \
         public: \
         static pkg& GetInstance();
@@ -128,34 +128,34 @@
 //--STRINGTABLE Helperfs
 
 #define TSS_GetString( pkg, id ) \
-	TSS_Package( pkg ).GetString( id )          // Access the Message String
+    TSS_Package( pkg ).GetString( id )          // Access the Message String
 
 
-#define TSS_DECLARE_STRINGTABLE	\
-	public: \
-		Messages::String \
+#define TSS_DECLARE_STRINGTABLE \
+    public: \
+        Messages::String \
         GetString( \
             Messages::ConstKeyRef id ) const { \
-		        return m_messages.Get( id ); } \
-		void LoadStrings();	\
-	private: \
+                return m_messages.Get( id ); } \
+        void LoadStrings(); \
+    private: \
         Messages m_messages                     // Decare a Stringtable
 
 
 #ifdef _DEBUG
 #define TSS_BeginStringtable( pkg ) \
-	void pkg::LoadStrings() \
-	{   cDebug d( #pkg "::LoadStrings()" ); \
+    void pkg::LoadStrings() \
+    {   cDebug d( #pkg "::LoadStrings()" ); \
         d.TraceDebug("Loading strings for " #pkg " package.\n"); \
         Messages::Pair astr[] = {               // Define a Stringtable
 #else // _DEBUG
 #define TSS_BeginStringtable( pkg ) \
-	void pkg::LoadStrings() \
-	{   Messages::Pair astr[] = {               // Define a Stringtable
+    void pkg::LoadStrings() \
+    {   Messages::Pair astr[] = {               // Define a Stringtable
 #endif // _DEBUG
 
 #define TSS_EndStringtable( pkg ) \
-	}; m_messages.Put( \
+    }; m_messages.Put( \
         astr, astr + countof(astr) ); }         // End define Strintable
 
 
@@ -175,7 +175,7 @@
 // cPackageBase_<CharT> -- Base class for all Package Resources
 //-----------------------------------------------------------------------------
 //  SYNOPSIS: 
-//	    This class is the base class for all package representations
+//      This class is the base class for all package representations
 //      and, thus, establishes the package contract. It's interface
 //      is relied on by the Package singleton wrapper, TSS_Package.
 //      Since part of its contract is that there is only one package
@@ -191,15 +191,15 @@
 //
 //  INVARIANTS:
 //      m_nInstances <= 1
-//	
+//  
 //
 
 template< class CharT >
 class cPackageBase_
 {
-	public:
+    public:
 
-		typedef cMessages_< int, CharT > Messages;
+        typedef cMessages_< int, CharT > Messages;
 
         void LoadStrings()
         {

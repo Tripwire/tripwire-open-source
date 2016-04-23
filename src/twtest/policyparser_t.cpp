@@ -30,11 +30,11 @@
 // info@tripwire.org or www.tripwire.org.
 //
 // policyparser_t -- test policy files
-//					TODO:
-//					we should put lots of files in ./testfiles, and verify:
-//					1.  correct files parse correctly
-//					2.  incorrect files cause errors
-//					3.  slightly incorrect files cause errors
+//                  TODO:
+//                  we should put lots of files in ./testfiles, and verify:
+//                  1.  correct files parse correctly
+//                  2.  incorrect files cause errors
+//                  3.  slightly incorrect files cause errors
 
 #include "twparser/stdtwparser.h"
 #include "core/debug.h"
@@ -49,26 +49,26 @@
 // helper class that checks output of each fcospec
 class cPolicyParserTester {
 public:
-	static bool			VerifyNameAndStartPoint(iFCOSpec *pfsspec, TSTRING &name);
+    static bool         VerifyNameAndStartPoint(iFCOSpec *pfsspec, TSTRING &name);
 };
 
 void TestPolicyParser()
 {
-	cDebug d("TestPolicyParser()");
+    cDebug d("TestPolicyParser()");
 
-	//
-	// file: pol.txt
-	//
+    //
+    // file: pol.txt
+    //
     try
-	{
-	    cDebug::AddOutTarget(cDebug::OUT_STDOUT);
+    {
+        cDebug::AddOutTarget(cDebug::OUT_STDOUT);
 
         std::ifstream in;
         in.open( "../twparser/testfiles/pol.txt" );
         if( ! in.good() )
             throw eParserHelper( _T("couldn't open test file") );
 
-		cPolicyParser parser( in );
+        cPolicyParser parser( in );
 
         cGenreSpecListVector policy;
         cErrorQueue errorQ;
@@ -76,20 +76,20 @@ void TestPolicyParser()
         cErrorTracer errorT;
 
         // set up an error bucket that will spit things to stderr
-	    errorT.SetChild( &errorR );
-	    errorQ.SetChild( &errorT );
+        errorT.SetChild( &errorR );
+        errorQ.SetChild( &errorT );
 
-		parser.Execute( policy, &errorQ );
+        parser.Execute( policy, &errorQ );
 
         return;
-	}
-	catch(eError& e)
-	{
+    }
+    catch(eError& e)
+    {
         TCERR << (int)e.GetID() << " : " << e.GetMsg().c_str() << std::endl;
-		return;
-	}
+        return;
+    }
 
-	return;
+    return;
 }
-	
+    
 

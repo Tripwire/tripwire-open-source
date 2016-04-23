@@ -55,7 +55,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 TSTRING cFSNameTranslator::ToStringRaw( const cFCOName& name ) const
 {
-	return name.AsString();
+    return name.AsString();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,9 +63,9 @@ TSTRING cFSNameTranslator::ToStringRaw( const cFCOName& name ) const
 ///////////////////////////////////////////////////////////////////////////////
 TSTRING cFSNameTranslator::ToStringAPI( const cFCOName& name ) const
 {
-	ASSERT( name.GetDelimiter() == _T('/') );
-	
-	return name.AsString();
+    ASSERT( name.GetDelimiter() == _T('/') );
+    
+    return name.AsString();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -73,10 +73,10 @@ TSTRING cFSNameTranslator::ToStringAPI( const cFCOName& name ) const
 ///////////////////////////////////////////////////////////////////////////////
 TSTRING cFSNameTranslator::ToStringDisplay( const cFCOName& name, bool bUnique ) const
 {
-	TSTRING strRet;
+    TSTRING strRet;
 
-	if( bUnique )
-	{
+    if( bUnique )
+    {
         cDisplayEncoder e( cDisplayEncoder::ROUNDTRIP );
         TSTRING strUnencoded = name.AsString();
         e.Encode( strUnencoded );
@@ -85,13 +85,13 @@ TSTRING cFSNameTranslator::ToStringDisplay( const cFCOName& name, bool bUnique )
         strRet += dq;
         strRet += strUnencoded;
         strRet += dq;        
-	}
+    }
     else
-	{
+    {
         cDisplayEncoder e( cDisplayEncoder::NON_ROUNDTRIP ); // cDisplayEncoder
         strRet = name.AsString();
         e.Encode( strRet );
-	}
+    }
 
     return strRet;
 }
@@ -113,7 +113,7 @@ bool cFSNameTranslator::DisplayStringToFCOName( const TSTRING& strC, cFCOName& n
         return false;
 
     // get rid of beginning and trailing quote
-	str = str.substr( 1, str.size() - 2 );
+    str = str.substr( 1, str.size() - 2 );
 
     //
     // undo funky wide char encoding

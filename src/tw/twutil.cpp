@@ -94,8 +94,8 @@ static const uint32 CURRENT_FIXED_VERSION  = 0x02020000;
 // WriteObjectToArchive -- called from WriteObject, does most of the work
 ///////////////////////////////////////////////////////////////////////////////
 static void WriteObjectToArchive(cArchive &arch, const TCHAR* filename, // filename is used only for issuing error messages
-								 const iTypedSerializable* pObjHeader, const iTypedSerializable& obj, 
-								 cFileHeader& fileHeader, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
+                                 const iTypedSerializable* pObjHeader, const iTypedSerializable& obj, 
+                                 cFileHeader& fileHeader, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
     try
     {
@@ -104,86 +104,86 @@ static void WriteObjectToArchive(cArchive &arch, const TCHAR* filename, // filen
         // we will have to move this set to outside WriteObject().
         fileHeader.SetVersion(CURRENT_FIXED_VERSION);
 
-	    fileHeader.SetEncoding(bEncrypt ? cFileHeader::ASYM_ENCRYPTION : cFileHeader::COMPRESSED);
+        fileHeader.SetEncoding(bEncrypt ? cFileHeader::ASYM_ENCRYPTION : cFileHeader::COMPRESSED);
 
-	    {
-		    cSerializerImpl fhSer(arch, cSerializerImpl::S_WRITE, filename);
-		    fileHeader.Write(&fhSer);
-	    }
+        {
+            cSerializerImpl fhSer(arch, cSerializerImpl::S_WRITE, filename);
+            fileHeader.Write(&fhSer);
+        }
 
-	    if (bEncrypt)
-	    {
+        if (bEncrypt)
+        {
             cElGamalSigArchive cryptoArchive;
-	        cryptoArchive.SetWrite(&arch, pPrivateKey);
-		    cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_WRITE, filename);
-		    ser.Init();
-		    if(pObjHeader)
-			    ser.WriteObject(pObjHeader);
-		    ser.WriteObject(&obj);
-		    ser.Finit();
-		    cryptoArchive.FlushWrite();
-	    }
-	    else
-	    {
-		    // not encrypted
+            cryptoArchive.SetWrite(&arch, pPrivateKey);
+            cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_WRITE, filename);
+            ser.Init();
+            if(pObjHeader)
+                ser.WriteObject(pObjHeader);
+            ser.WriteObject(&obj);
+            ser.Finit();
+            cryptoArchive.FlushWrite();
+        }
+        else
+        {
+            // not encrypted
             cNullCryptoArchive cryptoArchive;
-	        cryptoArchive.Start(&arch);
-		    cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_WRITE, filename);
-		    ser.Init();
-		    if(pObjHeader)
-			    ser.WriteObject(pObjHeader);
-		    ser.WriteObject(&obj);
-		    ser.Finit();
-		    cryptoArchive.Finish();
-	    }
-		    
+            cryptoArchive.Start(&arch);
+            cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_WRITE, filename);
+            ser.Init();
+            if(pObjHeader)
+                ser.WriteObject(pObjHeader);
+            ser.WriteObject(&obj);
+            ser.Finit();
+            cryptoArchive.Finish();
+        }
+            
     }
     catch (eError& e)
     {
-		throw ePoly(
-			e.GetID(), 
-			cErrorUtil::MakeFileError( e.GetMsg(), filename ), 
-			e.GetFlags() );
+        throw ePoly(
+            e.GetID(), 
+            cErrorUtil::MakeFileError( e.GetMsg(), filename ), 
+            e.GetFlags() );
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // WriteObject -- template class that writes an object to disk (ie -- report, 
-//		db, etc) either encrypted or unencrypted. 
+//      db, etc) either encrypted or unencrypted. 
 //      The only requrement on the object is that it is typed serializable.
-//		errorMsg is a number that can be passed to iUserString to indicate an
-//		appropriate error message if the object fails to load
+//      errorMsg is a number that can be passed to iUserString to indicate an
+//      appropriate error message if the object fails to load
 //
 // 10/30 -- this function has been expanded to take two objects -- a header and 
-//		an object. Both are typed serializable, but the header can be NULL if 
-//		none is desired. 
+//      an object. Both are typed serializable, but the header can be NULL if 
+//      none is desired. 
 ///////////////////////////////////////////////////////////////////////////////
 static void WriteObject(const TCHAR* filename, const iTypedSerializable* pObjHeader, const iTypedSerializable& obj, 
-						cFileHeader& fileHeader, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
+                        cFileHeader& fileHeader, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
     cDebug d("WriteObject");
-	d.TraceDebug(_T("Writing %s to file %s\n"), obj.GetType().AsString(), filename);
+    d.TraceDebug(_T("Writing %s to file %s\n"), obj.GetType().AsString(), filename);
 
-	ASSERT(pPrivateKey || (! bEncrypt));
+    ASSERT(pPrivateKey || (! bEncrypt));
 
-	cFileArchive arch;
+    cFileArchive arch;
 
-	if (!cFileUtil::IsRegularFile(filename) && cFileUtil::FileExists(filename))
-		throw eArchiveNotRegularFile( filename );
+    if (!cFileUtil::IsRegularFile(filename) && cFileUtil::FileExists(filename))
+        throw eArchiveNotRegularFile( filename );
 
     try
     {
-	    arch.OpenReadWrite( filename );
+        arch.OpenReadWrite( filename );
     }
     catch (eArchive&)
     {
         // probably better to rethrow this as a write failed exception
-		throw eArchiveWrite( filename, iFSServices::GetInstance()->GetErrString() ) ;
+        throw eArchiveWrite( filename, iFSServices::GetInstance()->GetErrString() ) ;
     }
 
-	WriteObjectToArchive(arch, filename, pObjHeader, obj, fileHeader, bEncrypt, pPrivateKey);
+    WriteObjectToArchive(arch, filename, pObjHeader, obj, fileHeader, bEncrypt, pPrivateKey);
 
-	arch.Close();
+    arch.Close();
 }
 
 
@@ -195,9 +195,9 @@ static void ReadObjectFromArchive(cArchive &arch, const TCHAR* objFileName, iTyp
     cFileHeader fileHeader;
 
     {
-		cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, objFileName);
-		fileHeader.Read(&fhSer);
-	}
+        cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, objFileName);
+        fileHeader.Read(&fhSer);
+    }
 
     // check for a mismatched header
     if (fileHeader.GetID() != fhid)
@@ -212,67 +212,67 @@ static void ReadObjectFromArchive(cArchive &arch, const TCHAR* objFileName, iTyp
     try 
     {
         // switch on the type of encoding...
-	    if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-	    {
-		    // tell the user the db is encrypted
-		    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString( cTW, tw::STR_FILE_ENCRYPTED).c_str());
-		    bEncrypted = true;
+        if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
+        {
+            // tell the user the db is encrypted
+            iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString( cTW, tw::STR_FILE_ENCRYPTED).c_str());
+            bEncrypted = true;
 
             if (pPublicKey == 0)
                 ThrowAndAssert(eSerializerEncryption(_T("")));
 
-		    cElGamalSigArchive cryptoArchive;
-		    cryptoArchive.SetRead(&arch, pPublicKey);
+            cElGamalSigArchive cryptoArchive;
+            cryptoArchive.SetRead(&arch, pPublicKey);
 
-		    cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ, objFileName);			
-		    ser.Init();
-		    if(pObjHeader)
-			    ser.ReadObject(pObjHeader);
-		    ser.ReadObject(&obj);
-		    ser.Finit();
-	    }
-	    else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-	    {
-		    //not encrypted db...
-		    bEncrypted = false;
+            cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ, objFileName);           
+            ser.Init();
+            if(pObjHeader)
+                ser.ReadObject(pObjHeader);
+            ser.ReadObject(&obj);
+            ser.Finit();
+        }
+        else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
+        {
+            //not encrypted db...
+            bEncrypted = false;
 
-		    cNullCryptoArchive cryptoArchive;
-		    cryptoArchive.Start(&arch);
+            cNullCryptoArchive cryptoArchive;
+            cryptoArchive.Start(&arch);
 
-		    cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ, objFileName);			
-		    ser.Init();
-		    if(pObjHeader)
-			    ser.ReadObject(pObjHeader);
-		    ser.ReadObject(&obj);
-		    ser.Finit();
-	    }
-	    else
-		    // unknown encoding...
-		    ThrowAndAssert(eSerializerInputStreamFmt(_T("")));
+            cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ, objFileName);           
+            ser.Init();
+            if(pObjHeader)
+                ser.ReadObject(pObjHeader);
+            ser.ReadObject(&obj);
+            ser.Finit();
+        }
+        else
+            // unknown encoding...
+            ThrowAndAssert(eSerializerInputStreamFmt(_T("")));
     }
     catch (eError& e)
     {
         // include filename in error msg
-		throw ePoly( 
-			e.GetID(), 
-			cErrorUtil::MakeFileError( e.GetMsg(), objFileName ), 
-			e.GetFlags() );
+        throw ePoly( 
+            e.GetID(), 
+            cErrorUtil::MakeFileError( e.GetMsg(), objFileName ), 
+            e.GetFlags() );
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ReadObject -- writes an object from disk, either encrypted or not, that was
-//		written using WriteObject above. 
+//      written using WriteObject above. 
 ///////////////////////////////////////////////////////////////////////////////
 static void ReadObject(const TCHAR* objFileName, iTypedSerializable* pObjHeader, iTypedSerializable& obj, const cFileHeaderID& fhid, const cElGamalSigPublicKey* pPublicKey, bool& bEncrypted)
 {
     cDebug d("ReadObject");
-	d.TraceDebug(_T("Reading %s from file %s\n"), obj.GetType().AsString(), objFileName);
-	
-	cFileArchive arch;
-	arch.OpenRead( objFileName );
+    d.TraceDebug(_T("Reading %s from file %s\n"), obj.GetType().AsString(), objFileName);
+    
+    cFileArchive arch;
+    arch.OpenRead( objFileName );
 
-	ReadObjectFromArchive(arch, objFileName, pObjHeader, obj, fhid, pPublicKey, bEncrypted);
+    ReadObjectFromArchive(arch, objFileName, pObjHeader, obj, fhid, pPublicKey, bEncrypted);
 
 }
 
@@ -283,56 +283,56 @@ bool cTWUtil::IsObjectEncrypted( const TCHAR* objFileName, const cFileHeaderID& 
 {
     bool fEncrypted = false;
     cDebug d("IsObjectEncrypted");
-	d.TraceDebug(_T("Reading from file %s\n"), objFileName);
-	
-	try
-	{
-		cFileArchive arch;
-		arch.OpenRead( objFileName );
+    d.TraceDebug(_T("Reading from file %s\n"), objFileName);
+    
+    try
+    {
+        cFileArchive arch;
+        arch.OpenRead( objFileName );
 
         cFileHeader fileHeader;
-		cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, objFileName);
-		fileHeader.Read(&fhSer);
+        cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, objFileName);
+        fileHeader.Read(&fhSer);
 
         // check for a mismatched header
         if (fileHeader.GetID() != fhid)
             ThrowAndAssert(eSerializerInputStreamFmt(_T(""), objFileName, eSerializer::TY_FILE));
 
-		// switch on the type of encoding...
-		if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-		{
+        // switch on the type of encoding...
+        if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
+        {
             fEncrypted = true;
-		}
-		else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-		{
+        }
+        else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
+        {
             fEncrypted = false;
-		}
-		else
-			// unknown encoding...
-			ThrowAndAssert(eSerializerInputStreamFmt(_T(""), objFileName, eSerializer::TY_FILE));
-	}
-	catch(eArchive& e)
-	{
+        }
+        else
+            // unknown encoding...
+            ThrowAndAssert(eSerializerInputStreamFmt(_T(""), objFileName, eSerializer::TY_FILE));
+    }
+    catch(eArchive& e)
+    {
         // Note: Output to TCERR is O.K. here, it is documented that this is what this function does
-		TSTRING msg = e.GetMsg();
-		if( ! msg.empty() )
-			msg += _T("\n");
-		msg += errorMsg;
+        TSTRING msg = e.GetMsg();
+        if( ! msg.empty() )
+            msg += _T("\n");
+        msg += errorMsg;
 
-		cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
-		ThrowAndAssert(ePoly());
-	}
-	catch(eSerializer& e)
-	{
+        cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
+        ThrowAndAssert(ePoly());
+    }
+    catch(eSerializer& e)
+    {
         // Note: Output to TCERR is O.K. here, it is documented that this is what this function does
-		TSTRING msg = e.GetMsg();
-		if( ! msg.empty() )
-			msg += _T("\n");
-		msg += errorMsg;
+        TSTRING msg = e.GetMsg();
+        if( ! msg.empty() )
+            msg += _T("\n");
+        msg += errorMsg;
 
-		cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
-		ThrowAndAssert(ePoly());
-	}
+        cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
+        ThrowAndAssert(ePoly());
+    }
 
     return( fEncrypted );
 }
@@ -341,53 +341,53 @@ bool cTWUtil::IsObjectEncrypted( cArchive &arch, const cFileHeaderID& fhid, cons
 {
     bool fEncrypted = false;
     cDebug d("IsObjectEncrypted");
-	d.TraceDebug(_T("Reading from archive\n"));
-	
-	try
-	{
+    d.TraceDebug(_T("Reading from archive\n"));
+    
+    try
+    {
         cFileHeader fileHeader;
-		cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str());
-		fileHeader.Read(&fhSer);
+        cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str());
+        fileHeader.Read(&fhSer);
 
         // check for a mismatched header
         if (fileHeader.GetID() != fhid)
             ThrowAndAssert(eSerializerInputStreamFmt(_T(""), TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str(), eSerializer::TY_FILE));
 
-		// switch on the type of encoding...
-		if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-		{
+        // switch on the type of encoding...
+        if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
+        {
             fEncrypted = true;
-		}
-		else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-		{
+        }
+        else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
+        {
             fEncrypted = false;
-		}
-		else
-			// unknown encoding...
-			ThrowAndAssert(eSerializerInputStreamFmt(_T(""), TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str(), eSerializer::TY_FILE));
-	}
-	catch(eArchive& e)
-	{
+        }
+        else
+            // unknown encoding...
+            ThrowAndAssert(eSerializerInputStreamFmt(_T(""), TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str(), eSerializer::TY_FILE));
+    }
+    catch(eArchive& e)
+    {
         // Note: Output to TCERR is O.K. here, it is documented that this is what this function does
-		TSTRING msg = e.GetMsg();
-		if( ! msg.empty() )
-			msg += _T("\n");
-		msg += errorMsg;
+        TSTRING msg = e.GetMsg();
+        if( ! msg.empty() )
+            msg += _T("\n");
+        msg += errorMsg;
 
-		cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
-		ThrowAndAssert(ePoly());
-	}
-	catch(eSerializer& e)
-	{
+        cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
+        ThrowAndAssert(ePoly());
+    }
+    catch(eSerializer& e)
+    {
         // Note: Output to TCERR is O.K. here, it is documented that this is what this function does
-		TSTRING msg = e.GetMsg();
-		if( ! msg.empty() )
-			msg += _T("\n");
-		msg += errorMsg;
+        TSTRING msg = e.GetMsg();
+        if( ! msg.empty() )
+            msg += _T("\n");
+        msg += errorMsg;
 
-		cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
-		ThrowAndAssert(ePoly());
-	}
+        cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
+        ThrowAndAssert(ePoly());
+    }
 
     return( fEncrypted );
 }
@@ -398,25 +398,25 @@ bool cTWUtil::IsObjectEncrypted( cArchive &arch, const cFileHeaderID& fhid, cons
 ///////////////////////////////////////////////////////////////////////////////
 void cTWUtil::WriteDatabase(const TCHAR* filename, cFCODatabaseFile& db, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
-	cFileHeader fileHeader;
+    cFileHeader fileHeader;
     fileHeader.SetID(db.GetFileHeaderID());
     
     // I am almost positive that this does nothing, WriteObject() sets the version in the cFileHeader - Jun 8, 1999 - dmb
     //fileHeader.SetVersion(1);
 
 #ifdef TW_PROFILE
-	cWin32TaskTimer timer(_T("Write Database"));
-	timer.Start();
+    cWin32TaskTimer timer(_T("Write Database"));
+    timer.Start();
 #endif
-	
-	WriteObject(filename, 0, db, fileHeader, bEncrypt, pPrivateKey);
+    
+    WriteObject(filename, 0, db, fileHeader, bEncrypt, pPrivateKey);
 
 #ifdef TW_PROFILE
-	timer.Stop();
+    timer.Stop();
 #endif
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_DB_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_DB_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
@@ -425,19 +425,19 @@ void cTWUtil::WriteDatabase(const TCHAR* filename, cFCODatabaseFile& db, bool bE
 ///////////////////////////////////////////////////////////////////////////////
 void cTWUtil::ReadDatabase(const TCHAR* filename, cFCODatabaseFile& db, const cElGamalSigPublicKey* pPublicKey, bool& bEncrypted)
 {
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_OPEN_DB_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_OPEN_DB_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 
 #ifdef TW_PROFILE
-	cWin32TaskTimer timer("cTWUtil::ReadDatabase");
-	timer.Start();
+    cWin32TaskTimer timer("cTWUtil::ReadDatabase");
+    timer.Start();
 #endif
 
     ReadObject(filename, 0, db, cFCODatabaseFile::GetFileHeaderID(), pPublicKey, bEncrypted);
 
 #ifdef TW_PROFILE
-	timer.Stop();
+    timer.Stop();
 #endif
 }
 
@@ -449,10 +449,10 @@ void cTWUtil::WriteReport(const TCHAR* filename, const cFCOReportHeader& reportH
     cFileHeader fileHeader;
     fileHeader.SetID(cFCOReport::GetFileHeaderID());
 
-	WriteObject(filename, &reportHeader, r, fileHeader, bEncrypt, pPrivateKey);
+    WriteObject(filename, &reportHeader, r, fileHeader, bEncrypt, pPrivateKey);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_REPORT_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_REPORT_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
@@ -462,12 +462,12 @@ void cTWUtil::WriteReport(cArchive &archive, const cFCOReportHeader& reportHeade
     cFileHeader fileHeader;
     fileHeader.SetID(cFCOReport::GetFileHeaderID());
 
-	TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
+    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
 
-	WriteObjectToArchive(archive, filename.c_str(), &reportHeader, r, fileHeader, bEncrypt, pPrivateKey);
+    WriteObjectToArchive(archive, filename.c_str(), &reportHeader, r, fileHeader, bEncrypt, pPrivateKey);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_REPORT_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_REPORT_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
@@ -476,8 +476,8 @@ void cTWUtil::WriteReport(cArchive &archive, const cFCOReportHeader& reportHeade
 ///////////////////////////////////////////////////////////////////////////////
 void cTWUtil::ReadReport(const TCHAR* reportFileName, cFCOReportHeader& reportHeader, cFCOReport& r, const cElGamalSigPublicKey* pPublicKey, bool silent, bool& bEncrypted)
 {
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_OPEN_REPORT_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_OPEN_REPORT_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( reportFileName ).c_str() );
     
     ReadObject(reportFileName, &reportHeader, r, cFCOReport::GetFileHeaderID(), pPublicKey, bEncrypted);
@@ -485,10 +485,10 @@ void cTWUtil::ReadReport(const TCHAR* reportFileName, cFCOReportHeader& reportHe
 
 void cTWUtil::ReadReport(cArchive &archive, cFCOReportHeader& reportHeader, cFCOReport& r, const cElGamalSigPublicKey* pPublicKey, bool silent, bool& bEncrypted)
 {
-	TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
+    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_OPEN_REPORT_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_OPEN_REPORT_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str());
     
     ReadObjectFromArchive(archive, filename.c_str(), &reportHeader, r, cFCOReport::GetFileHeaderID(), pPublicKey, bEncrypted);
@@ -499,7 +499,7 @@ void cTWUtil::ReadReport(cArchive &archive, cFCOReportHeader& reportHeader, cFCO
 ///////////////////////////////////////////////////////////////////////////////
 void cTWUtil::UpdatePolicyFile(const TCHAR* destFileName, const TCHAR* srcFileName, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
-	cFileArchive src;
+    cFileArchive src;
     src.OpenRead(srcFileName); // note: eArchive may float up
 
     std::string policyText;
@@ -507,7 +507,7 @@ void cTWUtil::UpdatePolicyFile(const TCHAR* destFileName, const TCHAR* srcFileNa
 
     src.ReadBlob((void*)policyText.data(), src.Length());
 
-	// NOTE -- this method will emit a message to stdout when the file has been written
+    // NOTE -- this method will emit a message to stdout when the file has been written
     cTWUtil::WritePolicyText(destFileName, policyText, bEncrypt, pPrivateKey); 
 }
 
@@ -521,7 +521,7 @@ TSTRING cTWUtil::GetCfgFilePath(const cCmdLineParser& cmdLine, int cfgFileID)
   cCmdLineIter iter(cmdLine);
   for(iter.SeekBegin(); ! iter.Done(); iter.Next())
     {
-		if(iter.ArgId() == cfgFileID)
+        if(iter.ArgId() == cfgFileID)
         {
           ASSERT(iter.NumParams() > 0);
           cfgFilePath = iter.ParamAt(0);
@@ -534,13 +534,13 @@ TSTRING cTWUtil::GetCfgFilePath(const cCmdLineParser& cmdLine, int cfgFileID)
   // otherwise, the location is the dir that this exe is in.
   if( fConfigOnCmdLine )
     {
-		TSTRING pathOut;
-		iFSServices::GetInstance()->FullPath( pathOut, cfgFilePath ) ;
-		cfgFilePath = pathOut;
+        TSTRING pathOut;
+        iFSServices::GetInstance()->FullPath( pathOut, cfgFilePath ) ;
+        cfgFilePath = pathOut;
     }
   else
     {
-		iFSServices::GetInstance()->FullPath(	cfgFilePath, TSS_GetString(cTW, tw::STR_DEF_CFG_FILENAME),
+        iFSServices::GetInstance()->FullPath(   cfgFilePath, TSS_GetString(cTW, tw::STR_DEF_CFG_FILENAME),
                                              cSystemInfo::GetExeDir() ) ;
     }
   
@@ -553,9 +553,9 @@ TSTRING cTWUtil::GetCfgFilePath(const cCmdLineParser& cmdLine, int cfgFileID)
 
 ///////////////////////////////////////////////////////////////////////////////
 // OpenConfigFile -- opens the config file, either from a known location or 
-//		from the location specified on the command line. Returns false if it fails.
+//      from the location specified on the command line. Returns false if it fails.
 //      cfgFileID is the ID of the config file switch
-//		TODO -- should this guy spit the error to cerr or fill up an error bucket?
+//      TODO -- should this guy spit the error to cerr or fill up an error bucket?
 /////////////////////////////////////////////////////////////////////////////////
 void cTWUtil::OpenConfigFile(cConfigFile& cf, cCmdLineParser& cmdLine, int cfgFileID, cErrorBucket& errorBucket, TSTRING& configFileOut)
 {
@@ -598,8 +598,8 @@ void cTWUtil::WriteConfigText(const TCHAR* filename, const TSTRING configText, b
 
     WriteObject(filename, NULL, nstring, fileHeader, bEncrypt, pPrivateKey);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_CONFIG_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_CONFIG_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
@@ -609,7 +609,7 @@ void cTWUtil::WriteConfigText(cArchive &archive, const TSTRING configText, bool 
 
     nstring.mString = CONFIG_FILE_MAGIC_8BYTE;
 
-	TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
+    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
 
     std::string ns;
     cStringUtil::Convert( ns, configText );
@@ -630,8 +630,8 @@ void cTWUtil::WriteConfigText(cArchive &archive, const TSTRING configText, bool 
 
     WriteObjectToArchive(archive, filename.c_str(), NULL, nstring, fileHeader, bEncrypt, pPrivateKey);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_CONFIG_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_CONFIG_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str());
 }
 
@@ -651,14 +651,14 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
     // This was coppied from ReadObject().  We need to use the baggage of the
     // file header to obtain the public key, thus the special casing.
     cDebug d("ReadConfigText");
-	d.TraceDebug(_T("Reading %s from file %s\n"), nstring.GetType().AsString(), filename);
-	
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
+    d.TraceDebug(_T("Reading %s from file %s\n"), nstring.GetType().AsString(), filename);
+    
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 
-	cFileArchive arch;
-	arch.OpenRead( filename );
+    cFileArchive arch;
+    arch.OpenRead( filename );
 
     cFileHeader fileHeader;
 
@@ -672,7 +672,7 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
         throw eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE);
     }
 
-#if 0	// XXX: This is broken, what the h*ll are they trying to write here? -PH
+#if 0   // XXX: This is broken, what the h*ll are they trying to write here? -PH
     d.TraceDebug("Found a file header of type %d.\n", fileHeader.GetEncoding());
 #endif
 
@@ -685,12 +685,12 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
         throw eSerializerVersionMismatch(_T(""), filename, eSerializer::TY_FILE);
 
     // switch on the type of encoding...
-	if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-	{
+    if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
+    {
         d.TraceDebug("Config file is compressed, public key len %d.\n", fileHeader.GetBaggage().Length());
 
-		// tell the user the db is encrypted
-		iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_FILE_ENCRYPTED).c_str());
+        // tell the user the db is encrypted
+        iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_FILE_ENCRYPTED).c_str());
         iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_NEWLINE).c_str());
 
         ASSERT(fileHeader.GetBaggage().Length() > 0);
@@ -701,40 +701,40 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
 
         cElGamalSigPublicKey publicKey(fileHeader.GetBaggage().GetMap());
 
-		cElGamalSigArchive cryptoArchive;
-		cryptoArchive.SetRead(&arch, &publicKey);
+        cElGamalSigArchive cryptoArchive;
+        cryptoArchive.SetRead(&arch, &publicKey);
 
-		cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);			
-		ser.Init();
-		ser.ReadObject(&nstring);
-		ser.Finit();
+        cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);            
+        ser.Init();
+        ser.ReadObject(&nstring);
+        ser.Finit();
 
-		// copy the baggage into the archive, if it was passed in
+        // copy the baggage into the archive, if it was passed in
         // Note: We rely in VerifySiteKey that we only fill out pBaggage if
         // the config file is encrypted.
-		//
-		if( pBaggage )
-		{
-			fileHeader.GetBaggage().Seek( 0, cBidirArchive::BEGINNING );
-			pBaggage->Copy( &fileHeader.GetBaggage(), fileHeader.GetBaggage().Length() );
-		}
-	}
-	else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-	{
+        //
+        if( pBaggage )
+        {
+            fileHeader.GetBaggage().Seek( 0, cBidirArchive::BEGINNING );
+            pBaggage->Copy( &fileHeader.GetBaggage(), fileHeader.GetBaggage().Length() );
+        }
+    }
+    else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
+    {
         d.TraceDebug("Config file is not compressed.\n");
 
-		//not encrypted db...
-		cNullCryptoArchive cryptoArchive;
-		cryptoArchive.Start(&arch);
+        //not encrypted db...
+        cNullCryptoArchive cryptoArchive;
+        cryptoArchive.Start(&arch);
 
-		cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);			
-		ser.Init();
-		ser.ReadObject(&nstring);
-		ser.Finit();
-	}
-	else
-		// unknown encoding...
-		throw eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE);
+        cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);            
+        ser.Init();
+        ser.ReadObject(&nstring);
+        ser.Finit();
+    }
+    else
+        // unknown encoding...
+        throw eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE);
 
     // check 8 byte header
     if (nstring.mString.compare(0, 8*sizeof(byte), CONFIG_FILE_MAGIC_8BYTE) != 0)
@@ -753,15 +753,15 @@ void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBag
 
     cSerializableNString nstring;
 
-	TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
+    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
 
     // This was coppied from ReadObject().  We need to use the baggage of the
     // file header to obtain the public key, thus the special casing.
     cDebug d("ReadConfigText");
-	d.TraceDebug(_T("Reading %s from file %s\n"), nstring.GetType().AsString(), filename.c_str());
-	
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
+    d.TraceDebug(_T("Reading %s from file %s\n"), nstring.GetType().AsString(), filename.c_str());
+    
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str());
 
 
@@ -777,7 +777,7 @@ void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBag
         throw eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE);
     }
 
-#if 0	// XXX: This is broken, how can you convert a class to an int??? -PH
+#if 0   // XXX: This is broken, how can you convert a class to an int??? -PH
     d.TraceDebug("Found a file header of type %d.\n", fileHeader.GetEncoding());
 #endif
 
@@ -790,12 +790,12 @@ void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBag
         throw eSerializerVersionMismatch(_T(""), filename.c_str(), eSerializer::TY_FILE);
 
     // switch on the type of encoding...
-	if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-	{
+    if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
+    {
         d.TraceDebug("Config file is compressed, public key len %d.\n", fileHeader.GetBaggage().Length());
 
-		// tell the user the db is encrypted
-		iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_FILE_ENCRYPTED).c_str());
+        // tell the user the db is encrypted
+        iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_FILE_ENCRYPTED).c_str());
         iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_NEWLINE).c_str());
 
         ASSERT(fileHeader.GetBaggage().Length() > 0);
@@ -806,40 +806,40 @@ void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBag
 
         cElGamalSigPublicKey publicKey(fileHeader.GetBaggage().GetMap());
 
-		cElGamalSigArchive cryptoArchive;
-		cryptoArchive.SetRead(&arch, &publicKey);
+        cElGamalSigArchive cryptoArchive;
+        cryptoArchive.SetRead(&arch, &publicKey);
 
-		cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);			
-		ser.Init();
-		ser.ReadObject(&nstring);
-		ser.Finit();
+        cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);            
+        ser.Init();
+        ser.ReadObject(&nstring);
+        ser.Finit();
 
-		// copy the baggage into the archive, if it was passed in
+        // copy the baggage into the archive, if it was passed in
         // Note: We rely in VerifySiteKey that we only fill out pBaggage if
         // the config file is encrypted.
-		//
-		if( pBaggage )
-		{
-			fileHeader.GetBaggage().Seek( 0, cBidirArchive::BEGINNING );
-			pBaggage->Copy( &fileHeader.GetBaggage(), fileHeader.GetBaggage().Length() );
-		}
-	}
-	else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-	{
+        //
+        if( pBaggage )
+        {
+            fileHeader.GetBaggage().Seek( 0, cBidirArchive::BEGINNING );
+            pBaggage->Copy( &fileHeader.GetBaggage(), fileHeader.GetBaggage().Length() );
+        }
+    }
+    else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
+    {
         d.TraceDebug("Config file is not compressed.\n");
 
-		//not encrypted db...
-		cNullCryptoArchive cryptoArchive;
-		cryptoArchive.Start(&arch);
+        //not encrypted db...
+        cNullCryptoArchive cryptoArchive;
+        cryptoArchive.Start(&arch);
 
-		cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);			
-		ser.Init();
-		ser.ReadObject(&nstring);
-		ser.Finit();
-	}
-	else
-		// unknown encoding...
-		throw eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE);
+        cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);            
+        ser.Init();
+        ser.ReadObject(&nstring);
+        ser.Finit();
+    }
+    else
+        // unknown encoding...
+        throw eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE);
 
     // check 8 byte header
     if (nstring.mString.compare(0, 8*sizeof(byte), CONFIG_FILE_MAGIC_8BYTE) != 0)
@@ -871,8 +871,8 @@ void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string polText, 
 
     WriteObject(filename, NULL, nstring, fileHeader, bEncrypt, pPrivateKey);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_POLICY_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_POLICY_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
@@ -880,7 +880,7 @@ void cTWUtil::WritePolicyText(cArchive &archive, const std::string polText, bool
 {
     cSerializableNString nstring;
 
-	TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
+    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
 
     // add a 8 byte header we can use to verify decryption
     nstring.mString = POLICY_FILE_MAGIC_8BYTE;
@@ -892,14 +892,14 @@ void cTWUtil::WritePolicyText(cArchive &archive, const std::string polText, bool
 
     WriteObjectToArchive(archive, filename.c_str(), NULL, nstring, fileHeader, bEncrypt, pPrivateKey);
 
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_WRITE_POLICY_FILE).c_str(), 
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_WRITE_POLICY_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ReadPolicyText
-//	
+//  
 // Read the policy file.  Read the text of a policy language into configText
 // Will throw eError on failure.
 ///////////////////////////////////////////////////////////////////////////////
@@ -907,7 +907,7 @@ void cTWUtil::ReadPolicyText(const TCHAR* filename, std::string& polText, const 
 {
     cSerializableNString nstring;
 
-	cFileUtil::TestFileExists(filename);
+    cFileUtil::TestFileExists(filename);
 
     bool bEncrypted;
     ReadObject(filename, NULL, nstring, cPolicyFile::GetFileHeaderID(), pPublicKey, bEncrypted);
@@ -926,7 +926,7 @@ void cTWUtil::ReadPolicyText(cArchive &archive, std::string& polText, const cElG
 {
     cSerializableNString nstring;
 
-	TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
+    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
 
     bool bEncrypted;
     ReadObjectFromArchive(archive, filename.c_str(), NULL, nstring, cPolicyFile::GetFileHeaderID(), pPublicKey, bEncrypted);
@@ -946,11 +946,11 @@ void cTWUtil::ReadPolicyText(cArchive &archive, std::string& polText, const cElG
 ///////////////////////////////////////////////////////////////////////////////
 void cTWUtil::OpenKeyFile(cKeyFile& keyFile, TSTRING fileName)
 {
-	// first, make sure the file exists...
-	cFileUtil::TestFileExists(fileName);
-	
-	iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										TSS_GetString( cTW, tw::STR_OPEN_KEYFILE).c_str(), 
+    // first, make sure the file exists...
+    cFileUtil::TestFileExists(fileName);
+    
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
+                                        TSS_GetString( cTW, tw::STR_OPEN_KEYFILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( fileName ).c_str());
 
     keyFile.ReadFile(fileName.c_str());
@@ -958,61 +958,61 @@ void cTWUtil::OpenKeyFile(cKeyFile& keyFile, TSTRING fileName)
 
 ///////////////////////////////////////////////////////////////////////////////
 // CreatePrivateKey
-//		we will attempt to get the correct passphrase three times before we
-//		give up.
+//      we will attempt to get the correct passphrase three times before we
+//      give up.
 ///////////////////////////////////////////////////////////////////////////////
 const cElGamalSigPrivateKey* cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyType keyType, int nSecs)
 {
     ASSERT(keyType == KEY_SITE || keyType == KEY_LOCAL || keyType == KEY_PROVIDED);
 
-	const cElGamalSigPrivateKey* pPrivateKey = NULL;
-	wc16_string passphrase;
+    const cElGamalSigPrivateKey* pPrivateKey = NULL;
+    wc16_string passphrase;
 
     if ( usePassphrase ) 
     {   
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep( nSecs );
 
-		passphrase = usePassphrase;
+        passphrase = usePassphrase;
 
         #ifndef WORDS_BIGENDIAN
         passphrase.swapbytes();
         #endif
 
-		pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
+        pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
         if(pPrivateKey)
-			return pPrivateKey;
+            return pPrivateKey;
 
         // if we got here, then a passphrase was provided on the command line that
-		// was not correct; this is an error condition.
-		//
-		if( keyType == KEY_LOCAL )
-			throw eTWUtilBadPassLocal();
-		else
-			throw eTWUtilBadPassSite();
+        // was not correct; this is an error condition.
+        //
+        if( keyType == KEY_LOCAL )
+            throw eTWUtilBadPassLocal();
+        else
+            throw eTWUtilBadPassSite();
     }
 
     int count = 0;
-	while(count < 3)
-	{
-		cTWUtil::NoEcho noEcho;
-		switch (keyType)
+    while(count < 3)
+    {
+        cTWUtil::NoEcho noEcho;
+        switch (keyType)
         {
         case KEY_LOCAL:
-			TCOUT << TSS_GetString( cTW, tw::STR_ENTER_LOCAL_PASSPHRASE);
+            TCOUT << TSS_GetString( cTW, tw::STR_ENTER_LOCAL_PASSPHRASE);
             break;
         case KEY_SITE:
-			TCOUT << TSS_GetString( cTW, tw::STR_ENTER_SITE_PASSPHRASE);
+            TCOUT << TSS_GetString( cTW, tw::STR_ENTER_SITE_PASSPHRASE);
             break;
         case KEY_PROVIDED:
         default:
-		    TCOUT << TSS_GetString( cTW, tw::STR_ENTER_PROVIDED_PASSPHRASE);
+            TCOUT << TSS_GetString( cTW, tw::STR_ENTER_PROVIDED_PASSPHRASE);
             break;
         }
 
-		cTWUtil::GetString(passphrase);
-		TCOUT << std::endl;
+        cTWUtil::GetString(passphrase);
+        TCOUT << std::endl;
 
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep( nSecs );
@@ -1021,23 +1021,23 @@ const cElGamalSigPrivateKey* cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const 
         passphrase.swapbytes();
         #endif
 
-		pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
+        pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
-		if (pPrivateKey)
-			break;
+        if (pPrivateKey)
+            break;
 
-		// tell the user that they entered the wrong passphrase
-        int strId = (keyType==KEY_LOCAL) ?	tw::STR_ERR_WRONG_PASSPHRASE_LOCAL : 
-											tw::STR_ERR_WRONG_PASSPHRASE_SITE;
-		TCOUT << TSS_GetString( cTW, strId) << std::endl;
-		passphrase.resize(0);
-		count++;
-	}
+        // tell the user that they entered the wrong passphrase
+        int strId = (keyType==KEY_LOCAL) ?  tw::STR_ERR_WRONG_PASSPHRASE_LOCAL : 
+                                            tw::STR_ERR_WRONG_PASSPHRASE_SITE;
+        TCOUT << TSS_GetString( cTW, strId) << std::endl;
+        passphrase.resize(0);
+        count++;
+    }
 
-	if(! pPrivateKey)
-		throw ePoly();
+    if(! pPrivateKey)
+        throw ePoly();
 
-	return pPrivateKey;
+    return pPrivateKey;
 }
 
 void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyType keyType, int nSecs)
@@ -1051,44 +1051,44 @@ void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep( nSecs );
 
-		passphrase = usePassphrase;
+        passphrase = usePassphrase;
 
         #ifndef WORDS_BIGENDIAN
         passphrase.swapbytes();
         #endif
 
         if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
-			return;
+            return;
 
         // if we got here, then a passphrase was provided on the command line that
-		// was not correct; this is an error condition.
-		//
-		if( keyType == KEY_LOCAL )
-			throw eTWUtilBadPassLocal();
-		else
-			throw eTWUtilBadPassSite();
+        // was not correct; this is an error condition.
+        //
+        if( keyType == KEY_LOCAL )
+            throw eTWUtilBadPassLocal();
+        else
+            throw eTWUtilBadPassSite();
     }
 
     int count = 0;
-	while(count < 3)
-	{
-		cTWUtil::NoEcho noEcho;
-		switch (keyType)
+    while(count < 3)
+    {
+        cTWUtil::NoEcho noEcho;
+        switch (keyType)
         {
         case KEY_LOCAL:
-			TCOUT << TSS_GetString( cTW, tw::STR_ENTER_LOCAL_PASSPHRASE);
+            TCOUT << TSS_GetString( cTW, tw::STR_ENTER_LOCAL_PASSPHRASE);
             break;
         case KEY_SITE:
-			TCOUT << TSS_GetString( cTW, tw::STR_ENTER_SITE_PASSPHRASE);
+            TCOUT << TSS_GetString( cTW, tw::STR_ENTER_SITE_PASSPHRASE);
             break;
         case KEY_PROVIDED:
         default:
-		    TCOUT << TSS_GetString( cTW, tw::STR_ENTER_PROVIDED_PASSPHRASE);
+            TCOUT << TSS_GetString( cTW, tw::STR_ENTER_PROVIDED_PASSPHRASE);
             break;
         }
 
-		cTWUtil::GetString(passphrase);
-		TCOUT << std::endl;
+        cTWUtil::GetString(passphrase);
+        TCOUT << std::endl;
 
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep( nSecs );
@@ -1097,18 +1097,18 @@ void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const
         passphrase.swapbytes();
         #endif
 
-		if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
-			return;
+        if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
+            return;
 
-		// tell the user that they entered the wrong passphrase
-        int strId = (keyType==KEY_LOCAL) ?	tw::STR_ERR_WRONG_PASSPHRASE_LOCAL : 
+        // tell the user that they entered the wrong passphrase
+        int strId = (keyType==KEY_LOCAL) ?  tw::STR_ERR_WRONG_PASSPHRASE_LOCAL : 
                     (keyType==KEY_SITE)  ?  tw::STR_ERR_WRONG_PASSPHRASE_SITE :
                     tw::STR_ERR_WRONG_PASSPHRASE_LOCAL; // TODO: make this provided
 
         TCOUT << TSS_GetString( cTW, strId) << std::endl;
-		passphrase.resize(0);
-		count++;
-	}
+        passphrase.resize(0);
+        count++;
+    }
 
     throw ePoly();
 }
@@ -1175,7 +1175,7 @@ cTWUtil::NoEcho::NoEcho()
     Ntty.c_lflag &= ~ECHO;
 
     // catch SIGINT and SIGQUIT
-    old_SIGINT	= tw_signal(SIGINT, RestoreEcho);
+    old_SIGINT  = tw_signal(SIGINT, RestoreEcho);
     old_SIGQUIT = tw_signal(SIGQUIT, RestoreEcho);
 
     if (tcsetattr( 0, TCSAFLUSH, &Ntty) != 0 && isatty(0))
@@ -1192,8 +1192,8 @@ cTWUtil::NoEcho::~NoEcho() {
 
 void cTWUtil::GetStringNoEcho(wc16_string& ret)
 {
-	NoEcho noEcho;
-	GetString(ret);
+    NoEcho noEcho;
+    GetString(ret);
 }
 #endif
 
@@ -1203,88 +1203,88 @@ void cTWUtil::GetStringNoEcho(wc16_string& ret)
 void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::ObjList& listIn )
 {
 
-	cGenre::Genre curGenre = cGenreSwitcher::GetInstance()->GetDefaultGenre();
+    cGenre::Genre curGenre = cGenreSwitcher::GetInstance()->GetDefaultGenre();
 
-	ASSERT( listIn.size() > 0 );
-	listOut.clear();
-	GenreObjList::iterator	curIter		= listOut.end();
-	cGenre::Genre			iterGenre	= cGenre::GENRE_INVALID;
+    ASSERT( listIn.size() > 0 );
+    listOut.clear();
+    GenreObjList::iterator  curIter     = listOut.end();
+    cGenre::Genre           iterGenre   = cGenre::GENRE_INVALID;
 
-	// iterate over all of the input...
-	//
-	for( ObjList::const_iterator i = listIn.begin(); i != listIn.end(); i++ )
-	{
-		// first, try to interperate the current string as a genre name...
-		// 17 Mar 99 mdb -- we now only do this if the string ends in a ':'
-		//
-		cGenre::Genre g = cGenre::GENRE_INVALID;
-		
-		if( i->at( i->length()-1 ) == _T(':') )
-		{
-			TSTRING genreStr;
-			genreStr.assign( i->begin(), i->end()-1 );
-			g = cGenreSwitcher::GetInstance()->StringToGenre( genreStr.c_str() );
+    // iterate over all of the input...
+    //
+    for( ObjList::const_iterator i = listIn.begin(); i != listIn.end(); i++ )
+    {
+        // first, try to interperate the current string as a genre name...
+        // 17 Mar 99 mdb -- we now only do this if the string ends in a ':'
+        //
+        cGenre::Genre g = cGenre::GENRE_INVALID;
+        
+        if( i->at( i->length()-1 ) == _T(':') )
+        {
+            TSTRING genreStr;
+            genreStr.assign( i->begin(), i->end()-1 );
+            g = cGenreSwitcher::GetInstance()->StringToGenre( genreStr.c_str() );
             
-	        //
-	        // if it is not a valid genre name, then test to see if it could 
+            //
+            // if it is not a valid genre name, then test to see if it could 
             // be an fconame.  If it is not, then it is a badly formed genre.
-	        //
-		    if( g == cGenre::GENRE_INVALID )
+            //
+            if( g == cGenre::GENRE_INVALID )
             {
-	            std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
-	            if( ! pParseUtil->IsAbsolutePath( *i ) )
-		            throw eTWUnknownSectionName( *i );
+                std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+                if( ! pParseUtil->IsAbsolutePath( *i ) )
+                    throw eTWUnknownSectionName( *i );
             }
-		}
-		if( g == cGenre::GENRE_INVALID )
-		{
-			// assume that we are in the correct genre; this is a fully qualified object name
-			// TODO -- throw here if cGenreParserHelper says it isn't a fully qualified name.
-			//
-			if( iterGenre != curGenre )
-			{
-				// seek to right list; create it if it is not there...
-				//
-				for( curIter = listOut.begin(); curIter != listOut.end(); curIter++ )
-				{
-					if( curIter->first == curGenre )
-						break;
-				}
-				if( curIter == listOut.end() )
-				{
-					// it doesn't exist; we will have to create a new one.
-					//
-					listOut.push_back( GenreObjs() );
-					listOut.back().first = curGenre;
-					curIter = listOut.end() - 1;
-				}
+        }
+        if( g == cGenre::GENRE_INVALID )
+        {
+            // assume that we are in the correct genre; this is a fully qualified object name
+            // TODO -- throw here if cGenreParserHelper says it isn't a fully qualified name.
+            //
+            if( iterGenre != curGenre )
+            {
+                // seek to right list; create it if it is not there...
+                //
+                for( curIter = listOut.begin(); curIter != listOut.end(); curIter++ )
+                {
+                    if( curIter->first == curGenre )
+                        break;
+                }
+                if( curIter == listOut.end() )
+                {
+                    // it doesn't exist; we will have to create a new one.
+                    //
+                    listOut.push_back( GenreObjs() );
+                    listOut.back().first = curGenre;
+                    curIter = listOut.end() - 1;
+                }
 
-				iterGenre = curGenre;
-			}
-			ASSERT( curIter != listOut.end() );
-			//
-			// add this to the list; assert that it has not been added yet.
-			//
-			ObjList::iterator oi;
-			for( oi = curIter->second.begin(); oi != curIter->second.end(); oi++ )
-			{
-				if( *oi == *i )
-				{
-					//TODO -- what should I do here? probably warn and continue...
-					ASSERT( false );
-					break;
-				}
-			}
-			if( oi == curIter->second.end() )
-				curIter->second.push_back( *i );
-		}
-		else
-		{
-			// set the current genre to this and continue...
-			//
-			curGenre = g;
-		}
-	}
+                iterGenre = curGenre;
+            }
+            ASSERT( curIter != listOut.end() );
+            //
+            // add this to the list; assert that it has not been added yet.
+            //
+            ObjList::iterator oi;
+            for( oi = curIter->second.begin(); oi != curIter->second.end(); oi++ )
+            {
+                if( *oi == *i )
+                {
+                    //TODO -- what should I do here? probably warn and continue...
+                    ASSERT( false );
+                    break;
+                }
+            }
+            if( oi == curIter->second.end() )
+                curIter->second.push_back( *i );
+        }
+        else
+        {
+            // set the current genre to this and continue...
+            //
+            curGenre = g;
+        }
+    }
 
 }
 
@@ -1294,41 +1294,41 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName cTWUtil::ParseObjectName( const TSTRING& fcoName )
 {
-	std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
-	cFCOName name( iTWFactory::GetInstance()->GetNameInfo() );
-	//
-	// make sure the fco name is a full path...
-	//
-	if( ! pParseUtil->IsAbsolutePath( fcoName ) )
-		throw eTWUtilNotFullPath( fcoName );
-	//
-	// construct the list that InterpretFCOName needs....
-	std::list<TSTRING>	inputNameList;
-	//
-	// dice up the string into a list
-	// currently, we only slice it up based on "|" (for nt registry entries)
-	//
+    std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+    cFCOName name( iTWFactory::GetInstance()->GetNameInfo() );
+    //
+    // make sure the fco name is a full path...
+    //
+    if( ! pParseUtil->IsAbsolutePath( fcoName ) )
+        throw eTWUtilNotFullPath( fcoName );
+    //
+    // construct the list that InterpretFCOName needs....
+    std::list<TSTRING>  inputNameList;
+    //
+    // dice up the string into a list
+    // currently, we only slice it up based on "|" (for nt registry entries)
+    //
     TSTRING::size_type pos = fcoName.find_first_of( _T('|') );
-	if( pos != TSTRING::npos )
-	{
-		// if the input string is "foo|bar" then we want the list to 
-		// look like this: "foo", "|", "bar" (three entries)
-		//
-		TSTRING str;
-		str.assign( fcoName, 0, pos );
-		inputNameList.push_back( str );
-		inputNameList.push_back( _T("|") );
-		str.assign( fcoName, pos+1, fcoName.length() - pos );
-		inputNameList.push_back( str );
-	}
-	else
-	{
-		inputNameList.push_back( fcoName );
-	}
+    if( pos != TSTRING::npos )
+    {
+        // if the input string is "foo|bar" then we want the list to 
+        // look like this: "foo", "|", "bar" (three entries)
+        //
+        TSTRING str;
+        str.assign( fcoName, 0, pos );
+        inputNameList.push_back( str );
+        inputNameList.push_back( _T("|") );
+        str.assign( fcoName, pos+1, fcoName.length() - pos );
+        inputNameList.push_back( str );
+    }
+    else
+    {
+        inputNameList.push_back( fcoName );
+    }
 
-	pParseUtil->InterpretFCOName( inputNameList, name ) ;
-	
-	return name;	
+    pParseUtil->InterpretFCOName( inputNameList, name ) ;
+    
+    return name;    
 }
 
 
@@ -1383,16 +1383,16 @@ void cTWUtil::PrintErrorMsg(const eError& e, const TSTRING& strExtra)
     ASSERT( e.GetID() != 0 );  // NOTE: BAM  5/9/99 -- there should no longer be an ID of ZERO
 
     /* BAM 5/9/99 -- this is old stuff
-	if((e.GetID() == 0) && (e.GetMsg().empty()))
-	{
-		// this should only occur at the top level of a program (ie -- twcmdline.cpp) and
-		// indicates that an error occurred and an error message has already been printed out.
-		// Therefore, we will do nothing here but return.
-		return;
-	}
+    if((e.GetID() == 0) && (e.GetMsg().empty()))
+    {
+        // this should only occur at the top level of a program (ie -- twcmdline.cpp) and
+        // indicates that an error occurred and an error message has already been printed out.
+        // Therefore, we will do nothing here but return.
+        return;
+    }
     */
 
-	cErrorReporter::PrintErrorMsg(e, strExtra);
+    cErrorReporter::PrintErrorMsg(e, strExtra);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1408,24 +1408,24 @@ bool cTWUtil::ConfirmYN(const TCHAR* prompt)
     int x;
 
     while (1) 
-	{
+    {
         TCOUT << prompt;
-		GetString(reply);
-		
-		cStringUtil::Convert(s, reply);
-		
+        GetString(reply);
+        
+        cStringUtil::Convert(s, reply);
+        
 #ifdef UNICODE
-		for (x = 0; s[x] && iswctype(s[x], wctype("space") ); x++)
-			;
+        for (x = 0; s[x] && iswctype(s[x], wctype("space") ); x++)
+            ;
 #else
-		for (x = 0; s[x] && std::isspace<TCHAR>( s[x], std::locale() ); x++)
-			;
+        for (x = 0; s[x] && std::isspace<TCHAR>( s[x], std::locale() ); x++)
+            ;
 #endif
-			
-		if (_totupper(s[x]) == _T('Y'))
-			return true;
-		else if (_totupper(s[x]) == _T('N'))
-			return false;
+            
+        if (_totupper(s[x]) == _T('Y'))
+            return true;
+        else if (_totupper(s[x]) == _T('N'))
+            return false;
     }
 }
 
@@ -1434,12 +1434,12 @@ bool cTWUtil::ConfirmYN(const TCHAR* prompt)
 ///////////////////////////////////////////////////////////////////////////////
 bool cTWUtil::VerifyCfgSiteKey( const TSTRING& strConfigFile, const TSTRING& siteKeyPath )
 {
-	// open the config file
-	//
-	cMemoryArchive	memArch;
+    // open the config file
+    //
+    cMemoryArchive  memArch;
     try
     {
-	    TSTRING	dummyString;	
+        TSTRING dummyString;    
         cTWUtil::ReadConfigText( strConfigFile.c_str(), dummyString, &memArch );
     }
     catch (eArchive& e)
@@ -1456,25 +1456,25 @@ bool cTWUtil::VerifyCfgSiteKey( const TSTRING& strConfigFile, const TSTRING& sit
     }
 
     // only do the test if there is baggage (indicating the cfg file is encrypted)
-	//
+    //
     ASSERT(memArch.Length() >= 0);
-	if (memArch.Length() <= 0)
+    if (memArch.Length() <= 0)
         return false;
 
     // get site public key
-	//
-	cKeyFile siteKeyfile;
-	cTWUtil::OpenKeyFile( siteKeyfile, siteKeyPath );
+    //
+    cKeyFile siteKeyfile;
+    cTWUtil::OpenKeyFile( siteKeyfile, siteKeyPath );
 
-	// create the two public keys...
-	//
-	memArch.Seek( 0, cBidirArchive::BEGINNING );
-	cElGamalSigPublicKey pubKey( memArch.GetMemory() );
+    // create the two public keys...
+    //
+    memArch.Seek( 0, cBidirArchive::BEGINNING );
+    cElGamalSigPublicKey pubKey( memArch.GetMemory() );
 
-	// compare the two ....
-	//
-	if( ! pubKey.IsEqual( *siteKeyfile.GetPublicKey() ) )
-	{
+    // compare the two ....
+    //
+    if( ! pubKey.IsEqual( *siteKeyfile.GetPublicKey() ) )
+    {
         TSTRING estr;
         estr.assign(TSS_GetString( cTW, tw::STR_ERR2_CFG_KEY_MISMATCH1 ));
         estr.append(strConfigFile);
@@ -1482,8 +1482,8 @@ bool cTWUtil::VerifyCfgSiteKey( const TSTRING& strConfigFile, const TSTRING& sit
         estr.append(siteKeyPath);
         estr.append(TSS_GetString( cTW, tw::STR_ERR2_CFG_KEY_MISMATCH3 ));
 
-		throw eTWUtilCfgKeyMismatch( estr );
-	}
+        throw eTWUtilCfgKeyMismatch( estr );
+    }
 
     return true;
 }

@@ -42,13 +42,13 @@
 
 static void PrintIter(const iFCOIter* pIter, cDebug& d)
 {
-	TSTRING str;
-	for(; ! pIter->Done(); pIter->Next())
-	{
-		str += pIter->FCO()->GetName().AsString().c_str();
-		str += _T(" ");
-	}
-	d.TraceDebug(_T("%s\n"), str.c_str());
+    TSTRING str;
+    for(; ! pIter->Done(); pIter->Next())
+    {
+        str += pIter->FCO()->GetName().AsString().c_str();
+        str += _T(" ");
+    }
+    d.TraceDebug(_T("%s\n"), str.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -56,95 +56,95 @@ static void PrintIter(const iFCOIter* pIter, cDebug& d)
 ///////////////////////////////////////////////////////////////////////////////
 void TestFCOSetImpl()
 {
-	cDebug d("TestFCOSetImpl()");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestFCOSetImpl()");
+    d.TraceDebug("Entering...\n");
 
 
-	iFCO* pFCO1 = new cFSObject(cFCOName(_T("fco1")));
-	iFCO* pFCO2 = new cFSObject(cFCOName(_T("fco2")));
-	iFCO* pFCO3 = new cFSObject(cFCOName(_T("fco3")));
+    iFCO* pFCO1 = new cFSObject(cFCOName(_T("fco1")));
+    iFCO* pFCO2 = new cFSObject(cFCOName(_T("fco2")));
+    iFCO* pFCO3 = new cFSObject(cFCOName(_T("fco3")));
 
-	cFCOSetImpl set;
-	set.Insert(pFCO1);
-	set.Insert(pFCO2);
-	set.Insert(pFCO3);
+    cFCOSetImpl set;
+    set.Insert(pFCO1);
+    set.Insert(pFCO2);
+    set.Insert(pFCO3);
 
-	// the set should have AddRef()ed, so I can release these now.
-	pFCO1->Release();
-	pFCO2->Release();
-	pFCO3->Release();
+    // the set should have AddRef()ed, so I can release these now.
+    pFCO1->Release();
+    pFCO2->Release();
+    pFCO3->Release();
 
-	// let's iterate over the fcos
-	cIterProxy<iFCOIter> pit(set.GetIter());
-	pit->SeekBegin();
-	PrintIter(pit, d);
+    // let's iterate over the fcos
+    cIterProxy<iFCOIter> pit(set.GetIter());
+    pit->SeekBegin();
+    PrintIter(pit, d);
 
-	// lookup a specific fco
-	cIterProxy<iFCOIter> pit2(set.Lookup(cFCOName(_T("fco2"))));
-	if(! (iFCOIter*)pit2)
-	{
-		d.TraceError("Lookup failed for fco2!\n");
-		TEST(false);
-	}
-	
-	d.TraceDebug("Iterating from fco2 to end...\n");
-	PrintIter(pit2, d);
-
-	// Insert something
-	d.TraceDebug("Inserting dog...\n");
-	pFCO1 = new cFSObject(cFCOName(_T("dog")));
-	set.Insert(pFCO1);
-	pFCO1->Release();
-	pit->SeekBegin();
-	PrintIter(pit, d);
-
-	// ...and then remove it
-	d.TraceDebug("Removing fco3\n");
-	cIterProxy<iFCOIter> pit3(set.Lookup(cFCOName(_T("fco3"))));
-	if(! (iFCOIter*)pit3)
-	{
-		d.TraceError("Lookup failed for fco3!\n");
+    // lookup a specific fco
+    cIterProxy<iFCOIter> pit2(set.Lookup(cFCOName(_T("fco2"))));
+    if(! (iFCOIter*)pit2)
+    {
+        d.TraceError("Lookup failed for fco2!\n");
         TEST(false);
-	}
-	pit3->Remove();
-	pit3->SeekBegin();
-	PrintIter(pit3, d);
+    }
+    
+    d.TraceDebug("Iterating from fco2 to end...\n");
+    PrintIter(pit2, d);
 
-	// test operator=
-	cFCOSetImpl set2;
-	set2 = set;
-	pit = set2.GetIter();
-	d.TraceDebug("Made a new set and set it equal to the first with operator=; printing out...\n");
-	PrintIter(pit, d);
+    // Insert something
+    d.TraceDebug("Inserting dog...\n");
+    pFCO1 = new cFSObject(cFCOName(_T("dog")));
+    set.Insert(pFCO1);
+    pFCO1->Release();
+    pit->SeekBegin();
+    PrintIter(pit, d);
 
-	// test IsEmpty
-	set.Clear();
-	TEST(set.IsEmpty());
+    // ...and then remove it
+    d.TraceDebug("Removing fco3\n");
+    cIterProxy<iFCOIter> pit3(set.Lookup(cFCOName(_T("fco3"))));
+    if(! (iFCOIter*)pit3)
+    {
+        d.TraceError("Lookup failed for fco3!\n");
+        TEST(false);
+    }
+    pit3->Remove();
+    pit3->SeekBegin();
+    PrintIter(pit3, d);
 
-	// test refrence counting...
-	d.TraceDebug("Set 1 was cleared out; printing set 2 to ensure ref counting worked\n");
-	pit->SeekBegin();
-	PrintIter(pit, d);
+    // test operator=
+    cFCOSetImpl set2;
+    set2 = set;
+    pit = set2.GetIter();
+    d.TraceDebug("Made a new set and set it equal to the first with operator=; printing out...\n");
+    PrintIter(pit, d);
 
-	// test serialization
-	cFCOSetImpl set3;
-	cMemoryArchive a;
-	cSerializerImpl writeSer(a, cSerializerImpl::S_WRITE);
-	writeSer.Init();
-	set2.Write(&writeSer);
-	writeSer.Finit();
-	a.Seek(0, cBidirArchive::BEGINNING);
-	cSerializerImpl readSer(a, cSerializerImpl::S_READ);
-	readSer.Init();
-	set3.Read(&readSer);
-	readSer.Finit();
-	d.TraceDebug("Serialized the set out and read it back in; this should be the same as above...\n");
-	pit = set3.GetIter();
-	PrintIter(pit, d);
+    // test IsEmpty
+    set.Clear();
+    TEST(set.IsEmpty());
+
+    // test refrence counting...
+    d.TraceDebug("Set 1 was cleared out; printing set 2 to ensure ref counting worked\n");
+    pit->SeekBegin();
+    PrintIter(pit, d);
+
+    // test serialization
+    cFCOSetImpl set3;
+    cMemoryArchive a;
+    cSerializerImpl writeSer(a, cSerializerImpl::S_WRITE);
+    writeSer.Init();
+    set2.Write(&writeSer);
+    writeSer.Finit();
+    a.Seek(0, cBidirArchive::BEGINNING);
+    cSerializerImpl readSer(a, cSerializerImpl::S_READ);
+    readSer.Init();
+    set3.Read(&readSer);
+    readSer.Finit();
+    d.TraceDebug("Serialized the set out and read it back in; this should be the same as above...\n");
+    pit = set3.GetIter();
+    PrintIter(pit, d);
 
 
-	d.TraceDebug("Leaving...\n");
-	return;
+    d.TraceDebug("Leaving...\n");
+    return;
 
 }
 

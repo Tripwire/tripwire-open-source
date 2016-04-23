@@ -49,8 +49,8 @@ class iFCOPropDisplayer;
 class cGenerateDb
 {
 public:
-	static void Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCOPropDisplayer* pPD, cErrorBucket* pBucket, uint32 flags = 0 );
-		// generates a tripwire database; this asserts that the database is open
+    static void Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCOPropDisplayer* pPD, cErrorBucket* pBucket, uint32 flags = 0 );
+        // generates a tripwire database; this asserts that the database is open
     
     enum Flags
     {

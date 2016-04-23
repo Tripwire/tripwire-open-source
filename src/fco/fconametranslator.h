@@ -60,24 +60,24 @@ public:
     //
     // basic functionality
     //    
-	virtual TSTRING ToStringRaw( const cFCOName& name ) const = 0;
-		// provides a "raw" representation of the fco name as a string. This uses only the 
-		// information contained in the cFCOName to construct the string (ie -- no genre specific
-		// info)
+    virtual TSTRING ToStringRaw( const cFCOName& name ) const = 0;
+        // provides a "raw" representation of the fco name as a string. This uses only the 
+        // information contained in the cFCOName to construct the string (ie -- no genre specific
+        // info)
 
-	virtual TSTRING ToStringAPI( const cFCOName& name ) const = 0;
-		// returns a string representation of the name that can be passed to system API calls. Note 
-		// that this is not possible to do in all genres ( for example, the NT registry )
+    virtual TSTRING ToStringAPI( const cFCOName& name ) const = 0;
+        // returns a string representation of the name that can be passed to system API calls. Note 
+        // that this is not possible to do in all genres ( for example, the NT registry )
 
     virtual TSTRING ToStringDisplay( const cFCOName& name, bool bUnique = false ) const = 0;
         // this function converts an fconame into a string suitable for printing to user.  
         // Every character in the string will be able to be converted to a multi-byte character
-		//
-		// If unique is set, the string will also have the following attributes:
-		// The returned string will have leading and trailing quotes.  
-		// The string returned must be able to be unambiguously translatable back into an FCO name 
-		// equal to the one that created the string. To use mathematical language, the function that
-		// maps cFCONames to TSTRINGS must be "one to one" and "onto".
+        //
+        // If unique is set, the string will also have the following attributes:
+        // The returned string will have leading and trailing quotes.  
+        // The string returned must be able to be unambiguously translatable back into an FCO name 
+        // equal to the one that created the string. To use mathematical language, the function that
+        // maps cFCONames to TSTRINGS must be "one to one" and "onto".
 
     virtual bool DisplayStringToFCOName( const TSTRING& str, cFCOName& name ) const = 0;    
         // this function converts strings from FCONameToDisplayString back into an fconame

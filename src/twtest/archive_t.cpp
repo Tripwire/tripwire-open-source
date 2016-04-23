@@ -84,7 +84,7 @@ void TestArchive()
 
     try {
         memarch.ReadInt32(i);
-		throw eTestArchiveError();
+        throw eTestArchiveError();
     }
     catch (eArchive& e)
     {
@@ -107,52 +107,52 @@ void TestArchive()
     TSTRING lockedFileName = TEMP_DIR;
     lockedFileName += _T("/inaccessable_file.bin");
 
-	cLockedTemporaryFileArchive lockedArch;
+    cLockedTemporaryFileArchive lockedArch;
 
     // try to create an archive using a temp file
     lockedArch.OpenReadWrite();
     lockedArch.Close();
 
     // this should open and lock the file -- shouldn't be able to access it
-	lockedArch.OpenReadWrite(lockedFileName.c_str());
-	lockedArch.Seek(0, cBidirArchive::BEGINNING);
+    lockedArch.OpenReadWrite(lockedFileName.c_str());
+    lockedArch.Seek(0, cBidirArchive::BEGINNING);
 
     // shouldn't be able to see these changes
-	lockedArch.WriteInt32(1);
-	lockedArch.WriteInt32(2);
-	lockedArch.WriteInt32(3);
-	lockedArch.WriteInt32(4);
-	lockedArch.WriteString(s);
-	lockedArch.WriteInt64(1234567L);
+    lockedArch.WriteInt32(1);
+    lockedArch.WriteInt32(2);
+    lockedArch.WriteInt32(3);
+    lockedArch.WriteInt32(4);
+    lockedArch.WriteString(s);
+    lockedArch.WriteInt64(1234567L);
     lockedArch.WriteInt16(42);
 
     // this should delete the file
-	lockedArch.Close();
+    lockedArch.Close();
 
     // cFileArchive 
     TSTRING fileName = TEMP_DIR;
     fileName += _T("/archive_test.bin");
 
-	cFileArchive filearch;
-	filearch.OpenReadWrite(fileName.c_str());
-	filearch.Seek(0, cBidirArchive::BEGINNING);
+    cFileArchive filearch;
+    filearch.OpenReadWrite(fileName.c_str());
+    filearch.Seek(0, cBidirArchive::BEGINNING);
 
-	filearch.WriteInt32(1);
-	filearch.WriteInt32(2);
-	filearch.WriteInt32(3);
-	filearch.WriteInt32(4);
+    filearch.WriteInt32(1);
+    filearch.WriteInt32(2);
+    filearch.WriteInt32(3);
+    filearch.WriteInt32(4);
 
-	filearch.WriteString(s);
-	filearch.WriteInt64(1234567L);
+    filearch.WriteString(s);
+    filearch.WriteInt64(1234567L);
 
     filearch.WriteInt16(42);
-	filearch.Close();
+    filearch.Close();
 
     int32 j;
-	int64 k;
-	filearch.OpenRead(fileName.c_str());
-	filearch.Seek(0, cBidirArchive::BEGINNING);
-	filearch.ReadInt32(j);
+    int64 k;
+    filearch.OpenRead(fileName.c_str());
+    filearch.Seek(0, cBidirArchive::BEGINNING);
+    filearch.ReadInt32(j);
     TEST(j == 1);
     filearch.ReadInt32(j);
     TEST(j == 2);
@@ -161,7 +161,7 @@ void TestArchive()
     filearch.ReadInt32(j);
     TEST(j == 4);
 
-	TSTRING s3;
+    TSTRING s3;
     filearch.ReadString(s3);
     TEST(s3.compare(_T("Weenus")) == 0);
     filearch.ReadInt64(k);
@@ -172,7 +172,7 @@ void TestArchive()
 
     try {
         filearch.ReadInt32(j);
-		throw eTestArchiveError();
+        throw eTestArchiveError();
     }
     catch (eArchive& e)
     {

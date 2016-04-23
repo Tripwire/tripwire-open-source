@@ -47,9 +47,9 @@
 
 TSS_BeginPackage( cDb )
 
-	public:
+    public:
 
-		cDb();
+        cDb();
 
 TSS_EndPackage( cDb )
 

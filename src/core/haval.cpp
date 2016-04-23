@@ -71,10 +71,10 @@
 /*
  * Some comments on getting Haval into Tripwire:
  *
- *	- all #elif directives replaced by ugly #if/#else/#endif sequences.
- *		not all compilers support #elif (an ANSI construct).
- *	- byte-order is discovered at compile time.  we use the information
- *		in "../../include/byteorder.h" to get this information.
+ *  - all #elif directives replaced by ugly #if/#else/#endif sequences.
+ *      not all compilers support #elif (an ANSI construct).
+ *  - byte-order is discovered at compile time.  we use the information
+ *      in "../../include/byteorder.h" to get this information.
  */
 
 #pragma GCC diagnostic ignored "-Wparentheses"
@@ -90,7 +90,7 @@
 #include "haval.h"
 #include "debug.h"
 
-#define HAVAL_VERSION    1		/* current version number */
+#define HAVAL_VERSION    1      /* current version number */
 
 /* Do not remove this line.  Protyping depends on it! */
 #if defined(__STDC__) || defined(__cplusplus)

@@ -47,65 +47,65 @@
 /*
 static void PrintFCOTree(const iFCO* pFCO, cDebug d, int depth)
 {
-	TSTRING prefix;
-	for(int i=0; i<depth; i++)
-	{
-		prefix += _T("--");
-	}
+    TSTRING prefix;
+    for(int i=0; i<depth; i++)
+    {
+        prefix += _T("--");
+    }
 
-	d.TraceDebug(_T("%s%s\n"), prefix.c_str(), pFCO->GetName().AsString().c_str());
+    d.TraceDebug(_T("%s%s\n"), prefix.c_str(), pFCO->GetName().AsString().c_str());
 
-	const cIterProxy<iFCOIter> pi = pFCO->GetChildSet()->GetIter();
+    const cIterProxy<iFCOIter> pi = pFCO->GetChildSet()->GetIter();
 
-	for(pi->SeekBegin(); ! pi->Done(); pi->Next())
-	{
-		PrintFCOTree(pi->FCO(), d, depth+1);
-	}
+    for(pi->SeekBegin(); ! pi->Done(); pi->Next())
+    {
+        PrintFCOTree(pi->FCO(), d, depth+1);
+    }
 }
 */
 
 void TestFCOSpecImpl()
 {
-	cDebug d("TestFCOSpecImpl");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestFCOSpecImpl");
+    d.TraceDebug("Entering...\n");
 
-	//*********************
-	//
-	// TODO -- As of tripwire 2.1, this needs to be updated!
-	// 28 Jan 99 mdb
-	//
-	//*********************
-	ASSERT( false );
+    //*********************
+    //
+    // TODO -- As of tripwire 2.1, this needs to be updated!
+    // 28 Jan 99 mdb
+    //
+    //*********************
+    ASSERT( false );
 /*
-	cFSDataSource dataSrc;
-	iFSServices* pFSS = iFSServices::GetInstance();
+    cFSDataSource dataSrc;
+    iFSServices* pFSS = iFSServices::GetInstance();
 
 
-	// test AllChildStopPoint fcos...
-	d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TEMP_DIR);
-	cFCOSpecImpl* pSpec2 = new cFCOSpecImpl(TEMP_DIR, &dataSrc, new cFCOSpecNoChildren);
-	pSpec2->SetStartPoint(cFCOName(TEMP_DIR));
-	iFCO* pFCO = pSpec2->CreateFCO(pSpec2->GetStartPoint(), iFCODataSource::CHILDREN_ALL);
-	PrintFCOTree(pFCO, d, 0);
-	pFCO->Release();
+    // test AllChildStopPoint fcos...
+    d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TEMP_DIR);
+    cFCOSpecImpl* pSpec2 = new cFCOSpecImpl(TEMP_DIR, &dataSrc, new cFCOSpecNoChildren);
+    pSpec2->SetStartPoint(cFCOName(TEMP_DIR));
+    iFCO* pFCO = pSpec2->CreateFCO(pSpec2->GetStartPoint(), iFCODataSource::CHILDREN_ALL);
+    PrintFCOTree(pFCO, d, 0);
+    pFCO->Release();
 
-	// create an FSSpec and set up some start and stop points...
-	cFCOSpecStopPointSet* pSet = new cFCOSpecStopPointSet;
-	cFCOSpecImpl* pSpec = new cFCOSpecImpl(_T("Test FSSpec"), &dataSrc, pSet);
-	pSpec->SetStartPoint(cFCOName(_T("d:/code")));
-	pSet->Add(cFCOName(_T("d:/code/open gl")));
-	pSet->Add(cFCOName(_T("d:/code/pclient")));
+    // create an FSSpec and set up some start and stop points...
+    cFCOSpecStopPointSet* pSet = new cFCOSpecStopPointSet;
+    cFCOSpecImpl* pSpec = new cFCOSpecImpl(_T("Test FSSpec"), &dataSrc, pSet);
+    pSpec->SetStartPoint(cFCOName(_T("d:/code")));
+    pSet->Add(cFCOName(_T("d:/code/open gl")));
+    pSet->Add(cFCOName(_T("d:/code/pclient")));
 
-	// create all the fcos...
-	pFCO = pSpec->CreateFCO(pSpec->GetStartPoint(), iFCODataSource::CHILDREN_ALL);
-	ASSERT(pFCO);
-	PrintFCOTree(pFCO, d, 0);
-	pFCO->Release();
+    // create all the fcos...
+    pFCO = pSpec->CreateFCO(pSpec->GetStartPoint(), iFCODataSource::CHILDREN_ALL);
+    ASSERT(pFCO);
+    PrintFCOTree(pFCO, d, 0);
+    pFCO->Release();
 
-	// TODO -- test Clone(), copy ctor, operator=
+    // TODO -- test Clone(), copy ctor, operator=
 
-	pSpec->Release();
-	return;
+    pSpec->Release();
+    return;
 */
 }
 

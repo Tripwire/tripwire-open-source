@@ -40,92 +40,92 @@
 
 void TestFCOSpecHelper()
 {
-	cDebug d("TestFCOSpecHelper");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestFCOSpecHelper");
+    d.TraceDebug("Entering...\n");
 
-	// test the start and stop point fringe cases...
-	d.TraceDebug("Testing start and stop point stuff...\n");
-	cFCOSpecStopPointSet* pSet3 = new cFCOSpecStopPointSet;
-	pSet3->SetStartPoint(cFCOName(_T("/etc")));		d.TraceDebug("*** Added start point /etc\n");
-	pSet3->Add(cFCOName(_T("/etc/dog/bark")));		d.TraceDebug("*** Added stop  point /etc/dog/bark\n");
-	pSet3->Add(cFCOName(_T("/etc/dog/pant")));		d.TraceDebug("*** Added stop  point /etc/dog/pant\n\n");
-	pSet3->Add(cFCOName(_T("/etc/cat/meow")));		d.TraceDebug("*** Added stop  point /etc/cat/meow\n");
-	pSet3->TraceContents();	
-	pSet3->Add(cFCOName(_T("/etc/dog")));			d.TraceDebug("*** Added stop  point /etc/dog\n");
-	pSet3->Add(cFCOName(_T("/etc/cat/purr")));		d.TraceDebug("*** Added stop  point /etc/cat/purr\n");
-	pSet3->Add(cFCOName(_T("/etc/cat/purr/loud")));	d.TraceDebug("*** Added stop  point /etc/cat/purr/loud\n");
-	pSet3->TraceContents();	
-	pSet3->Add(cFCOName(_T("/etc/dog")));			d.TraceDebug("*** Added stop  point /etc/dog\n");
-	try
-	{
-		pSet3->Add(cFCOName(_T("/var/spool")));		d.TraceDebug("*** Added stop  point /var/spool\n");
-	}
-	catch(eError& e)
-	{
-		d.TraceDebug(_T("Caught exception : %s\n"), e.GetMsg().c_str());
-	}
-	try
-	{
-		pSet3->SetStartPoint(cFCOName(_T("/var")));	d.TraceDebug("*** Added start point /var\n");
-	}
-	catch(eError& e)
-	{
-		d.TraceDebug(_T("Caught exception : %s\n"), e.GetMsg().c_str());
-	}
-	try
-	{
-		pSet3->SetStartPoint(cFCOName(_T("/")));				d.TraceDebug("*** Added start point /\n");
-	}
-	catch(eError& e)
-	{
-		d.TraceDebug(_T("Caught exception : %s\n"), e.GetMsg().c_str());
-	}
-	pSet3->TraceContents();	
+    // test the start and stop point fringe cases...
+    d.TraceDebug("Testing start and stop point stuff...\n");
+    cFCOSpecStopPointSet* pSet3 = new cFCOSpecStopPointSet;
+    pSet3->SetStartPoint(cFCOName(_T("/etc")));     d.TraceDebug("*** Added start point /etc\n");
+    pSet3->Add(cFCOName(_T("/etc/dog/bark")));      d.TraceDebug("*** Added stop  point /etc/dog/bark\n");
+    pSet3->Add(cFCOName(_T("/etc/dog/pant")));      d.TraceDebug("*** Added stop  point /etc/dog/pant\n\n");
+    pSet3->Add(cFCOName(_T("/etc/cat/meow")));      d.TraceDebug("*** Added stop  point /etc/cat/meow\n");
+    pSet3->TraceContents(); 
+    pSet3->Add(cFCOName(_T("/etc/dog")));           d.TraceDebug("*** Added stop  point /etc/dog\n");
+    pSet3->Add(cFCOName(_T("/etc/cat/purr")));      d.TraceDebug("*** Added stop  point /etc/cat/purr\n");
+    pSet3->Add(cFCOName(_T("/etc/cat/purr/loud"))); d.TraceDebug("*** Added stop  point /etc/cat/purr/loud\n");
+    pSet3->TraceContents(); 
+    pSet3->Add(cFCOName(_T("/etc/dog")));           d.TraceDebug("*** Added stop  point /etc/dog\n");
+    try
+    {
+        pSet3->Add(cFCOName(_T("/var/spool")));     d.TraceDebug("*** Added stop  point /var/spool\n");
+    }
+    catch(eError& e)
+    {
+        d.TraceDebug(_T("Caught exception : %s\n"), e.GetMsg().c_str());
+    }
+    try
+    {
+        pSet3->SetStartPoint(cFCOName(_T("/var"))); d.TraceDebug("*** Added start point /var\n");
+    }
+    catch(eError& e)
+    {
+        d.TraceDebug(_T("Caught exception : %s\n"), e.GetMsg().c_str());
+    }
+    try
+    {
+        pSet3->SetStartPoint(cFCOName(_T("/")));                d.TraceDebug("*** Added start point /\n");
+    }
+    catch(eError& e)
+    {
+        d.TraceDebug(_T("Caught exception : %s\n"), e.GetMsg().c_str());
+    }
+    pSet3->TraceContents(); 
 
-	// test SpecContainsFCO()
-	cFCOSpecStopPointSet* pSet4 = new cFCOSpecStopPointSet;
-	pSet4->SetStartPoint(cFCOName(_T("/etc")));
-	pSet4->Add(cFCOName(_T("/etc/dog")));
-	pSet4->Add(cFCOName(_T("/etc/cat/meow")));
-	TEST(  pSet4->ContainsFCO( cFCOName(_T("/etc/frog"))));
-	TEST(  pSet4->ContainsFCO( cFCOName(_T("/etc/cat/paw"))));
-	TEST(! pSet4->ContainsFCO( cFCOName(_T("/etc/dog"))));
-	TEST(! pSet4->ContainsFCO( cFCOName(_T("/var/spool/mail"))));
-	TEST(! pSet4->ContainsFCO( cFCOName(_T("/etc/dog/bark"))));
+    // test SpecContainsFCO()
+    cFCOSpecStopPointSet* pSet4 = new cFCOSpecStopPointSet;
+    pSet4->SetStartPoint(cFCOName(_T("/etc")));
+    pSet4->Add(cFCOName(_T("/etc/dog")));
+    pSet4->Add(cFCOName(_T("/etc/cat/meow")));
+    TEST(  pSet4->ContainsFCO( cFCOName(_T("/etc/frog"))));
+    TEST(  pSet4->ContainsFCO( cFCOName(_T("/etc/cat/paw"))));
+    TEST(! pSet4->ContainsFCO( cFCOName(_T("/etc/dog"))));
+    TEST(! pSet4->ContainsFCO( cFCOName(_T("/var/spool/mail"))));
+    TEST(! pSet4->ContainsFCO( cFCOName(_T("/etc/dog/bark"))));
 
-	// test the All Children Stop Points case
-	cFCOSpecNoChildren noChildren;
-	noChildren.SetStartPoint(cFCOName(_T("/etc")));
-	TEST(  noChildren.ContainsFCO( cFCOName(_T("/etc"))));
-	TEST(! noChildren.ContainsFCO( cFCOName(_T("/etc/frog"))));
+    // test the All Children Stop Points case
+    cFCOSpecNoChildren noChildren;
+    noChildren.SetStartPoint(cFCOName(_T("/etc")));
+    TEST(  noChildren.ContainsFCO( cFCOName(_T("/etc"))));
+    TEST(! noChildren.ContainsFCO( cFCOName(_T("/etc/frog"))));
 
-	// TODO -- test Compare()
+    // TODO -- test Compare()
 
-	// test serialization
-		// test serialization
-	cMemoryArchive a;
-	cSerializerImpl s(a, cSerializerImpl::S_WRITE);
-	s.Init();
-	s.WriteObjectDynCreate(pSet3);
-	s.WriteObjectDynCreate(&noChildren);
-	s.Finit();
-	a.Seek(0, cBidirArchive::BEGINNING);
+    // test serialization
+        // test serialization
+    cMemoryArchive a;
+    cSerializerImpl s(a, cSerializerImpl::S_WRITE);
+    s.Init();
+    s.WriteObjectDynCreate(pSet3);
+    s.WriteObjectDynCreate(&noChildren);
+    s.Finit();
+    a.Seek(0, cBidirArchive::BEGINNING);
 
-	iFCOSpecHelper* pHelp1, *pHelp2;
-	cSerializerImpl s2(a, cSerializerImpl::S_READ);
-	s2.Init();
-	pHelp1 = (iFCOSpecHelper*)s2.ReadObjectDynCreate();
-	pHelp2 = (iFCOSpecHelper*)s2.ReadObjectDynCreate();
-	s2.Finit();
+    iFCOSpecHelper* pHelp1, *pHelp2;
+    cSerializerImpl s2(a, cSerializerImpl::S_READ);
+    s2.Init();
+    pHelp1 = (iFCOSpecHelper*)s2.ReadObjectDynCreate();
+    pHelp2 = (iFCOSpecHelper*)s2.ReadObjectDynCreate();
+    s2.Finit();
 
-	TEST(pHelp1->Compare(pSet3)			== iFCOSpecHelper::CMP_EQ);
-	TEST(pHelp2->Compare(&noChildren)	== iFCOSpecHelper::CMP_EQ);
-	TEST(pHelp1->Compare(&noChildren)	!= iFCOSpecHelper::CMP_EQ);
-	TEST(pHelp2->Compare(pSet3)			!= iFCOSpecHelper::CMP_EQ);
+    TEST(pHelp1->Compare(pSet3)         == iFCOSpecHelper::CMP_EQ);
+    TEST(pHelp2->Compare(&noChildren)   == iFCOSpecHelper::CMP_EQ);
+    TEST(pHelp1->Compare(&noChildren)   != iFCOSpecHelper::CMP_EQ);
+    TEST(pHelp2->Compare(pSet3)         != iFCOSpecHelper::CMP_EQ);
 
 
-	delete pSet3;
-	delete pSet4;
-	delete pHelp1;
-	delete pHelp2;
+    delete pSet3;
+    delete pSet4;
+    delete pHelp1;
+    delete pHelp2;
 }

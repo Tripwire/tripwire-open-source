@@ -53,9 +53,9 @@ public:
         // Defines an order of FCOSpecs.  A FCOSpec is less than another if and only if
         // the string concatination of start point and an ordered list of stop point 
         // are less than the other.
-	static bool SpecsOverlap(const iFCOSpec* pSpec1, const iFCOSpec* pSpec2);
-		// returns true if the specs "overlap", meaning there exists an fco which is contained
-		// in both specs. This is true if one specs's start point is contained in the other spec.
+    static bool SpecsOverlap(const iFCOSpec* pSpec1, const iFCOSpec* pSpec2);
+        // returns true if the specs "overlap", meaning there exists an fco which is contained
+        // in both specs. This is true if one specs's start point is contained in the other spec.
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,12 +63,12 @@ public:
 
 ///////////////////////////////////////////////////////////////////////////////
 // SpecsOverlap -- returns true if one of the specs contains the other's 
-//		start point
+//      start point
 ///////////////////////////////////////////////////////////////////////////////
 inline bool iFCOSpecUtil::SpecsOverlap(const iFCOSpec* pSpec1, const iFCOSpec* pSpec2)
 {
-	return (pSpec1->SpecContainsFCO(pSpec2->GetStartPoint()) ||
-			pSpec2->SpecContainsFCO(pSpec1->GetStartPoint()));
+    return (pSpec1->SpecContainsFCO(pSpec2->GetStartPoint()) ||
+            pSpec2->SpecContainsFCO(pSpec1->GetStartPoint()));
 }
 
 

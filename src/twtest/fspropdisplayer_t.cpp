@@ -90,10 +90,10 @@ void cTestFSPropDisplayer::Test()
     outFile.OpenReadWrite(_T("c:\\tmp\\tmp.pd"));
     cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
 
-	outSer.Init();
+    outSer.Init();
     
     pPD->Write( &outSer );
-	outSer.Finit();
+    outSer.Finit();
 
     outFile.Close();
 
@@ -105,10 +105,10 @@ void cTestFSPropDisplayer::Test()
     cSerializerImpl inSer(inFile, cSerializerImpl::S_READ);
     
     cFSPropDisplayer* pPDNew = new cFSPropDisplayer();
-	inSer.Init();
+    inSer.Init();
     
     pPDNew->Read( &inSer );
-	inSer.Finit();
+    inSer.Finit();
     */
     
     TSTRING strRet;

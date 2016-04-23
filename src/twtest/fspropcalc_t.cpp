@@ -44,17 +44,17 @@
 /*
 static void PrintProps(const iFCO* pFCO)
 {
-	cDebug d("PrintProps");
-	const iFCOPropSet* pSet = pFCO->GetPropSet();
-	const cFCOPropVector& v = pSet->GetValidVector();
-	
-	for(int i=0; i<pSet->GetNumProps(); i++)
-	{
-		if(v.ContainsItem(i))
-		{
-			d.TraceDebug("[%d] %s\t%s\n", i, pSet->GetPropName(i), pSet->GetPropAt(i)->AsString().c_str());
-		}
-	}
+    cDebug d("PrintProps");
+    const iFCOPropSet* pSet = pFCO->GetPropSet();
+    const cFCOPropVector& v = pSet->GetValidVector();
+    
+    for(int i=0; i<pSet->GetNumProps(); i++)
+    {
+        if(v.ContainsItem(i))
+        {
+            d.TraceDebug("[%d] %s\t%s\n", i, pSet->GetPropName(i), pSet->GetPropAt(i)->AsString().c_str());
+        }
+    }
 }
 */
 
@@ -63,69 +63,69 @@ void TestFSPropCalc()
 {
 #pragma message( __FILE__ "(1) : TODO - implement this test file")
 #if 0
-	cDebug d("TestFSPropCalc");
-	cFSDataSource ds;
+    cDebug d("TestFSPropCalc");
+    cFSDataSource ds;
 
-	iFSServices* pFSServices = iFSServices::GetInstance();
-	bool bCaseSensitive = pFSServices->IsCaseSensitive();
+    iFSServices* pFSServices = iFSServices::GetInstance();
+    bool bCaseSensitive = pFSServices->IsCaseSensitive();
 
-	// oh boy! I finally get to test property calculation!
-	d.TraceDebug("Creating FCO c:\\temp\\foo.bin\n");
+    // oh boy! I finally get to test property calculation!
+    d.TraceDebug("Creating FCO c:\\temp\\foo.bin\n");
 
-	cFileArchive arch;
-	int ret;
-	ret = arch.OpenReadWrite(TEMP_DIR _T("/foo.bin"), true);
-	TEST(ret);
-	arch.WriteBlob("\x1\x2\x3\x4\x5\x6\x7\x8\x9\x0", 10);
-	arch.Close();
-	
-	// get the fco but none of its children...
-	iFCO* pFCO = ds.CreateFCO(cFCOName(TEMP_DIR _T("/foo.bin")), 0);
-	ASSERT(pFCO);
+    cFileArchive arch;
+    int ret;
+    ret = arch.OpenReadWrite(TEMP_DIR _T("/foo.bin"), true);
+    TEST(ret);
+    arch.WriteBlob("\x1\x2\x3\x4\x5\x6\x7\x8\x9\x0", 10);
+    arch.Close();
+    
+    // get the fco but none of its children...
+    iFCO* pFCO = ds.CreateFCO(cFCOName(TEMP_DIR _T("/foo.bin")), 0);
+    ASSERT(pFCO);
 
-	// create the calculator and set some properties to calculate...
-	cFSPropCalc propCalc;
-	cFCOPropVector v(pFCO->GetPropSet()->GetValidVector().GetSize());
-	v.AddItem(cFSPropSet::PROP_DEV);
-	v.AddItem(cFSPropSet::PROP_CTIME);
-	v.AddItem(cFSPropSet::PROP_SIZE);
-	v.AddItem(cFSPropSet::PROP_BLOCKS);
-	v.AddItem(cFSPropSet::PROP_CRC32);
-	v.AddItem(cFSPropSet::PROP_MD5);
-	propCalc.SetPropVector(v);
+    // create the calculator and set some properties to calculate...
+    cFSPropCalc propCalc;
+    cFCOPropVector v(pFCO->GetPropSet()->GetValidVector().GetSize());
+    v.AddItem(cFSPropSet::PROP_DEV);
+    v.AddItem(cFSPropSet::PROP_CTIME);
+    v.AddItem(cFSPropSet::PROP_SIZE);
+    v.AddItem(cFSPropSet::PROP_BLOCKS);
+    v.AddItem(cFSPropSet::PROP_CRC32);
+    v.AddItem(cFSPropSet::PROP_MD5);
+    propCalc.SetPropVector(v);
 
-	// finally, do the calculation
-	pFCO->AcceptVisitor(&propCalc);
+    // finally, do the calculation
+    pFCO->AcceptVisitor(&propCalc);
 
-	// see what properties were evaluated...
-	PrintProps(pFCO);
+    // see what properties were evaluated...
+    PrintProps(pFCO);
 
-	d.TraceDebug("CRC32 should be \"2ARm2G\"\n");
-	d.TraceDebug("MD5 should be \"1.Oyjj1dbom.DF2KktvtQe\"\n");
+    d.TraceDebug("CRC32 should be \"2ARm2G\"\n");
+    d.TraceDebug("MD5 should be \"1.Oyjj1dbom.DF2KktvtQe\"\n");
 
-	// if we do it with "Leave", then nothing should change...
-	d.TraceDebug("Changing collision action to Leave; the following run should _not_ call Stat()\n");
-	propCalc.SetCollisionAction(iFCOPropCalc::PROP_LEAVE);
-	pFCO->AcceptVisitor(&propCalc);
+    // if we do it with "Leave", then nothing should change...
+    d.TraceDebug("Changing collision action to Leave; the following run should _not_ call Stat()\n");
+    propCalc.SetCollisionAction(iFCOPropCalc::PROP_LEAVE);
+    pFCO->AcceptVisitor(&propCalc);
 
-	
-	// test only calculating unevaluated props...
-	d.TraceDebug("invalidating PROP_MD5 in fco, and changing the file. \n\tAll should remain the same except md5.\n");
-	ret = arch.OpenReadWrite(TEMP_DIR _T("/foo.bin"), true);
-	TEST(ret);
-	arch.WriteString(_T("Bark Bark Bark\n"));
-	arch.Close();
+    
+    // test only calculating unevaluated props...
+    d.TraceDebug("invalidating PROP_MD5 in fco, and changing the file. \n\tAll should remain the same except md5.\n");
+    ret = arch.OpenReadWrite(TEMP_DIR _T("/foo.bin"), true);
+    TEST(ret);
+    arch.WriteString(_T("Bark Bark Bark\n"));
+    arch.Close();
 
-	// do the calculation
-	pFCO->GetPropSet()->InvalidateProp(cFSPropSet::PROP_MD5);
-	pFCO->AcceptVisitor(&propCalc);
-	PrintProps(pFCO);
+    // do the calculation
+    pFCO->GetPropSet()->InvalidateProp(cFSPropSet::PROP_MD5);
+    pFCO->AcceptVisitor(&propCalc);
+    PrintProps(pFCO);
 
 
-	// TODO -- is there any way to test the error queue in the prop calc?
+    // TODO -- is there any way to test the error queue in the prop calc?
 
-	// release the fco
-	pFCO->Release();
+    // release the fco
+    pFCO->Release();
 #endif
-	return;
+    return;
 }

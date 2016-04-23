@@ -39,13 +39,13 @@ iTWFactory* iTWFactory::mpInstance = 0;
 
 void iTWFactory::SetFactory(iTWFactory* pFact)
 {
-	mpInstance = pFact;
+    mpInstance = pFact;
 }
 
 iTWFactory* iTWFactory::GetInstance()
 {
-	// TODO -- should I assert(mpInstance)? That is, is it an error condition to ask for
-	// the instance before it has been set?
-	return mpInstance;
+    // TODO -- should I assert(mpInstance)? That is, is it an error condition to ask for
+    // the instance before it has been set?
+    return mpInstance;
 }
 

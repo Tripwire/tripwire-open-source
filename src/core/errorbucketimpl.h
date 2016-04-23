@@ -61,111 +61,111 @@
 
 //////////////////////////////////////////////////////
 // cErrorReporter -- sends all error messages to 
-//		stderr
+//      stderr
 //////////////////////////////////////////////////////
 class cErrorReporter : public cErrorBucket
 {
 public:
-	static void PrintErrorMsg(const eError& error, const TSTRING& strExtra = _T(""));
-		// function that HandleError() uses to print the error messages to stderr.
-		// this function uses the current authoritative format for error reporting, so
-		// other functions needing to display errors to the user should use this.
-		//
+    static void PrintErrorMsg(const eError& error, const TSTRING& strExtra = _T(""));
+        // function that HandleError() uses to print the error messages to stderr.
+        // this function uses the current authoritative format for error reporting, so
+        // other functions needing to display errors to the user should use this.
+        //
 
         // NOTE:bam 5/7/99 -- I don't think the below is true anymore?
-		// NOTE:mdb -- if the error has an ID of zero, nothing will be printed. This
-		//		is a way to throw a fatal error where the error reporting has already
-		//		occurred.
+        // NOTE:mdb -- if the error has an ID of zero, nothing will be printed. This
+        //      is a way to throw a fatal error where the error reporting has already
+        //      occurred.
 
 protected:
-	virtual void HandleError(const eError& error);
+    virtual void HandleError(const eError& error);
 };
 
 ///////////////////////////////////////////////////////
 // cErrorTracer -- traces all errors with the D_ERROR debug
-//		level
+//      level
 ///////////////////////////////////////////////////////
 class cErrorTracer : public cErrorBucket
 {
 protected:
-	virtual void HandleError(const eError& error);
+    virtual void HandleError(const eError& error);
 };
 
 
 //////////////////////////////////////////////////////
 // cErrorQueue -- keeps track of all the errors that
-//		are reported to it, providing an interface for
-//		retrieving them at a later time
+//      are reported to it, providing an interface for
+//      retrieving them at a later time
 //////////////////////////////////////////////////////
 class cErrorQueue : public cErrorBucket, public iTypedSerializable
 {
-	friend class cErrorQueueIter;
+    friend class cErrorQueueIter;
 public:
-	void Clear();	
-		// remove all errors from the queue
-	int GetNumErrors() const;
-		// returns how many errors are in the queue
+    void Clear();   
+        // remove all errors from the queue
+    int GetNumErrors() const;
+        // returns how many errors are in the queue
 
-	//
-	// iSerializable interface
-	//
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    //
+    // iSerializable interface
+    //
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 
-	//
-	// Debugging
-	//
-	void TraceContents(int dl = -1) const;
+    //
+    // Debugging
+    //
+    void TraceContents(int dl = -1) const;
 
 protected:
-	virtual void HandleError(const eError& error);
+    virtual void HandleError(const eError& error);
 private:
-	typedef std::list<ePoly> ListType;
-	ListType mList;
+    typedef std::list<ePoly> ListType;
+    ListType mList;
 
-	DECLARE_TYPEDSERIALIZABLE()
+    DECLARE_TYPEDSERIALIZABLE()
 };
 
 class cErrorQueueIter
 {
 public:
-	cErrorQueueIter(cErrorQueue& queue);
-	cErrorQueueIter(const cErrorQueue& queue);
-	~cErrorQueueIter() {}
+    cErrorQueueIter(cErrorQueue& queue);
+    cErrorQueueIter(const cErrorQueue& queue);
+    ~cErrorQueueIter() {}
 
-	// iteration methods
-	void SeekBegin();
-	void Next();
-	bool Done() const;
+    // iteration methods
+    void SeekBegin();
+    void Next();
+    bool Done() const;
 
-	// access to the error
-	const ePoly&   GetError() const;
-		// both of these return results are undefined if the iterator 
-		// is not valid (ie - IsDone() == true)
+    // access to the error
+    const ePoly&   GetError() const;
+        // both of these return results are undefined if the iterator 
+        // is not valid (ie - IsDone() == true)
 private:
-	cErrorQueue::ListType&			mList;
-	cErrorQueue::ListType::iterator mIter;
+    cErrorQueue::ListType&          mList;
+    cErrorQueue::ListType::iterator mIter;
 };
 
 //////////////////////////////////////////////////////
 // cErrorBucketNull -- an error bucket that plays the
-//		role of /dev/null
+//      role of /dev/null
 //////////////////////////////////////////////////////
 class cErrorBucketNull : public cErrorBucket
 {
-	virtual void AddError(const eError& ) {}
+    virtual void AddError(const eError& ) {}
 protected:
-	virtual void HandleError(const eError& ) {}
+    virtual void HandleError(const eError& ) {}
 };
 
 //////////////////////////////////////////////////////
 // cErrorBucketPassThru -- does nothing with errors;
-//		just passes them on to its children
+//      just passes them on to its children
 //////////////////////////////////////////////////////
 class cErrorBucketPassThru : public cErrorBucket
 {
 protected:
-	virtual void HandleError(const eError& ) {}
+    virtual void HandleError(const eError& ) {}
 };
 
 

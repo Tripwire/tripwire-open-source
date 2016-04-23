@@ -43,12 +43,12 @@
 
 TSS_BEGIN_EXCEPTION( eUnix, eError )
 
-	eUnix( const TCHAR* functionName, const TCHAR* objectName, bool displayErrorNumber = true );
-		// construct one of these to indicate a unix api failure. both functionName and
-		// objectName can be NULL. This method will construct a string to pass to eError
-		// that contains all of the above information plus whatever errno returns if the dusplayErrorNumber
-		// parameter is true.
-	
+    eUnix( const TCHAR* functionName, const TCHAR* objectName, bool displayErrorNumber = true );
+        // construct one of these to indicate a unix api failure. both functionName and
+        // objectName can be NULL. This method will construct a string to pass to eError
+        // that contains all of the above information plus whatever errno returns if the dusplayErrorNumber
+        // parameter is true.
+    
 
 TSS_END_EXCEPTION()
 

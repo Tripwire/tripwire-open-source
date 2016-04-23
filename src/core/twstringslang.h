@@ -38,7 +38,7 @@
 
 enum Languages 
 {
-	LANG_USENGLISH = 1
+    LANG_USENGLISH = 1
 };
 
 #endif

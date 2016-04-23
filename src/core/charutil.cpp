@@ -63,19 +63,19 @@ int util_tlen( const TCHAR* cur, size_t count )
 */
 
 
-//	
+//  
 // finds the next whole character in string identified by ['cur'-'end')
 // identifies beginning of char in 'first', then end of character in 'last'
 // returns number of TCHARs that make up the next character
 // if there are no more characters, will return 0 and first = last = end
 // POSTCONDITIONS:
-//	
+//  
 // RETURNS:
-//	
+//  
 // THROWS:
-//	
+//  
 // COMPLEXITY:
-//	
+//  
 //
 
 /* static */
@@ -159,19 +159,19 @@ int cCharUtil::PeekNextChar(   const TSTRING::const_iterator& cur,
 //                     TSTRING::const_iterator& last )
 //-----------------------------------------------------------------------------
 // REQUIRES:
-//	
+//  
 // EFFECTS:
-//	
+//  
 // same as PeekNextChar but increments 'cur' to 'last'
 //
 // POSTCONDITIONS:
-//	
+//  
 // RETURNS:
-//	
+//  
 // THROWS:
-//	
+//  
 // COMPLEXITY:
-//	
+//  
 //
 
 /* static */

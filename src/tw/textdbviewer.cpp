@@ -88,9 +88,9 @@ static const TCHAR* g_sz79Equals = _T("=========================================
 static void InitOStream( TOSTREAM* pOut );
 static void DisplayFCOProps( const iFCO* const pFCO, const iFCOPropDisplayer* pPD, TOSTREAM* pOut );
 
-static void OutputDatabaseHeader	( const cFCODbHeader& dbHeader, TOSTREAM* pOut );
+static void OutputDatabaseHeader    ( const cFCODbHeader& dbHeader, TOSTREAM* pOut );
 // Currently we don't have a rule summary.  See function definition below
-//static void OutputRulesSummary	( const cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut );
+//static void OutputRulesSummary    ( const cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut );
 
 
 static void OutputSectionDelimiter( int nString, TOSTREAM* pOut );
@@ -106,7 +106,7 @@ static void OutputObjectDetail( cFCODatabaseFileIter& genreIter, const iFCONameT
 static void OutputIterChildren  ( cDbDataSourceIter dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails );
 static void OutputIterPeers     ( cDbDataSourceIter dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails );
 //static void OutputIter          ( cDbDataSourceIter& dbIter, const iFCOPropDisplayer* pPD, TOSTREAM* pOut, bool fDetails );
-static void PrintFCOShort		( const iFCO* pFCO, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin );
+static void PrintFCOShort       ( const iFCO* pFCO, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin );
 //static void OutputSpecHeader( const cFCODbSpecIter& dbi, TOSTREAM* pOut );
 //static void OutputDetailHeader( const cFCODbSpecIter& dbi, int nObjects, TOSTREAM* pOut );
 
@@ -134,11 +134,11 @@ void cTextDBViewer::PrintDB( cFCODatabaseFile& rd, const TSTRING& strFilename )
     }
     else
     {
-		//Gonna have to insert a lame hack here, since ostr.open DEMANDS a const char*!!
+        //Gonna have to insert a lame hack here, since ostr.open DEMANDS a const char*!!
 #ifdef _UNICODE
-		char ncBuf[ iFSServices::TW_MAX_PATH ];
-		wcstombs( ncBuf, strFilename.c_str(), sizeof(char));
-		fileOut.open( ncBuf );
+        char ncBuf[ iFSServices::TW_MAX_PATH ];
+        wcstombs( ncBuf, strFilename.c_str(), sizeof(char));
+        fileOut.open( ncBuf );
 #else //narrow character mode
         fileOut.open( strFilename.c_str() );
 #endif
@@ -151,7 +151,7 @@ void cTextDBViewer::PrintDB( cFCODatabaseFile& rd, const TSTRING& strFilename )
         else
         {
             ASSERT( false );
-			throw eArchiveOpen( strFilename, iFSServices::GetInstance()->GetErrString() );
+            throw eArchiveOpen( strFilename, iFSServices::GetInstance()->GetErrString() );
         }
     }
 
@@ -188,18 +188,18 @@ void cTextDBViewer::OutputFCO( cDbDataSourceIter& dbIter, const iFCOPropDisplaye
 
     if( dbIter.HasFCOData() )
     {
-		iFCO* pFCO = dbIter.CreateFCO();
+        iFCO* pFCO = dbIter.CreateFCO();
         
-		if( fDetails )
+        if( fDetails )
         {
             (*pOut) << TSS_GetString( cTW, tw::STR_OBJECT_NAME ) << _T(" ") << pNT->ToStringDisplay( pFCO->GetName() ).c_str() << endl << endl;
             DisplayFCOProps( pFCO, pPD, pOut );
             (*pOut) << endl << endl;
         }
         else
-			PrintFCOShort( pFCO, pPD, pNT, pOut, DETAILS_MARGIN );
+            PrintFCOShort( pFCO, pPD, pNT, pOut, DETAILS_MARGIN );
 
-		pFCO->Release();
+        pFCO->Release();
     }
 }
 
@@ -247,7 +247,7 @@ static void OutputIterPeers( cDbDataSourceIter dbIter, const iFCOPropDisplayer* 
     for ( dbIter.SeekBegin(); ! dbIter.Done(); dbIter.Next() )
     {
         // TODO: this obviously needs to be expanded upon.
-		cTextDBViewer::OutputFCO( dbIter, pPD, pNT, pOut, fDetails );
+        cTextDBViewer::OutputFCO( dbIter, pPD, pNT, pOut, fDetails );
 
         if( dbIter.CanDescend() )
             OutputIterChildren( dbIter, pPD, pNT, pOut, fDetails );
@@ -373,10 +373,10 @@ static void OutputRulesSummary(const cFCODatabaseFileIter& genreIter, const iFCO
     
     (*pOut) << endl;
 
-	// NOTE 4 Jan 99 mdb -- this used to use dbHeader.GetTotalObjectsScanned() but it was not always consistent with the 
-	//		total number of objects in the database. TODO -- if we are really not going to use this number, then we should 
-	//		not store it in the database at all.
-	//
+    // NOTE 4 Jan 99 mdb -- this used to use dbHeader.GetTotalObjectsScanned() but it was not always consistent with the 
+    //      total number of objects in the database. TODO -- if we are really not going to use this number, then we should 
+    //      not store it in the database at all.
+    //
     (*pOut) << TSS_GetString( cTW, tw::STR_TOTAL_NUM_FILES );
     //(*pOut) << _T(" ") << nTotalObjects << endl;
     (*pOut) << _T("TODO") << endl;

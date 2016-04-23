@@ -95,41 +95,41 @@ int echild();
 /*
  * define error codes
  */
-#define SE_NONE		0		/* no error */
-#define	SE_NOMEM	-1		/* no memory */
-#define SE_NOPIPE	-2		/* no pipes */
-#define SE_NOVAR	-3		/* variable not defined */
-#define SE_BADFD	-4		/* invalid file descriptor */
+#define SE_NONE     0       /* no error */
+#define SE_NOMEM    -1      /* no memory */
+#define SE_NOPIPE   -2      /* no pipes */
+#define SE_NOVAR    -3      /* variable not defined */
+#define SE_BADFD    -4      /* invalid file descriptor */
 
 /*
  * default security settings
  */
 #ifndef DEF_UMASK
-#	define DEF_UMASK	077		/* only owner has privileges */
+#   define DEF_UMASK    077     /* only owner has privileges */
 #endif
 #ifndef UID_RESET
-#	define UID_RESET	-2		/* reset EUID to RUID */
+#   define UID_RESET    -2      /* reset EUID to RUID */
 #endif
 #ifndef GID_RESET
-#	define GID_RESET	-2		/* reset EGID to RGID */
+#   define GID_RESET    -2      /* reset EGID to RGID */
 #endif
 #ifndef DEF_PATH
-#	ifdef __FreeBSD_cc_version
-#		define DEF_PATH	"PATH=/sbin:/usr/sbin:/bin:/usr/bin"  /* default search path */
-#	else
-#		define DEF_PATH "PATH=/bin:/usr/bin:/usr/ucb"	/* default search path */
-#	endif
+#   ifdef __FreeBSD_cc_version
+#       define DEF_PATH "PATH=/sbin:/usr/sbin:/bin:/usr/bin"  /* default search path */
+#   else
+#       define DEF_PATH "PATH=/bin:/usr/bin:/usr/ucb"   /* default search path */
+#   endif
 #endif
 #ifndef DEF_SHELL
-#	define DEF_SHELL	"SHELL=/bin/sh"	/* default shell */
+#   define DEF_SHELL    "SHELL=/bin/sh" /* default shell */
 #endif
 #ifndef DEF_IFS
-#	define DEF_IFS		"IFS= \t\n"	/* default IFS */
+#   define DEF_IFS      "IFS= \t\n" /* default IFS */
 #endif
 #ifndef DEF_TZ
-#	define DEF_TZ		"TZ"		/* default TZ */
+#   define DEF_TZ       "TZ"        /* default TZ */
 #endif
 #ifndef NOSHELL
-#	define NOSHELL		"/bin/sh"	/* use this if no shell */
+#   define NOSHELL      "/bin/sh"   /* use this if no shell */
 #endif
 

@@ -41,74 +41,74 @@
 // this is the struct we will use for testing purposes
 struct cDog
 {
-	int		i;
-	char	c;
-	double	d;
-	cDog() : i(53), c('f'), d(3.14) { cDebug d("cDog::cDog");	d.TraceDebug("Dog ctor...\n"); }
-	~cDog()							{ cDebug d("cDog::~cDog");	d.TraceDebug("Dog dtor...\n"); }
+    int     i;
+    char    c;
+    double  d;
+    cDog() : i(53), c('f'), d(3.14) { cDebug d("cDog::cDog");   d.TraceDebug("Dog ctor...\n"); }
+    ~cDog()                         { cDebug d("cDog::~cDog");  d.TraceDebug("Dog dtor...\n"); }
 };
 
 
 void TestObjectPool()
 {
     int k, j;
-	cDebug d("TestObjectPool");
+    cDebug d("TestObjectPool");
 
-	// first, just try the growing properties of the pool
-	cObjectPoolBase pool(10, 5);
-	d.TraceDebug("object size = 10, chunk size = 5\n");
-	for(k=0; k < 12; k++)
-	{
-		d.TraceDebug("Allocating...\n");
-		pool.Alloc();
-	}
-	d.TraceDebug("Removing everything...\n");
-	pool.Clear();
+    // first, just try the growing properties of the pool
+    cObjectPoolBase pool(10, 5);
+    d.TraceDebug("object size = 10, chunk size = 5\n");
+    for(k=0; k < 12; k++)
+    {
+        d.TraceDebug("Allocating...\n");
+        pool.Alloc();
+    }
+    d.TraceDebug("Removing everything...\n");
+    pool.Clear();
 
-	// test the template class
-	cObjectPool<cDog> dogPool(3);
-	std::list<cDog*> lDog;
-	for(j=0; j < 7; j++)
-	{
-		lDog.push_back(dogPool.New());
-	}
+    // test the template class
+    cObjectPool<cDog> dogPool(3);
+    std::list<cDog*> lDog;
+    for(j=0; j < 7; j++)
+    {
+        lDog.push_back(dogPool.New());
+    }
 
-	std::list<cDog*>::iterator i;
-	for( i = lDog.begin(); i != lDog.end(); i++)
-	{
-		d.TraceDebug("dog contents: %d %c %lf\n", (*i)->i, (*i)->c, (*i)->d);
-		dogPool.Delete(*i);
-	}
-	lDog.clear();
+    std::list<cDog*>::iterator i;
+    for( i = lDog.begin(); i != lDog.end(); i++)
+    {
+        d.TraceDebug("dog contents: %d %c %lf\n", (*i)->i, (*i)->c, (*i)->d);
+        dogPool.Delete(*i);
+    }
+    lDog.clear();
 
-	// now, do some random insertions and deletions...
-	std::vector<void*> vAlloced;
-	for(k=0; k < 1000; k++)
-	{
-		if(rand() % 3 > 0 )
-		{
-			// alloc
-			void* pNew = pool.Alloc();
-			d.TraceDebug("Allocating %p\n", pNew);
-			vAlloced.push_back(pNew);
-		}
-		else
-		{
-			// free
-   		        int randval = rand();
-			int vsize = vAlloced.size();
+    // now, do some random insertions and deletions...
+    std::vector<void*> vAlloced;
+    for(k=0; k < 1000; k++)
+    {
+        if(rand() % 3 > 0 )
+        {
+            // alloc
+            void* pNew = pool.Alloc();
+            d.TraceDebug("Allocating %p\n", pNew);
+            vAlloced.push_back(pNew);
+        }
+        else
+        {
+            // free
+                int randval = rand();
+            int vsize = vAlloced.size();
                         if (vsize) 
-			{
-			  int idx = randval % vsize;
-			  std::vector<void*>::iterator vi = vAlloced.begin() + idx;
-			  void* pGone = *vi;
-			  d.TraceDebug("Removing %p\n", pGone);
-			  pool.Free(pGone);
-			  vAlloced.erase(vi);
+            {
+              int idx = randval % vsize;
+              std::vector<void*>::iterator vi = vAlloced.begin() + idx;
+              void* pGone = *vi;
+              d.TraceDebug("Removing %p\n", pGone);
+              pool.Free(pGone);
+              vAlloced.erase(vi);
                         }
-		}
-	}
-	
-	d.TraceDebug("Leaving...\n");
+        }
+    }
+    
+    d.TraceDebug("Leaving...\n");
 }
 

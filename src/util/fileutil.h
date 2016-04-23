@@ -51,31 +51,31 @@ TSS_EXCEPTION( eFileUtilBackup,         eFileUtil );
 class cFileUtil
 {
 public:
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // File properties
-	//-------------------------------------------------------------------------
-	
-	static void TestFileExists(const TSTRING& fileName);	//throw eError();
-		// tests whether or not the file exists; throws eError suitable for cTWUtil::PrintErrorMsg()
-	static void TestFileWritable(const TSTRING& fileName);	//throw eError();
-		// tests whether or not the named file can be written to; throws eError suitable for cTWUtil::PrintErrorMsg()
-    static void TestFileReadable(const TSTRING& fileName);	//throw eError();
-		// tests whether or not the named file can be read from; throws eError suitable for cTWUtil::PrintErrorMsg()
-	static bool FileExists(const TSTRING& fileName); 
-		// tests whether or not the file exists
-	static bool FileWritable(const TSTRING& fileName);	
-		// tests whether or not the named file can be written to
+    //-------------------------------------------------------------------------
+    
+    static void TestFileExists(const TSTRING& fileName);    //throw eError();
+        // tests whether or not the file exists; throws eError suitable for cTWUtil::PrintErrorMsg()
+    static void TestFileWritable(const TSTRING& fileName);  //throw eError();
+        // tests whether or not the named file can be written to; throws eError suitable for cTWUtil::PrintErrorMsg()
+    static void TestFileReadable(const TSTRING& fileName);  //throw eError();
+        // tests whether or not the named file can be read from; throws eError suitable for cTWUtil::PrintErrorMsg()
+    static bool FileExists(const TSTRING& fileName); 
+        // tests whether or not the file exists
+    static bool FileWritable(const TSTRING& fileName);  
+        // tests whether or not the named file can be written to
         // if the file does not exist, but can be created this function will return true        
     static bool FileReadable(const TSTRING& fileName);
         // tests whether or not the named file can be read from
     static bool IsDir( const TSTRING& fileName );
         // returns true if file is a dir
-	static bool IsRegularFile( const TSTRING& fileName );
-		// returns true if file is a regular file
+    static bool IsRegularFile( const TSTRING& fileName );
+        // returns true if file is a regular file
 
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // File backup mechanism
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
 
     static bool BackupFile(const TSTRING& filename, bool printWarningOnFailure = true); // throw eFile()
         // Renames the file, if it exists, to an appropiate backup name for the OS.
@@ -83,12 +83,12 @@ public:
         // An eFileWrite will be thrown if the file is not writable.
         // This is because we don't want to overwrite read-only files, which would happen
         // if we were just renamed the file to a backup filename.
-	
-	//-------------------------------------------------------------------------
+    
+    //-------------------------------------------------------------------------
     // File copy mechanism
-	//-------------------------------------------------------------------------
-	static bool	Copy(const TSTRING& src, const TSTRING& dest); // throw eFile()
-		// copies the file from src to dest, preserving permissions.
+    //-------------------------------------------------------------------------
+    static bool Copy(const TSTRING& src, const TSTRING& dest); // throw eFile()
+        // copies the file from src to dest, preserving permissions.
 
 };
 

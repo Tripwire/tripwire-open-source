@@ -46,23 +46,23 @@
 // For each of these "enumerations" we create unique integers identifying each
 // variation.  We group similar items together, such as OS_REDHAT and OS_SLACKWARE
 
-#define OS_UNKNOWN		0
-#define OS_WIN32		0x0101
-#define OS_AIX			0x0401
-#define OS_HPUX			0x0501
-#define OS_IRIX			0x0601
-#define OS_OSF1			0x0701
+#define OS_UNKNOWN      0
+#define OS_WIN32        0x0101
+#define OS_AIX          0x0401
+#define OS_HPUX         0x0501
+#define OS_IRIX         0x0601
+#define OS_OSF1         0x0701
 
-#define COMP_UNKNOWN		0
-#define COMP_MSVC		    0x0101
-#define COMP_KAI_GCC		0x0201
-#define COMP_KAI_SUNPRO		0x0202
-#define COMP_KAI_GLIBC		0x0203
-#define COMP_KAI_VISUALAGE	0x0204
-#define COMP_KAI_HPANSIC	0x0205
-#define COMP_KAI_IRIX		0x0206
-#define COMP_KAI_OSF1ALPHA	0x0207
-#define COMP_SUNPRO		    0x0301
+#define COMP_UNKNOWN        0
+#define COMP_MSVC           0x0101
+#define COMP_KAI_GCC        0x0201
+#define COMP_KAI_SUNPRO     0x0202
+#define COMP_KAI_GLIBC      0x0203
+#define COMP_KAI_VISUALAGE  0x0204
+#define COMP_KAI_HPANSIC    0x0205
+#define COMP_KAI_IRIX       0x0206
+#define COMP_KAI_OSF1ALPHA  0x0207
+#define COMP_SUNPRO         0x0301
 
 //=============================================================================
 // Platform detection
@@ -93,34 +93,34 @@
     #define COMP                COMP_KAI_IRIX
 
 #elif defined(_ALPHA)
-    #define OS			        OS_OSF1
-    #define COMP		        COMP_KAI_OSF1ALPHA
+    #define OS                  OS_OSF1
+    #define COMP                COMP_KAI_OSF1ALPHA
 
 #elif defined (_HPUX)
-	#define OS					OS_HPUX
-	#define COMP				COMP_KAI_HPANSIC
+    #define OS                  OS_HPUX
+    #define COMP                COMP_KAI_HPANSIC
 
 #else
-//	OK for OS not to resolve, it's being phased out.
+//  OK for OS not to resolve, it's being phased out.
 //    #error Unknown OS
 #endif
 
 #if !defined(OS)
-//	OK for OS not to resolve, it's being phased out.
+//  OK for OS not to resolve, it's being phased out.
 //    #error OS definition did not resolve.  Check "platform.h".
 #endif
-	/* XXX: COMP may now not resolve, because autoconf may
-	 *	detect GCC.  This is done in the hopes that all
-	 *	COMP detections, and indeed both OS & COMP detechtions
-	 *	will eventualy be done automatically.
-	 *
-	 *	This means, the former "#if !defined(COMP)" will
-	 *	temporarily have to also check the HAVE_[compiler]
-	 *	#defines until all compilers are checked by autoconf,
-	 *	at which point this can be removed completely.
-	 *
-	 *	PH - 20010311
-	 */
+    /* XXX: COMP may now not resolve, because autoconf may
+     *  detect GCC.  This is done in the hopes that all
+     *  COMP detections, and indeed both OS & COMP detechtions
+     *  will eventualy be done automatically.
+     *
+     *  This means, the former "#if !defined(COMP)" will
+     *  temporarily have to also check the HAVE_[compiler]
+     *  #defines until all compilers are checked by autoconf,
+     *  at which point this can be removed completely.
+     *
+     *  PH - 20010311
+     */
 #if !defined(COMP) && !defined(HAVE_GCC)
     #error COMP definition did not resolve.  Check "platform.h".
 #endif
@@ -153,10 +153,10 @@
 // OS detection 
 // Note: Avoid using these if possible (see above)
 #define IS_WIN32    (OS == OS_WIN32)
-#define IS_AIX		(OS == OS_AIX)
-#define IS_HPUX		(OS == OS_HPUX)
-#define IS_IRIX		(OS == OS_IRIX)
-#define IS_OSF1		(OS == OS_OSF1)
+#define IS_AIX      (OS == OS_AIX)
+#define IS_HPUX     (OS == OS_HPUX)
+#define IS_IRIX     (OS == OS_IRIX)
+#define IS_OSF1     (OS == OS_OSF1)
 
 // complier detection
 #define IS_KAI      (COMP == COMP_KAI_GCC || COMP == COMP_KAI_SUNPRO || COMP == COMP_KAI_GLIBC || COMP == COMP_KAI_VISUALAGE || COMP == COMP_KAI_HPANSIC || COMP == COMP_KAI_IRIX || COMP == COMP_KAI_OSF1ALPHA)
@@ -179,8 +179,8 @@
 
 // Threading API
 // TODO:mdb -- this is not complete or rigorous on the unix side!!! 
-#define SUPPORTS_WIN32_THREADS	IS_WIN32
-#define SUPPORTS_POSIX_THREADS	(!SUPPORTS_WIN32_THREADS)
+#define SUPPORTS_WIN32_THREADS  IS_WIN32
+#define SUPPORTS_POSIX_THREADS  (!SUPPORTS_WIN32_THREADS)
 
 // Miscellaneous
 #define FSEEK_TAKES_INT32       IS_UNIX     // True if fseek takes 32-bit offsets

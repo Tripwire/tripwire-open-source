@@ -44,43 +44,43 @@ struct cSiggen_i;
 
 class cSiggenCmdLine {
 public:
-	public:
-	cSiggenCmdLine();
-	~cSiggenCmdLine();
+    public:
+    cSiggenCmdLine();
+    ~cSiggenCmdLine();
 
-	void InitCmdLineParser	(cCmdLineParser& parser );
-		// call this to initialize the command line parser 
+    void InitCmdLineParser  (cCmdLineParser& parser );
+        // call this to initialize the command line parser 
 
-	int Init				( cCmdLineParser& parser );
-		//This function should be called prior to Execute. 
-		//It's purpose is to transfer the information from the
-		//cmdlineparser class to the member data struct.
-	int Execute				();
-		//This is where the actual execution will take place.
+    int Init                ( cCmdLineParser& parser );
+        //This function should be called prior to Execute. 
+        //It's purpose is to transfer the information from the
+        //cmdlineparser class to the member data struct.
+    int Execute             ();
+        //This is where the actual execution will take place.
 
-	// constants for all the command line arguments
-	enum CmdLineArgs
-	{
-		HELP,
-		//signatures
-		CRC32,
-		MD5,
-		SHA,
-		HAVAL,
+    // constants for all the command line arguments
+    enum CmdLineArgs
+    {
+        HELP,
+        //signatures
+        CRC32,
+        MD5,
+        SHA,
+        HAVAL,
 
-		//Output switches:
-		ALL,
-		HEX,
-		TERSE,
+        //Output switches:
+        ALL,
+        HEX,
+        TERSE,
 
-		PARAMS,			// the final parameters
+        PARAMS,         // the final parameters
 
-		NUM_CMDLINEARGS
-	};
+        NUM_CMDLINEARGS
+    };
 
-	private:
-	cSiggen_i* mpData;
-		//insulated implementation.
+    private:
+    cSiggen_i* mpData;
+        //insulated implementation.
 };
 
 #endif //__SIGGENCMDLINE_H

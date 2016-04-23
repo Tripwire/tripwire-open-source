@@ -41,14 +41,14 @@
 
 class cSerializerTestObject : public iTypedSerializable
 {
-	DECLARE_TYPEDSERIALIZABLE()
+    DECLARE_TYPEDSERIALIZABLE()
 
 public:
     cSerializerTestObject();
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0);		// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);        // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 
     bool    CheckValid();
 
@@ -85,18 +85,18 @@ bool cSerializerTestObject::CheckValid()
 
 void cSerializerTestObject::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("cSerializerTestObject::Read()")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("cSerializerTestObject::Read()")));
 
     // clear the object to test reading propperly
     mNumber = 0;
     memset(mData, 0, 20);
     mString.erase();
-	int32 number;
+    int32 number;
     pSerializer->ReadInt32(number);
     pSerializer->ReadBlob(mData, 20);
     pSerializer->ReadString(mString);
-	mNumber = number;
+    mNumber = number;
 
 }
 
@@ -109,12 +109,12 @@ void cSerializerTestObject::Write(iSerializer* pSerializer) const
 
 void TestSerializerImpl()
 {
-	cDebug db("TestSerializerImpl()");
+    cDebug db("TestSerializerImpl()");
 
-	db.TraceAlways("Entering...\n");
+    db.TraceAlways("Entering...\n");
 
     // Got to the regisiter the test class
-	cSerializerImpl::RegisterSerializable(CLASS_TYPE(cSerializerTestObject), cSerializerTestObject::Create);
+    cSerializerImpl::RegisterSerializable(CLASS_TYPE(cSerializerTestObject), cSerializerTestObject::Create);
 
     // writing
     {
@@ -122,13 +122,13 @@ void TestSerializerImpl()
         file.OpenReadWrite(TEMP_DIR _T("/tmp.bin"));
         cSerializerImpl serializer(file, cSerializerImpl::S_WRITE);
 
-		serializer.Init();
+        serializer.Init();
         
-		cSerializerTestObject testobj;
-		testobj.Write(&serializer);
+        cSerializerTestObject testobj;
+        testobj.Write(&serializer);
 
         db.TraceAlways("    Writeing object 1...\n");
-		serializer.WriteObject(&testobj);
+        serializer.WriteObject(&testobj);
 
         db.TraceAlways("    Writeing object 2...\n");
         serializer.WriteObject(&testobj);
@@ -138,8 +138,8 @@ void TestSerializerImpl()
 
         db.TraceAlways("    Writeing object 4...\n");
         serializer.WriteObject(&testobj);
-		
-		serializer.Finit();
+        
+        serializer.Finit();
     }
 
     // reading
@@ -148,29 +148,29 @@ void TestSerializerImpl()
         file.OpenRead(TEMP_DIR _T("/tmp.bin"));
         cSerializerImpl serializer(file, cSerializerImpl::S_READ);
 
-		serializer.Init();
+        serializer.Init();
 
         cSerializerTestObject testobj;
         testobj.Read(&serializer);
         TEST(testobj.CheckValid());
 
         db.TraceAlways("    Reading and verifying object 1...\n");
-		serializer.ReadObject(&testobj);
-		TEST(testobj.CheckValid());
+        serializer.ReadObject(&testobj);
+        TEST(testobj.CheckValid());
 
         db.TraceAlways("    Reading and verifying object 2...\n");
-		serializer.ReadObject(&testobj);
-		TEST(testobj.CheckValid());
+        serializer.ReadObject(&testobj);
+        TEST(testobj.CheckValid());
 
         db.TraceAlways("    Reading and verifying object 3...\n");
-		serializer.ReadObject(&testobj);
-		TEST(testobj.CheckValid());
+        serializer.ReadObject(&testobj);
+        TEST(testobj.CheckValid());
 
         db.TraceAlways("    Reading and verifying object 4...\n");
-		serializer.ReadObject(&testobj);
-		TEST(testobj.CheckValid());
+        serializer.ReadObject(&testobj);
+        TEST(testobj.CheckValid());
 
-		serializer.Finit();
+        serializer.Finit();
     }
 
     db.TraceAlways("Done...\n");

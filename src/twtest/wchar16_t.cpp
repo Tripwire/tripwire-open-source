@@ -41,9 +41,9 @@
 
 void TestWchar16()
 {
-	cDebug db("TestWchar16()");
+    cDebug db("TestWchar16()");
 
-	db.TraceAlways("Entering...\n");
+    db.TraceAlways("Entering...\n");
 
     wc16_string a;
     TEST(a.length() == 0);

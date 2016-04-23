@@ -110,17 +110,17 @@ int cFileHeaderID::operator==( const cFileHeaderID& rhs ) const
         ( ::memcmp( mID, rhs.mID, mIDLen * sizeof(char) ) == 0 );
 }
 
-void cFileHeaderID::Read(iSerializer* pSerializer, int32 /*version*/ )	// throw (eSerializer, eArchive)
+void cFileHeaderID::Read(iSerializer* pSerializer, int32 /*version*/ )  // throw (eSerializer, eArchive)
 {
     int16 len;
     pSerializer->ReadInt16( len );
-	if ( (len < 0) || (len >= cFileHeaderID::MAXBYTES ))
-	{
-		// this is invalid!
-		throw eSerializerInputStreamFmt( _T("File Header ID invalid") );
-	}
+    if ( (len < 0) || (len >= cFileHeaderID::MAXBYTES ))
+    {
+        // this is invalid!
+        throw eSerializerInputStreamFmt( _T("File Header ID invalid") );
+    }
     pSerializer->ReadBlob(mID, len * sizeof(char));
-	mIDLen = len;
+    mIDLen = len;
 }
 
 void cFileHeaderID::Write(iSerializer* pSerializer) const // throw (eSerializer, eArchive)

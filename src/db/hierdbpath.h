@@ -44,51 +44,51 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // cHierDbPath:
-//		A class for maintaining a pathname object that can be added to and
-//		removed from using push and pop operations.  A toggling of case-
-//		sensitivitity/insensitivity is also supplied, as well as the ability
-//		to set/change the delimiting character in the path.
+//      A class for maintaining a pathname object that can be added to and
+//      removed from using push and pop operations.  A toggling of case-
+//      sensitivitity/insensitivity is also supplied, as well as the ability
+//      to set/change the delimiting character in the path.
 class cHierDbPath
 {
 public:
-	// Ctor, Dtor:
-	cHierDbPath();	//empty constructor: 
-		// Default delimiter = '/', default case-sensitivity = false
+    // Ctor, Dtor:
+    cHierDbPath();  //empty constructor: 
+        // Default delimiter = '/', default case-sensitivity = false
 
-	cHierDbPath( TCHAR delChar, bool bCaseSensitive );
-	~cHierDbPath();
+    cHierDbPath( TCHAR delChar, bool bCaseSensitive );
+    ~cHierDbPath();
 
-	// Copy Ctor:
-	cHierDbPath	( const cHierDbPath& rhs );
+    // Copy Ctor:
+    cHierDbPath ( const cHierDbPath& rhs );
 
-	cHierDbPath&	operator=( const cHierDbPath& rhs );
+    cHierDbPath&    operator=( const cHierDbPath& rhs );
 
-	void			SetDelimiter		( TCHAR cDelimiter );
-	TCHAR			GetDelimiter		( void ) const;
-	void			SetCaseSensitive	( bool bCaseSensitive );
-	bool			IsCaseSensitive		( void ) const;
+    void            SetDelimiter        ( TCHAR cDelimiter );
+    TCHAR           GetDelimiter        ( void ) const;
+    void            SetCaseSensitive    ( bool bCaseSensitive );
+    bool            IsCaseSensitive     ( void ) const;
 
-	void			Clear				( void );
-	void			Push				( const TSTRING& str );
-		// Pushes a substring onto the end of the path( using str );
-	TSTRING			Pop					( void );
-		// Pops a substring off of the end of the path, and returns it.
-		// mCurrPath is altered by removing the substring.
+    void            Clear               ( void );
+    void            Push                ( const TSTRING& str );
+        // Pushes a substring onto the end of the path( using str );
+    TSTRING         Pop                 ( void );
+        // Pops a substring off of the end of the path, and returns it.
+        // mCurrPath is altered by removing the substring.
 
-	TSTRING			AsString			( void ) const;
-		// Returns a TSTRING representation of mCurrPath.
+    TSTRING         AsString            ( void ) const;
+        // Returns a TSTRING representation of mCurrPath.
 
-	int				GetSize				( void ) const;
-		// Returns the number of substrings in the path.
+    int             GetSize             ( void ) const;
+        // Returns the number of substrings in the path.
 
-	typedef std::vector<TSTRING> DbPath;
+    typedef std::vector<TSTRING> DbPath;
 private:
 
-	bool	mbCaseSensitive;
-	TCHAR	mDelimitingChar;
+    bool    mbCaseSensitive;
+    TCHAR   mDelimitingChar;
 
-	DbPath	mCurrPath;
-		// Data structure for holding the path.
+    DbPath  mCurrPath;
+        // Data structure for holding the path.
 };
 
 #endif //__HIERDBPATH_H

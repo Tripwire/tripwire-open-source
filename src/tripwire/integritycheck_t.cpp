@@ -52,48 +52,48 @@
 
 void TestIntegrityCheck()
 {
-	cDebug d("TestIntegrityCheck");
+    cDebug d("TestIntegrityCheck");
 
-	try
-	{
-		cFCOReport		report;
+    try
+    {
+        cFCOReport      report;
         cGenreSpecListVector slv;
-		cErrorTracer	et;
-		iFCONameInfo*	pInfo = iTWFactory::GetInstance()->GetNameInfo();
-		cHierDatabase	db( pInfo->IsCaseSensitive(), pInfo->GetDelimitingChar() );
-		db.Open( _T("c:/tmp/tw.db"), 5, false );
-		//
-		// make some specs...
-		//
-		std::ifstream in;
-		in.open("c:/tmp/pol.pol");		
-		if(in.fail())
-		{
-			d.TraceError( "Unable to open policy file!\n" );
-			TEST( false );
-			return;
-		}
-		cPolicyParser parser(in);
-		parser.Execute(slv, &et);
-		
+        cErrorTracer    et;
+        iFCONameInfo*   pInfo = iTWFactory::GetInstance()->GetNameInfo();
+        cHierDatabase   db( pInfo->IsCaseSensitive(), pInfo->GetDelimitingChar() );
+        db.Open( _T("c:/tmp/tw.db"), 5, false );
         //
-		// ok, time to integrity check!
-		//
+        // make some specs...
+        //
+        std::ifstream in;
+        in.open("c:/tmp/pol.pol");      
+        if(in.fail())
+        {
+            d.TraceError( "Unable to open policy file!\n" );
+            TEST( false );
+            return;
+        }
+        cPolicyParser parser(in);
+        parser.Execute(slv, &et);
+        
+        //
+        // ok, time to integrity check!
+        //
         cGenreSpecListVector::iterator at;
         for( at = slv.begin(); at != slv.end(); at++ )
         {
             cIntegrityCheck ic( at->GetGenre(), at->GetSpecList(), db, report, &et );
-		    ic.Execute();
+            ic.Execute();
         }
 
-		//
-		// finally, let's print out the report...
-		//
-		report.TraceContents();
-		
-	}
-	catch( eError& e )
-	{
-		d.TraceError( "*** Caught Exception: %d %s\n", e.GetID(), e.GetMsg().c_str() );
-	}
+        //
+        // finally, let's print out the report...
+        //
+        report.TraceContents();
+        
+    }
+    catch( eError& e )
+    {
+        d.TraceError( "*** Caught Exception: %d %s\n", e.GetID(), e.GetMsg().c_str() );
+    }
 }

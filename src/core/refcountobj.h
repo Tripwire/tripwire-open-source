@@ -67,13 +67,13 @@ public:
     virtual void AddRef() const;
     virtual void Release() const;
 
-	int GetRefCount() const { return mRefCount; }
-		// sometimes it is useful to know an object's refrence
+    int GetRefCount() const { return mRefCount; }
+        // sometimes it is useful to know an object's refrence
 protected:
     virtual ~cRefCountObj();
 
-	virtual void Delete() const;
-		// override this if you don't want to be destroyed by "delete this"!
+    virtual void Delete() const;
+        // override this if you don't want to be destroyed by "delete this"!
 private:
     mutable int mRefCount;
 

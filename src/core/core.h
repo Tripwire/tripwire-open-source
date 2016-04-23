@@ -43,17 +43,17 @@
 
 //--Requirements
 
-#include "package.h"	// for: Packaging Abstraction
+#include "package.h"    // for: Packaging Abstraction
 
 //--Classes
 
 TSS_BeginPackage( cCore )
 
-	TSS_DECLARE_STRINGTABLE;
+    TSS_DECLARE_STRINGTABLE;
 
-	public:
+    public:
 
-		cCore();
+        cCore();
 
 TSS_EndPackage( cCore )
 

@@ -56,7 +56,7 @@
 
 cFileManipulator::cFileManipulator(const TCHAR* filename)
 {
-	mbInit = false;
+    mbInit = false;
     mFileName = filename;
 }
 
@@ -83,7 +83,7 @@ void cFileManipulator::Init()
             }
             catch (eArchive&)
             {
-			    throw eFileManipFileRead( mFileName );
+                throw eFileManipFileRead( mFileName );
             }
 
             cSerializerImpl s(arch, cSerializerImpl::S_READ);
@@ -91,50 +91,50 @@ void cFileManipulator::Init()
         }
         catch (eArchive&)
         {
-			throw eFileManipHeaderNotFound( mFileName );
+            throw eFileManipHeaderNotFound( mFileName );
         }
         catch (eSerializer&)
         {
-			throw eFileManipHeaderNotFound( mFileName );
+            throw eFileManipHeaderNotFound( mFileName );
         }
     } 
     else
-	{
-		throw eFileManipFileNotFound( mFileName );
-	}
-	mbInit = true;
+    {
+        throw eFileManipFileNotFound( mFileName );
+    }
+    mbInit = true;
 }
 
 const cFileHeaderID* cFileManipulator::GetHeaderID() 
 {
-	ASSERT( mbInit );
-	if (!mbInit)
-	{
-//		return NULL;
-		Init();
-	}
+    ASSERT( mbInit );
+    if (!mbInit)
+    {
+//      return NULL;
+        Init();
+    }
     return &mFileHeader.GetID();
 }
 
 uint32 cFileManipulator::GetFileVersion()
 {
-	ASSERT( mbInit );
-	if (!mbInit)
-	{
-//		return 0;
-		Init();
-	}
+    ASSERT( mbInit );
+    if (!mbInit)
+    {
+//      return 0;
+        Init();
+    }
     return mFileHeader.GetVersion();
 }
 
 cFileHeader::Encoding cFileManipulator::GetEncoding()
 {
-	ASSERT( mbInit );
-	if (!mbInit)
-	{
-//		return (cFileHeader::Encoding)0;
-		Init();
-	} 
+    ASSERT( mbInit );
+    if (!mbInit)
+    {
+//      return (cFileHeader::Encoding)0;
+        Init();
+    } 
     return mFileHeader.GetEncoding();
 }
 
@@ -145,11 +145,11 @@ bool cFileManipulator::TestDecryption(const cElGamalSigPublicKey& key, bool thor
 {
     // TODO: pay attention to thorough flag.  For now we will just always act thoroughly.
 
-	ASSERT( mbInit );
-	if (!mbInit)
-	{
-		return false;
-	}
+    ASSERT( mbInit );
+    if (!mbInit)
+    {
+        return false;
+    }
 
     bool fError = false;
  
@@ -181,21 +181,21 @@ bool cFileManipulator::TestDecryption(const cElGamalSigPublicKey& key, bool thor
         {
             // read the embedded key from config file and see if it is the same 
             // as the public key passed in.
-            cMemoryArchive	memArch;
-	        TSTRING			configText;	//not used
+            cMemoryArchive  memArch;
+            TSTRING         configText; //not used
             cTWUtil::ReadConfigText( mFileName.c_str(), configText, &memArch );
-	        memArch.Seek( 0, cBidirArchive::BEGINNING );
+            memArch.Seek( 0, cBidirArchive::BEGINNING );
 
-	        // only do the test if there is baggage (indicating the cfg file is encrypted)
-	        if( memArch.Length() > 0 )
-	        {
-		        // create the two public keys...
-		        cElGamalSigPublicKey pubKey( memArch.GetMemory() );
+            // only do the test if there is baggage (indicating the cfg file is encrypted)
+            if( memArch.Length() > 0 )
+            {
+                // create the two public keys...
+                cElGamalSigPublicKey pubKey( memArch.GetMemory() );
 
-		        // compare the two ....
-		        if( ! pubKey.IsEqual( key ) )
-			        throw ePoly();
-	        }
+                // compare the two ....
+                if( ! pubKey.IsEqual( key ) )
+                    throw ePoly();
+            }
         }
         else if (mFileHeader.GetID() == cPolicyFile::GetFileHeaderID())
         {
@@ -229,11 +229,11 @@ bool cFileManipulator::TestDecryption(const cElGamalSigPublicKey& key, bool thor
 // Returns on successful encryption change.
 void  cFileManipulator::ChangeEncryption(const cElGamalSigPublicKey* pOldKey, const cElGamalSigPrivateKey* pNewKey, bool backup)
 {
-	ASSERT( mbInit );
-	if (!mbInit)
-	{
-		Init();
-	}
+    ASSERT( mbInit );
+    if (!mbInit)
+    {
+        Init();
+    }
 
     // check the pOldKey matches the current encryption state
     if (mFileHeader.GetEncoding() != cFileHeader::ASYM_ENCRYPTION)
@@ -283,7 +283,7 @@ void  cFileManipulator::ChangeEncryption(const cElGamalSigPublicKey* pOldKey, co
             TSTRING configText;
 
             iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										        TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
+                                                TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
                                                 cDisplayEncoder::EncodeInline( mFileName ).c_str());
 
             cTWUtil::ReadConfigText(mFileName.c_str(), configText);
@@ -302,7 +302,7 @@ void  cFileManipulator::ChangeEncryption(const cElGamalSigPublicKey* pOldKey, co
             std::string policyText;
 
             iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-										        TSS_GetString( cTW, tw::STR_OPEN_POLICY_FILE).c_str(), 
+                                                TSS_GetString( cTW, tw::STR_OPEN_POLICY_FILE).c_str(), 
                                                 cDisplayEncoder::EncodeInline( mFileName ).c_str());
 
             cTWUtil::ReadPolicyText(mFileName.c_str(), policyText, pOldKey);

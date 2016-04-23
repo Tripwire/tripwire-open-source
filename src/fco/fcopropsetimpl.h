@@ -51,25 +51,25 @@
 class cPropSetImpl : public iFCOPropSet
 {
 public:
-	cFSPropSet();
-	cFSPropSet(const cFSPropSet& rhs);
-	virtual ~cFSPropSet();
+    cFSPropSet();
+    cFSPropSet(const cFSPropSet& rhs);
+    virtual ~cFSPropSet();
 
-	const cFSPropSet& operator=(const cFSPropSet& rhs);
+    const cFSPropSet& operator=(const cFSPropSet& rhs);
 
-	virtual const cFCOPropVector&	GetValidVector()				const ;
-	virtual int						GetNumProps	()					const ;
-	virtual int						GetPropIndex(const TCHAR* name) const;
-	virtual        TSTRING  		GetPropName	(int index)			const;
-	virtual const iFCOProp*			GetPropAt(int index)			const;
-	virtual		  iFCOProp*			GetPropAt(int index)			;
-	virtual void					InvalidateProp(int index);
-	virtual void					InvalidateProps(const cFCOPropVector& propsToInvalidate) ;
-	virtual void					InvalidateAll();
-	virtual void					CopyProps(const iFCOPropSet* pSrc, const cFCOPropVector& propsToCopy);
+    virtual const cFCOPropVector&   GetValidVector()                const ;
+    virtual int                     GetNumProps ()                  const ;
+    virtual int                     GetPropIndex(const TCHAR* name) const;
+    virtual        TSTRING          GetPropName (int index)         const;
+    virtual const iFCOProp*         GetPropAt(int index)            const;
+    virtual       iFCOProp*         GetPropAt(int index)            ;
+    virtual void                    InvalidateProp(int index);
+    virtual void                    InvalidateProps(const cFCOPropVector& propsToInvalidate) ;
+    virtual void                    InvalidateAll();
+    virtual void                    CopyProps(const iFCOPropSet* pSrc, const cFCOPropVector& propsToCopy);
 
 private:
-	cFCOPropVector		mValidProps;	// all the properties that have been evaluated
+    cFCOPropVector      mValidProps;    // all the properties that have been evaluated
     cFCOPropVector      mUndefinedProps;    // properties that have been measured but have undefined values
 };
 

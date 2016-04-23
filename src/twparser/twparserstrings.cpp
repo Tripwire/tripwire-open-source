@@ -41,15 +41,15 @@
 
 TSS_BeginStringtable( cTWParser )
     
-    TSS_StringEntry( twparser::STR_PARSER_INVALID_CHAR,	_T("Invalid character: ") ),
-    TSS_StringEntry( twparser::STR_PARSER_RULENAME,	    _T("rulename") ),
-    TSS_StringEntry( twparser::STR_PARSER_EMAILTO,	    _T("emailto") ),
-    TSS_StringEntry( twparser::STR_PARSER_RECURSE,	    _T("recurse") ),
-    TSS_StringEntry( twparser::STR_PARSER_SEVERITY,	    _T("severity") ),
-    TSS_StringEntry( twparser::STR_PARSER_FALSE,	        _T("false") ),
-    TSS_StringEntry( twparser::STR_PARSER_TRUE,	        _T("true") ),
-    TSS_StringEntry( twparser::STR_PARSER_SECTION_GLOBAL,	_T("GLOBAL") ),
-    TSS_StringEntry( twparser::STR_LINE_NUMBER,	        _T("Line number ") ),
+    TSS_StringEntry( twparser::STR_PARSER_INVALID_CHAR, _T("Invalid character: ") ),
+    TSS_StringEntry( twparser::STR_PARSER_RULENAME,     _T("rulename") ),
+    TSS_StringEntry( twparser::STR_PARSER_EMAILTO,      _T("emailto") ),
+    TSS_StringEntry( twparser::STR_PARSER_RECURSE,      _T("recurse") ),
+    TSS_StringEntry( twparser::STR_PARSER_SEVERITY,     _T("severity") ),
+    TSS_StringEntry( twparser::STR_PARSER_FALSE,            _T("false") ),
+    TSS_StringEntry( twparser::STR_PARSER_TRUE,         _T("true") ),
+    TSS_StringEntry( twparser::STR_PARSER_SECTION_GLOBAL,   _T("GLOBAL") ),
+    TSS_StringEntry( twparser::STR_LINE_NUMBER,         _T("Line number ") ),
     TSS_StringEntry( twparser::STR_ERR2_PARSER_NO_RULES_IN_SECTION, _T("Section: ") ),
 
 TSS_EndStringtable( cTWParser )

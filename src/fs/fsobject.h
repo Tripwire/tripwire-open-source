@@ -57,45 +57,45 @@
 // cFSObject -- base class for files and directory FCOs
 class cFSObject : public iFCO
 {
-	DECLARE_SERREFCOUNT()
-	
+    DECLARE_SERREFCOUNT()
+    
 public:
-	cFSObject(const cFCOName& name);
+    cFSObject(const cFCOName& name);
 
-	virtual void					SetName(const cFCOName& name) ;
-	virtual const cFCOName&			GetName() const ;
+    virtual void                    SetName(const cFCOName& name) ;
+    virtual const cFCOName&         GetName() const ;
 
-	virtual const	iFCOPropSet*	GetPropSet() const	;
-	virtual 		iFCOPropSet*	GetPropSet()		;
-	virtual			uint32			GetCaps() const ;
+    virtual const   iFCOPropSet*    GetPropSet() const  ;
+    virtual         iFCOPropSet*    GetPropSet()        ;
+    virtual         uint32          GetCaps() const ;
 
-	virtual iFCO*					Clone() const ;
-	virtual void					AcceptVisitor(iFCOVisitor* pVisitor) ;
+    virtual iFCO*                   Clone() const ;
+    virtual void                    AcceptVisitor(iFCOVisitor* pVisitor) ;
 
-	const cFSPropSet&	GetFSPropSet() const;
-	cFSPropSet&			GetFSPropSet();
-		// returns a reference to the FS property set
+    const cFSPropSet&   GetFSPropSet() const;
+    cFSPropSet&         GetFSPropSet();
+        // returns a reference to the FS property set
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 
-	virtual void TraceContents(int dl = -1) const;
+    virtual void TraceContents(int dl = -1) const;
 
 #ifdef _DEBUG
-	static void TraceStats() ;
-		// this TRACEs statistics on FSObject usage that is pertinent to performance or mem leakage 
-		// concerns.
+    static void TraceStats() ;
+        // this TRACEs statistics on FSObject usage that is pertinent to performance or mem leakage 
+        // concerns.
 #endif
 
     cFSObject();
-	virtual ~cFSObject();	
-		// only destroy by calling Release(); Also prevents creation on the 
-		// stack.
+    virtual ~cFSObject();   
+        // only destroy by calling Release(); Also prevents creation on the 
+        // stack.
 
 private:
-	cFSPropSet	mPropSet;	
-	cFCOName	mName;
+    cFSPropSet  mPropSet;   
+    cFCOName    mName;
 };
 
 //////////////////////////////////////////////////////
@@ -103,12 +103,12 @@ private:
 //////////////////////////////////////////////////////
 inline const cFSPropSet& cFSObject::GetFSPropSet() const
 {
-	return mPropSet;
+    return mPropSet;
 }
 
 inline cFSPropSet& cFSObject::GetFSPropSet()
 {
-	return mPropSet;
+    return mPropSet;
 }
 
 

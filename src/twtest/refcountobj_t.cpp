@@ -115,9 +115,9 @@ void cRefCountTestObjList::Add(cRefCountTestObj* pNewObj)
 
 void TestRefCountObj()
 {
-	cDebug db("TestRefCountObj()");
+    cDebug db("TestRefCountObj()");
 
-	db.TraceAlways("Entering...\n");
+    db.TraceAlways("Entering...\n");
 
     // Note the following test of Reference counted objects containing 
     // copies of themselves failed.  Perhaps someday we will upgrade the

@@ -54,30 +54,30 @@
 ///////////////////////////////////////////////////////////////////////////////
 void cTripwireUtil::CalcProps( iFCO* pFCO, const iFCOSpec* pSpec, iFCOPropCalc* pCalc, iFCOPropDisplayer* pPD )
 {
-	// verbose output...
-	TW_NOTIFY_VERBOSE(	_T("--- %s%s\n"), 
-						TSS_GetString( cTripwire, tripwire::STR_NOTIFY_GEN_SIG ).c_str(), 
-						iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay
-							( pFCO->GetName() ).c_str() );
+    // verbose output...
+    TW_NOTIFY_VERBOSE(  _T("--- %s%s\n"), 
+                        TSS_GetString( cTripwire, tripwire::STR_NOTIFY_GEN_SIG ).c_str(), 
+                        iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay
+                            ( pFCO->GetName() ).c_str() );
 
-	
-	const cFCOPropVector& propsToCalc = pSpec->GetPropVector(pSpec->GetSpecMask(pFCO));
-	// set the appropriate property mask for this fco
-	pCalc->SetPropVector(propsToCalc);
-	// do the calculation
-	pFCO->AcceptVisitor(pCalc->GetVisitor());
-	// 
-	// invalidate unneeded properties....
-	// I want to invalidate everything that is in the fco but not in the spec...
-	//
-	cFCOPropVector propsToInvalidate	=  pFCO->GetPropSet()->GetValidVector();
-	propsToInvalidate					^= propsToCalc;
-	pFCO->GetPropSet()->InvalidateProps( propsToInvalidate );
-	//
-	// load this fco's data into the prop displayer
-	//
-	if( pPD )
-		pPD->InitForFCO( pFCO );
+    
+    const cFCOPropVector& propsToCalc = pSpec->GetPropVector(pSpec->GetSpecMask(pFCO));
+    // set the appropriate property mask for this fco
+    pCalc->SetPropVector(propsToCalc);
+    // do the calculation
+    pFCO->AcceptVisitor(pCalc->GetVisitor());
+    // 
+    // invalidate unneeded properties....
+    // I want to invalidate everything that is in the fco but not in the spec...
+    //
+    cFCOPropVector propsToInvalidate    =  pFCO->GetPropSet()->GetValidVector();
+    propsToInvalidate                   ^= propsToCalc;
+    pFCO->GetPropSet()->InvalidateProps( propsToInvalidate );
+    //
+    // load this fco's data into the prop displayer
+    //
+    if( pPD )
+        pPD->InitForFCO( pFCO );
 }
 
 
@@ -86,63 +86,63 @@ void cTripwireUtil::CalcProps( iFCO* pFCO, const iFCOSpec* pSpec, iFCOPropCalc* 
 ///////////////////////////////////////////////////////////////////////////////
 bool cTripwireUtil::RemoveFCOFromDb( cFCOName name, cDbDataSourceIter& dbIter)
 {
-	cDebug d("cTripwireUtil::RemoveFCOFromDb");
-	//cDbDataSourceIter dbIter( &db );
+    cDebug d("cTripwireUtil::RemoveFCOFromDb");
+    //cDbDataSourceIter dbIter( &db );
 
-	// seek to the fco to be removed..
-	//
-	dbIter.SeekToFCO( name, false );
-	//
-	// error if the fco doesn't exist...
-	//
-	if( dbIter.Done() || ( ! dbIter.HasFCOData() ) )
-	{
-		return false;
-	}
-	else
-	{
-		// remove the fco data...
-		//
-		d.TraceDebug(_T(">>> Removing FCO %s\n"), dbIter.GetName().AsString().c_str());
-		dbIter.RemoveFCOData() ;
-		if( ! dbIter.CanDescend() )
-		{
-			// note that this is not sufficient to remove all unused nodes from the database...
-			//
-			d.TraceDebug(_T(">>> Removing Database Node %s\n"), dbIter.GetName().AsString().c_str());
-			dbIter.RemoveFCO();
-		}
-		//
-		// get rid of all the empty parents above me...
-		// TODO -- is this the right thing to do all the time?
-		//
-		while( ! dbIter.AtRoot() )
-		{
-			cFCOName parentName = dbIter.GetParentName();
-			dbIter.Ascend();
-			dbIter.SeekTo( parentName.GetShortName() );
-			ASSERT( ! dbIter.Done() );
-			if( (! dbIter.Done()) && (dbIter.CanRemoveChildArray()) )
-			{
-				dbIter.RemoveChildArray();
-				//
-				// and, remove this node if there is no fco data...
-				//
-				if( ! dbIter.HasFCOData() )
-				{
-					d.TraceDebug(_T(">>> Removing Database Node %s\n"), dbIter.GetName().AsString().c_str());
-					dbIter.RemoveFCO();
-				}
-				else
-					break;
-			}
-			else 
-				break;
-		}
+    // seek to the fco to be removed..
+    //
+    dbIter.SeekToFCO( name, false );
+    //
+    // error if the fco doesn't exist...
+    //
+    if( dbIter.Done() || ( ! dbIter.HasFCOData() ) )
+    {
+        return false;
+    }
+    else
+    {
+        // remove the fco data...
+        //
+        d.TraceDebug(_T(">>> Removing FCO %s\n"), dbIter.GetName().AsString().c_str());
+        dbIter.RemoveFCOData() ;
+        if( ! dbIter.CanDescend() )
+        {
+            // note that this is not sufficient to remove all unused nodes from the database...
+            //
+            d.TraceDebug(_T(">>> Removing Database Node %s\n"), dbIter.GetName().AsString().c_str());
+            dbIter.RemoveFCO();
+        }
+        //
+        // get rid of all the empty parents above me...
+        // TODO -- is this the right thing to do all the time?
+        //
+        while( ! dbIter.AtRoot() )
+        {
+            cFCOName parentName = dbIter.GetParentName();
+            dbIter.Ascend();
+            dbIter.SeekTo( parentName.GetShortName() );
+            ASSERT( ! dbIter.Done() );
+            if( (! dbIter.Done()) && (dbIter.CanRemoveChildArray()) )
+            {
+                dbIter.RemoveChildArray();
+                //
+                // and, remove this node if there is no fco data...
+                //
+                if( ! dbIter.HasFCOData() )
+                {
+                    d.TraceDebug(_T(">>> Removing Database Node %s\n"), dbIter.GetName().AsString().c_str());
+                    dbIter.RemoveFCO();
+                }
+                else
+                    break;
+            }
+            else 
+                break;
+        }
 
-	}
+    }
 
-	return true;
+    return true;
 }
 
 

@@ -8,149 +8,149 @@
 class Filter : public BufferedTransformation
 {
 public:
-	Filter(BufferedTransformation *outQ = NULL);
-	Filter(const Filter &source);
+    Filter(BufferedTransformation *outQ = NULL);
+    Filter(const Filter &source);
 
-	bool Attachable() {return true;}
-	void Detach(BufferedTransformation *newOut = NULL);
-	void Attach(BufferedTransformation *newOut);
-	void Close()
-		{InputFinished(); outQueue->Close();}
+    bool Attachable() {return true;}
+    void Detach(BufferedTransformation *newOut = NULL);
+    void Attach(BufferedTransformation *newOut);
+    void Close()
+        {InputFinished(); outQueue->Close();}
 
-	unsigned long MaxRetrieveable()
-		{return outQueue->MaxRetrieveable();}
+    unsigned long MaxRetrieveable()
+        {return outQueue->MaxRetrieveable();}
 
-	unsigned int Get(byte &outByte)
-		{return outQueue->Get(outByte);}
-	unsigned int Get(byte *outString, unsigned int getMax)
-		{return outQueue->Get(outString, getMax);}
+    unsigned int Get(byte &outByte)
+        {return outQueue->Get(outByte);}
+    unsigned int Get(byte *outString, unsigned int getMax)
+        {return outQueue->Get(outString, getMax);}
 
-	unsigned int Peek(byte &outByte) const
-		{return outQueue->Peek(outByte);}
+    unsigned int Peek(byte &outByte) const
+        {return outQueue->Peek(outByte);}
 
-	BufferedTransformation *OutQueue() {return outQueue.get();}
+    BufferedTransformation *OutQueue() {return outQueue.get();}
 
 protected:
-	member_ptr<BufferedTransformation> outQueue;
+    member_ptr<BufferedTransformation> outQueue;
 
 private:
-	void operator=(const Filter &);	// assignment not allowed
+    void operator=(const Filter &); // assignment not allowed
 };
 
 class BlockFilterBase : public Filter
 {
 public:
-	BlockFilterBase(BlockTransformation &cipher,
-					BufferedTransformation *outQueue);
-	virtual ~BlockFilterBase() {}
+    BlockFilterBase(BlockTransformation &cipher,
+                    BufferedTransformation *outQueue);
+    virtual ~BlockFilterBase() {}
 
-	void Put(byte inByte)
-	{
-		if (inBufSize == S)
-			ProcessBuf();
-		inBuf[inBufSize++]=inByte;
-	}
+    void Put(byte inByte)
+    {
+        if (inBufSize == S)
+            ProcessBuf();
+        inBuf[inBufSize++]=inByte;
+    }
 
-	void Put(const byte *inString, unsigned int length);
+    void Put(const byte *inString, unsigned int length);
 
 protected:
-	void ProcessBuf();
+    void ProcessBuf();
 
-	BlockTransformation &cipher;
-	const unsigned int S;
-	SecByteBlock inBuf;
-	unsigned int inBufSize;
+    BlockTransformation &cipher;
+    const unsigned int S;
+    SecByteBlock inBuf;
+    unsigned int inBufSize;
 };
 
 class BlockEncryptionFilter : public BlockFilterBase
 {
 public:
-	BlockEncryptionFilter(BlockTransformation &cipher, BufferedTransformation *outQueue = NULL)
-		: BlockFilterBase(cipher, outQueue) {}
+    BlockEncryptionFilter(BlockTransformation &cipher, BufferedTransformation *outQueue = NULL)
+        : BlockFilterBase(cipher, outQueue) {}
 
 protected:
-	void InputFinished();
+    void InputFinished();
 };
 
 class BlockDecryptionFilter : public BlockFilterBase
 {
 public:
-	BlockDecryptionFilter(BlockTransformation &cipher, BufferedTransformation *outQueue = NULL)
-		: BlockFilterBase(cipher, outQueue) {}
+    BlockDecryptionFilter(BlockTransformation &cipher, BufferedTransformation *outQueue = NULL)
+        : BlockFilterBase(cipher, outQueue) {}
 
 protected:
-	void InputFinished();
+    void InputFinished();
 };
 
 class StreamCipherFilter : public Filter
 {
 public:
-	StreamCipherFilter(StreamCipher &c,
-					   BufferedTransformation *outQueue = NULL)
-		: Filter(outQueue), cipher(c) {}
+    StreamCipherFilter(StreamCipher &c,
+                       BufferedTransformation *outQueue = NULL)
+        : Filter(outQueue), cipher(c) {}
 
-	void Put(byte inByte)
-		{outQueue->Put(cipher.ProcessByte(inByte));}
+    void Put(byte inByte)
+        {outQueue->Put(cipher.ProcessByte(inByte));}
 
-	void Put(const byte *inString, unsigned int length);
+    void Put(const byte *inString, unsigned int length);
 
 private:
-	StreamCipher &cipher;
+    StreamCipher &cipher;
 };
 
 class HashFilter : public Filter
 {
 public:
-	HashFilter(HashModule &hm, BufferedTransformation *outQueue = NULL)
-		: Filter(outQueue), hash(hm) {}
+    HashFilter(HashModule &hm, BufferedTransformation *outQueue = NULL)
+        : Filter(outQueue), hash(hm) {}
 
-	void InputFinished();
+    void InputFinished();
 
-	void Put(byte inByte)
-		{hash.Update(&inByte, 1);}
+    void Put(byte inByte)
+        {hash.Update(&inByte, 1);}
 
-	void Put(const byte *inString, unsigned int length)
-		{hash.Update(inString, length);}
+    void Put(const byte *inString, unsigned int length)
+        {hash.Update(inString, length);}
 
 private:
-	HashModule &hash;
+    HashModule &hash;
 };
 
 class Source : public Filter
 {
 public:
-	Source(BufferedTransformation *outQ = NULL)
-		: Filter(outQ) {}
+    Source(BufferedTransformation *outQ = NULL)
+        : Filter(outQ) {}
 
-	void Put(byte)
-		{Pump(1);}
-	void Put(const byte *, unsigned int length)
-		{Pump(length);}
-	void InputFinished()
-		{PumpAll();}
+    void Put(byte)
+        {Pump(1);}
+    void Put(const byte *, unsigned int length)
+        {Pump(length);}
+    void InputFinished()
+        {PumpAll();}
 
-	virtual unsigned int Pump(unsigned int size) =0;
-	virtual unsigned long PumpAll() =0;
+    virtual unsigned int Pump(unsigned int size) =0;
+    virtual unsigned long PumpAll() =0;
 };
 
 class Sink : public BufferedTransformation
 {
 public:
-	unsigned long MaxRetrieveable()
-		{return 0;}
-	unsigned int Get(byte &)
-		{return 0;}
-	unsigned int Get(byte *, unsigned int)
-		{return 0;}
-	unsigned int Peek(byte &) const
-		{return 0;}
+    unsigned long MaxRetrieveable()
+        {return 0;}
+    unsigned int Get(byte &)
+        {return 0;}
+    unsigned int Get(byte *, unsigned int)
+        {return 0;}
+    unsigned int Peek(byte &) const
+        {return 0;}
 };
 
 class BitBucket : public Sink
 {
 public:
-	void Put(byte) {}
-	void Put(const byte *, unsigned int) {}
+    void Put(byte) {}
+    void Put(const byte *, unsigned int) {}
 };
 
 BufferedTransformation *Insert(const byte *in, unsigned int length, BufferedTransformation *outQueue);

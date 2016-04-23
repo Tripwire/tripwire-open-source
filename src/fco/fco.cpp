@@ -40,14 +40,14 @@
 #include "stdfco.h"
 #include "fco.h"        // for: cFCO
 #include "core/core.h"  // for: cCore
-#include "fcoerrors.h"	// for: fco error table
+#include "fcoerrors.h"  // for: fco error table
 
 TSS_ImplementPackage( cFCO )
 
 cFCO::cFCO()
 {
-    TSS_Dependency			( cCore );
-	TSS_REGISTER_PKG_ERRORS	( fco );
+    TSS_Dependency          ( cCore );
+    TSS_REGISTER_PKG_ERRORS ( fco );
 }
 
 //=============================================================================

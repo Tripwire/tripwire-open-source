@@ -42,13 +42,13 @@
 void TestErrorBucketImpl()
 {
 /*
-	//This whole function is in sorry shape... TODO: Fix this DRA
+    //This whole function is in sorry shape... TODO: Fix this DRA
   d.TraceDebug("Entering...\n");
 
-	cErrorReporter	er;
-	cErrorQueue		eq;
+    cErrorReporter  er;
+    cErrorQueue     eq;
 
-	er.SetChild(&eq);
+    er.SetChild(&eq);
 
 
 //These calls to PrintErrorMsg are broken.  The code is probably old. -DRA
@@ -75,44 +75,44 @@ void TestErrorBucketImpl()
                                          ));
 
 
-	// TODO -- test the error table
-	// TODO -- test the error filter
-	// set some errors...
-	TSS_EXCEPTION( eTestErrorBucketImpl, eError );
-	eTestErrorBucketImpl error1(_T("Error A")), error2(_T("Error B")), error3(_T("Error C"));
+    // TODO -- test the error table
+    // TODO -- test the error filter
+    // set some errors...
+    TSS_EXCEPTION( eTestErrorBucketImpl, eError );
+    eTestErrorBucketImpl error1(_T("Error A")), error2(_T("Error B")), error3(_T("Error C"));
 
-	er.AddError(error1);	d.TraceDebug("Adding error 0 -- Error A\n");
-	er.AddError(error2);	d.TraceDebug("Adding error 1 -- Error B\n");
-	er.AddError(error3);	d.TraceDebug("Adding error 100 -- Error C\n");
+    er.AddError(error1);    d.TraceDebug("Adding error 0 -- Error A\n");
+    er.AddError(error2);    d.TraceDebug("Adding error 1 -- Error B\n");
+    er.AddError(error3);    d.TraceDebug("Adding error 100 -- Error C\n");
 
-	// those should have gone out to stderr; let's check the queue
-	cErrorQueueIter i(eq);
-	int counter = 0;
-	for(i.SeekBegin(); ! i.Done(); i.Next(), counter++)
-	{
-		switch(counter)
-		{
-		case 0:
-			TEST(i.GetError().GetID() == error1.GetID());
-			TEST(i.GetError().GetMsg().compare(_T("Error A")) == 0);
-			break;
-		case 1:
-			TEST(i.GetError().GetID() == error2.GetID());
-			TEST(i.GetError().GetMsg().compare(_T("Error B")) == 0);
-			break;
-		case 2:
-			TEST(i.GetError().GetID() == error3.GetID());
-			TEST(i.GetError().GetMsg().compare(_T("Error C")) == 0);
-			break;
-		default:
-			TEST(false);
-		}
-	}
+    // those should have gone out to stderr; let's check the queue
+    cErrorQueueIter i(eq);
+    int counter = 0;
+    for(i.SeekBegin(); ! i.Done(); i.Next(), counter++)
+    {
+        switch(counter)
+        {
+        case 0:
+            TEST(i.GetError().GetID() == error1.GetID());
+            TEST(i.GetError().GetMsg().compare(_T("Error A")) == 0);
+            break;
+        case 1:
+            TEST(i.GetError().GetID() == error2.GetID());
+            TEST(i.GetError().GetMsg().compare(_T("Error B")) == 0);
+            break;
+        case 2:
+            TEST(i.GetError().GetID() == error3.GetID());
+            TEST(i.GetError().GetMsg().compare(_T("Error C")) == 0);
+            break;
+        default:
+            TEST(false);
+        }
+    }
 
-	TODO - test this stuff that's commented out
+    TODO - test this stuff that's commented out
 
-	TCOUT << _T("Following string should be a cArchive::ERR_OPEN_FAILED error:\n"); 
-	TCOUT << cErrorTable::GetErrorString(cArchive::ERR_OPEN_FAILED) << std::endl;
+    TCOUT << _T("Following string should be a cArchive::ERR_OPEN_FAILED error:\n"); 
+    TCOUT << cErrorTable::GetErrorString(cArchive::ERR_OPEN_FAILED) << std::endl;
 
 // print out all error strings
 #if 1
@@ -136,7 +136,7 @@ void TestErrorBucketImpl()
     }
 #endif
 
-	d.TraceDebug("Leaving...\n");
+    d.TraceDebug("Leaving...\n");
 */
 }
 

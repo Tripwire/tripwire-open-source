@@ -47,8 +47,8 @@
 // we use this instead of TraceContents() so we can test the report iterators.
 static void TraceReport(const cFCOReport& r, cDebug& d)
 {
-	d.TraceDebug("Global Error Queue:\n");
-	r.GetErrorQueue()->TraceContents();
+    d.TraceDebug("Global Error Queue:\n");
+    r.GetErrorQueue()->TraceContents();
 
     cFCOReportGenreIter genreIter(r);
     int genreCount = 0;
@@ -59,83 +59,83 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
 
         cFCOReportSpecIter specIter(genreIter);
         int specCount = 0;
-	    for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ++specCount)
-	    {
-		    d.TraceDebug(">>> Spec [%d]:\n", specCount);
-		    ASSERT(specIter.GetSpec());
-		    specIter.GetSpec()->TraceContents();
-		    specIter.GetAttr()->TraceContents();
-		    specIter.GetErrorQueue()->TraceContents();
+        for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ++specCount)
+        {
+            d.TraceDebug(">>> Spec [%d]:\n", specCount);
+            ASSERT(specIter.GetSpec());
+            specIter.GetSpec()->TraceContents();
+            specIter.GetAttr()->TraceContents();
+            specIter.GetErrorQueue()->TraceContents();
 
-		    d.TraceDebug(">>> Added Files:\n");
-		    specIter.GetAddedSet()->TraceContents();
-		    d.TraceDebug(">>> Removed Files:\n");
-		    specIter.GetRemovedSet()->TraceContents();
+            d.TraceDebug(">>> Added Files:\n");
+            specIter.GetAddedSet()->TraceContents();
+            d.TraceDebug(">>> Removed Files:\n");
+            specIter.GetRemovedSet()->TraceContents();
 
-		    // trace out changed files
-		    cFCOReportChangeIter changeIter(specIter);
-		    int changeCtr = 0;
-		    for(changeIter.SeekBegin(); ! changeIter.Done(); changeIter.Next(), changeCtr++)
-		    {
-			    d.TraceDebug(">>>>> Changed fco [%d]\n", changeCtr);
-			    d.TraceDebug(">>>>>   Old FCO:\n");
-			    changeIter.GetOld()->TraceContents();
-			    d.TraceDebug(">>>>>   New FCO:\n");
-			    changeIter.GetNew()->TraceContents();
-			    changeIter.GetChangeVector().TraceContents();
-		    }
-	    }
+            // trace out changed files
+            cFCOReportChangeIter changeIter(specIter);
+            int changeCtr = 0;
+            for(changeIter.SeekBegin(); ! changeIter.Done(); changeIter.Next(), changeCtr++)
+            {
+                d.TraceDebug(">>>>> Changed fco [%d]\n", changeCtr);
+                d.TraceDebug(">>>>>   Old FCO:\n");
+                changeIter.GetOld()->TraceContents();
+                d.TraceDebug(">>>>>   New FCO:\n");
+                changeIter.GetNew()->TraceContents();
+                changeIter.GetChangeVector().TraceContents();
+            }
+        }
     }
 }
 
 void TestFCOReport()
 {
-	cDebug d("TestFCOReport");
+    cDebug d("TestFCOReport");
 
 
-    cFCOSpecImpl*   pSpec			= new cFCOSpecImpl(_T("/etc"), NULL, new cFCOSpecStopPointSet);
-	cFCOSpecAttr*	pAttr			= new cFCOSpecAttr;
-    cFSObject*		addedFCO		= new cFSObject(cFCOName(_T("/etc/added_file")));
-    cFSObject*		removedFCO		= new cFSObject(cFCOName(_T("/etc/removed_file")));
-    cFSObject*		changedFCO		= new cFSObject(cFCOName(_T("/etc/changed_file")));
-    cFSObject*		oldChangedFCO	= new cFSObject(cFCOName(_T("/etc/changed_file")));
-    cFSObject*		newChangedFCO	= new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFCOSpecImpl*   pSpec           = new cFCOSpecImpl(_T("/etc"), NULL, new cFCOSpecStopPointSet);
+    cFCOSpecAttr*   pAttr           = new cFCOSpecAttr;
+    cFSObject*      addedFCO        = new cFSObject(cFCOName(_T("/etc/added_file")));
+    cFSObject*      removedFCO      = new cFSObject(cFCOName(_T("/etc/removed_file")));
+    cFSObject*      changedFCO      = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFSObject*      oldChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFSObject*      newChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
     cFCOPropVector changedPropVector;
 
-	//Calculate the time taken to generate the test report:
-	time_t* dummy_arg = NULL;
-	time_t	time_finish;
-	//time_t	time_begin = time(dummy_arg);
+    //Calculate the time taken to generate the test report:
+    time_t* dummy_arg = NULL;
+    time_t  time_finish;
+    //time_t    time_begin = time(dummy_arg);
 
     {
         cFCOReport  report;
 
         changedPropVector.AddItem(cFSPropSet::PROP_SIZE);
-		pSpec->SetStartPoint(cFCOName(_T("/etc")));
-		pAttr->SetName(_T("/etc"));
-		pAttr->SetSeverity(53);
+        pSpec->SetStartPoint(cFCOName(_T("/etc")));
+        pAttr->SetName(_T("/etc"));
+        pAttr->SetSeverity(53);
 
         report.AddSpec(0x00020001, pSpec, pAttr); // TODO:bam - change these
         cFCOReportSpecIter it(report, 0x00020001); // to use cFS::Genre
         it.GetAddedSet()->Insert(addedFCO);
-		it.GetRemovedSet()->Insert(removedFCO);
-		report.AddChangedFCO(it, oldChangedFCO, newChangedFCO, changedPropVector);
+        it.GetRemovedSet()->Insert(removedFCO);
+        report.AddChangedFCO(it, oldChangedFCO, newChangedFCO, changedPropVector);
 
-		//Store the time taken to generate the test report:
-		time_finish = time(dummy_arg);
-		//report.SetCreationTime( (int64)difftime(time_finish, time_begin));
-		//d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
+        //Store the time taken to generate the test report:
+        time_finish = time(dummy_arg);
+        //report.SetCreationTime( (int64)difftime(time_finish, time_begin));
+        //d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
 
         d.TraceDebug("Before serializing report:\n");
-		TraceReport(report, d);
+        TraceReport(report, d);
         {
             cFileArchive outFile;
             outFile.OpenReadWrite(_T("tmp.twr"));
             cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
 
-		    outSer.Init();
+            outSer.Init();
             outSer.WriteObject(&report);
-		    outSer.Finit();
+            outSer.Finit();
 
             outFile.Close();
 
@@ -145,28 +145,28 @@ void TestFCOReport()
 
             cFCOReport inReport;
 
-		    inSer.Init();
+            inSer.Init();
             inSer.ReadObject(&inReport);
-		    inSer.Finit();
+            inSer.Finit();
 
             d.TraceDebug("Read in serialized report:\n");
-			TraceReport(inReport, d);
+            TraceReport(inReport, d);
         }
     }
 
-	// TODO -- test cFCOReportSpecIter::Remove()
-	// TODO -- test cFCOReportChangeIter::Remove()
-	d.TraceDebug("*** We still need to test Remove() for the two iterator classes!\n");
+    // TODO -- test cFCOReportSpecIter::Remove()
+    // TODO -- test cFCOReportChangeIter::Remove()
+    d.TraceDebug("*** We still need to test Remove() for the two iterator classes!\n");
 
     pSpec->Release();
-	pAttr->Release();
+    pAttr->Release();
     addedFCO->Release();
     removedFCO->Release();
     changedFCO->Release();
     oldChangedFCO->Release();
     newChangedFCO->Release();
 
-	d.TraceDebug("Leaving...\n");
-	return;
+    d.TraceDebug("Leaving...\n");
+    return;
 }
 

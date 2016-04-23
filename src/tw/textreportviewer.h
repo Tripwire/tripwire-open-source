@@ -69,10 +69,10 @@ class cErrorQueueIter;
 // DECLARATION OF CLASSES
 //=========================================================================
 
-TSS_EXCEPTION( eTextReportViewer,				eError );
-TSS_EXCEPTION( eTextReportViewerFileOpen,		eTextReportViewer );
-TSS_EXCEPTION( eTextReportViewerEditorLaunch,	eTextReportViewer );
-TSS_EXCEPTION( eTextReportViewerReportCorrupt,	eTextReportViewer );
+TSS_EXCEPTION( eTextReportViewer,               eError );
+TSS_EXCEPTION( eTextReportViewerFileOpen,       eTextReportViewer );
+TSS_EXCEPTION( eTextReportViewerEditorLaunch,   eTextReportViewer );
+TSS_EXCEPTION( eTextReportViewerReportCorrupt,  eTextReportViewer );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,12 +106,12 @@ public:
         // the user view changes to the database, and, by selecting FCO entries,
         // chooses which changes to write to the database.  Unchecked entries
         // are removed from the report
-		// edName is the name of the editor to use to update the report
+        // edName is the name of the editor to use to update the report
 
     virtual void PrintTextReport( const TSTRING& strFilename, ReportingLevel level = FULL_REPORT ); //throw (eTextReportViewer);
         // if strFilename is "-", will print to TCOUT
     virtual void PrintTextReport( TOSTREAM& ostr, ReportingLevel level = FULL_REPORT ); //throw (eTextReportViewer);
-		// prints the report to the specified ostream
+        // prints the report to the specified ostream
 
     TSTRING SingleLineReport();
     
@@ -176,7 +176,7 @@ protected:
     //
     // private util functions
     //
-    bool LaunchEditorOnFile( const TSTRING& strFilename, const TSTRING& edName  );	//throw (eFSServices, eTextReportViewer);
+    bool LaunchEditorOnFile( const TSTRING& strFilename, const TSTRING& edName  );  //throw (eFSServices, eTextReportViewer);
     void OutputTextReport(); //throw (eTextReportViewer);
     
     void PrintGenre( const cFCOReportGenreIter& genreIter ); //throw (eTextReportViewer);
@@ -213,7 +213,7 @@ protected:
     bool IsChecked();
     TSTRING GetGenre();
     void InitOStream();
-	void GetReportNumbers();
+    void GetReportNumbers();
 
     void ReadTextReport( const TSTRING& strFilename );    
 
@@ -231,20 +231,20 @@ protected:
 
     void OutputParseableReport();
 
-	//
-	// overridables:
-	//
+    //
+    // overridables:
+    //
 
-	virtual bool IgnoreThisSpec(const cFCOSpecAttr *attr);
+    virtual bool IgnoreThisSpec(const cFCOSpecAttr *attr);
     virtual bool WantOutputReportHeader();
     virtual bool WantOutputRulesSummary();
     virtual bool WantOutputSpecHeader();
     virtual bool WantOutputObjectSummary();
     virtual bool WantOutputObjectDetails();
-		// These function allows derived classes to tailor the report's apearance
+        // These function allows derived classes to tailor the report's apearance
 
-	virtual bool CanUpdate();
-		// override this to return false if DisplayReportAndHaveUserUpdateIt should not be allowed
+    virtual bool CanUpdate();
+        // override this to return false if DisplayReportAndHaveUserUpdateIt should not be allowed
 
     //
     // data members
@@ -255,7 +255,7 @@ protected:
     const cFCOReportHeader* mpHeader;
     const cFCOReport*       mpReport;
     int                     mMaxSeverityViolated;
-	int						mNumberViolations;
+    int                     mNumberViolations;
     int                     mErrorNum;
     GenreList               mFCOsRemoveFromReport; // collection of filenames to remove from report.
     ReportingLevel          mReportingLevel;
@@ -277,20 +277,20 @@ protected:
 class cEmailReportViewer : public cTextReportViewer
 {
 public:
-	// constructor must be provided an email recipient's address
+    // constructor must be provided an email recipient's address
     cEmailReportViewer( const cFCOReportHeader& h, const cFCOReport& r, 
                         const TSTRING &address,
                         bool bForceFullReport = false);
 
 
 protected:
-	// overrides
-	virtual bool IgnoreThisSpec(const cFCOSpecAttr *attr);
+    // overrides
+    virtual bool IgnoreThisSpec(const cFCOSpecAttr *attr);
     virtual bool WantOutputObjectSummary();
     virtual bool CanUpdate();
 
-	// data members
-	TSTRING	mAddress;
+    // data members
+    TSTRING mAddress;
    bool     mbForceFullReport;
 
 };

@@ -49,34 +49,34 @@
 
 void TestGenerateDb()
 {
-	cDebug d("TestGenerateDb");
+    cDebug d("TestGenerateDb");
 
-	try
-	{
-		iFCONameInfo*	pInfo = iTWFactory::GetInstance()->GetNameInfo();
-		cErrorTracer	et;
-		cHierDatabase	db( pInfo->IsCaseSensitive(), pInfo->GetDelimitingChar() );
-		db.Open( _T("c:/tmp/tw.db"), 5, true );
-		cHierDatabase::iterator iter( &db );
-		//
-		// make some specs...
-		//
+    try
+    {
+        iFCONameInfo*   pInfo = iTWFactory::GetInstance()->GetNameInfo();
+        cErrorTracer    et;
+        cHierDatabase   db( pInfo->IsCaseSensitive(), pInfo->GetDelimitingChar() );
+        db.Open( _T("c:/tmp/tw.db"), 5, true );
+        cHierDatabase::iterator iter( &db );
+        //
+        // make some specs...
+        //
         cGenreSpecListVector slv;
-		std::ifstream in;
-		in.open("c:/tmp/pol.pol");		
-		if(in.fail())
-		{
-			d.TraceError( "Unable to open policy file!\n" );
-			TEST( false );
-			return;
-		}
-		cPolicyParser parser(in);
-		parser.Execute(slv, &et);
-		
+        std::ifstream in;
+        in.open("c:/tmp/pol.pol");      
+        if(in.fail())
+        {
+            d.TraceError( "Unable to open policy file!\n" );
+            TEST( false );
+            return;
+        }
+        cPolicyParser parser(in);
+        parser.Execute(slv, &et);
+        
         
         //
-		// ok, time to integrity check!
-		//
+        // ok, time to integrity check!
+        //
         cGenreSpecListVector::iterator at;
         for( at = slv.begin(); at != slv.end(); at++ )
         {
@@ -86,10 +86,10 @@ void TestGenerateDb()
                                     cGenreSwitcher::GetInstance()->GetFactoryForGenre( at->GetGenre() )->CreatePropDisplayer(), 
                                     &et 
                                 );
-        }	
-	}
-	catch( eError& e )
-	{
-		d.TraceError( "*** Caught Exception: %d %s\n", e.GetID(), e.GetMsg().c_str() );
-	}
+        }   
+    }
+    catch( eError& e )
+    {
+        d.TraceError( "*** Caught Exception: %d %s\n", e.GetID(), e.GetMsg().c_str() );
+    }
 }

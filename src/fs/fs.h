@@ -50,7 +50,7 @@
 
 TSS_BeginPackage( cFS )
 
-	TSS_DECLARE_STRINGTABLE;
+    TSS_DECLARE_STRINGTABLE;
     
     public:
         cFS();

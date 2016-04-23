@@ -114,8 +114,8 @@ bool cFSPropDisplayer::IsMultiLineProp( int propID ) const
 
 cFSPropDisplayer::~cFSPropDisplayer()
 {
-	cDebug d("~cFSPropDisplayer");
-	d.TraceNever( "Destructor called on object %x\n", (ptr_size_type)this);
+    cDebug d("~cFSPropDisplayer");
+    d.TraceNever( "Destructor called on object %x\n", (ptr_size_type)this);
 }
 
 const cFCOPropVector& cFSPropDisplayer::GetPropsConverted() const
@@ -193,12 +193,12 @@ TSTRING& cFSPropDisplayer::GetDetailsHeader( TSTRING& strBuf, int iMargin ) cons
 
 
 ////////////////////////////////////////////////////////////////////////
-// Function name	: cFSPropDisplayer::GetDetails
-// Description	    : takes a TSTRING and fills it with an "ls -l" representation
+// Function name    : cFSPropDisplayer::GetDetails
+// Description      : takes a TSTRING and fills it with an "ls -l" representation
 //                    of the object's permission bits ( e.g. "drwxr-x--x" ), UID,
 //                    size, and last access time.  Does not add the name of the FSO
 //
-// Return type		: TSTRING& -- reference to input buffer
+// Return type      : TSTRING& -- reference to input buffer
 //
 // Argument         : TSTRING& strBuf -- buffer.  GetDesription will use it to allocate space.
 //
@@ -303,10 +303,10 @@ TSTRING cFSPropDisplayer::PropAsString( const iFCO* const pFCO, const int propId
 {
     if( mpvPropsWeDisplay.ContainsItem( propIdx ) && mbLazy )
     {
-		InitForProp( pFCO, propIdx );
-	}
-	// run the const version of PropAsString
-	return ((const cFSPropDisplayer*)this)->PropAsString(pFCO, propIdx, iOffset, iWidth);
+        InitForProp( pFCO, propIdx );
+    }
+    // run the const version of PropAsString
+    return ((const cFSPropDisplayer*)this)->PropAsString(pFCO, propIdx, iOffset, iWidth);
 }
 
 TSTRING cFSPropDisplayer::PropAsString( const iFCO* const pFCO, const int propIdx, int iOffset, int iWidth ) const
@@ -393,7 +393,7 @@ TSTRING cFSPropDisplayer::PropAsString( const iFCO* const pFCO, const int propId
 
 void cFSPropDisplayer::Write( iSerializer* pSerializer ) const
 {
-	mpvPropsWeDisplay.Write( pSerializer );
+    mpvPropsWeDisplay.Write( pSerializer );
     pSerializer->WriteInt32( mbLazy ? 1 : 0 );
     
 
@@ -419,8 +419,8 @@ void cFSPropDisplayer::Write( iSerializer* pSerializer ) const
 
 void cFSPropDisplayer::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("Property Displayer Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("Property Displayer Read")));
     
     mpvPropsWeDisplay.Read( pSerializer );
 
@@ -433,7 +433,7 @@ void cFSPropDisplayer::Read(iSerializer* pSerializer, int32 version)
         int32 nValues;
         int64 key;
         TSTRING val;
-	    int i;
+        int i;
 
         // read UID hashtable
         pSerializer->ReadInt32( nValues );

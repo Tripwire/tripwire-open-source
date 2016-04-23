@@ -67,13 +67,13 @@ template< class KEY, class CHR > class cMessages_;
 //  Used to maintain a table of resources that are indexed by KEY
 //  type values. The <REZ> type can be any valid type that is
 //  assignable.
-//	
+//  
 // CONSTRAINTS:
 //  <KEY> must be a valid key type for the std::map concept
 //  <REZ> must be a valid value type for the std::map concept.
-//	
+//  
 // INVARIANTS:
-//	
+//  
 //
 template< class KeyT, class RscT >
 class cResources_
@@ -135,7 +135,7 @@ class cResources_
 //-----------------------------------------------------------------------------
 //  SYNOPSIS: 
 //      Specialization of cResources_<KEY,REZ> to store message strings    
-//      instead of generalized resource objects. In the future this can         	
+//      instead of generalized resource objects. In the future this can             
 //      be refactored to use message objects so that they can come from
 //      a dynamic  source (i.e., not a string-literal) such as persistant
 //      storage or some algorithm based on the concatenation of elements.
@@ -145,9 +145,9 @@ class cResources_
 //      not allowing the client to expect a specific character sequence
 //      representation, such as the near ubiquitous const char*. For
 //      example:
-//                                                                           	
+//                                                                              
 //          const char* psz = messages.GetAnsi( IDS_SOMESTRING );               
-//                                                                           	
+//                                                                              
 //      The above call requires the caller to be responsible for memory
 //      resources in the case of a conversion. However, there is no 
 //      clear way to know up front how many bytes will be required. 
@@ -155,14 +155,14 @@ class cResources_
 //      memory within cMessages and require the caller to release the
 //      the resources when they are done with the message. If we instead
 //      require calls in the following form:
-//                                                                           	
+//                                                                              
 //          std::string str = messages.GetAnsi( IDS_SOMESTRING );               
-//                                                                           	
+//                                                                              
 //      We can allows assume proper resource use regardless of whether
 //      a simple character pointer is returned or newly allocated 
 //      resources used to convert the stored message.
 //                                                                           
-//	
+//  
 //  CONSTRAINTS:
 //      As with all classes which manipulate character sequences, CHAR
 //      must be a valid character type as defined by the STDCPP standard.
@@ -425,7 +425,7 @@ Message_Class::GetWide( ConstKeyRef id ) const
 // cMessages_<char & wchar_t> -- Specializations
 //-----------------------------------------------------------------------------
 //  SYNOPSIS: 
-//	    MSVC does not yet support specializations. As a compromise, we fully
+//      MSVC does not yet support specializations. As a compromise, we fully
 //      specialize on TCHR but assume a key type of "const int".
 //
 
@@ -456,7 +456,7 @@ class cMessages_<ENUM_TYPE, char> :
         { 
             Value msg = Resources::Get( id );
             return ( msg != DefaultValueRef() ) 
-					? String( msg )
+                    ? String( msg )
                     : String();
         }
         

@@ -60,72 +60,72 @@ class cBidirArchive;
 class cBlockFile
 {
 public:
-	enum {						BLOCK_SIZE = 4096 };
-	typedef cBlock<BLOCK_SIZE>	Block;
+    enum {                      BLOCK_SIZE = 4096 };
+    typedef cBlock<BLOCK_SIZE>  Block;
 
-	cBlockFile();
-	~cBlockFile();
+    cBlockFile();
+    ~cBlockFile();
 
-	void	Open( const TSTRING& fileName, int numPages, bool bTruncate = false ); //throw (eArchive)	
-		// opens the given file name as a block file, and uses numPages to signify the 
-		// number of pages to cache blocks in as they are accessed from disk.
-		// if bTruncate is true, then the file is created with zero length.
-	void	Open( cBidirArchive* pArch, int numPages ); //throw (eArchive)
-		// the same as the previous Open(), except the passed in archive is used. This class will destroy
-		// the archive when it is done (when Close() is called). If the archive length is zero, then
-		// we create a new database. Otherwise, we assume we are opening an existing file.
-	void	Close(); //throw (eArchive)
-		// writes all unsaved data to disk and disassociates the block file from its archive
-	void	Flush(); //throw (eArchive)
-		// flushes all dirty data to disk
+    void    Open( const TSTRING& fileName, int numPages, bool bTruncate = false ); //throw (eArchive)   
+        // opens the given file name as a block file, and uses numPages to signify the 
+        // number of pages to cache blocks in as they are accessed from disk.
+        // if bTruncate is true, then the file is created with zero length.
+    void    Open( cBidirArchive* pArch, int numPages ); //throw (eArchive)
+        // the same as the previous Open(), except the passed in archive is used. This class will destroy
+        // the archive when it is done (when Close() is called). If the archive length is zero, then
+        // we create a new database. Otherwise, we assume we are opening an existing file.
+    void    Close(); //throw (eArchive)
+        // writes all unsaved data to disk and disassociates the block file from its archive
+    void    Flush(); //throw (eArchive)
+        // flushes all dirty data to disk
 
-	Block*	GetBlock( int blockNum ); //throw (eArchive)
-		// returns the specified block. This asserts that the block number is below GetNumBlocks()
-		// this method takes care of paging the block into memory and returns a pointer to the block.
+    Block*  GetBlock( int blockNum ); //throw (eArchive)
+        // returns the specified block. This asserts that the block number is below GetNumBlocks()
+        // this method takes care of paging the block into memory and returns a pointer to the block.
 
-	Block* CreateBlock(); //throw (eArchive)
-		// this creates a new block, sets its number to GetNumBlocks(), pages it into memory, and 
-		// returns a pointer to it
+    Block* CreateBlock(); //throw (eArchive)
+        // this creates a new block, sets its number to GetNumBlocks(), pages it into memory, and 
+        // returns a pointer to it
 
-	void DestroyLastBlock(  );
-		// this method removes the last block from the file
+    void DestroyLastBlock(  );
+        // this method removes the last block from the file
 
-	int		GetNumBlocks() const { return mNumBlocks; }
-	int		GetBlockSize() const { return BLOCK_SIZE; }
+    int     GetNumBlocks() const { return mNumBlocks; }
+    int     GetBlockSize() const { return BLOCK_SIZE; }
 
-	cBidirArchive*	GetArchive() { return mpArchive; }
-		// NOTE -- be _very_ careful with this archive. It should probably not be written to
+    cBidirArchive*  GetArchive() { return mpArchive; }
+        // NOTE -- be _very_ careful with this archive. It should probably not be written to
 private:
-	typedef cBlockImpl<BLOCK_SIZE>		BlockImpl;
-	typedef std::vector< BlockImpl >	BlockVector;
-	
-	int				mNumPages;
-	int				mNumBlocks;		// the total number of blocks in the archive.
-	uint32			mTimer;			// keeps track of the current "time"
-	cBidirArchive*	mpArchive;		// note: I always own the deletion of the archive
-	BlockVector		mvPagedBlocks;
+    typedef cBlockImpl<BLOCK_SIZE>      BlockImpl;
+    typedef std::vector< BlockImpl >    BlockVector;
+    
+    int             mNumPages;
+    int             mNumBlocks;     // the total number of blocks in the archive.
+    uint32          mTimer;         // keeps track of the current "time"
+    cBidirArchive*  mpArchive;      // note: I always own the deletion of the archive
+    BlockVector     mvPagedBlocks;
 
-	void FlushBlock( BlockImpl* pBlock ); //throw (eArchive)
-		// helper function that writes a block to disk if it is dirty
+    void FlushBlock( BlockImpl* pBlock ); //throw (eArchive)
+        // helper function that writes a block to disk if it is dirty
 
-	///////////////////////////////////////////////////////////////////////////
-	// Profiling / Debugging interface
-	///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    // Profiling / Debugging interface
+    ///////////////////////////////////////////////////////////////////////////
 #ifdef _BLOCKFILE_DEBUG
 public:
-	void TraceContents(int dl = -1) const;
-		// traces out all the info we can on the current state of this class
-		// dl is the debug level to trace it at; -1 means to use D_DEBUG
-	void AssertValid() const;
-		// ASSERTs as much as we can about the consistancy of our internal state.
-	int mNumBlockWrite;
-		// counts how many writes we have done
-	int mNumBlockRead;
-		// counts how many reads we have done
-	int mNumPageFault;
-		// number of times a page fault occured
-	int mNumPageRequests;
-		// number of page requests (useful to compare with mNumPageFault)
+    void TraceContents(int dl = -1) const;
+        // traces out all the info we can on the current state of this class
+        // dl is the debug level to trace it at; -1 means to use D_DEBUG
+    void AssertValid() const;
+        // ASSERTs as much as we can about the consistancy of our internal state.
+    int mNumBlockWrite;
+        // counts how many writes we have done
+    int mNumBlockRead;
+        // counts how many reads we have done
+    int mNumPageFault;
+        // number of times a page fault occured
+    int mNumPageRequests;
+        // number of page requests (useful to compare with mNumPageFault)
 
 #endif //_BLOCKFILE_DEBUG
 
@@ -138,16 +138,16 @@ public:
 inline void cBlockFile::FlushBlock( cBlockFile::BlockImpl* pBlock ) //throw (eArchive)
 {
 
-	if( (pBlock->GetBlockNum() != Block::INVALID_NUM) && pBlock->IsDirty() )
-	{
-		// mNumBlockWrite keeps track of how many block writes we do
-		//
+    if( (pBlock->GetBlockNum() != Block::INVALID_NUM) && pBlock->IsDirty() )
+    {
+        // mNumBlockWrite keeps track of how many block writes we do
+        //
 #ifdef _BLOCKFILE_DEBUG
-		mNumBlockWrite++;
+        mNumBlockWrite++;
 #endif
 
-		pBlock->Write( *mpArchive );
-	}
+        pBlock->Write( *mpArchive );
+    }
 }
 
 

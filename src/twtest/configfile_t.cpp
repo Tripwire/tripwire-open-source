@@ -119,73 +119,73 @@ void TestConfigFile(void)
     }
 
 #ifdef NOT_BRIANS_TEST
-	cDebug d("Testconfigfile");
-	d.TraceDetail("Entering...\n");
-	iFSServices* pFSServices = iFSServices::GetInstance();
+    cDebug d("Testconfigfile");
+    d.TraceDetail("Entering...\n");
+    iFSServices* pFSServices = iFSServices::GetInstance();
 
-	//Define some test values for <name, value> pairs to be
-	//stored in a test config. module. I'm going to use the
-	//values specified in the install doc. -DA
-	TSTRING currpath;
-	pFSServices->GetCurrentDir(currpath);
-	const TSTRING testTWROOT = currpath;
-	const TSTRING testTWBIN = (testTWROOT + _T("/bin/"));
-	const TSTRING testTWCFG = (testTWROOT + _T("/etc/"));
-	const TSTRING testTWMAN = (testTWROOT + _T("/man/"));
-	const TSTRING testTWHTML = (testTWROOT + _T("/html/"));
-	const TSTRING testTWDB = (testTWROOT + _T("/db/"));
-	const TSTRING testTWKEY = (testTWROOT + _T("/key/"));
-	const TSTRING testTWREPORT = (testTWROOT + _T("/report/"));
-	const TSTRING testTWPASSWORD = (testTWROOT + _T("/null_password"));
+    //Define some test values for <name, value> pairs to be
+    //stored in a test config. module. I'm going to use the
+    //values specified in the install doc. -DA
+    TSTRING currpath;
+    pFSServices->GetCurrentDir(currpath);
+    const TSTRING testTWROOT = currpath;
+    const TSTRING testTWBIN = (testTWROOT + _T("/bin/"));
+    const TSTRING testTWCFG = (testTWROOT + _T("/etc/"));
+    const TSTRING testTWMAN = (testTWROOT + _T("/man/"));
+    const TSTRING testTWHTML = (testTWROOT + _T("/html/"));
+    const TSTRING testTWDB = (testTWROOT + _T("/db/"));
+    const TSTRING testTWKEY = (testTWROOT + _T("/key/"));
+    const TSTRING testTWREPORT = (testTWROOT + _T("/report/"));
+    const TSTRING testTWPASSWORD = (testTWROOT + _T("/null_password"));
 
-	//Begin tests of config. module parser:
-	cConfigFile write_cfgmod;
-	//Filename for writing/reading some value pairs:
-	const TSTRING testfile = testTWCFG + _T("tripwire.cfg");
+    //Begin tests of config. module parser:
+    cConfigFile write_cfgmod;
+    //Filename for writing/reading some value pairs:
+    const TSTRING testfile = testTWCFG + _T("tripwire.cfg");
 
-	//Insert the test values into cConfigFile's hashtable:
+    //Insert the test values into cConfigFile's hashtable:
     /*
-	write_cfgmod.Insert( _T("TWROOT"), testTWROOT);
-	write_cfgmod.Insert( _T("TWBIN"), testTWBIN);
-	write_cfgmod.Insert( _T("TWCFG"), testTWCFG);
-	write_cfgmod.Insert( _T("TWMAN"), testTWMAN);
-	write_cfgmod.Insert( _T("TWHTML"), testTWHTML);
-	write_cfgmod.Insert( _T("TWDB"), testTWDB);
-	write_cfgmod.Insert( _T("TWKEY"), testTWKEY);
-	write_cfgmod.Insert( _T("TWREPORT"), testTWREPORT);
-	write_cfgmod.Insert( _T("TWPASSWORD"), testTWPASSWORD);
+    write_cfgmod.Insert( _T("TWROOT"), testTWROOT);
+    write_cfgmod.Insert( _T("TWBIN"), testTWBIN);
+    write_cfgmod.Insert( _T("TWCFG"), testTWCFG);
+    write_cfgmod.Insert( _T("TWMAN"), testTWMAN);
+    write_cfgmod.Insert( _T("TWHTML"), testTWHTML);
+    write_cfgmod.Insert( _T("TWDB"), testTWDB);
+    write_cfgmod.Insert( _T("TWKEY"), testTWKEY);
+    write_cfgmod.Insert( _T("TWREPORT"), testTWREPORT);
+    write_cfgmod.Insert( _T("TWPASSWORD"), testTWPASSWORD);
     */
 
-	//Store these values on disk.
+    //Store these values on disk.
     TSTRING configText;
     write_cfgmod.WriteString(configText); 
     cTWUtil::WriteConfigText(testfile.c_str(), configText, false, NULL);
 
-	//Instantiate another cConfigFile object for reading back
-	//values:
-	cConfigFile read_cfgmod;
+    //Instantiate another cConfigFile object for reading back
+    //values:
+    cConfigFile read_cfgmod;
 
     try
     {
         cTWUtil::ReadConfigText(testfile.c_str(), configText);
-	    read_cfgmod.ReadString(configText);
+        read_cfgmod.ReadString(configText);
     }
-	catch (eError& error)
+    catch (eError& error)
     {
         TCERR << (int)error.GetID() << std::endl << error.GetMsg() << std::endl;
         ASSERT(false);
     }
 
-	//These TSTRINGS will hold info. from .Lookup:
-	TSTRING lookup1, lookup2;
+    //These TSTRINGS will hold info. from .Lookup:
+    TSTRING lookup1, lookup2;
 
-	read_cfgmod.Lookup( _T("TWROOT"), lookup1);
-	read_cfgmod.Lookup( _T("TWDB"), lookup2);
-	d.TraceDetail("First lookup's value: %s \n", lookup1.c_str());
-	d.TraceDetail("Second lookup's value: %s \n", lookup2.c_str());
-	TEST( lookup1 == testTWROOT );
-	TEST( lookup2 == testTWDB );
+    read_cfgmod.Lookup( _T("TWROOT"), lookup1);
+    read_cfgmod.Lookup( _T("TWDB"), lookup2);
+    d.TraceDetail("First lookup's value: %s \n", lookup1.c_str());
+    d.TraceDetail("Second lookup's value: %s \n", lookup2.c_str());
+    TEST( lookup1 == testTWROOT );
+    TEST( lookup2 == testTWDB );
 
-	d.TraceDetail("Tests Passed!\n");
+    d.TraceDetail("Tests Passed!\n");
 #endif // NOT_BRIANS_TEST
 }

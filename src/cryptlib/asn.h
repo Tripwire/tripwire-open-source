@@ -24,34 +24,34 @@ bool BERLengthDecode(BufferedTransformation &, unsigned int &);
 class BERSequenceDecoder : public BufferedTransformation
 {
 public:
-	BERSequenceDecoder(BufferedTransformation &inQueue);
-	~BERSequenceDecoder();
+    BERSequenceDecoder(BufferedTransformation &inQueue);
+    ~BERSequenceDecoder();
 
-	void Put(byte) {}
-	void Put(const byte *, unsigned int) {}
+    void Put(byte) {}
+    void Put(const byte *, unsigned int) {}
 
-	unsigned long MaxRetrieveable()
-		{return inQueue.MaxRetrieveable();}
-	unsigned int Get(byte &outByte)
-		{return inQueue.Get(outByte);}
-	unsigned int Get(byte *outString, unsigned int getMax)
-		{return inQueue.Get(outString, getMax);}
-	unsigned int Peek(byte &outByte) const
-		{return inQueue.Peek(outByte);}
+    unsigned long MaxRetrieveable()
+        {return inQueue.MaxRetrieveable();}
+    unsigned int Get(byte &outByte)
+        {return inQueue.Get(outByte);}
+    unsigned int Get(byte *outString, unsigned int getMax)
+        {return inQueue.Get(outString, getMax);}
+    unsigned int Peek(byte &outByte) const
+        {return inQueue.Peek(outByte);}
 
 private:
-	BufferedTransformation &inQueue;
-	bool definiteLength;
-	unsigned int length;
+    BufferedTransformation &inQueue;
+    bool definiteLength;
+    unsigned int length;
 };
 
 class DERSequenceEncoder : public ByteQueue
 {
 public:
-	DERSequenceEncoder(BufferedTransformation &outQueue);
-	~DERSequenceEncoder();
+    DERSequenceEncoder(BufferedTransformation &outQueue);
+    ~DERSequenceEncoder();
 private:
-	BufferedTransformation &outQueue;
+    BufferedTransformation &outQueue;
 };
 
 #endif

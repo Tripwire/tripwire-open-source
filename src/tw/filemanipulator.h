@@ -64,26 +64,26 @@ public:
         ERR_LAST
     };
 
-	TSTRING eFileManipulator::GetMsg() const
-	{
-		TSTRING ret = iUserString::GetInstance()->GetString(STR_ERROR_FILENAME);
-		ret.append(mMsg);
-		return ret;
-	}
+    TSTRING eFileManipulator::GetMsg() const
+    {
+        TSTRING ret = iUserString::GetInstance()->GetString(STR_ERROR_FILENAME);
+        ret.append(mMsg);
+        return ret;
+    }
 */
 
 //=============================================================================
 // eFileManip
 //=============================================================================
-TSS_FILE_EXCEPTION( eFileManip,				eFileError )
-TSS_FILE_EXCEPTION( eFileManipInvalidFile,	eFileManip )
-TSS_FILE_EXCEPTION( eFileManipFileRead,		eFileManip )
+TSS_FILE_EXCEPTION( eFileManip,             eFileError )
+TSS_FILE_EXCEPTION( eFileManipInvalidFile,  eFileManip )
+TSS_FILE_EXCEPTION( eFileManipFileRead,     eFileManip )
 TSS_FILE_EXCEPTION( eFileManipHeaderNotFound,eFileManip )
-TSS_FILE_EXCEPTION( eFileManipFileNotFound,	eFileManip )
-TSS_FILE_EXCEPTION( eFileManipNotEncrypted,	eFileManip )
-TSS_FILE_EXCEPTION( eFileManipMissingKey,	eFileManip )
-TSS_FILE_EXCEPTION( eFileManipNotWritable,	eFileManip )
-TSS_FILE_EXCEPTION( eFileManipUnrecognizedFileType,	eFileManip )
+TSS_FILE_EXCEPTION( eFileManipFileNotFound, eFileManip )
+TSS_FILE_EXCEPTION( eFileManipNotEncrypted, eFileManip )
+TSS_FILE_EXCEPTION( eFileManipMissingKey,   eFileManip )
+TSS_FILE_EXCEPTION( eFileManipNotWritable,  eFileManip )
+TSS_FILE_EXCEPTION( eFileManipUnrecognizedFileType, eFileManip )
 
 //=============================================================================
 // cFileManipulator
@@ -95,7 +95,7 @@ public:
         // throws eArchive if file does not exist
     cFileManipulator(const cFileManipulator& rhs);
     ~cFileManipulator();
-	void Init();
+    void Init();
 
     // information for this file
     TSTRING                 GetFileName() const;
@@ -129,7 +129,7 @@ public:
         // and returns false if it is a database or report.
 
 private:
-	bool		mbInit;
+    bool        mbInit;
     TSTRING     mFileName;
     cFileHeader mFileHeader;
 };

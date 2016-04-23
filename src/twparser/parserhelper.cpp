@@ -85,7 +85,7 @@ bool                                    cPreprocessor::mfIgnoreSection;
 cParserHelper::ScopedAttrContainer      cParserHelper::mScopedAttrs;
 cParserHelper::GenreContainer           cParserHelper::mAph;
 cGenreParseInfo*                        cParserHelper::pCurrentGenreInfo;
-cSymbolTable							cParserHelper::mGlobalVarTable;
+cSymbolTable                            cParserHelper::mGlobalVarTable;
 bool                                    cParserHelper::mfParseOnly;
 
 
@@ -337,7 +337,7 @@ void cParserHelper::SetSection( TSTRING& strSection ) // throw( eParserHelper )
         else 
         {
             throw eParserSectionAlreadyDefined( strSection );
-		}
+        }
     }
     else // ignore
     {
@@ -357,14 +357,14 @@ void cParserHelper::SetSection( TSTRING& strSection ) // throw( eParserHelper )
 // the return value of the hash table insert.
 bool cParserHelper::InsertGlobalVariable( const TSTRING& var, const TSTRING& val )
 {
-	TSTRING dummy;
+    TSTRING dummy;
     /*  if( cParserHelper::GetGenreInfo()->GetPredefVarTable().Lookup(var, dummy) )
-			throw eParserRedefineVar( var );
-	*/
-	// TODO : Verify that there is no feasible way to search the predefines without 
-	// messing everything up, given our current architecture.
+            throw eParserRedefineVar( var );
+    */
+    // TODO : Verify that there is no feasible way to search the predefines without 
+    // messing everything up, given our current architecture.
 
-	return mGlobalVarTable.Insert( var, val );
+    return mGlobalVarTable.Insert( var, val );
 }
 
 cGenreParseInfo* cParserHelper::GetGenreInfo()
@@ -598,7 +598,7 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
 
 ///////////////////////////////////////////////////////////////////////////////
 // CreateFCOSpecs -- foreach rule, create an FCOSpec.  then attach the stop
-//			points.
+//          points.
 ///////////////////////////////////////////////////////////////////////////////
 void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSpecList &fcospeclist) //throw( eParserHelper )
 {
@@ -607,16 +607,16 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
 
     cDebug d("cGenreParseInfo::CreateFCOSpecs");
 
-	// foreach rule
-	std::list<const cParseRule *>::iterator rule;
-	for (rule = pgpi->GetRules()->begin(); rule != pgpi->GetRules()->end(); rule++) 
+    // foreach rule
+    std::list<const cParseRule *>::iterator rule;
+    for (rule = pgpi->GetRules()->begin(); rule != pgpi->GetRules()->end(); rule++) 
     {
         //
-		// create the spec with its the last element of its start point as its name.
+        // create the spec with its the last element of its start point as its name.
         // if the attribute 'rulename' is specified, we'll set it as the spec name later
         // Need to set the start point after the helper is set
         //        
-		cFCOName startpoint = (*rule)->GetName();
+        cFCOName startpoint = (*rule)->GetName();
         iFCOSpec *pfcospec = iTWFactory::GetInstance()->CreateSpec( startpoint.GetShortName() ); // we'll set the helper below
 
         //////////////////////////////////////////////////////////////
@@ -633,18 +633,18 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
         {
             cFCOSpecStopPointSet* pStopPtSet = new cFCOSpecStopPointSet;
             
-		    // set stop points
+            // set stop points
             cGenreParseInfo::StopListType::iterator stop;
-		    for (stop = pgpi->GetStopList()->begin(); stop != pgpi->GetStopList()->end(); stop++) 
+            for (stop = pgpi->GetStopList()->begin(); stop != pgpi->GetStopList()->end(); stop++) 
             {
-			    // add stop point if below start point
-			    cFCOName::Relationship relate = startpoint.GetRelationship(*stop);
+                // add stop point if below start point
+                cFCOName::Relationship relate = startpoint.GetRelationship(*stop);
 
-			    if (relate == cFCOName::REL_ABOVE) 
-			    {
-				    pStopPtSet->Add( *stop );
-			    }
-		    }
+                if (relate == cFCOName::REL_ABOVE) 
+                {
+                    pStopPtSet->Add( *stop );
+                }
+            }
 
             pStopPtSet->SetRecurseDepth( -1 == depth ? cFCOSpecStopPointSet::RECURSE_INFINITE : depth );
             pfcospec->SetHelper( pStopPtSet );
@@ -653,29 +653,29 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
         //////////////////////////////////////////////////////////////
 
         //
-		// set start point
+        // set start point
         //
-		pfcospec->SetStartPoint( startpoint );
+        pfcospec->SetStartPoint( startpoint );
 
         //
-		// set default mask
+        // set default mask
         //
-		const iFCOSpecMask *pdefspecmask = iFCOSpecMask::GetDefaultMask();
-		ASSERT(pdefspecmask != 0);
+        const iFCOSpecMask *pdefspecmask = iFCOSpecMask::GetDefaultMask();
+        ASSERT(pdefspecmask != 0);
 
         //
-		// build property vector
+        // build property vector
         //
         cFCOPropVector v = (*rule)->GetDefSpecMask().GetPropVector();        
-		pHelper->AddSubTypeProps( v );
-		pfcospec->SetPropVector( pdefspecmask, v);
+        pHelper->AddSubTypeProps( v );
+        pfcospec->SetPropVector( pdefspecmask, v);
 
         //
         // add attributes
         //
         TSTRING strAttrVal;
         cParseNamedAttrList* pal = (*rule)->GetAttrList();
-		cFCOSpecAttr* pAttr	= new cFCOSpecAttr;
+        cFCOSpecAttr* pAttr = new cFCOSpecAttr;
         if( pal != NULL )
         {
             // TODO: make storage place for these keywords
@@ -688,32 +688,32 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
             pa = pal->Lookup( TSS_GetString( cTWParser, twparser::STR_PARSER_RULENAME ) );
             if( pa )
             {
-				// TODO -- at some future date, remove the name in the spec 
-				// and only set it in pAttr
+                // TODO -- at some future date, remove the name in the spec 
+                // and only set it in pAttr
                 pfcospec->SetName( pa->GetValue() );
-				pAttr->SetName( pa->GetValue() );
+                pAttr->SetName( pa->GetValue() );
             }
             
             //
             // get severity
             //
-			pa = pal->Lookup( TSS_GetString( cTWParser, twparser::STR_PARSER_SEVERITY ) );
+            pa = pal->Lookup( TSS_GetString( cTWParser, twparser::STR_PARSER_SEVERITY ) );
             if( pa )
-			{
+            {
                 int iSev;
                 cSeverityLimits sl;
                 if( ! sl.InterpretInt( pa->GetValue(), &iSev ) )
                     throw eParserBadSevVal( pa->GetValue(), pa->GetLineNum() );
 
                 pAttr->SetSeverity( iSev );
-			}
+            }
 
             //
             // get emailto
             //
             pa = pal->Lookup( TSS_GetString( cTWParser, twparser::STR_PARSER_EMAILTO ) ) ;
             if( pa )
-			{
+            {
                 TSTRING strAddressee;
                 int index = 0;
                 while( cParserUtil::GetNextMailName( pa->GetValue(), strAddressee, index++ ) )
@@ -721,58 +721,58 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
                     d.TraceDebug( _T("email to recip: <%s>\n"), strAddressee.c_str() );
                     pAttr->AddEmail( strAddressee );
                 }
-			}
+            }
         }
 
         //
-		// store rule in the spec list
+        // store rule in the spec list
         //
-		fcospeclist.Add( pfcospec, pAttr );
-		pfcospec->Release();
-		pAttr->Release();
-	}
+        fcospeclist.Add( pfcospec, pAttr );
+        pfcospec->Release();
+        pAttr->Release();
+    }
 
     delete pHelper;
 }
 ///////////////////////////////////////////////////////////////////////////////
 // CreatePropVector -- given the string representation of the attribute vector,
-//			create an FCOPropVector
+//          create an FCOPropVector
 ///////////////////////////////////////////////////////////////////////////////
 void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropVector& v, iParserGenreUtil* pHelper )
 {
     ASSERT( pHelper != NULL );
 
-	// state: turning modes on or off
-	enum Mode { MO_TURNON, MO_TURNOFF };
-	Mode mode = MO_TURNON;
+    // state: turning modes on or off
+    enum Mode { MO_TURNON, MO_TURNOFF };
+    Mode mode = MO_TURNON;
 
     // clear out all spaces in the string    
     TSTRING strPropList = strPropListC;
     util_EatAllSpaces( strPropList );
 
-	// zero it out
-	v.Clear();
+    // zero it out
+    v.Clear();
 
     TSTRING::const_iterator iter;
     TSTRING::size_type i;  // index into string
     for ( iter = strPropList.begin(), i = 0; iter != strPropList.end(); iter++, i++ ) 
     {
-		int propIndex = -1;	                	// index into propvector
+        int propIndex = -1;                     // index into propvector
 
-		switch (*iter) 
+        switch (*iter) 
         {
             /////////////////////////////////////////////////////////////
-		    // parsing modes
-		    case '+':
-			    mode = MO_TURNON;
-			    continue;
-		    case '-':
-			    mode = MO_TURNOFF;
-			    continue;
+            // parsing modes
+            case '+':
+                mode = MO_TURNON;
+                continue;
+            case '-':
+                mode = MO_TURNOFF;
+                continue;
             /////////////////////////////////////////////////////////////
                 
             /////////////////////////////////////////////////////////////
-		    // long attribute names
+            // long attribute names
             case '&':
                 {
                     //
@@ -808,15 +808,15 @@ void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropV
             break;
             //
             /////////////////////////////////////////////////////////////
-		}
+        }
 
-		// now turn on or turn off bit, according to mode
+        // now turn on or turn off bit, according to mode
         ASSERT( propIndex != -1 );
-		if (mode == MO_TURNON)
-			v.AddItemAndGrow( propIndex );
-		else 
-			v.RemoveItem( propIndex );
-	}
+        if (mode == MO_TURNON)
+            v.AddItemAndGrow( propIndex );
+        else 
+            v.RemoveItem( propIndex );
+    }
 
     /* for 1.5, allow no properties (just track file existence)
     // if v is empty, error
@@ -824,12 +824,12 @@ void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropV
     emptyPropVector.Clear();    
     if( v == emptyPropVector )
     {
-		d.TraceError("CreatePropVector failed!!\n");
+        d.TraceError("CreatePropVector failed!!\n");
         throw eError( ERR_BAD_PROP_STRING, strPropV.c_str() );
     }
     */
 
-	return;
+    return;
 }
 
 // gets semicolon-delimited words in a string. index starts at 0.
@@ -1109,7 +1109,7 @@ int util_GetRecurseDepth( const cParseNamedAttrList* pList ) //throw( eParserHel
     {        
         const cParseNamedAttr* pa = pList->Lookup( TSS_GetString( cTWParser, twparser::STR_PARSER_RECURSE ) );
         if( pa )
-	    {
+        {
             TSTRING str = pa->GetValue();
 
             std::transform( str.begin(), str.end(), str.begin(), _totlower );
@@ -1131,7 +1131,7 @@ int util_GetRecurseDepth( const cParseNamedAttrList* pList ) //throw( eParserHel
                     throw eParserUnrecognizedAttrVal( str, pa->GetLineNum() );                
                 return i;
             }
-	    }
+        }
     }
 
     return( -1 ); // defaults to recurse all levels

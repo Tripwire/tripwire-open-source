@@ -48,173 +48,173 @@ void HashTest2();
 
 void TestHashTable(void)
 {
-	HashTest1();
-	HashTest2();
+    HashTest1();
+    HashTest2();
 }
 
 void HashTest1()
 {
-	//Test the Hash table with Key = TSTRING 
+    //Test the Hash table with Key = TSTRING 
 
-	cHashTable<TSTRING, void*> htable;
-	cDebug d("TestHashTable()::Test1");
-	d.TraceDetail("Entering ...\n");
+    cHashTable<TSTRING, void*> htable;
+    cDebug d("TestHashTable()::Test1");
+    d.TraceDetail("Entering ...\n");
 
-	//return val for all function calls.
-	bool ret = true;
+    //return val for all function calls.
+    bool ret = true;
 
-	//test data
-	TSTRING string = _T("test string");
-	TSTRING string2 = _T("another test string");
-	TSTRING string3 = _T("yet another test string");
-	void* data_ptr    = NULL;
-	void* data_ptr2   = NULL;
-	void* data_ptr3   = NULL;
-	void* test_lookup = NULL;
+    //test data
+    TSTRING string = _T("test string");
+    TSTRING string2 = _T("another test string");
+    TSTRING string3 = _T("yet another test string");
+    void* data_ptr    = NULL;
+    void* data_ptr2   = NULL;
+    void* data_ptr3   = NULL;
+    void* test_lookup = NULL;
 
-	int var = 32;
-	int var2 = 33;
-	int* test = &var;
-	int* test2 = &var2;
+    int var = 32;
+    int var2 = 33;
+    int* test = &var;
+    int* test2 = &var2;
 
-	data_ptr = test;
-	data_ptr2 = test2;
+    data_ptr = test;
+    data_ptr2 = test2;
 
-	//Test insert and lookup.
-	htable.Insert(string, data_ptr);
+    //Test insert and lookup.
+    htable.Insert(string, data_ptr);
     ret &= htable.Lookup(string, test_lookup);
-	TEST(ret);
-
-	//Make sure value is being stored and returned correctly
-	d.TraceDetail("Value returned from table is %i, and should be %i.\n", *((int*)test_lookup), var);
-	TEST(*((int*)test_lookup) == var);
-
-	//Check remove and lookup (lookup should fail)
-    ret &= htable.Remove(string);
-	TEST(ret);
-	ret &= !htable.Lookup(string, test_lookup);
     TEST(ret);
-	//Has test_lookup's value changed?  It shouldn't have...
-	TEST(*((int*)test_lookup) == var);
 
-	//Insert and Remove different string/key combo.
-	htable.Insert(string2, data_ptr2);
-	htable.Insert(string3, data_ptr3);
+    //Make sure value is being stored and returned correctly
+    d.TraceDetail("Value returned from table is %i, and should be %i.\n", *((int*)test_lookup), var);
+    TEST(*((int*)test_lookup) == var);
 
-	// test iteration
-	cHashTableIter<TSTRING, void*> iter(htable);
-	d.TraceDebug("Testing the iterator:\n");
-	for(iter.SeekBegin(); ! iter.Done(); iter.Next())
-	{
-		d.TraceDebug(_T("Key=%s\tValue=%d\n"), iter.Key().c_str(), iter.Val());
-	}
+    //Check remove and lookup (lookup should fail)
+    ret &= htable.Remove(string);
+    TEST(ret);
+    ret &= !htable.Lookup(string, test_lookup);
+    TEST(ret);
+    //Has test_lookup's value changed?  It shouldn't have...
+    TEST(*((int*)test_lookup) == var);
 
-	// get statistics
+    //Insert and Remove different string/key combo.
+    htable.Insert(string2, data_ptr2);
+    htable.Insert(string3, data_ptr3);
+
+    // test iteration
+    cHashTableIter<TSTRING, void*> iter(htable);
+    d.TraceDebug("Testing the iterator:\n");
+    for(iter.SeekBegin(); ! iter.Done(); iter.Next())
+    {
+        d.TraceDebug(_T("Key=%s\tValue=%d\n"), iter.Key().c_str(), iter.Val());
+    }
+
+    // get statistics
 #ifdef _DEBUG
-	htable.TraceDiagnostics();
+    htable.TraceDiagnostics();
 #endif
 
-	//Test IsEmpty()
-	ret &= !htable.IsEmpty();
-	TEST(!htable.IsEmpty());
+    //Test IsEmpty()
+    ret &= !htable.IsEmpty();
+    TEST(!htable.IsEmpty());
 
-	//Test Clear(), IsEmpty()
-	ret &= htable.Clear();
-	TEST(htable.Clear());
-	ret &= htable.IsEmpty();
-	TEST(htable.IsEmpty());
+    //Test Clear(), IsEmpty()
+    ret &= htable.Clear();
+    TEST(htable.Clear());
+    ret &= htable.IsEmpty();
+    TEST(htable.IsEmpty());
 /*
-	//Test the Hash table with arbitrary key
-	
+    //Test the Hash table with arbitrary key
+    
 
-	//Won't work with int!! (oops).  I'll need to make one of our data types 
-	// const TCHAR*() capable.  Casting an int to a TCHAR* just returns an address,
-	// so there's no way to properly hash (no length, etc).
-	cHashTable<cDummy, void*> htable2;
-	cDummy key1, key2;
-	key1.SetInt(40);
-	key2.SetInt(50);
-	test_lookup = NULL;
+    //Won't work with int!! (oops).  I'll need to make one of our data types 
+    // const TCHAR*() capable.  Casting an int to a TCHAR* just returns an address,
+    // so there's no way to properly hash (no length, etc).
+    cHashTable<cDummy, void*> htable2;
+    cDummy key1, key2;
+    key1.SetInt(40);
+    key2.SetInt(50);
+    test_lookup = NULL;
 
-	//Test insert and lookup.
-	htable2.Insert(key1, data_ptr);
-	TEST(ret &= htable2.Lookup(key1, test_lookup));
+    //Test insert and lookup.
+    htable2.Insert(key1, data_ptr);
+    TEST(ret &= htable2.Lookup(key1, test_lookup));
 
-	//Make sure value is being stored and returned correctly
-	d.TraceDetail("Value returned from table is %i, and should be %i.\n", *((int*)test_lookup), var);
-	TEST(*((int*)test_lookup) == var);
+    //Make sure value is being stored and returned correctly
+    d.TraceDetail("Value returned from table is %i, and should be %i.\n", *((int*)test_lookup), var);
+    TEST(*((int*)test_lookup) == var);
 
-	//Check remove and lookup (lookup should fail)
-	TEST(ret &= htable2.Remove(key1));
-	TEST(ret &= !htable2.Lookup(key1, test_lookup));
-	//Has test_lookup's value changed?  It shouldn't have...
-	TEST(*((int*)test_lookup) == var);
+    //Check remove and lookup (lookup should fail)
+    TEST(ret &= htable2.Remove(key1));
+    TEST(ret &= !htable2.Lookup(key1, test_lookup));
+    //Has test_lookup's value changed?  It shouldn't have...
+    TEST(*((int*)test_lookup) == var);
 
-	//Insert and different key/val combo.
-	htable2.Insert(key2, data_ptr2);
+    //Insert and different key/val combo.
+    htable2.Insert(key2, data_ptr2);
 
-	//Test IsEmpty()
-	ret &= !htable2.IsEmpty();
-	TEST(!htable2.IsEmpty());
+    //Test IsEmpty()
+    ret &= !htable2.IsEmpty();
+    TEST(!htable2.IsEmpty());
 
-	//Test Clear(), IsEmpty()
-	ret &= htable2.Clear();
-	TEST(htable2.Clear());
-	ret &= htable2.IsEmpty();
-	TEST(htable2.IsEmpty());
-	
-*/	
-	return;
+    //Test Clear(), IsEmpty()
+    ret &= htable2.Clear();
+    TEST(htable2.Clear());
+    ret &= htable2.IsEmpty();
+    TEST(htable2.IsEmpty());
+    
+*/  
+    return;
 }
 
 void HashTest2()
 {
-	cDebug d("TestHashTable()::Test2");
-	d.TraceDebug("entering...\n");
+    cDebug d("TestHashTable()::Test2");
+    d.TraceDebug("entering...\n");
 
-	{
-		cHashTable <TSTRING, TSTRING> tbl;
+    {
+        cHashTable <TSTRING, TSTRING> tbl;
 
-		// test insert and lookup
-		TEST(tbl.Insert(_T("foo"), _T("foo")) == false);
+        // test insert and lookup
+        TEST(tbl.Insert(_T("foo"), _T("foo")) == false);
 
-		TSTRING val;
-		TEST(tbl.Lookup(_T("foo"), val));
-		TEST(val.compare(_T("foo")) == 0);
+        TSTRING val;
+        TEST(tbl.Lookup(_T("foo"), val));
+        TEST(val.compare(_T("foo")) == 0);
 
-		// check Empty() on non-empty list
-		TEST(tbl.IsEmpty() == false);
+        // check Empty() on non-empty list
+        TEST(tbl.IsEmpty() == false);
 
-		// test insertion with collision
-		TEST(tbl.Insert(_T("foo"), _T("bar")) == true);
-		TEST(tbl.Lookup(_T("foo"), val));
-		TEST(val.compare(_T("bar")) == 0);
+        // test insertion with collision
+        TEST(tbl.Insert(_T("foo"), _T("bar")) == true);
+        TEST(tbl.Lookup(_T("foo"), val));
+        TEST(val.compare(_T("bar")) == 0);
 
-		// test removal
-		TEST(tbl.Remove(_T("foo")));
+        // test removal
+        TEST(tbl.Remove(_T("foo")));
 
-		// make sure it's totally empty (confirms that hash table insertion worked!)
-		TEST(tbl.IsEmpty());
+        // make sure it's totally empty (confirms that hash table insertion worked!)
+        TEST(tbl.IsEmpty());
 
-		// test another insertion
-		TEST(tbl.Insert(_T("a"), _T("bcd")) == false);
-		TEST(tbl.Insert(_T("b"), _T("def")) == false);
+        // test another insertion
+        TEST(tbl.Insert(_T("a"), _T("bcd")) == false);
+        TEST(tbl.Insert(_T("b"), _T("def")) == false);
 
-		TSTRING v1, v2;
-		TEST(tbl.Lookup(_T("a"), v1));
-		TEST(tbl.Lookup(_T("b"), v2));
+        TSTRING v1, v2;
+        TEST(tbl.Lookup(_T("a"), v1));
+        TEST(tbl.Lookup(_T("b"), v2));
 
-		TEST(v1.compare(_T("bcd")) == 0);
-		TEST(v2.compare(_T("def")) == 0);
+        TEST(v1.compare(_T("bcd")) == 0);
+        TEST(v2.compare(_T("def")) == 0);
 
-		// remove and test IsEmpty()
-		TEST(tbl.Remove(_T("a")));
-		TEST(tbl.IsEmpty() == false);
+        // remove and test IsEmpty()
+        TEST(tbl.Remove(_T("a")));
+        TEST(tbl.IsEmpty() == false);
 
-		TEST(tbl.Remove(_T("b")));
-		TEST(tbl.IsEmpty() == true);
+        TEST(tbl.Remove(_T("b")));
+        TEST(tbl.IsEmpty() == true);
 
-	}
+    }
 
-	d.TraceDebug("PASSED!\n");
+    d.TraceDebug("PASSED!\n");
 }

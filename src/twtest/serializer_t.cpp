@@ -47,14 +47,14 @@
 // will be tested in serializerimpl_t.cpp
 class cSerTestObject : public iTypedSerializable
 {
-	DECLARE_TYPEDSERIALIZABLE()
+    DECLARE_TYPEDSERIALIZABLE()
 
 public:
     cSerTestObject();
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0) {}
-	virtual void Write(iSerializer* pSerializer) const {}
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0) {}
+    virtual void Write(iSerializer* pSerializer) const {}
 
 private:
     int     mDummy;
@@ -69,5 +69,5 @@ cSerTestObject::cSerTestObject()
 
 void TestSerializer()
 {
-	cSerTestObject test_obj;
+    cSerTestObject test_obj;
 }

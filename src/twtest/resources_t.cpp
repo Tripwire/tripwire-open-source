@@ -43,38 +43,38 @@
 
 TSS_BeginPackage( cTestResources )
 
-	TSS_DECLARE_STRINGTABLE;
+    TSS_DECLARE_STRINGTABLE;
 
-	public:
+    public:
 
-		cTestResources() : mnCount( 10 )			
-		{
-		}
+        cTestResources() : mnCount( 10 )            
+        {
+        }
 
-		size_t Count() const {
-			return mnCount;
-		}
+        size_t Count() const {
+            return mnCount;
+        }
 
-		size_t Count( size_t nCount ) {
-			return mnCount = nCount;
-		}
+        size_t Count( size_t nCount ) {
+            return mnCount = nCount;
+        }
 
-	private:
-		size_t mnCount;
+    private:
+        size_t mnCount;
 
 TSS_EndPackage( cTestResources )
 
 TSS_BeginStringIds( test )
-	IDS_TEST1 = 1,
-	IDS_TEST2,
-	IDS_TEST3,
-	IDS_INVALID
+    IDS_TEST1 = 1,
+    IDS_TEST2,
+    IDS_TEST3,
+    IDS_INVALID
 TSS_EndStringIds( test )
 
 TSS_BeginStringtable( cTestResources )
-	TSS_StringEntry( test::IDS_TEST1, _T("Test String 1") ),
-	TSS_StringEntry( test::IDS_TEST2, _T("Test String 2") ),
-	TSS_StringEntry( test::IDS_TEST3, _T("Test String 3") )
+    TSS_StringEntry( test::IDS_TEST1, _T("Test String 1") ),
+    TSS_StringEntry( test::IDS_TEST2, _T("Test String 2") ),
+    TSS_StringEntry( test::IDS_TEST3, _T("Test String 3") )
 TSS_EndStringtable( cTestResources )
 
 
@@ -83,14 +83,14 @@ TSS_ImplementPackage( cTestResources )
 
 void TestResources()
 {
-	TSS_Package( cTestResources ).Count( 20 );
+    TSS_Package( cTestResources ).Count( 20 );
 
-	TCOUT << _T("Package::Count(") << TSS_Package( cTestResources ).Count() << _T(")\n" ) << std::endl;
-	
-	TCOUT << TSS_GetString( cTestResources, test::IDS_TEST1 ) << std::endl;
-	TCOUT << TSS_GetString( cTestResources, test::IDS_TEST2 ) << std::endl;
-	TCOUT << TSS_GetString( cTestResources, test::IDS_TEST3 ) << std::endl;
-	TCOUT << TSS_GetString( cTestResources, test::IDS_INVALID ) << std::endl;
+    TCOUT << _T("Package::Count(") << TSS_Package( cTestResources ).Count() << _T(")\n" ) << std::endl;
+    
+    TCOUT << TSS_GetString( cTestResources, test::IDS_TEST1 ) << std::endl;
+    TCOUT << TSS_GetString( cTestResources, test::IDS_TEST2 ) << std::endl;
+    TCOUT << TSS_GetString( cTestResources, test::IDS_TEST3 ) << std::endl;
+    TCOUT << TSS_GetString( cTestResources, test::IDS_INVALID ) << std::endl;
 
 
 }

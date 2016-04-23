@@ -37,57 +37,57 @@
 
 void TestDebug()
 {
-	// it is amusing that we use cDebug to output the results of testing cDebug
-	// "Are you insane?" ... "No, I am not."
-	cDebug d("TestDebug()");
-	d.TraceDebug("Entering...");
+    // it is amusing that we use cDebug to output the results of testing cDebug
+    // "Are you insane?" ... "No, I am not."
+    cDebug d("TestDebug()");
+    d.TraceDebug("Entering...");
 
-	// save the current debug level, since we will be altering it.
-	int oldDebugLevel = cDebug::GetDebugLevel();
+    // save the current debug level, since we will be altering it.
+    int oldDebugLevel = cDebug::GetDebugLevel();
 
-	// test debug level variation...
-	d.TraceDebug("Setting debug level to Debug(%d)\n", cDebug::D_DEBUG);
-	cDebug::SetDebugLevel(cDebug::D_DEBUG);
-	d.TraceDebug	("You should see this, as well as line 2 below, but not line 3.\n");
-	d.TraceWarning	("Line 2: Warning(%d)\n", cDebug::D_WARNING);
-	d.TraceDetail	("Line 3: Detail(%d)\n", cDebug::D_DETAIL);
-	d.TraceDebug	("Restoring the debug level to %d\n", oldDebugLevel);
-	cDebug::SetDebugLevel(oldDebugLevel);
+    // test debug level variation...
+    d.TraceDebug("Setting debug level to Debug(%d)\n", cDebug::D_DEBUG);
+    cDebug::SetDebugLevel(cDebug::D_DEBUG);
+    d.TraceDebug    ("You should see this, as well as line 2 below, but not line 3.\n");
+    d.TraceWarning  ("Line 2: Warning(%d)\n", cDebug::D_WARNING);
+    d.TraceDetail   ("Line 3: Detail(%d)\n", cDebug::D_DETAIL);
+    d.TraceDebug    ("Restoring the debug level to %d\n", oldDebugLevel);
+    cDebug::SetDebugLevel(oldDebugLevel);
 
-	// testing the output source
-	int oldOutTarget = 0;
-	if(cDebug::HasOutTarget(cDebug::OUT_STDOUT))	oldOutTarget |= cDebug::OUT_STDOUT;
-	if(cDebug::HasOutTarget(cDebug::OUT_TRACE))		oldOutTarget |= cDebug::OUT_TRACE;
-	if(cDebug::HasOutTarget(cDebug::OUT_FILE))		oldOutTarget |= cDebug::OUT_FILE;
-	cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
-	cDebug::RemoveOutTarget(cDebug::OUT_TRACE);
-	cDebug::RemoveOutTarget(cDebug::OUT_FILE);
+    // testing the output source
+    int oldOutTarget = 0;
+    if(cDebug::HasOutTarget(cDebug::OUT_STDOUT))    oldOutTarget |= cDebug::OUT_STDOUT;
+    if(cDebug::HasOutTarget(cDebug::OUT_TRACE))     oldOutTarget |= cDebug::OUT_TRACE;
+    if(cDebug::HasOutTarget(cDebug::OUT_FILE))      oldOutTarget |= cDebug::OUT_FILE;
+    cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
+    cDebug::RemoveOutTarget(cDebug::OUT_TRACE);
+    cDebug::RemoveOutTarget(cDebug::OUT_FILE);
 
-	d.TraceDebug("You should not see this (All out targets removed)\n");
-	cDebug::AddOutTarget(cDebug::OUT_STDOUT);
-	d.TraceDebug("You should see this in stdout only.\n");
-	cDebug::AddOutTarget(cDebug::OUT_TRACE);
-	d.TraceDebug("You should see this in stdout and trace.\n");
-	cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
-	d.TraceDebug("You should see this in trace only.\n");
-	// set up an output file...use the temp file in test.h
+    d.TraceDebug("You should not see this (All out targets removed)\n");
+    cDebug::AddOutTarget(cDebug::OUT_STDOUT);
+    d.TraceDebug("You should see this in stdout only.\n");
+    cDebug::AddOutTarget(cDebug::OUT_TRACE);
+    d.TraceDebug("You should see this in stdout and trace.\n");
+    cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
+    d.TraceDebug("You should see this in trace only.\n");
+    // set up an output file...use the temp file in test.h
     std::string str = TEMP_DIR_N;
-	str += "/debug.out";
-	bool bResult = false;
+    str += "/debug.out";
+    bool bResult = false;
         bResult = cDebug::SetOutputFile(str.c_str());
         //TODO... TEST(bResult);
         if( !bResult) 
-	  TCERR << "SetOutputFile failed!" << std::endl;
+      TCERR << "SetOutputFile failed!" << std::endl;
 
-	d.TraceDebug("This should be in trace and the file %s.\n", str.c_str());
+    d.TraceDebug("This should be in trace and the file %s.\n", str.c_str());
 
-	// restore the out source...
-	// TODO -- note that the original output file cannot be restored; this sucks!
-	if(oldOutTarget & cDebug::OUT_STDOUT)	cDebug::AddOutTarget(cDebug::OUT_STDOUT);	else cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
-	if(oldOutTarget & cDebug::OUT_TRACE)	cDebug::AddOutTarget(cDebug::OUT_TRACE);	else cDebug::RemoveOutTarget(cDebug::OUT_TRACE);
-	if(oldOutTarget & cDebug::OUT_FILE)		cDebug::AddOutTarget(cDebug::OUT_FILE);		else cDebug::RemoveOutTarget(cDebug::OUT_FILE);
+    // restore the out source...
+    // TODO -- note that the original output file cannot be restored; this sucks!
+    if(oldOutTarget & cDebug::OUT_STDOUT)   cDebug::AddOutTarget(cDebug::OUT_STDOUT);   else cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
+    if(oldOutTarget & cDebug::OUT_TRACE)    cDebug::AddOutTarget(cDebug::OUT_TRACE);    else cDebug::RemoveOutTarget(cDebug::OUT_TRACE);
+    if(oldOutTarget & cDebug::OUT_FILE)     cDebug::AddOutTarget(cDebug::OUT_FILE);     else cDebug::RemoveOutTarget(cDebug::OUT_FILE);
 
-	d.TraceDebug("Exiting...\n");
+    d.TraceDebug("Exiting...\n");
 }
 
 

@@ -38,59 +38,59 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintPropVector -- function that prints the contents of a cFCOPropVector
-//		TODO: We might want to add this functionality to the property vector some
-//		day...
+//      TODO: We might want to add this functionality to the property vector some
+//      day...
 ///////////////////////////////////////////////////////////////////////////////
 static void PrintPropVector(const cFCOPropVector& v, cDebug& d)
 {
-	TOSTRINGSTREAM stream;
-	for(int i=0; i<v.GetSize(); i++)
-	{
-		if(v.ContainsItem(i))
-			stream << i << "," << " ";
-	}
-	stream << std::ends;
-	d.TraceDebug("%s\n", stream.str().c_str());
+    TOSTRINGSTREAM stream;
+    for(int i=0; i<v.GetSize(); i++)
+    {
+        if(v.ContainsItem(i))
+            stream << i << "," << " ";
+    }
+    stream << std::ends;
+    d.TraceDebug("%s\n", stream.str().c_str());
 }
 
 void TestFSPropSet()
 {
-	cDebug d("TestFSPropSet");
-	
-	cFSPropSet propSet;
-
-	// mess around with inode...
-	d.TraceDebug("Setting Inode (property %d)\n", cFSPropSet::PROP_INODE);
-	propSet.SetInode(53);
-	TEST(propSet.GetInode() == 53);
-	d.TraceDebug("Valid Vector is now \n");
-	PrintPropVector(propSet.GetValidVector(), d);
-	TEST(cFSPropSet::PROP_INODE == propSet.GetPropIndex(_T("Inode Number")));
-	TEST(TSTRING(_T("Inode Number")).compare(propSet.GetPropName(cFSPropSet::PROP_INODE)) == 0);
-
-	// mess around with blocks...
-	d.TraceDebug("Setting Blocks (property %d)\n", cFSPropSet::PROP_BLOCKS);
-	propSet.SetBlocks(50);
-	TEST(propSet.GetBlocks() == 50);
-	d.TraceDebug("Valid Vector is now \n");
-	PrintPropVector(propSet.GetValidVector(), d);
-	TEST(cFSPropSet::PROP_BLOCKS == propSet.GetPropIndex(_T("Blocks")));
-	TEST(TSTRING(_T("Blocks")).compare(propSet.GetPropName(cFSPropSet::PROP_BLOCKS)) == 0);
+    cDebug d("TestFSPropSet");
     
-	// try copying it...
-	cFSPropSet ps2 = propSet;
-	d.TraceDebug("Copied Object's Valid Vector:\n");
-	PrintPropVector(propSet.GetValidVector(), d);
-	TEST(ps2.GetValidVector() == propSet.GetValidVector());
-	TEST(ps2.GetBlocks() == propSet.GetBlocks());
-	TEST(ps2.GetInode() == propSet.GetInode());
+    cFSPropSet propSet;
 
-	// try invalidating properties...
-	propSet.InvalidateProp(cFSPropSet::PROP_INODE);
-	TEST( propSet.GetValidVector().ContainsItem(cFSPropSet::PROP_INODE) == false );
-	propSet.InvalidateAll();
-	cFCOPropVector emptyVector(propSet.GetValidVector().GetSize());
-	TEST(propSet.GetValidVector() == emptyVector);
+    // mess around with inode...
+    d.TraceDebug("Setting Inode (property %d)\n", cFSPropSet::PROP_INODE);
+    propSet.SetInode(53);
+    TEST(propSet.GetInode() == 53);
+    d.TraceDebug("Valid Vector is now \n");
+    PrintPropVector(propSet.GetValidVector(), d);
+    TEST(cFSPropSet::PROP_INODE == propSet.GetPropIndex(_T("Inode Number")));
+    TEST(TSTRING(_T("Inode Number")).compare(propSet.GetPropName(cFSPropSet::PROP_INODE)) == 0);
 
-	return;
+    // mess around with blocks...
+    d.TraceDebug("Setting Blocks (property %d)\n", cFSPropSet::PROP_BLOCKS);
+    propSet.SetBlocks(50);
+    TEST(propSet.GetBlocks() == 50);
+    d.TraceDebug("Valid Vector is now \n");
+    PrintPropVector(propSet.GetValidVector(), d);
+    TEST(cFSPropSet::PROP_BLOCKS == propSet.GetPropIndex(_T("Blocks")));
+    TEST(TSTRING(_T("Blocks")).compare(propSet.GetPropName(cFSPropSet::PROP_BLOCKS)) == 0);
+    
+    // try copying it...
+    cFSPropSet ps2 = propSet;
+    d.TraceDebug("Copied Object's Valid Vector:\n");
+    PrintPropVector(propSet.GetValidVector(), d);
+    TEST(ps2.GetValidVector() == propSet.GetValidVector());
+    TEST(ps2.GetBlocks() == propSet.GetBlocks());
+    TEST(ps2.GetInode() == propSet.GetInode());
+
+    // try invalidating properties...
+    propSet.InvalidateProp(cFSPropSet::PROP_INODE);
+    TEST( propSet.GetValidVector().ContainsItem(cFSPropSet::PROP_INODE) == false );
+    propSet.InvalidateAll();
+    cFCOPropVector emptyVector(propSet.GetValidVector().GetSize());
+    TEST(propSet.GetValidVector() == emptyVector);
+
+    return;
 }

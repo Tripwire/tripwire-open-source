@@ -487,13 +487,13 @@ static int yy_base[] = {
 // You can redefine YY_INTERACTIVE to be 0 to get a very slightly
 // faster scanner:
 #ifndef YY_INTERACTIVE
-#define	YY_INTERACTIVE	1
+#define YY_INTERACTIVE  1
 #endif
 
 // You can compile with -DYY_DEBUG to get a print trace of the scanner
 #ifdef YY_DEBUG
 #undef YY_DEBUG
-#define YY_DEBUG(fmt,a1,a2)	fprintf(stderr,fmt,a1,a2)
+#define YY_DEBUG(fmt,a1,a2) fprintf(stderr,fmt,a1,a2)
 #else
 #define YY_DEBUG(fmt,a1,a2)
 #endif
@@ -501,9 +501,9 @@ static int yy_base[] = {
 const int MIN_NUM_STATES = 20;
 
 // Do *NOT* redefine the following:
-#define	BEGIN		yy_start =
-#define	REJECT		goto yy_reject
-#define	yymore()	goto yy_more
+#define BEGIN       yy_start =
+#define REJECT      goto yy_reject
+#define yymore()    goto yy_more
 
 #line 10 "tokens.l"
 
@@ -533,14 +533,14 @@ const int MIN_NUM_STATES = 20;
 /* specify that the lexer exit on EOF */
 int yywrap()
 {
-	return 1;
+    return 1;
 }
 
 /* wrapper around cDebug tracing */
 void lextrace(const TCHAR*str)
 {
-	cDebug d("\t\t\t\tlexer");
-	d.TraceDetail( _T("%s\n"), str);
+    cDebug d("\t\t\t\tlexer");
+    d.TraceDetail( _T("%s\n"), str);
 }
 
 // since i've replaced this with a non-va_arg yyerror,
@@ -570,79 +570,79 @@ std::string FormatSyntaxError( char ch, const char* pszAdditionalMsg = NULL )
 //#pragma argsused
 yy_scan::yy_scan(int sz, char* buf, char* sv, yy_state_t* states)
 {
-	mustfree = 0;
-	if ((size = sz) < MIN_NUM_STATES
-	  || (yytext = buf) == 0
-	  || (state = states) == 0) {
-		yyerror("Bad space for scanner!");
-		exit(1);
-	}
+    mustfree = 0;
+    if ((size = sz) < MIN_NUM_STATES
+      || (yytext = buf) == 0
+      || (state = states) == 0) {
+        yyerror("Bad space for scanner!");
+        exit(1);
+    }
 #ifdef YY_PRESERVE
-	save = sv;
+    save = sv;
 #endif
 }
 // Constructor for yy_scan. Set up tables
 yy_scan::yy_scan(int sz)
 {
-	size = sz;
-	yytext = new char[sz+1];	// text buffer
-	state = new yy_state_t[sz+1];	// state buffer
+    size = sz;
+    yytext = new char[sz+1];    // text buffer
+    state = new yy_state_t[sz+1];   // state buffer
 #ifdef YY_PRESERVE
-	save = new char[sz];	// saved yytext[]
-	push = save + sz;
+    save = new char[sz];    // saved yytext[]
+    push = save + sz;
 #endif
-	if (yytext == NULL
+    if (yytext == NULL
 #ifdef YY_PRESERVE
-	  || save == NULL
+      || save == NULL
 #endif
-	  || state == NULL) {
-		yyerror("No space for scanner!");
-		exit(1);
-	}
-	mustfree = 1;
-	yy_end = 0;
-	yy_start = 0;
-	yy_lastc = YYNEWLINE;
-	yyin = stdin;
-	yyout = stdout;
-	yylineno = 1;
-	yyleng = 0;
+      || state == NULL) {
+        yyerror("No space for scanner!");
+        exit(1);
+    }
+    mustfree = 1;
+    yy_end = 0;
+    yy_start = 0;
+    yy_lastc = YYNEWLINE;
+    yyin = stdin;
+    yyout = stdout;
+    yylineno = 1;
+    yyleng = 0;
 }
 
 // Descructor for yy_scan
 yy_scan::~yy_scan()
 {
-	if (mustfree) {
-		mustfree = 0;
-		delete(yytext);
-		delete(state);
+    if (mustfree) {
+        mustfree = 0;
+        delete(yytext);
+        delete(state);
 #ifdef YY_PRESERVE
-		delete(save);
+        delete(save);
 #endif
-	}
+    }
 }
 
 // Print error message, showing current line number
 void
 yy_scan::yyerror(const char *fmt, ...)
 {
-	va_list va;
+    va_list va;
 
-	va_start(va, fmt);
+    va_start(va, fmt);
 #ifdef LEX_WINDOWS
-	// Windows has no concept of a standard error output!
-	// send output to yyout as a simple solution
-	if (yylineno)
-		fprintf(yyout, "%d: ", yylineno);
-	(void) vfprintf(yyout, fmt, va);
-	fputc('\n', yyout);
+    // Windows has no concept of a standard error output!
+    // send output to yyout as a simple solution
+    if (yylineno)
+        fprintf(yyout, "%d: ", yylineno);
+    (void) vfprintf(yyout, fmt, va);
+    fputc('\n', yyout);
 #else /* LEX_WINDOWS */
-	if (yylineno)
-		fprintf(stderr, "%d: ", yylineno);
-	(void) vfprintf(stderr, fmt, va);
-	fputc('\n', stderr);
+    if (yylineno)
+        fprintf(stderr, "%d: ", yylineno);
+    (void) vfprintf(stderr, fmt, va);
+    fputc('\n', stderr);
 #endif /* LEX_WINDOWS */
-	va_end(va);
+    va_end(va);
 }
 
 
@@ -661,75 +661,75 @@ yy_scan::yyerror(const char *fmt, ...)
 int
 yy_scan::yylex()
 {
-	int wReturnValue;
-	HANDLE hRes_table;
-	unsigned short far *old_yy_la_act;	// remember old pointer values
-	short far *old_yy_final;
-	yy_state_t far *old_yy_begin;
-	yy_state_t far *old_yy_next;
-	yy_state_t far *old_yy_check;
-	yy_state_t far *old_yy_default;
-	short far *old_yy_base;
+    int wReturnValue;
+    HANDLE hRes_table;
+    unsigned short far *old_yy_la_act;  // remember old pointer values
+    short far *old_yy_final;
+    yy_state_t far *old_yy_begin;
+    yy_state_t far *old_yy_next;
+    yy_state_t far *old_yy_check;
+    yy_state_t far *old_yy_default;
+    short far *old_yy_base;
 
-	// the following code will load the required
-	// resources for a Windows based parser. 
+    // the following code will load the required
+    // resources for a Windows based parser. 
 
-	hRes_table = LoadResource (hInst,
-		FindResource (hInst, "UD_RES_yyLEX", "yyLEXTBL"));
-	
-	// return an error code if any
-	// of the resources did not load 
+    hRes_table = LoadResource (hInst,
+        FindResource (hInst, "UD_RES_yyLEX", "yyLEXTBL"));
+    
+    // return an error code if any
+    // of the resources did not load 
 
-	if (hRes_table == (HANDLE)NULL) 
-		return (0);
-	
-	// the following code will lock the resources
-	// into fixed memory locations for the scanner
-	// (remember previous pointer locations)
+    if (hRes_table == (HANDLE)NULL) 
+        return (0);
+    
+    // the following code will lock the resources
+    // into fixed memory locations for the scanner
+    // (remember previous pointer locations)
 
-	old_yy_la_act = yy_la_act;
-	old_yy_final = yy_final;
-	old_yy_begin = yy_begin;
-	old_yy_next = yy_next;
-	old_yy_check = yy_check;
-	old_yy_default = yy_default;
-	old_yy_base = yy_base;
+    old_yy_la_act = yy_la_act;
+    old_yy_final = yy_final;
+    old_yy_begin = yy_begin;
+    old_yy_next = yy_next;
+    old_yy_check = yy_check;
+    old_yy_default = yy_default;
+    old_yy_base = yy_base;
 
-	yy_la_act = (unsigned short far *)LockResource (hRes_table);
-	yy_final = (short far *)(yy_la_act + Sizeof_yy_la_act);
-	yy_begin = (yy_state_t far *)(yy_final + Sizeof_yy_final);
-	yy_next = (yy_state_t far *)(yy_begin + Sizeof_yy_begin);
-	yy_check = (yy_state_t far *)(yy_next + Sizeof_yy_next);
-	yy_default = (yy_state_t far *)(yy_check + Sizeof_yy_check);
-	yy_base = (short far *)(yy_default + Sizeof_yy_default);
+    yy_la_act = (unsigned short far *)LockResource (hRes_table);
+    yy_final = (short far *)(yy_la_act + Sizeof_yy_la_act);
+    yy_begin = (yy_state_t far *)(yy_final + Sizeof_yy_final);
+    yy_next = (yy_state_t far *)(yy_begin + Sizeof_yy_begin);
+    yy_check = (yy_state_t far *)(yy_next + Sizeof_yy_next);
+    yy_default = (yy_state_t far *)(yy_check + Sizeof_yy_check);
+    yy_base = (short far *)(yy_default + Sizeof_yy_default);
 
 
-	// call the standard yylex() code
+    // call the standard yylex() code
 
-	wReturnValue = win_yylex();
+    wReturnValue = win_yylex();
 
-	// unlock the resources
+    // unlock the resources
 
-	UnlockResource (hRes_table);
+    UnlockResource (hRes_table);
 
-	// and now free the resource
+    // and now free the resource
 
-	FreeResource (hRes_table);
+    FreeResource (hRes_table);
 
-	//
-	// restore previously saved pointers
-	//
+    //
+    // restore previously saved pointers
+    //
 
-	yy_la_act = old_yy_la_act;
-	yy_final = old_yy_final;
-	yy_begin = old_yy_begin;
-	yy_next = old_yy_next;
-	yy_check = old_yy_check;
-	yy_default = old_yy_default;
-	yy_base = old_yy_base;
+    yy_la_act = old_yy_la_act;
+    yy_final = old_yy_final;
+    yy_begin = old_yy_begin;
+    yy_next = old_yy_next;
+    yy_check = old_yy_check;
+    yy_default = old_yy_default;
+    yy_base = old_yy_base;
 
-	return (wReturnValue);
-}	// end yylex()
+    return (wReturnValue);
+}   // end yylex()
 
 // The actual lex scanner
 // yy_sbuf[0:yyleng-1] contains the states corresponding to yytext.
@@ -756,187 +756,187 @@ yy_scan::yylex()
 #endif /* LEX_WINDOWS */
 
 {
-	int c, i, yybase;
-	unsigned  yyst;		/* state */
-	int yyfmin, yyfmax;	/* yy_la_act indices of final states */
-	int yyoldi, yyoleng;	/* base i, yyleng before look-ahead */
-	int yyeof;		/* 1 if eof has already been read */
+    int c, i, yybase;
+    unsigned  yyst;     /* state */
+    int yyfmin, yyfmax; /* yy_la_act indices of final states */
+    int yyoldi, yyoleng;    /* base i, yyleng before look-ahead */
+    int yyeof;      /* 1 if eof has already been read */
 
 #line 375 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 
 
 #ifdef YYEXIT
-	yyLexFatal = 0;
+    yyLexFatal = 0;
 #endif
-	yyeof = 0;
-	i = yyleng;
-	YY_SCANNER();
+    yyeof = 0;
+    i = yyleng;
+    YY_SCANNER();
 
   yy_again:
-	if ((yyleng = i) > 0) {
-		yy_lastc = yytext[i-1];	// determine previous char
-		while (i > 0)	//	// scan previously token
-			if (yytext[--i] == YYNEWLINE)	// fix yylineno
-				yylineno++;
-	}
-	yy_end -= yyleng;		// adjust pushback
-	if (yy_end > 0)
-		memmove(yytext, yytext+yyleng, (size_t) yy_end);
-	i = 0;
+    if ((yyleng = i) > 0) {
+        yy_lastc = yytext[i-1]; // determine previous char
+        while (i > 0)   //  // scan previously token
+            if (yytext[--i] == YYNEWLINE)   // fix yylineno
+                yylineno++;
+    }
+    yy_end -= yyleng;       // adjust pushback
+    if (yy_end > 0)
+        memmove(yytext, yytext+yyleng, (size_t) yy_end);
+    i = 0;
 
   yy_contin:
-	yyoldi = i;
+    yyoldi = i;
 
-	/* run the state machine until it jams */
-	yyst = yy_begin[yy_start + ((yy_lastc == YYNEWLINE) ? 1 : 0)];
-	state[i] = (yy_state_t) yyst;
-	do {
-		YY_DEBUG("<state %d, i = %d>\n", yyst, i);
-		if (i >= size) {
-			YY_FATAL("Token buffer overflow");
+    /* run the state machine until it jams */
+    yyst = yy_begin[yy_start + ((yy_lastc == YYNEWLINE) ? 1 : 0)];
+    state[i] = (yy_state_t) yyst;
+    do {
+        YY_DEBUG("<state %d, i = %d>\n", yyst, i);
+        if (i >= size) {
+            YY_FATAL("Token buffer overflow");
 #ifdef YYEXIT
-			if (yyLexFatal)
-				return -2;
+            if (yyLexFatal)
+                return -2;
 #endif
-		}	/* endif */
+        }   /* endif */
 
-		/* get input char */
-		if (i < yy_end)
-			c = yytext[i];		/* get pushback char */
-		else if (!yyeof && (c = yygetc()) != EOF) {
-			yy_end = i+1;
-			yytext[i] = c;
-		} else /* c == EOF */ {
-			c = EOF;		/* just to make sure... */
-			if (i == yyoldi) {	/* no token */
-				yyeof = 0;
-				if (yywrap())
-					return 0;
-				else
-					goto yy_again;
-			} else {
-				yyeof = 1;	/* don't re-read EOF */
-				break;
-			}
-		}
-		YY_DEBUG("<input %d = 0x%02x>\n", c, c);
+        /* get input char */
+        if (i < yy_end)
+            c = yytext[i];      /* get pushback char */
+        else if (!yyeof && (c = yygetc()) != EOF) {
+            yy_end = i+1;
+            yytext[i] = c;
+        } else /* c == EOF */ {
+            c = EOF;        /* just to make sure... */
+            if (i == yyoldi) {  /* no token */
+                yyeof = 0;
+                if (yywrap())
+                    return 0;
+                else
+                    goto yy_again;
+            } else {
+                yyeof = 1;  /* don't re-read EOF */
+                break;
+            }
+        }
+        YY_DEBUG("<input %d = 0x%02x>\n", c, c);
 
-		/* look up next state */
-		while ((yybase = yy_base[yyst]+(unsigned char)c) > yy_nxtmax
-		    || yy_check[yybase] != (yy_state_t) yyst) {
-			if (yyst == (unsigned int)yy_endst)
-				goto yy_jammed;
-			yyst = yy_default[yyst];
-		}
-		yyst = yy_next[yybase];
-	  yy_jammed: ;
-	     state[++i] = (yy_state_t) yyst;
-	} while (!(yyst == (unsigned int)yy_endst || YY_INTERACTIVE &&
-		yy_base[yyst] > yy_nxtmax && yy_default[yyst] == yy_endst));
+        /* look up next state */
+        while ((yybase = yy_base[yyst]+(unsigned char)c) > yy_nxtmax
+            || yy_check[yybase] != (yy_state_t) yyst) {
+            if (yyst == (unsigned int)yy_endst)
+                goto yy_jammed;
+            yyst = yy_default[yyst];
+        }
+        yyst = yy_next[yybase];
+      yy_jammed: ;
+         state[++i] = (yy_state_t) yyst;
+    } while (!(yyst == (unsigned int)yy_endst || YY_INTERACTIVE &&
+        yy_base[yyst] > yy_nxtmax && yy_default[yyst] == yy_endst));
 
-	YY_DEBUG("<stopped %d, i = %d>\n", yyst, i);
-	if (yyst != (unsigned int)yy_endst)
-		++i;
+    YY_DEBUG("<stopped %d, i = %d>\n", yyst, i);
+    if (yyst != (unsigned int)yy_endst)
+        ++i;
 
   yy_search:
-	/* search backward for a final state */
-	while (--i > yyoldi) {
-		yyst = state[i];
-		if ((yyfmin = yy_final[yyst]) < (yyfmax = yy_final[yyst+1]))
-			goto yy_found;	/* found final state(s) */
-	}
-	/* no match, default action */
-	i = yyoldi + 1;
-	output(yytext[yyoldi]);
-	goto yy_again;
+    /* search backward for a final state */
+    while (--i > yyoldi) {
+        yyst = state[i];
+        if ((yyfmin = yy_final[yyst]) < (yyfmax = yy_final[yyst+1]))
+            goto yy_found;  /* found final state(s) */
+    }
+    /* no match, default action */
+    i = yyoldi + 1;
+    output(yytext[yyoldi]);
+    goto yy_again;
 
   yy_found:
-	YY_DEBUG("<final state %d, i = %d>\n", yyst, i);
-	yyoleng = i;		/* save length for REJECT */
-	
-	// pushback look-ahead RHS, handling trailing context
-	if ((c = (int)(yy_la_act[yyfmin]>>9) - 1) >= 0) {
-		unsigned char *bv = yy_look + c*YY_LA_SIZE;
-		static unsigned char bits [8] = {
-			1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7
-		};
-		while (1) {
-			if (--i < yyoldi) {	/* no / */
-				i = yyoleng;
-				break;
-			}
-			yyst = state[i];
-			if (bv[(unsigned)yyst/8] & bits[(unsigned)yyst%8])
-				break;
-		}
-	}
+    YY_DEBUG("<final state %d, i = %d>\n", yyst, i);
+    yyoleng = i;        /* save length for REJECT */
+    
+    // pushback look-ahead RHS, handling trailing context
+    if ((c = (int)(yy_la_act[yyfmin]>>9) - 1) >= 0) {
+        unsigned char *bv = yy_look + c*YY_LA_SIZE;
+        static unsigned char bits [8] = {
+            1<<0, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7
+        };
+        while (1) {
+            if (--i < yyoldi) { /* no / */
+                i = yyoleng;
+                break;
+            }
+            yyst = state[i];
+            if (bv[(unsigned)yyst/8] & bits[(unsigned)yyst%8])
+                break;
+        }
+    }
 
-	/* perform action */
-	yyleng = i;
-	YY_USER();
-	switch (yy_la_act[yyfmin] & 0777) {
-	case 0:
+    /* perform action */
+    yyleng = i;
+    YY_USER();
+    switch (yy_la_act[yyfmin] & 0777) {
+    case 0:
 #line 109 "tokens.l"
-	{
-					BEGIN( globals );
-				}
-	break;
-	case 1:
+    {
+                    BEGIN( globals );
+                }
+    break;
+    case 1:
 #line 114 "tokens.l"
-	{
-					BEGIN(INITIAL);
-					return TWP_SECTION;
-				}
-	break;
-	case 2:
+    {
+                    BEGIN(INITIAL);
+                    return TWP_SECTION;
+                }
+    break;
+    case 2:
 #line 119 "tokens.l"
-	{ TRACE_RETURN(TWP_ECHO); }
-	break;
-	case 3:
+    { TRACE_RETURN(TWP_ECHO); }
+    break;
+    case 3:
 #line 122 "tokens.l"
-	{ 
-					lextrace(_T("eating spaces..."));			 /* eat spaces */ 
-				}
-	break;
-	case 4:
+    { 
+                    lextrace(_T("eating spaces..."));            /* eat spaces */ 
+                }
+    break;
+    case 4:
 #line 125 "tokens.l"
-	{   
+    {   
                     cParserHelper::IncrementLineNumber();
-					lextrace(_T("eating line continuation...")); /* eat line continuations */ 
-				}
-	break;
-	case 5:
+                    lextrace(_T("eating line continuation...")); /* eat line continuations */ 
+                }
+    break;
+    case 5:
 #line 129 "tokens.l"
-	{
-					lextrace(_T("eating comment..."));
-				}
-	break;
-	case 6:
+    {
+                    lextrace(_T("eating comment..."));
+                }
+    break;
+    case 6:
 #line 138 "tokens.l"
-	{ 
-						// we must make copy of string, otherwise another lexeme will clobber it
-						cDebug d("\t\t\t\tlexer::string");
+    { 
+                        // we must make copy of string, otherwise another lexeme will clobber it
+                        cDebug d("\t\t\t\tlexer::string");
 
-						// convert LPCSTR to TSTRING
-						cParseString *mpstring = new cParseString;
-						ASSERT(mpstring);
-						*mpstring = cStringUtil::StrToTstr( yytext );
+                        // convert LPCSTR to TSTRING
+                        cParseString *mpstring = new cParseString;
+                        ASSERT(mpstring);
+                        *mpstring = cStringUtil::StrToTstr( yytext );
 
-						d.TraceDetail("--> <%s>\n", mpstring->c_str());
+                        d.TraceDetail("--> <%s>\n", mpstring->c_str());
 
-						// attach to lval
-						yylval.mpString = mpstring;
-						
+                        // attach to lval
+                        yylval.mpString = mpstring;
+                        
                         return TWP_GLOBAL_STRING;
-					}
-	break;
-	case 7:
+                    }
+    break;
+    case 7:
 #line 155 "tokens.l"
-	{
-						// we must make copy of string, otherwise another lexeme will clobber it
-						cDebug d("\t\t\t\tlexer::qstring");
+    {
+                        // we must make copy of string, otherwise another lexeme will clobber it
+                        cDebug d("\t\t\t\tlexer::qstring");
 
-						// get rid of beginning and trailing quotes
+                        // get rid of beginning and trailing quotes
                         std::string strWithQuotes = yytext;
                         std::string str = strWithQuotes.substr(1, strWithQuotes.size() - 2);
                         
@@ -946,161 +946,161 @@ yy_scan::yylex()
                         
                         d.TraceDetail(_T("read as        --> <%s>\n"), strW.c_str());
 
-						// convert TSTRING to cParseString
-						cParseString *mpstring = new cParseString;
-						ASSERT(mpstring);
-						*mpstring = strW;
+                        // convert TSTRING to cParseString
+                        cParseString *mpstring = new cParseString;
+                        ASSERT(mpstring);
+                        *mpstring = strW;
 
 
-						d.TraceDetail("interpreted as --> <%s>\n", mpstring->c_str());
+                        d.TraceDetail("interpreted as --> <%s>\n", mpstring->c_str());
 
-						// attach to lval
-						yylval.mpString = mpstring;
-						return TWP_GLOBAL_STRING;
-					}
-	break;
-	case 8:
+                        // attach to lval
+                        yylval.mpString = mpstring;
+                        return TWP_GLOBAL_STRING;
+                    }
+    break;
+    case 8:
 #line 182 "tokens.l"
-	{ TRACE_RETURN(TWP_SEMICOLON);		}
-	break;
-	case 9:
+    { TRACE_RETURN(TWP_SEMICOLON);      }
+    break;
+    case 9:
 #line 183 "tokens.l"
-	{ TRACE_RETURN(TWP_EQUALS);			}
-	break;
-	case 10:
+    { TRACE_RETURN(TWP_EQUALS);         }
+    break;
+    case 10:
 #line 185 "tokens.l"
-	{ cParserHelper::IncrementLineNumber(); }
-	break;
-	case 11:
+    { cParserHelper::IncrementLineNumber(); }
+    break;
+    case 11:
 #line 186 "tokens.l"
-	{
+    {
                             std::string strError;
                             strError = FormatSyntaxError( yytext[0], "The global section only accepts statements of the form:\n variable = value;\n" );
 
                             yyerror( strError.c_str()); 
-						} /* catches anything that cannot be deemed a variable definition and exits. */
-	break;
-	case 12:
+                        } /* catches anything that cannot be deemed a variable definition and exits. */
+    break;
+    case 12:
 #line 196 "tokens.l"
-	{ 
-						lextrace(_T("eating spaces...")); /* eat spaces */ 
-					}
-	break;
-	case 13:
+    { 
+                        lextrace(_T("eating spaces...")); /* eat spaces */ 
+                    }
+    break;
+    case 13:
 #line 200 "tokens.l"
-	{   
+    {   
                         cParserHelper::IncrementLineNumber();
-						lextrace(_T("eating line continuation...")); /* eat line continuations */ 
-					}
-	break;
-	case 14:
+                        lextrace(_T("eating line continuation...")); /* eat line continuations */ 
+                    }
+    break;
+    case 14:
 #line 205 "tokens.l"
-	{ 
-						lextrace(_T("eating comment..."));
-					}
-	break;
-	case 15:
+    { 
+                        lextrace(_T("eating comment..."));
+                    }
+    break;
+    case 15:
 #line 209 "tokens.l"
-	{ TRACE_RETURN(TWP_LBRACE);			}
-	break;
-	case 16:
+    { TRACE_RETURN(TWP_LBRACE);         }
+    break;
+    case 16:
 #line 210 "tokens.l"
-	{ TRACE_RETURN(TWP_RBRACE);			}
-	break;
-	case 17:
+    { TRACE_RETURN(TWP_RBRACE);         }
+    break;
+    case 17:
 #line 213 "tokens.l"
-	{ TRACE_RETURN(TWP_BANG);			}
-	break;
-	case 18:
+    { TRACE_RETURN(TWP_BANG);           }
+    break;
+    case 18:
 #line 215 "tokens.l"
-	{ TRACE_RETURN(TWP_RARROW);			}
-	break;
-	case 19:
+    { TRACE_RETURN(TWP_RARROW);         }
+    break;
+    case 19:
 #line 216 "tokens.l"
-	{ TRACE_RETURN(TWP_EQUALS);			}
-	break;
-	case 20:
+    { TRACE_RETURN(TWP_EQUALS);         }
+    break;
+    case 20:
 #line 218 "tokens.l"
-	{ TRACE_RETURN(TWP_SEMICOLON);		}
-	break;
-	case 21:
+    { TRACE_RETURN(TWP_SEMICOLON);      }
+    break;
+    case 21:
 #line 219 "tokens.l"
-	{ TRACE_RETURN(TWP_LPAREN);			}
-	break;
-	case 22:
+    { TRACE_RETURN(TWP_LPAREN);         }
+    break;
+    case 22:
 #line 220 "tokens.l"
-	{ TRACE_RETURN(TWP_RPAREN);			}
-	break;
-	case 23:
+    { TRACE_RETURN(TWP_RPAREN);         }
+    break;
+    case 23:
 #line 221 "tokens.l"
-	{ TRACE_RETURN(TWP_COMMA);			}
-	break;
-	case 24:
+    { TRACE_RETURN(TWP_COMMA);          }
+    break;
+    case 24:
 #line 222 "tokens.l"
-	{ TRACE_RETURN(TWP_PIPE); }
-	break;
-	case 25:
+    { TRACE_RETURN(TWP_PIPE); }
+    break;
+    case 25:
 #line 226 "tokens.l"
-	{ TRACE_RETURN(TWP_DOLLAR);			}
-	break;
-	case 26:
+    { TRACE_RETURN(TWP_DOLLAR);         }
+    break;
+    case 26:
 #line 227 "tokens.l"
-	{ TRACE_RETURN(TWP_OROR); }
-	break;
-	case 27:
+    { TRACE_RETURN(TWP_OROR); }
+    break;
+    case 27:
 #line 230 "tokens.l"
-	{ TRACE_RETURN(TWP_SECTION); }
-	break;
-	case 28:
+    { TRACE_RETURN(TWP_SECTION); }
+    break;
+    case 28:
 #line 231 "tokens.l"
-	{ TRACE_RETURN(TWP_IFHOST); }
-	break;
-	case 29:
+    { TRACE_RETURN(TWP_IFHOST); }
+    break;
+    case 29:
 #line 232 "tokens.l"
-	{ TRACE_RETURN(TWP_ELSE); }
-	break;
-	case 30:
+    { TRACE_RETURN(TWP_ELSE); }
+    break;
+    case 30:
 #line 233 "tokens.l"
-	{ TRACE_RETURN(TWP_ENDIF); }
-	break;
-	case 31:
+    { TRACE_RETURN(TWP_ENDIF); }
+    break;
+    case 31:
 #line 234 "tokens.l"
-	{ TRACE_RETURN(TWP_ERROR); }
-	break;
-	case 32:
+    { TRACE_RETURN(TWP_ERROR); }
+    break;
+    case 32:
 #line 235 "tokens.l"
-	{ TRACE_RETURN(TWP_ECHO); }
-	break;
-	case 33:
+    { TRACE_RETURN(TWP_ECHO); }
+    break;
+    case 33:
 #line 236 "tokens.l"
-	{ lextrace( _T( "@@end" ) ); return 0; } /* logical end of file */
-	break;
-	case 34:
+    { lextrace( _T( "@@end" ) ); return 0; } /* logical end of file */
+    break;
+    case 34:
 #line 239 "tokens.l"
-	{ 
-						// we must make copy of string, otherwise another lexeme will clobber it
-						cDebug d("\t\t\t\tlexer::string");
-						
-						// convert LPCSTR to TSTRING
-						cParseString *mpstring = new cParseString;
-						ASSERT(mpstring);
-						*mpstring = cStringUtil::StrToTstr( yytext );
-
-						d.TraceDetail("--> <%s>\n", mpstring->c_str());
-
-						// attach to lval
-						yylval.mpString = mpstring;
-						
-                        return TWP_STRING;
-					}
-	break;
-	case 35:
-#line 256 "tokens.l"
-	{
+    { 
                         // we must make copy of string, otherwise another lexeme will clobber it
-						cDebug d("\t\t\t\tlexer::qstring");
+                        cDebug d("\t\t\t\tlexer::string");
                         
-						// get rid of beginning and trailing quotes
+                        // convert LPCSTR to TSTRING
+                        cParseString *mpstring = new cParseString;
+                        ASSERT(mpstring);
+                        *mpstring = cStringUtil::StrToTstr( yytext );
+
+                        d.TraceDetail("--> <%s>\n", mpstring->c_str());
+
+                        // attach to lval
+                        yylval.mpString = mpstring;
+                        
+                        return TWP_STRING;
+                    }
+    break;
+    case 35:
+#line 256 "tokens.l"
+    {
+                        // we must make copy of string, otherwise another lexeme will clobber it
+                        cDebug d("\t\t\t\tlexer::qstring");
+                        
+                        // get rid of beginning and trailing quotes
                         std::string strWithQuotes = yytext;
                         std::string str = strWithQuotes.substr(1, strWithQuotes.size() - 2);
                         
@@ -1115,59 +1115,59 @@ yy_scan::yylex()
                             cParserHelper::GetGenreInfo()->DoVarSubstitution( strW );
                         }
 
-						// convert TSTRING to cParseString
-						cParseString *mpstring = new cParseString;
-						ASSERT(mpstring);
-						*mpstring = strW;
+                        // convert TSTRING to cParseString
+                        cParseString *mpstring = new cParseString;
+                        ASSERT(mpstring);
+                        *mpstring = strW;
 
 
 #ifdef _DEBUG
                         TSTRING strDisplay = *mpstring;                        
                         cDisplayEncoder e;
                         e.Encode( strDisplay );
-						d.TraceDetail("interpreted as --> <%s>\n", strDisplay.c_str());
+                        d.TraceDetail("interpreted as --> <%s>\n", strDisplay.c_str());
 #endif // _DEBUG
 
-						// attach to lval
-						yylval.mpString = mpstring;
-						return TWP_STRING;
-					}
-	break;
-	case 36:
+                        // attach to lval
+                        yylval.mpString = mpstring;
+                        return TWP_STRING;
+                    }
+    break;
+    case 36:
 #line 309 "tokens.l"
-	{ cParserHelper::IncrementLineNumber(); }
-	break;
-	case 37:
+    { cParserHelper::IncrementLineNumber(); }
+    break;
+    case 37:
 #line 310 "tokens.l"
-	{
+    {
                         std::string strError;
                         strError = FormatSyntaxError( yytext[0] );
                         
                         yyerror( strError.c_str() );
                     } /* catches anything else that's not in here and quits */
-	break;
+    break;
 
 #line 487 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 
-	}
-	YY_SCANNER();
-	i = yyleng;
-	goto yy_again;			/* action fell though */
+    }
+    YY_SCANNER();
+    i = yyleng;
+    goto yy_again;          /* action fell though */
 
   yy_reject:
-	YY_SCANNER();
-	i = yyoleng;			/* restore original yytext */
-	if (++yyfmin < yyfmax)
-		goto yy_found;		/* another final state, same length */
-	else
-		goto yy_search;		/* try shorter yytext */
+    YY_SCANNER();
+    i = yyoleng;            /* restore original yytext */
+    if (++yyfmin < yyfmax)
+        goto yy_found;      /* another final state, same length */
+    else
+        goto yy_search;     /* try shorter yytext */
 
   yy_more:
-	YY_SCANNER();
-	i = yyleng;
-	if (i > 0)
-		yy_lastc = yytext[i-1];
-	goto yy_contin;
+    YY_SCANNER();
+    i = yyleng;
+    if (i > 0)
+        yy_lastc = yytext[i-1];
+    goto yy_contin;
 }
 
 /*
@@ -1176,31 +1176,31 @@ yy_scan::yylex()
 void
 yy_scan::yy_reset()
 {
-	YY_INIT();
-	yylineno = 1;
+    YY_INIT();
+    yylineno = 1;
 }
 /* get input char with pushback */
 int
 yy_scan::input()
 {
-	int c;
+    int c;
 #ifndef YY_PRESERVE
-	if (yy_end > yyleng) {
-		yy_end--;
-		memmove(yytext+yyleng, yytext+yyleng+1,
-			(size_t) (yy_end-yyleng));
-		c = save;
-		YY_USER();
+    if (yy_end > yyleng) {
+        yy_end--;
+        memmove(yytext+yyleng, yytext+yyleng+1,
+            (size_t) (yy_end-yyleng));
+        c = save;
+        YY_USER();
 #else
-	if (push < save+size) {
-		c = *push++;
+    if (push < save+size) {
+        c = *push++;
 #endif
-	} else
-		c = yygetc();
-	yy_lastc = c;
-	if (c == YYNEWLINE)
-		yylineno++;
-	return c;
+    } else
+        c = yygetc();
+    yy_lastc = c;
+    if (c == YYNEWLINE)
+        yylineno++;
+    return c;
 }
 
 /* pushback char */
@@ -1208,27 +1208,27 @@ int
 yy_scan::unput(int c)
 {
 #ifndef YY_PRESERVE
-	if (yy_end >= size) {
-		YY_FATAL("Push-back buffer overflow");
-	} else {
-		if (yy_end > yyleng) {
-			yytext[yyleng] = save;
-			memmove(yytext+yyleng+1, yytext+yyleng,
-				(size_t) (yy_end-yyleng));
-			yytext[yyleng] = 0;
-		}
-		yy_end++;
-		save = c;
+    if (yy_end >= size) {
+        YY_FATAL("Push-back buffer overflow");
+    } else {
+        if (yy_end > yyleng) {
+            yytext[yyleng] = save;
+            memmove(yytext+yyleng+1, yytext+yyleng,
+                (size_t) (yy_end-yyleng));
+            yytext[yyleng] = 0;
+        }
+        yy_end++;
+        save = c;
 #else
-	if (push <= save) {
-		YY_FATAL("Push-back buffer overflow");
-	} else {
-		*--push = c;
+    if (push <= save) {
+        YY_FATAL("Push-back buffer overflow");
+    } else {
+        *--push = c;
 #endif
-		if (c == YYNEWLINE)
-			yylineno--;
-	}	/* endif */
-	return c;
+        if (c == YYNEWLINE)
+            yylineno--;
+    }   /* endif */
+    return c;
 }
 
 #line 321 "tokens.l"

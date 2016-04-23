@@ -58,7 +58,7 @@ TSS_ImplementPackage( cTWAdmin )
 // POSTCONDITIONS:
 //
 // COMPLEXITY:
-//	Constant
+//  Constant
 //
 cTWAdmin::cTWAdmin()
 {
@@ -66,7 +66,7 @@ cTWAdmin::cTWAdmin()
     // set up dependencies
     //
     TSS_Dependency( cTW );
-    TSS_REGISTER_PKG_ERRORS	( twadmin );
+    TSS_REGISTER_PKG_ERRORS ( twadmin );
 }
 
 // eof: twadmin.cpp

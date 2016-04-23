@@ -30,7 +30,7 @@
 // info@tripwire.org or www.tripwire.org.
 //
 // file.h : Interface for cFile class, which abstracts file operations across
-//		different platforms (currently just Windows and Unix...)
+//      different platforms (currently just Windows and Unix...)
 
 #ifndef __FILE_H
 #define __FILE_H
@@ -55,17 +55,17 @@
 // eFile exception class
 //=============================================================================
 
-TSS_FILE_EXCEPTION( eFile,			eFileError );
-TSS_FILE_EXCEPTION( eFileOpen,		eFile );
-TSS_FILE_EXCEPTION( eFileWrite,		eFile );
-TSS_FILE_EXCEPTION( eFileRead,		eFile );
-TSS_FILE_EXCEPTION( eFileEOF,		eFile );	// never used!
-TSS_FILE_EXCEPTION( eFileSeek,		eFile );
-TSS_FILE_EXCEPTION( eFileInvalidOp,	eFile );	// never used!
-TSS_FILE_EXCEPTION( eFileTrunc,		eFile );
-TSS_FILE_EXCEPTION( eFileClose,		eFile );	// never used!
-TSS_FILE_EXCEPTION( eFileFlush,		eFile );
-TSS_FILE_EXCEPTION( eFileRewind,	eFile );
+TSS_FILE_EXCEPTION( eFile,          eFileError );
+TSS_FILE_EXCEPTION( eFileOpen,      eFile );
+TSS_FILE_EXCEPTION( eFileWrite,     eFile );
+TSS_FILE_EXCEPTION( eFileRead,      eFile );
+TSS_FILE_EXCEPTION( eFileEOF,       eFile );    // never used!
+TSS_FILE_EXCEPTION( eFileSeek,      eFile );
+TSS_FILE_EXCEPTION( eFileInvalidOp, eFile );    // never used!
+TSS_FILE_EXCEPTION( eFileTrunc,     eFile );
+TSS_FILE_EXCEPTION( eFileClose,     eFile );    // never used!
+TSS_FILE_EXCEPTION( eFileFlush,     eFile );
+TSS_FILE_EXCEPTION( eFileRewind,    eFile );
 
 //=============================================================================
 // cFile
@@ -81,64 +81,64 @@ public:
 
 #endif // IS_UNIX
 
-	enum SeekFrom 
-	{
+    enum SeekFrom 
+    {
             SEEK_BEGIN = 0,
             SEEK_CURRENT,
             SEEK_EOF
-	};
+    };
 
-	enum OpenFlags
-	{
-            // note that reading from the file is implicit	
-            OPEN_READ          = 0x00000001,	// not needed, but makes calls nice...
-            OPEN_WRITE         = 0x00000002,	// we will be writing to the file
-            OPEN_LOCKED_TEMP   = 0x00000004,	// the file should not be readable by other processes and should be removed when closed
-            OPEN_TRUNCATE      = 0x00000008,	// opens an empty file. creates it if it doesn't exist. Doesn't make much sense without OF_WRITE
-            OPEN_CREATE         = 0x00000010,	// create the file if it doesn't exist; this is implicit if OF_TRUNCATE is set
+    enum OpenFlags
+    {
+            // note that reading from the file is implicit  
+            OPEN_READ          = 0x00000001,    // not needed, but makes calls nice...
+            OPEN_WRITE         = 0x00000002,    // we will be writing to the file
+            OPEN_LOCKED_TEMP   = 0x00000004,    // the file should not be readable by other processes and should be removed when closed
+            OPEN_TRUNCATE      = 0x00000008,    // opens an empty file. creates it if it doesn't exist. Doesn't make much sense without OF_WRITE
+            OPEN_CREATE         = 0x00000010,   // create the file if it doesn't exist; this is implicit if OF_TRUNCATE is set
             OPEN_TEXT           = 0x00000020,
-            OPEN_EXCLUSIVE      = 0x00000040,	// Use O_CREAT | O_EXCL
+            OPEN_EXCLUSIVE      = 0x00000040,   // Use O_CREAT | O_EXCL
             OPEN_NONBLOCKING    = 0x00000080,    // Use non-blocking i/o [Unix]
-	};
+    };
 
-	//Ctor, Dtor, CpyCtor, Operator=:
-	cFile				( void );
-	~cFile				( void );
+    //Ctor, Dtor, CpyCtor, Operator=:
+    cFile               ( void );
+    ~cFile              ( void );
 
-	/************ User Interface **************************/
+    /************ User Interface **************************/
 
-	// Both Open methods ALWAYS open files in BINARY mode!
-	void	Open				( const TSTRING& sFileName, uint32 flags = OPEN_READ );	//throw(eFile)
-	void	Close				( void );												//throw(eFile)
-	bool	IsOpen				( void ) const;
+    // Both Open methods ALWAYS open files in BINARY mode!
+    void    Open                ( const TSTRING& sFileName, uint32 flags = OPEN_READ ); //throw(eFile)
+    void    Close               ( void );                                               //throw(eFile)
+    bool    IsOpen              ( void ) const;
 
-	File_t	Seek				( File_t offset, SeekFrom From ) const;				//throw(eFile)
-		// Seek returns the current offset after completion
-	File_t	Read				( void* buffer, File_t nBytes ) const;	//throw(eFile)
-		// Read returns the number of bytes that are actually read.  If the nBytes
-		// parameter is 0, 0 bytes will be read and buffer will remain untouched.
+    File_t  Seek                ( File_t offset, SeekFrom From ) const;             //throw(eFile)
+        // Seek returns the current offset after completion
+    File_t  Read                ( void* buffer, File_t nBytes ) const;  //throw(eFile)
+        // Read returns the number of bytes that are actually read.  If the nBytes
+        // parameter is 0, 0 bytes will be read and buffer will remain untouched.
         // If the read head is at EOF, no bytes will be read and 0 will be returned.
-	File_t	Write				( const void* buffer, File_t nBytes );	//throw(eFile)
-		// Write returns the number of bytes that are actually written.
-	File_t	Tell				( void ) const;
-		// Tell returns the current offset.
-	bool	Flush				( void );											//throw(eFile)
-		// Flush returns 0 if the currently defined stream is successfully flushed.
-	void	Rewind				( void ) const;										//throw(eFile)
-		// Sets the offset to 0.
-	File_t	GetSize				( void ) const;
-		// Returns the size of the current file in bytes.  Returns -1 if no file is defined.
-	void	Truncate			( File_t offset );									// throw(eFile) 
+    File_t  Write               ( const void* buffer, File_t nBytes );  //throw(eFile)
+        // Write returns the number of bytes that are actually written.
+    File_t  Tell                ( void ) const;
+        // Tell returns the current offset.
+    bool    Flush               ( void );                                           //throw(eFile)
+        // Flush returns 0 if the currently defined stream is successfully flushed.
+    void    Rewind              ( void ) const;                                     //throw(eFile)
+        // Sets the offset to 0.
+    File_t  GetSize             ( void ) const;
+        // Returns the size of the current file in bytes.  Returns -1 if no file is defined.
+    void    Truncate            ( File_t offset );                                  // throw(eFile) 
 
 private:
-	cFile				( const cFile& rhs );   //not impl.
-	cFile& operator=	( const cFile& rhs);    //not impl.
+    cFile               ( const cFile& rhs );   //not impl.
+    cFile& operator=    ( const cFile& rhs);    //not impl.
 
-	//Pointer to the insulated implementation
-	cFile_i*	mpData;
+    //Pointer to the insulated implementation
+    cFile_i*    mpData;
 
 public:
-	bool		isWritable;	
+    bool        isWritable; 
 };
 
 
@@ -146,8 +146,8 @@ public:
 class cArosPath
 {
 public:
-	static TSTRING AsPosix(const TSTRING& in);
-	static TSTRING AsNative(const TSTRING& in);
+    static TSTRING AsPosix(const TSTRING& in);
+    static TSTRING AsNative(const TSTRING& in);
 };
 #endif
 

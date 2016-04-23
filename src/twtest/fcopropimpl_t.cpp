@@ -36,27 +36,27 @@
 
 void TestFCOPropImpl()
 {
-	cDebug d("TestFCOPropImpl");
-	d.TraceDebug("Entering...\n");
+    cDebug d("TestFCOPropImpl");
+    d.TraceDebug("Entering...\n");
 
-	// print the enum key:
-	d.TraceDebug("Output key:%d True\n%d False\n%d Wrong Type\n%d Unsupported\n", 
-		iFCOProp::CMP_TRUE,iFCOProp::CMP_FALSE,iFCOProp::CMP_WRONG_PROP_TYPE,iFCOProp::CMP_UNSUPPORTED);
+    // print the enum key:
+    d.TraceDebug("Output key:%d True\n%d False\n%d Wrong Type\n%d Unsupported\n", 
+        iFCOProp::CMP_TRUE,iFCOProp::CMP_FALSE,iFCOProp::CMP_WRONG_PROP_TYPE,iFCOProp::CMP_UNSUPPORTED);
 
 
-	// test string rep
-	cFCOPropInt64 pi64;
-	cFCOPropUint64 pui64, pui64b;
-	pi64.SetValue(-456);
-	pui64.SetValue(456);
+    // test string rep
+    cFCOPropInt64 pi64;
+    cFCOPropUint64 pui64, pui64b;
+    pi64.SetValue(-456);
+    pui64.SetValue(456);
     pui64b.SetValue(333);
-	d.TraceDebug(_T("property int64 = (should be -456) %s\n"), pi64.AsString().c_str());
-	// test a few operators
-	d.TraceDebug("-456 < 456 (uint cmp to int should fail)= %d\n", pi64.Compare(&pui64, iFCOProp::OP_LT));
-	cFCOPropInt64 p2i64;
-	p2i64.SetValue(4);
-	d.TraceDebug("-456 <  4 = %d\n", pi64.Compare(&p2i64, iFCOProp::OP_LT));
-	d.TraceDebug("4 == 456 = %d\n", p2i64.Compare(&pi64, iFCOProp::OP_EQ));
+    d.TraceDebug(_T("property int64 = (should be -456) %s\n"), pi64.AsString().c_str());
+    // test a few operators
+    d.TraceDebug("-456 < 456 (uint cmp to int should fail)= %d\n", pi64.Compare(&pui64, iFCOProp::OP_LT));
+    cFCOPropInt64 p2i64;
+    p2i64.SetValue(4);
+    d.TraceDebug("-456 <  4 = %d\n", pi64.Compare(&p2i64, iFCOProp::OP_LT));
+    d.TraceDebug("4 == 456 = %d\n", p2i64.Compare(&pi64, iFCOProp::OP_EQ));
     d.TraceDebug("333ui64 == 456ui64 = %d\n", pui64.Compare(&pui64b, iFCOProp::OP_EQ));
     cFCOPropTSTRING pt1;
     cFCOPropTSTRING pt2;
@@ -68,7 +68,7 @@ void TestFCOPropImpl()
     d.TraceDebug("bar == bar = %d\n", pt1.Compare(&pt1, iFCOProp::OP_EQ));
     d.TraceDebug("bar == 456 = %d\n", pt1.Compare(&pi64, iFCOProp::OP_EQ));
 
-	d.TraceDebug("Leaving...\n");
-	return;
+    d.TraceDebug("Leaving...\n");
+    return;
 }
 

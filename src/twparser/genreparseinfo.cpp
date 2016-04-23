@@ -78,8 +78,8 @@ cGenreParseInfo::cGenreParseInfo()
  
 ///////////////////////////////////////////////////////////////////////////////
 // AddStopPoint
-//			NOTE: the list copies the string, so it is safe for the parser to
-//			free the lexeme
+//          NOTE: the list copies the string, so it is safe for the parser to
+//          free the lexeme
 ///////////////////////////////////////////////////////////////////////////////
 void
 cGenreParseInfo::AddStopPoint( const cFCOName& name )
@@ -89,9 +89,9 @@ cGenreParseInfo::AddStopPoint( const cFCOName& name )
 
 ///////////////////////////////////////////////////////////////////////////////
 // AddRule -- adds the specified rule to our list.  we will eventually call 
-//			MakeFCOSpecs(), which will use this list as its source.
+//          MakeFCOSpecs(), which will use this list as its source.
 //
-//			NOTE: the list is responsible for freeing the pointers
+//          NOTE: the list is responsible for freeing the pointers
 ///////////////////////////////////////////////////////////////////////////////
 void
 cGenreParseInfo::AddRule(const cParseRule *pnode)
@@ -146,85 +146,85 @@ void cGenreParseInfo::InitPredefinedVariables()
 
 ///////////////////////////////////////////////////////////////////////////////
 // DoVarSubstitution()
-//		replaces any $(VAR) in string with it's value, unless the $ is escaped with
+//      replaces any $(VAR) in string with it's value, unless the $ is escaped with
 //      a backslash.  Fails if symbol isn't found
 ///////////////////////////////////////////////////////////////////////////////
 
 bool cGenreParseInfo::DoVarSubstitution( TSTRING &rval ) //throw( eParserHelper )
 {
-	cDebug d("cConfigFile::DoVarSubst()");
-	d.TraceDebug("ORIG: %s\n", rval.c_str());
+    cDebug d("cConfigFile::DoVarSubst()");
+    d.TraceDebug("ORIG: %s\n", rval.c_str());
 
-	// walk through string
-	//		look for $(
-	//			find matching )
-	//			pick out subset
-	//			look up in symbol table
-	//			substitute subset
-	//		continue iterating
+    // walk through string
+    //      look for $(
+    //          find matching )
+    //          pick out subset
+    //          look up in symbol table
+    //          substitute subset
+    //      continue iterating
 
-	// step through string
-	// iterate to (slen-1), because we are looking for a two-character sentinel "$("
+    // step through string
+    // iterate to (slen-1), because we are looking for a two-character sentinel "$("
     bool fEscaping = false;
     for (TSTRING::size_type i = 0; i < rval.size(); i++) 
-	{
-		TCHAR c = rval[i];
+    {
+        TCHAR c = rval[i];
 
-		// is it the "$(" sentinel? (an escaped '$' is not a variable)
-		if (c == '$' && ! fEscaping ) 
-		{
-			c = rval[i+1];
-			if (c == '(') 
-			{
-				// ooh, wow!  it's a variable!  find the end
-				bool found = false;
+        // is it the "$(" sentinel? (an escaped '$' is not a variable)
+        if (c == '$' && ! fEscaping ) 
+        {
+            c = rval[i+1];
+            if (c == '(') 
+            {
+                // ooh, wow!  it's a variable!  find the end
+                bool found = false;
                 TSTRING::size_type j;
 
-				for (j = i+1; j < rval.size(); j++) 
-				{
-					if (rval[j] == ')') 
-					{
-						found = true;
-						break;
-					}
-				}
+                for (j = i+1; j < rval.size(); j++) 
+                {
+                    if (rval[j] == ')') 
+                    {
+                        found = true;
+                        break;
+                    }
+                }
 
-				// did we find it?
-				if (!found) 
-				{
+                // did we find it?
+                if (!found) 
+                {
                     // TODO: throw error
-					return false;
-				}
+                    return false;
+                }
 
-				// otherwise, cut out the variable name
-				TSTRING::size_type begin = i + 2;
-				TSTRING::size_type size = j - i - 2;
-				TSTRING varname;
-				varname = rval.substr(begin, size);
+                // otherwise, cut out the variable name
+                TSTRING::size_type begin = i + 2;
+                TSTRING::size_type size = j - i - 2;
+                TSTRING varname;
+                varname = rval.substr(begin, size);
 
-				d.TraceDebug("symbol = %s\n", varname.c_str());
+                d.TraceDebug("symbol = %s\n", varname.c_str());
 
-				// look up in symbol table
-				TSTRING varvalue;
-				if ( ! LookupVariable( varname, varvalue ) ) 
+                // look up in symbol table
+                TSTRING varvalue;
+                if ( ! LookupVariable( varname, varvalue ) ) 
                     throw eParserUseUndefVar( varname );
 
-				// replace varname with varvalue
-				rval.replace(begin-2, size+3, varvalue);
+                // replace varname with varvalue
+                rval.replace(begin-2, size+3, varvalue);
 
-				d.TraceDebug("POST: %s\n", rval.c_str());
+                d.TraceDebug("POST: %s\n", rval.c_str());
 
-				// no no no
-				// we should exit function, and get called again
+                // no no no
+                // we should exit function, and get called again
 
 
-				// update counters
-				//		we should bump the cursor over by the length of the 
-				//			varvalue (minus one, to compensate for post-increment of index)
-				i += varvalue.size() - 1;
-				goto nextchar;
-			}
-		}
+                // update counters
+                //      we should bump the cursor over by the length of the 
+                //          varvalue (minus one, to compensate for post-increment of index)
+                i += varvalue.size() - 1;
+                goto nextchar;
+            }
+        }
         else if (c == '\\')
         {
             fEscaping = ! fEscaping;
@@ -234,15 +234,15 @@ bool cGenreParseInfo::DoVarSubstitution( TSTRING &rval ) //throw( eParserHelper 
             fEscaping = false;
         }
 nextchar:
-		;
-	}
+        ;
+    }
 
 
 
-	d.TraceDebug("DONE: %s\n", rval.c_str());
+    d.TraceDebug("DONE: %s\n", rval.c_str());
 
-	// switch around
-	return true;
+    // switch around
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -260,8 +260,8 @@ bool cGenreParseInfo::InsertVariable( const TSTRING& var, const TSTRING& val ) /
 
 ///////////////////////////////////////////////////////////////////////////////
 // Lookup -- returns value, or returns false
-//		This method will return false only if the given variable is not defined
-//		in any of the three symbol tables.
+//      This method will return false only if the given variable is not defined
+//      in any of the three symbol tables.
 ///////////////////////////////////////////////////////////////////////////////
 bool cGenreParseInfo::LookupVariable( const TSTRING& var, TSTRING& val )
 {

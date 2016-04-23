@@ -44,24 +44,24 @@
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
-//		grow heap for allocating strings 
-//		uncomment this stuff to use the grow heap...
+//      grow heap for allocating strings 
+//      uncomment this stuff to use the grow heap...
 //
 
 #include "core/growheap.h"
 
 // TODO:BAM -- maybe make a PAGE_SIZE in platform.h
 enum 
-{	
-    FCONAME_HEAP_INITIAL_SIZE	=	0x1000, // 4k 
-    FCONAME_HEAP_GROW_BY		=	0x1000
+{   
+    FCONAME_HEAP_INITIAL_SIZE   =   0x1000, // 4k 
+    FCONAME_HEAP_GROW_BY        =   0x1000
 };
 
-static cGrowHeap	gFCONameHeap( FCONAME_HEAP_INITIAL_SIZE, FCONAME_HEAP_GROW_BY, _T("FCO Name") );
+static cGrowHeap    gFCONameHeap( FCONAME_HEAP_INITIAL_SIZE, FCONAME_HEAP_GROW_BY, _T("FCO Name") );
 
 inline void* util_AllocMem(int size)
 {
-	return gFCONameHeap.Malloc( size );
+    return gFCONameHeap.Malloc( size );
 }
 inline void util_FreeMem(void* pData)
 {
@@ -74,11 +74,11 @@ inline void util_FreeMem(void* pData)
 /*
 inline void* util_AllocMem(int size)
 {
-	return malloc( size );
+    return malloc( size );
 }
 inline void util_FreeMem(void* pData)
 {
-	free(pData);
+    free(pData);
 }
 */
 
@@ -89,57 +89,57 @@ inline void util_FreeMem(void* pData)
 
 void cFCONameTblNode::SetLowercaseNode(cFCONameTblNode* pNewNode)
 {
-	ASSERT(pNewNode != 0);	// doesn't make sense to set this to NULL
+    ASSERT(pNewNode != 0);  // doesn't make sense to set this to NULL
 
-	if(mpLowerNode)
-		mpLowerNode->Release();
-	if(pNewNode == this)
-	{
-		// we can't store a pointer to ourselves, since reference counting doesn't go well
-		// with circular pointers, so we will represent this with a NULL pointer
-		mpLowerNode = NULL;
-		return;
-	}
-	pNewNode->AddRef();
-	mpLowerNode = pNewNode;
+    if(mpLowerNode)
+        mpLowerNode->Release();
+    if(pNewNode == this)
+    {
+        // we can't store a pointer to ourselves, since reference counting doesn't go well
+        // with circular pointers, so we will represent this with a NULL pointer
+        mpLowerNode = NULL;
+        return;
+    }
+    pNewNode->AddRef();
+    mpLowerNode = pNewNode;
 }
 
 void cFCONameTblNode::SetString(const TSTRING& newStr)
 {
-	if( mpString != NULL )
-	{
-		delete [] mpString;
-		mpString = NULL;
-	}
-	
-	mpString = (TCHAR*)util_AllocMem( sizeof(TCHAR)*(newStr.length()+1) );
-	_tcscpy( mpString, newStr.c_str() );
+    if( mpString != NULL )
+    {
+        delete [] mpString;
+        mpString = NULL;
+    }
+    
+    mpString = (TCHAR*)util_AllocMem( sizeof(TCHAR)*(newStr.length()+1) );
+    _tcscpy( mpString, newStr.c_str() );
 
-	// NOTE -- the lower case pointer is now invalid.
+    // NOTE -- the lower case pointer is now invalid.
 }
 
 cFCONameTblNode::cFCONameTblNode(const TSTRING& name, const cFCONameTblNode* node) :
-	mpString(NULL),
-	mpLowerNode(node)
+    mpString(NULL),
+    mpLowerNode(node)
 {
-	SetString( name );
+    SetString( name );
 }
 
 cFCONameTblNode::~cFCONameTblNode()
 {
-	if(mpLowerNode)
-		mpLowerNode->Release();
-	if(mpString != NULL)
-	{
-		util_FreeMem( mpString );
-		mpString = NULL;
-	}
+    if(mpLowerNode)
+        mpLowerNode->Release();
+    if(mpString != NULL)
+    {
+        util_FreeMem( mpString );
+        mpString = NULL;
+    }
 }
 
 void cFCONameTblNode::Delete() const
 {
-	((cFCONameTblNode*)this)->~cFCONameTblNode();
-	util_FreeMem((void*)this);
+    ((cFCONameTblNode*)this)->~cFCONameTblNode();
+    util_FreeMem((void*)this);
 }
 
 
@@ -151,18 +151,18 @@ void cFCONameTblNode::Delete() const
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
 cFCONameTbl::cFCONameTbl(int defSize) :
-	mTable(defSize)
+    mTable(defSize)
 {
 }
 
 cFCONameTbl::~cFCONameTbl()
 {
 #ifdef _DEBUG
-	cDebug d("cFCONameTbl::~cFCONameTbl()");
-	d.TraceDebug("Tracing cFCONameTblNode hash table statistics:\n");
-	mTable.TraceDiagnostics();
+    cDebug d("cFCONameTbl::~cFCONameTbl()");
+    d.TraceDebug("Tracing cFCONameTblNode hash table statistics:\n");
+    mTable.TraceDiagnostics();
 #endif
-	Clear();
+    Clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -171,41 +171,41 @@ cFCONameTbl::~cFCONameTbl()
 
 cFCONameTblNode* cFCONameTbl::CreateNode(const TSTRING& nodeName)
 {
-	cFCONameTblNode* pNode, *pLowerNode;
-	if(mTable.Lookup(nodeName.c_str(), pNode))
-	{
-		// this already exists in the table; just return the existing node
-		pNode->AddRef();
-		return pNode;
-	}
-	pNode = new(util_AllocMem(sizeof(cFCONameTblNode))) cFCONameTblNode(nodeName, NULL);
-	mTable.Insert(pNode->GetString(), pNode);
+    cFCONameTblNode* pNode, *pLowerNode;
+    if(mTable.Lookup(nodeName.c_str(), pNode))
+    {
+        // this already exists in the table; just return the existing node
+        pNode->AddRef();
+        return pNode;
+    }
+    pNode = new(util_AllocMem(sizeof(cFCONameTblNode))) cFCONameTblNode(nodeName, NULL);
+    mTable.Insert(pNode->GetString(), pNode);
 
-	// fill out the lower-case info
-	TSTRING lowStr = pNode->GetString();
-	TSTRING::iterator i;
+    // fill out the lower-case info
+    TSTRING lowStr = pNode->GetString();
+    TSTRING::iterator i;
 
     // TODO:BAM -- does this have any meaning in mb?
-	for(i = lowStr.begin(); i != lowStr.end(); ++i)
-	{
-		*i = _totlower(*i);
-	}
-	// see if this exists in the table (it could potentially look up itself!)
-	if(mTable.Lookup(lowStr.c_str(), pLowerNode))
-	{
-		pNode->SetLowercaseNode(pLowerNode);
-	}
-	else
-	{
-		// we know that the original string is not lower case if we got to this point
-		pLowerNode = new(util_AllocMem(sizeof(cFCONameTblNode))) cFCONameTblNode(lowStr, NULL);
-		pLowerNode->SetLowercaseNode(pLowerNode);
-		pNode->SetLowercaseNode(pLowerNode);
-		mTable.Insert(pLowerNode->GetString(), pLowerNode);
-	}
+    for(i = lowStr.begin(); i != lowStr.end(); ++i)
+    {
+        *i = _totlower(*i);
+    }
+    // see if this exists in the table (it could potentially look up itself!)
+    if(mTable.Lookup(lowStr.c_str(), pLowerNode))
+    {
+        pNode->SetLowercaseNode(pLowerNode);
+    }
+    else
+    {
+        // we know that the original string is not lower case if we got to this point
+        pLowerNode = new(util_AllocMem(sizeof(cFCONameTblNode))) cFCONameTblNode(lowStr, NULL);
+        pLowerNode->SetLowercaseNode(pLowerNode);
+        pNode->SetLowercaseNode(pLowerNode);
+        mTable.Insert(pLowerNode->GetString(), pLowerNode);
+    }
 
-	pNode->AddRef();
-	return pNode;
+    pNode->AddRef();
+    return pNode;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -213,14 +213,14 @@ cFCONameTblNode* cFCONameTbl::CreateNode(const TSTRING& nodeName)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCONameTbl::Clear()
 {
-	cHashTableIter<const TCHAR*, cFCONameTblNode*, cCharCmp> iter(mTable);
-	for(iter.SeekBegin(); ! iter.Done(); iter.Next())
-	{
-	  cFCONameTblNode* p = iter.Val();
-	  if (p)
-	    p->Release();
-	}
+    cHashTableIter<const TCHAR*, cFCONameTblNode*, cCharCmp> iter(mTable);
+    for(iter.SeekBegin(); ! iter.Done(); iter.Next())
+    {
+      cFCONameTblNode* p = iter.Val();
+      if (p)
+        p->Release();
+    }
 
-	mTable.Clear();
+    mTable.Clear();
 }
 

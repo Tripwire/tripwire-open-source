@@ -45,78 +45,78 @@
 // eSerializer::GetMsg -- Overloaded method for returning an error message.
 /*virtual*/ TSTRING eSerializer::GetMsg() const
 {
-	TSTRING ret;
+    TSTRING ret;
 
-	if( !eSerializer::mDataSource.empty() )
-	{
+    if( !eSerializer::mDataSource.empty() )
+    {
         ret = mMsg;
 
-		switch( eSerializer::mSourceType )
-		{
-		case TY_UNDEFINED:
-			ret.append( mDataSource );
-			break;
-		case TY_FILE:
-			ret.append( _T("\nFile: ") );
-			ret.append( mDataSource );
-			break;
-		case TY_TEMPFILE:
-			ret.append( _T("\nTemporary File: ") );
-			ret.append( mDataSource );
-			break;
-		case TY_MEMORY:
-			ret.append( _T("\nMemory Block: ") ); //uhhh...??
-			ret.append( mDataSource );
-			break;
-		case TY_PIPE:
-			ret.append( _T("\nNamed Pipe: "));
-			ret.append( mDataSource );
-			break;
-		case TY_SOCKET:
-			ret.append( _T("\nNetwork Socket: "));
-			ret.append( mDataSource );
-			break;
-		default:
-			ret.append( _T("\n"));
-			ret.append( mDataSource );
-			break;
-		}
-	}
-	else 
-	{
+        switch( eSerializer::mSourceType )
+        {
+        case TY_UNDEFINED:
+            ret.append( mDataSource );
+            break;
+        case TY_FILE:
+            ret.append( _T("\nFile: ") );
+            ret.append( mDataSource );
+            break;
+        case TY_TEMPFILE:
+            ret.append( _T("\nTemporary File: ") );
+            ret.append( mDataSource );
+            break;
+        case TY_MEMORY:
+            ret.append( _T("\nMemory Block: ") ); //uhhh...??
+            ret.append( mDataSource );
+            break;
+        case TY_PIPE:
+            ret.append( _T("\nNamed Pipe: "));
+            ret.append( mDataSource );
+            break;
+        case TY_SOCKET:
+            ret.append( _T("\nNetwork Socket: "));
+            ret.append( mDataSource );
+            break;
+        default:
+            ret.append( _T("\n"));
+            ret.append( mDataSource );
+            break;
+        }
+    }
+    else 
+    {
         // Just use the base class method...
-		ret = eError::GetMsg();
-	}
-	
-	return ret;
+        ret = eError::GetMsg();
+    }
+    
+    return ret;
 }
 
 /*
 eSerializer::eSerializer(ErrorNum errNum, const TSTRING& msg) :
-	eError(errNum, msg)
+    eError(errNum, msg)
 {
 }
 
-const TSTRING&	eSerializer::GetMsg() const
+const TSTRING&  eSerializer::GetMsg() const
 {
-	if((mErrorNum < 0) || (mErrorNum >= E_NUMITEMS))
-	{
-		// I don't know what this error number is; just use the base class implementation
-		return eError::GetMsg();
-	}
+    if((mErrorNum < 0) || (mErrorNum >= E_NUMITEMS))
+    {
+        // I don't know what this error number is; just use the base class implementation
+        return eError::GetMsg();
+    }
 
-	static TSTRING message;
-	static const TCHAR* reasonStrings[] = { _T("The serializer encountered an unknown type"),
-											_T("Invlaid input stream format for serializer"),
-											_T("Archive error"),
-											_T("Version Mismatch"),
-											_T("Invalid Reason") };
+    static TSTRING message;
+    static const TCHAR* reasonStrings[] = { _T("The serializer encountered an unknown type"),
+                                            _T("Invlaid input stream format for serializer"),
+                                            _T("Archive error"),
+                                            _T("Version Mismatch"),
+                                            _T("Invalid Reason") };
 
-	message = reasonStrings[mErrorNum];
-	message += _T(" : ");
-	message += mMsg;
+    message = reasonStrings[mErrorNum];
+    message += _T(" : ");
+    message += mMsg;
 
-	return message;
+    return message;
 
 }
 

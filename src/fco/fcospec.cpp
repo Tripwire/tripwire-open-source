@@ -46,28 +46,28 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // cDefaultSpecMask -- an implementation of iFCOSpecMask that implements the 
-//		default mask
+//      default mask
 ///////////////////////////////////////////////////////////////////////////////
 class cDefaultSpecMask : public iFCOSpecMask
 {
 public:
         cDefaultSpecMask() {}
-	virtual const TSTRING& GetName() const;
-	virtual bool Accept(const iFCO* pFCO) const;
+    virtual const TSTRING& GetName() const;
+    virtual bool Accept(const iFCO* pFCO) const;
 private:
-	static const TSTRING mName;
+    static const TSTRING mName;
 };
 
 const TSTRING cDefaultSpecMask::mName(_T("Default")); 
 
 const TSTRING& cDefaultSpecMask::GetName() const
 {
-	return mName;
+    return mName;
 }
 
 bool cDefaultSpecMask::Accept(const iFCO* pFCO) const
 {
-	return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ static const cDefaultSpecMask defaultSpecMask;
 
 const iFCOSpecMask* iFCOSpecMask::GetDefaultMask()
 {
-	return &defaultSpecMask;
+    return &defaultSpecMask;
 }
 
 

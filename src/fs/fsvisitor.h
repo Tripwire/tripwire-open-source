@@ -33,7 +33,7 @@
 // fsvisitor.h
 //
 // iFCOVisitor -- top-level visitor interface. Right now, this only contains 
-//		GetGenre(), which returns the visitor's type
+//      GetGenre(), which returns the visitor's type
 #ifndef __FSVISITOR_H
 #define __FSVISITOR_H
 
@@ -46,13 +46,13 @@ class cFSObject;
 class iFSVisitor : public iFCOVisitor
 {
 public:
-	DECLARE_TYPED()
+    DECLARE_TYPED()
 
-	// visitor interfaces specific to file systems
-	virtual void VisitFSObject(cFSObject& obj) = 0;
+    // visitor interfaces specific to file systems
+    virtual void VisitFSObject(cFSObject& obj) = 0;
 
 protected:
-	virtual ~iFSVisitor() {};
+    virtual ~iFSVisitor() {};
 };
 
 #endif

@@ -48,7 +48,7 @@ void crcUpdate( CRC_INFO& crcInfo, const uint8* pbData, int cbDataLen );
 void crcFinit ( CRC_INFO& crcInfo );
 
 
-	// calculates the crc for len bytes starting at pBuf
+    // calculates the crc for len bytes starting at pBuf
 //Wrapper function for CRC32 in crc32.cpp
 #endif //__CRC32_H
 

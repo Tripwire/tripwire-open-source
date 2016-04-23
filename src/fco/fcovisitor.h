@@ -33,7 +33,7 @@
 // fcovisitor.h
 //
 // iFCOVisitor -- top-level visitor interface. Right now, this only contains 
-//		GetGenre(), which returns the visitor's type
+//      GetGenre(), which returns the visitor's type
 #ifndef __FCOVISITOR_H
 #define __FCOVISITOR_H
 
@@ -43,17 +43,17 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // IMPORTANT! -- Note that although the concept of "genre" is the same as in the 
-//		design document, a genre seems to be fundamentally equivalent to a cType
-//		as defined in typed.h. Therefore, the elements in the visitor pattern will
-//		do their safe cast based on the visitor's iTyped interface.
+//      design document, a genre seems to be fundamentally equivalent to a cType
+//      as defined in typed.h. Therefore, the elements in the visitor pattern will
+//      do their safe cast based on the visitor's iTyped interface.
 ///////////////////////////////////////////////////////////////////////////////
 class iFCOVisitor : public iTyped
 {
 public:
-	// it is sad to note that without genres, iFCOVisitor now has _nothing_! ... 
-	// never a good sign -mdb
+    // it is sad to note that without genres, iFCOVisitor now has _nothing_! ... 
+    // never a good sign -mdb
 protected:
-	virtual ~iFCOVisitor() {};
+    virtual ~iFCOVisitor() {};
 };
 
 #endif

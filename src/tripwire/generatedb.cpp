@@ -54,64 +54,64 @@
 ///////////////////////////////////////////////////////////////////////////////
 // util_ProcessDir
 //
-//		this returns true if at least one object was added to the directory.
+//      this returns true if at least one object was added to the directory.
 ///////////////////////////////////////////////////////////////////////////////
 static void util_ProcessDir( cDbDataSourceIter dbIter, iFCODataSourceIter* pIter, iFCOSpec* pSpec, iFCOPropCalc* pPC, iFCOPropDisplayer* pPD )
 {
-	ASSERT( ! dbIter.Done() );
-	ASSERT( ! pIter->Done() );
-	ASSERT( pIter->CanDescend() );
-	ASSERT( dbIter.CanDescend() );
-	if( ! pIter->CanDescend() )
-		return;
-	//
-	// first, descend into the directory
-	//
-	pIter->Descend();
-	dbIter.Descend();
-	//
-	// now, iterate through the data source, adding entries to the database ...
-	//
-	for( pIter->SeekBegin(); ! pIter->Done(); pIter->Next() )
-	{
-		//
-		// don't continue if the spec says we shouldn't
-		//
-		if( pSpec->ShouldStopDescent( pIter->GetName() ) )
-		{
-			continue;
-		}
-		// TODO -- do I need to check the db iter to see if the given item already exists?
-		//		this should never really happen unless the data source iter is screwed up.
-		// TODO -- use a smart reference counted object pointer here to release the object when it 
-		//		goes out of scope.
-		iFCO* pFCO = pIter->CreateFCO();
-		if( pFCO )
-		{
-			cTripwireUtil::CalcProps( pFCO, pSpec, pPC, pPD ); 
-			dbIter.AddFCO( pIter->GetShortName(), pFCO );
-			pFCO->Release();
-			//
-			// descend into this directory if we can...
-			//
-			if( pIter->CanDescend() )
-			{
-				if( ! dbIter.CanDescend() )
-				{
-					dbIter.AddChildArray();
-				}
-				std::auto_ptr<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
-				util_ProcessDir( dbIter, pCopy.get(), pSpec, pPC, pPD );
-				//
-				// if no files were added, remove the child array...
-				//
-				if( dbIter.CanRemoveChildArray() )
-				{
-					dbIter.RemoveChildArray();
-				}
-			}
-		}
-	}
+    ASSERT( ! dbIter.Done() );
+    ASSERT( ! pIter->Done() );
+    ASSERT( pIter->CanDescend() );
+    ASSERT( dbIter.CanDescend() );
+    if( ! pIter->CanDescend() )
+        return;
+    //
+    // first, descend into the directory
+    //
+    pIter->Descend();
+    dbIter.Descend();
+    //
+    // now, iterate through the data source, adding entries to the database ...
+    //
+    for( pIter->SeekBegin(); ! pIter->Done(); pIter->Next() )
+    {
+        //
+        // don't continue if the spec says we shouldn't
+        //
+        if( pSpec->ShouldStopDescent( pIter->GetName() ) )
+        {
+            continue;
+        }
+        // TODO -- do I need to check the db iter to see if the given item already exists?
+        //      this should never really happen unless the data source iter is screwed up.
+        // TODO -- use a smart reference counted object pointer here to release the object when it 
+        //      goes out of scope.
+        iFCO* pFCO = pIter->CreateFCO();
+        if( pFCO )
+        {
+            cTripwireUtil::CalcProps( pFCO, pSpec, pPC, pPD ); 
+            dbIter.AddFCO( pIter->GetShortName(), pFCO );
+            pFCO->Release();
+            //
+            // descend into this directory if we can...
+            //
+            if( pIter->CanDescend() )
+            {
+                if( ! dbIter.CanDescend() )
+                {
+                    dbIter.AddChildArray();
+                }
+                std::auto_ptr<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
+                util_ProcessDir( dbIter, pCopy.get(), pSpec, pPC, pPD );
+                //
+                // if no files were added, remove the child array...
+                //
+                if( dbIter.CanRemoveChildArray() )
+                {
+                    dbIter.RemoveChildArray();
+                }
+            }
+        }
+    }
 
 }
 
@@ -120,27 +120,27 @@ static void util_ProcessDir( cDbDataSourceIter dbIter, iFCODataSourceIter* pIter
 ///////////////////////////////////////////////////////////////////////////////
 void cGenerateDb::Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCOPropDisplayer* pPD, cErrorBucket* pBucket, uint32 flags )
 {
-	// TODO -- assert the db is empty or clear it out myself!
+    // TODO -- assert the db is empty or clear it out myself!
 
-	std::auto_ptr<iFCODataSourceIter>	pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
+    std::auto_ptr<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
 
-	//
-	// set up the database's iterator...
-	// I assume the current genre is correct...
-	//
-	cDbDataSourceIter dbIter( &db );	
+    //
+    // set up the database's iterator...
+    // I assume the current genre is correct...
+    //
+    cDbDataSourceIter dbIter( &db );    
     
-	//
-	// set the iterators' error bucket...
-	//
-	pDSIter->SetErrorBucket(pBucket);
+    //
+    // set the iterators' error bucket...
+    //
+    pDSIter->SetErrorBucket(pBucket);
     dbIter.SetErrorBucket(pBucket);
 
-	//
-	// this is the object that will calculate all of the properties of the fcos.
-	//
-	std::auto_ptr<iFCOPropCalc>	pPC(iTWFactory::GetInstance()->CreatePropCalc());
-	pPC->SetErrorBucket( pBucket );
+    //
+    // this is the object that will calculate all of the properties of the fcos.
+    //
+    std::auto_ptr<iFCOPropCalc> pPC(iTWFactory::GetInstance()->CreatePropCalc());
+    pPC->SetErrorBucket( pBucket );
     if( flags & FLAG_ERASE_FOOTPRINTS_GD )
     {
         pPC->SetCalcFlags(      iFCOPropCalc::DO_NOT_MODIFY_PROPERTIES );
@@ -148,59 +148,59 @@ void cGenerateDb::Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCO
         pDSIter->SetIterFlags(  iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
     }
 
-	//
-	// iterate over all of the specs...
-	//
-	cFCOSpecListCanonicalIter specIter(specList);
-	for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next())
-	{
-		// verbose output
-		TW_NOTIFY_VERBOSE(	_T("%s %s\n"), 
-							TSS_GetString( cTripwire, tripwire::STR_NOTIFY_PROCESSING ).c_str(),
-							iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay
-								( specIter.Spec()->GetStartPoint() ).c_str() );
-		//
-		// have the iterators seek to the appropriate starting point
-		//
-		pDSIter->SeekToFCO	( specIter.Spec()->GetStartPoint(), false ); // false means don't generate my peers...
-		if( ! pDSIter->Done() )
-		{
-			iFCO* pFCO = pDSIter->CreateFCO();
-			if( pFCO )
-			{
-				dbIter.CreatePath( specIter.Spec()->GetStartPoint() );
-				//
-				// ok, now process this directory
-				// we need to add the start point here, since the first thing the ProcessDir function does is
-				//		Descend().
-				//
-				cTripwireUtil::CalcProps( pFCO, specIter.Spec(), pPC.get(), pPD );
-				dbIter.SetFCOData( pFCO );
-				pFCO->Release();
-				//
-				// if this is a directory, process its children...
-				//
-				if( pDSIter->CanDescend() && (! specIter.Spec()->ShouldStopDescent( pDSIter->GetName() )) )
-				{
-					// make the child array, if it doesn't exist...
-					//
-					if( ! dbIter.CanDescend() )
-					{
-						dbIter.AddChildArray();
-					}
-					std::auto_ptr<iFCODataSourceIter> pCopy( pDSIter->CreateCopy() );
-					util_ProcessDir( dbIter, pCopy.get(), specIter.Spec(), pPC.get(), pPD	);
-					//
-					// if no files were added, remove the child array...
-					//
-					if( dbIter.CanRemoveChildArray() )
-					{
-						dbIter.RemoveChildArray();
-					}
-				}
-			}
-		}
+    //
+    // iterate over all of the specs...
+    //
+    cFCOSpecListCanonicalIter specIter(specList);
+    for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next())
+    {
+        // verbose output
+        TW_NOTIFY_VERBOSE(  _T("%s %s\n"), 
+                            TSS_GetString( cTripwire, tripwire::STR_NOTIFY_PROCESSING ).c_str(),
+                            iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay
+                                ( specIter.Spec()->GetStartPoint() ).c_str() );
+        //
+        // have the iterators seek to the appropriate starting point
+        //
+        pDSIter->SeekToFCO  ( specIter.Spec()->GetStartPoint(), false ); // false means don't generate my peers...
+        if( ! pDSIter->Done() )
+        {
+            iFCO* pFCO = pDSIter->CreateFCO();
+            if( pFCO )
+            {
+                dbIter.CreatePath( specIter.Spec()->GetStartPoint() );
+                //
+                // ok, now process this directory
+                // we need to add the start point here, since the first thing the ProcessDir function does is
+                //      Descend().
+                //
+                cTripwireUtil::CalcProps( pFCO, specIter.Spec(), pPC.get(), pPD );
+                dbIter.SetFCOData( pFCO );
+                pFCO->Release();
+                //
+                // if this is a directory, process its children...
+                //
+                if( pDSIter->CanDescend() && (! specIter.Spec()->ShouldStopDescent( pDSIter->GetName() )) )
+                {
+                    // make the child array, if it doesn't exist...
+                    //
+                    if( ! dbIter.CanDescend() )
+                    {
+                        dbIter.AddChildArray();
+                    }
+                    std::auto_ptr<iFCODataSourceIter> pCopy( pDSIter->CreateCopy() );
+                    util_ProcessDir( dbIter, pCopy.get(), specIter.Spec(), pPC.get(), pPD   );
+                    //
+                    // if no files were added, remove the child array...
+                    //
+                    if( dbIter.CanRemoveChildArray() )
+                    {
+                        dbIter.RemoveChildArray();
+                    }
+                }
+            }
+        }
 
-	}
+    }
 }
 

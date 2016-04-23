@@ -64,8 +64,8 @@ void MakeDir( const TCHAR* const lpszDirName );
 // we use this instead of TraceContents() so we can test the report iterators.
 static void TraceReport(const cFCOReport& r, cDebug& d)
 {
-	d.TraceDebug("Global Error Queue:\n");
-	r.GetErrorQueue()->TraceContents();
+    d.TraceDebug("Global Error Queue:\n");
+    r.GetErrorQueue()->TraceContents();
 
     cFCOReportGenreIter genreIter(r);
     int genreCount = 0;
@@ -74,34 +74,34 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
     {
         d.TraceDebug("> Genre [%d]:\n", genreCount);
 
-	    cFCOReportSpecIter specIter(genreIter);
-	    int ct = 0;
+        cFCOReportSpecIter specIter(genreIter);
+        int ct = 0;
 
-	    for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ct++)
-	    {
-		    d.TraceDebug(">>> Spec [%d]:\n", ct);
-		    ASSERT(specIter.GetSpec());
-		    specIter.GetSpec()->TraceContents();
-		    specIter.GetErrorQueue()->TraceContents();
+        for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ct++)
+        {
+            d.TraceDebug(">>> Spec [%d]:\n", ct);
+            ASSERT(specIter.GetSpec());
+            specIter.GetSpec()->TraceContents();
+            specIter.GetErrorQueue()->TraceContents();
 
-		    d.TraceDebug(">>> Added Files:\n");
-		    specIter.GetAddedSet()->TraceContents();
-		    d.TraceDebug(">>> Removed Files:\n");
-		    specIter.GetRemovedSet()->TraceContents ();
+            d.TraceDebug(">>> Added Files:\n");
+            specIter.GetAddedSet()->TraceContents();
+            d.TraceDebug(">>> Removed Files:\n");
+            specIter.GetRemovedSet()->TraceContents ();
 
-		    // trace out changed files
-		    cFCOReportChangeIter changeIter(specIter);
-		    int changeCtr = 0;
-		    for(changeIter.SeekBegin(); ! changeIter.Done(); changeIter.Next(), changeCtr++)
-		    {
-			    d.TraceDebug(">>>>> Changed fco [%d]\n", changeCtr);
-			    d.TraceDebug(">>>>>   Old FCO:\n");
-			    changeIter.GetOld()->TraceContents();
-			    d.TraceDebug(">>>>>   New FCO:\n");
-			    changeIter.GetNew()->TraceContents();
-			    changeIter.GetChangeVector().TraceContents();
-		    }
-	    }
+            // trace out changed files
+            cFCOReportChangeIter changeIter(specIter);
+            int changeCtr = 0;
+            for(changeIter.SeekBegin(); ! changeIter.Done(); changeIter.Next(), changeCtr++)
+            {
+                d.TraceDebug(">>>>> Changed fco [%d]\n", changeCtr);
+                d.TraceDebug(">>>>>   Old FCO:\n");
+                changeIter.GetOld()->TraceContents();
+                d.TraceDebug(">>>>>   New FCO:\n");
+                changeIter.GetNew()->TraceContents();
+                changeIter.GetChangeVector().TraceContents();
+            }
+        }
     }
 }
 
@@ -118,7 +118,7 @@ void TestTextReportViewer()
     TSTRING  fcoNameTempFile;
     try
     {
-	    iFSServices* pFSServices = iFSServices::GetInstance();
+        iFSServices* pFSServices = iFSServices::GetInstance();
         ASSERT( pFSServices );
 
         TSTRING fcoNameTempDir;
@@ -133,12 +133,12 @@ void TestTextReportViewer()
         
         fcoNameTempFile = fcoNameTempDir += _T("twtempXXXXXX");
         pFSServices->MakeTempFilename( fcoNameTempFile );
-	}
-	catch(eFSServices& /* e */)
-	{
+    }
+    catch(eFSServices& /* e */)
+    {
         // TODO: properly handle error
         ASSERT( false );
-	}
+    }
 
     // need two prop calcs because.....
     // if cFSPropCalc::VisitFSObject succeeds, cFSPropCalc stores the FCO in
@@ -150,8 +150,8 @@ void TestTextReportViewer()
  
     
     cFCOSpecStopPointSet *pStopPts = new cFCOSpecStopPointSet;
-    cFCOSpecImpl*    pSpec			= new cFCOSpecImpl( fcoNameSpec1.AsString(), NULL, pStopPts);
-	cFCOSpecAttr* pAttr			= new cFCOSpecAttr;
+    cFCOSpecImpl*    pSpec          = new cFCOSpecImpl( fcoNameSpec1.AsString(), NULL, pStopPts);
+    cFCOSpecAttr* pAttr         = new cFCOSpecAttr;
     
     
     cFCOPropVector v;    
@@ -165,54 +165,54 @@ void TestTextReportViewer()
     TSTRING fcoNameMakeMe;
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/added_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  addedFCO		= new cFSObject( cFCOName(fcoNameMakeMe));
+    cFSObject*  addedFCO        = new cFSObject( cFCOName(fcoNameMakeMe));
     pPropCalc->VisitFSObject( *addedFCO );
 
     
     // MakeTempFile can't handle strings with escaped quotes, so we'll have to do this ourselves
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/\"quoted\\_and_backslashed_file1\"");    
-	//TOFSTREAM file1( fcoNameMakeMe.c_str() );
+    //TOFSTREAM file1( fcoNameMakeMe.c_str() );
     //ASSERT( file1 );
     //file1.close();
 
-    cFSObject*  addedFCO2		= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  addedFCO2       = new cFSObject( cFCOName(fcoNameMakeMe) );
     //pPropCalc->VisitFSObject( *addedFCO2 );
     
     
     // MakeTempFile can't handle strings with escaped quotes, so we'll have to do this ourselves
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/quoted_file\"2\"XXXXXX");
-	//TOFSTREAM file2( fcoNameMakeMe.c_str() );
+    //TOFSTREAM file2( fcoNameMakeMe.c_str() );
     //ASSERT( file2 );
     //file2.close();
 
-    cFSObject*  addedFCO3		= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  addedFCO3       = new cFSObject( cFCOName(fcoNameMakeMe) );
     //pPropCalc->VisitFSObject( *addedFCO3 );
 
     
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/removed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  removedFCO		= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  removedFCO      = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *removedFCO );
 
     
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/removed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  removedFCO2		= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  removedFCO2     = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *removedFCO2 );
 
     pSpec->SetStartPoint( fcoNameSpec1 );
-	pAttr->SetName( fcoNameSpec1.AsString() );
-	pAttr->SetSeverity(53);
+    pAttr->SetName( fcoNameSpec1.AsString() );
+    pAttr->SetSeverity(53);
     pStopPts->Add( cFCOName( fcoNameSpec1.AsString() + _T("/End1")) );
     report.AddSpec(0x00020001, pSpec, pAttr, &specIter); // TODO:bam - use cFS::Genre
-	pAttr->Release();    
+    pAttr->Release();    
 
     
     specIter.GetAddedSet()->Insert(addedFCO);
     specIter.GetAddedSet()->Insert(addedFCO2);
     specIter.GetAddedSet()->Insert(addedFCO3);
-	specIter.GetRemovedSet()->Insert(removedFCO);
-	specIter.GetRemovedSet()->Insert(removedFCO2);
+    specIter.GetRemovedSet()->Insert(removedFCO);
+    specIter.GetRemovedSet()->Insert(removedFCO2);
 
     // make changed FCO1
     cFCOPropVector changedPropVector1;
@@ -220,31 +220,31 @@ void TestTextReportViewer()
     
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/changed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  oldChangedFCO	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  oldChangedFCO   = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *oldChangedFCO );
     (static_cast<cFSPropSet*> (oldChangedFCO->GetPropSet()))->SetSize(123);
     //(static_cast<cFSPropSet*> (oldChangedFCO->GetPropSet()))->SetUID(_T("old"));
 
-    cFSObject*  newChangedFCO	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  newChangedFCO   = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc2->VisitFSObject( *newChangedFCO );
     (static_cast<cFSPropSet*> (newChangedFCO->GetPropSet()))->SetSize(666);
     //(static_cast<cFSPropSet*> (newChangedFCO->GetPropSet()))->SetUID(_T("new"));
 
     changedPropVector1.AddItem(cFSPropSet::PROP_SIZE);
     changedPropVector1.AddItem(cFSPropSet::PROP_UID);
-	report.AddChangedFCO(specIter, oldChangedFCO, newChangedFCO, changedPropVector1);
+    report.AddChangedFCO(specIter, oldChangedFCO, newChangedFCO, changedPropVector1);
 
     // make changed FCO2
     cFCOPropVector changedPropVector2;
 
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/changed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  oldChangedFCO2	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  oldChangedFCO2  = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *oldChangedFCO2 );
     
     //(static_cast<cFSPropSet*> (oldChangedFCO2->GetPropSet()))->SetGSID( _T("S-1-1-0") );
 
-    cFSObject*  newChangedFCO2	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  newChangedFCO2  = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc2->VisitFSObject( *newChangedFCO2 );
     //(static_cast<cFSPropSet*> (newChangedFCO2->GetPropSet()))->SetGSID( _T("S-1-1-1") );
 
@@ -256,29 +256,29 @@ void TestTextReportViewer()
  //   report.GetErrorQueue()->AddError(eError(_T("this too is a general error")));
         
 
-    cFCOSpecStopPointSet *pStopPts2		= new cFCOSpecStopPointSet;
-    cFCOSpecImpl*		pSpec2				= new cFCOSpecImpl( fcoNameSpec2.AsString(), NULL, pStopPts2);
-	cFCOSpecAttr*	pAttr2				= new cFCOSpecAttr;
+    cFCOSpecStopPointSet *pStopPts2     = new cFCOSpecStopPointSet;
+    cFCOSpecImpl*       pSpec2              = new cFCOSpecImpl( fcoNameSpec2.AsString(), NULL, pStopPts2);
+    cFCOSpecAttr*   pAttr2              = new cFCOSpecAttr;
 
     fcoNameMakeMe = fcoNameSpec2.AsString() + _T("/added_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  addedFCO5		= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  addedFCO5       = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *addedFCO5 );
     
     fcoNameMakeMe = fcoNameSpec2.AsString() + _T("/removed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  removedFCO5		= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  removedFCO5     = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *removedFCO5 );
 
     pSpec2->SetStartPoint( fcoNameSpec2 );    
-	pAttr2->SetName( fcoNameSpec2.AsString() );
-	pAttr2->SetSeverity(64);
+    pAttr2->SetName( fcoNameSpec2.AsString() );
+    pAttr2->SetSeverity(64);
     pStopPts2->Add( cFCOName( fcoNameSpec2.AsString() + _T("/End2") ) );
     report.AddSpec(0x00020001, pSpec2, pAttr2, &specIter); // TODO:bam -- use cFS::Genre
-	pAttr2->Release();
+    pAttr2->Release();
     
     specIter.GetAddedSet()->Insert(addedFCO5);
-	specIter.GetRemovedSet()->Insert(removedFCO5);
+    specIter.GetRemovedSet()->Insert(removedFCO5);
 
         
 
@@ -287,28 +287,28 @@ void TestTextReportViewer()
     
     fcoNameMakeMe = fcoNameSpec2.AsString() + _T("/changed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  oldChangedFCO3	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  oldChangedFCO3  = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *oldChangedFCO3 );
     (static_cast<cFSPropSet*> (oldChangedFCO3->GetPropSet()))->SetBlockSize(313222);
     
-    cFSObject*  newChangedFCO3	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  newChangedFCO3  = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc2->VisitFSObject( *newChangedFCO3 );
     (static_cast<cFSPropSet*> (newChangedFCO3->GetPropSet()))->SetBlockSize(22213145);
 
     changedPropVector3.AddItem(cFSPropSet::PROP_BLOCK_SIZE);
-	report.AddChangedFCO(specIter, oldChangedFCO3, newChangedFCO3, changedPropVector3);
+    report.AddChangedFCO(specIter, oldChangedFCO3, newChangedFCO3, changedPropVector3);
 
     // make changed FCO4
     cFCOPropVector changedPropVector4;
     
     fcoNameMakeMe = fcoNameSpec2.AsString() + _T("/changed_fileXXXXXX");
     MakeFile( fcoNameMakeMe );
-    cFSObject*  oldChangedFCO4	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  oldChangedFCO4  = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *oldChangedFCO4 );
     (static_cast<cFSPropSet*> (oldChangedFCO4->GetPropSet()))->SetSize(9104498);
     (static_cast<cFSPropSet*> (oldChangedFCO4->GetPropSet()))->SetMode( S_IREAD | S_IWRITE );    
     
-    cFSObject*  newChangedFCO4	= new cFSObject( cFCOName(fcoNameMakeMe) );
+    cFSObject*  newChangedFCO4  = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc2->VisitFSObject( *newChangedFCO4 );
     (static_cast<cFSPropSet*> (newChangedFCO4->GetPropSet()))->SetSize(66);
     (static_cast<cFSPropSet*> (newChangedFCO4->GetPropSet()))->SetMode( S_IREAD | S_IWRITE | S_IEXEC );
@@ -336,9 +336,9 @@ void TestTextReportViewer()
             cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
 
             //TraceReport(report, d);
-		    outSer.Init();
+            outSer.Init();
             outSer.WriteObject(&report);
-		    outSer.Finit();
+            outSer.Finit();
 
             outFile.Close();
 
@@ -348,12 +348,12 @@ void TestTextReportViewer()
 
             cFCOReport inReport;
 
-		    inSer.Init();
+            inSer.Init();
             inSer.ReadObject(&inReport);
-		    inSer.Finit();
+            inSer.Finit();
 
             d.TraceDebug("Read in serialized report:\n");
-			//TraceReport(inReport, d);
+            //TraceReport(inReport, d);
             trv.PrintTextReport( rhi, inReport, TSTRING( TEMP_DIR _T( "/test2.txt" ) ) );    
 
             //TODO: this does not work any more
@@ -366,7 +366,7 @@ void TestTextReportViewer()
     //cTextReportViewer::LaunchEditorOnFile( fcoNameTempFile, _T("") );
 
     
-	iFSServices* pFSServices = iFSServices::GetInstance();
+    iFSServices* pFSServices = iFSServices::GetInstance();
     ASSERT( pFSServices );
     pFSServices->FileDelete( addedFCO->GetName().AsString() );
     pFSServices->FileDelete( addedFCO2->GetName().AsString() );
@@ -405,7 +405,7 @@ void TestTextReportViewer()
     oldChangedFCO4->Release();
     newChangedFCO4->Release();
 
-	return;
+    return;
 }
 
 void MakeFile( TSTRING& strNameMakeMe )
@@ -428,7 +428,7 @@ void MakeFile( TSTRING& strNameMakeMe )
                 strA += ach[j];
         }
 
-		TOFSTREAM file( strA.c_str() );
+        TOFSTREAM file( strA.c_str() );
         ASSERT( file );
         file.close();
     }
@@ -446,8 +446,8 @@ void MakeDir( const TCHAR* const lpszDirName )
 {
     try
     {
-	    iFSServices* pFSServices = iFSServices::GetInstance();
-	    TSTRING newdir(lpszDirName);
+        iFSServices* pFSServices = iFSServices::GetInstance();
+        TSTRING newdir(lpszDirName);
 
         pFSServices->Mkdir( newdir );
     }

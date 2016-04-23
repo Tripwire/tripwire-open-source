@@ -62,24 +62,24 @@ bool cFSParserUtil::MapStringToProperty( const TSTRING& str, int& propIndex ) co
     {
         switch( str[0] )
         {
-	        case 'p': propIndex = cFSPropSet::PROP_MODE;    break;
-	        case 'i': propIndex = cFSPropSet::PROP_INODE;   break;
-	        case 'n': propIndex = cFSPropSet::PROP_NLINK;   break;
-	        case 'u': propIndex = cFSPropSet::PROP_UID;     break;
-	        case 'g': propIndex = cFSPropSet::PROP_GID;     break;
-	        case 's': propIndex = cFSPropSet::PROP_SIZE;    break;
-	        case 't': propIndex = cFSPropSet::PROP_FILETYPE;break;
-	        case 'd': propIndex = cFSPropSet::PROP_DEV;		break;
-            case 'r': propIndex = cFSPropSet::PROP_RDEV;	break;                
-	        case 'b': propIndex = cFSPropSet::PROP_BLOCKS;  break;
+            case 'p': propIndex = cFSPropSet::PROP_MODE;    break;
+            case 'i': propIndex = cFSPropSet::PROP_INODE;   break;
+            case 'n': propIndex = cFSPropSet::PROP_NLINK;   break;
+            case 'u': propIndex = cFSPropSet::PROP_UID;     break;
+            case 'g': propIndex = cFSPropSet::PROP_GID;     break;
+            case 's': propIndex = cFSPropSet::PROP_SIZE;    break;
+            case 't': propIndex = cFSPropSet::PROP_FILETYPE;break;
+            case 'd': propIndex = cFSPropSet::PROP_DEV;     break;
+            case 'r': propIndex = cFSPropSet::PROP_RDEV;    break;                
+            case 'b': propIndex = cFSPropSet::PROP_BLOCKS;  break;
             case 'a': propIndex = cFSPropSet::PROP_ATIME;   break;
-	        case 'm': propIndex = cFSPropSet::PROP_MTIME;   break;
-	        case 'c': propIndex = cFSPropSet::PROP_CTIME;   break;
-	        case 'C': propIndex = cFSPropSet::PROP_CRC32;   break;
-	        case 'M': propIndex = cFSPropSet::PROP_MD5;		break;
-	        case 'S': propIndex = cFSPropSet::PROP_SHA;		break;
-	        case 'H': propIndex = cFSPropSet::PROP_HAVAL;   break;
-	        case 'l': propIndex = cFSPropSet::PROP_GROWING_FILE; break;
+            case 'm': propIndex = cFSPropSet::PROP_MTIME;   break;
+            case 'c': propIndex = cFSPropSet::PROP_CTIME;   break;
+            case 'C': propIndex = cFSPropSet::PROP_CRC32;   break;
+            case 'M': propIndex = cFSPropSet::PROP_MD5;     break;
+            case 'S': propIndex = cFSPropSet::PROP_SHA;     break;
+            case 'H': propIndex = cFSPropSet::PROP_HAVAL;   break;
+            case 'l': propIndex = cFSPropSet::PROP_GROWING_FILE; break;
             default:  fMappedChar = false;                  break;
         }
     }
@@ -177,13 +177,13 @@ bool cFSParserUtil::EnumPredefinedVariables( int index, TSTRING& sName, TSTRING&
         sName  = TSS_GetString( cFS, fs::STR_PARSER_HOSTNAME );
         try
         {
-			iFSServices::GetInstance()->GetMachineName( sValue);
-			if (sValue.empty())
-				sValue = TSS_GetString( cFS, fs::STR_FS_PARSER_HOSTNAME_VAL );
+            iFSServices::GetInstance()->GetMachineName( sValue);
+            if (sValue.empty())
+                sValue = TSS_GetString( cFS, fs::STR_FS_PARSER_HOSTNAME_VAL );
         }
         catch( eFSServices& )
         {
-			sValue = TSS_GetString( cFS, fs::STR_FS_PARSER_HOSTNAME_VAL );
+            sValue = TSS_GetString( cFS, fs::STR_FS_PARSER_HOSTNAME_VAL );
         }
         return true;
     default:

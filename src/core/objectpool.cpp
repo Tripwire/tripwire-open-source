@@ -40,10 +40,10 @@
 class cBlockLink
 {
 public:
-	cBlockLink(cBlockLink* pNext) : mpNext(pNext)	{}
-	cBlockLink* Next()								{ return mpNext; }
+    cBlockLink(cBlockLink* pNext) : mpNext(pNext)   {}
+    cBlockLink* Next()                              { return mpNext; }
 private:
-	cBlockLink* mpNext;	// pointer to the next link, or NULL
+    cBlockLink* mpNext; // pointer to the next link, or NULL
 };
 
 
@@ -55,13 +55,13 @@ private:
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
 cBlockList::cBlockList() :
-	mpBlocks(0)
+    mpBlocks(0)
 {
 }
 
 cBlockList::~cBlockList()
 {
-	Clear();
+    Clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,9 +69,9 @@ cBlockList::~cBlockList()
 ///////////////////////////////////////////////////////////////////////////////
 void* cBlockList::Allocate(int size)
 {
-	char* mem	= new char[size + sizeof(cBlockLink)];
-	mpBlocks	= new(mem) cBlockLink(mpBlocks);
-	return mem + sizeof(cBlockLink);
+    char* mem   = new char[size + sizeof(cBlockLink)];
+    mpBlocks    = new(mem) cBlockLink(mpBlocks);
+    return mem + sizeof(cBlockLink);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -79,13 +79,13 @@ void* cBlockList::Allocate(int size)
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockList::Clear()
 {
-	while(mpBlocks)
-	{
-		cBlockLink* pLink = mpBlocks;
-		mpBlocks = mpBlocks->Next();
-		pLink->~cBlockLink();
-		delete [] (char*)(pLink);
-	}
+    while(mpBlocks)
+    {
+        cBlockLink* pLink = mpBlocks;
+        mpBlocks = mpBlocks->Next();
+        pLink->~cBlockLink();
+        delete [] (char*)(pLink);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -96,16 +96,16 @@ void cBlockList::Clear()
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
 cObjectPoolBase::cObjectPoolBase(int objSize, int chunkSize) :
-	mObjectSize(objSize),
-	mChunkSize(chunkSize),
-	mpNextFree(0)
+    mObjectSize(objSize),
+    mChunkSize(chunkSize),
+    mpNextFree(0)
 {
 }
 
 cObjectPoolBase::~cObjectPoolBase()
 {
-	//TODO -- assert that the number of instances left are 0.
-	Clear();
+    //TODO -- assert that the number of instances left are 0.
+    Clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,19 +113,19 @@ cObjectPoolBase::~cObjectPoolBase()
 ///////////////////////////////////////////////////////////////////////////////
 void cObjectPoolBase::AllocNewChunk()
 {
-	ASSERT(mpNextFree == 0);
+    ASSERT(mpNextFree == 0);
 
-	int size		= mObjectSize * mChunkSize;
-	char* pBlock	= (char*)mBlockList.Allocate(size);
+    int size        = mObjectSize * mChunkSize;
+    char* pBlock    = (char*)mBlockList.Allocate(size);
 
-	char* pLast = pBlock + size - mObjectSize;
-	for(char* pc = pBlock; pc < pLast; pc += mObjectSize)
-	{
-		((cLink*)pc)->mpNext = (cLink*)(pc + mObjectSize);
-	}
-	((cLink*)pLast)->mpNext = 0;
+    char* pLast = pBlock + size - mObjectSize;
+    for(char* pc = pBlock; pc < pLast; pc += mObjectSize)
+    {
+        ((cLink*)pc)->mpNext = (cLink*)(pc + mObjectSize);
+    }
+    ((cLink*)pLast)->mpNext = 0;
 
-	mpNextFree = (cLink*)pBlock;
+    mpNextFree = (cLink*)pBlock;
 }
 
 

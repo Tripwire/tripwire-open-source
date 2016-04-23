@@ -42,14 +42,14 @@
 
 TSS_BEGIN_ERROR_REGISTRATION( twadmin )
 
-TSS_REGISTER_ERROR( eTWASkippingDirectory(),	_T("Skipping Directory.") )
-TSS_REGISTER_ERROR( eTWAFileNotFound(),			_T("File not found.") )
-TSS_REGISTER_ERROR( eTWAFileAccess(),			_T("File Access.") )
-TSS_REGISTER_ERROR( eTWAFileTypeUnknown(),		_T("File Type Unknown.") )
+TSS_REGISTER_ERROR( eTWASkippingDirectory(),    _T("Skipping Directory.") )
+TSS_REGISTER_ERROR( eTWAFileNotFound(),         _T("File not found.") )
+TSS_REGISTER_ERROR( eTWAFileAccess(),           _T("File Access.") )
+TSS_REGISTER_ERROR( eTWAFileTypeUnknown(),      _T("File Type Unknown.") )
 TSS_REGISTER_ERROR( eTWAEncryptionChange(),     _T("Encryption change.") )
 TSS_REGISTER_ERROR( eTWAInvalidHelpMode(),      _T("Invalid mode parameter to help:") )
 TSS_REGISTER_ERROR( eTWADecrypt(),              _T("Remove encryption failed.\nFilename: ") )
-TSS_REGISTER_ERROR( eTWADecryptCorrupt(),	    _T("Remove encryption failed.\nThe file may be corrupt.\nFilename: ") )
+TSS_REGISTER_ERROR( eTWADecryptCorrupt(),       _T("Remove encryption failed.\nThe file may be corrupt.\nFilename: ") )
 TSS_REGISTER_ERROR( eTWACreateCfgMissingSitekey(),  _T("Config file text is missing sitekey.") )
 TSS_REGISTER_ERROR( eTWACreateCfgSitekeyMismatch(), _T("Config file key mismatch.") )
 
