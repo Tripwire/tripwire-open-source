@@ -1781,9 +1781,8 @@ bool cEmailReportViewer::IgnoreThisSpec(const cFCOSpecAttr *attr)
     // IgnoreThisSpec - returns false if the email address is specified
     // for the given spec attributes.
 
-  if (mbForceFullReport)
-    return false;
-
+    if (mbForceFullReport)
+        return false;
 
     // loop through all email addresses for this spec
     cFCOSpecAttrEmailIter emailIter(*attr);

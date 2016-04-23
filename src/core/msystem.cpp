@@ -961,7 +961,8 @@ int mask;
      /*
       * parent process: if couldn't create child, error
       */
-     if (ch_pid != -1){
+     if (ch_pid != -1)
+     {
             /*
              * ignore any signals until child dies
              */
@@ -981,20 +982,23 @@ int mask;
             /*
              * use a stdio interface for uniformity
              */
-            if (fp != NULL){
-                    if (fp[0] != NULL)
+            if (fp != NULL)
+            {
+                if (fp[0] != NULL)
                     fp[0] = fdopen(p[0][1], "w");
                 else
                     (void) close(p[0][1]);
-                    if (fp[1] != NULL)
+
+                if (fp[1] != NULL)
                     fp[1] = fdopen(p[1][0], "r");
                 else
                     (void) close(p[1][0]);
-                    if (fp[2] != NULL)
+
+                if (fp[2] != NULL)
                     fp[2] = fdopen(p[2][0], "r");
                 else
                     (void) close(p[2][0]);
-                }
+            }
     }
     /*
      * return child's PID
