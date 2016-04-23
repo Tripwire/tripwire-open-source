@@ -1115,17 +1115,17 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
     for( ; iter != mFCOsRemoveFromReport.end(); iter++ )
         nFCOsToRemove += iter->second->size();
 
-	if( nFCOsToRemove != nFCOsRemoved )
-	{
-		// TODO -- maybe have a different enumeration for this?
-		throw eTextReportViewerReportCorrupt(); 
-	}
+    if( nFCOsToRemove != nFCOsRemoved )
+    {
+        // TODO -- maybe have a different enumeration for this?
+        throw eTextReportViewerReportCorrupt(); 
+    }
 }
 
 void cTextReportViewer::OutputReportHeader()
 {
-	if (!WantOutputReportHeader())
-		return;
+    if (!WantOutputReportHeader())
+        return;
 
     const int headerColumnWidth = 30;
 

@@ -400,7 +400,7 @@ bool cFCODataSourceIterImpl::InsertIntoPeers( iFCO* pFCO )
     else
         mPeers.push_back( pFCO );
 
-	return true;	
+    return true;	
 }
 
 ///////////////////////////////////////////////////////////////////////////////

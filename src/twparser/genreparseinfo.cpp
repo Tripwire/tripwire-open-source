@@ -84,7 +84,7 @@ cGenreParseInfo::cGenreParseInfo()
 void
 cGenreParseInfo::AddStopPoint( const cFCOName& name )
 {
-	mStopList.push_back( name );
+    mStopList.push_back( name );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ cGenreParseInfo::AddStopPoint( const cFCOName& name )
 void
 cGenreParseInfo::AddRule(const cParseRule *pnode)
 {
-	mRuleList.push_back(pnode);
+    mRuleList.push_back(pnode);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,7 +255,7 @@ bool cGenreParseInfo::InsertVariable( const TSTRING& var, const TSTRING& val ) /
     if( mLocalPredefVarTable.Lookup(var, dummy) )
         throw eParserRedefineVar( var );
 
-	return mLocalVarTable.Insert( var, val );
+    return mLocalVarTable.Insert( var, val );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -265,8 +265,8 @@ bool cGenreParseInfo::InsertVariable( const TSTRING& var, const TSTRING& val ) /
 ///////////////////////////////////////////////////////////////////////////////
 bool cGenreParseInfo::LookupVariable( const TSTRING& var, TSTRING& val )
 {
-	if( mLocalPredefVarTable.Lookup( var, val ) || mLocalVarTable.Lookup( var, val ) )
-		return true;
-	else
-		return ( cParserHelper::GetGlobalVarTable().Lookup( var, val ) );
+    if( mLocalPredefVarTable.Lookup( var, val ) || mLocalVarTable.Lookup( var, val ) )
+        return true;
+    else
+        return ( cParserHelper::GetGlobalVarTable().Lookup( var, val ) );
 }

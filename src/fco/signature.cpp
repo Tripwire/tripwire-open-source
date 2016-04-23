@@ -413,32 +413,32 @@ TSTRING cCRC32Signature::AsString() const
     if (cArchiveSigGen::Hex())
         return AsStringHex();
     
-	TSTRING ret;
-	char *ps_signature;
-	char buf[100];
-	uint32 local = mCRCInfo.crc;
+    TSTRING ret;
+    char *ps_signature;
+    char buf[100];
+    uint32 local = mCRCInfo.crc;
 
-	ps_signature = pltob64(&local, buf, 1);
-		//ps_signature holds base64 representation of mCRCInfo.crc
+    ps_signature = pltob64(&local, buf, 1);
+    //ps_signature holds base64 representation of mCRCInfo.crc
 #ifdef _UNICODE
-	ret.resize(strlen(ps_signature));
-	mbstowcs((TCHAR*)ret.data(), ps_signature, strlen(ps_signature));
+    ret.resize(strlen(ps_signature));
+    mbstowcs((TCHAR*)ret.data(), ps_signature, strlen(ps_signature));
 #else
-	ret.append(ps_signature);
+    ret.append(ps_signature);
 #endif
-	return ret;
+    return ret;
 }
 
 TSTRING cCRC32Signature::AsStringHex() const
 {
-	TOSTRINGSTREAM ss;
+    TOSTRINGSTREAM ss;
 
     ss.imbue( std::locale::classic() );
-	ss.setf( ios::hex, ios::basefield );
+    ss.setf( ios::hex, ios::basefield );
 
-	ss << (size_t)mCRCInfo.crc;
+    ss << (size_t)mCRCInfo.crc;
 
-	return ss.str();
+    return ss.str();
 }
 
 bool cCRC32Signature::IsEqual(const iSignature& rhs) const

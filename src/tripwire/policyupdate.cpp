@@ -269,41 +269,43 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
 			mpBucket->AddError( e );
 			bResult = false;
 		}
-	}
-	//
-	// now, we will update the database with everything in the report...
-	// TODO -- don't do this if the anal flag was passed in
-	//
-	TW_NOTIFY_NORMAL( TSS_GetString( cTripwire, tripwire::STR_PU_UPDATE_DB ).c_str() );
-	//
-	cUpdateDb update( mDb, report, mpBucket );
+    }
+    //
+    // now, we will update the database with everything in the report...
+    // TODO -- don't do this if the anal flag was passed in
+    //
+    TW_NOTIFY_NORMAL( TSS_GetString( cTripwire, tripwire::STR_PU_UPDATE_DB ).c_str() );
+    //
+    cUpdateDb update( mDb, report, mpBucket );
     
     uint32 updateDBFlags = cUpdateDb::FLAG_REPLACE_PROPS;
     if( flags & FLAG_ERASE_FOOTPRINTS_PU ) 
+    {
         updateDBFlags |= cUpdateDb::FLAG_ERASE_FOOTPRINTS_UD;
+    }
 
-	update.Execute( updateDBFlags );
-
+    update.Execute( updateDBFlags );
 	
-	// the last thing that we have to do is to remove everything that is still
-	// in the database that does not belong in the new database (ie -- does not fall under any
-	// new rules)
-	//
-	// TODO -- is there any way to do this that does not involve iterating over the entire database?
-	// TODO -- I should probably write a general-purpose database iterator class to do this...
-	//
+    // the last thing that we have to do is to remove everything that is still
+    // in the database that does not belong in the new database (ie -- does not fall under any
+    // new rules)
+    //
+    // TODO -- is there any way to do this that does not involve iterating over the entire database?
+    // TODO -- I should probably write a general-purpose database iterator class to do this...
+    //
 
-	TW_NOTIFY_NORMAL( TSS_GetString( cTripwire, tripwire::STR_PU_PRUNING ).c_str() );
-	//
-	cDbDataSourceIter i( &mDb );
+    TW_NOTIFY_NORMAL( TSS_GetString( cTripwire, tripwire::STR_PU_PRUNING ).c_str() );
+    //
+    cDbDataSourceIter i( &mDb );
     i.SetErrorBucket(mpBucket);
     
     if( flags & FLAG_ERASE_FOOTPRINTS_PU )
+    {
         i.SetIterFlags( iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
+    }
+    const cFCOSpecListCanonicalIter newPolIter( mNewPolicy );
+    util_PruneExtraObjects( i, newPolIter );
 
-	const cFCOSpecListCanonicalIter newPolIter( mNewPolicy );
-	util_PruneExtraObjects( i, newPolIter );
-
-	return bResult;
+    return bResult;
 }
 

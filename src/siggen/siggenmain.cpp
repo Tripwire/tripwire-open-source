@@ -78,32 +78,30 @@ void tw_unexpected_handler()
 
 static void SiggenInit()
 {
-	TSS_Dependency( cSiggen );
+    TSS_Dependency( cSiggen );
 	
-	static cUserNotifyStdout	unStdout;
-	static cErrorTracer			et;
-	static cErrorReporter		er;
+    static cUserNotifyStdout	unStdout;
+    static cErrorTracer			et;
+    static cErrorReporter		er;
 
-	//
-	// initialize iUserNotify
-	//
-	iUserNotify::SetInstance( &unStdout );
-	iUserNotify::GetInstance()->SetVerboseLevel(iUserNotify::V_NORMAL);
+    //
+    // initialize iUserNotify
+    //
+    iUserNotify::SetInstance( &unStdout );
+    iUserNotify::GetInstance()->SetVerboseLevel(iUserNotify::V_NORMAL);
 
-	//
-	// set up the file system services    
-	//
+    //
+    // set up the file system services    
+    //
 #if IS_UNIX
     static cUnixFSServices	fss;
 #endif
-	iFSServices::SetInstance( &fss );
+    iFSServices::SetInstance( &fss );
 
-
-	//
-	// set up an error bucket that will spit things to stderr
-	//
-	et.SetChild( &er );
-
+    //
+    // set up an error bucket that will spit things to stderr
+    //
+    et.SetChild( &er );
 }
 
 int __cdecl _tmain(int argc, const TCHAR** argv)
@@ -113,8 +111,8 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
     if (TimeBombExploded())
         return 1;
 
-	try 
-	{
+    try 
+    {
         // set unexpected and terminate handlers
         // Note: we do this before Init() in case it attempts to call these handlers
         // TODO: move this into the Init() routine
@@ -122,12 +120,12 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
         //cTWInit twInit( argv[0] );
-		SiggenInit();
+        SiggenInit();
 
         cDebug::SetDebugLevel(cDebug::D_DETAIL);
-		cSiggenCmdLine siggen;
+        cSiggenCmdLine siggen;
 
-		// first, process the command line
+        // first, process the command line
         if (argc < 2)
         {
             TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
@@ -136,66 +134,64 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
             
             ret = 1;
             goto exit;
-		}
+        }
 
-		//
-		// Display the version info...
-    	// this is quick and dirty ... just the way I like it :-) -- mdb
-		//
-		if	(_tcscmp(argv[1], _T("--version")) == 0)
-		{
+        //
+        // Display the version info...
+        // this is quick and dirty ... just the way I like it :-) -- mdb
+        //
+        if (_tcscmp(argv[1], _T("--version")) == 0)
+	{
             TCOUT << TSS_GetString( cTW, tw::STR_VERSION_LONG) << std::endl;
-			ret=0;
-			goto exit;
-		}
+            ret=0;
+            goto exit;
+        }
 
 
-		cCmdLineParser cmdLine;
-		siggen.InitCmdLineParser(cmdLine);
-		try
-		{
-			cmdLine.Parse(argc, argv);
-		}
-		catch( eError& e )
-		{
-			cTWUtil::PrintErrorMsg(e);
+        cCmdLineParser cmdLine;
+        siggen.InitCmdLineParser(cmdLine);
+        try
+        {
+            cmdLine.Parse(argc, argv);
+        }
+        catch( eError& e )
+        {
+            cTWUtil::PrintErrorMsg(e);
             TCERR << TSS_GetString( cTW, tw::STR_GET_HELP) << std::endl;
             
             ret = 1;
             goto exit;
-		}
+        }
 
-		cCmdLineIter iter(cmdLine);
+        cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cSiggenCmdLine::HELP))
         {
             TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
             TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
             TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_USAGE) << std::endl;
-			ret = 1;
+            ret = 1;
             goto exit;
         }
 
-		if(! siggen.Init(cmdLine))
-		{
-			TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
+        if(! siggen.Init(cmdLine))
+        {
+            TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
             TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
             TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_USAGE) << std::endl;
-			ret = 1;
+            ret = 1;
             goto exit;
-		}
-		ret = siggen.Execute();
+        }
+	ret = siggen.Execute();
 
-	}//end try block
-
-	catch (eError& error)
+    } //end try block
+    catch (eError& error)
     {
-		cErrorReporter::PrintErrorMsg(error);
+        cErrorReporter::PrintErrorMsg(error);
         ASSERT(false);
     }
 
 exit:
 
-
-	return ret;
+    return ret;
 }//end MAIN
 

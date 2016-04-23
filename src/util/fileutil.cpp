@@ -61,14 +61,14 @@
 void cFileUtil::TestFileExists(const TSTRING& fileName)
 {
     if(! cFileUtil::FileExists(fileName)) 
-	{
+    {
         TSTRING filenameText = TSS_GetString( cCore, core::STR_ERROR_FILENAME );
         filenameText.append(fileName);
         filenameText.append(1, _T('\n'));
         filenameText.append(iFSServices::GetInstance()->GetErrString());
 
         throw eOpen(filenameText);
-	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,15 +76,15 @@ void cFileUtil::TestFileExists(const TSTRING& fileName)
 ///////////////////////////////////////////////////////////////////////////////
 void cFileUtil::TestFileWritable(const TSTRING& fileName)
 {
-	if(! cFileUtil::FileWritable(fileName))
-	{
+    if(! cFileUtil::FileWritable(fileName))
+    {
         TSTRING filenameText = TSS_GetString( cCore, core::STR_ERROR_FILENAME);
         filenameText.append(fileName);
         filenameText.append(1, _T('\n'));
         filenameText.append(iFSServices::GetInstance()->GetErrString());
 
         throw eOpenWrite(filenameText);
-	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,15 +92,15 @@ void cFileUtil::TestFileWritable(const TSTRING& fileName)
 ///////////////////////////////////////////////////////////////////////////////
 void cFileUtil::TestFileReadable(const TSTRING& fileName)
 {
-	if(! cFileUtil::FileReadable(fileName))
-	{
+    if(! cFileUtil::FileReadable(fileName))
+    {
         TSTRING filenameText = TSS_GetString( cCore, core::STR_ERROR_FILENAME);
         filenameText.append(fileName);
         filenameText.append(1, _T('\n'));
         filenameText.append(iFSServices::GetInstance()->GetErrString());
 
         throw eOpenRead(filenameText);
-	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -123,16 +123,16 @@ bool cFileUtil::IsDir( const TSTRING& fileName )
 
 bool cFileUtil::IsRegularFile( const TSTRING& fileName )
 {
-	cFSStatArgs s;
-	try
-	{
-		iFSServices::GetInstance()->Stat( fileName, s);
-	}
-	catch( eFSServices )
-	{
-		return false;
-	}
-	return (s.mFileType == cFSStatArgs::TY_FILE );
+    cFSStatArgs s;
+    try
+    {
+        iFSServices::GetInstance()->Stat( fileName, s);
+    }
+    catch( eFSServices )
+    {
+        return false;
+    }
+    return (s.mFileType == cFSStatArgs::TY_FILE );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -196,9 +196,9 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
     if (!cFileUtil::FileExists(filename))
         return true;
 
-	// if the file is not a regular file, it is not appropriate to back it up
-	if (!cFileUtil::IsRegularFile(filename))
-		return true;
+    // if the file is not a regular file, it is not appropriate to back it up
+    if (!cFileUtil::IsRegularFile(filename))
+        return true;
 
     // if it is not writeable, throw error
     if (!cFileUtil::FileWritable(filename))
@@ -216,8 +216,9 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
     // _tunlink(), problems removing the file will be caught by _trename().
     _tunlink(backup_filename.c_str());
 
-	// back up the file, preserving permissions and ownership, if possible
-	if (cFileUtil::Copy(filename.c_str(), backup_filename.c_str()) == false)
+    // back up the file, preserving permissions and ownership, if possible
+    if (cFileUtil::Copy(filename.c_str(), backup_filename.c_str()) == false)
+    {
         if (printWarningOnFailure &&
             iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_NORMAL)
         {
@@ -230,7 +231,7 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
 
             cErrorReporter::PrintErrorMsg(eFileUtilBackup(estr, eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
         }
-
+    }
     return true;
 }
 
@@ -238,37 +239,37 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
 {
 #if IS_UNIX
 	
-	enum { BUF_SIZE = 4096 };
-	int8 buf[BUF_SIZE];
-	int nBytesRead;
+    enum { BUF_SIZE = 4096 };
+    int8 buf[BUF_SIZE];
+    int nBytesRead;
 
-	cFile srcFile, destFile;
+    cFile srcFile, destFile;
 
-	srcFile.Open(src_path.c_str());
-	// Create destination file. We'll fix the permissions later.
-	destFile.Open(dest_path.c_str(), cFile::OPEN_WRITE|cFile::OPEN_CREATE);
+    srcFile.Open(src_path.c_str());
+    // Create destination file. We'll fix the permissions later.
+    destFile.Open(dest_path.c_str(), cFile::OPEN_WRITE|cFile::OPEN_CREATE);
 	
-	for (int i = srcFile.GetSize(); i > 0; )
-	{
-		nBytesRead = srcFile.Read(buf, BUF_SIZE);
-		destFile.Write(buf, nBytesRead);
-		i -= nBytesRead;
-	}
+    for (int i = srcFile.GetSize(); i > 0; )
+    {
+        nBytesRead = srcFile.Read(buf, BUF_SIZE);
+        destFile.Write(buf, nBytesRead);
+        i -= nBytesRead;
+    }
 
-	struct stat srcStat;
-	stat(src_path.c_str(), &srcStat);
+    struct stat srcStat;
+    stat(src_path.c_str(), &srcStat);
 
-	// restore permissions and ownership
-	// don't worry if it fails. it's not mission-critical.
-	chmod( dest_path.c_str(), srcStat.st_mode );
-	chown( dest_path.c_str(), srcStat.st_uid, srcStat.st_gid );
+    // restore permissions and ownership
+    // don't worry if it fails. it's not mission-critical.
+    chmod( dest_path.c_str(), srcStat.st_mode );
+    chown( dest_path.c_str(), srcStat.st_uid, srcStat.st_gid );
 
-	srcFile.Close();
-	destFile.Close();
+    srcFile.Close();
+    destFile.Close();
 
 #endif
 	
-	return true;
+    return true;
 }
 
 

@@ -407,16 +407,16 @@ unsigned int cCryptoSource::Pump(unsigned int size)
 
 unsigned long cCryptoSource::PumpAll()
 {
-	unsigned long total=0;
-	unsigned int l;
+    unsigned long total=0;
+    unsigned int l;
 
     if (mBufferLen == 0)
         mBufferLen = mpCipher->GetBlockSizePlain();
 
-	while ((l=Pump(mBufferLen)) != 0)
-		total += l;
+    while ((l=Pump(mBufferLen)) != 0)
+        total += l;
 
-	return total;
+    return total;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

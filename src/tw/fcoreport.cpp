@@ -177,18 +177,18 @@ cFCOReport_i::cNode::cNode(const cFCOReport_i::cNode& rhs)
     if (mpSpec)
         mpSpec->AddRef();
 
-	mpSpecAttr = rhs.mpSpecAttr;
+    mpSpecAttr = rhs.mpSpecAttr;
     if (mpSpecAttr)
         mpSpecAttr->AddRef();
 
-	mChanged = rhs.mChanged;
-	mErrorQueue = rhs.mErrorQueue;
+    mChanged = rhs.mChanged;
+    mErrorQueue = rhs.mErrorQueue;
     mnObjectsScanned = rhs.mnObjectsScanned;
 }
 
 cFCOReport_i::cNode::~cNode()
 {
-	Clear();
+    Clear();
 }
 
 void cFCOReport_i::cNode::Clear()
@@ -376,8 +376,8 @@ cFCOReportSpecIter::~cFCOReportSpecIter()
 
 cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReportSpecIter& rhs)
 {
-	mpData = new cFCOReportSpecIter_i();
-	*this = rhs;
+    mpData = new cFCOReportSpecIter_i();
+    *this = rhs;
 }
 
 void cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
@@ -385,13 +385,13 @@ void cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
     if (mpData == 0)
         mpData = new cFCOReportSpecIter_i();
 
-	mpData->mpList	= rhs.mpData->mpList;
-	mpData->mIter	= rhs.mpData->mIter;
+    mpData->mpList	= rhs.mpData->mpList;
+    mpData->mIter	= rhs.mpData->mIter;
 }
 
-int	cFCOReportSpecIter::GetNumChanged() const
+int cFCOReportSpecIter::GetNumChanged() const
 {
-	ASSERT(! Done());
+    ASSERT(! Done());
     return mpData ? mpData->mIter->mChanged.size() : 0;
 }
 
@@ -406,15 +406,15 @@ void cFCOReportSpecIter::SetObjectsScanned( int nObjectsScanned )
 
 int	cFCOReportSpecIter::GetObjectsScanned() const
 {
-	ASSERT(! Done());
+    ASSERT(! Done());
     return mpData ? mpData->mIter->mnObjectsScanned : 0;
 }
 
 void cFCOReportSpecIter::Remove()
 {
-	ASSERT(! Done());
-	mpData->mIter->Clear();
-	mpData->mIter = mpData->mpList->erase(mpData->mIter);
+    ASSERT(! Done());
+    mpData->mIter->Clear();
+    mpData->mIter = mpData->mpList->erase(mpData->mIter);
 }
 
 /////////////////////////

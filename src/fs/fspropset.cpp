@@ -207,19 +207,25 @@ cFSPropSet::cFSPropSet(const cFSPropSet& rhs) :
     iFCOPropSet(),
 	mValidProps(cFSPropSet::PROP_NUMITEMS)
 {
-	*this = rhs;
+    *this = rhs;
 }
 
 const cFSPropSet& cFSPropSet::operator=(const cFSPropSet& rhs)
 {
-	mValidProps = rhs.GetValidVector();
+    mValidProps = rhs.GetValidVector();
     mUndefinedProps = rhs.mUndefinedProps;
 
-    for(int i=0; i < PROP_NUMITEMS; i++)
-        if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i))
-	        GetPropAt(i)->Copy( ((cFSPropSet&)rhs).GetPropAt(i) ); // call non-const GetPropAt for rhs
-                                                                   // don't want it to assert ContainsItem
-	return *this;
+    for (int i=0; i < PROP_NUMITEMS; i++)
+    {
+        if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i)) 
+        {
+            GetPropAt(i)->Copy( ((cFSPropSet&)rhs).GetPropAt(i) ); 
+            // call non-const GetPropAt for rhs
+            // don't want it to assert ContainsItem
+        }
+    }
+
+    return *this;
 }
 
 const cFCOPropVector& cFSPropSet::GetValidVector() const 
