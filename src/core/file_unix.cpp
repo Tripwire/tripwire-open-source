@@ -56,14 +56,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 /*static TSTRING util_GetErrnoString()
 {
-	TSTRING ret;
-	char* pErrorStr = strerror(errno);
+    TSTRING ret;
+    char* pErrorStr = strerror(errno);
 #ifdef _UNICODE
-#error	We dont currently support unicode on unix
+#error  We dont currently support unicode on unix
 #else
-	ret = pErrorStr;
+    ret = pErrorStr;
 #endif
-	return ret;
+    return ret;
 }*/
 
 ///////////////////////////////////////////////////////////////////////////
@@ -73,26 +73,26 @@
 ///////////////////////////////////////////////////////////////////////////
 struct cFile_i
 {
-	cFile_i();
-	~cFile_i();
+    cFile_i();
+    ~cFile_i();
 
-	FILE* mpCurrStream;	//currently defined file stream
-	TSTRING mFileName;	//the name of the file we are currently referencing.
+    FILE* mpCurrStream; //currently defined file stream
+    TSTRING mFileName;  //the name of the file we are currently referencing.
 };
 
 //Ctor
 cFile_i::cFile_i() :
-	mpCurrStream(NULL)
+    mpCurrStream(NULL)
 {}
 
 //Dtor
 cFile_i::~cFile_i()
 {
-	if (mpCurrStream != NULL)
-		fclose( mpCurrStream );
-	mpCurrStream = NULL;
+    if (mpCurrStream != NULL)
+        fclose( mpCurrStream );
+    mpCurrStream = NULL;
 
-	mFileName.empty();
+    mFileName.empty();
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -102,18 +102,18 @@ cFile_i::~cFile_i()
 ///////////////////////////////////////////////////////////////////////////
 
 cFile::cFile() :
-	mpData(NULL), isWritable(false)
+    mpData(NULL), isWritable(false)
 {
-	mpData = new cFile_i;
+    mpData = new cFile_i;
 }
 
 cFile::~cFile()
 {
-	if( mpData != NULL)
-	{
-		delete mpData;
-		mpData = NULL;
-	}
+    if( mpData != NULL)
+    {
+        delete mpData;
+        mpData = NULL;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -126,44 +126,44 @@ void cFile::Open( const TSTRING& sFileName, uint32 flags )
 #else
 void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 {
-	TSTRING sFileName = cArosPath::AsNative(sFileNameC);
+    TSTRING sFileName = cArosPath::AsNative(sFileNameC);
 #endif
-	mode_t openmode = 0664;
-	if ( mpData->mpCurrStream != NULL )
-		Close();
-	
-	//
-	// set up the sopen permissions
-	//
-	int perm = 0;
+    mode_t openmode = 0664;
+    if ( mpData->mpCurrStream != NULL )
+        Close();
+    
+    //
+    // set up the sopen permissions
+    //
+    int perm = 0;
 
-	TSTRING mode;
+    TSTRING mode;
 
-	if( flags & OPEN_WRITE )
-	{
-		perm		|= O_RDWR;
-		isWritable	= true;
-		mode		= _T("rb");
-		if( flags & OPEN_TRUNCATE )
-		{
-			perm |= O_TRUNC;
-			perm |= O_CREAT;
-			mode = _T("w+b");
-		}
-		else
-			mode = _T("r+b");
-	}
-	else
-	{
-		perm		|= O_RDONLY;
-		isWritable	= false;
-		mode		= _T("rb");
-	}
+    if( flags & OPEN_WRITE )
+    {
+        perm        |= O_RDWR;
+        isWritable  = true;
+        mode        = _T("rb");
+        if( flags & OPEN_TRUNCATE )
+        {
+            perm |= O_TRUNC;
+            perm |= O_CREAT;
+            mode = _T("w+b");
+        }
+        else
+            mode = _T("r+b");
+    }
+    else
+    {
+        perm        |= O_RDONLY;
+        isWritable  = false;
+        mode        = _T("rb");
+    }
 
-	if ( flags & OPEN_EXCLUSIVE ) {
-		perm |= O_CREAT | O_EXCL;
-		openmode = (mode_t) 0600; // Make sure only root can read the file
-	}
+    if ( flags & OPEN_EXCLUSIVE ) {
+        perm |= O_CREAT | O_EXCL;
+        openmode = (mode_t) 0600; // Make sure only root can read the file
+    }
 
         if ( flags & OPEN_CREATE )
             perm |= O_CREAT;
@@ -172,83 +172,83 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
         if( flags & OPEN_NONBLOCKING )
             perm |= O_NONBLOCK;
 #endif
-	//
-	// actually open the file
-	//
-	int fh = _topen( sFileName.c_str(), perm, openmode );
-	if( fh == -1 )
-	{
-		throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
-	}
+    //
+    // actually open the file
+    //
+    int fh = _topen( sFileName.c_str(), perm, openmode );
+    if( fh == -1 )
+    {
+        throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
+    }
 
 #ifndef __AROS__
-	if( flags & OPEN_LOCKED_TEMP )
-	{
-		// unlink this file 
+    if( flags & OPEN_LOCKED_TEMP )
+    {
+        // unlink this file 
         if( 0 != unlink( sFileName.c_str() ) )
         {
             // we weren't able to unlink file, so close handle and fail
             close( fh );
             throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
         }
-	}
+    }
 #endif
 
-	//
-	// turn the file handle into a FILE*
-	//
-	mpData->mpCurrStream = _tfdopen(fh, mode.c_str());
+    //
+    // turn the file handle into a FILE*
+    //
+    mpData->mpCurrStream = _tfdopen(fh, mode.c_str());
 
-	mpData->mFileName = sFileName;	//Set mFileName to the newly opened file.
-	
-	cFile::Rewind();
+    mpData->mFileName = sFileName;  //Set mFileName to the newly opened file.
+    
+    cFile::Rewind();
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 // Close -- Closes mpCurrStream and sets the pointer to NULL
 ///////////////////////////////////////////////////////////////////////////
-void cFile::Close()	//throw(eFile)
+void cFile::Close() //throw(eFile)
 {
-	if(mpData->mpCurrStream != NULL)
-	{
-		fclose( mpData->mpCurrStream );
-		mpData->mpCurrStream = NULL;
-	}
-	mpData->mFileName.empty();
+    if(mpData->mpCurrStream != NULL)
+    {
+        fclose( mpData->mpCurrStream );
+        mpData->mpCurrStream = NULL;
+    }
+    mpData->mFileName.empty();
 }
 
 bool cFile::IsOpen( void ) const
 {
-	return( mpData->mpCurrStream != NULL );
+    return( mpData->mpCurrStream != NULL );
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // Seek -- Positions the read/write offset in mpCurrStream.  Returns the
-//		current offset upon completion.  Returns 0 if no stream is defined.
+//      current offset upon completion.  Returns 0 if no stream is defined.
 ///////////////////////////////////////////////////////////////////////////
 cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
 {
-	//Check to see if a file as been opened yet...
-	ASSERT( mpData->mpCurrStream != 0);
+    //Check to see if a file as been opened yet...
+    ASSERT( mpData->mpCurrStream != 0);
 
     int apiFrom;
 
-	switch( From )
-	{
-	case cFile::SEEK_BEGIN:
+    switch( From )
+    {
+    case cFile::SEEK_BEGIN:
         apiFrom = SEEK_SET;
-		break;
-	case cFile::SEEK_CURRENT:
+        break;
+    case cFile::SEEK_CURRENT:
         apiFrom = SEEK_CUR;
-		break;
-	case cFile::SEEK_EOF:
+        break;
+    case cFile::SEEK_EOF:
         apiFrom = SEEK_END;
-		break;
-	default:
-		//An invalid SeekFrom parameter was passed.
-		throw( eInternal( _T("file_unix") ) );
-	}
+        break;
+    default:
+        //An invalid SeekFrom parameter was passed.
+        throw( eInternal( _T("file_unix") ) );
+    }
 
     // this is a hack to simulate running out of disk space
     #if 0
@@ -276,98 +276,98 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
 
 ///////////////////////////////////////////////////////////////////////////
 // Read -- Returns the actual bytes read from mpCurrStream.  Returns 0 if
-//		mpCurrStream is undefined.
+//      mpCurrStream is undefined.
 ///////////////////////////////////////////////////////////////////////////
 cFile::File_t cFile::Read( void* buffer, File_t nBytes ) const //throw(eFile)
 {
-	File_t iBytesRead;
+    File_t iBytesRead;
 
-	// Has a file been opened?
-	ASSERT( mpData->mpCurrStream != NULL );
+    // Has a file been opened?
+    ASSERT( mpData->mpCurrStream != NULL );
 
-	// Is the nBytes parameter 0?  If so, return without touching buffer:
-	if( nBytes == 0 )
-		return 0;
+    // Is the nBytes parameter 0?  If so, return without touching buffer:
+    if( nBytes == 0 )
+        return 0;
 
-	iBytesRead = fread( buffer, sizeof(byte), nBytes, mpData->mpCurrStream );
-	
-	if( ferror( mpData->mpCurrStream ) != 0 )
-		throw eFileRead( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) ;
-	else
-		return iBytesRead;
+    iBytesRead = fread( buffer, sizeof(byte), nBytes, mpData->mpCurrStream );
+    
+    if( ferror( mpData->mpCurrStream ) != 0 )
+        throw eFileRead( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) ;
+    else
+        return iBytesRead;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // Write -- Returns the actual number of bytes written to mpCurrStream
-//		Returns 0 if no file has been opened.
+//      Returns 0 if no file has been opened.
 ///////////////////////////////////////////////////////////////////////////
-cFile::File_t cFile::Write( const void* buffer, File_t nBytes )		//throw(eFile)
+cFile::File_t cFile::Write( const void* buffer, File_t nBytes )     //throw(eFile)
 {
-	File_t actual_count = 0;
+    File_t actual_count = 0;
 
-	// Has a file been opened? Is it writable?
-	ASSERT( mpData->mpCurrStream != NULL );
-	ASSERT( isWritable );
+    // Has a file been opened? Is it writable?
+    ASSERT( mpData->mpCurrStream != NULL );
+    ASSERT( isWritable );
 
-	if( ( actual_count = fwrite( buffer, sizeof(byte), nBytes, mpData->mpCurrStream ) ) < nBytes )
-		throw eFileWrite( mpData->mFileName, iFSServices::GetInstance()->GetErrString() );
-	else
-		return actual_count;
+    if( ( actual_count = fwrite( buffer, sizeof(byte), nBytes, mpData->mpCurrStream ) ) < nBytes )
+        throw eFileWrite( mpData->mFileName, iFSServices::GetInstance()->GetErrString() );
+    else
+        return actual_count;
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // Tell -- Returns the current file offset.  Returns 0 if no file has been
-//		opened.
+//      opened.
 ///////////////////////////////////////////////////////////////////////////
 cFile::File_t cFile::Tell() const
 {
-	ASSERT( mpData->mpCurrStream != 0);
+    ASSERT( mpData->mpCurrStream != 0);
 
-	return ftell( mpData->mpCurrStream );
+    return ftell( mpData->mpCurrStream );
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // Flush -- Flushes the current stream.
 ///////////////////////////////////////////////////////////////////////////
-bool cFile::Flush()	//throw(eFile)
+bool cFile::Flush() //throw(eFile)
 {
-	if ( mpData->mpCurrStream == NULL )
-		throw eFileFlush( mpData->mFileName, iFSServices::GetInstance()->GetErrString() );
-		
-	return ( fflush( mpData->mpCurrStream) == 0 );
+    if ( mpData->mpCurrStream == NULL )
+        throw eFileFlush( mpData->mFileName, iFSServices::GetInstance()->GetErrString() );
+        
+    return ( fflush( mpData->mpCurrStream) == 0 );
 }
 ///////////////////////////////////////////////////////////////////////////
 // Rewind -- Sets the offset to the beginning of the file.  If mpCurrStream
-//		is NULL, this method returns false. If the rewind operation fails,
-//		an exception is thrown.
+//      is NULL, this method returns false. If the rewind operation fails,
+//      an exception is thrown.
 ///////////////////////////////////////////////////////////////////////////
-void cFile::Rewind() const	//throw(eFile)
+void cFile::Rewind() const  //throw(eFile)
 {
-	ASSERT( mpData->mpCurrStream != 0);
+    ASSERT( mpData->mpCurrStream != 0);
 
-	rewind( mpData->mpCurrStream );
-	if( ftell( mpData->mpCurrStream ) != 0 )
-		throw( eFileRewind( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) );
+    rewind( mpData->mpCurrStream );
+    if( ftell( mpData->mpCurrStream ) != 0 )
+        throw( eFileRewind( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) );
 }
 
 ///////////////////////////////////////////////////////////////////////////
 // GetSize -- Returns the size of the current stream, if one has been
-//		opened. If no stream has been opened, returns -1.
+//      opened. If no stream has been opened, returns -1.
 ///////////////////////////////////////////////////////////////////////////
 cFile::File_t cFile::GetSize() const
 {
-	File_t vCurrentOffset = Tell();	//for saving the current offset
-	File_t ret;
+    File_t vCurrentOffset = Tell(); //for saving the current offset
+    File_t ret;
 
-	//Has a file been opened? If not, return -1
-	if( mpData->mpCurrStream == NULL )
-		return -1;
+    //Has a file been opened? If not, return -1
+    if( mpData->mpCurrStream == NULL )
+        return -1;
 
-	ret = Seek( 0, cFile::SEEK_EOF );
-	Seek( vCurrentOffset, cFile::SEEK_BEGIN );
-		//return the offset to it's position prior to GetSize call.
+    ret = Seek( 0, cFile::SEEK_EOF );
+    Seek( vCurrentOffset, cFile::SEEK_BEGIN );
+        //return the offset to it's position prior to GetSize call.
 
-	return ret;
+    return ret;
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -375,39 +375,39 @@ cFile::File_t cFile::GetSize() const
 /////////////////////////////////////////////////////////////////////////
 void cFile::Truncate( File_t offset ) // throw(eFile) 
 {
-	ASSERT( mpData->mpCurrStream != 0);
-	ASSERT( isWritable );
+    ASSERT( mpData->mpCurrStream != 0);
+    ASSERT( isWritable );
 
-	ftruncate( fileno(mpData->mpCurrStream), offset );
-	if( GetSize() != offset )
-		throw( eFileTrunc( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) );
+    ftruncate( fileno(mpData->mpCurrStream), offset );
+    if( GetSize() != offset )
+        throw( eFileTrunc( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) );
 }
 
 
 #ifdef __AROS__
 TSTRING cArosPath::AsPosix( const TSTRING& in )
 {
-	if (in[0] == '/')
-		return in;
+    if (in[0] == '/')
+        return in;
 
-	TSTRING out = '/' + in;
-	std::replace(out.begin(), out.end(), ':', '/');
+    TSTRING out = '/' + in;
+    std::replace(out.begin(), out.end(), ':', '/');
 
-	return out;
+    return out;
 }
 
 TSTRING cArosPath::AsNative( const TSTRING& in )
 {
-	if (in[0] != '/')
-		return in;
+    if (in[0] != '/')
+        return in;
 
-	int x;
-	for (x=1; in[x] == '/' && x<in.length(); x++);
+    int x;
+    for (x=1; in[x] == '/' && x<in.length(); x++);
 
-	TSTRING out = in.substr(x); 
-	TSTRING::size_type t = out.find_first_of('/');
-	out[t] = ':';
+    TSTRING out = in.substr(x); 
+    TSTRING::size_type t = out.find_first_of('/');
+    out[t] = ':';
 
-	return out;
+    return out;
 } 
 #endif

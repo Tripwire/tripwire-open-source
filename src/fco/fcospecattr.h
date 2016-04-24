@@ -54,38 +54,38 @@
 class cFCOSpecAttr : public iSerRefCountObj
 {
 public:
-	cFCOSpecAttr();
-	virtual ~cFCOSpecAttr();
+    cFCOSpecAttr();
+    virtual ~cFCOSpecAttr();
 
-	///////////////////////
-	// the attributes
-	///////////////////////
-	const TSTRING&	GetName() const;
-	void			SetName(const TSTRING& name);
-	
-	int32			GetSeverity() const;
-	void			SetSeverity(int32 s);
+    ///////////////////////
+    // the attributes
+    ///////////////////////
+    const TSTRING&  GetName() const;
+    void            SetName(const TSTRING& name);
+    
+    int32           GetSeverity() const;
+    void            SetSeverity(int32 s);
 
-	int				GetNumEmail() const;
-	void			AddEmail(const TSTRING& str);
-		// adds an email address for report notification. This class makes no attempt
-		// to catch and prune identical entries in the email list.
+    int             GetNumEmail() const;
+    void            AddEmail(const TSTRING& str);
+        // adds an email address for report notification. This class makes no attempt
+        // to catch and prune identical entries in the email list.
 
-	virtual void Read (iSerializer* pSerializer, int32 version = 0);	// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;					// throw (eSerializer, eArchive)
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;                 // throw (eSerializer, eArchive)
 
-	void TraceContents(int dl = -1) const;
+    void TraceContents(int dl = -1) const;
 
-	DECLARE_SERREFCOUNT()
+    DECLARE_SERREFCOUNT()
 private:
-	cFCOSpecAttr	(const cFCOSpecAttr& rhs);	// not impl
-	void operator=	(const cFCOSpecAttr& rhs);	// not impl
+    cFCOSpecAttr    (const cFCOSpecAttr& rhs);  // not impl
+    void operator=  (const cFCOSpecAttr& rhs);  // not impl
 
-	std::list<TSTRING>	mEmailAddrs;	// the email addresses of people to be notified
-	TSTRING				mName;			// the name of the spec
-	int32				mSeverity;		// the severity level
+    std::list<TSTRING>  mEmailAddrs;    // the email addresses of people to be notified
+    TSTRING             mName;          // the name of the spec
+    int32               mSeverity;      // the severity level
 
-	friend class cFCOSpecAttrEmailIter;
+    friend class cFCOSpecAttrEmailIter;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,89 +94,89 @@ private:
 class cFCOSpecAttrEmailIter
 {
 public:
-	cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr);
+    cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr);
     ~cFCOSpecAttrEmailIter();
 
-	void SeekBegin()	const;
-	bool Done()			const;
-	bool IsEmpty()		const;
-	void Next()			const;
+    void SeekBegin()    const;
+    bool Done()         const;
+    bool IsEmpty()      const;
+    void Next()         const;
 
-	const TSTRING& EmailAddress() const;
+    const TSTRING& EmailAddress() const;
 private:
-	const std::list<TSTRING>&					mSet;
-	mutable std::list<TSTRING>::const_iterator	mIter; 
+    const std::list<TSTRING>&                   mSet;
+    mutable std::list<TSTRING>::const_iterator  mIter; 
 };
 
 
 //#############################################################################
 // inline implementation
 inline cFCOSpecAttr::cFCOSpecAttr() :
-	mName(_T("Unnamed")),
-	mSeverity(0)
+    mName(_T("Unnamed")),
+    mSeverity(0)
 {
 }
 inline cFCOSpecAttr::~cFCOSpecAttr()
 {
 }
-inline const TSTRING&	cFCOSpecAttr::GetName() const
+inline const TSTRING&   cFCOSpecAttr::GetName() const
 {
-	return mName;
+    return mName;
 }
 inline void cFCOSpecAttr::SetName(const TSTRING& name)
 {
-	mName = name;
+    mName = name;
 }
 inline int32 cFCOSpecAttr::GetSeverity() const
 {
-	return mSeverity;
+    return mSeverity;
 }
-inline void	cFCOSpecAttr::SetSeverity(int32 s)
+inline void cFCOSpecAttr::SetSeverity(int32 s)
 {
-	mSeverity = s;
+    mSeverity = s;
 }
 
-inline void	cFCOSpecAttr::AddEmail(const TSTRING& str)
+inline void cFCOSpecAttr::AddEmail(const TSTRING& str)
 {
-	mEmailAddrs.push_back(str);
+    mEmailAddrs.push_back(str);
 }
 inline int cFCOSpecAttr::GetNumEmail() const
 {
-	return mEmailAddrs.size();
+    return mEmailAddrs.size();
 }
 
 ///////////////
 // iterator
 ///////////////
 inline cFCOSpecAttrEmailIter::cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr) :
-	mSet(attr.mEmailAddrs)
+    mSet(attr.mEmailAddrs)
 {
-	mIter = mSet.begin();
+    mIter = mSet.begin();
 }
 
 inline cFCOSpecAttrEmailIter::~cFCOSpecAttrEmailIter()
 {
 }
-inline void cFCOSpecAttrEmailIter::SeekBegin()	const
+inline void cFCOSpecAttrEmailIter::SeekBegin()  const
 {
-	mIter = mSet.begin();
+    mIter = mSet.begin();
 }
 inline bool cFCOSpecAttrEmailIter::Done() const
 {
-	return (mIter == mSet.end());
+    return (mIter == mSet.end());
 }
 inline bool cFCOSpecAttrEmailIter::IsEmpty() const
 {
-	return mSet.empty();
+    return mSet.empty();
 }
 inline void cFCOSpecAttrEmailIter::Next() const
 {
-	mIter++;
+    mIter++;
 }
 inline const TSTRING& cFCOSpecAttrEmailIter::EmailAddress() const
 {
-	ASSERT(! Done());
-	return *mIter;
+    ASSERT(! Done());
+    return *mIter;
 }
 
 

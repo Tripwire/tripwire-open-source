@@ -54,8 +54,8 @@ public:
     //
     // basic functionality
     //    
-	virtual TSTRING ToStringRaw( const cFCOName& name ) const;
-	virtual TSTRING ToStringAPI( const cFCOName& name ) const;
+    virtual TSTRING ToStringRaw( const cFCOName& name ) const;
+    virtual TSTRING ToStringAPI( const cFCOName& name ) const;
     virtual TSTRING ToStringDisplay( const cFCOName& name, bool bUnique = false ) const;
     virtual bool DisplayStringToFCOName( const TSTRING& str, cFCOName& name ) const;
     

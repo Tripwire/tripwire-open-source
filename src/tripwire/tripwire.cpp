@@ -65,8 +65,8 @@ cTripwire::cTripwire()
     TSS_Dependency( cFCO );
     TSS_Dependency( cFS );
     TSS_Dependency( cUtil );
-	
-	TSS_REGISTER_PKG_ERRORS( tripwire )
+    
+    TSS_REGISTER_PKG_ERRORS( tripwire )
 }
 
 // eof: tripwire.cpp

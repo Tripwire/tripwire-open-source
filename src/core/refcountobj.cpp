@@ -54,18 +54,18 @@ RefSet* gpRefCountObj_Objects = 0;
 // a way to see what hasn't been accounted for....
 struct cRefCountObj_Debug
 {
-	~cRefCountObj_Debug()
-	{
-		RefSet::iterator i;
-		cDebug d("cRefCountObj_Debug");
-		if(gpRefCountObj_Objects)
-		{
-			for(i = gpRefCountObj_Objects->begin(); i != gpRefCountObj_Objects->end(); i++)
-			{
-				d.TraceNever("Refrence Counted Object %p still exists\n", *i);
-			}
-		}
-	}
+    ~cRefCountObj_Debug()
+    {
+        RefSet::iterator i;
+        cDebug d("cRefCountObj_Debug");
+        if(gpRefCountObj_Objects)
+        {
+            for(i = gpRefCountObj_Objects->begin(); i != gpRefCountObj_Objects->end(); i++)
+            {
+                d.TraceNever("Refrence Counted Object %p still exists\n", *i);
+            }
+        }
+    }
 } gRefCountObj_Debug;
 
 #endif // _DEBUG
@@ -80,12 +80,12 @@ cRefCountObj::cRefCountObj()
     ++objectCounter;
     ++referenceCounter;
 
-	cDebug d("cRefCountObj::cRefCountObj");
-	d.TraceNever("Object Created[%p] %s\n", this, typeid(*this).name());
+    cDebug d("cRefCountObj::cRefCountObj");
+    d.TraceNever("Object Created[%p] %s\n", this, typeid(*this).name());
 
-	if(! gpRefCountObj_Objects)
-		gpRefCountObj_Objects = new RefSet;
-	gpRefCountObj_Objects->insert(this);
+    if(! gpRefCountObj_Objects)
+        gpRefCountObj_Objects = new RefSet;
+    gpRefCountObj_Objects->insert(this);
 #endif
 }
 
@@ -97,20 +97,20 @@ cRefCountObj::~cRefCountObj()
 
 #ifdef _DEBUG
     --objectCounter;
-	cDebug d("cRefCountObj::~cRefCountObj");
-	d.TraceNever("Object Destroyed[%p] %s Objects Left = %d\n", this, typeid(*this).name(), objectCounter);
-	if(objectCounter == 0)
-	{
-		d.TraceDebug("****** All Reference Counted Objects Destroyed! ******\n") ;
-	}
-
-	ASSERT(gpRefCountObj_Objects);
-	RefSet::const_iterator i = gpRefCountObj_Objects->find(this);
-	ASSERT(i != gpRefCountObj_Objects->end());
-	gpRefCountObj_Objects->erase(this);
-	if(gpRefCountObj_Objects->size() == 0)
+    cDebug d("cRefCountObj::~cRefCountObj");
+    d.TraceNever("Object Destroyed[%p] %s Objects Left = %d\n", this, typeid(*this).name(), objectCounter);
+    if(objectCounter == 0)
     {
-		delete gpRefCountObj_Objects;
+        d.TraceDebug("****** All Reference Counted Objects Destroyed! ******\n") ;
+    }
+
+    ASSERT(gpRefCountObj_Objects);
+    RefSet::const_iterator i = gpRefCountObj_Objects->find(this);
+    ASSERT(i != gpRefCountObj_Objects->end());
+    gpRefCountObj_Objects->erase(this);
+    if(gpRefCountObj_Objects->size() == 0)
+    {
+        delete gpRefCountObj_Objects;
         gpRefCountObj_Objects = 0;
     }
 
@@ -135,7 +135,7 @@ void cRefCountObj::AddRef() const
 
 void cRefCountObj::Release() const
 {
-	if (this == 0)
+    if (this == 0)
         return;
 
     if (--mRefCount == 0)
@@ -150,6 +150,6 @@ void cRefCountObj::Release() const
 
 void cRefCountObj::Delete() const
 {
-	delete this;
+    delete this;
 }
 

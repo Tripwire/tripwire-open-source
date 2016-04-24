@@ -52,17 +52,17 @@ void cCharEncoder::EncodeChar( TSTRING::const_iterator& i, TSTRING& strToAppendT
 {
     if( *i == mchEncodeMe )
     {
-		strToAppendTo += mchEncoded1;
-		strToAppendTo += mchEncoded2;
+        strToAppendTo += mchEncoded1;
+        strToAppendTo += mchEncoded2;
     }
     else if( *i == mchEncoded1 )
     {
-		strToAppendTo += mchEncoded1;
-		strToAppendTo += mchEncoded1;
+        strToAppendTo += mchEncoded1;
+        strToAppendTo += mchEncoded1;
     }
     else
     {
-		strToAppendTo += *i;
+        strToAppendTo += *i;
     }
 }
 
@@ -71,16 +71,16 @@ TCHAR cCharEncoder::DecodeChar( TSTRING::const_iterator& i, TSTRING::const_itera
     ASSERT( i != end );
 
     if( *i == mchEncodeMe )
-	{
-		ASSERT( false );
+    {
+        ASSERT( false );
         return _T('\0');
-	}
+    }
     else if( *i == mchEncoded1 )
     {
         if( ++i == end )
         {
             ASSERT( false );
-	        return _T('\0');
+            return _T('\0');
         }
         else
         {
@@ -91,7 +91,7 @@ TCHAR cCharEncoder::DecodeChar( TSTRING::const_iterator& i, TSTRING::const_itera
             else
             {
                 ASSERT( false );
-		        return _T('\0');
+                return _T('\0');
             }
         }
     }
@@ -115,10 +115,10 @@ TSTRING& cStringEncoder::Encode( TSTRING& inAndOut )
 TSTRING& cStringEncoder::Encode( const TSTRING& in, TSTRING& out )
 {
     out.erase();
-	//
-	// assume that out will approximately be the size of in
-	//
-	out.reserve( in.length() );
+    //
+    // assume that out will approximately be the size of in
+    //
+    out.reserve( in.length() );
 
     for( TSTRING::const_iterator i = in.begin(); i != in.end(); i++ )
         ce.EncodeChar( i, out );
@@ -137,10 +137,10 @@ TSTRING& cStringEncoder::Unencode( TSTRING& inAndOut )
 TSTRING& cStringEncoder::Unencode( const TSTRING& in, TSTRING& out )
 {
     out.erase();
-	//
-	// assume that out will approximately be the size of in
-	//
-	out.reserve( in.length() );
+    //
+    // assume that out will approximately be the size of in
+    //
+    out.reserve( in.length() );
 
     TSTRING::const_iterator end = in.end();
     for( TSTRING::const_iterator i = in.begin(); i != end; i++ )

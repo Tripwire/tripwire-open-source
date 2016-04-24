@@ -32,8 +32,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // objectpool.h
 //
-// cBlockList		-- a linked list of blocks of memory
-// cObjectPoolBase	-- a pool of equal-sized objects; constant time allocation
+// cBlockList       -- a linked list of blocks of memory
+// cObjectPoolBase  -- a pool of equal-sized objects; constant time allocation
 #ifndef __OBJECTPOOL_H
 #define __OBJECTPOOL_H
 
@@ -45,13 +45,13 @@ class cBlockLink;
 class cBlockList
 {
 public:
-	cBlockList();
-	~cBlockList();
+    cBlockList();
+    ~cBlockList();
 
-	void*	Allocate(int size);
-	void	Clear();			// releases everything in the block list
+    void*   Allocate(int size);
+    void    Clear();            // releases everything in the block list
 private:
-	cBlockLink* mpBlocks;		// linked list of blocks
+    cBlockLink* mpBlocks;       // linked list of blocks
 };
 
 //-----------------------------------------------------------------------------
@@ -60,44 +60,44 @@ private:
 class cObjectPoolBase
 {
 public:
-	cObjectPoolBase(int objSize, int chunkSize);
-	~cObjectPoolBase();
-		// NOTE -- dtor is not virtual; therefore it is potentially dangerous to delete a pointer to
-		// this class unless you know for sure the dynamic class type has nothing to clean up.
+    cObjectPoolBase(int objSize, int chunkSize);
+    ~cObjectPoolBase();
+        // NOTE -- dtor is not virtual; therefore it is potentially dangerous to delete a pointer to
+        // this class unless you know for sure the dynamic class type has nothing to clean up.
 
-	void*	Alloc	();
-	void	Free	(void* pObj);
-	void	Clear	();				
-	//TODO -- add IsPointerValid() 
+    void*   Alloc   ();
+    void    Free    (void* pObj);
+    void    Clear   ();             
+    //TODO -- add IsPointerValid() 
 private:
-	void	AllocNewChunk();	// get another chunk to use...
+    void    AllocNewChunk();    // get another chunk to use...
 
-	struct cLink 
-	{
-		cLink* mpNext;
-	};
-	
-	cBlockList	mBlockList;
-	const int	mObjectSize;	// how big are the objects?
-	const int	mChunkSize;		// how big are the chunks we are allocating?
-	cLink*		mpNextFree;		// the next free object
-	//int mInstanceCount;		// number of objects that are currently allocated but not freed.
+    struct cLink 
+    {
+        cLink* mpNext;
+    };
+    
+    cBlockList  mBlockList;
+    const int   mObjectSize;    // how big are the objects?
+    const int   mChunkSize;     // how big are the chunks we are allocating?
+    cLink*      mpNextFree;     // the next free object
+    //int mInstanceCount;       // number of objects that are currently allocated but not freed.
 };
 
 //-----------------------------------------------------------------------------
 // cObjectPool
 // Note -- this template only works for classes that are constructed with their
-//		default ctor; I don't know how to extend this model to work for non-default 
-//		ctors...
+//      default ctor; I don't know how to extend this model to work for non-default 
+//      ctors...
 //-----------------------------------------------------------------------------
 template <class T>
 class cObjectPool : public cObjectPoolBase
 {
 public:
-	cObjectPool(int chunkSize) : cObjectPoolBase(sizeof(T), chunkSize) {}
+    cObjectPool(int chunkSize) : cObjectPoolBase(sizeof(T), chunkSize) {}
 
-	T*		New		()			{ return new(cObjectPoolBase::Alloc()) T(); }
-	void	Delete	(T* pObj)	{ pObj->~T(); Free(pObj); }
+    T*      New     ()          { return new(cObjectPoolBase::Alloc()) T(); }
+    void    Delete  (T* pObj)   { pObj->~T(); Free(pObj); }
 };
 
 //#############################################################################
@@ -108,12 +108,12 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 inline void* cObjectPoolBase::Alloc()
 {
-	if(! mpNextFree)
-		AllocNewChunk();
+    if(! mpNextFree)
+        AllocNewChunk();
 
-	cLink* pRtn = mpNextFree;
-	mpNextFree = mpNextFree->mpNext;
-	return pRtn;
+    cLink* pRtn = mpNextFree;
+    mpNextFree = mpNextFree->mpNext;
+    return pRtn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -121,9 +121,9 @@ inline void* cObjectPoolBase::Alloc()
 ///////////////////////////////////////////////////////////////////////////////
 inline void cObjectPoolBase::Free(void* pObj)
 {
-	cLink* pNew = (cLink*)pObj;
-	pNew->mpNext = mpNextFree;
-	mpNextFree = pNew;
+    cLink* pNew = (cLink*)pObj;
+    pNew->mpNext = mpNextFree;
+    mpNextFree = pNew;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -131,8 +131,8 @@ inline void cObjectPoolBase::Free(void* pObj)
 ///////////////////////////////////////////////////////////////////////////////
 inline void cObjectPoolBase::Clear()
 {
-	mBlockList.Clear();
-	mpNextFree = 0;
+    mBlockList.Clear();
+    mpNextFree = 0;
 }
 
 

@@ -82,8 +82,8 @@ cFS::cFS()
     //             Remove this ifdef when we remove FS from the Win32 build
     cGenreSwitcher::GetInstance()->RegisterGenre( &fsGenre, flags );
 
-	// register errors...
-	//
-	TSS_REGISTER_PKG_ERRORS( fs )
+    // register errors...
+    //
+    TSS_REGISTER_PKG_ERRORS( fs )
 }
 

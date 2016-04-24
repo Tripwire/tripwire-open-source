@@ -84,9 +84,9 @@ TSS_EXCEPTION( eConverterUnknownCodepage,       eConverter );
 *            or a byte value is not a character, it is cast to a reserved
 *            region of UCS2 ( 0xE000 - 0xE0FF ).
 * CONSTRAINTS:
-*	
+*   
 * INVARIANTS:
-*	
+*   
 */
 class iCodeConverter
 {

@@ -59,28 +59,28 @@ TSS_EXCEPTION( ePolicyUpdateChangedFCO, ePolicyUpdate );
 class cPolicyUpdate
 {
 public:
-	cPolicyUpdate(	cGenre::Genre genreNum, const cFCOSpecList& oldPolicy, const cFCOSpecList& newPolicy,
-					cHierDatabase& db, cErrorBucket* pBucket );
+    cPolicyUpdate(  cGenre::Genre genreNum, const cFCOSpecList& oldPolicy, const cFCOSpecList& newPolicy,
+                    cHierDatabase& db, cErrorBucket* pBucket );
 
-	bool Execute( uint32 flags = 0 ) ; // throw (eError)
-		// if false is returned, then there was at least one conflict that came up during the policy
-		// update, and if tripwire was run in anal mode then the policy update should fail. 
+    bool Execute( uint32 flags = 0 ) ; // throw (eError)
+        // if false is returned, then there was at least one conflict that came up during the policy
+        // update, and if tripwire was run in anal mode then the policy update should fail. 
 
-	enum Flags
-	{
-		ANAL	                = 0x00000001,	// if this is set, then we are in anal mode. This affects whether error
-								                // messages appear as "Error" or "Warning"
+    enum Flags
+    {
+        ANAL                    = 0x00000001,   // if this is set, then we are in anal mode. This affects whether error
+                                                // messages appear as "Error" or "Warning"
         FLAG_ERASE_FOOTPRINTS_PU= 0x00000002
             // when this flag is set, cPolicyUpdate will attempt undo any inadvertant modifications
             // it may make when executing.
-	};
+    };
 
 private:
-	const cFCOSpecList& mOldPolicy;
-	const cFCOSpecList& mNewPolicy;
-	cHierDatabase&		mDb;
-	cGenre::Genre		mGenre;
-	cErrorBucket*		mpBucket;
+    const cFCOSpecList& mOldPolicy;
+    const cFCOSpecList& mNewPolicy;
+    cHierDatabase&      mDb;
+    cGenre::Genre       mGenre;
+    cErrorBucket*       mpBucket;
 };
 
 #endif //__POLICYUPDATE_H

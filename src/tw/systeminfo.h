@@ -47,28 +47,28 @@
 class cSystemInfo
 {
 public:
-	cSystemInfo();
-	~cSystemInfo();
+    cSystemInfo();
+    ~cSystemInfo();
 
-	static TSTRING	GetExePath();
-	static void		SetExePath(const TSTRING& path);
+    static TSTRING  GetExePath();
+    static void     SetExePath(const TSTRING& path);
         // Get the full path to this executable
 
-	static TSTRING	GetExeDir();
-	static void		SetExeDir(const TSTRING& dir);
-		// these methods get and set the executable's working directory ... it is asserted 
-		// that SetExeDir() has been called when GetExeDir() is called.
+    static TSTRING  GetExeDir();
+    static void     SetExeDir(const TSTRING& dir);
+        // these methods get and set the executable's working directory ... it is asserted 
+        // that SetExeDir() has been called when GetExeDir() is called.
 
-	static int64    GetExeStartTime();
-	static void		SetExeStartTime(const int64& time);
+    static int64    GetExeStartTime();
+    static void     SetExeStartTime(const int64& time);
         // Get and set the approximate time (time_t format) which the excecutable was started.
         // This will be used for all times having to do with this run of the executable.
 
 private:
-	static TSTRING	mExePath;
-	static bool		mbExePathSet;
-	static TSTRING	mExeDir;
-	static bool		mbExeDirSet;
+    static TSTRING  mExePath;
+    static bool     mbExePathSet;
+    static TSTRING  mExeDir;
+    static bool     mbExeDirSet;
     static int64    mExecuteStartTime;
 };
 
@@ -83,43 +83,43 @@ inline cSystemInfo::~cSystemInfo()
 {
 }
 
-inline TSTRING	cSystemInfo::GetExePath()
+inline TSTRING  cSystemInfo::GetExePath()
 {
-	ASSERT( mbExePathSet );
-	return mExePath;
+    ASSERT( mbExePathSet );
+    return mExePath;
 }
 
 inline void cSystemInfo::SetExePath(const TSTRING& path)
 {
-	ASSERT( ! path.empty() );
-	mbExePathSet = true;
+    ASSERT( ! path.empty() );
+    mbExePathSet = true;
 
-	mExePath = path;
+    mExePath = path;
 }
 
-inline TSTRING	cSystemInfo::GetExeDir()
+inline TSTRING  cSystemInfo::GetExeDir()
 {
-	ASSERT( mbExeDirSet );
-	return mExeDir;
+    ASSERT( mbExeDirSet );
+    return mExeDir;
 }
 
 inline void cSystemInfo::SetExeDir(const TSTRING& dir)
 {
-	ASSERT( ! dir.empty() );
-	mbExeDirSet = true;
+    ASSERT( ! dir.empty() );
+    mbExeDirSet = true;
 
-	mExeDir = dir;
+    mExeDir = dir;
 }
 
 inline int64 cSystemInfo::GetExeStartTime()
 {
-	ASSERT( mExecuteStartTime != 0 );
-	return mExecuteStartTime;
+    ASSERT( mExecuteStartTime != 0 );
+    return mExecuteStartTime;
 }
 
 inline void cSystemInfo::SetExeStartTime(const int64& time)
 {
-	mExecuteStartTime = time;
+    mExecuteStartTime = time;
 }
 
 #endif //__SYSTEMINFO_H

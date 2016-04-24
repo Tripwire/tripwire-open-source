@@ -45,14 +45,14 @@
 
 bool iFCOSpecUtil::FCOSpecEqual(const iFCOSpec& lhs, const iFCOSpec& rhs)
 {
-	// TODO -- this doesn't take spec masks into account!
-	return (lhs.GetHelper()->Compare(rhs.GetHelper()) == iFCOSpecHelper::CMP_EQ);
+    // TODO -- this doesn't take spec masks into account!
+    return (lhs.GetHelper()->Compare(rhs.GetHelper()) == iFCOSpecHelper::CMP_EQ);
 }
 
 bool iFCOSpecUtil::FCOSpecLessThan(const iFCOSpec& lhs, const iFCOSpec& rhs)
 {
-	// TODO -- this doesn't take spec masks into account!
-	return (lhs.GetHelper()->Compare(rhs.GetHelper()) == iFCOSpecHelper::CMP_LT);
+    // TODO -- this doesn't take spec masks into account!
+    return (lhs.GetHelper()->Compare(rhs.GetHelper()) == iFCOSpecHelper::CMP_LT);
 }
 
 

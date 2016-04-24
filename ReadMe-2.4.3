@@ -1,4 +1,4 @@
-What's new in Open Source Tripwire 2.4.3.0:
+What's new in Open Source Tripwire 2.4.3:
 
 * This update fixes compilation errors on modern compilers (GCC 4.7+ and LLVM/clang), 
 as well as some additional errors encountered on various platforms.  This is intended
@@ -39,6 +39,7 @@ Linuxes
 - Raspbian 7 (wheezy) (armv6l) + gcc 4.6.3
 - openSuSE Tumbleweed (20160408) (i586) + gcc 5.3.1
 - RHEL 6.0 (powerpc64) + gcc 4.4.4
+- Fedora 24 Alpha 7 (amd64) + gcc 6.0.0
 
 OSX
 - Mac OS X 10.11 + LLVM 7.0.2 / clang-700.1.81
@@ -90,7 +91,7 @@ may be desirable elsewhere. It's simplest to add these to configure.in and run
 autoreconf -i instead of hand-editing each Makefile individually.
 
 * Older versions of Open Source Tripwire reportedly do not build on Tru64 UNIX.
-This is likely to be true with 2.4.3.0 as well, due to the lack of appropriate
+This is likely to be true with 2.4.3 as well, due to the lack of appropriate
 hardware to test it on. If anyone out there has a Tru64 box and wants to fix 
 this, patches are always welcome.
  

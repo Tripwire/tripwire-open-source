@@ -117,7 +117,7 @@ TSS_PARSER_EXCEPTION( eParserBadCharacter           );
 
 ///////////////////////////////////////////////////////////////////////////////
 // class cPreprocessor
-//		used for directives #ifhost, to determine if parserhelper acts on input from parser
+//      used for directives #ifhost, to determine if parserhelper acts on input from parser
 //      if current state is STATE_ACCEPT, it will create specs from rules, set variables, etc.
 //      if current state is STATE_IGNORE, it will not. 
 //      -- assumes there is at least one state in stack at all times
@@ -187,17 +187,17 @@ public:
         // merges semicolon-delimited mailnames.  will not add a duplicate name.
 
     static void     CreatePropVector( const TSTRING& attr, cFCOPropVector& v, iParserGenreUtil* pHelper ); // throw( eParserHelper )
-		// takes a string of the form (+pinguam...) and turns it into a file system property vector; throws an error if
+        // takes a string of the form (+pinguam...) and turns it into a file system property vector; throws an error if
         // the string is in an invalid format.  Grows the prop vector if necessary.
     static void     CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSpecList &fcospeclist ); // throw( eParserHelper )
-		// this uses the internal list of rules and stop points to generate the list of
-		//		fco specs.    
+        // this uses the internal list of rules and stop points to generate the list of
+        //      fco specs.    
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // this class exists only to encapsulate the routines to help the parser
-//		along -- the goal is to reduce the code that lives in the yacc
+//      along -- the goal is to reduce the code that lives in the yacc
 //
 class cParserHelper
 {
@@ -236,22 +236,22 @@ public:
     static bool                         ScopeEmpty() { return mScopedAttrs.empty(); };
 
 
-	static bool InsertGlobalVariable( const TSTRING& var, const  TSTRING& val);	//throw( eParserHelper )
-		// Insert a variable into mGlobalVarTable.
+    static bool InsertGlobalVariable( const TSTRING& var, const  TSTRING& val); //throw( eParserHelper )
+        // Insert a variable into mGlobalVarTable.
 
-	static cSymbolTable& GetGlobalVarTable( void ) { return mGlobalVarTable; }
-		// Returns a reference to mGlobalVarTable.
+    static cSymbolTable& GetGlobalVarTable( void ) { return mGlobalVarTable; }
+        // Returns a reference to mGlobalVarTable.
 private:
     
     static void CleanUp(); // frees memory    
 
-	static cSymbolTable	mGlobalVarTable;
-	// A table for all the global variable definitions.
+    static cSymbolTable mGlobalVarTable;
+    // A table for all the global variable definitions.
     //
     // data members
     //
-	static cErrorBucket* mpError;
-		// holds errors that the parser creates
+    static cErrorBucket* mpError;
+        // holds errors that the parser creates
     static int miLineNum;
         // current line number (set in lexer)
     typedef std::map< cGenre::Genre, cGenreParseInfo* > GenreContainer;

@@ -39,45 +39,45 @@
 
 // TODO: JEB: make this look like eFileError
 eUnix::eUnix( const TCHAR* szFunctionName, const TCHAR* szObjectName, bool fCallGetLastError)
-:	eError( _T(""))
+:   eError( _T(""))
 {
 #if IS_UNIX
-	ASSERT( szFunctionName || szObjectName || fCallGetLastError );
-	//
-	// construct the error message:
-	//
-	// it will be of the form: FuncName() failed for Object: <FormatMessage output>
-	//
-	if( szFunctionName )
-	{
-		mMsg = szFunctionName;
-		mMsg += _T(" failed");
+    ASSERT( szFunctionName || szObjectName || fCallGetLastError );
+    //
+    // construct the error message:
+    //
+    // it will be of the form: FuncName() failed for Object: <FormatMessage output>
+    //
+    if( szFunctionName )
+    {
+        mMsg = szFunctionName;
+        mMsg += _T(" failed");
 
-		if( szObjectName )
-		{
-			mMsg += _T(" for ");
-			mMsg += szObjectName;
-		}
-	}
-	else if( szObjectName )
-	{
-		mMsg = szObjectName;
-	}
-	else
-	{
-		mMsg = _T("Error");
-	}
+        if( szObjectName )
+        {
+            mMsg += _T(" for ");
+            mMsg += szObjectName;
+        }
+    }
+    else if( szObjectName )
+    {
+        mMsg = szObjectName;
+    }
+    else
+    {
+        mMsg = _T("Error");
+    }
 
-	if( fCallGetLastError )
-	{
+    if( fCallGetLastError )
+    {
         TSTRING strErr = strerror(errno);
 
         if( ! strErr.empty() )
         {
-		    mMsg += _T(": ");
-		    mMsg += strErr;
+            mMsg += _T(": ");
+            mMsg += strErr;
         }
-	}
+    }
 #endif // IS_UNIX
 }
 

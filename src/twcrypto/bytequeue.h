@@ -33,7 +33,7 @@
 // bytequeue.h
 //
 // cByteQueue -- specification file for an unlimited queue for storing bytes
-//	
+//  
 // this is a superior implementation of the byte queue supplied with the crypto++ lib
 #ifndef __BYTEQUEUE_H
 #define __BYTEQUEUE_H
@@ -45,38 +45,38 @@ class cByteQueueNode;
 class cByteQueue : public BufferedTransformation
 {
 public:
-	cByteQueue(int nodeSize=1024);
-	cByteQueue(const cByteQueue &copy);
-	~cByteQueue();
+    cByteQueue(int nodeSize=1024);
+    cByteQueue(const cByteQueue &copy);
+    ~cByteQueue();
 
-	// how many bytes currently stored
-	unsigned long CurrentSize() const;
-	unsigned long MaxRetrieveable()
-		{return CurrentSize();}
+    // how many bytes currently stored
+    unsigned long CurrentSize() const;
+    unsigned long MaxRetrieveable()
+        {return CurrentSize();}
 
-	void Put(byte inByte);
-	void Put(const byte *inString, unsigned int length);
+    void Put(byte inByte);
+    void Put(const byte *inString, unsigned int length);
 
-	// both functions returns the number of bytes actually retrived
-	unsigned int Get(byte &outByte);
-	unsigned int Get(byte *outString, unsigned int getMax);
+    // both functions returns the number of bytes actually retrived
+    unsigned int Get(byte &outByte);
+    unsigned int Get(byte *outString, unsigned int getMax);
 
-	unsigned int Peek(byte &outByte) const;
+    unsigned int Peek(byte &outByte) const;
 
-	void CopyTo(BufferedTransformation &target) const;
-	void CopyTo(byte *target) const;
+    void CopyTo(BufferedTransformation &target) const;
+    void CopyTo(byte *target) const;
 
-	cByteQueue & operator=(const cByteQueue &rhs);
-	bool operator==(const cByteQueue &rhs) const;
-	byte operator[](unsigned long i) const;
+    cByteQueue & operator=(const cByteQueue &rhs);
+    bool operator==(const cByteQueue &rhs) const;
+    byte operator[](unsigned long i) const;
 
 private:
-	void CopyFrom(const cByteQueue &copy);
-	void Destroy();
+    void CopyFrom(const cByteQueue &copy);
+    void Destroy();
 
-	int			mNodeSize;
-	int			mCurrentSize;
-	cByteQueueNode *head, *tail;
+    int         mNodeSize;
+    int         mCurrentSize;
+    cByteQueueNode *head, *tail;
 };
 
 #endif //__BYTEQUEUE_H

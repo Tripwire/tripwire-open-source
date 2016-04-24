@@ -73,7 +73,7 @@ private:
 ///////////////////////////////////////////////////////////////////////////////
 //
 // this class exists only to encapsulate the routines to help the parser
-//		along -- the goal is to reduce the code that lives in the yacc
+//      along -- the goal is to reduce the code that lives in the yacc
 //
 
 class cGenreParseInfo 
@@ -81,51 +81,51 @@ class cGenreParseInfo
 public:
     cGenreParseInfo();
 
-  	void			AddStopPoint( const cFCOName& name );
-		// adds the specified path as a stop point -- for now, we just queue it up,
-		//		since we don't know which rule to attach it to.  to do that, we call
-		//		AttachStopPoints()
+    void            AddStopPoint( const cFCOName& name );
+        // adds the specified path as a stop point -- for now, we just queue it up,
+        //      since we don't know which rule to attach it to.  to do that, we call
+        //      AttachStopPoints()
 
     bool            RulePointAlreadyDefined( const cFCOName& fcoName );
         // checks if szName is in mSpecNameList
 
-	void			AddRule(const cParseRule *pnode);
-		// adds the specified rule to our list.  we will eventually call CreateFCOSpecs(),
-		//		which will use the list as its source.
+    void            AddRule(const cParseRule *pnode);
+        // adds the specified rule to our list.  we will eventually call CreateFCOSpecs(),
+        //      which will use the list as its source.
 
     bool DoVarSubstitution(TSTRING &rval); //throw( eParserHelper )
     
-    bool InsertVariable( const TSTRING& var, const TSTRING& val);			//throw( eParserHelper )
+    bool InsertVariable( const TSTRING& var, const TSTRING& val);           //throw( eParserHelper )
     bool LookupVariable( const TSTRING& var, TSTRING& val);
-		// This method now looks in the global variable table (defined in cParserHelper ),
-		// if a variable is not found in the local or predefined tables.
+        // This method now looks in the global variable table (defined in cParserHelper ),
+        // if a variable is not found in the local or predefined tables.
 
     //
     // data retreval
     //
     typedef std::list< cFCOName >           StopListType;
-    typedef std::list< const cParseRule* >	RuleListType;
+    typedef std::list< const cParseRule* >  RuleListType;
     RuleListType*   GetRules() { return &mRuleList; };
     StopListType*   GetStopList() { return &mStopList; };
 
-	cSymbolTable&	GetPredefVarTable( void ) { return mLocalPredefVarTable; }
+    cSymbolTable&   GetPredefVarTable( void ) { return mLocalPredefVarTable; }
 
 private:
     void         InitPredefinedVariables();
 
     
 
-	StopListType    mStopList;
-		// this is where all the stop points are stored at parse-time, since we
-		// don't know enough to bind them to fcospecs yet.
+    StopListType    mStopList;
+        // this is where all the stop points are stored at parse-time, since we
+        // don't know enough to bind them to fcospecs yet.
 
-	RuleListType    mRuleList;
-		// these are the list of parser generated rules
+    RuleListType    mRuleList;
+        // these are the list of parser generated rules
 
     cSymbolTable    mLocalVarTable;
-		// contains all the variable symbol definitions
-	cSymbolTable    mLocalPredefVarTable;
-		// Contains the predefined variable definitions.
+        // contains all the variable symbol definitions
+    cSymbolTable    mLocalPredefVarTable;
+        // Contains the predefined variable definitions.
 };
 
 #endif // __GENREPARSEINFO_H

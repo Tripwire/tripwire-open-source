@@ -68,7 +68,7 @@ void cFCOSpecList::Clear()
     }
 
     mCanonicalList.clear();
-	mAddedList.clear();
+    mAddedList.clear();
 }
 
 bool cFCOSpecList::IsEmpty() const
@@ -99,11 +99,11 @@ void cFCOSpecList::Add(iFCOSpec* pSpec, cFCOSpecAttr* pAttr)
 {
     std::list<PairType>::iterator itr;
     pSpec->AddRef();
-	if(pAttr == 0)
-		pAttr = new cFCOSpecAttr;
-	else
-		pAttr->AddRef();
-	for (itr = mCanonicalList.begin(); ; ++itr)
+    if(pAttr == 0)
+        pAttr = new cFCOSpecAttr;
+    else
+        pAttr->AddRef();
+    for (itr = mCanonicalList.begin(); ; ++itr)
     {
         if (itr == mCanonicalList.end() ||
             iFCOSpecUtil::FCOSpecLessThan(*pSpec, *itr->first))
@@ -120,39 +120,39 @@ iFCOSpec* cFCOSpecList::Lookup(iFCOSpec* pSpec) const
     std::list<PairType>::iterator itr;
     for (itr = mCanonicalList.begin(); itr != mCanonicalList.end(); ++itr)
         if (itr->first == pSpec)
-		{
-			pSpec->AddRef();
+        {
+            pSpec->AddRef();
             return itr->first;
-		}
+        }
 
     for (itr = mCanonicalList.begin(); itr != mCanonicalList.end(); ++itr)
         if (iFCOSpecUtil::FCOSpecEqual(*pSpec, *itr->first))
-		{
-			itr->first->AddRef();
+        {
+            itr->first->AddRef();
             return itr->first;
-		}
+        }
 
     return NULL;
 }
 
 void cFCOSpecList::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Spec List")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Spec List")));
 
     Clear();
 
     int i;
-	int32 size;
+    int32 size;
     pSerializer->ReadInt32(size);
 
     for (i = 0; i < size; ++i)
     {
-        iFCOSpec*		pReadInSpec = static_cast<iFCOSpec*>	(pSerializer->ReadObjectDynCreate());
-		cFCOSpecAttr*	pSpecAttr	= static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());
-		Add(pReadInSpec, pSpecAttr);
+        iFCOSpec*       pReadInSpec = static_cast<iFCOSpec*>    (pSerializer->ReadObjectDynCreate());
+        cFCOSpecAttr*   pSpecAttr   = static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());
+        Add(pReadInSpec, pSpecAttr);
         pReadInSpec->Release(); // Add() will increase the ref count by 1
-		pSpecAttr->Release();
+        pSpecAttr->Release();
     }
 }
 
@@ -162,10 +162,10 @@ void cFCOSpecList::Write(iSerializer* pSerializer) const
 
     cFCOSpecListAddedIter itr(*this);
     for (itr.SeekBegin(); !itr.Done(); itr.Next())
-	{
+    {
         pSerializer->WriteObjectDynCreate(itr.Spec());
-		pSerializer->WriteObjectDynCreate(itr.Attr());
-	}
+        pSerializer->WriteObjectDynCreate(itr.Attr());
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -214,29 +214,29 @@ iFCOSpec* cFCOSpecListAddedIter::Spec()
 }
 const cFCOSpecAttr*   cFCOSpecListAddedIter::Attr() const
 {
-	return mIter->second;
+    return mIter->second;
 }
 cFCOSpecAttr* cFCOSpecListAddedIter::Attr()
 {
-	return mIter->second;
+    return mIter->second;
 }
 
 void cFCOSpecListAddedIter::Remove()
 {
-	ASSERT(! Done());
+    ASSERT(! Done());
 
-	// the tricky part is finding the spec in the other list...
-	std::list<cFCOSpecList::PairType>::iterator i;
-	for(i = mpSpecList->mCanonicalList.begin(); i != mpSpecList->mCanonicalList.end(); i++)
-	{
-		if(i->first == mIter->first)
-			break;
-	}
-	ASSERT(i != mpSpecList->mCanonicalList.end());
+    // the tricky part is finding the spec in the other list...
+    std::list<cFCOSpecList::PairType>::iterator i;
+    for(i = mpSpecList->mCanonicalList.begin(); i != mpSpecList->mCanonicalList.end(); i++)
+    {
+        if(i->first == mIter->first)
+            break;
+    }
+    ASSERT(i != mpSpecList->mCanonicalList.end());
 
-	// now to do the deleteing!
-	mIter = mpSpecList->mAddedList.erase(mIter);
-	mpSpecList->mCanonicalList.erase(i);
+    // now to do the deleteing!
+    mIter = mpSpecList->mAddedList.erase(mIter);
+    mpSpecList->mCanonicalList.erase(i);
 }
 
 
@@ -286,10 +286,10 @@ iFCOSpec* cFCOSpecListCanonicalIter::Spec()
 }
 const cFCOSpecAttr*   cFCOSpecListCanonicalIter::Attr() const
 {
-	return mIter->second;
+    return mIter->second;
 }
 cFCOSpecAttr* cFCOSpecListCanonicalIter::Attr()
 {
-	return mIter->second;
+    return mIter->second;
 }
 

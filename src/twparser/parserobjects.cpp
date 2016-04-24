@@ -57,86 +57,86 @@ cParseRule::~cParseRule()
 
 const cFCOName& cParseRule::GetName() const
 {
-	return mName;
+    return mName;
 }
 
 void cParseRule::SetName( const cFCOName& name )
 {
-	mName = name;
+    mName = name;
 }
 
 cParseNamedAttrList *
 cParseRule::GetAttrList() const
 {
-	return mpAttrList;
+    return mpAttrList;
 }
 
 void
 cParseRule::SetAttrList(cParseNamedAttrList *pattr) 
 {
-	mpAttrList = pattr;
+    mpAttrList = pattr;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // SetSpecMaskList
-//			attaches cParseSpecMaskList to this structure
+//          attaches cParseSpecMaskList to this structure
 ///////////////////////////////////////////////////////////////////////////////
 void
 cParseRule::SetSpecMaskList(cParseSpecMaskList *pmasks)
 {
-	mpSpecMaskList = pmasks;
+    mpSpecMaskList = pmasks;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetNumSpecMasks
-//			returns number of specmasks in list (excluding default)
+//          returns number of specmasks in list (excluding default)
 ///////////////////////////////////////////////////////////////////////////////
 int
 cParseRule::GetNumSpecMasks() const
 {
-	// empty list?
-	if (mpSpecMaskList == NULL)
-		return 0;
-	
-	return mpSpecMaskList->mList.size();
+    // empty list?
+    if (mpSpecMaskList == NULL)
+        return 0;
+    
+    return mpSpecMaskList->mList.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetNumNamedAttrs
-//			returns number of named attributes in list
+//          returns number of named attributes in list
 ///////////////////////////////////////////////////////////////////////////////
 int
 cParseRule::GetNumNamedAttrs() const
 {
-	// empty list?
-	if (mpAttrList == NULL)
-		return 0;
-	
-	return mpAttrList->mList.size();
+    // empty list?
+    if (mpAttrList == NULL)
+        return 0;
+    
+    return mpAttrList->mList.size();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Dump
-//			dumps out all the contents of the parse node, including children
+//          dumps out all the contents of the parse node, including children
 ///////////////////////////////////////////////////////////////////////////////
 
 void
 cParseRule::Dump()
 {
-	cDebug d("\tcParseRule::Dump()");
+    cDebug d("\tcParseRule::Dump()");
 
-	d.TraceDebug("name=%s\n", mName.AsString().c_str());
-	d.TraceDebug("defspecmask.prop_vector=%s\n", mDefSpecMask.GetPropVectorString().c_str() );
-	d.TraceDebug("defspecmask.condition=%s\n", mDefSpecMask.GetCondition().c_str() );
+    d.TraceDebug("name=%s\n", mName.AsString().c_str());
+    d.TraceDebug("defspecmask.prop_vector=%s\n", mDefSpecMask.GetPropVectorString().c_str() );
+    d.TraceDebug("defspecmask.condition=%s\n", mDefSpecMask.GetCondition().c_str() );
 
-	// specmasks
-	d.TraceDebug("    numspecmasks=%d\n", GetNumSpecMasks());
+    // specmasks
+    d.TraceDebug("    numspecmasks=%d\n", GetNumSpecMasks());
     if( mpSpecMaskList )
         mpSpecMaskList->Dump(d);
 
-	// named attributes
-	d.TraceDebug("    numattrs=%d\n", GetNumNamedAttrs());
+    // named attributes
+    d.TraceDebug("    numattrs=%d\n", GetNumNamedAttrs());
     if( mpAttrList )
         mpAttrList->Dump(d);
 }
@@ -160,47 +160,47 @@ cParseSpecMask::~cParseSpecMask()
 int
 cParseSpecMask::GetNumAttrs() const
 {
-	if (mpAttrList == NULL)
-		return 0;
+    if (mpAttrList == NULL)
+        return 0;
 
-	return mpAttrList->mList.size();
+    return mpAttrList->mList.size();
 }
 
 void
 cParseSpecMask::SetAttrList(cParseNamedAttrList *pattr)
 {
-	mpAttrList = pattr;
+    mpAttrList = pattr;
 }
 
 cParseNamedAttrList *
 cParseSpecMask::GetAttrList() const
 {
-	return mpAttrList;
+    return mpAttrList;
 }
 
 const TSTRING& cParseSpecMask::GetPropVectorString() const
 {
-	return msPV;
+    return msPV;
 }
 
 const cFCOPropVector& cParseSpecMask::GetPropVector() const
 {
-	return mPropVector;
+    return mPropVector;
 }
 
 const TSTRING& cParseSpecMask::GetCondition() const
 {
-	return msCondition;
+    return msCondition;
 }
 
 void
 cParseSpecMask::Dump(cDebug &d) const
 {
-	d.TraceDebug("    condition=(%s), propvector=:\n", msCondition.c_str(), msPV.c_str() );
-	
-	// dump list of attributes
-	if (mpAttrList)
-		mpAttrList->Dump(d);
+    d.TraceDebug("    condition=(%s), propvector=:\n", msCondition.c_str(), msPV.c_str() );
+    
+    // dump list of attributes
+    if (mpAttrList)
+        mpAttrList->Dump(d);
 }
 
 //
@@ -210,10 +210,10 @@ cParseSpecMask::Dump(cDebug &d) const
 void
 cParseSpecMaskList::Dump(cDebug &d) const
 {
-	std::list<cParseSpecMask *>::const_iterator ispec;
-	for (ispec = mList.begin(); ispec != mList.end(); ispec++) {
-		(*ispec)->Dump(d);
-	}
+    std::list<cParseSpecMask *>::const_iterator ispec;
+    for (ispec = mList.begin(); ispec != mList.end(); ispec++) {
+        (*ispec)->Dump(d);
+    }
 }
 
 // 
@@ -237,7 +237,7 @@ cParseNamedAttr* cParseNamedAttr::Clone() const
 
 void cParseNamedAttr::Dump(cDebug &d) const
 {
-	d.TraceDebug("    name=(%s), value=(%s)\n", mstrName.c_str(), mstrValue.c_str());
+    d.TraceDebug("    name=(%s), value=(%s)\n", mstrName.c_str(), mstrValue.c_str());
 }
 
 void cParseNamedAttr::Validate() const
@@ -305,11 +305,11 @@ void cParseNamedAttrList::Clear()
 void
 cParseNamedAttrList::Dump(cDebug &d) const
 {
-	// dump out each named attribute
-	std::list<cParseNamedAttr *>::const_iterator iattr;
-	for (iattr = mList.begin(); iattr != mList.end(); iattr++) {
-		(*iattr)->Dump(d);
-	}
+    // dump out each named attribute
+    std::list<cParseNamedAttr *>::const_iterator iattr;
+    for (iattr = mList.begin(); iattr != mList.end(); iattr++) {
+        (*iattr)->Dump(d);
+    }
 }
 
 

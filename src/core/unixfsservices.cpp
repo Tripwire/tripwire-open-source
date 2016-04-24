@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////////////// 
 // unixfsservices.cpp
 //
-//	Implements cUnixFSServices class in unixfsservices.h
+//  Implements cUnixFSServices class in unixfsservices.h
 //
 
 #include "core/stdcore.h"
@@ -143,18 +143,18 @@ cUnixFSServices::~cUnixFSServices()
 ///////////////////////////////////////////////////////////////////////////////
 // GetErrString
 ///////////////////////////////////////////////////////////////////////////////
-TSTRING	cUnixFSServices::GetErrString() const
+TSTRING cUnixFSServices::GetErrString() const
 {
-	TSTRING ret;
-	char* pErrorStr = strerror(errno);
+    TSTRING ret;
+    char* pErrorStr = strerror(errno);
 #ifdef _UNICODE
-	wchar_t pBuf[1024];
-	mbstowcs(pBuf, pErrorStr, 1024);
-	ret = pBuf;
+    wchar_t pBuf[1024];
+    mbstowcs(pBuf, pErrorStr, 1024);
+    ret = pBuf;
 #else
-	ret = pErrorStr;
+    ret = pErrorStr;
 #endif
-	return ret;
+    return ret;
 }
 
 
@@ -186,71 +186,71 @@ void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &
 #else
 void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const throw(eFSServices)
 {
-	TSTRING strFilename = cArosPath::AsNative(strFilenameC);
+    TSTRING strFilename = cArosPath::AsNative(strFilenameC);
 #endif
 
-	//Get all the filenames
-	DIR* dp;
-	dp = opendir( strFilename.c_str() );
+    //Get all the filenames
+    DIR* dp;
+    dp = opendir( strFilename.c_str() );
 
-	if (dp == NULL) 
-	{
-		throw eFSServicesGeneric( strFilename, iFSServices::GetInstance()->GetErrString() );
-		return;
-	}
-	
-	struct dirent* d;
+    if (dp == NULL) 
+    {
+        throw eFSServicesGeneric( strFilename, iFSServices::GetInstance()->GetErrString() );
+        return;
+    }
+    
+    struct dirent* d;
 
-	while ((d = readdir(dp)) != NULL)
-	{
-		if ((strcmp(d->d_name, _T(".")) != 0) && (strcmp(d->d_name, _T("..")) != 0))
-		{
-			if( bFullPaths )
-			{
-				//Create the full pathname
-				TSTRING strNewName = strFilename;
+    while ((d = readdir(dp)) != NULL)
+    {
+        if ((strcmp(d->d_name, _T(".")) != 0) && (strcmp(d->d_name, _T("..")) != 0))
+        {
+            if( bFullPaths )
+            {
+                //Create the full pathname
+                TSTRING strNewName = strFilename;
 
-				// get full path of dir entry
-				util_TrailingSep( strNewName, true );
-				strNewName += d->d_name;
+                // get full path of dir entry
+                util_TrailingSep( strNewName, true );
+                strNewName += d->d_name;
             
-				// save full path name
-				v.push_back( strNewName );
-			}
-			else
-				v.push_back( d->d_name );
-		}
-	}
+                // save full path name
+                v.push_back( strNewName );
+            }
+            else
+                v.push_back( d->d_name );
+        }
+    }
 
-	//Close the directory
-	closedir( dp );
+    //Close the directory
+    closedir( dp );
 }
 
 /* needs to and with S_IFMT, check EQUALITY with S_*, and return more types
 cFSStatArgs::FileType cUnixFSServices::GetFileType(const cFCOName &filename) throw(eFSServices)
 {
-	cFSStatArgs stat;
-	Stat(filename, stat);
-	return stat.mFileType;
+    cFSStatArgs stat;
+    Stat(filename, stat);
+    return stat.mFileType;
 }
 */
 
 void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSServices)
 {
-	TCHAR pathname[iFSServices::TW_MAX_PATH];
-	pathname[0] = '\0';
-	TCHAR* ret = getcwd(pathname, sizeof(TCHAR)*iFSServices::TW_MAX_PATH);
+    TCHAR pathname[iFSServices::TW_MAX_PATH];
+    pathname[0] = '\0';
+    TCHAR* ret = getcwd(pathname, sizeof(TCHAR)*iFSServices::TW_MAX_PATH);
 
-	if (ret == NULL)
-		throw eFSServicesGeneric( strCurDir, iFSServices::GetInstance()->GetErrString() );
+    if (ret == NULL)
+        throw eFSServicesGeneric( strCurDir, iFSServices::GetInstance()->GetErrString() );
 
     strCurDir = pathname;
 }
 
 void cUnixFSServices::ChangeDir( const TSTRING& strDir ) const throw(eFSServices)
 {
-	if( chdir( strDir.c_str() ) < 0 )
-		throw eFSServicesGeneric( strDir, iFSServices::GetInstance()->GetErrString() );
+    if( chdir( strDir.c_str() ) < 0 )
+        throw eFSServicesGeneric( strDir, iFSServices::GetInstance()->GetErrString() );
 }
 
 
@@ -294,7 +294,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
     wchar_t wcsbuf[1024];
     mbstowcs( wcsbuf, pchTempFileName, strlen( pchTempFileName ) + 1 ));
     strName = wcsbuf;
-#else	
+#else   
     strName = pchTempFileName;
 #endif
 
@@ -303,25 +303,25 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
     // So I'll always attempt to delete it -bam
     FileDelete( strName );
 
-	return( strName );
+    return( strName );
 }
 
 void cUnixFSServices::Mkdir( const TSTRING& strName ) const throw ( eFSServices )
 {
-	if( 0 != _tmkdir( strName.c_str(), 0777 ) )
+    if( 0 != _tmkdir( strName.c_str(), 0777 ) )
     {
         // if mkdir failed because the dir existed, that's OK
         if( errno != EEXIST )
-		    throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
+            throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
     }
-}	
+}   
 
 bool cUnixFSServices::Rmdir( const TSTRING& strName ) const
 {
-	if( 0 == rmdir( strName.c_str() ) )
-		return true;
+    if( 0 == rmdir( strName.c_str() ) )
+        return true;
 
-	return false;
+    return false;
 }
 
 void cUnixFSServices::GetTempDirName( TSTRING& strName ) const throw(eFSServices)
@@ -341,19 +341,19 @@ void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const th
 #else
 void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const throw(eFSServices)
 {
-	TSTRING strName = cArosPath::AsNative(strNameC);
+    TSTRING strName = cArosPath::AsNative(strNameC);
 #endif
-	//local variable for obtaining info on file.
-	struct stat statbuf;
+    //local variable for obtaining info on file.
+    struct stat statbuf;
 
-	int ret;
-	ret = lstat( strName.c_str(), &statbuf );
+    int ret;
+    ret = lstat( strName.c_str(), &statbuf );
 
-	cDebug d( "cUnixFSServices::Stat" );
-	d.TraceDetail( "Executing on file %s (result=%d)\n", strName.c_str(), ret );
+    cDebug d( "cUnixFSServices::Stat" );
+    d.TraceDetail( "Executing on file %s (result=%d)\n", strName.c_str(), ret );
 
-	if( ret < 0 )
-		throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
+    if( ret < 0 )
+        throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
 
     // new stuff 7/17/99 - BAM
     // if the file is not a device set rdev to zero by hand (most OSs will
@@ -365,46 +365,46 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
         util_ZeroMemory( statbuf.st_rdev );                                             
     }
 
-	//copy information returned by lstat call into the structure passed in
-	stat.gid        = statbuf.st_gid;
-	stat.atime		= statbuf.st_atime;
-	stat.ctime		= statbuf.st_ctime;
-	stat.mtime		= statbuf.st_mtime;
-	stat.dev		= statbuf.st_dev;
-	stat.rdev		= statbuf.st_rdev;
-	stat.ino		= statbuf.st_ino;
-	stat.mode		= statbuf.st_mode;
-	stat.nlink		= statbuf.st_nlink;
-	stat.size		= statbuf.st_size;
-	stat.uid		= statbuf.st_uid;
+    //copy information returned by lstat call into the structure passed in
+    stat.gid        = statbuf.st_gid;
+    stat.atime      = statbuf.st_atime;
+    stat.ctime      = statbuf.st_ctime;
+    stat.mtime      = statbuf.st_mtime;
+    stat.dev        = statbuf.st_dev;
+    stat.rdev       = statbuf.st_rdev;
+    stat.ino        = statbuf.st_ino;
+    stat.mode       = statbuf.st_mode;
+    stat.nlink      = statbuf.st_nlink;
+    stat.size       = statbuf.st_size;
+    stat.uid        = statbuf.st_uid;
     stat.blksize    = statbuf.st_blksize;
     stat.blocks     = statbuf.st_blocks;
 
-	// set the file type
-	if(S_ISREG(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FILE;
-	else if(S_ISDIR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_DIR;
-	else if(S_ISLNK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_SYMLINK;
-	else if(S_ISBLK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
-	else if(S_ISCHR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_CHARDEV;
-	else if(S_ISFIFO(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_FIFO;
-	else if(S_ISSOCK(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_SOCK;
+    // set the file type
+    if(S_ISREG(statbuf.st_mode))    stat.mFileType = cFSStatArgs::TY_FILE;
+    else if(S_ISDIR(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_DIR;
+    else if(S_ISLNK(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_SYMLINK;
+    else if(S_ISBLK(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
+    else if(S_ISCHR(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_CHARDEV;
+    else if(S_ISFIFO(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_FIFO;
+    else if(S_ISSOCK(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_SOCK;
 #ifdef S_IFDOOR
-	else if(S_ISDOOR(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_DOOR;
+    else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
 #ifdef S_IFPORT
-	else if(S_ISPORT(statbuf.st_mode))	stat.mFileType = cFSStatArgs::TY_PORT;
+    else if(S_ISPORT(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_PORT;
 #endif
     
-	else stat.mFileType = cFSStatArgs::TY_INVALID;
+    else stat.mFileType = cFSStatArgs::TY_INVALID;
 }
 
 void cUnixFSServices::GetMachineName( TSTRING& strName ) const throw( eFSServices )
 {
-	struct utsname namebuf;
-	if( uname( &namebuf ) == -1 )
-		throw eFSServicesGeneric( strName );
-	else
-		strName = namebuf.nodename;
+    struct utsname namebuf;
+    if( uname( &namebuf ) == -1 )
+        throw eFSServicesGeneric( strName );
+    else
+        strName = namebuf.nodename;
 }
 
 void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
@@ -455,7 +455,7 @@ bool cUnixFSServices::GetCurrentUserName( TSTRING& strName ) const
         fSuccess = true;
     }
     else
-		strName = _T("");
+        strName = _T("");
 
     return( fSuccess );
 }
@@ -506,17 +506,17 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
 
 bool cUnixFSServices::IsCaseSensitive() const
 {
-	return true;
+    return true;
 }
 
 
 bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const 
 {
     bool fSuccess = true;
-	struct stat statbuf;
+    struct stat statbuf;
 
-    int ret = lstat(tstrFilename.c_str(), &statbuf);	
-	if(ret < 0)
+    int ret = lstat(tstrFilename.c_str(), &statbuf);    
+    if(ret < 0)
     {
         fSuccess = false;
     }
@@ -525,11 +525,11 @@ bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tst
     {
         struct passwd* pp = getpwuid( statbuf.st_uid );
         //ASSERT( pp );
-		// We shouldn't assert this, because it might be the case that a file
-		// is associated with some old user that no longer exists... we should
-		// not fail this case.  Instead, the method will just return false per
-		// the test below.
-	    if( pp == NULL )
+        // We shouldn't assert this, because it might be the case that a file
+        // is associated with some old user that no longer exists... we should
+        // not fail this case.  Instead, the method will just return false per
+        // the test below.
+        if( pp == NULL )
         {
             fSuccess = false;
         }
@@ -545,10 +545,10 @@ bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tst
 bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const 
 {    
     bool fSuccess = true;
-	struct stat statbuf;
+    struct stat statbuf;
 
-    int ret = lstat(tstrFilename.c_str(), &statbuf);	
-	if(ret < 0)
+    int ret = lstat(tstrFilename.c_str(), &statbuf);    
+    if(ret < 0)
     {
         fSuccess = false;
     }
@@ -558,21 +558,21 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
         struct group* pg = getgrgid( statbuf.st_gid );
         //ASSERT( pg ); this assert stops everything in debug mode if we can't lookup a groupid
     
-	    if( pg == NULL )
+        if( pg == NULL )
         {
             fSuccess = false;
             tstrGroup = TSS_GetString(cCore, core::STR_UNKNOWN);
         }
         else
             tstrGroup = pg->gr_name;
-    }	
+    }   
 
     return( fSuccess );
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Function name	: cUnixFSServices::ConvertModeToString
-// Description	    : takes a TSTRING and fills it with an "ls -l" representation
+// Function name    : cUnixFSServices::ConvertModeToString
+// Description      : takes a TSTRING and fills it with an "ls -l" representation
 //                    of the object's permission bits ( e.g. "drwxr-x--x" ).  
 //
 // Returns          : void -- no errors are reported
@@ -583,95 +583,95 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
 void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) const
 {   
     TCHAR szPerm[11]; //10 permission bits plus the NULL
-	_tcscpy( szPerm, _T("----------") );
+    _tcscpy( szPerm, _T("----------") );
 
-	ASSERT( sizeof(unsigned short) <= sizeof(uint32) );
-	// We do this in case an "unsigned short" is ever larger than the
-	// value we are switching on, since the size of the mode parameter
-	// will be unsigned short (whatever that means, for the given platform...)
+    ASSERT( sizeof(unsigned short) <= sizeof(uint32) );
+    // We do this in case an "unsigned short" is ever larger than the
+    // value we are switching on, since the size of the mode parameter
+    // will be unsigned short (whatever that means, for the given platform...)
 
     // check file type
-	switch ((uint32)perm & S_IFMT)	//some versions of Unix don't like to switch on
-									//64 bit values.
+    switch ((uint32)perm & S_IFMT)  //some versions of Unix don't like to switch on
+                                    //64 bit values.
     {
-	    case S_IFDIR:
-		    szPerm[0] = _T('d');
-		    break;
-	    case S_IFCHR:
-		    szPerm[0] = _T('c');
-		    break;
-	    case S_IFBLK:
-		    szPerm[0] = _T('b');
-		    break;
-	    case S_IFIFO:
-		    szPerm[0] = _T('p');
-		    break;
-	    case S_IFLNK:
-		    szPerm[0] = _T('l');
-		    break;
+        case S_IFDIR:
+            szPerm[0] = _T('d');
+            break;
+        case S_IFCHR:
+            szPerm[0] = _T('c');
+            break;
+        case S_IFBLK:
+            szPerm[0] = _T('b');
+            break;
+        case S_IFIFO:
+            szPerm[0] = _T('p');
+            break;
+        case S_IFLNK:
+            szPerm[0] = _T('l');
+            break;
 #ifdef S_IFDOOR
-	    case S_IFDOOR:
-		    szPerm[0] = _T('D');
-		    break;
+        case S_IFDOOR:
+            szPerm[0] = _T('D');
+            break;
 #endif
 #ifdef S_IFPORT
-	    case S_IFPORT:
-		    szPerm[0] = _T('P');
-		    break;
+        case S_IFPORT:
+            szPerm[0] = _T('P');
+            break;
 #endif
         break;
-	}
+    }
 
     // check owner read and write
-	if (perm & S_IRUSR)
-		szPerm[1] = _T('r');
-	if (perm & S_IWUSR)
-		szPerm[2] = _T('w');
+    if (perm & S_IRUSR)
+        szPerm[1] = _T('r');
+    if (perm & S_IWUSR)
+        szPerm[2] = _T('w');
 
     // check owner execute
-	if (perm & S_ISUID && perm & S_IXUSR)
-		szPerm[3] = _T('s');
-	else if (perm & S_IXUSR)
-		szPerm[3] = _T('x');
-	else if (perm & S_ISUID)
-		szPerm[3] = _T('S');
+    if (perm & S_ISUID && perm & S_IXUSR)
+        szPerm[3] = _T('s');
+    else if (perm & S_IXUSR)
+        szPerm[3] = _T('x');
+    else if (perm & S_ISUID)
+        szPerm[3] = _T('S');
 
     // check group read and write
-	if (perm & S_IRGRP)
-		szPerm[4] = _T('r');
-	if (perm & S_IWGRP)
-		szPerm[5] = _T('w');
+    if (perm & S_IRGRP)
+        szPerm[4] = _T('r');
+    if (perm & S_IWGRP)
+        szPerm[5] = _T('w');
 
     // check group execute
-	if (perm & S_ISGID && perm & S_IXGRP)
-		szPerm[6] = _T('s');
-	else if (perm & S_IXGRP)
-		szPerm[6] = _T('x');
-	else if (perm & S_ISGID)
-		szPerm[6] = _T('l');
+    if (perm & S_ISGID && perm & S_IXGRP)
+        szPerm[6] = _T('s');
+    else if (perm & S_IXGRP)
+        szPerm[6] = _T('x');
+    else if (perm & S_ISGID)
+        szPerm[6] = _T('l');
 
     // check other read and write
-	if (perm & S_IROTH)
-		szPerm[7] = _T('r');
-	if (perm & S_IWOTH)
-		szPerm[8] = _T('w');
+    if (perm & S_IROTH)
+        szPerm[7] = _T('r');
+    if (perm & S_IWOTH)
+        szPerm[8] = _T('w');
 
     // check other execute
-	if (perm & S_ISVTX && perm & S_IXOTH)
-		szPerm[9] = _T('t');
-	else if (perm & S_IXOTH)
-		szPerm[9] = _T('x');
-	else if (perm & S_ISVTX)
-		szPerm[9] = _T('T');
+    if (perm & S_ISVTX && perm & S_IXOTH)
+        szPerm[9] = _T('t');
+    else if (perm & S_IXOTH)
+        szPerm[9] = _T('x');
+    else if (perm & S_ISVTX)
+        szPerm[9] = _T('T');
 
     tstrPerm = szPerm;
 
-	return;
+    return;
 }
 
 ////////////////////////////////////////////////////////////////////////
-// Function name	: cUnixFSServices::Rename
-// Description	    : Rename a file.  Overwrites newname if it exists.and overwrite is true
+// Function name    : cUnixFSServices::Rename
+// Description      : Rename a file.  Overwrites newname if it exists.and overwrite is true
 //
 // Returns          : false if failure, true on success
 bool cUnixFSServices::Rename(const TSTRING& strOldName, const TSTRING& strNewName, bool overwrite) const
@@ -728,16 +728,16 @@ bool cUnixFSServices::GetExecutableFilename( TSTRING& strFullPath, const TSTRING
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Function name	: cUnixFSServices::FullPath
-// Description	    : 
+// Function name    : cUnixFSServices::FullPath
+// Description      : 
 //
-// Return type		: bool 
+// Return type      : bool 
 // Argument         :  TSTRING& strFullPath
 // Argument         : const TSTRING& strRelPathC
 // Argument         : const TSTRING& pathRelFromC
 //
 // TODO -- is throwing an exception the more appropriate alternative to returning
-//		a bool? I think it is ... mdb
+//      a bool? I think it is ... mdb
 ///////////////////////////////////////////////////////////////////////////////
 bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC, const TSTRING& pathRelFromC ) const
 {    
@@ -755,7 +755,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
     //
 
     if( strRelPath[0] == TW_SLASH ) // if is absolute path
-	{
+    {
         if( IsRoot( strRelPath ) ) // if it's root, don't monkey with it, just return it.
         {
             strFullPath = strRelPath;
@@ -763,26 +763,26 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
         }
         else
         {
-		    strFullPath = _T(""); // push root, then add path elements from strRelPathC
+            strFullPath = _T(""); // push root, then add path elements from strRelPathC
                                   // one by one (in while loop below)
         }
-	}
+    }
     else // is a relative path, so check pathRelFromC
     {
         if( pathRelFromC.empty() ) // if we're relative to CWD...
         {
-	        //
-	        // get the current working directory
-	        //
-	        try
-	        {
-		        GetCurrentDir( strFullPath );
+            //
+            // get the current working directory
+            //
+            try
+            {
+                GetCurrentDir( strFullPath );
                 util_TrailingSep( strFullPath, false );
-	        }
-	        catch( eFSServices& )
-	        {
-		        return false;
-	        }
+            }
+            catch( eFSServices& )
+            {
+                return false;
+            }
         }
         else // we're relative to a given dir
         {
@@ -850,8 +850,8 @@ int cUnixFSServices::CreateLockedTemporaryFile( const TCHAR* szFilename, int per
                  O_CREAT | O_EXCL;    // only create a new file -- error if it exists already
 
     // create file
-	int fh = _topen( szFilename, oflags, 0666 );    
-	if( fh >= 0 )
+    int fh = _topen( szFilename, oflags, 0666 );    
+    if( fh >= 0 )
     {
         // file was created.  Now unlink it
         if( 0 != unlink( szFilename ) )
@@ -873,10 +873,10 @@ void cUnixFSServices::Sleep( int nSeconds ) const
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Function name	: IsRoot
-// Description	    : A root path is all '/'s
+// Function name    : IsRoot
+// Description      : A root path is all '/'s
 //
-// Return type		: bool 
+// Return type      : bool 
 // Argument         : const TSTRING& strPath
 ///////////////////////////////////////////////////////////////////////////////
 bool cUnixFSServices::IsRoot( const TSTRING& strPath ) const
@@ -904,12 +904,12 @@ bool cUnixFSServices::IsRoot( const TSTRING& strPath ) const
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Function name	: util_PathFind
-// Description	    : 
+// Function name    : util_PathFind
+// Description      : 
 //      takes single-element executible filename and looks in path env var for it
 //      assumes path is colon-delimited string of directories.
 //
-// Return type		: bool 
+// Return type      : bool 
 // Argument         :  TSTRING& strFullPath
 // Argument         : const TSTRING& strFilename
 ///////////////////////////////////////////////////////////////////////////////
@@ -989,11 +989,11 @@ bool util_PathFind( TSTRING& strFullPath, const TSTRING& strFilename )
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Function name	: util_FileIsExecutable
-// Description	    : file ( or file a link points to ) must be a regular 
+// Function name    : util_FileIsExecutable
+// Description      : file ( or file a link points to ) must be a regular 
 //                    file and executable by someone
 //
-// Return type		: bool 
+// Return type      : bool 
 // Argument         : const TSTRING& strFile
 ///////////////////////////////////////////////////////////////////////////////
 bool util_FileIsExecutable( const TSTRING& strFile )
@@ -1002,7 +1002,7 @@ bool util_FileIsExecutable( const TSTRING& strFile )
         return false;
     
     struct stat s;
-	if( stat( strFile.c_str(), &s ) < 0 ) // this call handles links
+    if( stat( strFile.c_str(), &s ) < 0 ) // this call handles links
         return false;
 
     return( S_ISREG( s.st_mode ) && ( s.st_mode & ( S_IXUSR | S_IXGRP | S_IXOTH ) ) ); // can someone execute it?
@@ -1010,13 +1010,13 @@ bool util_FileIsExecutable( const TSTRING& strFile )
 
 
 ////////////////////////////////////////////////////////////////////////////////
-// Function name	: util_RemoveDuplicateSeps
-// Description	    : 
+// Function name    : util_RemoveDuplicateSeps
+// Description      : 
 // takes all adjacent slashes and replaces them with a single slash
 //      ///root//foo -> /root/foo
 //      rel//foo///  -> rel/foo/
 //
-// Return type		: void 
+// Return type      : void 
 // Argument         : TSTRING& strPath
 ///////////////////////////////////////////////////////////////////////////////
 void util_RemoveDuplicateSeps( TSTRING& strPath )
@@ -1051,15 +1051,15 @@ void util_RemoveDuplicateSeps( TSTRING& strPath )
 
 
 //////////////////////////////////////////////////////////////////////////////////
-// Function name	: util_RemoveLastPathElement
-// Description	    : 
+// Function name    : util_RemoveLastPathElement
+// Description      : 
 //      effectively pops off a path element from the end, except for the root dir, where it does nothing
 //      it removes any slashes before and after the element
 //      ///root//foo/    -> leaves "///root" ("foo"  is strElem)
 //      ///root          -> leaves ""        ("root" is strElem)
 //      //               -> leaves ""        (""     is strElem)
 //
-// Return type		: void 
+// Return type      : void 
 // Argument         :  TSTRING& strPath
 // Argument         : TSTRING& strElem
 /////////////////////////////////////////////////////////////////////////////////
@@ -1091,8 +1091,8 @@ void util_RemoveLastPathElement( TSTRING& strPath, TSTRING& strElem )
 
 
 ////////////////////////////////////////////////////////////////////////////////////
-// Function name	: util_GetNextPathElement
-// Description	    : 
+// Function name    : util_GetNextPathElement
+// Description      : 
 //      starting from the left side of the path string, returns the index'th path element
 //      returns true if the element exists, false if there aren't <index + 1> many elements
 //
@@ -1101,7 +1101,7 @@ void util_RemoveLastPathElement( TSTRING& strPath, TSTRING& strElem )
 //      2rd element of   ABC/DEF/GH -> GH
 //      1st element of //ABC/DEF/GH -> DEF
 //
-// Return type		: bool : got path element? ( i.e. was there index path elements? )
+// Return type      : bool : got path element? ( i.e. was there index path elements? )
 // Argument         : const TSTRING& strPathC
 // Argument         : TSTRING& strElem
 // Argument         : int index
@@ -1146,10 +1146,10 @@ bool util_GetNextPathElement( const TSTRING& strPathC, TSTRING& strElem, int ind
 }
 
 /////////////////////////////////////////////////////////////////////////
-// Function name	: util_TrailingSep
-// Description	    : ensure that a path ( fLeaveSep ? "has" : "does not have" ) a trailing slash
+// Function name    : util_TrailingSep
+// Description      : ensure that a path ( fLeaveSep ? "has" : "does not have" ) a trailing slash
 //
-// Return type		: bool : was there a trailing slash?
+// Return type      : bool : was there a trailing slash?
 // Argument         : TSTRING& str
 // Argument         : bool fLeaveSep
 /////////////////////////////////////////////////////////////////////////////////
@@ -1179,10 +1179,10 @@ bool util_TrailingSep( TSTRING& str, bool fLeaveSep )
 }
 
 /////////////////////////////////////////////////////////////////////////
-// Function name	: util_RemoveTrailingSeps
-// Description	    : removes all trailing separators
+// Function name    : util_RemoveTrailingSeps
+// Description      : removes all trailing separators
 //
-// Return type		: void 
+// Return type      : void 
 // Argument         : TSTRING& str
 /////////////////////////////////////////////////////////////////////////////////
 void util_RemoveTrailingSeps( TSTRING& str )

@@ -59,8 +59,8 @@ public:
     int  operator == (const cFileHeaderID& rhs) const;
     int  operator != (const cFileHeaderID& rhs) const;
 
-	virtual void Read (iSerializer* pSerializer, int32 version = 0);	// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;				    // throw (eSerializer, eArchive)
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;                 // throw (eSerializer, eArchive)
 
 private:
     // For now we will store the id as a string.
@@ -127,8 +127,8 @@ public:
     cMemoryArchive&         GetBaggage();
     const cMemoryArchive&   GetBaggage() const;
 
-	virtual void Read (iSerializer* pSerializer, int32 version = 0);	// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;				    // throw (eSerializer, eArchive)
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;                 // throw (eSerializer, eArchive)
 
 protected:
     cFileHeaderID   mID;

@@ -44,7 +44,7 @@
 //
 bool TimeBombExploded()
 {
-	struct tm time_struct;
+    struct tm time_struct;
 
     /*
     memset(&time_struct, 0, sizeof(time_struct));

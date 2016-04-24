@@ -80,7 +80,7 @@ public:
 
     ~wc16_string_impl();    // call Release() to delete
 private:
-    void operator = (const wc16_string_impl& rhs) { return; }	// don't call
+    void operator = (const wc16_string_impl& rhs) { return; }   // don't call
 };
 
 static WCHAR16 NULL_WCHAR16 = 0;
@@ -119,8 +119,8 @@ void wc16_string::operator = (const wc16_string& rhs)
 
     mpData = rhs.mpData;
 
-	if( mpData )
-	    mpData->AddRef();
+    if( mpData )
+        mpData->AddRef();
 }
 
 

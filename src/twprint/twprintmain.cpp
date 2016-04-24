@@ -51,14 +51,14 @@
 #include "tw/twutil.h"
 #include "tw/twstrings.h"
 
-#include "twprint.h"	// package initialization
+#include "twprint.h"    // package initialization
 
 #if IS_UNIX
 #include "core/unixfsservices.h"
 #include <unistd.h>
 #endif
 
-#include <memory>		// for auto_ptr
+#include <memory>       // for auto_ptr
 #include <iostream>
 #include <exception>
 
@@ -89,25 +89,25 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
     cTWInit twInit;
 
     try  
-	{
+    {
         // set unexpected and terminate handlers
         // Note: we do this before Init() in case it attempts to call these handlers
         // TODO: move this into the Init() routine
 
-	  EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
-	  EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
+      EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
+      EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
         twInit.Init( argv[0] );
-		TSS_Dependency( cTWPrint );
-		
-		// init twprint strings
-		//
+        TSS_Dependency( cTWPrint );
+        
+        // init twprint strings
+        //
 
         cDebug::SetDebugLevel(cDebug::D_DEBUG);
 
 
-		// **** let's try a new way of doing things!
-		// first, process the command line
+        // **** let's try a new way of doing things!
+        // first, process the command line
         if (argc < 2)
         {
             TCOUT << TSS_GetString(cTWPrint, twprint::STR_TWPRINT_VERSION) << std::endl;
@@ -116,44 +116,44 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
             
             ret = 1;
             goto exit;
-		}
+        }
 
-		//
-		// Display the version info...
-    	// this is quick and dirty ... just the way I like it :-) -- mdb
-		//
-		if	(_tcscmp(argv[1], _T("--version")) == 0)
-		{
+        //
+        // Display the version info...
+        // this is quick and dirty ... just the way I like it :-) -- mdb
+        //
+        if  (_tcscmp(argv[1], _T("--version")) == 0)
+        {
             TCOUT << TSS_GetString(cTW, tw::STR_VERSION_LONG) << std::endl;
-			ret = 0;
-			goto exit;
-		}
-
-		// Next, set the mode... exit with error if now valid mode specified.
-		std::auto_ptr<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
-		if(! pMode.get())
-		{
-			// no valid mode passed; GetMode will display an appropriate string (include usage statement)
-			ret = 1;
+            ret = 0;
             goto exit;
-		}
+        }
+
+        // Next, set the mode... exit with error if now valid mode specified.
+        std::auto_ptr<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
+        if(! pMode.get())
+        {
+            // no valid mode passed; GetMode will display an appropriate string (include usage statement)
+            ret = 1;
+            goto exit;
+        }
 
         cCmdLineParser cmdLine;
-		// Call InitCmdLineParser for this mode:
-		pMode->InitCmdLineParser(cmdLine);
+        // Call InitCmdLineParser for this mode:
+        pMode->InitCmdLineParser(cmdLine);
 
-		try
-		{
-			cmdLine.Parse(argc, argv);
-		}
-		catch( eError& e )
-		{
-			cTWUtil::PrintErrorMsg(e);
+        try
+        {
+            cmdLine.Parse(argc, argv);
+        }
+        catch( eError& e )
+        {
+            cTWUtil::PrintErrorMsg(e);
             TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
             
             ret = 1;
             goto exit;
-		}
+        }
 
         #if IS_UNIX
         // erase the command line
@@ -168,51 +168,51 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         {
             TCOUT << TSS_GetString(cTWPrint, twprint::STR_TWPRINT_VERSION) << std::endl;
             TCOUT << TSS_GetString(cTW,      tw::STR_VERSION) << std::endl;
-			// Output a specific usage statement for this mode.
-			TCOUT << pMode->GetModeUsage();
-			ret = 1;
+            // Output a specific usage statement for this mode.
+            TCOUT << pMode->GetModeUsage();
+            ret = 1;
             goto exit;
         }
 
-		// open up the config file, possibly using the passed in path
-		cConfigFile config;
+        // open up the config file, possibly using the passed in path
+        cConfigFile config;
         cErrorReporter errorReporter;
 
-		if( pMode->GetModeID() != cTWPrintCmdLine::MODE_HELP )
-		{
+        if( pMode->GetModeID() != cTWPrintCmdLine::MODE_HELP )
+        {
             try
-			{
-				//open cfg file
-			    TSTRING cfgPath;
-				cTWUtil::OpenConfigFile(config, cmdLine, cTWPrintCmdLine::CFG_FILE, errorReporter, cfgPath);
+            {
+                //open cfg file
+                TSTRING cfgPath;
+                cTWUtil::OpenConfigFile(config, cmdLine, cTWPrintCmdLine::CFG_FILE, errorReporter, cfgPath);
                 pMode->SetConfigFile( cfgPath );
-			}
-			catch(eError& error)
-			{
-				cTWUtil::PrintErrorMsg(error);
-				TCERR << TSS_GetString(cTW, tw::STR_ERR_TWCFG_CANT_READ) << std::endl;
-				ret = 1;
-				goto exit;
-			}
-		}
+            }
+            catch(eError& error)
+            {
+                cTWUtil::PrintErrorMsg(error);
+                TCERR << TSS_GetString(cTW, tw::STR_ERR_TWCFG_CANT_READ) << std::endl;
+                ret = 1;
+                goto exit;
+            }
+        }
 
-		// ok, now we can initialize the mode object and have it execute
-		if(! pMode->Init(config, cmdLine))
-		{
-			// TODO -- Init should spit out the error msg...
-			// I don't think this error message is necessary
-			//TCERR << _T("Problem initializing twprint!") << std::endl;
+        // ok, now we can initialize the mode object and have it execute
+        if(! pMode->Init(config, cmdLine))
+        {
+            // TODO -- Init should spit out the error msg...
+            // I don't think this error message is necessary
+            //TCERR << _T("Problem initializing twprint!") << std::endl;
             TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
-			ret = 1;
-			goto exit;
-		}
-		ret = pMode->Execute( &twInit.errorQueue );
+            ret = 1;
+            goto exit;
+        }
+        ret = pMode->Execute( &twInit.errorQueue );
 
-	}//end try block
+    }//end try block
 
-	catch (eError& error)
+    catch (eError& error)
     {
-		cTWUtil::PrintErrorMsg(error);
+        cTWUtil::PrintErrorMsg(error);
         ASSERT(false);
         ret = 1;
     }
@@ -243,7 +243,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
 exit:
 
 
-	return ret;
+    return ret;
 
 }//end MAIN
 

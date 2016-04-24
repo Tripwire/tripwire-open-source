@@ -829,7 +829,7 @@ bool cEncoder::OnlyOneCatagoryPerChar() const
             ach[0] = ch;
             for( sack_type::const_iterator atE = m_encodings.begin(); atE != m_encodings.end(); atE++ )
             {
-	        if( (*atE)->NeedsEncoding( ach.begin(), ach.end() ) )
+                if( (*atE)->NeedsEncoding( ach.begin(), ach.end() ) )
                 {
                     if( fFailedATest )
                         return false; // each char can only fail one test

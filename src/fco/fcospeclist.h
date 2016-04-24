@@ -59,7 +59,7 @@
 
 class cFCOSpecList : public iTypedSerializable
 {
-	DECLARE_TYPEDSERIALIZABLE()
+    DECLARE_TYPEDSERIALIZABLE()
 
     friend class cFCOSpecListCanonicalIter;
     friend class cFCOSpecListAddedIter;
@@ -73,13 +73,13 @@ public:
     void    Clear();
         // Clear the list of specs, deleting them all
     
-    bool    IsEmpty()	const;
-    int     Size()		const;
+    bool    IsEmpty()   const;
+    int     Size()      const;
     
     void    Add(iFCOSpec* pSpec, cFCOSpecAttr* pAttr = 0);
         // Add iFCOSpec to list.  The objects will be AddRef()ed by the list
-		// and Release()d on destruction. If pAttr == NULL, then an empty 
-		// attribute list will be created and associated with the spec.
+        // and Release()d on destruction. If pAttr == NULL, then an empty 
+        // attribute list will be created and associated with the spec.
 
     iFCOSpec* Lookup(iFCOSpec* pSpec) const;
         // Search the list a spec that matches pSpec.  This search is fairly
@@ -87,14 +87,14 @@ public:
         // string compares must be done to determine the result.  Returns
         // NULL if it is NOT in the list, otherwise a pointer to the object in 
         // this list that matches pSpec. Either way, if non-null is returned, the 
-		// object was AddRef()ed
+        // object was AddRef()ed
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 
 protected:
-	typedef std::pair<iFCOSpec*, cFCOSpecAttr*>	PairType;
+    typedef std::pair<iFCOSpec*, cFCOSpecAttr*> PairType;
 
     mutable std::list<PairType> mAddedList;          // list in added order
     mutable std::list<PairType> mCanonicalList; // list in well defined order
@@ -106,19 +106,19 @@ public:
     cFCOSpecListAddedIter(const cFCOSpecList& list);
     ~cFCOSpecListAddedIter();
 
-	void	            SeekBegin()		const;
-	bool	            Done()			const;
-	bool	            IsEmpty()		const;
-	void	            Next()			const;
-	void				Remove();
-		// removes the node the iterator is currently pointing at.
-		// asserts !Done() and moves the iterator to the next node,
-		// or to the end if it is the last node.
-	
-	const   iFCOSpec*		Spec() const;
-	        iFCOSpec*		Spec();
-	const   cFCOSpecAttr*   Attr() const;
-	        cFCOSpecAttr*	Attr();
+    void                SeekBegin()     const;
+    bool                Done()          const;
+    bool                IsEmpty()       const;
+    void                Next()          const;
+    void                Remove();
+        // removes the node the iterator is currently pointing at.
+        // asserts !Done() and moves the iterator to the next node,
+        // or to the end if it is the last node.
+    
+    const   iFCOSpec*       Spec() const;
+            iFCOSpec*       Spec();
+    const   cFCOSpecAttr*   Attr() const;
+            cFCOSpecAttr*   Attr();
 
 protected:
     cFCOSpecList*   mpSpecList;
@@ -132,17 +132,17 @@ public:
     cFCOSpecListCanonicalIter(const cFCOSpecList& list);
     ~cFCOSpecListCanonicalIter();
 
-	void	            SeekBegin()		const;
-	bool	            Done()			const;
-	bool	            IsEmpty()		const;
-	void	            Next()			const;
-	//void				Remove();
-		// TODO --implement this the same as Remove() in the 
-		// added iter.
-	const   iFCOSpec*		Spec() const;
-	        iFCOSpec*		Spec();
-	const   cFCOSpecAttr*   Attr() const;
-	        cFCOSpecAttr*	Attr();
+    void                SeekBegin()     const;
+    bool                Done()          const;
+    bool                IsEmpty()       const;
+    void                Next()          const;
+    //void              Remove();
+        // TODO --implement this the same as Remove() in the 
+        // added iter.
+    const   iFCOSpec*       Spec() const;
+            iFCOSpec*       Spec();
+    const   cFCOSpecAttr*   Attr() const;
+            cFCOSpecAttr*   Attr();
 
 protected:
     cFCOSpecList*   mpSpecList;

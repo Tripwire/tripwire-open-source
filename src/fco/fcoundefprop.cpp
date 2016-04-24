@@ -106,13 +106,13 @@ cFCOUndefinedProp::Compare( const iFCOProp* rhs, iFCOProp::Op op ) const
 
 
     if ( rhs->GetType() != GetType() )
-	{
+    {
         // undefined prop is unequal to all other props
         return 
             ( op == iFCOProp::OP_EQ )
                 ? iFCOProp::CMP_FALSE
                 : iFCOProp::CMP_TRUE;
-	}
+    }
     else if ( op == iFCOProp::OP_EQ )
     {
         return iFCOProp::CMP_TRUE;
@@ -135,7 +135,7 @@ void cFCOUndefinedProp::Write(iSerializer* pSerializer) const
 
 void cFCOUndefinedProp::Copy(const iFCOProp* rhs)
 {
-	ThrowAndAssert( INTERNAL_ERROR("fcoundefprop.cpp") );
+    ThrowAndAssert( INTERNAL_ERROR("fcoundefprop.cpp") );
 }
 
 // eof: fcoundefprop.cpp

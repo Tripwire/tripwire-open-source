@@ -43,11 +43,11 @@
 #if IS_UNIX
 namespace //unique
 {
-	TCHAR* tw_itot( int value, TCHAR* string, int radix)
-	{
-		_stprintf( string, "%d", value );
-		return string;
-	}
+    TCHAR* tw_itot( int value, TCHAR* string, int radix)
+    {
+        _stprintf( string, "%d", value );
+        return string;
+    }
 }
 #else
   #define tw_itot _itot
@@ -73,7 +73,7 @@ eInternal::eInternal(TCHAR* sourceFile, int lineNum)
 ///////////////////////////////////////////////////////////////////////////////
 TSTRING cErrorUtil::MakeFileError( const TSTRING& msg, const TSTRING& fileName )
 {
-	TSTRING ret;
+    TSTRING ret;
     ret = TSS_GetString( cCore, core::STR_ERR2_FILENAME );
     ret.append( fileName );
     ret.append( 1, _T('\n') );
@@ -82,7 +82,7 @@ TSTRING cErrorUtil::MakeFileError( const TSTRING& msg, const TSTRING& fileName )
     {
         ret.append(msg);
     }
-	
-	return ret;
+    
+    return ret;
 }
 

@@ -109,7 +109,7 @@ protected:
     int             mPrivateKeyUseCount;
 
 private:   
-    void	ProtectKeys(int8* passphrase, int passphraseLen); // throw eKeyFile()
+    void    ProtectKeys(int8* passphrase, int passphraseLen); // throw eKeyFile()
     void    ReleaseMem();
 };
 

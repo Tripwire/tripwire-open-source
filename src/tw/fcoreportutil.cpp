@@ -91,10 +91,10 @@ void cFCOReportUtil::FinalizeReport( cFCOReport& rr )
 
 void cFCOReportUtil::InitPropDisplayer( cFCOReportGenreIter& gi )
 {
-	if(gi.GetGenreHeader().GetPropDisplayer() == NULL)
-		gi.GetGenreHeader().SetPropDisplayer(iTWFactory::GetInstance()->CreatePropDisplayer());
+    if(gi.GetGenreHeader().GetPropDisplayer() == NULL)
+        gi.GetGenreHeader().SetPropDisplayer(iTWFactory::GetInstance()->CreatePropDisplayer());
     
-	iFCOPropDisplayer* pPropDisplayer = gi.GetGenreHeader().GetPropDisplayer();
+    iFCOPropDisplayer* pPropDisplayer = gi.GetGenreHeader().GetPropDisplayer();
     ASSERT( pPropDisplayer != 0);
 
     // cycle through all FCOs in report

@@ -54,8 +54,8 @@ cSerRefCountTable::~cSerRefCountTable()
 
 void cSerRefCountTable::Clear()
 {
-	mIDToObjTbl.clear();
-	mObjToIdTbl.clear();
+    mIDToObjTbl.clear();
+    mObjToIdTbl.clear();
 }
 
 // find the table id for object.  returns 0 if not in table.
@@ -63,10 +63,10 @@ int cSerRefCountTable::Lookup(const iSerRefCountObj* pObj)
 {
     std::map<iSerRefCountObj*, int>::iterator itr;
 
-	// pay no attention to this cast :-)
-	itr = mObjToIdTbl.find(const_cast<iSerRefCountObj*>(pObj));
+    // pay no attention to this cast :-)
+    itr = mObjToIdTbl.find(const_cast<iSerRefCountObj*>(pObj));
 
-    return itr == mObjToIdTbl.end() ? NULL : itr->second;
+    return (itr == mObjToIdTbl.end()) ? 0 : itr->second;
 }
 
 // find object for specified id.  returns NULL if not in table
@@ -86,8 +86,8 @@ int cSerRefCountTable::Add(iSerRefCountObj* pObj, int id)
 {
     if (Lookup(pObj) != 0)
     {
-		// this should be a programming error, but we will throw just to be safe...
-		ThrowAndAssert(eInternal(_T("cSerRefCountTable::Add() passed object already in table.")));
+        // this should be a programming error, but we will throw just to be safe...
+        ThrowAndAssert(eInternal(_T("cSerRefCountTable::Add() passed object already in table.")));
     }
     if (id == 0)
     {
@@ -96,8 +96,8 @@ int cSerRefCountTable::Add(iSerRefCountObj* pObj, int id)
     }
     else if (Lookup(id) != NULL)
     {
-		// this should be a programming error, but we will throw just to be safe...
-		ThrowAndAssert(eInternal(_T("cSerRefCountTable::Add() passed ID already in table.")));
+        // this should be a programming error, but we will throw just to be safe...
+        ThrowAndAssert(eInternal(_T("cSerRefCountTable::Add() passed ID already in table.")));
     }
 
     mIDToObjTbl.insert( MapIDTObj::value_type(id, pObj));
@@ -108,8 +108,8 @@ int cSerRefCountTable::Add(iSerRefCountObj* pObj, int id)
 
 int cSerRefCountTable::Add(const iSerRefCountObj* pObj, int id)
 {
-	iSerRefCountObj* pNonConst = const_cast<iSerRefCountObj*>(pObj);
-	return Add(pNonConst, id);
+    iSerRefCountObj* pNonConst = const_cast<iSerRefCountObj*>(pObj);
+    return Add(pNonConst, id);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

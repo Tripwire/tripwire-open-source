@@ -47,101 +47,101 @@
 // Another in my collection of macros, this just saves
 // some redundant typing on my part.
 #define PROP_DATA(TYPE)\
-	private:\
-		TYPE mValue;\
-	public:\
-		typedef TYPE ValueType;\
-		TYPE GetValue() const { return mValue; }\
-		void SetValue(const TYPE& v) { mValue = v; }
+    private:\
+        TYPE mValue;\
+    public:\
+        typedef TYPE ValueType;\
+        TYPE GetValue() const { return mValue; }\
+        void SetValue(const TYPE& v) { mValue = v; }
 ////////////////////////////////////////////////////////////////
 
 class cFCOPropInt32 : public iFCOProp
 {
 public:
-	PROP_DATA(int32)				// see macro above
-	DECLARE_TYPEDSERIALIZABLE()		// type information
+    PROP_DATA(int32)                // see macro above
+    DECLARE_TYPEDSERIALIZABLE()     // type information
 
-	cFCOPropInt32() : mValue(0) {}
-	virtual ~cFCOPropInt32()	{}
-	
-	// from iFCOProp
-	virtual TSTRING AsString() const;
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
-	virtual void Copy(const iFCOProp* rhs);
-	
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    cFCOPropInt32() : mValue(0) {}
+    virtual ~cFCOPropInt32()    {}
+    
+    // from iFCOProp
+    virtual TSTRING AsString() const;
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
+    virtual void Copy(const iFCOProp* rhs);
+    
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 };
 
 class cFCOPropInt64 : public iFCOProp
 {
 public:
-	PROP_DATA(int64)	// see macro above
-	DECLARE_TYPEDSERIALIZABLE()		// type information
+    PROP_DATA(int64)    // see macro above
+    DECLARE_TYPEDSERIALIZABLE()     // type information
 
-	cFCOPropInt64() : mValue(0) {}
-	virtual ~cFCOPropInt64()	{}
-	
-	// from iFCOProp
-	virtual TSTRING AsString() const;
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
-	virtual void Copy(const iFCOProp* rhs);
-	
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    cFCOPropInt64() : mValue(0) {}
+    virtual ~cFCOPropInt64()    {}
+    
+    // from iFCOProp
+    virtual TSTRING AsString() const;
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
+    virtual void Copy(const iFCOProp* rhs);
+    
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 };
 
 class cFCOPropUint64 : public iFCOProp
 {
 public:
-	PROP_DATA(uint64)	// see macro above
-	DECLARE_TYPEDSERIALIZABLE()		// type information
+    PROP_DATA(uint64)   // see macro above
+    DECLARE_TYPEDSERIALIZABLE()     // type information
 
-	cFCOPropUint64() : mValue(0) {}
-	virtual ~cFCOPropUint64()	{}
-	
-	// from iFCOProp
-	virtual TSTRING AsString() const;
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
-	virtual void Copy(const iFCOProp* rhs);
+    cFCOPropUint64() : mValue(0) {}
+    virtual ~cFCOPropUint64()   {}
+    
+    // from iFCOProp
+    virtual TSTRING AsString() const;
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
+    virtual void Copy(const iFCOProp* rhs);
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 };
 
 
 class cFCOPropTSTRING : public iFCOProp
 {
 public:
-	PROP_DATA(TSTRING)	// see macro above
-	DECLARE_TYPEDSERIALIZABLE()		// type information
+    PROP_DATA(TSTRING)  // see macro above
+    DECLARE_TYPEDSERIALIZABLE()     // type information
 
-	cFCOPropTSTRING() : mValue(_T("")) {}
-	virtual ~cFCOPropTSTRING()	{}
-	
-	// from iFCOProp
-	virtual TSTRING AsString() const;
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
-	virtual void Copy(const iFCOProp* rhs);
+    cFCOPropTSTRING() : mValue(_T("")) {}
+    virtual ~cFCOPropTSTRING()  {}
+    
+    // from iFCOProp
+    virtual TSTRING AsString() const;
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
+    virtual void Copy(const iFCOProp* rhs);
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // cFCOPropGrowingFile -- a property that represents a growing file. It does
-//		this by overriding Compare() and implementing it like less-than
-//		it is important, then, to note that this requires the fcos to be passed
-//		to the compare object in this order: old, new
+//      this by overriding Compare() and implementing it like less-than
+//      it is important, then, to note that this requires the fcos to be passed
+//      to the compare object in this order: old, new
 ///////////////////////////////////////////////////////////////////////////////
 class cFCOPropGrowingFile : public cFCOPropInt64
 {
 public:
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const;
 };
 
 #endif //__FCOPROPIMPL_H

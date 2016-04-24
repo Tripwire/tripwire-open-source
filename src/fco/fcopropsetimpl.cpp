@@ -45,21 +45,21 @@
 ///////////////////////////////////////////////////////////////////////////////
 void cPropSetImpl::TraceContents(int dl) const
 {
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
 
-	cDebug d("cPropSetImpl::TraceContents");
+    cDebug d("cPropSetImpl::TraceContents");
 
-	TOSTRINGSTREAM ostr;
-	ostr << _T("File Sysytem Prop Set: ");
-	for(int i=0; i<GetNumProps(); i++)
-	{
-		if(mValidProps.ContainsItem(i))
-		{
-			ostr << _T("[") << i << _T("]") << GetPropName(i) << _T(" = ") << GetPropAt(i)->AsString().c_str() << _T(", ");
-		}
-	}
-	d.Trace(dl, _T("%s\n"), ostr.str().c_str());
+    TOSTRINGSTREAM ostr;
+    ostr << _T("File Sysytem Prop Set: ");
+    for(int i=0; i<GetNumProps(); i++)
+    {
+        if(mValidProps.ContainsItem(i))
+        {
+            ostr << _T("[") << i << _T("]") << GetPropName(i) << _T(" = ") << GetPropAt(i)->AsString().c_str() << _T(", ");
+        }
+    }
+    d.Trace(dl, _T("%s\n"), ostr.str().c_str());
 
 }
 
@@ -68,27 +68,27 @@ void cPropSetImpl::TraceContents(int dl) const
 ///////////////////////////////////////////////////////////////////////////////
 void cPropSetImpl::CopyProps(const iFCOPropSet* pSrc, const cFCOPropVector& propsToCopy)
 {
-	ASSERT(pSrc->GetType() == CLASS_TYPE(cPropSetImpl));
+    ASSERT(pSrc->GetType() == CLASS_TYPE(cPropSetImpl));
 
-	// first, modify my valid vector...
-	mValidProps |= propsToCopy;
+    // first, modify my valid vector...
+    mValidProps |= propsToCopy;
 
-	for(int i=0; i < GetNumFSProps(); i++)
-	{
-		if(propsToCopy.ContainsItem(i))
-		{
+    for(int i=0; i < GetNumFSProps(); i++)
+    {
+        if(propsToCopy.ContainsItem(i))
+        {
             ASSERT( pSrc->GetValidVector().ContainsItem( i ) );
             const iFCOProp* pProp = pSrc->GetPropAt(i);
 
             if (pProp->GetType() != cFCOUndefinedProp::GetInstance()->GetType())
             {
-			    GetPropAt(i)->Copy( pProp );
+                GetPropAt(i)->Copy( pProp );
                 mUndefinedProps.RemoveItem(i);
             }
             else
                 mUndefinedProps.AddItem(i);
-		}
-	}
+        }
+    }
 }
 
 
@@ -97,20 +97,20 @@ void cPropSetImpl::CopyProps(const iFCOPropSet* pSrc, const cFCOPropVector& prop
 ///////////////////////////////////////////////////////////////////////////////
 void cPropSetImpl::InvalidateProp(int index)
 {
-	ASSERT((index >= 0) && (index < GetNumProps()));
-	mValidProps.RemoveItem(index);
+    ASSERT((index >= 0) && (index < GetNumProps()));
+    mValidProps.RemoveItem(index);
 }
 
 void cPropSetImpl::InvalidateAll()
 {
-	mValidProps.Clear();
+    mValidProps.Clear();
 }
 
 void cPropSetImpl::InvalidateProps(const cFCOPropVector& propsToInvalidate) 
 {
-	cFCOPropVector	inBoth	=  mValidProps;
-	inBoth					&= propsToInvalidate;
-	mValidProps				^= inBoth;
+    cFCOPropVector  inBoth  =  mValidProps;
+    inBoth                  &= propsToInvalidate;
+    mValidProps             ^= inBoth;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -118,17 +118,17 @@ void cPropSetImpl::InvalidateProps(const cFCOPropVector& propsToInvalidate)
 ///////////////////////////////////////////////////////////////////////////////
 int cPropSetImpl::GetNumFSProps()
 {
-	return PROP_NUMITEMS;
+    return PROP_NUMITEMS;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // ctors. dtor, operator=
 ///////////////////////////////////////////////////////////////////////////////
 cPropSetImpl::cPropSetImpl() :
-	mValidProps(cPropSetImpl::PROP_NUMITEMS),
+    mValidProps(cPropSetImpl::PROP_NUMITEMS),
     mUndefinedProps(cPropSetImpl::PROP_NUMITEMS)
 {
-	// TODO: do I want to zero out all the property values here?
+    // TODO: do I want to zero out all the property values here?
 }
 
 cPropSetImpl::~cPropSetImpl()
@@ -137,63 +137,63 @@ cPropSetImpl::~cPropSetImpl()
 }
 
 cPropSetImpl::cPropSetImpl(const cPropSetImpl& rhs) :
-	mValidProps(cPropSetImpl::PROP_NUMITEMS)
+    mValidProps(cPropSetImpl::PROP_NUMITEMS)
 {
-	*this = rhs;
+    *this = rhs;
 }
 
 const cPropSetImpl& cPropSetImpl::operator=(const cPropSetImpl& rhs)
 {
-	mValidProps = rhs.GetValidVector();
+    mValidProps = rhs.GetValidVector();
     mUndefinedProps = rhs.mUndefinedProps;
 
     for(int i=0; i < PROP_NUMITEMS; i++)
         if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i))
-	        GetPropAt(i)->Copy( ((cPropSetImpl&)rhs).GetPropAt(i) ); // call non-const GetPropAt for rhs
+            GetPropAt(i)->Copy( ((cPropSetImpl&)rhs).GetPropAt(i) ); // call non-const GetPropAt for rhs
                                                                    // don't want it to assert ContainsItem
-	return *this;
+    return *this;
 }
 
 const cFCOPropVector& cPropSetImpl::GetValidVector() const 
 {
-	return mValidProps;
+    return mValidProps;
 }
 
 int cPropSetImpl::GetNumProps() const 
 {
-	return PROP_NUMITEMS;
+    return PROP_NUMITEMS;
 }
 
 /*
 int cPropSetImpl::GetPropIndex(const TCHAR* name) const
 {
-	for(int i=0; i<PROP_NUMITEMS; i++)
-	{
-		if( _tcscmp( name, TSS_GetString( cFS, cPropSetImpl_PropNames[i]).c_str() ) == 0 )
-			return i;
-	}
-	return iFCOPropSet::PROP_NOT_FOUND;
+    for(int i=0; i<PROP_NUMITEMS; i++)
+    {
+        if( _tcscmp( name, TSS_GetString( cFS, cPropSetImpl_PropNames[i]).c_str() ) == 0 )
+            return i;
+    }
+    return iFCOPropSet::PROP_NOT_FOUND;
 }
 
 TSTRING cPropSetImpl::GetPropName(int index) const
 {
-	ASSERT((index >= 0) && (index < GetNumProps()));
-	return TSS_GetString( cFS, cPropSetImpl_PropNames[index]);
+    ASSERT((index >= 0) && (index < GetNumProps()));
+    return TSS_GetString( cFS, cPropSetImpl_PropNames[index]);
 }
 
   */
 void cPropSetImpl::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("Property Set Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("Property Set Read")));
 
-	mValidProps.Read(pSerializer);
+    mValidProps.Read(pSerializer);
     mUndefinedProps.Read(pSerializer);
 
     for (int i=0; i < PROP_NUMITEMS; i++)
     {
-		if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i))
-			GetPropAt(i)->Read(pSerializer);
+        if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i))
+            GetPropAt(i)->Read(pSerializer);
     }
 }
 
@@ -204,8 +204,8 @@ void cPropSetImpl::Write(iSerializer* pSerializer) const
  
    for (int i=0; i < PROP_NUMITEMS; i++)
    {
-		if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i))
-			GetPropAt(i)->Write(pSerializer);
+        if (mValidProps.ContainsItem(i) && !mUndefinedProps.ContainsItem(i))
+            GetPropAt(i)->Write(pSerializer);
    }
 }
 

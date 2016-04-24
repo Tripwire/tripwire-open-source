@@ -33,17 +33,17 @@
 
 #if IS_WIN32
 #pragma warning( disable : 4305 )
-	// C4305: The specified identifier type was converted to a smaller type. Information was lost in the casting.
+    // C4305: The specified identifier type was converted to a smaller type. Information was lost in the casting.
 #pragma warning( disable : 4309 )
-	// C4309: 'conversion' : truncation of constant value
+    // C4309: 'conversion' : truncation of constant value
 #pragma warning( disable : 4129 )
-	// C4129: 'character' : unrecognized character escape sequence
+    // C4129: 'character' : unrecognized character escape sequence
 #pragma warning( disable : 4068 )
-	// C4086: expected pragma parameter to be '1', '2', '4', '8', or '16'
+    // C4086: expected pragma parameter to be '1', '2', '4', '8', or '16'
 #pragma warning( disable : 4102 )
-	// C4102: 'label' : unreferenced label
+    // C4102: 'label' : unreferenced label
 #pragma warning( disable : 4244 )
-	// C4244: '=' : conversion from 'int' to 'short', possible loss of data
+    // C4244: '=' : conversion from 'int' to 'short', possible loss of data
 #endif //#if IS_WIN32
 
 

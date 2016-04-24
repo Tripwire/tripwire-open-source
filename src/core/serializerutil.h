@@ -44,10 +44,10 @@ class iSerializer;
 class cSerializerUtil
 {
 public:
-	static int64 Copy( iSerializer* pDest, cArchive*    pSrc, int64 amt );  // throw( eArchvie, eSerilaizer )
-	static int64 Copy( cArchive*    pDest, iSerializer* pSrc, int64 amt );  // throw( eArchvie, eSerilaizer )
-		// these two methods copy data from archives to serializers and vice-versa. They
-		// throw exceptions on error; the return value is the amount that was copied.
+    static int64 Copy( iSerializer* pDest, cArchive*    pSrc, int64 amt );  // throw( eArchvie, eSerilaizer )
+    static int64 Copy( cArchive*    pDest, iSerializer* pSrc, int64 amt );  // throw( eArchvie, eSerilaizer )
+        // these two methods copy data from archives to serializers and vice-versa. They
+        // throw exceptions on error; the return value is the amount that was copied.
 };
 
 #endif

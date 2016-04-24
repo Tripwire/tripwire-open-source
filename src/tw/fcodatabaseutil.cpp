@@ -31,7 +31,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////////////
 //fcodatabaseutil.cpp : Implements functions for maintaining 
-//		fcodatabase objects.
+//      fcodatabase objects.
 
 #include "stdtw.h"
 #include "fcodatabaseutil.h"
@@ -63,18 +63,18 @@ void cFCODatabaseUtil::CalculateHeader(
                                         int64           lastDBUpdateTime  
                                       )
 {
-	cDebug d("cFCODatabaseUtil::CalculateHeaderInfo");
+    cDebug d("cFCODatabaseUtil::CalculateHeaderInfo");
 
-	dbHeader.SetPolicyFilename		(policyFilename);
-	dbHeader.SetConfigFilename		(configFilename);
-	dbHeader.SetDBFilename			(dbFilename);
+    dbHeader.SetPolicyFilename      (policyFilename);
+    dbHeader.SetConfigFilename      (configFilename);
+    dbHeader.SetDBFilename          (dbFilename);
     dbHeader.SetSystemName          (cTWUtil::GetSystemName());
-	dbHeader.SetCommandLineParams	(commandLineParams);
+    dbHeader.SetCommandLineParams   (commandLineParams);
     dbHeader.SetIPAddress           (cTWUtil::GetIPAddress());
-	dbHeader.SetCreator             (cTWUtil::GetCurrentUser());
+    dbHeader.SetCreator             (cTWUtil::GetCurrentUser());
     dbHeader.SetHostID              (cTWUtil::GetHostID());
-	dbHeader.SetCreationTime		(createTime);
-	dbHeader.SetLastDBUpdateTime	(lastDBUpdateTime);
+    dbHeader.SetCreationTime        (createTime);
+    dbHeader.SetLastDBUpdateTime    (lastDBUpdateTime);
 }
 
 

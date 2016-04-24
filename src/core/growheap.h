@@ -45,26 +45,26 @@
 
 //-----------------------------------------------------------------------------
 // cGrowHeap -- a heap that can grow but never shrink
-//		All items alloced should be well below growBy in size
+//      All items alloced should be well below growBy in size
 //-----------------------------------------------------------------------------
 class cGrowHeap_i;
 
 class cGrowHeap 
 {
 public:
-	cGrowHeap( size_t initialSize, size_t growby, const TCHAR* name );
-		// creates a heap that is initially initialSize big, and increases the 
-		// size by growBy every time there is no more room.
+    cGrowHeap( size_t initialSize, size_t growby, const TCHAR* name );
+        // creates a heap that is initially initialSize big, and increases the 
+        // size by growBy every time there is no more room.
         // initialSize and growby must be a multiple of BYTE_ALIGN
-	~cGrowHeap();
+    ~cGrowHeap();
 
-	void*	Malloc( size_t size );
-	void	Clear();
-		// resets the grow heap's state.
-	size_t	TotalMemUsage() const;
-		// returns the total memory usage of this heap
+    void*   Malloc( size_t size );
+    void    Clear();
+        // resets the grow heap's state.
+    size_t  TotalMemUsage() const;
+        // returns the total memory usage of this heap
 private:
-	cGrowHeap_i*	mpData;
+    cGrowHeap_i*    mpData;
 };
 
 

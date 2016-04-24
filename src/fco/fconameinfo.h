@@ -45,8 +45,8 @@
 class iFCONameInfo
 {
 public:
-	virtual bool	IsCaseSensitive()				const = 0;
-	virtual TCHAR	GetDelimitingChar()				const = 0;
+    virtual bool    IsCaseSensitive()               const = 0;
+    virtual TCHAR   GetDelimitingChar()             const = 0;
     virtual ~iFCONameInfo() {}
 };
 

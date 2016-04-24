@@ -36,10 +36,10 @@
 // Company: TSS
 // Desc:    contains useful eError derived classes
 //
-// eInternal		-- internal logic errors ( ie -- programming mistakes )
-// ePoly			-- "polymorphic" error that takes its ID as input instead
-//						of from its class name
-// ThrowAndAssert   -- asserts false and throws the specified exception	
+// eInternal        -- internal logic errors ( ie -- programming mistakes )
+// ePoly            -- "polymorphic" error that takes its ID as input instead
+//                      of from its class name
+// ThrowAndAssert   -- asserts false and throws the specified exception 
 //
 #ifndef __ERRORUTIL_H
 #define __ERRORUTIL_H
@@ -55,22 +55,22 @@
 class ePoly : public eError
 {
 public:
- 	//-------------------------------------------------------------------------
-	// Construction and Assignment
- 	//-------------------------------------------------------------------------
-				ePoly( uint32 id, const TSTRING& msg, uint32 flags = 0 );
-	explicit	ePoly( const eError& rhs ); 
-	explicit	ePoly();
-	void operator=( const eError& rhs ); 
+    //-------------------------------------------------------------------------
+    // Construction and Assignment
+    //-------------------------------------------------------------------------
+                ePoly( uint32 id, const TSTRING& msg, uint32 flags = 0 );
+    explicit    ePoly( const eError& rhs ); 
+    explicit    ePoly();
+    void operator=( const eError& rhs ); 
 
- 	//-------------------------------------------------------------------------
-	// ID manipulation
-	//-------------------------------------------------------------------------
-	virtual uint32	GetID() const;
-	void			SetID( uint32 id );
+    //-------------------------------------------------------------------------
+    // ID manipulation
+    //-------------------------------------------------------------------------
+    virtual uint32  GetID() const;
+    void            SetID( uint32 id );
 
 private:
-	uint32	mID;
+    uint32  mID;
 };
 
 //-----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ private:
 //-----------------------------------------------------------------------------
 TSS_BEGIN_EXCEPTION( eInternal, eError )
 public:
-	eInternal( TCHAR* file, int lineNum );
+    eInternal( TCHAR* file, int lineNum );
 TSS_END_EXCEPTION()
 
 //-----------------------------------------------------------------------------
@@ -87,11 +87,11 @@ TSS_END_EXCEPTION()
 class cErrorUtil
 {
 public:
-	static TSTRING MakeFileError( const TSTRING& msg, const TSTRING& fileName );
-		// constructs an error message of the form:
-		// File: <fileName> \n <msg> 
-		// This is useful for constructing strings to pass as the msg parameter 
-		// to eError constructors.
+    static TSTRING MakeFileError( const TSTRING& msg, const TSTRING& fileName );
+        // constructs an error message of the form:
+        // File: <fileName> \n <msg> 
+        // This is useful for constructing strings to pass as the msg parameter 
+        // to eError constructors.
 };
 
 //-----------------------------------------------------------------------------
@@ -99,15 +99,15 @@ public:
 //-----------------------------------------------------------------------------
 //
 // NOTE -- we require the developer to supply the file name instead of using 
-//		__FILE__ because that includes the full path to the file, which we
-//		would not like to display to the user.
+//      __FILE__ because that includes the full path to the file, which we
+//      would not like to display to the user.
 //
-#define INTERNAL_ERROR(filename)		eInternal((TCHAR*)_T(filename), __LINE__)
-#define THROW_INTERNAL(filename) throw	eInternal((TCHAR*)_T(filename), __LINE__)
+#define INTERNAL_ERROR(filename)        eInternal((TCHAR*)_T(filename), __LINE__)
+#define THROW_INTERNAL(filename) throw  eInternal((TCHAR*)_T(filename), __LINE__)
 
 
 // TODO: ASSERT is always fatal in Unix, perhaps we could #ifdef the ASSERT
-//		to echo to cout the line number the exception occured at?
+//      to echo to cout the line number the exception occured at?
 #define ThrowAndAssert(exception) { ASSERT(false); throw exception; }
 
 
@@ -119,10 +119,10 @@ public:
 // ePoly
 ///////////////////////////////////////////////////////////////////////////////
 inline ePoly::ePoly( uint32 id, const TSTRING& msg, uint32 flags )
-:	eError( msg, flags ),
-	mID( id )
+:   eError( msg, flags ),
+    mID( id )
 {
-	
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -137,10 +137,10 @@ inline ePoly::ePoly( const eError& rhs )
 // ePoly
 ///////////////////////////////////////////////////////////////////////////////
 inline ePoly::ePoly()
-:	eError( _T("") ),
-	mID( 0 )
+:   eError( _T("") ),
+    mID( 0 )
 {
-	
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -150,7 +150,7 @@ inline void ePoly::operator=( const eError& rhs )
 {
     mMsg = rhs.GetMsg();
     mFlags = rhs.GetFlags();
-	mID = rhs.GetID();
+    mID = rhs.GetID();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ inline void ePoly::operator=( const eError& rhs )
 ///////////////////////////////////////////////////////////////////////////////
 inline uint32 ePoly::GetID() const
 {
-	return mID;
+    return mID;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -166,7 +166,7 @@ inline uint32 ePoly::GetID() const
 ///////////////////////////////////////////////////////////////////////////////
 inline void ePoly::SetID( uint32 id )
 {
-	mID = id;	
+    mID = id;   
 }
 
 #endif //__ERRORUTIL_H

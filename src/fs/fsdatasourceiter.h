@@ -40,8 +40,8 @@
 //=========================================================================
 #include "fco/fcodatasourceiterimpl.h"
 
-TSS_EXCEPTION( eFSDataSourceIter,				    eError )
-TSS_EXCEPTION( eFSDataSourceIterReadDir,	eFSDataSourceIter )
+TSS_EXCEPTION( eFSDataSourceIter,                   eError )
+TSS_EXCEPTION( eFSDataSourceIterReadDir,    eFSDataSourceIter )
 
 
 //=========================================================================
@@ -50,39 +50,39 @@ TSS_EXCEPTION( eFSDataSourceIterReadDir,	eFSDataSourceIter )
 
 //-----------------------------------------------------------------------------
 // *** Important Note: Not crossing file system boundaries works by noting the 
-//		device number of the object created by SeekToFCO( XXX, false ), since it
-//		is assumed the only time you will pass false is when you are seeking to 
-//		the start point of a spec. 
-//			-- 20 Jan 99 mdb
+//      device number of the object created by SeekToFCO( XXX, false ), since it
+//      is assumed the only time you will pass false is when you are seeking to 
+//      the start point of a spec. 
+//          -- 20 Jan 99 mdb
 //-----------------------------------------------------------------------------
 class cFSDataSourceIter : public cFCODataSourceIterImpl
 {
 public:
-	cFSDataSourceIter(); 			
-	cFSDataSourceIter( const cFSDataSourceIter& rhs );
-	virtual ~cFSDataSourceIter();	
+    cFSDataSourceIter();            
+    cFSDataSourceIter( const cFSDataSourceIter& rhs );
+    virtual ~cFSDataSourceIter();   
 
-	cFSDataSourceIter& operator=( const cFSDataSourceIter& rhs );
+    cFSDataSourceIter& operator=( const cFSDataSourceIter& rhs );
 
-	virtual iFCODataSourceIter* CreateCopy() const;
+    virtual iFCODataSourceIter* CreateCopy() const;
 
     static void SetFileSystemCrossing(bool crossFS);
         // Call this to set the property where cFSDataSourceIter does not automatically recurse
         // across file system boundaries.  Currently this is by default is set to false.
 
-	//void TraceContents(int dl = -1) const;
+    //void TraceContents(int dl = -1) const;
 private:
-	uint64					mDev;		// the device number of the last node reached through SeekTo()
-										// if this is zero, then it is assumed to be uninitialized
+    uint64                  mDev;       // the device number of the last node reached through SeekTo()
+                                        // if this is zero, then it is assumed to be uninitialized
 
-	//-------------------------------------------------------------------------
-	// helper methods
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // helper methods
+    //-------------------------------------------------------------------------
 
     virtual void GetChildrenNames( const TSTRING& strParentName, std::vector<TSTRING>& vChildrenNames );
 
     virtual iFCO* CreateObject(const cFCOName& name, bool bCreatingPeers );
-	virtual bool InitializeTypeInfo(iFCO* pFCO) ;
+    virtual bool InitializeTypeInfo(iFCO* pFCO) ;
 };
 
 #endif //__FSDATASOURCEITER_H

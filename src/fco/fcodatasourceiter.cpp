@@ -46,22 +46,22 @@
 
 iFCODataSourceIter::Relationship iFCODataSourceIter::Compare( const TCHAR* str1, const TCHAR* str2 ) const
 {
-	int cmpResult;
-	if( IsCaseSensitive() )
-	{
-		cmpResult = _tcscmp( str1, str2 );
-	}
-	else
+    int cmpResult;
+    if( IsCaseSensitive() )
     {
-		cmpResult = _tcsicmp( str1, str2 );
-	}
+        cmpResult = _tcscmp( str1, str2 );
+    }
+    else
+    {
+        cmpResult = _tcsicmp( str1, str2 );
+    }
 
-	if		( cmpResult < 0 )
-		return REL_LT;
-	else if ( cmpResult > 0 )
-		return REL_GT;
-	else
-		return REL_EQ;
+    if      ( cmpResult < 0 )
+        return REL_LT;
+    else if ( cmpResult > 0 )
+        return REL_GT;
+    else
+        return REL_EQ;
 
 }
 

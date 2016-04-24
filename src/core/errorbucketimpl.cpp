@@ -42,9 +42,9 @@
 //#############################################################################
 void cErrorBucket::AddError(const eError& error)
 {
-	HandleError(error);
-	if(mpChild)
-		mpChild->AddError(error);
+    HandleError(error);
+    if(mpChild)
+        mpChild->AddError(error);
 }
 
 //#############################################################################
@@ -55,14 +55,14 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
     cDisplayEncoder e( 
             (cDisplayEncoder::Flags) ( cDisplayEncoder::NON_ROUNDTRIP | 
                                        cDisplayEncoder::ALLOW_WHITESPACE ) );
-	TSTRING errStr;
+    TSTRING errStr;
 
-	//
-	// if the ID is zero, just return.
-	// this should only occur at the top level of a program (ie -- twcmdline.cpp) and
-	// indicates that an error occurred and an error message has already been printed out.
-	// Therefore, we will do nothing here but return.
-	//
+    //
+    // if the ID is zero, just return.
+    // this should only occur at the top level of a program (ie -- twcmdline.cpp) and
+    // indicates that an error occurred and an error message has already been printed out.
+    // Therefore, we will do nothing here but return.
+    //
 
     // TODO: Having an error with an ID of 0 is legacy.  The only place it happens at this
     // point is when we throw ePoly() with no constructor arguments.  At some point we want
@@ -70,8 +70,8 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
     // But we don't want to break any release code, thus we return on the next line - June 2, 1999 DMB.
     ASSERT( error.GetID() != 0 );
 
-	if( error.GetID() == 0 )
-		return;
+    if( error.GetID() == 0 )
+        return;
 
     // "First Part" header
     errStr = TSS_GetString( cCore, error.IsFatal() ? core::STR_ERROR_ERROR 
@@ -94,7 +94,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
 // #pragma message("errorbucketimpl.cpp needs a little help in the mb arena, with the findfirst/last and such")
 
     errStr = cErrorTable::GetInstance()->Get( error.GetID() );
-	if(! errStr.empty())
+    if(! errStr.empty())
     {
         // If the first part has a '\n' in it, we take everything following and prepend it to the
         // second part.  This was added to allow specifing a verbose string as the second part
@@ -109,7 +109,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
         ASSERT(errStr.length() + len + 6 < 80); // line too big for terminal?
                                                 // Add 6 to account for "### ' and ': '
         TCERR << TSS_GetString( cCore, core::STR_ERROR_COLON ) << _T(" ") << errStr;
-	    TCERR << std::endl;
+        TCERR << std::endl;
     }
 
     // "Second Part" error string
@@ -160,22 +160,22 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
     }
 
     // "Third Part" print 'exiting' or 'continuing'
-	// note that we supress this part if the appropriate flag is set...
-	//
-	if( (error.GetFlags() & eError::SUPRESS_THIRD_MSG) == 0 )
-	{
+    // note that we supress this part if the appropriate flag is set...
+    //
+    if( (error.GetFlags() & eError::SUPRESS_THIRD_MSG) == 0 )
+    {
         TCERR << TSS_GetString( cCore, core::STR_ERROR_HEADER) 
-			  << TSS_GetString( 
+              << TSS_GetString( 
                     cCore,
                     error.IsFatal()
                         ? core::STR_ERROR_EXITING 
                         : core::STR_ERROR_CONTINUING ) << std::endl;
-	}
+    }
 }
 
 void cErrorReporter::HandleError(const eError& error)
 {
-	PrintErrorMsg(error);
+    PrintErrorMsg(error);
 }
 
 //#############################################################################
@@ -183,11 +183,11 @@ void cErrorReporter::HandleError(const eError& error)
 //#############################################################################
 void cErrorTracer::HandleError(const eError& error)
 {
-	cDebug d("cErrorTracer::HandleError");
+    cDebug d("cErrorTracer::HandleError");
 
-	d.TraceError(	_T("%s : %s\n"), 
-					cErrorTable::GetInstance()->Get( error.GetID() ).c_str(), 
-					error.GetMsg().c_str() );
+    d.TraceError(   _T("%s : %s\n"), 
+                    cErrorTable::GetInstance()->Get( error.GetID() ).c_str(), 
+                    error.GetMsg().c_str() );
 }
 
 //#############################################################################
@@ -197,51 +197,51 @@ IMPLEMENT_TYPEDSERIALIZABLE(cErrorQueue, _T("cErrorQueue"), 0, 1);
 
 void cErrorQueue::Clear()
 {
-	mList.clear();
+    mList.clear();
 }
 
 int cErrorQueue::GetNumErrors() const
 {
-	return mList.size();
+    return mList.size();
 }
 
 void cErrorQueue::HandleError(const eError& error)
 {
-	mList.push_back( ePoly( error ) );
+    mList.push_back( ePoly( error ) );
 }
 
 cErrorQueueIter::cErrorQueueIter(cErrorQueue& queue) :
-	mList(queue.mList)
+    mList(queue.mList)
 {
-	SeekBegin();
+    SeekBegin();
 }
 
 cErrorQueueIter::cErrorQueueIter(const cErrorQueue& queue)
-:	mList( ((cErrorQueue*)&queue)->mList )
+:   mList( ((cErrorQueue*)&queue)->mList )
 {
-	SeekBegin();
+    SeekBegin();
 }
 
 
 void cErrorQueueIter::SeekBegin()
 {
-	mIter = mList.begin();
+    mIter = mList.begin();
 }
 
 void cErrorQueueIter::Next()
 {
-	++mIter;
+    ++mIter;
 }
 
 bool cErrorQueueIter::Done() const
 {
-	return (mIter == mList.end());
+    return (mIter == mList.end());
 }
 
 const ePoly& cErrorQueueIter::GetError() const
 {
-	ASSERT(! Done());
-	return (*mIter);
+    ASSERT(! Done());
+    return (*mIter);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -249,25 +249,25 @@ const ePoly& cErrorQueueIter::GetError() const
 ///////////////////////////////////////////////////////////////////////////////
 void cErrorQueue::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("ErrorQueue Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("ErrorQueue Read")));
 
-	int32 size;
-	mList.clear();
-	pSerializer->ReadInt32(size);
-	for(int i = 0; i < size; ++i)
-	{
+    int32 size;
+    mList.clear();
+    pSerializer->ReadInt32(size);
+    for(int i = 0; i < size; ++i)
+    {
         int32   errorNumber;
         TSTRING errorString;
         int32   flags;
 
-		pSerializer->ReadInt32	(errorNumber);
-		pSerializer->ReadString	(errorString);
-        pSerializer->ReadInt32	(flags);
+        pSerializer->ReadInt32  (errorNumber);
+        pSerializer->ReadString (errorString);
+        pSerializer->ReadInt32  (flags);
 
-		mList.push_back( ePoly( errorNumber, errorString, flags ) );		
-	}
-	
+        mList.push_back( ePoly( errorNumber, errorString, flags ) );        
+    }
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -275,15 +275,15 @@ void cErrorQueue::Read(iSerializer* pSerializer, int32 version)
 ///////////////////////////////////////////////////////////////////////////////
 void cErrorQueue::Write(iSerializer* pSerializer) const
 {
-	pSerializer->WriteInt32(mList.size());
-	ListType::const_iterator i;
-	for( i = mList.begin(); i != mList.end(); ++i)
-	{
-		pSerializer->WriteInt32	((*i).GetID());
-		pSerializer->WriteString((*i).GetMsg());
-        pSerializer->WriteInt32	((*i).GetFlags());
-	}
-	
+    pSerializer->WriteInt32(mList.size());
+    ListType::const_iterator i;
+    for( i = mList.begin(); i != mList.end(); ++i)
+    {
+        pSerializer->WriteInt32 ((*i).GetID());
+        pSerializer->WriteString((*i).GetMsg());
+        pSerializer->WriteInt32 ((*i).GetFlags());
+    }
+    
 }
 
 
@@ -292,15 +292,15 @@ void cErrorQueue::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 void cErrorQueue::TraceContents(int dl) const
 {
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
-	
-	cDebug d("cFCOErrorQueue::TraceContents");
-	ListType::const_iterator i;
-	int counter = 0;
-	for(i = mList.begin(); i != mList.end(); i++, counter++)
-	{
-		d.Trace(dl, _T("Error[%d]: num = %x string = %s\n")	, counter, (*i).GetID(), (*i).GetMsg().c_str()); 
-	}
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
+    
+    cDebug d("cFCOErrorQueue::TraceContents");
+    ListType::const_iterator i;
+    int counter = 0;
+    for(i = mList.begin(); i != mList.end(); i++, counter++)
+    {
+        d.Trace(dl, _T("Error[%d]: num = %x string = %s\n") , counter, (*i).GetID(), (*i).GetMsg().c_str()); 
+    }
 }
 

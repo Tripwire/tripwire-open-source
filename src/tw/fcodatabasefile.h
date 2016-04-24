@@ -72,72 +72,72 @@ class cElGamalSigPrivateKey;
 // TODO -- figure out some way to templatize this class based on encryption method
 //
 
-TSS_EXCEPTION( eFCODbFile,						eError );
-TSS_EXCEPTION( eFCODbFileTooBig,				eFCODbFile );
+TSS_EXCEPTION( eFCODbFile,                      eError );
+TSS_EXCEPTION( eFCODbFileTooBig,                eFCODbFile );
 
 //-----------------------------------------------------------------------------
 // cFCODatabaseFile -- class that manages a set of databases (for different genres
-//		stored encrypted on disk
+//      stored encrypted on disk
 //-----------------------------------------------------------------------------
 class cFCODatabaseFile : public iTypedSerializable
 {
 public:
-	cFCODatabaseFile();
-	virtual ~cFCODatabaseFile();
+    cFCODatabaseFile();
+    virtual ~cFCODatabaseFile();
 
-	void	SetFileName( const TSTRING& name );
-	TSTRING	GetFileName() const;
-		// the file name is only used in exception throwing; it is not necessary to set it.
+    void    SetFileName( const TSTRING& name );
+    TSTRING GetFileName() const;
+        // the file name is only used in exception throwing; it is not necessary to set it.
 
-	void AddGenre( cGenre::Genre genreId, cFCODatabaseFileIter* pIter = 0 ); //throw (eArchive)
-		// if pIter is not null, then it is pointing at the new node. This asserts that the 
-		// genre doesn't currently exist
+    void AddGenre( cGenre::Genre genreId, cFCODatabaseFileIter* pIter = 0 ); //throw (eArchive)
+        // if pIter is not null, then it is pointing at the new node. This asserts that the 
+        // genre doesn't currently exist
 
     cFCODbHeader& GetHeader();
 
     static const cFileHeaderID& GetFileHeaderID();
 
-	///////////////////////////////
-	// serialization interface
-	///////////////////////////////
-	virtual void Read (iSerializer* pSerializer, int32 version = 0);	// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;					// throw (eSerializer, eArchive)
+    ///////////////////////////////
+    // serialization interface
+    ///////////////////////////////
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;                 // throw (eSerializer, eArchive)
 
-	
-	typedef cFCODatabaseFileIter iterator;
-	//-------------------------------------------------------------------------
-	// cEntry -- a single entry in the database -- represents a genre's database 
-	//		note that if the entry hasn't been loaded from disk yet, all of its
-	//		data members are NULL
-	//-------------------------------------------------------------------------
-	struct tEntry
-	{
-		tEntry( cGenre::Genre genre );
-			// the ctor will get the appropriate database construction parameters 
-			// based on the genre number.
-		~tEntry( )
-		{
+    
+    typedef cFCODatabaseFileIter iterator;
+    //-------------------------------------------------------------------------
+    // cEntry -- a single entry in the database -- represents a genre's database 
+    //      note that if the entry hasn't been loaded from disk yet, all of its
+    //      data members are NULL
+    //-------------------------------------------------------------------------
+    struct tEntry
+    {
+        tEntry( cGenre::Genre genre );
+            // the ctor will get the appropriate database construction parameters 
+            // based on the genre number.
+        ~tEntry( )
+        {
 
-		}
+        }
 
-		cHierDatabase	    mDb;		// the database; 	
-		cFCODbGenreHeader	mGenreHeader;
-		cFCOSpecList	    mSpecList;	// the spec used to create the database 
-        cGenre::Genre       mGenre;		// the genre this is associated with 
-	};
+        cHierDatabase       mDb;        // the database;    
+        cFCODbGenreHeader   mGenreHeader;
+        cFCOSpecList        mSpecList;  // the spec used to create the database 
+        cGenre::Genre       mGenre;     // the genre this is associated with 
+    };
 
 private:
-	cFCODatabaseFile( const cFCODatabaseFile& rhs );	//not impl
-	void operator=	( const cFCODatabaseFile& rhs );	//not impl
-	
-	typedef std::vector<tEntry*> DbList;
-	friend class cFCODatabaseFileIter;
+    cFCODatabaseFile( const cFCODatabaseFile& rhs );    //not impl
+    void operator=  ( const cFCODatabaseFile& rhs );    //not impl
+    
+    typedef std::vector<tEntry*> DbList;
+    friend class cFCODatabaseFileIter;
 
-    cFCODbHeader	mHeader;
-	DbList		    mDbList;	// the list of databases
-	TSTRING		    mFileName;	// for cosmetic purposes only
+    cFCODbHeader    mHeader;
+    DbList          mDbList;    // the list of databases
+    TSTRING         mFileName;  // for cosmetic purposes only
 
-	DECLARE_TYPEDSERIALIZABLE()
+    DECLARE_TYPEDSERIALIZABLE()
 };
 
 //-----------------------------------------------------------------------------
@@ -146,31 +146,31 @@ private:
 class cFCODatabaseFileIter
 {
 public:
-	cFCODatabaseFileIter( cFCODatabaseFile& dbFile );
+    cFCODatabaseFileIter( cFCODatabaseFile& dbFile );
 
-	void	SeekBegin();
-	void	Next();
-	bool	Done() const;
-	int		Size() const { return mDbFile.mDbList.size(); }
+    void    SeekBegin();
+    void    Next();
+    bool    Done() const;
+    int     Size() const { return mDbFile.mDbList.size(); }
 
-	void SeekToGenre(cGenre::Genre genreId);
-		// Done() is true if the genre doesn't exist
-	void Remove();
-		// removes the current node from the database file
+    void SeekToGenre(cGenre::Genre genreId);
+        // Done() is true if the genre doesn't exist
+    void Remove();
+        // removes the current node from the database file
 
-    cGenre::Genre           GetGenre()		const;
-	cHierDatabase&			GetDb() ;
-	const cHierDatabase&	GetDb()			const;
-	cFCOSpecList&			GetSpecList();
-	const cFCOSpecList&		GetSpecList()	const;
+    cGenre::Genre           GetGenre()      const;
+    cHierDatabase&          GetDb() ;
+    const cHierDatabase&    GetDb()         const;
+    cFCOSpecList&           GetSpecList();
+    const cFCOSpecList&     GetSpecList()   const;
     cFCODbGenreHeader&          GetGenreHeader();
-	const cFCODbGenreHeader&    GetGenreHeader() const;
+    const cFCODbGenreHeader&    GetGenreHeader() const;
 
 private:
-	cFCODatabaseFile&					mDbFile ;
-	cFCODatabaseFile::DbList::iterator	mIter;
+    cFCODatabaseFile&                   mDbFile ;
+    cFCODatabaseFile::DbList::iterator  mIter;
 
-	friend class cFCODatabaseFile;
+    friend class cFCODatabaseFile;
 };
 
 //#############################################################################

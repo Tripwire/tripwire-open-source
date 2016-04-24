@@ -57,9 +57,9 @@
 
 cFSDataSourceIter::cFSDataSourceIter() : cFCODataSourceIterImpl(), mDev(0)
 {
-	// set the case sensitiveness of the parent...
-	//
-	mParentName.SetCaseSensitive( iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive() );
+    // set the case sensitiveness of the parent...
+    //
+    mParentName.SetCaseSensitive( iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive() );
 }
 
 cFSDataSourceIter::~cFSDataSourceIter()
@@ -68,10 +68,10 @@ cFSDataSourceIter::~cFSDataSourceIter()
 
 cFSDataSourceIter::cFSDataSourceIter( const cFSDataSourceIter& rhs ) : cFCODataSourceIterImpl(), mDev(0)
 {
-	// set the case sensitiveness of the parent...
-	//
-	mParentName.SetCaseSensitive( iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive() );
-	*this = rhs;
+    // set the case sensitiveness of the parent...
+    //
+    mParentName.SetCaseSensitive( iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive() );
+    *this = rhs;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,9 +85,9 @@ cFSDataSourceIter& cFSDataSourceIter::operator=( const cFSDataSourceIter& rhs )
     // copy base
     cFCODataSourceIterImpl::operator=(rhs);
     // copy derived
-	mDev = rhs.mDev;
+    mDev = rhs.mDev;
 
-	return *this;
+    return *this;
 }
 
 static bool gCrossFileSystems = false;
@@ -104,41 +104,41 @@ static bool gCrossFileSystems = false;
 ///////////////////////////////////////////////////////////////////////////////
 iFCODataSourceIter* cFSDataSourceIter::CreateCopy() const 
 {
-	return (new cFSDataSourceIter(*this));
+    return (new cFSDataSourceIter(*this));
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // CreateObject -- creates the named object and fills out its properties
-//		appropriately. Returns NULL if any errors occur and fills up the 
-//		error queue.
-//		
-//		This does not create the object if dev > 0 and the object's mDev is not
-//		equal to it (thus preventing the crossing of file systems)
+//      appropriately. Returns NULL if any errors occur and fills up the 
+//      error queue.
+//      
+//      This does not create the object if dev > 0 and the object's mDev is not
+//      equal to it (thus preventing the crossing of file systems)
 //
-//		TODO -- in the future, this should become some kind of lazy evaluation so
-//			that we don't have to get all the stats() we don't need to.
+//      TODO -- in the future, this should become some kind of lazy evaluation so
+//          that we don't have to get all the stats() we don't need to.
 ///////////////////////////////////////////////////////////////////////////////
 iFCO * cFSDataSourceIter::CreateObject(const cFCOName& name, bool bCreatePeers )
 {
     cFSObject* pNewObj = new cFSObject(name);
 
-	if( ! bCreatePeers )
-	{
-		// when bCreatePeers is false, it means we should set mDev to the 
-		// device number of the current object (ie -- it is a new "start point")
-		// If we don't do this here, InitializeTypeInfo() will reject creating the
-		// node.
-		// -- 9 June 99 mdb
-		//
-		mDev = 0;
-		if( ! InitializeTypeInfo( pNewObj ) )
-		{
-			pNewObj->Release();
-			return 0;
-		}
-		mDev = pNewObj->GetFSPropSet().GetDev();
-	}
+    if( ! bCreatePeers )
+    {
+        // when bCreatePeers is false, it means we should set mDev to the 
+        // device number of the current object (ie -- it is a new "start point")
+        // If we don't do this here, InitializeTypeInfo() will reject creating the
+        // node.
+        // -- 9 June 99 mdb
+        //
+        mDev = 0;
+        if( ! InitializeTypeInfo( pNewObj ) )
+        {
+            pNewObj->Release();
+            return 0;
+        }
+        mDev = pNewObj->GetFSPropSet().GetDev();
+    }
 
     return pNewObj;
 }
@@ -149,17 +149,17 @@ void cFSDataSourceIter::GetChildrenNames( const TSTRING& strParentName, std::vec
     {
         iFSServices::GetInstance()->ReadDir( strParentName, vChildrenNames, false );
     }
-	catch( eFSServices& e )
-	{
-		cDebug d("cFSDataSourceIter::GeneratePeers");
-		d.TraceError("**** ReadDir failed for %s\n", strParentName.c_str() );
+    catch( eFSServices& e )
+    {
+        cDebug d("cFSDataSourceIter::GeneratePeers");
+        d.TraceError("**** ReadDir failed for %s\n", strParentName.c_str() );
 
-		if( mpErrorBucket )
+        if( mpErrorBucket )
         {
-			eFSDataSourceIterReadDir eReadDir(e.GetMsg(), eError::NON_FATAL);
-			mpErrorBucket->AddError( eReadDir );
+            eFSDataSourceIterReadDir eReadDir(e.GetMsg(), eError::NON_FATAL);
+            mpErrorBucket->AddError( eReadDir );
         }
-	}
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -167,99 +167,99 @@ void cFSDataSourceIter::GetChildrenNames( const TSTRING& strParentName, std::vec
 ///////////////////////////////////////////////////////////////////////////////
 bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
 {
-	cFSObject* pObj = (cFSObject*)pFCO;
-	iFCONameTranslator* pTrans = iTWFactory::GetInstance()->GetNameTranslator();
-	
-	if( pObj->GetFSPropSet().GetValidVector().ContainsItem( cFSPropSet::PROP_FILETYPE) )
-		return true;
+    cFSObject* pObj = (cFSObject*)pFCO;
+    iFCONameTranslator* pTrans = iTWFactory::GetInstance()->GetNameTranslator();
+    
+    if( pObj->GetFSPropSet().GetValidVector().ContainsItem( cFSPropSet::PROP_FILETYPE) )
+        return true;
 
-	//
-	// assume invalid by default...
-	//
-	cFSPropSet& propSet = pObj->GetFSPropSet();
-	propSet.SetFileType(cFSPropSet::FT_INVALID);
+    //
+    // assume invalid by default...
+    //
+    cFSPropSet& propSet = pObj->GetFSPropSet();
+    propSet.SetFileType(cFSPropSet::FT_INVALID);
 
-	cFSStatArgs statArgs;
-	try
-	{
-		iFSServices::GetInstance()->Stat( pTrans->ToStringAPI( pObj->GetName() ), statArgs);
-	}
-	catch(eFSServices& e)
-	{
-		cDebug d("CreateObject");
-		d.TraceError( "*** Stat of %s failed!!!\n", pObj->GetName().AsString().c_str() );
-		if( mpErrorBucket )
+    cFSStatArgs statArgs;
+    try
+    {
+        iFSServices::GetInstance()->Stat( pTrans->ToStringAPI( pObj->GetName() ), statArgs);
+    }
+    catch(eFSServices& e)
+    {
+        cDebug d("CreateObject");
+        d.TraceError( "*** Stat of %s failed!!!\n", pObj->GetName().AsString().c_str() );
+        if( mpErrorBucket )
         {
             e.SetFatality( false );
-			mpErrorBucket->AddError( e );
+            mpErrorBucket->AddError( e );
         }
-		return false;
-	}
-	
-	//
-	// don't create the object if it is on a different file system...
-	//
-	if( gCrossFileSystems == false && (mDev != 0) && (statArgs.dev != mDev) )
-	{
-        TW_NOTIFY_NORMAL(	TSS_GetString( cFS, fs::STR_DIFFERENT_FILESYSTEM ).c_str(),
-							pTrans->ToStringDisplay( pObj->GetName() ).c_str() );
-		return false;
-	}
+        return false;
+    }
+    
+    //
+    // don't create the object if it is on a different file system...
+    //
+    if( gCrossFileSystems == false && (mDev != 0) && (statArgs.dev != mDev) )
+    {
+        TW_NOTIFY_NORMAL(   TSS_GetString( cFS, fs::STR_DIFFERENT_FILESYSTEM ).c_str(),
+                            pTrans->ToStringDisplay( pObj->GetName() ).c_str() );
+        return false;
+    }
 
-	//
-	// fill out all of the appropriate properties....
-	//
-	propSet.SetDev			(statArgs.dev);
-    propSet.SetRDev			(statArgs.rdev);
-	propSet.SetInode		(statArgs.ino);
-	propSet.SetMode			(statArgs.mode);
-	propSet.SetNLink		(statArgs.nlink);
-	propSet.SetUID			(statArgs.uid);
-	propSet.SetGID			(statArgs.gid);
-	propSet.SetSize			(statArgs.size);
-	propSet.SetAccessTime	(statArgs.atime);
-	propSet.SetModifyTime	(statArgs.mtime);
-	propSet.SetCreateTime	(statArgs.ctime);
-	propSet.SetBlockSize	(statArgs.blksize);
-	propSet.SetBlocks		(statArgs.blocks);
-	propSet.SetGrowingFile	(statArgs.size);
+    //
+    // fill out all of the appropriate properties....
+    //
+    propSet.SetDev          (statArgs.dev);
+    propSet.SetRDev         (statArgs.rdev);
+    propSet.SetInode        (statArgs.ino);
+    propSet.SetMode         (statArgs.mode);
+    propSet.SetNLink        (statArgs.nlink);
+    propSet.SetUID          (statArgs.uid);
+    propSet.SetGID          (statArgs.gid);
+    propSet.SetSize         (statArgs.size);
+    propSet.SetAccessTime   (statArgs.atime);
+    propSet.SetModifyTime   (statArgs.mtime);
+    propSet.SetCreateTime   (statArgs.ctime);
+    propSet.SetBlockSize    (statArgs.blksize);
+    propSet.SetBlocks       (statArgs.blocks);
+    propSet.SetGrowingFile  (statArgs.size);
 
-	// set the file type
-	switch(statArgs.mFileType)
-	{
-	case cFSStatArgs::TY_FILE:
-		propSet.SetFileType(cFSPropSet::FT_FILE);
-		break;
-	case cFSStatArgs::TY_DIR:
-		propSet.SetFileType(cFSPropSet::FT_DIR);
-		break;
-	case cFSStatArgs::TY_BLOCKDEV:
-		propSet.SetFileType(cFSPropSet::FT_BLOCKDEV);
-		break;
-	case cFSStatArgs::TY_CHARDEV:
-		propSet.SetFileType(cFSPropSet::FT_CHARDEV);
-		break;
-	case cFSStatArgs::TY_SYMLINK:
-		propSet.SetFileType(cFSPropSet::FT_SYMLINK);
-		break;
-	case cFSStatArgs::TY_FIFO:
-		propSet.SetFileType(cFSPropSet::FT_FIFO);
-		break;
-	case cFSStatArgs::TY_SOCK:
-		propSet.SetFileType(cFSPropSet::FT_SOCK);
-		break;
-	case cFSStatArgs::TY_DOOR:
-		propSet.SetFileType(cFSPropSet::FT_DOOR);
-		break;
-	case cFSStatArgs::TY_PORT:
-		propSet.SetFileType(cFSPropSet::FT_PORT);
-		break;
-	default:
-		// set it to invalid
-		propSet.SetFileType(cFSPropSet::FT_INVALID);
-	}
+    // set the file type
+    switch(statArgs.mFileType)
+    {
+    case cFSStatArgs::TY_FILE:
+        propSet.SetFileType(cFSPropSet::FT_FILE);
+        break;
+    case cFSStatArgs::TY_DIR:
+        propSet.SetFileType(cFSPropSet::FT_DIR);
+        break;
+    case cFSStatArgs::TY_BLOCKDEV:
+        propSet.SetFileType(cFSPropSet::FT_BLOCKDEV);
+        break;
+    case cFSStatArgs::TY_CHARDEV:
+        propSet.SetFileType(cFSPropSet::FT_CHARDEV);
+        break;
+    case cFSStatArgs::TY_SYMLINK:
+        propSet.SetFileType(cFSPropSet::FT_SYMLINK);
+        break;
+    case cFSStatArgs::TY_FIFO:
+        propSet.SetFileType(cFSPropSet::FT_FIFO);
+        break;
+    case cFSStatArgs::TY_SOCK:
+        propSet.SetFileType(cFSPropSet::FT_SOCK);
+        break;
+    case cFSStatArgs::TY_DOOR:
+        propSet.SetFileType(cFSPropSet::FT_DOOR);
+        break;
+    case cFSStatArgs::TY_PORT:
+        propSet.SetFileType(cFSPropSet::FT_PORT);
+        break;
+    default:
+        // set it to invalid
+        propSet.SetFileType(cFSPropSet::FT_INVALID);
+    }
 
-	return true;
-	
+    return true;
+    
 }
 

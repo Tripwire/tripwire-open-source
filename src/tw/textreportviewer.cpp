@@ -194,59 +194,59 @@ void cTextReportViewer::InitOStream()
 
 void cTextReportViewer::DisplayReportAndHaveUserUpdateIt( const TSTRING& edName, ReportingLevel level ) //throw (eFSServices)
 {
-	if (!CanUpdate())
-	{
-		// We should not be calling this for classes derived from cTextReport that can't update
-		THROW_INTERNAL("textreportviewer.cpp");
-	}
+    if (!CanUpdate())
+    {
+        // We should not be calling this for classes derived from cTextReport that can't update
+        THROW_INTERNAL("textreportviewer.cpp");
+    }
 
     ASSERT( ! edName.empty() );
 
-	//
+    //
     // get temp filename in which to store user-readable report
     //
     TSTRING strTempFile;
-	iFSServices* pFSServices = iFSServices::GetInstance();
+    iFSServices* pFSServices = iFSServices::GetInstance();
     ASSERT( pFSServices != 0 );
 
     pFSServices->GetTempDirName( strTempFile );
-	strTempFile += _T("twtempXXXXXX");
-	pFSServices->MakeTempFilename( strTempFile );
+    strTempFile += _T("twtempXXXXXX");
+    pFSServices->MakeTempFilename( strTempFile );
 
     // this try/catch ensures the temp file was removed...
-	try
-	{
+    try
+    {
         // we are updating...
         mfUpdate = true; 
 
-		//
-		// write report to the temp file.  put checks beside each FCO entry.
-		//        
-		PrintTextReport( strTempFile, level );
+        //
+        // write report to the temp file.  put checks beside each FCO entry.
+        //        
+        PrintTextReport( strTempFile, level );
     
-		//
-		// find an appropriate editor and launch it on the temp file.  the user
-		// can uncheck any item she doesn't want put back into the database.
-		//
-		LaunchEditorOnFile( strTempFile, edName );
+        //
+        // find an appropriate editor and launch it on the temp file.  the user
+        // can uncheck any item she doesn't want put back into the database.
+        //
+        LaunchEditorOnFile( strTempFile, edName );
 
-		//
-		// read report back in from the temp file and remove any unchecked entries from
-		// the report
-		//
-		ReadTextReport( strTempFile );    
+        //
+        // read report back in from the temp file and remove any unchecked entries from
+        // the report
+        //
+        ReadTextReport( strTempFile );    
 
-		//
-		// remove unchecked elements from remove
-		//        
+        //
+        // remove unchecked elements from remove
+        //        
         RemoveFCOsFromReport();
-	}
-	catch(...)
-	{
-		// delete the temp file, then rethrow
-	    pFSServices->FileDelete( strTempFile );
-		throw;
-	}
+    }
+    catch(...)
+    {
+        // delete the temp file, then rethrow
+        pFSServices->FileDelete( strTempFile );
+        throw;
+    }
     //
     // delete temp file
     //
@@ -267,15 +267,15 @@ void cTextReportViewer::PrintTextReport( const TSTRING& strFilename, ReportingLe
     if( strFilename.compare(_T("-")) == 0 )
     {
         mpOut = &TCOUT;
-		OutputTextReport();
+        OutputTextReport();
     }
     else
     {
         fixed_basic_ofstream<TCHAR> out;
         OpenOutputFile( out, strFilename );
         mpOut = &out;
-		OutputTextReport();
-		out.close();
+        OutputTextReport();
+        out.close();
     }
 }
 
@@ -285,8 +285,8 @@ void cTextReportViewer::PrintTextReport( const TSTRING& strFilename, ReportingLe
 void cTextReportViewer::PrintTextReport( TOSTREAM& ostr, ReportingLevel level )
 {
     mReportingLevel = level;
-	mpOut = &ostr;
-	OutputTextReport();
+    mpOut = &ostr;
+    OutputTextReport();
 }
 
 
@@ -295,26 +295,26 @@ void cTextReportViewer::GetReportNumbers()
     cFCOReportGenreIter genreIter( *mpReport );
     for( genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next() )
     {   
-	    // We need to at least get the max severity in this function
-	    cFCOReportSpecIter ri( genreIter );
-	    for( ri.SeekBegin(); !ri.Done(); ri.Next() )
-	    { 
-		    if( !IgnoreThisSpec( ri.GetAttr() ) )
-		    {
-			    int nAdded   = ri.GetAddedSet()->Size();
-			    int nRemoved = ri.GetRemovedSet()->Size();
-			    int nChanged = ri.GetNumChanged();
+        // We need to at least get the max severity in this function
+        cFCOReportSpecIter ri( genreIter );
+        for( ri.SeekBegin(); !ri.Done(); ri.Next() )
+        { 
+            if( !IgnoreThisSpec( ri.GetAttr() ) )
+            {
+                int nAdded   = ri.GetAddedSet()->Size();
+                int nRemoved = ri.GetRemovedSet()->Size();
+                int nChanged = ri.GetNumChanged();
 
-			    if( nAdded || nRemoved || nChanged ) 
+                if( nAdded || nRemoved || nChanged ) 
                 {
-				    // update the max severity
-				    if( mMaxSeverityViolated < ri.GetAttr()->GetSeverity() )
-					    mMaxSeverityViolated = ri.GetAttr()->GetSeverity();
+                    // update the max severity
+                    if( mMaxSeverityViolated < ri.GetAttr()->GetSeverity() )
+                        mMaxSeverityViolated = ri.GetAttr()->GetSeverity();
 
-				    mNumberViolations += ( nAdded + nRemoved + nChanged );
-			    }
-		    }
-	    }
+                    mNumberViolations += ( nAdded + nRemoved + nChanged );
+                }
+            }
+        }
     }   
 
     mfGotNumbers = true;
@@ -495,8 +495,8 @@ void cTextReportViewer::OutputObjectSummary()
     //
     // check if we should output summary
     //    
-	if (!WantOutputObjectSummary())
-		return;
+    if (!WantOutputObjectSummary())
+        return;
 
     //
     // output summary header
@@ -545,11 +545,11 @@ void cTextReportViewer::OutputObjectSummary( const cFCOReportGenreIter& genreIte
     bool violationReported = false;
     for( ri.SeekBegin(); !ri.Done(); ri.Next() )
     { 
-		// skip this spec if it's not one we care about for this report
-		if (IgnoreThisSpec(ri.GetAttr()))
-			continue;
+        // skip this spec if it's not one we care about for this report
+        if (IgnoreThisSpec(ri.GetAttr()))
+            continue;
         
-		//
+        //
         // output a spec header if it was violated
         //
         if( ! SpecEmpty( ri ) )
@@ -600,8 +600,8 @@ void cTextReportViewer::OutputObjectDetails()
     //
     // check if we should output details
     //
-	if (!WantOutputObjectDetails())
-		return;
+    if (!WantOutputObjectDetails())
+        return;
 
     //
     // output detail header
@@ -641,9 +641,9 @@ void cTextReportViewer::OutputObjectDetails( const cFCOReportGenreIter& genreIte
 
     for(ri.SeekBegin() ; !ri.Done(); ri.Next() )
     {        
-		// skip this spec if it's not one we care about for this report
-		if (IgnoreThisSpec(ri.GetAttr()))
-			continue;
+        // skip this spec if it's not one we care about for this report
+        if (IgnoreThisSpec(ri.GetAttr()))
+            continue;
     
         //
         // output spec section header if there are changes
@@ -689,7 +689,7 @@ void cTextReportViewer::OutputFooter()
 bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TSTRING& edName ) //throw (eTextReportViewer)
 {
     bool fRanViewer = false;
-	TSTRING editor = edName;
+    TSTRING editor = edName;
 
     // make sure we can read from this file
     cFileUtil::TestFileReadable( strFilename );
@@ -703,7 +703,7 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
     le_set("DISPLAY");  // DISPLAY and HOME needed so we can launch X apps. X apps apparently check
     le_set("HOME");     // a .xpermissions file in the users home dir
     le_set("LANG");     // LANG allowed through in case any apps need 
-	int systemRet = msystem( (char*) ( ( editor+ _T(' ') + strFilename ).c_str() ) );
+    int systemRet = msystem( (char*) ( ( editor+ _T(' ') + strFilename ).c_str() ) );
     le_unset("LANG");
     le_unset("HOME");
     le_unset("DISPLAY");
@@ -715,8 +715,8 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
     }
     else
     {
-		//ASSERT( false );
-		throw eTextReportViewerEditorLaunch( edName );
+        //ASSERT( false );
+        throw eTextReportViewerEditorLaunch( edName );
     }
 
 #endif //if IS_WIN32
@@ -776,23 +776,23 @@ void cTextReportViewer::PrintBallotLine( const iFCO& FCO )
 // returns false if finds "\n#" -- start of new genre
 int cTextReportViewer::FindNextLineToken()
 {
-	// loop over chars until (1) EOF is hit, or (2) we find "\n[" or '\n#'
+    // loop over chars until (1) EOF is hit, or (2) we find "\n[" or '\n#'
     for( GetChar(); !mpIn->eof(); GetChar() )
-	{
-		if( mCurrentChar[0] == '\n' )
-		{
+    {
+        if( mCurrentChar[0] == '\n' )
+        {
             // we'll only compare to single byte chars
             // so it's ok to use PeekChar() instead of our GetChar()
-			if( PeekChar() == '[' )
-			{
-				return TOKEN_BALLOT_BOX;
-			}
+            if( PeekChar() == '[' )
+            {
+                return TOKEN_BALLOT_BOX;
+            }
             else if( PeekChar() == '#' ) // start of new genre
-			{
-				return TOKEN_GENRE;
-			}
-		}
-	}
+            {
+                return TOKEN_GENRE;
+            }
+        }
+    }
 
     return( TOKEN_EOF );
 }
@@ -828,9 +828,9 @@ void cTextReportViewer::ReadTextReport( const TSTRING& strFilename ) //throw (eT
     }
         
     //
-	// close the file
+    // close the file
     //
-	in.close();
+    in.close();
 }
 
 
@@ -839,22 +839,22 @@ void cTextReportViewer::GetGenreInfo( FCOList** ppCurList )
     //
     // identify genre
     //
-	TSTRING strGenre = GetGenre();
-	ASSERT( ! strGenre.empty() );
-	cGenre::Genre g = cGenreSwitcher::GetInstance()->StringToGenre( strGenre.c_str() );
-	if( cGenre::GENRE_INVALID == g)
-	{
-		throw eTextReportViewerReportCorrupt(); // TODO: ERR_UKNOWN_GENRE
-	}
-	cGenreSwitcher::GetInstance()->SelectGenre( g );
+    TSTRING strGenre = GetGenre();
+    ASSERT( ! strGenre.empty() );
+    cGenre::Genre g = cGenreSwitcher::GetInstance()->StringToGenre( strGenre.c_str() );
+    if( cGenre::GENRE_INVALID == g)
+    {
+        throw eTextReportViewerReportCorrupt(); // TODO: ERR_UKNOWN_GENRE
+    }
+    cGenreSwitcher::GetInstance()->SelectGenre( g );
 
     //
     // get list of fcos in report for this genre
     //
     GenreList::iterator curIter = mFCOsRemoveFromReport.find( g );
-	if( curIter == mFCOsRemoveFromReport.end() )        
-		throw eTextReportViewerReportCorrupt(); // TODO: ERR_UKNOWN_GENRE
-	*ppCurList = curIter->second;
+    if( curIter == mFCOsRemoveFromReport.end() )        
+        throw eTextReportViewerReportCorrupt(); // TODO: ERR_UKNOWN_GENRE
+    *ppCurList = curIter->second;
 
     //
     // get the prop displayer
@@ -874,23 +874,23 @@ void cTextReportViewer::GetBallotInfo( FCOList* pCurList )
     if( IsChecked() )
     {
         //
-		// look at the ballot line and get the name of the FCO
+        // look at the ballot line and get the name of the FCO
         //
         cFCOName fcoName;
-		GetFCONameFromBallotLine( fcoName );
+        GetFCONameFromBallotLine( fcoName );
 
-		///////////////////////////////////////
-		// remove this FCO from list
-		cTextReportViewer::FCOList::const_iterator iter;
-		iter = pCurList->find( fcoName );
-		if( iter == pCurList->end() )
-		{
-			throw eTextReportViewerReportCorrupt();// TODO: ERR_UKNOWN_NAME
-		}
+        ///////////////////////////////////////
+        // remove this FCO from list
+        cTextReportViewer::FCOList::const_iterator iter;
+        iter = pCurList->find( fcoName );
+        if( iter == pCurList->end() )
+        {
+            throw eTextReportViewerReportCorrupt();// TODO: ERR_UKNOWN_NAME
+        }
 
-		pCurList->erase( fcoName );
-		///////////////////////////////////////
-	}
+        pCurList->erase( fcoName );
+        ///////////////////////////////////////
+    }
 }
 
 // reads input up to EOL or EOF
@@ -979,7 +979,7 @@ void cTextReportViewer::GetFCONameFromBallotLine( cFCOName& fcoName ) //throw (e
         else if( TW_IS_EOL( chIn ) )
         {
             // if EOL, there was no name!
-			throw eTextReportViewerReportCorrupt(); 
+            throw eTextReportViewerReportCorrupt(); 
         }
         else
         {
@@ -1014,7 +1014,7 @@ void cTextReportViewer::GetFCONameFromBallotLine( cFCOName& fcoName ) //throw (e
                 cStringUtil::StrToTstr( strFCOName ), 
                 fcoName ) )
     {
-		throw eTextReportViewerReportCorrupt(); // TODO -- it might be nice to be able to specify what line of the report got corrupted
+        throw eTextReportViewerReportCorrupt(); // TODO -- it might be nice to be able to specify what line of the report got corrupted
     }
 }
 
@@ -1115,17 +1115,17 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
     for( ; iter != mFCOsRemoveFromReport.end(); iter++ )
         nFCOsToRemove += iter->second->size();
 
-	if( nFCOsToRemove != nFCOsRemoved )
-	{
-		// TODO -- maybe have a different enumeration for this?
-		throw eTextReportViewerReportCorrupt(); 
-	}
+    if( nFCOsToRemove != nFCOsRemoved )
+    {
+        // TODO -- maybe have a different enumeration for this?
+        throw eTextReportViewerReportCorrupt(); 
+    }
 }
 
 void cTextReportViewer::OutputReportHeader()
 {
-	if (!WantOutputReportHeader())
-		return;
+    if (!WantOutputReportHeader())
+        return;
 
     const int headerColumnWidth = 30;
 
@@ -1202,8 +1202,8 @@ void cTextReportViewer::OutputRulesSummary()
     //
     // check if we should output summary
     //    
-	if( !WantOutputRulesSummary() )
-		return;
+    if( !WantOutputRulesSummary() )
+        return;
 
     //
     // output summary header
@@ -1321,9 +1321,9 @@ void cTextReportViewer::CollateRulesSummary( const cFCOReportGenreIter& genreIte
     cFCOReportSpecIter ri( genreIter );
     for( ri.SeekBegin(); !ri.Done(); ri.Next() )
     {
-		// skip this spec if it's not one we care about for this report
-		if (IgnoreThisSpec(ri.GetAttr()))
-			continue;
+        // skip this spec if it's not one we care about for this report
+        if (IgnoreThisSpec(ri.GetAttr()))
+            continue;
 
         RuleSummaryLine newLine;
         
@@ -1373,8 +1373,8 @@ void cTextReportViewer::CollateRulesSummary( const cFCOReportGenreIter& genreIte
 
 void cTextReportViewer::OutputSpecHeader( const cFCOReportSpecIter &ri )
 {
-	if (!WantOutputSpecHeader())
-		return;
+    if (!WantOutputSpecHeader())
+        return;
 
     (*mpOut) << g_sz79Dashes << endl;
     
@@ -1650,7 +1650,7 @@ bool cTextReportViewer::WantOutputRulesSummary()                 { return true; 
 bool cTextReportViewer::WantOutputSpecHeader()                   { return true;  }
 bool cTextReportViewer::WantOutputObjectSummary()                { return true;  }
 bool cTextReportViewer::WantOutputObjectDetails()                { return true;  }
-bool cTextReportViewer::CanUpdate()								 { return true;  }
+bool cTextReportViewer::CanUpdate()                              { return true;  }
 
 
 //=========================================================================
@@ -1661,10 +1661,10 @@ void OpenInputFile( std::ifstream& in, const TSTRING& strFile ) // throw( eTextR
 {
     in.open( cStringUtil::TstrToStr( strFile ).c_str() );
     
-	if(! in.is_open())
-	{
-		throw eTextReportViewerFileOpen( strFile ); 
-	}
+    if(! in.is_open())
+    {
+        throw eTextReportViewerFileOpen( strFile ); 
+    }
 }
 
 void OpenOutputFile( fixed_basic_ofstream<TCHAR>& out, const TSTRING& strFile ) // throw( eTextReportViewer )
@@ -1673,7 +1673,7 @@ void OpenOutputFile( fixed_basic_ofstream<TCHAR>& out, const TSTRING& strFile ) 
 
     // we explicitly create the file so that we control the 
     // permissions on the new file.
-	unlink(narrowFilename.c_str());
+    unlink(narrowFilename.c_str());
     int fd = open(narrowFilename.c_str(), O_RDWR|O_CREAT|O_TRUNC|O_EXCL, 00600);
     if (fd == -1 || close(fd) != 0) {
       throw eTextReportViewerFileOpen( strFile ); 
@@ -1681,8 +1681,8 @@ void OpenOutputFile( fixed_basic_ofstream<TCHAR>& out, const TSTRING& strFile ) 
 
     out.open( narrowFilename.c_str() );
         
-	if(! out.is_open())
-		throw eTextReportViewerFileOpen( strFile ); 
+    if(! out.is_open())
+        throw eTextReportViewerFileOpen( strFile ); 
 }
 
 bool SpecEmpty( const cFCOReportSpecIter& ri )
@@ -1778,35 +1778,34 @@ cEmailReportViewer::cEmailReportViewer( const cFCOReportHeader& h, const cFCORep
 
 bool cEmailReportViewer::IgnoreThisSpec(const cFCOSpecAttr *attr)
 {
-	// IgnoreThisSpec - returns false if the email address is specified
-	// for the given spec attributes.
+    // IgnoreThisSpec - returns false if the email address is specified
+    // for the given spec attributes.
 
-  if (mbForceFullReport)
-    return false;
+    if (mbForceFullReport)
+        return false;
 
+    // loop through all email addresses for this spec
+    cFCOSpecAttrEmailIter emailIter(*attr);
+    for(emailIter.SeekBegin(); ! emailIter.Done(); emailIter.Next())
+    {
+        if (emailIter.EmailAddress() == mAddress)
+            return false; // Don't ignore it. It applies to me.
+    }
 
-	// loop through all email addresses for this spec
-	cFCOSpecAttrEmailIter emailIter(*attr);
-	for(emailIter.SeekBegin(); ! emailIter.Done(); emailIter.Next())
-	{
-		if (emailIter.EmailAddress() == mAddress)
-			return false; // Don't ignore it. It applies to me.
-	}
-
-	return true; // Ignore it. It doesn't have my name on it.
+    return true; // Ignore it. It doesn't have my name on it.
 }
 
 bool cEmailReportViewer::WantOutputObjectSummary()
 {
-	// This area is not useful unless you're doing the ballot box thing,
-	// which is not applicable to emailed reports.
-	return false;
+    // This area is not useful unless you're doing the ballot box thing,
+    // which is not applicable to emailed reports.
+    return false;
 }
 
-bool cEmailReportViewer::CanUpdate()								 
+bool cEmailReportViewer::CanUpdate()                                 
 {
-	// this derived class does not allow "DisplayReportAndHaveUserUpdateIt()"
-	return false;
+    // this derived class does not allow "DisplayReportAndHaveUserUpdateIt()"
+    return false;
 }
 
 
@@ -1832,7 +1831,7 @@ TSTRING cTextReportViewer::SingleLineReport()
     // format time: YYYYMMDDHHMMSS
     //
     TCHAR szDate[256];
-	_tcsftime( szDate, countof( szDate ), _T("%Y%m%d%H%M%S"), ptm );
+    _tcsftime( szDate, countof( szDate ), _T("%Y%m%d%H%M%S"), ptm );
 
     sstrReport << TSS_GetString( cTW, tw::STR_TRIPWIRE_REPORT_SHORT );
     sstrReport << _T(" ");
@@ -1843,36 +1842,36 @@ TSTRING cTextReportViewer::SingleLineReport()
     //
     // get report stats
     //    
-	int nAddedTotal   = 0;
-	int nRemovedTotal = 0;
-	int nChangedTotal = 0;
+    int nAddedTotal   = 0;
+    int nRemovedTotal = 0;
+    int nChangedTotal = 0;
     int nViolations   = 0;
     int maxSeverityViolated = 0;
 
     cFCOReportGenreIter genreIter( *mpReport );
     for( genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next() )
     {
-	    // We need to at least get the max severity in this function
-	    cFCOReportSpecIter ri( genreIter );
-	    for( ri.SeekBegin(); !ri.Done(); ri.Next() )
-	    {
-			int nAdded   = ri.GetAddedSet()->Size();
-			int nRemoved = ri.GetRemovedSet()->Size();
-			int nChanged = ri.GetNumChanged();
+        // We need to at least get the max severity in this function
+        cFCOReportSpecIter ri( genreIter );
+        for( ri.SeekBegin(); !ri.Done(); ri.Next() )
+        {
+            int nAdded   = ri.GetAddedSet()->Size();
+            int nRemoved = ri.GetRemovedSet()->Size();
+            int nChanged = ri.GetNumChanged();
 
-	        nAddedTotal   += nAdded;
-	        nRemovedTotal += nRemoved;
-	        nChangedTotal += nChanged;
+            nAddedTotal   += nAdded;
+            nRemovedTotal += nRemoved;
+            nChangedTotal += nChanged;
 
-			if( nAdded || nRemoved || nChanged ) 
+            if( nAdded || nRemoved || nChanged ) 
             {
-				// update the max severity
-				if( maxSeverityViolated < ri.GetAttr()->GetSeverity() )
-					maxSeverityViolated = ri.GetAttr()->GetSeverity();
+                // update the max severity
+                if( maxSeverityViolated < ri.GetAttr()->GetSeverity() )
+                    maxSeverityViolated = ri.GetAttr()->GetSeverity();
 
-				nViolations += ( nAdded + nRemoved + nChanged );
-			}
-	    }
+                nViolations += ( nAdded + nRemoved + nChanged );
+            }
+        }
     }
 
     sstrReport << _T(" ") << TSS_GetString( cTW, tw::STR_VIOLATIONS_SHORT ) << _T(":") << nViolations;

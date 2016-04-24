@@ -33,8 +33,8 @@
 // fcosetws.h
 //
 // cFCOSetWS -- derived from cFCOSetImpl, this set is associated with a spec and
-//		for each insert, ASSERTs that the fco is contained in the spec.
-//		ws stands for either With Spec, With Sanity checking, or Warm Salamander
+//      for each insert, ASSERTs that the fco is contained in the spec.
+//      ws stands for either With Spec, With Sanity checking, or Warm Salamander
 #ifndef __FCOSETWS_H
 #define __FCOSETWS_H
 
@@ -52,84 +52,84 @@
 class cFCOSetWS : public cFCOSetImpl
 {
 public:
-	cFCOSetWS(const iFCOSpec* pSpec);
-		// all FCOs that are inserted will be ASSERTed to be contained in this spec.
-		// the class will AddRef() the spec, so the sanity of this class can be subverted
-		// by changing the contents of the spec after this set is created
-	cFCOSetWS(const cFCOSetWS& rhs);	
-	virtual ~cFCOSetWS();
-	void operator=(const cFCOSetWS& rhs);	
+    cFCOSetWS(const iFCOSpec* pSpec);
+        // all FCOs that are inserted will be ASSERTed to be contained in this spec.
+        // the class will AddRef() the spec, so the sanity of this class can be subverted
+        // by changing the contents of the spec after this set is created
+    cFCOSetWS(const cFCOSetWS& rhs);    
+    virtual ~cFCOSetWS();
+    void operator=(const cFCOSetWS& rhs);   
 
-	void SetSpec(const iFCOSpec* pSpec);
-		// this may only be called if the set is empty (useful if you want to construct a
-		// set but you don't have the spec yet. The spec must be set before Insert() is called.
+    void SetSpec(const iFCOSpec* pSpec);
+        // this may only be called if the set is empty (useful if you want to construct a
+        // set but you don't have the spec yet. The spec must be set before Insert() is called.
 
-	virtual void				Insert(iFCO* pFCO);
+    virtual void                Insert(iFCO* pFCO);
 private:
-	const iFCOSpec* mpSpec;
+    const iFCOSpec* mpSpec;
 };
 
 //#############################################################################
 // inline implementation
 inline cFCOSetWS::cFCOSetWS(const iFCOSpec* pSpec) :
-	cFCOSetImpl(),
-	mpSpec(pSpec)
+    cFCOSetImpl(),
+    mpSpec(pSpec)
 {
-	if(mpSpec)
-		mpSpec->AddRef();
+    if(mpSpec)
+        mpSpec->AddRef();
 }
 inline cFCOSetWS::cFCOSetWS(const cFCOSetWS& rhs) :
-	cFCOSetImpl(rhs),
-	mpSpec(rhs.mpSpec)
+    cFCOSetImpl(rhs),
+    mpSpec(rhs.mpSpec)
 {
-	if(mpSpec)
-		mpSpec->AddRef();
+    if(mpSpec)
+        mpSpec->AddRef();
 }
 
 inline cFCOSetWS::~cFCOSetWS()
 {
-	if(mpSpec)
-		mpSpec->Release();
+    if(mpSpec)
+        mpSpec->Release();
 }
 
 inline void cFCOSetWS::operator=(const cFCOSetWS& rhs)
 {
-	mpSpec = rhs.mpSpec;
-	if(mpSpec)
-		mpSpec->AddRef();
-	cFCOSetImpl::operator=(rhs); 
+    mpSpec = rhs.mpSpec;
+    if(mpSpec)
+        mpSpec->AddRef();
+    cFCOSetImpl::operator=(rhs); 
 }
 
 inline void cFCOSetWS::SetSpec(const iFCOSpec* pSpec)
 {
-	if(mpSpec)
-		mpSpec->Release();
-	mpSpec = pSpec;
-	if(mpSpec)
-		mpSpec->AddRef();
+    if(mpSpec)
+        mpSpec->Release();
+    mpSpec = pSpec;
+    if(mpSpec)
+        mpSpec->AddRef();
 }
 
 inline void cFCOSetWS::Insert(iFCO* pFCO)
 {
-	// here is the only real work this class does!
+    // here is the only real work this class does!
 #ifdef _DEBUG
-	// TODO -- note that this doesn't do any checking if the spec is NULL. I
-	// am not sure if this is the right thing to do or not.
-	if(mpSpec)
-	{
-		ASSERT(mpSpec->SpecContainsFCO(pFCO->GetName()));
+    // TODO -- note that this doesn't do any checking if the spec is NULL. I
+    // am not sure if this is the right thing to do or not.
+    if(mpSpec)
+    {
+        ASSERT(mpSpec->SpecContainsFCO(pFCO->GetName()));
 
-		if(! mpSpec->SpecContainsFCO(pFCO->GetName()))
-		{
-			cDebug d("cFCOSetWS::Insert");
-			d.TraceError("*** Insert of FCO %s not appropriate for spec %s\n", pFCO->GetName().AsString().c_str(), mpSpec->GetName().c_str());
-			d.TraceError("*** Spec contents:\n");
-			mpSpec->TraceContents(cDebug::D_ERROR);
-		}
-	}
+        if(! mpSpec->SpecContainsFCO(pFCO->GetName()))
+        {
+            cDebug d("cFCOSetWS::Insert");
+            d.TraceError("*** Insert of FCO %s not appropriate for spec %s\n", pFCO->GetName().AsString().c_str(), mpSpec->GetName().c_str());
+            d.TraceError("*** Spec contents:\n");
+            mpSpec->TraceContents(cDebug::D_ERROR);
+        }
+    }
 #endif // _DEBUG
 
-	cFCOSetImpl::Insert(pFCO);
+    cFCOSetImpl::Insert(pFCO);
 }
 
 

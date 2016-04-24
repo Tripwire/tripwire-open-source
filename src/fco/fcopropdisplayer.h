@@ -125,17 +125,17 @@ public:
     virtual void Merge( const iFCOPropDisplayer* const ppd ) = 0;
         // adds all prop display info from rhs to this.  it is an error to merge two prop diplayers of different derived types
 
-	virtual const cFCOPropVector& GetPropsConverted() const = 0;
+    virtual const cFCOPropVector& GetPropsConverted() const = 0;
         // returns vector where if a given prop in the vector is valid, then this class 
         // can do a PropAsString that's different from the prop's own AsString()
 
-	virtual TSTRING PropAsString( const iFCO* const pFCO, int const propIdx, int iOffset = 0, int iWidth = 0) const = 0;    
+    virtual TSTRING PropAsString( const iFCO* const pFCO, int const propIdx, int iOffset = 0, int iWidth = 0) const = 0;    
     virtual TSTRING PropAsString( const iFCO* const pFCO, int const propIdx, int iOffset = 0, int iWidth = 0) = 0;    
         // returns a more readable value than iFCOProp::AsString() (which simply returns a text version
         // of the prop's value), (e.g. instead of calling fsprop(ATIME)::AsString() and getting 4578295721,
         // you can call PropAsString to get "Sun Sep 26 1998" or the like.) If the displayer doesn't 
         // know how to display the property, simply returns iFCOProp::AsString()
-		// The non-const version will attempt to initialize the property if Lazy is set to true.
+        // The non-const version will attempt to initialize the property if Lazy is set to true.
 
         // iOffset and iWidth should be used for multi-line properties;  they only have meaning for lines
         // after the first, so most single-line properties should ignore them.
@@ -157,7 +157,7 @@ public:
         // describes output of GetDetails and is formatted just like it.  To be used as a header.
         // since the header is a two-lined output, it needs a margin for the second line
 
-	virtual void InitForProp( const iFCO* const pFCO, const int propIdx ) = 0;
+    virtual void InitForProp( const iFCO* const pFCO, const int propIdx ) = 0;
         // InitForProp() is called to initialize the class's data structures to convert the passed 
         // property only. This can be used if there is only a small subset of the total system 
         // information that will actually be used, saving on memory and disk usage.
@@ -165,8 +165,8 @@ public:
     virtual void InitForFCO( const iFCO* const ifco ) = 0;
         // calls InitForProp on all valid props in ifco
 
-	virtual void SetLazy( const bool bLazy = true ) = 0;
-	virtual bool GetLazy() const = 0;    
+    virtual void SetLazy( const bool bLazy = true ) = 0;
+    virtual bool GetLazy() const = 0;    
         // Get/SetLazy() is used for the lazy evaluation of the class's conversion data; if SetLazy(true) is called, 
         // then all PropAsString() calls will have an implicit InitForProp()call, if it is needed, before the conversion.
 };

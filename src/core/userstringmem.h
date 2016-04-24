@@ -69,11 +69,11 @@ public:
     ~cUserStringMemBased();
 
     // the abstract interface
-    virtual bool            SelectStringSet	(int setID);
-    virtual const TCHAR*    GetString		(int stringID) const;
-    virtual void			ClearStringSet	(int id);
-    virtual void			AddStringSet	(int setID, const iUserString::tStringPair* pPairArray);
-    virtual void			AddString		(int setID, int stringID, TCHAR* string);
+    virtual bool            SelectStringSet (int setID);
+    virtual const TCHAR*    GetString       (int stringID) const;
+    virtual void            ClearStringSet  (int id);
+    virtual void            AddStringSet    (int setID, const iUserString::tStringPair* pPairArray);
+    virtual void            AddString       (int setID, int stringID, TCHAR* string);
 
 private:
     typedef std::map<int, TCHAR*> StringSet;

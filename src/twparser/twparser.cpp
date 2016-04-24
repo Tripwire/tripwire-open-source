@@ -54,6 +54,6 @@ cTWParser::cTWParser()
     //
     // TODO:BAM -- TSS_Dependency( ??? );
 
-	TSS_REGISTER_PKG_ERRORS( twparser )
+    TSS_REGISTER_PKG_ERRORS( twparser )
 }
 

@@ -81,12 +81,12 @@ void cSyslog::Log(const TCHAR* programName, cSyslog::LogType logType, const TCHA
 
     count = sizeof(char) * MB_CUR_MAX * _tcslen(programName); // note we use sizeof(char) * 2 because mb chars can be two bytes long
     identString.resize(count); 
-	count = wcstombs((char*)identString.data(), programName, count);
+    count = wcstombs((char*)identString.data(), programName, count);
     identString.resize(count); // count will be set to number of bytes written
 
     count = sizeof(char) * MB_CUR_MAX * _tcslen(message); 
     msgString.resize(count); 
-	count = wcstombs((char*)msgString.data(), message, count);
+    count = wcstombs((char*)msgString.data(), message, count);
     msgString.resize(count);
 
     const char* ident = programName.data();

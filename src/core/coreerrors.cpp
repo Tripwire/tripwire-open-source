@@ -68,34 +68,34 @@ TSS_REGISTER_ERROR( eBadCmdLine(),      _T("Command line error.") );
 
 /// Archive 
 
-TSS_REGISTER_ERROR( eArchive(),			_T("Archive error.") )
-TSS_REGISTER_ERROR( eArchiveOpen(),		_T("File could not be opened.") )
-TSS_REGISTER_ERROR( eArchiveWrite(),	_T("File could not be written.") )
-TSS_REGISTER_ERROR( eArchiveRead(),		_T("File could not be read.") )
-TSS_REGISTER_ERROR( eArchiveEOF(),		_T("End of file reached.") )
-TSS_REGISTER_ERROR( eArchiveSeek(),		_T("File seek failed.") )
-TSS_REGISTER_ERROR( eArchiveMemmap(),	_T("Memory mapped archive file invalid.") )
+TSS_REGISTER_ERROR( eArchive(),         _T("Archive error.") )
+TSS_REGISTER_ERROR( eArchiveOpen(),     _T("File could not be opened.") )
+TSS_REGISTER_ERROR( eArchiveWrite(),    _T("File could not be written.") )
+TSS_REGISTER_ERROR( eArchiveRead(),     _T("File could not be read.") )
+TSS_REGISTER_ERROR( eArchiveEOF(),      _T("End of file reached.") )
+TSS_REGISTER_ERROR( eArchiveSeek(),     _T("File seek failed.") )
+TSS_REGISTER_ERROR( eArchiveMemmap(),   _T("Memory mapped archive file invalid.") )
 TSS_REGISTER_ERROR( eArchiveOutOfMem(), _T("Archive ran out of memory.") )
 TSS_REGISTER_ERROR( eArchiveInvalidOp(),_T("Archive logic error.") )
-TSS_REGISTER_ERROR( eArchiveFormat(),	_T("Archive file format invalid.") )
+TSS_REGISTER_ERROR( eArchiveFormat(),   _T("Archive file format invalid.") )
 TSS_REGISTER_ERROR( eArchiveNotRegularFile(), _T("File is not a regular file.") )
-TSS_REGISTER_ERROR( eArchiveCrypto(),	_T("File could not be decrypted.") )
+TSS_REGISTER_ERROR( eArchiveCrypto(),   _T("File could not be decrypted.") )
 TSS_REGISTER_ERROR( eArchiveStringTooLong(),    _T("String was too long.") )
 
 
 /// File
 
-TSS_REGISTER_ERROR( eFile(),			_T("File error.") )
-TSS_REGISTER_ERROR( eFileOpen(),		_T("File could not be opened.") )
-TSS_REGISTER_ERROR( eFileWrite(),		_T("File could not be written.") )
-TSS_REGISTER_ERROR( eFileRead(),		_T("File could not be read.") )
-TSS_REGISTER_ERROR( eFileEOF(),			_T("End of file reached.") )
-TSS_REGISTER_ERROR( eFileSeek(),		_T("File seek failed.") )
-TSS_REGISTER_ERROR( eFileInvalidOp(),	_T("File logic error.") )
-TSS_REGISTER_ERROR( eFileTrunc(),		_T("File could not be truncated.") )
-TSS_REGISTER_ERROR( eFileClose(),		_T("File could not be closed.") )
-TSS_REGISTER_ERROR( eFileFlush(),		_T("File could not be flushed.") )
-TSS_REGISTER_ERROR( eFileRewind(),		_T("File could not be rewound.") )
+TSS_REGISTER_ERROR( eFile(),            _T("File error.") )
+TSS_REGISTER_ERROR( eFileOpen(),        _T("File could not be opened.") )
+TSS_REGISTER_ERROR( eFileWrite(),       _T("File could not be written.") )
+TSS_REGISTER_ERROR( eFileRead(),        _T("File could not be read.") )
+TSS_REGISTER_ERROR( eFileEOF(),         _T("End of file reached.") )
+TSS_REGISTER_ERROR( eFileSeek(),        _T("File seek failed.") )
+TSS_REGISTER_ERROR( eFileInvalidOp(),   _T("File logic error.") )
+TSS_REGISTER_ERROR( eFileTrunc(),       _T("File could not be truncated.") )
+TSS_REGISTER_ERROR( eFileClose(),       _T("File could not be closed.") )
+TSS_REGISTER_ERROR( eFileFlush(),       _T("File could not be flushed.") )
+TSS_REGISTER_ERROR( eFileRewind(),      _T("File could not be rewound.") )
 
 
 /// Win32
@@ -106,32 +106,32 @@ TSS_REGISTER_ERROR(eUnix(),               _T("Unix API failure.") )
 
 /// FSServices
 
-TSS_REGISTER_ERROR( eFSServices(),		 _T("File system error.") )
+TSS_REGISTER_ERROR( eFSServices(),       _T("File system error.") )
 TSS_REGISTER_ERROR( eFSServicesGeneric(),_T("File system error.") )
 
 
 /// Serializer
 
-TSS_REGISTER_ERROR( eSerializerUnknownType(),			_T("Unknown type encountered in file.\nFile format may not be valid for this platform.") )
-TSS_REGISTER_ERROR( eSerializerInputStreamFmt(),		_T("Invalid input stream format.") )
-TSS_REGISTER_ERROR( eSerializerOutputStreamFmt(),		_T("Invalid output stream format.") )
-TSS_REGISTER_ERROR( eSerializerInputStremTypeArray(),	_T("A bad index was encountered in file.") )
-TSS_REGISTER_ERROR( eSerializerArchive(),				_T("File read encountered an archive error.") )
-TSS_REGISTER_ERROR( eSerializerVersionMismatch(),		_T("File version mismatch.") )
-TSS_REGISTER_ERROR( eSerializerEncryption(),			_T("File encryption error.") )
-TSS_REGISTER_ERROR( eSerializer(),						_T("File format error.") )
+TSS_REGISTER_ERROR( eSerializerUnknownType(),           _T("Unknown type encountered in file.\nFile format may not be valid for this platform.") )
+TSS_REGISTER_ERROR( eSerializerInputStreamFmt(),        _T("Invalid input stream format.") )
+TSS_REGISTER_ERROR( eSerializerOutputStreamFmt(),       _T("Invalid output stream format.") )
+TSS_REGISTER_ERROR( eSerializerInputStremTypeArray(),   _T("A bad index was encountered in file.") )
+TSS_REGISTER_ERROR( eSerializerArchive(),               _T("File read encountered an archive error.") )
+TSS_REGISTER_ERROR( eSerializerVersionMismatch(),       _T("File version mismatch.") )
+TSS_REGISTER_ERROR( eSerializerEncryption(),            _T("File encryption error.") )
+TSS_REGISTER_ERROR( eSerializer(),                      _T("File format error.") )
 
 
 /// Command Line
 
-TSS_REGISTER_ERROR( eCmdLine(),				_T("Command line parsing error.") )
-TSS_REGISTER_ERROR( eCmdLineInvalidArg(),	_T("Invalid argument passed on command line.") )
-TSS_REGISTER_ERROR( eCmdLineBadArgParam(),	_T("Incorrect number of parameters to a command line argument.") )
-TSS_REGISTER_ERROR( eCmdLineBadParam(),		_T("Incorrect number of parameters on command line.") )
+TSS_REGISTER_ERROR( eCmdLine(),             _T("Command line parsing error.") )
+TSS_REGISTER_ERROR( eCmdLineInvalidArg(),   _T("Invalid argument passed on command line.") )
+TSS_REGISTER_ERROR( eCmdLineBadArgParam(),  _T("Incorrect number of parameters to a command line argument.") )
+TSS_REGISTER_ERROR( eCmdLineBadParam(),     _T("Incorrect number of parameters on command line.") )
 TSS_REGISTER_ERROR( eCmdLineBadSwitchPos(), _T("Switch appears after final command line parameter.") )
-TSS_REGISTER_ERROR( eCmdLineMutEx(),		_T("Specified command line switches are mutually exclusive.") )
-TSS_REGISTER_ERROR( eCmdLineDependency(),	_T("Command line parameter missing.") )
-TSS_REGISTER_ERROR( eCmdLineMultiArg(),		_T("Command line argument specified more than once.") )
+TSS_REGISTER_ERROR( eCmdLineMutEx(),        _T("Specified command line switches are mutually exclusive.") )
+TSS_REGISTER_ERROR( eCmdLineDependency(),   _T("Command line parameter missing.") )
+TSS_REGISTER_ERROR( eCmdLineMultiArg(),     _T("Command line argument specified more than once.") )
 
 
 /// TWLocale

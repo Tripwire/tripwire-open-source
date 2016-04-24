@@ -5,7 +5,7 @@
 set -e
 
 PRODUCT=tripwire
-VERSION=2.4.3.0
+VERSION=2.4.3.1
 
 platform() {
   case `uname` in

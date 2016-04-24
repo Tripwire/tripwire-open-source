@@ -72,7 +72,7 @@ cGenreSwitcher::~cGenreSwitcher()
 // thows an eError if newGenre is invalid
 void cGenreSwitcher::SelectGenre( cGenre::Genre g )
 {
-	iTWFactory::SetFactory( GetFactoryForGenre( g ) );
+    iTWFactory::SetFactory( GetFactoryForGenre( g ) );
     m_curGenre = g;
 }
 
@@ -142,22 +142,22 @@ bool cGenreSwitcher::IsGenreRegistered( cGenre::Genre g )
 bool cGenreSwitcher::IsGenreAppropriate( cGenre::Genre g )
 {
 #if IS_UNIX
-		const uint32 platformMask = cGenre::PLATFORM_MASK_UNIX; 
-	#else
-		#error who am I?
-	#endif
+        const uint32 platformMask = cGenre::PLATFORM_MASK_UNIX; 
+    #else
+        #error who am I?
+    #endif
 
-	return( ( platformMask & g ) != 0 );
+    return( ( platformMask & g ) != 0 );
 }
 
 
-iTWFactory*	cGenreSwitcher::GetFactoryForGenre( cGenre::Genre g )
+iTWFactory* cGenreSwitcher::GetFactoryForGenre( cGenre::Genre g )
 {
     cGenreInfoVec::const_iterator i = m_vGenres.find( g );
 
     if( i == m_vGenres.end() )
     {
-		ThrowAndAssert( INTERNAL_ERROR( "Switch to invalid genre factory") );
+        ThrowAndAssert( INTERNAL_ERROR( "Switch to invalid genre factory") );
     }
     
     ASSERT( (*i)->m_pFactory != NULL );
@@ -256,7 +256,7 @@ cGenreInfoVec::const_iterator cGenreInfoVec::find( const TSTRING& sGenre ) const
         //
         if (_tcsicmp(sGenre.c_str(), (*i)->m_sLongName.c_str()) == 0 || 
             _tcsicmp(sGenre.c_str(), (*i)->m_sShortName.c_str()) == 0)
-	        break;
+            break;
     }
 
     return( i );

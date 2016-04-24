@@ -78,9 +78,9 @@ class iSerializer;
 class iSerializable
 {
 public:
-	virtual void Read (iSerializer* pSerializer, int32 version = 0) = 0;	// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const	= 0;				// throw (eSerializer, eArchive)
-		// objects implement these methods to read and write themselves to a serializer. 
+    virtual void Read (iSerializer* pSerializer, int32 version = 0) = 0;    // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const  = 0;                // throw (eSerializer, eArchive)
+        // objects implement these methods to read and write themselves to a serializer. 
 
     virtual ~iSerializable() {}
 };
@@ -88,16 +88,16 @@ public:
 class iTypedSerializable : public iTyped, public iSerializable
 {
 public:
-	typedef iTypedSerializable* (*CreateFunc)();
-		// Pointer to a function that creates an empty version of each typed serializable object
+    typedef iTypedSerializable* (*CreateFunc)();
+        // Pointer to a function that creates an empty version of each typed serializable object
 
-	virtual int32 Version() const = 0;
-		// Return the current version of that this serializable object writes.
-		// As a convention version number should be (major_version << 16) | minor_version.
+    virtual int32 Version() const = 0;
+        // Return the current version of that this serializable object writes.
+        // As a convention version number should be (major_version << 16) | minor_version.
 
-	static int32 MkVersion(int16 major, int16 minor) { return (int32)(((uint32)major << 16) | (uint32)minor); }
-	static int16 MajorVersion(int32 version) { return (int16)((uint32)version >> 16); }
-	static int16 MinorVersion(int32 version) { return (int16)version; }
+    static int32 MkVersion(int16 major, int16 minor) { return (int32)(((uint32)major << 16) | (uint32)minor); }
+    static int16 MajorVersion(int32 version) { return (int16)((uint32)version >> 16); }
+    static int16 MinorVersion(int32 version) { return (int16)version; }
 
     virtual ~iTypedSerializable() {}
 };
@@ -105,21 +105,21 @@ public:
 //////////////////////////////
 // convenience macros
 #define DECLARE_TYPEDSERIALIZABLE() \
-	DECLARE_TYPED() \
-public:	\
-	static iTypedSerializable* Create(); \
-	virtual int32 Version() const;
+    DECLARE_TYPED() \
+public: \
+    static iTypedSerializable* Create(); \
+    virtual int32 Version() const;
 
 #define IMPLEMENT_TYPEDSERIALIZABLE(CLASS, TYPEDSTRING, VERSION_MAJOR, VERSION_MINOR) \
-	IMPLEMENT_TYPED(CLASS, TYPEDSTRING) \
-	iTypedSerializable* CLASS::Create() \
-	{ \
-		return new CLASS; \
-	} \
-	int32 CLASS::Version() const \
-	{ \
-		return iTypedSerializable::MkVersion(VERSION_MAJOR, VERSION_MINOR); \
-	} 
+    IMPLEMENT_TYPED(CLASS, TYPEDSTRING) \
+    iTypedSerializable* CLASS::Create() \
+    { \
+        return new CLASS; \
+    } \
+    int32 CLASS::Version() const \
+    { \
+        return iTypedSerializable::MkVersion(VERSION_MAJOR, VERSION_MINOR); \
+    } 
 
 #endif // __SERIALIZABLE_H
 

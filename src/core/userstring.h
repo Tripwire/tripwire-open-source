@@ -61,7 +61,7 @@ public:
         TCHAR* string;
     };
     
-	// Select between the different localized string sets 
+    // Select between the different localized string sets 
     // for this product.  Returns false if string not defined.
     virtual bool            SelectStringSet(int setID) = 0;
 
@@ -83,11 +83,11 @@ public:
     // Add a single string.  The above rules apply.
     virtual void AddString(int setID, int stringID, TCHAR* string) = 0;
 
-	// singleton manipulation
-	static iUserString* GetInstance();
-	static void			SetInstance(iUserString* pInst);
+    // singleton manipulation
+    static iUserString* GetInstance();
+    static void         SetInstance(iUserString* pInst);
 private:
-	static iUserString* mpInstance;
+    static iUserString* mpInstance;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -116,14 +116,14 @@ Example Use:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 inline iUserString* iUserString::GetInstance()
 {
-	ASSERT(mpInstance);
+    ASSERT(mpInstance);
 
-	return mpInstance;
+    return mpInstance;
 }
 
 inline void iUserString::SetInstance(iUserString* pInst)
 {
-	mpInstance = pInst;
+    mpInstance = pInst;
 }
 
 

@@ -43,7 +43,7 @@
 
 //--Requirements
 
-#include "core/package.h"	    // for: TSS_DeclarePackage
+#include "core/package.h"       // for: TSS_DeclarePackage
 
 //--Classes
 

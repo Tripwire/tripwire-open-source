@@ -44,36 +44,36 @@ static void tw_psignal( int sig, const TCHAR* s );
 
 tw_sighandler_t tw_signal(int sig, tw_sighandler_t pFunc)
 {
-	return signal(sig, pFunc);
+    return signal(sig, pFunc);
 }
 
 int tw_raise(int sig)
 {
-	return raise(sig);
+    return raise(sig);
 }
 
 tw_sighandler_t tw_sigign(int sig)
 {
-	return signal(sig, SIG_IGN);
+    return signal(sig, SIG_IGN);
 }
 
 //////////////////////////////////////////////////////////////////////
 // tw_HandleSignal -- Take a given signal and install a handler for 
-//		it, which will then exit with the supplied exit value
+//      it, which will then exit with the supplied exit value
 tw_sighandler_t tw_HandleSignal( int sig )
 {
-	return signal( sig, util_SignalHandler );
+    return signal( sig, util_SignalHandler );
 }
 
 void util_SignalHandler( int sig )
 {
-	//If we're on unix, let's print out a nice error message telling
-	//the user which signal we've recieved.
+    //If we're on unix, let's print out a nice error message telling
+    //the user which signal we've recieved.
 #if IS_UNIX
-	tw_psignal( sig, (TSS_GetString( cCore, core::STR_SIGNAL).c_str() ) );
+    tw_psignal( sig, (TSS_GetString( cCore, core::STR_SIGNAL).c_str() ) );
 #endif
 
-	exit( 8 );
+    exit( 8 );
 }
 
 #if IS_UNIX
@@ -108,7 +108,7 @@ void tw_psignal(int sig, const TCHAR *str)
         _T("Virtual Timer Expired"),
         _T("Profiling Timer Expired"),
         _T("Pollable Event"),
-		_T("Window Size Change"),
+        _T("Window Size Change"),
         _T("Stopped (signal)"),
         _T("Stopped (user)"),
         _T("Continued"),

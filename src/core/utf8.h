@@ -61,12 +61,12 @@
 // function to safely convert the string to something printable
 //-----------------------------------------------------------------------------
 #ifdef _UNICODE
-#	define TSS_UTF8( x ) cUTF8( x ).wstr()
+#   define TSS_UTF8( x ) cUTF8( x ).wstr()
 #else
-#	define TSS_UTF8( x ) x
+#   define TSS_UTF8( x ) x
 #endif
 
-#ifdef _UNICODE		// this class is only needed in unicode builds...
+#ifdef _UNICODE     // this class is only needed in unicode builds...
 
 //-----------------------------------------------------------------------------
 // Entities Declared in this Module

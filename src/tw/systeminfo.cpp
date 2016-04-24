@@ -36,9 +36,9 @@
 #include "stdtw.h"
 #include "systeminfo.h"
 
-TSTRING	cSystemInfo::mExePath(_T(""));
-bool	cSystemInfo::mbExePathSet(false);
-TSTRING	cSystemInfo::mExeDir(_T(""));
-bool	cSystemInfo::mbExeDirSet(false);
+TSTRING cSystemInfo::mExePath(_T(""));
+bool    cSystemInfo::mbExePathSet(false);
+TSTRING cSystemInfo::mExeDir(_T(""));
+bool    cSystemInfo::mbExeDirSet(false);
 int64   cSystemInfo::mExecuteStartTime(0);
 

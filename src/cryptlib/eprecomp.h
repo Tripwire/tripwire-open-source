@@ -15,25 +15,25 @@
 template <class T> class ExponentiationPrecomputation
 {
 public:
-	typedef T Group;
-	typedef typename Group::Element Element;
+    typedef T Group;
+    typedef typename Group::Element Element;
 
-	ExponentiationPrecomputation(const Group &group) : group(group) {}
+    ExponentiationPrecomputation(const Group &group) : group(group) {}
 
-	ExponentiationPrecomputation(const Group &group, const Element &base, unsigned int maxExpBits, unsigned int storage)
-		: group(group), storage(storage), g(storage) {Precompute(base, maxExpBits);}
+    ExponentiationPrecomputation(const Group &group, const Element &base, unsigned int maxExpBits, unsigned int storage)
+        : group(group), storage(storage), g(storage) {Precompute(base, maxExpBits);}
 
-	ExponentiationPrecomputation(const Group &group, const ExponentiationPrecomputation &pc)
-		: group(group), storage(pc.storage), exponentBase(pc.exponentBase), g(pc.g)	{}
+    ExponentiationPrecomputation(const Group &group, const ExponentiationPrecomputation &pc)
+        : group(group), storage(pc.storage), exponentBase(pc.exponentBase), g(pc.g) {}
 
-	void Precompute(const Element &base, unsigned int maxExpBits);
-	Element Exponentiate(const Integer &exponent) const;
-	Element CascadeExponentiate(const Integer &exponent, const ExponentiationPrecomputation<Group> &pc2, const Integer &exponent2) const;
+    void Precompute(const Element &base, unsigned int maxExpBits);
+    Element Exponentiate(const Integer &exponent) const;
+    Element CascadeExponentiate(const Integer &exponent, const ExponentiationPrecomputation<Group> &pc2, const Integer &exponent2) const;
 
-	const Group &group;
-	unsigned int storage;	// number of precalculated bases
-	Integer exponentBase;	// what base to represent the exponent in
-	std::vector<Element> g;		// precalculated bases
+    const Group &group;
+    unsigned int storage;   // number of precalculated bases
+    Integer exponentBase;   // what base to represent the exponent in
+    std::vector<Element> g;     // precalculated bases
 };
 
 #endif

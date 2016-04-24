@@ -44,18 +44,18 @@ IMPLEMENT_SERREFCOUNT(cFCOSpecAttr, _T("cFCOSpecAttr"), 0, 1)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecAttr::Read(iSerializer* pSerializer, int32 version)
 {
-	pSerializer->ReadString(mName);
-	pSerializer->ReadInt32(mSeverity);
+    pSerializer->ReadString(mName);
+    pSerializer->ReadInt32(mSeverity);
 
-	int32 size;
-	TSTRING str;
-	pSerializer->ReadInt32(size);
-	mEmailAddrs.clear();
-	for(int i=0; i < size; i++)
-	{
-		pSerializer->ReadString(str);
-		mEmailAddrs.push_back(str);
-	}
+    int32 size;
+    TSTRING str;
+    pSerializer->ReadInt32(size);
+    mEmailAddrs.clear();
+    for(int i=0; i < size; i++)
+    {
+        pSerializer->ReadString(str);
+        mEmailAddrs.push_back(str);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,13 +63,13 @@ void cFCOSpecAttr::Read(iSerializer* pSerializer, int32 version)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecAttr::Write(iSerializer* pSerializer) const
 {
-	pSerializer->WriteString(mName);
-	pSerializer->WriteInt32(mSeverity);
+    pSerializer->WriteString(mName);
+    pSerializer->WriteInt32(mSeverity);
 
-	pSerializer->WriteInt32(mEmailAddrs.size());
-	std::list<TSTRING>::const_iterator i;
-	for(i = mEmailAddrs.begin(); i != mEmailAddrs.end(); ++i)
-		pSerializer->WriteString(*i);
+    pSerializer->WriteInt32(mEmailAddrs.size());
+    std::list<TSTRING>::const_iterator i;
+    for(i = mEmailAddrs.begin(); i != mEmailAddrs.end(); ++i)
+        pSerializer->WriteString(*i);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -77,19 +77,19 @@ void cFCOSpecAttr::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSpecAttr::TraceContents(int dl) const
 {
-	cDebug d("cFCOSpecAttr::TraceContents");
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
+    cDebug d("cFCOSpecAttr::TraceContents");
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
 
     d.Trace(dl,"--- cFCOSpecAttr ---\n");
-	d.Trace(dl, "Name: %s Severity: %d\n", mName.c_str(), mSeverity);
-	d.Trace(dl, "Email addresses:\n");
+    d.Trace(dl, "Name: %s Severity: %d\n", mName.c_str(), mSeverity);
+    d.Trace(dl, "Email addresses:\n");
 
-	std::list<TSTRING>::const_iterator i;
-	for(i = mEmailAddrs.begin(); i != mEmailAddrs.end(); ++i)
-	{
-		d.Trace(dl, "\t%s\n", i->c_str());
-	}
+    std::list<TSTRING>::const_iterator i;
+    for(i = mEmailAddrs.begin(); i != mEmailAddrs.end(); ++i)
+    {
+        d.Trace(dl, "\t%s\n", i->c_str());
+    }
 }
 
 

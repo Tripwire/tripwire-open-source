@@ -46,48 +46,48 @@
 class iUserNotify
 {
 public:
-	// singleton interface; caller is responsible for deleting pointer;
-	static iUserNotify* GetInstance();
-	static void			SetInstance(iUserNotify* pInst);
-	
-	virtual void Notify(int verboseLevel, const TCHAR* format, ...) ;
-		// notify the user that an event has occured. The outcome of this operation is
-		// dependant on the type of object that is implementing this interface (for example,
-		// a console application would want an iUserNotify that prints things to stdout)
-		// If the current verbosity level is less than verboseLevel, nothing will happen.
+    // singleton interface; caller is responsible for deleting pointer;
+    static iUserNotify* GetInstance();
+    static void         SetInstance(iUserNotify* pInst);
+    
+    virtual void Notify(int verboseLevel, const TCHAR* format, ...) ;
+        // notify the user that an event has occured. The outcome of this operation is
+        // dependant on the type of object that is implementing this interface (for example,
+        // a console application would want an iUserNotify that prints things to stdout)
+        // If the current verbosity level is less than verboseLevel, nothing will happen.
         // All output should be sent through the cDisplayEncoder beforehand
         // TODO:BAM -- enforce this somehow?
 
-	virtual void	SetVerboseLevel(int level);
-	virtual int		GetVerboseLevel() const;
-		// get/set the current verbosity level. Notify()s that occur whose verbosity level
-		// is greater than the current level will not be processed.
+    virtual void    SetVerboseLevel(int level);
+    virtual int     GetVerboseLevel() const;
+        // get/set the current verbosity level. Notify()s that occur whose verbosity level
+        // is greater than the current level will not be processed.
 
-	// a convenience enumeration; no one is bound by law to use these
-	enum VerboseLevel
-	{
-		V_SILENT  = 0,
-		V_NORMAL  = 1,
-		V_VERBOSE = 2
-	};
-	//
-	// convenience methods for notifying at these three levels...
-	//
-	void NotifySilent	( const TCHAR* format, ... );
-	void NotifyNormal	( const TCHAR* format, ... );
-	void NotifyVerbose	( const TCHAR* format, ... );
+    // a convenience enumeration; no one is bound by law to use these
+    enum VerboseLevel
+    {
+        V_SILENT  = 0,
+        V_NORMAL  = 1,
+        V_VERBOSE = 2
+    };
+    //
+    // convenience methods for notifying at these three levels...
+    //
+    void NotifySilent   ( const TCHAR* format, ... );
+    void NotifyNormal   ( const TCHAR* format, ... );
+    void NotifyVerbose  ( const TCHAR* format, ... );
 
 
-	iUserNotify(int verboseLevel = 0);
-	virtual ~iUserNotify();
+    iUserNotify(int verboseLevel = 0);
+    virtual ~iUserNotify();
 protected:
-	virtual void HandleNotify( int level, const TCHAR* format, va_list& args ) = 0;
-		// this is implemented in derived classes to implement the specific type of
-		// notification desired
-	
-	int	mVerboseLevel;
+    virtual void HandleNotify( int level, const TCHAR* format, va_list& args ) = 0;
+        // this is implemented in derived classes to implement the specific type of
+        // notification desired
+    
+    int mVerboseLevel;
 private:
-	static iUserNotify* mpInstance;
+    static iUserNotify* mpInstance;
 };
 
 
@@ -102,29 +102,29 @@ private:
 //-----------------------------------------------------------------------------
 
 #define TW_NOTIFY_SILENT\
-	if( iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_SILENT )\
-		iUserNotify::GetInstance()->NotifySilent
+    if( iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_SILENT )\
+        iUserNotify::GetInstance()->NotifySilent
 
 #define TW_NOTIFY_NORMAL\
-	if( iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_NORMAL )\
-		iUserNotify::GetInstance()->NotifyNormal
+    if( iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_NORMAL )\
+        iUserNotify::GetInstance()->NotifyNormal
 
 #define TW_NOTIFY_VERBOSE\
-	if( iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_VERBOSE )\
-		iUserNotify::GetInstance()->NotifyVerbose
+    if( iUserNotify::GetInstance()->GetVerboseLevel() >= iUserNotify::V_VERBOSE )\
+        iUserNotify::GetInstance()->NotifyVerbose
 
 //#############################################################################
 // inline implementation
 //#############################################################################
 inline iUserNotify* iUserNotify::GetInstance()
 {
-	ASSERT(mpInstance != 0);
-	return mpInstance;
+    ASSERT(mpInstance != 0);
+    return mpInstance;
 }
 
 inline void iUserNotify::SetInstance(iUserNotify* pInst)
 {
-	mpInstance = pInst;
+    mpInstance = pInst;
 }
 
 

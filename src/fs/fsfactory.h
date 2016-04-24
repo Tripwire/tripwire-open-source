@@ -43,17 +43,17 @@
 class cFSFactory : public iTWFactory
 {
 public:
-	cFSFactory() {}
-	virtual ~cFSFactory() {}
-	
-	virtual iFCOPropCalc*				CreatePropCalc() const;
-	virtual iFCOSpec*					CreateSpec(const TSTRING& name, iFCOSpecHelper* pHelper) const;
-    virtual iFCOPropDisplayer*			CreatePropDisplayer() const;
+    cFSFactory() {}
+    virtual ~cFSFactory() {}
+    
+    virtual iFCOPropCalc*               CreatePropCalc() const;
+    virtual iFCOSpec*                   CreateSpec(const TSTRING& name, iFCOSpecHelper* pHelper) const;
+    virtual iFCOPropDisplayer*          CreatePropDisplayer() const;
     virtual iParserGenreUtil*           CreateParserGenreUtil() const;
-	virtual iSerRefCountObj::CreateFunc GetCreateFunc() const;
-	virtual iFCODataSourceIter*			CreateDataSourceIter() const ;
-	virtual iFCONameInfo*				GetNameInfo() const ;
-	virtual cFCOPropVector				GetLooseDirMask() const ;
+    virtual iSerRefCountObj::CreateFunc GetCreateFunc() const;
+    virtual iFCODataSourceIter*         CreateDataSourceIter() const ;
+    virtual iFCONameInfo*               GetNameInfo() const ;
+    virtual cFCOPropVector              GetLooseDirMask() const ;
     virtual iFCONameTranslator*         GetNameTranslator() const;
 
 };

@@ -830,7 +830,7 @@ void cTWModeIC::InitCmdLineParser(cCmdLineParser& cmdLine)
    cmdLine.AddArg(cTWCmdLine::RULE_NAME,     TSTRING(_T("R")), TSTRING(_T("rule-name")),     cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::GENRE_NAME,    TSTRING(_T("x")), TSTRING(_T("section")),       cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::PARAMS,        TSTRING(_T("")),  TSTRING(_T("")),           cCmdLineParser::PARAM_MANY);
-   cmdLine.AddArg(cTWCmdLine::HEXADECIMAL,   TSTRING(_T("h")), TSTRING(_T("hexadecimal")),	cCmdLineParser::PARAM_NONE);
+   cmdLine.AddArg(cTWCmdLine::HEXADECIMAL,   TSTRING(_T("h")), TSTRING(_T("hexadecimal")),  cCmdLineParser::PARAM_NONE);
     
    // multiple levels of reporting
    cmdLine.AddArg(cTWCmdLine::REPORTLEVEL,      TSTRING(_T("t")), TSTRING(_T("email-report-level")),  cCmdLineParser::PARAM_ONE);

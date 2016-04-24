@@ -43,55 +43,55 @@ class eError
 {
 public:
 
- 	//-------------------------------------------------------------------------
-	// Construction and Assignment
- 	//-------------------------------------------------------------------------
-				eError( const TSTRING& msg, uint32 flags = 0 );
-	explicit	eError( const eError& rhs ); 
-	explicit	eError();
-	void operator=( const eError& rhs ); 
+    //-------------------------------------------------------------------------
+    // Construction and Assignment
+    //-------------------------------------------------------------------------
+                eError( const TSTRING& msg, uint32 flags = 0 );
+    explicit    eError( const eError& rhs ); 
+    explicit    eError();
+    void operator=( const eError& rhs ); 
 
- 	//-------------------------------------------------------------------------
-	// Destruction
- 	//-------------------------------------------------------------------------
-	virtual ~eError();
+    //-------------------------------------------------------------------------
+    // Destruction
+    //-------------------------------------------------------------------------
+    virtual ~eError();
 
- 	//-------------------------------------------------------------------------
-	// Data Access
- 	//-------------------------------------------------------------------------
-	virtual uint32 GetID() const = 0;
-		// returns a system wide unique identifier for this exception. See the
-		// macro below for the typical implementation of this method.
-		// This is used to associate the error with a string description of the 
-		// error via the global error table.
+    //-------------------------------------------------------------------------
+    // Data Access
+    //-------------------------------------------------------------------------
+    virtual uint32 GetID() const = 0;
+        // returns a system wide unique identifier for this exception. See the
+        // macro below for the typical implementation of this method.
+        // This is used to associate the error with a string description of the 
+        // error via the global error table.
 
-	virtual TSTRING GetMsg() const;
-		// returns specific information about the error that occured. Provides 
-		// additional information about the error described by GetID(). It should
-		// not provide any information redundant with GetID().
-		//
+    virtual TSTRING GetMsg() const;
+        // returns specific information about the error that occured. Provides 
+        // additional information about the error described by GetID(). It should
+        // not provide any information redundant with GetID().
+        //
         // The string passed to the constructor should be formated properly to 
         // be displayed as the "Second" part of an error message, or the derived 
         // class should override GetMsg() and return a string appropriate for display.
-	
-	uint32 GetFlags() const;
-		// Flags are defined below. Currently, these only have an impact on how errors are
-		// displayed.
+    
+    uint32 GetFlags() const;
+        // Flags are defined below. Currently, these only have an impact on how errors are
+        // displayed.
 
- 	//-------------------------------------------------------------------------
-	// Flags
- 	//-------------------------------------------------------------------------
-	enum Flag
-	{
-	    NON_FATAL				= 0x00000001,		// displays "Error" or "Warning" ?
-		SUPRESS_THIRD_MSG		= 0x00000002		// supresses the "continuing" or "exiting" message
-	};
+    //-------------------------------------------------------------------------
+    // Flags
+    //-------------------------------------------------------------------------
+    enum Flag
+    {
+        NON_FATAL               = 0x00000001,       // displays "Error" or "Warning" ?
+        SUPRESS_THIRD_MSG       = 0x00000002        // supresses the "continuing" or "exiting" message
+    };
 
-	void SetFlags( uint32 flags );
+    void SetFlags( uint32 flags );
 
- 	//-------------------------------------------------------------------------
-	// Flag Convenience Methods
- 	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // Flag Convenience Methods
+    //-------------------------------------------------------------------------
     void    SetFatality(bool fatal);
     bool    IsFatal() const;
         // Fatality is set to true by default when eError is constructed.  But when an error
@@ -101,19 +101,19 @@ public:
     void    SetSupressThird(bool supressThird);
     bool    SupressThird() const;
 
- 	//-------------------------------------------------------------------------
-	// Utility Methods
-	//-------------------------------------------------------------------------
-	static uint32 CalcHash( const char* name );
-		// calculates the CRC32 of the string passed in as name. This methods
-		// asserts that name is non null. This is used to generate unique IDs 
-		// for errors.
+    //-------------------------------------------------------------------------
+    // Utility Methods
+    //-------------------------------------------------------------------------
+    static uint32 CalcHash( const char* name );
+        // calculates the CRC32 of the string passed in as name. This methods
+        // asserts that name is non null. This is used to generate unique IDs 
+        // for errors.
 
- 	//-------------------------------------------------------------------------
-	// Private Implementation
- 	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // Private Implementation
+    //-------------------------------------------------------------------------
 protected:
-	TSTRING	mMsg;
+    TSTRING mMsg;
     uint32  mFlags;
 };
 
@@ -125,7 +125,7 @@ protected:
 // TSS_BEGIN_EXCEPTION / TSS_END_EXCEPTION
 //
 // Serves the same purpose as TSS_EXCEPTION but allows custom data and methods 
-//		to be added to the exception class.
+//      to be added to the exception class.
 ///////////////////////////////////////////////////////////////////////////////
 
 #if HAVE_GCC
@@ -135,22 +135,22 @@ protected:
 #endif
 
 #define TSS_BEGIN_EXCEPTION( except, base ) \
-	class except : public base \
-	{\
-	public:\
-		except( const TSTRING& msg, uint32 flags = 0 ) \
-		: base( msg, flags ) {} \
-		TSS_BEGIN_EXCEPTION_EXPLICIT except( const except& rhs ) \
-		: base( rhs ) {} \
-		explicit except() : base() {} \
-		\
-		virtual uint32 GetID() const \
-		{\
-			return CalcHash( #except ); \
-		}\
+    class except : public base \
+    {\
+    public:\
+        except( const TSTRING& msg, uint32 flags = 0 ) \
+        : base( msg, flags ) {} \
+        TSS_BEGIN_EXCEPTION_EXPLICIT except( const except& rhs ) \
+        : base( rhs ) {} \
+        explicit except() : base() {} \
+        \
+        virtual uint32 GetID() const \
+        {\
+            return CalcHash( #except ); \
+        }\
 
 #define TSS_END_EXCEPTION( ) \
-	};
+    };
 
 ///////////////////////////////////////////////////////////////////////////////
 // TSS_BEGIN_EXCEPTION_NO_CTOR
@@ -158,29 +158,29 @@ protected:
 // Same as TSS_BEGIN_EXCEPTION, but doesn't define any ctors.
 ///////////////////////////////////////////////////////////////////////////////
 #define TSS_BEGIN_EXCEPTION_NO_CTOR( except, base ) \
-	class except : public base \
-	{\
-	public:\
-		explicit except() : base() {} \
-		\
-		virtual uint32 GetID() const \
-		{\
-			return CalcHash( #except ); \
-		}\
+    class except : public base \
+    {\
+    public:\
+        explicit except() : base() {} \
+        \
+        virtual uint32 GetID() const \
+        {\
+            return CalcHash( #except ); \
+        }\
 
 ///////////////////////////////////////////////////////////////////////////////
 // TSS_EXCEPTION
 //
-//	This is a convenience define for quickly defining an exception class. After
-//	defining a new exception, don't forget to add it to the package's error 
-//	string file!
+//  This is a convenience define for quickly defining an exception class. After
+//  defining a new exception, don't forget to add it to the package's error 
+//  string file!
 //
 // TODO (mdb) -- do we want to cache the CRC? if we store it in a class static 
-//		variable, then we will need to define it in the cpp file as well ...
+//      variable, then we will need to define it in the cpp file as well ...
 ///////////////////////////////////////////////////////////////////////////////
 #define TSS_EXCEPTION( except, base ) \
-	TSS_BEGIN_EXCEPTION( except, base ) \
-	TSS_END_EXCEPTION()
+    TSS_BEGIN_EXCEPTION( except, base ) \
+    TSS_END_EXCEPTION()
 
 //-----------------------------------------------------------------------------
 // Inline Implementation
@@ -190,30 +190,30 @@ protected:
 // eError
 ///////////////////////////////////////////////////////////////////////////////
 inline eError::eError( const TSTRING& msg, uint32 flags )
-:	mMsg	( msg ),
-	mFlags	( flags )
+:   mMsg    ( msg ),
+    mFlags  ( flags )
 {
-	
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // eError
 ///////////////////////////////////////////////////////////////////////////////
 inline eError::eError( const eError& rhs )
-:	mMsg	( rhs.mMsg ),
-	mFlags	( rhs.mFlags )
+:   mMsg    ( rhs.mMsg ),
+    mFlags  ( rhs.mFlags )
 {
-	
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // eError
 ///////////////////////////////////////////////////////////////////////////////
 inline eError::eError( )
-:	mMsg	( _T("") ),
-	mFlags	( 0 )
+:   mMsg    ( _T("") ),
+    mFlags  ( 0 )
 {
-	
+    
 }
 
 
@@ -222,8 +222,8 @@ inline eError::eError( )
 ///////////////////////////////////////////////////////////////////////////////
 inline void eError::operator=( const eError& rhs )
 {
-	mMsg	= rhs.mMsg;
-	mFlags	= rhs.mFlags;
+    mMsg    = rhs.mMsg;
+    mFlags  = rhs.mFlags;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -231,7 +231,7 @@ inline void eError::operator=( const eError& rhs )
 ///////////////////////////////////////////////////////////////////////////////
 inline eError::~eError()
 {
-	
+    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -239,7 +239,7 @@ inline eError::~eError()
 ///////////////////////////////////////////////////////////////////////////////
 inline TSTRING eError::GetMsg() const
 {
-	return mMsg;	
+    return mMsg;    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -247,7 +247,7 @@ inline TSTRING eError::GetMsg() const
 ///////////////////////////////////////////////////////////////////////////////
 inline uint32 eError::GetFlags() const
 {
-	return mFlags;
+    return mFlags;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,7 +255,7 @@ inline uint32 eError::GetFlags() const
 ///////////////////////////////////////////////////////////////////////////////
 inline void eError::SetFlags( uint32 flags )
 {
-	mFlags = flags;	
+    mFlags = flags; 
 }
 
 ///////////////////////////////////////////////////////////////////////////////

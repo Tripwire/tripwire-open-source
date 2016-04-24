@@ -45,8 +45,8 @@ class cFileHeaderID;
 class cPolicyFile //: public iTyped
 {
 public:
-	cPolicyFile();
-	virtual ~cPolicyFile();
+    cPolicyFile();
+    virtual ~cPolicyFile();
 
     static const cFileHeaderID& GetFileHeaderID();
 

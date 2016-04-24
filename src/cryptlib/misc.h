@@ -17,17 +17,17 @@
 
 inline unsigned int bitsToBytes(unsigned int bitCount)
 {
-	return ((bitCount+7)/(8));
+    return ((bitCount+7)/(8));
 }
 
 inline unsigned int bytesToWords(unsigned int byteCount)
 {
-	return ((byteCount+WORD_SIZE-1)/WORD_SIZE);
+    return ((byteCount+WORD_SIZE-1)/WORD_SIZE);
 }
 
 inline unsigned int bitsToWords(unsigned int bitCount)
 {
-	return ((bitCount+WORD_BITS-1)/(WORD_BITS));
+    return ((bitCount+WORD_BITS-1)/(WORD_BITS));
 }
 
 void xorbuf(byte *buf, const byte *mask, unsigned int count);
@@ -35,12 +35,12 @@ void xorbuf(byte *output, const byte *input, const byte *mask, unsigned int coun
 
 template <class T> inline T rotl(T x, unsigned int y)
 {
-	return ((x<<y) | (x>>(sizeof(T)*8-y)));
+    return ((x<<y) | (x>>(sizeof(T)*8-y)));
 }
 
 template <class T> inline T rotr(T x, unsigned int y)
 {
-	return ((x>>y) | (x<<(sizeof(T)*8-y)));
+    return ((x>>y) | (x<<(sizeof(T)*8-y)));
 }
 
 #if defined(_MSC_VER) || defined(__BCPLUSPLUS__)
@@ -50,51 +50,51 @@ template <class T> inline T rotr(T x, unsigned int y)
 
 template<> inline unsigned short rotl<unsigned short>(unsigned short x, unsigned int y)
 {
-	return (unsigned short)((x<<y) | (x>>(16-y)));
+    return (unsigned short)((x<<y) | (x>>(16-y)));
 }
 
 template<> inline unsigned short rotr<unsigned short>(unsigned short x, unsigned int y)
 {
-	return (unsigned short)((x>>y) | (x<<(16-y)));
+    return (unsigned short)((x>>y) | (x<<(16-y)));
 }
 
 template<> inline unsigned long rotl<unsigned long>(unsigned long x, unsigned int y)
 {
-	return _lrotl(x, y);
+    return _lrotl(x, y);
 }
 
 template<> inline unsigned long rotr<unsigned long>(unsigned long x, unsigned int y)
 {
-	return _lrotr(x, y);
+    return _lrotr(x, y);
 }
 #endif // defined(_MSC_VER) || defined(__BCPLUSPLUS__)
 
 inline word16 byteReverse(word16 value)
 {
-	return rotl(value, 8U);
+    return rotl(value, 8U);
 }
 
 inline word32 byteReverse(word32 value)
 {
 #ifdef FAST_ROTATE
-	// 5 instructions with rotate instruction, 9 without
-	return (rotr(value, 8) & 0xff00ff00) | (rotl(value, 8) & 0x00ff00ff);
+    // 5 instructions with rotate instruction, 9 without
+    return (rotr(value, 8) & 0xff00ff00) | (rotl(value, 8) & 0x00ff00ff);
 #elif defined(_KCC)
-	// 6 instructions with rotate instruction, 8 without
-	value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);
-	return ((value<<16U) | (value>>16U));
+    // 6 instructions with rotate instruction, 8 without
+    value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);
+    return ((value<<16U) | (value>>16U));
 #else
-	// 6 instructions with rotate instruction, 8 without
-	value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);
-	return rotl(value, 16U);
+    // 6 instructions with rotate instruction, 8 without
+    value = ((value & 0xFF00FF00) >> 8) | ((value & 0x00FF00FF) << 8);
+    return rotl(value, 16U);
 #endif
 }
 
 #ifdef WORD64_AVAILABLE
 inline word64 byteReverse(word64 value)
 {
-	value = ((value & W64LIT(0xFF00FF00FF00FF00)) >> 8) | ((value & W64LIT(0x00FF00FF00FF00FF)) << 8);
-	value = ((value & W64LIT(0xFFFF0000FFFF0000)) >> 16) | ((value & W64LIT(0x0000FFFF0000FFFF)) << 16);
+    value = ((value & W64LIT(0xFF00FF00FF00FF00)) >> 8) | ((value & W64LIT(0x00FF00FF00FF00FF)) << 8);
+    value = ((value & W64LIT(0xFFFF0000FFFF0000)) >> 16) | ((value & W64LIT(0x0000FFFF0000FFFF)) << 16);
 #ifdef _KCC
     return ((value<<32U) | (value>>32U));
 #else
@@ -105,10 +105,10 @@ inline word64 byteReverse(word64 value)
 
 template <class T> void byteReverse(T *out, const T *in, unsigned int byteCount)
 {
-	assert(byteCount%sizeof(T) == 0);
-	byteCount /= sizeof(T);
-	for (unsigned i=0; i<byteCount; i++)
-		out[i] = byteReverse(in[i]);
+    assert(byteCount%sizeof(T) == 0);
+    byteCount /= sizeof(T);
+    for (unsigned i=0; i<byteCount; i++)
+        out[i] = byteReverse(in[i]);
 }
 
 #ifdef _MSC_VER
@@ -138,127 +138,127 @@ unsigned long Crop(unsigned long, int size);
 
 template <class T> struct SecBlock
 {
-	SecBlock(unsigned int size=0)
-		: size(size) {ptr = SecAlloc(T, size); memset(ptr, 0, size*sizeof(T));}
-	SecBlock(const SecBlock<T> &t)
-		: size(t.size) {ptr = SecAlloc(T, size); CopyFrom(t);}
-	SecBlock(const T *t, unsigned int size)
-		: size(size) {ptr = SecAlloc(T, size); memcpy(ptr, t, size*sizeof(T));}
-	~SecBlock()
-		{SecFree(ptr, size);}
+    SecBlock(unsigned int size=0)
+        : size(size) {ptr = SecAlloc(T, size); memset(ptr, 0, size*sizeof(T));}
+    SecBlock(const SecBlock<T> &t)
+        : size(t.size) {ptr = SecAlloc(T, size); CopyFrom(t);}
+    SecBlock(const T *t, unsigned int size)
+        : size(size) {ptr = SecAlloc(T, size); memcpy(ptr, t, size*sizeof(T));}
+    ~SecBlock()
+        {SecFree(ptr, size);}
 
 #if defined(__GNUC__) || defined(__BCPLUSPLUS__)
-	operator const void *() const
-		{return ptr;}
-	operator void *()
-		{return ptr;}
+    operator const void *() const
+        {return ptr;}
+    operator void *()
+        {return ptr;}
 #endif
 
-	operator const T *() const
-		{return ptr;}
-	operator T *()
-		{return ptr;}
+    operator const T *() const
+        {return ptr;}
+    operator T *()
+        {return ptr;}
 
 #if !defined(_MSC_VER) && !defined(_KCC)
     T *operator +(unsigned int offset)
-		{return ptr+offset;}
-	const T *operator +(unsigned int offset) const
-		{return ptr+offset;}
+        {return ptr+offset;}
+    const T *operator +(unsigned int offset) const
+        {return ptr+offset;}
     T *operator +(long offset)
-		{return ptr+offset;}
-	const T *operator +(long offset) const
-		{return ptr+offset;}
-	T& operator[](unsigned int index)
-		{assert(index<size); return ptr[index];}
-	const T& operator[](unsigned int index) const
-		{assert(index<size); return ptr[index];}
+        {return ptr+offset;}
+    const T *operator +(long offset) const
+        {return ptr+offset;}
+    T& operator[](unsigned int index)
+        {assert(index<size); return ptr[index];}
+    const T& operator[](unsigned int index) const
+        {assert(index<size); return ptr[index];}
 #endif
 
-	const T* Begin() const
-		{return ptr;}
-	T* Begin()
-		{return ptr;}
-	const T* End() const
-		{return ptr+size;}
-	T* End()
-		{return ptr+size;}
+    const T* Begin() const
+        {return ptr;}
+    T* Begin()
+        {return ptr;}
+    const T* End() const
+        {return ptr+size;}
+    T* End()
+        {return ptr+size;}
 
-	void CopyFrom(const SecBlock<T> &t)
-	{
-		New(t.size);
-		memcpy(ptr, t.ptr, size*sizeof(T));
-	}
+    void CopyFrom(const SecBlock<T> &t)
+    {
+        New(t.size);
+        memcpy(ptr, t.ptr, size*sizeof(T));
+    }
 
-	SecBlock& operator=(const SecBlock<T> &t)
-	{
-		CopyFrom(t);
-		return *this;
-	}
+    SecBlock& operator=(const SecBlock<T> &t)
+    {
+        CopyFrom(t);
+        return *this;
+    }
 
-	bool operator==(const SecBlock<T> &t) const
-	{
-		return size == t.size && memcmp(ptr, t.ptr, size*sizeof(T)) == 0;
-	}
+    bool operator==(const SecBlock<T> &t) const
+    {
+        return size == t.size && memcmp(ptr, t.ptr, size*sizeof(T)) == 0;
+    }
 
-	void New(unsigned int newSize)
-	{
-		if (newSize != size)
-		{
-			T *newPtr = SecAlloc(T, newSize);
-			SecFree(ptr, size);
-			ptr = newPtr;
-			size = newSize;
-		}
-	}
+    void New(unsigned int newSize)
+    {
+        if (newSize != size)
+        {
+            T *newPtr = SecAlloc(T, newSize);
+            SecFree(ptr, size);
+            ptr = newPtr;
+            size = newSize;
+        }
+    }
 
-	void CleanNew(unsigned int newSize)
-	{
-		if (newSize != size)
-		{
-			T *newPtr = SecAlloc(T, newSize);
-			SecFree(ptr, size);
-			ptr = newPtr;
-			size = newSize;
-		}
-		memset(ptr, 0, size*sizeof(T));
-	}
+    void CleanNew(unsigned int newSize)
+    {
+        if (newSize != size)
+        {
+            T *newPtr = SecAlloc(T, newSize);
+            SecFree(ptr, size);
+            ptr = newPtr;
+            size = newSize;
+        }
+        memset(ptr, 0, size*sizeof(T));
+    }
 
-	void Grow(unsigned int newSize)
-	{
-		if (newSize > size)
-		{
-			T *newPtr = SecAlloc(T, newSize);
-			memcpy(newPtr, ptr, size*sizeof(T));
-			SecFree(ptr, size);
-			ptr = newPtr;
-			size = newSize;
-		}
-	}
+    void Grow(unsigned int newSize)
+    {
+        if (newSize > size)
+        {
+            T *newPtr = SecAlloc(T, newSize);
+            memcpy(newPtr, ptr, size*sizeof(T));
+            SecFree(ptr, size);
+            ptr = newPtr;
+            size = newSize;
+        }
+    }
 
-	void CleanGrow(unsigned int newSize)
-	{
-		if (newSize > size)
-		{
-			T *newPtr = SecAlloc(T, newSize);
-			memcpy(newPtr, ptr, size*sizeof(T));
-			memset(newPtr+size, 0, (newSize-size)*sizeof(T));
-			SecFree(ptr, size);
-			ptr = newPtr;
-			size = newSize;
-		}
-	}
+    void CleanGrow(unsigned int newSize)
+    {
+        if (newSize > size)
+        {
+            T *newPtr = SecAlloc(T, newSize);
+            memcpy(newPtr, ptr, size*sizeof(T));
+            memset(newPtr+size, 0, (newSize-size)*sizeof(T));
+            SecFree(ptr, size);
+            ptr = newPtr;
+            size = newSize;
+        }
+    }
 
-	void swap(SecBlock<T> &b);
-	friend void swap(SecBlock<T> &a, SecBlock<T> &b) {a.swap(b);}
+    void swap(SecBlock<T> &b);
+    friend void swap(SecBlock<T> &a, SecBlock<T> &b) {a.swap(b);}
 
-	unsigned int size;
-	T *ptr;
+    unsigned int size;
+    T *ptr;
 };
 
 template <class T> void SecBlock<T>::swap(SecBlock<T> &b)
 {
-	std::swap(size, b.size);
-	std::swap(ptr, b.ptr);
+    std::swap(size, b.size);
+    std::swap(ptr, b.ptr);
 }
 
 typedef SecBlock<byte> SecByteBlock;

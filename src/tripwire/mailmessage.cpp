@@ -55,51 +55,51 @@ cMailMessage::~cMailMessage()
 ///////////////////////////////////////////////////////////////////////////////
 void cMailMessage::SetBody(const TSTRING& strBody)
 {
-	mstrBody = strBody;
+    mstrBody = strBody;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void cMailMessage::SetFrom(const TSTRING& strFrom)
 {
-	mstrFrom = strFrom;
+    mstrFrom = strFrom;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void cMailMessage::SetFromName(const TSTRING& strFromName)
 {
-	mstrFromName  = strFromName;
+    mstrFromName  = strFromName;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void cMailMessage::SetSubject(const TSTRING& strSubject)
 {
-	mstrSubject = strSubject;
+    mstrSubject = strSubject;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void cMailMessage::AddRecipient(const TSTRING& strRecipient)
 {
-	mvstrRecipients.push_back(strRecipient);
+    mvstrRecipients.push_back(strRecipient);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 void cMailMessage::AttachFile(const TSTRING& strFullPath)
 {
-	mvstrAttachments.push_back(strFullPath);
+    mvstrAttachments.push_back(strFullPath);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 bool cMailMessage::Send()
 {
-	// this is a pure virtual method. You should never end up here.
-	ASSERT(false); 
-	return false;
+    // this is a pure virtual method. You should never end up here.
+    ASSERT(false); 
+    return false;
 }
 
 
@@ -109,11 +109,11 @@ bool cMailMessage::Send()
 //
 bool cMailMessage::Ready()
 {
-	// You must specify 'from', 'to', the subject
-	if( mstrFrom.length() == 0 || mvstrRecipients.size() == 0 || mstrSubject.length() == 0 )
-	{
-		return false;
-	}
+    // You must specify 'from', 'to', the subject
+    if( mstrFrom.length() == 0 || mvstrRecipients.size() == 0 || mstrSubject.length() == 0 )
+    {
+        return false;
+    }
 
     // make sure we can at least send something...
     if( mstrBody.empty() )
@@ -121,17 +121,17 @@ bool cMailMessage::Ready()
         mstrBody = _T("\r\n");
     }
 
-	return true;
+    return true;
 }
 
 bool cMailMessage::GetAttachmentsAsString( std::string& s )
 {
     s.erase();
     bool allOK = true;
-	for(    std::vector<TSTRING>::const_iterator at = mvstrAttachments.begin();
+    for(    std::vector<TSTRING>::const_iterator at = mvstrAttachments.begin();
             at != mvstrAttachments.end();
             at++ )
-	{
+    {
         s += "\r\n";
 
         cFile file;
@@ -140,13 +140,13 @@ bool cMailMessage::GetAttachmentsAsString( std::string& s )
             file.Open( at->c_str(), cFile::OPEN_READ);
 
 
-		    // Simply stream the file into the socket.
-		    // This will append the file as additional text.
+            // Simply stream the file into the socket.
+            // This will append the file as additional text.
             const cFile::File_t cBufSize = 2048;
-		    char                buf[cBufSize];
+            char                buf[cBufSize];
             cFile::File_t       bytes;
 
-		    while ((bytes = file.Read(buf, cBufSize)) != 0)
+            while ((bytes = file.Read(buf, cBufSize)) != 0)
             {
                 ASSERT( bytes > 0 && bytes <= cBufSize ); // ensures typecast below
                 ASSERT( (std::string::size_type)bytes < std::string().max_size() );
@@ -155,7 +155,7 @@ bool cMailMessage::GetAttachmentsAsString( std::string& s )
             }
 
             file.Close();
-		}
+        }
         catch (eFile&)
         {
             // TODO: There is no method of reporting detailed information on 
@@ -166,14 +166,14 @@ bool cMailMessage::GetAttachmentsAsString( std::string& s )
             file.Close();
             allOK = false;
         }
-	}
+    }
 
-	// Send a new line to be sure the file ends properly
-	// Failure to do this could result in the "<CRLF>.<CRLF>" begin acknowledged as
-	// the end of the email message.
+    // Send a new line to be sure the file ends properly
+    // Failure to do this could result in the "<CRLF>.<CRLF>" begin acknowledged as
+    // the end of the email message.
     s += "\r\n";
 
-	return allOK;
+    return allOK;
 }
 
 std::string cMailMessage::Create822Header()
@@ -184,31 +184,31 @@ std::string cMailMessage::Create822Header()
          i < mvstrRecipients.size();
          i++ ) 
     {
-		if( strToList.length() > 0 )
-			strToList += ", ";
+        if( strToList.length() > 0 )
+            strToList += ", ";
 
-		strToList += cStringUtil::TstrToStr( mvstrRecipients[i] );
-	}
+        strToList += cStringUtil::TstrToStr( mvstrRecipients[i] );
+    }
 
     ss << cMailMessageUtil::FormatAddressHeader( "MIME-Version", "1.0" );
 
-	TSTRING strDate;
-	if( cMailMessageUtil::ReadDate( strDate ) )
-		ss << cMailMessageUtil::FormatAddressHeader( "Date", cStringUtil::TstrToStr( strDate ) );
+    TSTRING strDate;
+    if( cMailMessageUtil::ReadDate( strDate ) )
+        ss << cMailMessageUtil::FormatAddressHeader( "Date", cStringUtil::TstrToStr( strDate ) );
 
     std::string fromAddress;
     if( ! mstrFromName.empty() )
-	{
-		fromAddress  = "\"";
-		fromAddress += cStringUtil::TstrToStr(mstrFromName);
-		fromAddress += "\" <";
-		fromAddress += cStringUtil::TstrToStr(mstrFrom);
-		fromAddress += ">";
+    {
+        fromAddress  = "\"";
+        fromAddress += cStringUtil::TstrToStr(mstrFromName);
+        fromAddress += "\" <";
+        fromAddress += cStringUtil::TstrToStr(mstrFrom);
+        fromAddress += ">";
     }
     else
-	{
-		fromAddress = cStringUtil::TstrToStr(mstrFrom);
-	}
+    {
+        fromAddress = cStringUtil::TstrToStr(mstrFrom);
+    }
 
     ss << cMailMessageUtil::FormatAddressHeader(    "From",     fromAddress);
     ss << cMailMessageUtil::FormatAddressHeader(    "To",       strToList );
@@ -230,27 +230,27 @@ bool cMailMessageUtil::ReadDate( TSTRING& strDateBuf )
 
 #if HAVE_STRFTIME
 
-	TCHAR szDate[1024];
-	struct tm *tm = NULL;
-	
-	time_t current_time = time(NULL);
-	tm = localtime ( &current_time );
-	
-	const TCHAR* szFormat = _T("%a, %d %b %Y %H:%M:%S %z");
-	
-	size_t numChars = _tcsftime( szDate, countof( szDate ), szFormat, tm );
-	
-	if ( numChars != 0 )
-	{
-		strDateBuf = szDate;
-		fGotDate = true;
-	}
+    TCHAR szDate[1024];
+    struct tm *tm = NULL;
+    
+    time_t current_time = time(NULL);
+    tm = localtime ( &current_time );
+    
+    const TCHAR* szFormat = _T("%a, %d %b %Y %H:%M:%S %z");
+    
+    size_t numChars = _tcsftime( szDate, countof( szDate ), szFormat, tm );
+    
+    if ( numChars != 0 )
+    {
+        strDateBuf = szDate;
+        fGotDate = true;
+    }
 
 #else
 
-	int64 now = cSystemInfo::GetExeStartTime();
-	strDateBuf = cTimeUtil::GetRFC822Date(cTimeUtil::TimeToDateGMT(now));
-	fGotDate = true;
+    int64 now = cSystemInfo::GetExeStartTime();
+    strDateBuf = cTimeUtil::GetRFC822Date(cTimeUtil::TimeToDateGMT(now));
+    fGotDate = true;
 
 #endif // HAVE_STRFTIME
 

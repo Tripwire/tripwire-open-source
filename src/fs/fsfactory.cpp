@@ -50,38 +50,38 @@
 class cUnixNameInfo : public iFCONameInfo
 {
 public:
-	virtual bool	IsCaseSensitive() const 
-	{
-		return true;
-	}
+    virtual bool    IsCaseSensitive() const 
+    {
+        return true;
+    }
 
-	virtual TCHAR	GetDelimitingChar() const 
-	{
-		return _T('/');
-	}
+    virtual TCHAR   GetDelimitingChar() const 
+    {
+        return _T('/');
+    }
     
     virtual ~cUnixNameInfo() {}
 };
 
 
-iFCOPropCalc*	cFSFactory::CreatePropCalc() const
+iFCOPropCalc*   cFSFactory::CreatePropCalc() const
 {
-	return new cFSPropCalc();
+    return new cFSPropCalc();
 }
 
 iFCOSpec* cFSFactory::CreateSpec(const TSTRING& name, iFCOSpecHelper* pHelper) const
 {
-	return new cFCOSpecImpl(name, NULL, pHelper);
+    return new cFCOSpecImpl(name, NULL, pHelper);
 }
 
 iFCOPropDisplayer* cFSFactory::CreatePropDisplayer() const
 {
-	return new cFSPropDisplayer();
+    return new cFSPropDisplayer();
 }
 
 iSerRefCountObj::CreateFunc cFSFactory::GetCreateFunc() const
 {
-	return cFSObject::Create;
+    return cFSObject::Create;
 }
 
 iParserGenreUtil*  cFSFactory::CreateParserGenreUtil() const
@@ -89,25 +89,25 @@ iParserGenreUtil*  cFSFactory::CreateParserGenreUtil() const
     return new cFSParserUtil();
 }
 
-iFCODataSourceIter*	cFSFactory::CreateDataSourceIter() const 
+iFCODataSourceIter* cFSFactory::CreateDataSourceIter() const 
 {
-	return new cFSDataSourceIter();
+    return new cFSDataSourceIter();
 }
 
 
 iFCONameInfo* cFSFactory::GetNameInfo() const 
 {
-	static cUnixNameInfo gUnixNameInfo;
-	return &gUnixNameInfo;
+    static cUnixNameInfo gUnixNameInfo;
+    return &gUnixNameInfo;
 }
 
 cFCOPropVector cFSFactory::GetLooseDirMask() const 
 {
-	static cFCOPropVector vec;
-	static bool bInit = false;
+    static cFCOPropVector vec;
+    static bool bInit = false;
 
-	if( ! bInit )
-	{
+    if( ! bInit )
+    {
         vec.AddItem( cFSPropSet::PROP_SIZE );
         vec.AddItem( cFSPropSet::PROP_NLINK );
         vec.AddItem( cFSPropSet::PROP_ATIME );
@@ -119,11 +119,11 @@ cFCOPropVector cFSFactory::GetLooseDirMask() const
         vec.AddItem( cFSPropSet::PROP_MD5 );
         vec.AddItem( cFSPropSet::PROP_SHA );
         vec.AddItem( cFSPropSet::PROP_HAVAL );
-		
-		bInit = true;
-	}
+        
+        bInit = true;
+    }
 
-	return vec;
+    return vec;
 }
 
 iFCONameTranslator* cFSFactory::GetNameTranslator() const

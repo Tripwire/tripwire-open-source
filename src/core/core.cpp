@@ -46,7 +46,7 @@ TSS_ImplementPackage( cCore )
 
 cCore::cCore()
 {
-	TSS_REGISTER_PKG_ERRORS( core );
+    TSS_REGISTER_PKG_ERRORS( core );
 
     // NOTE: Initialize code converter when cCore is a dependency
     // of another package (created on first call to GetInstance(),

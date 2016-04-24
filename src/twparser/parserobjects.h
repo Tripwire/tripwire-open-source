@@ -69,9 +69,9 @@ class iParserGenreUtil;
 
 ///////////////////////////////////////////////////////////////////////////////
 // parser representation of named attributes
-//		these {name, value} pairs can be associated with either rules, or rule masks.
-//		the implication is that each rule masks inherits the attributes of its parents,
-//		but can override them.
+//      these {name, value} pairs can be associated with either rules, or rule masks.
+//      the implication is that each rule masks inherits the attributes of its parents,
+//      but can override them.
 //
 //      Has knowledge of allowable attribute names and their allowable values
 //      Validate() throws error if name is unrecognized or value is outside allowable range
@@ -88,7 +88,7 @@ public:
     
     const TSTRING& GetName()    const { return mstrName; };
     const TSTRING& GetValue()   const { return mstrValue; };
-	int            GetLineNum() const { return mLineNum; };
+    int            GetLineNum() const { return mLineNum; };
     void  SetValue( const TSTRING& str )  { mstrValue = str; };
 
     void  Validate() const;
@@ -96,7 +96,7 @@ public:
     //
     // debug functions
     //
-	void				Dump(cDebug &d) const;			// debugging routine
+    void                Dump(cDebug &d) const;          // debugging routine
 
 private:
     //
@@ -149,7 +149,7 @@ public:
     //
     // general functionality
     //
-	void				Dump( cDebug &d ) const;			// dump entire list
+    void                Dump( cDebug &d ) const;            // dump entire list
     void                Add( cParseNamedAttr* const pa );
     const cParseNamedAttr*   Lookup( const TSTRING& tstrAttrName ) const;
     void                Clear();
@@ -171,104 +171,104 @@ public:
     //
     // data members
     //
-    std::list< cParseNamedAttr * >	mList;
+    std::list< cParseNamedAttr * >  mList;
 };
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // parser representation of fcospecmasks
-//		specmasks consist of sets of {condition, propvector} pairs, and also have associated
-//		with them a list of {attributes}.
+//      specmasks consist of sets of {condition, propvector} pairs, and also have associated
+//      with them a list of {attributes}.
 class cParseSpecMask 
 {
 public:
     //
     // ctor and dtor
     //
-	cParseSpecMask( TSTRING &condition, TSTRING &vector, iParserGenreUtil* pHelper ); // throw( eParserHelper )
+    cParseSpecMask( TSTRING &condition, TSTRING &vector, iParserGenreUtil* pHelper ); // throw( eParserHelper )
     cParseSpecMask( const cParseSpecMask& sm ) { *this = sm; };
     ~cParseSpecMask();
 
     //
     // data access
     //
-	void				SetAttrList(cParseNamedAttrList *);		// attach list of named attributes
-	cParseNamedAttrList	*GetAttrList() const;	
-	int					GetNumAttrs() const;			// number of named attributes
-	const cFCOPropVector&     GetPropVector() const;			// get prop vector (only used when parsing default specmasks)
+    void                SetAttrList(cParseNamedAttrList *);     // attach list of named attributes
+    cParseNamedAttrList *GetAttrList() const;   
+    int                 GetNumAttrs() const;            // number of named attributes
+    const cFCOPropVector&     GetPropVector() const;            // get prop vector (only used when parsing default specmasks)
     const TSTRING&            GetPropVectorString() const;
-	const TSTRING&			GetCondition() const;			// get condition
+    const TSTRING&          GetCondition() const;           // get condition
     
     //
     // debug functionality
     //
-	void				Dump(cDebug &d) const;			// debugging routine
+    void                Dump(cDebug &d) const;          // debugging routine
 
 private:
     //
     // data members
     //
-	TSTRING					msCondition;			// TODO: this shouldn't be a string -- should be expression
-	TSTRING					msPV;
+    TSTRING                 msCondition;            // TODO: this shouldn't be a string -- should be expression
+    TSTRING                 msPV;
     cFCOPropVector          mPropVector;
-	cParseNamedAttrList*    mpAttrList;				// list of named attributes associated with specmask
+    cParseNamedAttrList*    mpAttrList;             // list of named attributes associated with specmask
 
 };
 
 ///////////////////////////////////////////////////////////////////////////////
 // wrapper around list routines
-//		we do this so yacc can have something convenient to carry around
+//      we do this so yacc can have something convenient to carry around
 class cParseSpecMaskList 
 {
 public:
     ~cParseSpecMaskList() { KILL_LIST(cParseSpecMask,mList); };
 
-	void				Dump(cDebug &d) const;			// dump entire list
+    void                Dump(cDebug &d) const;          // dump entire list
     void                Add( cParseSpecMask* const pa ) { mList.push_back( pa );};
 
-	std::list< cParseSpecMask* >		mList;
+    std::list< cParseSpecMask* >        mList;
 };
 
 
 // parser representation of fcospecs, which is composed of...
-//		a rule name, a set of specmasks, a default specmask (required), and a set of named attributes
+//      a rule name, a set of specmasks, a default specmask (required), and a set of named attributes
 class cParseRule 
 {
 public:
     //
-	// ctors and dtor
+    // ctors and dtor
     //
     cParseRule( const cParseSpecMask& defSpecMask ) :mDefSpecMask( defSpecMask ), mpAttrList(0), mpSpecMaskList(0), mName(_T("")) {}
     ~cParseRule();
 
     //
-	// data access
+    // data access
     //
-	const cFCOName&     GetName() const; // rule name
-	void				SetName( const cFCOName& name );
-	cParseNamedAttrList*GetAttrList() const; // rule attributes
-	void				SetAttrList(cParseNamedAttrList* );
-	void				SetSpecMaskList(cParseSpecMaskList *pmask);
-		// attach a list of specifiers to this rule (excluding default spec)
-	int					GetNumSpecMasks() const;
-		// returns number of spec masks (excluding default rule)
-	int					GetNumNamedAttrs() const;
-		// returns number of named attributes
+    const cFCOName&     GetName() const; // rule name
+    void                SetName( const cFCOName& name );
+    cParseNamedAttrList*GetAttrList() const; // rule attributes
+    void                SetAttrList(cParseNamedAttrList* );
+    void                SetSpecMaskList(cParseSpecMaskList *pmask);
+        // attach a list of specifiers to this rule (excluding default spec)
+    int                 GetNumSpecMasks() const;
+        // returns number of spec masks (excluding default rule)
+    int                 GetNumNamedAttrs() const;
+        // returns number of named attributes
     const cParseSpecMask&     GetDefSpecMask() const { return mDefSpecMask; };
 
     //
-	// debugging functions
+    // debugging functions
     //
-	void				Dump();
+    void                Dump();
     
 private:
     //
-	// debugging functions
+    // debugging functions
     //
-    cParseSpecMask              mDefSpecMask;	    // default specifier
-	cParseNamedAttrList*        mpAttrList;		// list of named attributes
-	cParseSpecMaskList*         mpSpecMaskList;	// list of specifiers
-	cFCOName                    mName;				// name of fcospec
+    cParseSpecMask              mDefSpecMask;       // default specifier
+    cParseNamedAttrList*        mpAttrList;     // list of named attributes
+    cParseSpecMaskList*         mpSpecMaskList; // list of specifiers
+    cFCOName                    mName;              // name of fcospec
 };
 
 

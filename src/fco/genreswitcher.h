@@ -103,10 +103,10 @@ public:
     cGenre::Genre   CurrentGenre();
         // returs the current genre, or cGenre::GENRE_INVALID if no genre
         // has be selected since construction
-	
-	iTWFactory*	    GetFactoryForGenre( cGenre::Genre );
-		// returns the tw factory appropriate for the given genre
-		// throws eError if genre is invalid.
+    
+    iTWFactory*     GetFactoryForGenre( cGenre::Genre );
+        // returns the tw factory appropriate for the given genre
+        // throws eError if genre is invalid.
     
     cGenre::Genre   GetDefaultGenre();
         // returns ID of default registered genre

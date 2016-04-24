@@ -53,100 +53,100 @@ class eArchive;
 class cBlockRecordFile
 {
 public:
-	//-------------------------------------------------------------------------
-	// Construction and Destruction
-	//-------------------------------------------------------------------------
-	cBlockRecordFile();
-	virtual ~cBlockRecordFile();
+    //-------------------------------------------------------------------------
+    // Construction and Destruction
+    //-------------------------------------------------------------------------
+    cBlockRecordFile();
+    virtual ~cBlockRecordFile();
 
-	//-------------------------------------------------------------------------
-	// Opening and Closing Files
-	//-------------------------------------------------------------------------
-	virtual void Open	( const TSTRING& fileName, int numPages, bool bTruncate = false )	; //throw (eArchive)
-	virtual void Open	( cBidirArchive* pArch, int numPages )								; //throw (eArchive)
-		// for the second Open(), this class owns the destruction of the archive
-	virtual void Close	()																	; //throw (eArchive)
-	virtual void Flush	()																	; //throw (eArchive)
+    //-------------------------------------------------------------------------
+    // Opening and Closing Files
+    //-------------------------------------------------------------------------
+    virtual void Open   ( const TSTRING& fileName, int numPages, bool bTruncate = false )   ; //throw (eArchive)
+    virtual void Open   ( cBidirArchive* pArch, int numPages )                              ; //throw (eArchive)
+        // for the second Open(), this class owns the destruction of the archive
+    virtual void Close  ()                                                                  ; //throw (eArchive)
+    virtual void Flush  ()                                                                  ; //throw (eArchive)
 
-	//-------------------------------------------------------------------------
-	// tAddr -- struct that is used to identify the location of a data item in
-	//			the file
-	//-------------------------------------------------------------------------
-	struct tAddr
-	{
-		int32	mBlockNum;
-		int32	mIndex;
+    //-------------------------------------------------------------------------
+    // tAddr -- struct that is used to identify the location of a data item in
+    //          the file
+    //-------------------------------------------------------------------------
+    struct tAddr
+    {
+        int32   mBlockNum;
+        int32   mIndex;
 
-		tAddr(int32 block = -1, int32 addr = -1) : mBlockNum(block), mIndex(addr) {}
-	};
+        tAddr(int32 block = -1, int32 addr = -1) : mBlockNum(block), mIndex(addr) {}
+    };
 
-	//-------------------------------------------------------------------------
-	// Adding and Removing Data
-	//-------------------------------------------------------------------------
-	tAddr	AddItem( int8* pData, int dataSize ) ; //throw (eArchive)
-		// adds the given data to the file, growing it as necessary. Return value
-		// can be used in the future to retrieve the data
-	void	RemoveItem( tAddr dataAddr ) ; //throw (eArchive)
-		// removes the named data from the file. This will assert that the given 
-		// address is valid, and will shrink the end of the file if there are 
-		// empty blocks at the end after the removal TODO -- it doesn't actually
-		// do the latter.
+    //-------------------------------------------------------------------------
+    // Adding and Removing Data
+    //-------------------------------------------------------------------------
+    tAddr   AddItem( int8* pData, int dataSize ) ; //throw (eArchive)
+        // adds the given data to the file, growing it as necessary. Return value
+        // can be used in the future to retrieve the data
+    void    RemoveItem( tAddr dataAddr ) ; //throw (eArchive)
+        // removes the named data from the file. This will assert that the given 
+        // address is valid, and will shrink the end of the file if there are 
+        // empty blocks at the end after the removal TODO -- it doesn't actually
+        // do the latter.
 
-	//-------------------------------------------------------------------------
-	// Accessing Data
-	//-------------------------------------------------------------------------
-	bool	IsValidAddr( tAddr addr ) ; //throw (eArchive)
-		// returns true if the given address points to valid data
-	int8*	GetDataForReading( tAddr dataAddr, int32& dataSize ) ; //throw (eArchive)
-		// returns a pointer to the named data. This method will assert that the address is
-		// valid. The data pointer returned is guarenteed to be valid only until the next
-		// method call into this class.
-	int8*	GetDataForWriting( tAddr dataAddr, int32& dataSize ) ; //throw (eArchive)
-		// this is the same as the previous function, except the dirty bit for the page is also set
+    //-------------------------------------------------------------------------
+    // Accessing Data
+    //-------------------------------------------------------------------------
+    bool    IsValidAddr( tAddr addr ) ; //throw (eArchive)
+        // returns true if the given address points to valid data
+    int8*   GetDataForReading( tAddr dataAddr, int32& dataSize ) ; //throw (eArchive)
+        // returns a pointer to the named data. This method will assert that the address is
+        // valid. The data pointer returned is guarenteed to be valid only until the next
+        // method call into this class.
+    int8*   GetDataForWriting( tAddr dataAddr, int32& dataSize ) ; //throw (eArchive)
+        // this is the same as the previous function, except the dirty bit for the page is also set
 
-	cBidirArchive* GetArchive() { return mBlockFile.GetArchive(); }
-		// NOTE -- be very careful with this; only read from it and do not write to it.
+    cBidirArchive* GetArchive() { return mBlockFile.GetArchive(); }
+        // NOTE -- be very careful with this; only read from it and do not write to it.
 
-	//-------------------------------------------------------------------------
-	// Private Implementation
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // Private Implementation
+    //-------------------------------------------------------------------------
 protected:
-	typedef std::vector<cBlockRecordArray>	BlockArray;
-	//
-	// NOTE -- use all of these methods with much care!
-	//
-	cBlockFile*			GetBlockFile	()			{ return &mBlockFile; }
-	BlockArray*			GetBlockArray	()			{ return &mvBlocks; }
+    typedef std::vector<cBlockRecordArray>  BlockArray;
+    //
+    // NOTE -- use all of these methods with much care!
+    //
+    cBlockFile*         GetBlockFile    ()          { return &mBlockFile; }
+    BlockArray*         GetBlockArray   ()          { return &mvBlocks; }
 
 private:
 
-	int32		mLastAddedTo;		// optimization that keeps track of last block added to
-	bool		mbOpen;				// are we currently associated with a file?
-	cBlockFile	mBlockFile;
-	BlockArray	mvBlocks;
+    int32       mLastAddedTo;       // optimization that keeps track of last block added to
+    bool        mbOpen;             // are we currently associated with a file?
+    cBlockFile  mBlockFile;
+    BlockArray  mvBlocks;
 
-	cBlockRecordFile		( const cBlockRecordFile& rhs ); //not impl
-	void operator=			( const cBlockRecordFile& rhs ); //not impl
+    cBlockRecordFile        ( const cBlockRecordFile& rhs ); //not impl
+    void operator=          ( const cBlockRecordFile& rhs ); //not impl
 
-	int FindRoomForData( int32 dataSize ); //throw (eArchive)
-		// searches through all the blocks, starting with mLastAddedTo, looking 
-		// for one with dataSize free space. This asserts that the size is valid
-		// for storage in a block
-	void OpenImpl( bool bTruncate ); //throw (eArchive)
-		// implementation of the Open() methods above; both end up calling this.
+    int FindRoomForData( int32 dataSize ); //throw (eArchive)
+        // searches through all the blocks, starting with mLastAddedTo, looking 
+        // for one with dataSize free space. This asserts that the size is valid
+        // for storage in a block
+    void OpenImpl( bool bTruncate ); //throw (eArchive)
+        // implementation of the Open() methods above; both end up calling this.
 
-	//-------------------------------------------------------------------------
-	// Profiling / Debugging Interface
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
+    // Profiling / Debugging Interface
+    //-------------------------------------------------------------------------
 #ifdef _BLOCKFILE_DEBUG
 public:
-	void TraceContents(int dl = -1) const;
-		// traces out all the info we can on the current state of this class
-		// dl is the debug level to trace it at; -1 means to use D_DEBUG
-	void AssertValid() const;
-		// ASSERTs as much as we can about the consistancy of our internal state.
-	void AssertAllBlocksValid() ;
-		// time consuming function that calls AssertValid() on all of the blocks
+    void TraceContents(int dl = -1) const;
+        // traces out all the info we can on the current state of this class
+        // dl is the debug level to trace it at; -1 means to use D_DEBUG
+    void AssertValid() const;
+        // ASSERTs as much as we can about the consistancy of our internal state.
+    void AssertAllBlocksValid() ;
+        // time consuming function that calls AssertValid() on all of the blocks
 #endif
 
 };

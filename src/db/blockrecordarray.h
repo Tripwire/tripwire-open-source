@@ -46,7 +46,7 @@
 
 //
 // TODO -- I need to guarantee that all of the structures in this class do not have any pad bytes. 
-//		This is true under win32, but I am not sure if it will always be true. -- 10 feb 99 mdb
+//      This is true under win32, but I am not sure if it will always be true. -- 10 feb 99 mdb
 //
 
 class eArchive;
@@ -54,145 +54,145 @@ class eArchive;
 class cBlockRecordArray
 {
 public:
-	//-------------------------------------------------------------------------------------
-	// Construction
-	//-------------------------------------------------------------------------------------
-	cBlockRecordArray(cBlockFile* pBlockFile, int blockNum);
-		// this object is associated with a single block in a cBlockFile. It is _not_
-		// asserted that the blockNum is valid for the associated file at this point, 
-		// since it is possible that the file has not been loaded yet
-	cBlockRecordArray();
-		// if this version of the ctor is called, then Init() must be called before it can be used.
-	void	Init(cBlockFile* pBlockFile, int blockNum);
+    //-------------------------------------------------------------------------------------
+    // Construction
+    //-------------------------------------------------------------------------------------
+    cBlockRecordArray(cBlockFile* pBlockFile, int blockNum);
+        // this object is associated with a single block in a cBlockFile. It is _not_
+        // asserted that the blockNum is valid for the associated file at this point, 
+        // since it is possible that the file has not been loaded yet
+    cBlockRecordArray();
+        // if this version of the ctor is called, then Init() must be called before it can be used.
+    void    Init(cBlockFile* pBlockFile, int blockNum);
 
-	virtual ~cBlockRecordArray();
+    virtual ~cBlockRecordArray();
 
-	//-------------------------------------------------------------------------------------
-	// Initialization ... exactly one of these methods must be called before this class can be used
-	//-------------------------------------------------------------------------------------
-	void	InitNewBlock() ; //throw (eArchive)
-		// this method should be called when a new block has been created, and before this 
-		// class operates on it.
-	void	InitForExistingBlock() ; //throw (eArchive)
-		// this method should be called to initialize this class for use with a block that has 
-		// previously been created and initialized with InitNewBlock().
+    //-------------------------------------------------------------------------------------
+    // Initialization ... exactly one of these methods must be called before this class can be used
+    //-------------------------------------------------------------------------------------
+    void    InitNewBlock() ; //throw (eArchive)
+        // this method should be called when a new block has been created, and before this 
+        // class operates on it.
+    void    InitForExistingBlock() ; //throw (eArchive)
+        // this method should be called to initialize this class for use with a block that has 
+        // previously been created and initialized with InitNewBlock().
 
-	//-------------------------------------------------------------------------------------
-	// Data Manipulation
-	//-------------------------------------------------------------------------------------
-	int		AddItem(int8* pData, int dataSize, int mainIndex) ; //throw (eArchive)	
-		// inserts the given item into the array; returns the index that it was inserted into.
-		// this asserts that there is room for the new element, and updates the avail. space and
-		// max index as necessary.
-	void	DeleteItem(int index ) ; //throw (eArchive)
-		// deletes the specified item; this asserts that the index is valid, and updates the avail.
-		// space and max index as necessary. 
-	int8*	GetDataForReading( int index, int32& dataSize ) ; //throw (eArchive)
-		// returns a pointer to the named data. This method will assert that the address is
-		// valid. The data pointer returned is guarenteed to be valid only until the next
-		// method call into this class.
-	int8*	GetDataForWriting( int index, int32& dataSize ) ; //throw (eArchive)
-		// this is the same as the previous function, except the dirty bit for the page is also set
-	bool	IsItemValid(int index) const ; //throw (eArchive)
-		// returns true if the given index has a valid value.
+    //-------------------------------------------------------------------------------------
+    // Data Manipulation
+    //-------------------------------------------------------------------------------------
+    int     AddItem(int8* pData, int dataSize, int mainIndex) ; //throw (eArchive)  
+        // inserts the given item into the array; returns the index that it was inserted into.
+        // this asserts that there is room for the new element, and updates the avail. space and
+        // max index as necessary.
+    void    DeleteItem(int index ) ; //throw (eArchive)
+        // deletes the specified item; this asserts that the index is valid, and updates the avail.
+        // space and max index as necessary. 
+    int8*   GetDataForReading( int index, int32& dataSize ) ; //throw (eArchive)
+        // returns a pointer to the named data. This method will assert that the address is
+        // valid. The data pointer returned is guarenteed to be valid only until the next
+        // method call into this class.
+    int8*   GetDataForWriting( int index, int32& dataSize ) ; //throw (eArchive)
+        // this is the same as the previous function, except the dirty bit for the page is also set
+    bool    IsItemValid(int index) const ; //throw (eArchive)
+        // returns true if the given index has a valid value.
 
-	bool	IsClassValid() const;
-		// returns true if the class has an internally consistant state. If an archive exception
-		// occurs, false is returned. This method is good for determining if a newly opened block
-		// file is actually a block file
+    bool    IsClassValid() const;
+        // returns true if the class has an internally consistant state. If an archive exception
+        // occurs, false is returned. This method is good for determining if a newly opened block
+        // file is actually a block file
 
-	bool	Initialized() const			{							return mbInit; }
-	int		GetAvailableSpace() const	{ ASSERT( Initialized() );	return mSpaceAvailable; }
-	int		GetNumItems() const			{ ASSERT( Initialized() );	return mNumItems; }
-		// returns the number of items currently being stored in the array
+    bool    Initialized() const         {                           return mbInit; }
+    int     GetAvailableSpace() const   { ASSERT( Initialized() );  return mSpaceAvailable; }
+    int     GetNumItems() const         { ASSERT( Initialized() );  return mNumItems; }
+        // returns the number of items currently being stored in the array
 
-	///////////////////////////////////////////////////////////////////
-	// tRecordIndex -- this is what each record in the array is
-	//		indexed by. These come at the beginning of the block and
-	//		the record data comes at the end.
-	///////////////////////////////////////////////////////////////////
-	struct tRecordIndex
-	{
-	private:
-		int32	mOffset;	// offset from the end of the block that my data is at; offset 1 is the last byte in the block
-		int32	mMainIndex;	// my main array index
-	public:
-		// byte order safe access methods...
-		//
-		void  SetOffset		( int32 off )	{ mOffset	= tw_htonl( off ); }
-		int32 GetOffset		(  )			{ return	  tw_ntohl( mOffset ); }
-		void  SetMainIndex	( int32 idx )	{ mMainIndex= tw_htonl( idx ); }
-		int32 GetMainIndex	(  )			{ return	  tw_ntohl( mMainIndex ); }
-	};
-	///////////////////////////////////////////////////////////////////
-	// tHeader -- the info that appears at the beginning of the block
-	///////////////////////////////////////////////////////////////////
-	struct tHeader
-	{
-	private:
-		int32	mSpaceAvailable;
-		int32	mNumItems;
-	public:
-		// byte order safe access methods...
-		//
-		void  SetSpaceAvail	( int32 sa )	{ mSpaceAvailable	=	tw_htonl( sa ); }
-		int32 GetSpaceAvail	(  )			{ return				tw_ntohl( mSpaceAvailable ); }
-		void  SetNumItems	( int32 ni )	{ mNumItems			=	tw_htonl( ni ); }
-		int32 GetNumItems	(  )			{ return				tw_ntohl( mNumItems ); }
-	};
+    ///////////////////////////////////////////////////////////////////
+    // tRecordIndex -- this is what each record in the array is
+    //      indexed by. These come at the beginning of the block and
+    //      the record data comes at the end.
+    ///////////////////////////////////////////////////////////////////
+    struct tRecordIndex
+    {
+    private:
+        int32   mOffset;    // offset from the end of the block that my data is at; offset 1 is the last byte in the block
+        int32   mMainIndex; // my main array index
+    public:
+        // byte order safe access methods...
+        //
+        void  SetOffset     ( int32 off )   { mOffset   = tw_htonl( off ); }
+        int32 GetOffset     (  )            { return      tw_ntohl( mOffset ); }
+        void  SetMainIndex  ( int32 idx )   { mMainIndex= tw_htonl( idx ); }
+        int32 GetMainIndex  (  )            { return      tw_ntohl( mMainIndex ); }
+    };
+    ///////////////////////////////////////////////////////////////////
+    // tHeader -- the info that appears at the beginning of the block
+    ///////////////////////////////////////////////////////////////////
+    struct tHeader
+    {
+    private:
+        int32   mSpaceAvailable;
+        int32   mNumItems;
+    public:
+        // byte order safe access methods...
+        //
+        void  SetSpaceAvail ( int32 sa )    { mSpaceAvailable   =   tw_htonl( sa ); }
+        int32 GetSpaceAvail (  )            { return                tw_ntohl( mSpaceAvailable ); }
+        void  SetNumItems   ( int32 ni )    { mNumItems         =   tw_htonl( ni ); }
+        int32 GetNumItems   (  )            { return                tw_ntohl( mNumItems ); }
+    };
 
-	enum	{	MAX_RECORDS		= cBlockFile::BLOCK_SIZE / ( sizeof(tRecordIndex) + sizeof(uint32) ),
-					// MAX_RECORDS signifies the maximum number of records that can be stored in a single block. 
-					// It is rationalized like this: each used record needs a tRecordIndex plus an extra uint32
-					// as a minimum storage requirement (even though it is ok to have a record that is filled in 
-					// with zero bytes)
-				MARGIN			= 10 , 
-					// MARGIN is the min. amount of room that should exist between the indexes and the data. This
-					// is used when calculating the available space, and also in assertions.
-				MAX_DATA_SIZE	= cBlockFile::BLOCK_SIZE - sizeof(tRecordIndex) - sizeof(tHeader) - MARGIN,
-					// this is the largest single piece of data that could theoreticaly be stored (if it were the
-					// only thing stored in the block). We assume that the single record index will take up space,
-					// the header will take up space, and the margin will take up space.
-				INVALID_INDEX	= -1
-					// when tRecordIndex::mMainIndex is set to this, it indicates that the index is not being used.
-			};
+    enum    {   MAX_RECORDS     = cBlockFile::BLOCK_SIZE / ( sizeof(tRecordIndex) + sizeof(uint32) ),
+                    // MAX_RECORDS signifies the maximum number of records that can be stored in a single block. 
+                    // It is rationalized like this: each used record needs a tRecordIndex plus an extra uint32
+                    // as a minimum storage requirement (even though it is ok to have a record that is filled in 
+                    // with zero bytes)
+                MARGIN          = 10 , 
+                    // MARGIN is the min. amount of room that should exist between the indexes and the data. This
+                    // is used when calculating the available space, and also in assertions.
+                MAX_DATA_SIZE   = cBlockFile::BLOCK_SIZE - sizeof(tRecordIndex) - sizeof(tHeader) - MARGIN,
+                    // this is the largest single piece of data that could theoreticaly be stored (if it were the
+                    // only thing stored in the block). We assume that the single record index will take up space,
+                    // the header will take up space, and the margin will take up space.
+                INVALID_INDEX   = -1
+                    // when tRecordIndex::mMainIndex is set to this, it indicates that the index is not being used.
+            };
 
-	///////////////////////////////////////////////////////////////////
-	// tIndexArray -- the beginning of a block is treated 
-	//		as one of these
-	///////////////////////////////////////////////////////////////////
-	struct tIndexArray
-	{
-		tHeader			mHeader;
-		tRecordIndex	maRecordIndex[MAX_RECORDS];
-	};
+    ///////////////////////////////////////////////////////////////////
+    // tIndexArray -- the beginning of a block is treated 
+    //      as one of these
+    ///////////////////////////////////////////////////////////////////
+    struct tIndexArray
+    {
+        tHeader         mHeader;
+        tRecordIndex    maRecordIndex[MAX_RECORDS];
+    };
 
 private:
-	cBlockFile*		mpBlockFile;
-	int				mBlockNum;			// the block that I am operating on
-	int				mSpaceAvailable;	// amount of storage I have left
-	int				mNumItems;			// number of items currently being stored in this array
-	bool			mbInit;				// has InitXXX() been called?
+    cBlockFile*     mpBlockFile;
+    int             mBlockNum;          // the block that I am operating on
+    int             mSpaceAvailable;    // amount of storage I have left
+    int             mNumItems;          // number of items currently being stored in this array
+    bool            mbInit;             // has InitXXX() been called?
 
-	void UpdateFreeSpace(cBlockFile::Block* pBlock);
-		// calculates the total free space available in this array and assigns
-		// it to mSpaceAvailable. Note that the value of mSpaceAvailable signifies
-		// the size of the largest single item that could be added to the array.
-	void WriteHeaderInfo(cBlockFile::Block* pBlock);
-		// gets the header information at the top of our block in sync with our member vars
-	void ReadHeaderInfo	(cBlockFile::Block* pBlock);
-		// reads the header info from the block and sets our member vars to what was read
+    void UpdateFreeSpace(cBlockFile::Block* pBlock);
+        // calculates the total free space available in this array and assigns
+        // it to mSpaceAvailable. Note that the value of mSpaceAvailable signifies
+        // the size of the largest single item that could be added to the array.
+    void WriteHeaderInfo(cBlockFile::Block* pBlock);
+        // gets the header information at the top of our block in sync with our member vars
+    void ReadHeaderInfo (cBlockFile::Block* pBlock);
+        // reads the header info from the block and sets our member vars to what was read
 
-	///////////////////////////////////////////////////////////////////////////
-	// Profiling / Debugging interface
-	///////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
+    // Profiling / Debugging interface
+    ///////////////////////////////////////////////////////////////////////////
 #ifdef _BLOCKFILE_DEBUG
 public:
-	void TraceContents(int dl = -1) const;
-		// traces out all the info we can on the current state of this class
-		// dl is the debug level to trace it at; -1 means to use D_DEBUG
-	void AssertValid() const;
-		// ASSERTs as much as we can about the consistency of our internal state.
+    void TraceContents(int dl = -1) const;
+        // traces out all the info we can on the current state of this class
+        // dl is the debug level to trace it at; -1 means to use D_DEBUG
+    void AssertValid() const;
+        // ASSERTs as much as we can about the consistency of our internal state.
 #endif
 };
 

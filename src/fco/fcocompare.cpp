@@ -48,7 +48,7 @@ cFCOCompare::cFCOCompare()
 }
 
 cFCOCompare::cFCOCompare( const cFCOPropVector& propsToCompare)
-:	mPropsToCmp( propsToCompare )
+:   mPropsToCmp( propsToCompare )
 {
 
 }
@@ -63,54 +63,54 @@ cFCOCompare::~cFCOCompare()
 ///////////////////////////////////////////////////////////////////////////////
 uint32 cFCOCompare::Compare(const iFCO* pFco1, const iFCO* pFco2) 
 {
-	ASSERT(pFco1 != 0);
-	ASSERT(pFco2 != 0);
-	// first, make sure the fcos are of the same type...
-	if(pFco1->GetType() != pFco2->GetType())
-	{
-		ASSERT( false );
-		INTERNAL_ERROR( "fcocompare.cpp" );
-	}
-	
+    ASSERT(pFco1 != 0);
+    ASSERT(pFco2 != 0);
+    // first, make sure the fcos are of the same type...
+    if(pFco1->GetType() != pFco2->GetType())
+    {
+        ASSERT( false );
+        INTERNAL_ERROR( "fcocompare.cpp" );
+    }
+    
 
-	const iFCOPropSet* ps1		= pFco1->GetPropSet();
-	const iFCOPropSet* ps2		= pFco2->GetPropSet();
-	const cFCOPropVector& v1	= pFco1->GetPropSet()->GetValidVector();
-	const cFCOPropVector& v2	= pFco2->GetPropSet()->GetValidVector();
+    const iFCOPropSet* ps1      = pFco1->GetPropSet();
+    const iFCOPropSet* ps2      = pFco2->GetPropSet();
+    const cFCOPropVector& v1    = pFco1->GetPropSet()->GetValidVector();
+    const cFCOPropVector& v2    = pFco2->GetPropSet()->GetValidVector();
 
-	uint32 result = 0;
+    uint32 result = 0;
 
-	mInvalidProps.SetSize( v1.GetSize() );
-	mUnequalProps.SetSize( v1.GetSize() );
-	mInvalidProps.Clear();
-	mUnequalProps.Clear();
+    mInvalidProps.SetSize( v1.GetSize() );
+    mUnequalProps.SetSize( v1.GetSize() );
+    mInvalidProps.Clear();
+    mUnequalProps.Clear();
 
-	// finally, comapre all the properties
-	for(int i=0; i<v1.GetSize(); i++)
-	{
-		if(mPropsToCmp.ContainsItem(i))
-		{
-			if((! v1.ContainsItem(i)) || (! v2.ContainsItem(i)))
-			{
-				mInvalidProps.AddItem(i);
-				result |= PROPS_NOT_ALL_VALID;
-			}
-			else
-			{
-				// comapre the properties
-				if(ps1->GetPropAt(i)->Compare(ps2->GetPropAt(i), iFCOProp::OP_EQ) != iFCOProp::CMP_TRUE)
-				{
-					// they are not equal!
-					mUnequalProps.AddItem(i);
-					result |= PROPS_UNEQUAL;
-				}
-			}
-		}
-	}
+    // finally, comapre all the properties
+    for(int i=0; i<v1.GetSize(); i++)
+    {
+        if(mPropsToCmp.ContainsItem(i))
+        {
+            if((! v1.ContainsItem(i)) || (! v2.ContainsItem(i)))
+            {
+                mInvalidProps.AddItem(i);
+                result |= PROPS_NOT_ALL_VALID;
+            }
+            else
+            {
+                // comapre the properties
+                if(ps1->GetPropAt(i)->Compare(ps2->GetPropAt(i), iFCOProp::OP_EQ) != iFCOProp::CMP_TRUE)
+                {
+                    // they are not equal!
+                    mUnequalProps.AddItem(i);
+                    result |= PROPS_UNEQUAL;
+                }
+            }
+        }
+    }
 
-	if( ! result )
-		result = EQUAL;
+    if( ! result )
+        result = EQUAL;
 
-	return result;
+    return result;
 }
 

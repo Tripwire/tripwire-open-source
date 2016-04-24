@@ -37,7 +37,7 @@
 //
 #include "stddb.h"
 #include "db.h"
-#include "core/core.h"	    // for: TSS_Package( cCore )
+#include "core/core.h"      // for: TSS_Package( cCore )
 
 TSS_ImplementPackage( cDb )
 

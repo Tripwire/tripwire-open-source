@@ -46,39 +46,39 @@ TSS_BeginStringtable( cTWPrint )
                 _T("\n")
                 _T("Print Database:  twprint [-m d|--print-dbfile] [options] [object1 [object2...]]\n")    
                 _T("Print Report:  twprint [-m r|--print-report] [options]\n")
-				_T("Type 'twprint [mode] --help' OR\n")
-				_T("'twprint --help mode [mode...]' OR\n")
-				_T("'twprint --help all' for extended help\n")
+                _T("Type 'twprint [mode] --help' OR\n")
+                _T("'twprint --help mode [mode...]' OR\n")
+                _T("'twprint --help all' for extended help\n")
                 _T("\n")
-				),
+                ),
 
-	TSS_StringEntry( twprint::STR_TWPRINT_HELP_PRINT_DATABASE,
+    TSS_StringEntry( twprint::STR_TWPRINT_HELP_PRINT_DATABASE,
                 _T("Print Database mode:\n")
                 _T("  -m d                 --print-dbfile\n")
-				_T("  -v                   --verbose\n")
-		        _T("  -h                   --hexadecimal\n")
-				_T("  -s                   --silent, --quiet\n")
+                _T("  -v                   --verbose\n")
+                _T("  -h                   --hexadecimal\n")
+                _T("  -s                   --silent, --quiet\n")
                 _T("  -c cfgfile           --cfgfile cfgfile\n")
                 _T("  -d database          --dbfile database\n")
-                _T("  -L localkey	       --local-keyfile localkey\n")
+                _T("  -L localkey          --local-keyfile localkey\n")
                 _T("[object1 [object2 ...]\n")
                 _T("\n")
-				_T("The -v and -s options are mutually exclusive.\n")
+                _T("The -v and -s options are mutually exclusive.\n")
                 _T("\n")
-				),
+                ),
 
-	TSS_StringEntry( twprint::STR_TWPRINT_HELP_PRINT_REPORT,
+    TSS_StringEntry( twprint::STR_TWPRINT_HELP_PRINT_REPORT,
                 _T("Print Report mode:\n")
                 _T("  -m r                 --print-report\n")
-				_T("  -v                   --verbose\n")
-		        _T("  -h                   --hexadecimal\n")                    
-				_T("  -s                   --silent, --quiet\n")
+                _T("  -v                   --verbose\n")
+                _T("  -h                   --hexadecimal\n")                    
+                _T("  -s                   --silent, --quiet\n")
                 _T("  -c cfgfile           --cfgfile cfgfile\n")
                 _T("  -r report            --twrfile report\n")
-                _T("  -L localkey	       --local-keyfile localkey\n")
-				_T("  -t { 0|1|2|3|4 }     --report-level { 0|1|2|3|4 }\n")
+                _T("  -L localkey          --local-keyfile localkey\n")
+                _T("  -t { 0|1|2|3|4 }     --report-level { 0|1|2|3|4 }\n")
                 _T("\n")
-				_T("The -v and -s options are mutually exclusive.\n")
+                _T("The -v and -s options are mutually exclusive.\n")
                 _T("\n")
               ),
     

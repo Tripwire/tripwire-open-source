@@ -33,33 +33,33 @@
 // iterproxy.h
 // 
 // cIterProxy<> -- smart pointer for iterator classes used in tripwire. the
-//		iterator must support being destroyed with a member function called
-//		ReleaseIter()
+//      iterator must support being destroyed with a member function called
+//      ReleaseIter()
 #ifndef __ITERPROXY_H
 #define __ITERPROXY_H
 
 ////////////////////////////////////////////////////
 // cIterProxy -- a smart pointer class
-//		for fco iterators. It can be dereferenced
-//		and assigned to like a pointer, but it calls
-//		mpIter->Release() when it is destroyed, unless
-//		mpIter == NULL.
+//      for fco iterators. It can be dereferenced
+//      and assigned to like a pointer, but it calls
+//      mpIter->Release() when it is destroyed, unless
+//      mpIter == NULL.
 ////////////////////////////////////////////////////
 
 template<class TYPE>
 class cIterProxy
 {
 public:
-	cIterProxy(TYPE* pIter = NULL)		: mpIter(pIter)			{};
-	cIterProxy(const TYPE* pIter)	: mpIter((TYPE*)pIter)	{};
-	~cIterProxy()					{ if (mpIter) mpIter->DestroyIter(); }
-	operator		TYPE*()				{ return mpIter; }
-	operator const	TYPE*() const		{ return mpIter; }
-	TYPE*		operator->()			{ return mpIter; }
-	const TYPE*	operator->() const		{ return mpIter; }
-	TYPE*		operator=(TYPE* rhs)	{ mpIter = rhs; return mpIter; }
+    cIterProxy(TYPE* pIter = NULL)      : mpIter(pIter)         {};
+    cIterProxy(const TYPE* pIter)   : mpIter((TYPE*)pIter)  {};
+    ~cIterProxy()                   { if (mpIter) mpIter->DestroyIter(); }
+    operator        TYPE*()             { return mpIter; }
+    operator const  TYPE*() const       { return mpIter; }
+    TYPE*       operator->()            { return mpIter; }
+    const TYPE* operator->() const      { return mpIter; }
+    TYPE*       operator=(TYPE* rhs)    { mpIter = rhs; return mpIter; }
 private:
-	TYPE* mpIter;
+    TYPE* mpIter;
 };
 
 

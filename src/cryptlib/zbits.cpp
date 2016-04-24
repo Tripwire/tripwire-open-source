@@ -18,7 +18,7 @@ unsigned long bits_sent;   /* bit length of the compressed data */
 // #define putbyte(b) outQ.Put(b)
 
 BitOutput::BitOutput(BufferedTransformation &outQ)
-	: outQ(outQ)
+    : outQ(outQ)
 {
    bitbuff = 0;
    boffset = 0;
@@ -36,14 +36,14 @@ void BitOutput::send_bits(unsigned int value, int length) /* Send a value on a g
 #endif
    bitbuff |= value << boffset;
    if ((boffset += length) >= 8) {
-	  outQ.Put(bitbuff);
-	  value >>= length - (boffset -= 8);
-	  if (boffset >= 8) {
-		 boffset -= 8;
-		 outQ.Put(value);
-		 value >>= 8;
-	  }
-	  bitbuff = value;
+      outQ.Put(bitbuff);
+      value >>= length - (boffset -= 8);
+      if (boffset >= 8) {
+         boffset -= 8;
+         outQ.Put(value);
+         value >>= 8;
+      }
+      bitbuff = value;
    }
 }
 
@@ -52,19 +52,19 @@ void BitOutput::bi_windup()
 {
    assert(boffset < 8);
    if (boffset) {
-	  outQ.Put(bitbuff);
-	  boffset = 0;
-	  bitbuff = 0;
+      outQ.Put(bitbuff);
+      boffset = 0;
+      bitbuff = 0;
 #ifdef DEBUG
-	  bits_sent = (bits_sent+7) & ~7;
+      bits_sent = (bits_sent+7) & ~7;
 #endif
    }
 }
 
 void BitOutput::bi_putsh(word16 x)
 {
-	outQ.Put((byte)x);
-	outQ.Put(byte(x>>8));
+    outQ.Put((byte)x);
+    outQ.Put(byte(x>>8));
 }
 
 /* Copy a stored block to the zip file, storing first the length and its
@@ -75,10 +75,10 @@ void BitOutput::copy_block(byte *buf, unsigned int len, int header)
    bi_windup();
 
    if (header) {
-		bi_putsh(len);
-		bi_putsh(~len);
+        bi_putsh(len);
+        bi_putsh(~len);
 #ifdef DEBUG
-	  bits_sent += 2*16;
+      bits_sent += 2*16;
 #endif
    }
    outQ.Put(buf, len);

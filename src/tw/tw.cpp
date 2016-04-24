@@ -62,8 +62,8 @@ cTW::cTW()
     TSS_Dependency( cFCO );
     TSS_Dependency( cUtil );
     TSS_Dependency( cFS );
-	
-	TSS_REGISTER_PKG_ERRORS( tw )
+    
+    TSS_REGISTER_PKG_ERRORS( tw )
 }
 
 // eof: tw.cpp

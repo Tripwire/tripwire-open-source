@@ -44,23 +44,23 @@
 class cType
 {
 public:
-	cType(const TCHAR* name);
-	
-	const TCHAR* AsString() const;
-	bool operator==(const cType& rhs) const;
-	bool operator!=(const cType& rhs) const;
+    cType(const TCHAR* name);
+    
+    const TCHAR* AsString() const;
+    bool operator==(const cType& rhs) const;
+    bool operator!=(const cType& rhs) const;
 private:
-	TSTRING mString;
+    TSTRING mString;
 };
 
 class iTyped
 {
 public:
-	virtual const cType& GetType() const = 0;
-		// the type of an FCO; classes that implement this interface need to 
-		// (a) declare a public static const cType member mType and
-		// (b) returning that object in their implementation of GetType()
-		// You can use the macros below to simplify the process
+    virtual const cType& GetType() const = 0;
+        // the type of an FCO; classes that implement this interface need to 
+        // (a) declare a public static const cType member mType and
+        // (b) returning that object in their implementation of GetType()
+        // You can use the macros below to simplify the process
 
     virtual ~iTyped() {}
 };
@@ -72,70 +72,70 @@ public:
 public:\
 static const cType mType;\
 virtual const cType& GetType() const; 
-	// put DECLARE_TYPED in the class definition
+    // put DECLARE_TYPED in the class definition
 
 #define IMPLEMENT_TYPED(CLASS, STRING)\
-const cType	CLASS::mType(STRING);\
+const cType CLASS::mType(STRING);\
 const cType& CLASS::GetType() const\
 {\
-	return mType;\
+    return mType;\
 }
-	// put IMPLEMENT_TYPED in the .cpp file where the class is implemented
+    // put IMPLEMENT_TYPED in the .cpp file where the class is implemented
 
 #define CLASS_TYPE(CLASS) CLASS::mType
-	// a convienent way to specify a class's type
+    // a convienent way to specify a class's type
 
 ///////////////////////////////////////////////
 // iTyped Example
 ///////////////////////////////////////////////
 /*
-	(foo.h)
-	class cFoo : public iTyped
-	{
-	public:
-		DECLARE_TYPED()
-	}
+    (foo.h)
+    class cFoo : public iTyped
+    {
+    public:
+        DECLARE_TYPED()
+    }
 
-	(foo.cpp)
-	DECLARE_TYPED(cFoo, "Foo");
+    (foo.cpp)
+    DECLARE_TYPED(cFoo, "Foo");
 
-	(main.cpp)
-	int main()
-	{
-		iTyped* pi = Bar();	// returned a cFoo
-		cout << "Encountered class " << pi->GetType().AsString() << endl;
-			// prints "Encountered class Foo"
-		if(pi->GetType() == CLASS_TYPE(cFoo))
-		{
-			cFoo* pFoo = static_cast<cFoo*>(pi);
-			// cast is always safe
-		}
-	}
+    (main.cpp)
+    int main()
+    {
+        iTyped* pi = Bar(); // returned a cFoo
+        cout << "Encountered class " << pi->GetType().AsString() << endl;
+            // prints "Encountered class Foo"
+        if(pi->GetType() == CLASS_TYPE(cFoo))
+        {
+            cFoo* pFoo = static_cast<cFoo*>(pi);
+            // cast is always safe
+        }
+    }
 */
 
 ///////////////////////////////////////////////////////////////////////////////
 // inline implementation
 ///////////////////////////////////////////////////////////////////////////////
 inline cType::cType(const TCHAR* name) : 
-	mString(name) 
+    mString(name) 
 {
-	ASSERT(!mString.empty());
+    ASSERT(!mString.empty());
 }
 
 
-inline const TCHAR* cType::AsString() const				
+inline const TCHAR* cType::AsString() const             
 { 
-	return mString.c_str(); 
+    return mString.c_str(); 
 }
 
 inline bool cType::operator==(const cType& rhs) const 
 { 
-	return (this == &rhs); 
+    return (this == &rhs); 
 }
 
 inline bool cType::operator!=(const cType& rhs) const 
 { 
-	return (this != &rhs); 
+    return (this != &rhs); 
 }
 
 

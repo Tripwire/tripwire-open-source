@@ -32,8 +32,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // fcosetimpl.h
 //
-// class cFCOSetImpl		-- concrete implementation of an FCO set
-// class cFCOIterImpl		-- the iterator over the set
+// class cFCOSetImpl        -- concrete implementation of an FCO set
+// class cFCOIterImpl       -- the iterator over the set
 #ifndef __FCOSETIMPL_H
 #define __FCOSETIMPL_H
 
@@ -49,79 +49,79 @@ class cFCOIterImpl;
 
 class cFCOSetImpl : public iFCOSet
 {
-	friend class cFCOIterImpl;
-	DECLARE_TYPEDSERIALIZABLE()
+    friend class cFCOIterImpl;
+    DECLARE_TYPEDSERIALIZABLE()
 
 public:
-	cFCOSetImpl();
-	cFCOSetImpl(const cFCOSetImpl& rhs);	
-	virtual ~cFCOSetImpl();
-	void operator=(const cFCOSetImpl& rhs);	
-	
-	virtual const	iFCOIter*	Lookup(const cFCOName& name) const;
-	virtual			iFCOIter*	Lookup(const cFCOName& name);
-	virtual const	iFCOIter*	GetIter() const;
-	virtual			iFCOIter*	GetIter();
-	virtual void				Insert(iFCO* pFCO);
-	virtual void				Clear();
+    cFCOSetImpl();
+    cFCOSetImpl(const cFCOSetImpl& rhs);    
+    virtual ~cFCOSetImpl();
+    void operator=(const cFCOSetImpl& rhs); 
+    
+    virtual const   iFCOIter*   Lookup(const cFCOName& name) const;
+    virtual         iFCOIter*   Lookup(const cFCOName& name);
+    virtual const   iFCOIter*   GetIter() const;
+    virtual         iFCOIter*   GetIter();
+    virtual void                Insert(iFCO* pFCO);
+    virtual void                Clear();
     virtual bool                IsEmpty() const;
     virtual int                 Size() const { return mFCOSet.size(); };
-	virtual void				TraceContents(int dl = -1) const; 
+    virtual void                TraceContents(int dl = -1) const; 
 
-	// iSerializable interface
-	virtual void				Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void				Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void                Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void                Write(iSerializer* pSerializer) const;  // throw (eSerializer, eArchive)
 private:
-	void						ReturnIter(const cFCOIterImpl* pIter) const;
-		// returns the iterator to its owner; the reciprocal action
-		// to Lookup() or GetIter(); called by the iterator when it is destroyed
+    void                        ReturnIter(const cFCOIterImpl* pIter) const;
+        // returns the iterator to its owner; the reciprocal action
+        // to Lookup() or GetIter(); called by the iterator when it is destroyed
 
-	// class we store in the set below; it is a hack that allows us to 
-	// look up iFCOs using cFCONames in a std::set
-	class cFCONode
-	{
-	public:
-		iFCO*			mpFCO;
-		const cFCOName*	mpFCOName;
+    // class we store in the set below; it is a hack that allows us to 
+    // look up iFCOs using cFCONames in a std::set
+    class cFCONode
+    {
+    public:
+        iFCO*           mpFCO;
+        const cFCOName* mpFCOName;
 
-		cFCONode()						: mpFCO(0),			mpFCOName(0)				{}
-		cFCONode(iFCO* pFCO)			: mpFCO(pFCO),		mpFCOName(&pFCO->GetName()) {}
-		cFCONode(const cFCOName& name)	: mpFCO(0),			mpFCOName(&name)			{}
-		cFCONode(const cFCONode& rhs)	: mpFCO(rhs.mpFCO), mpFCOName(rhs.mpFCOName)	{}
-		bool operator < (const cFCONode& rhs) const { if(mpFCOName) return (*mpFCOName <  *rhs.mpFCOName); else return false; }
-		bool operator ==(const cFCONode& rhs) const { if(mpFCOName) return (*mpFCOName == *rhs.mpFCOName); else return false; }
-	};
+        cFCONode()                      : mpFCO(0),         mpFCOName(0)                {}
+        cFCONode(iFCO* pFCO)            : mpFCO(pFCO),      mpFCOName(&pFCO->GetName()) {}
+        cFCONode(const cFCOName& name)  : mpFCO(0),         mpFCOName(&name)            {}
+        cFCONode(const cFCONode& rhs)   : mpFCO(rhs.mpFCO), mpFCOName(rhs.mpFCOName)    {}
+        bool operator < (const cFCONode& rhs) const { if(mpFCOName) return (*mpFCOName <  *rhs.mpFCOName); else return false; }
+        bool operator ==(const cFCONode& rhs) const { if(mpFCOName) return (*mpFCOName == *rhs.mpFCOName); else return false; }
+    };
 
-	std::set<cFCONode> mFCOSet;
-		// this is what actually stores the iFCOs.
+    std::set<cFCONode> mFCOSet;
+        // this is what actually stores the iFCOs.
 };
 
 class cFCOIterImpl : public iFCOIter
 {
-	friend class cFCOSetImpl;
+    friend class cFCOSetImpl;
 
 public:
-	cFCOIterImpl(cFCOSetImpl* pSet);
-	cFCOIterImpl(const cFCOSetImpl* pSet);
+    cFCOIterImpl(cFCOSetImpl* pSet);
+    cFCOIterImpl(const cFCOSetImpl* pSet);
 
-	virtual void	SeekBegin()		const;
-	virtual bool	Done()			const;
-	virtual bool	IsEmpty()		const;
-	virtual void	Next()			const;
-	virtual const	iFCO*	FCO()	const;
-	virtual 		iFCO*	FCO();
-	virtual bool	SeekToFCO(const cFCOName& name) const;
+    virtual void    SeekBegin()     const;
+    virtual bool    Done()          const;
+    virtual bool    IsEmpty()       const;
+    virtual void    Next()          const;
+    virtual const   iFCO*   FCO()   const;
+    virtual         iFCO*   FCO();
+    virtual bool    SeekToFCO(const cFCOName& name) const;
 
-	virtual void			Remove();
-    virtual void			Remove() const;
-	virtual void			DestroyIter() const;
+    virtual void            Remove();
+    virtual void            Remove() const;
+    virtual void            DestroyIter() const;
 private:
-	virtual ~cFCOIterImpl() ;
+    virtual ~cFCOIterImpl() ;
 
-	cFCOSetImpl*						mpSet;
-	mutable std::set<cFCOSetImpl::cFCONode>::iterator	mIter;
-		// the definition of a const iterator is not that its position cannot change, 
-		// but that it cannot modify the set it is iterating over, hence the "mutable"
+    cFCOSetImpl*                        mpSet;
+    mutable std::set<cFCOSetImpl::cFCONode>::iterator   mIter;
+        // the definition of a const iterator is not that its position cannot change, 
+        // but that it cannot modify the set it is iterating over, hence the "mutable"
 };
 
 

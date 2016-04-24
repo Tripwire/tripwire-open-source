@@ -43,10 +43,10 @@
 class cUserNotifyStdout : public iUserNotify
 {
 public:
-	virtual void HandleNotify( int level, const TCHAR* format, va_list& args ) ;
-		// formats the string and sends it to stdout
-		// NOTE -- a little tripwire specific hack has been applied that makes all output
-		// at or above iUserNotify::V_VERBOSE go to stderr instead of stdout
+    virtual void HandleNotify( int level, const TCHAR* format, va_list& args ) ;
+        // formats the string and sends it to stdout
+        // NOTE -- a little tripwire specific hack has been applied that makes all output
+        // at or above iUserNotify::V_VERBOSE go to stderr instead of stdout
 };
 
 #endif /* __USERNOTIFYSTDOUT_H */

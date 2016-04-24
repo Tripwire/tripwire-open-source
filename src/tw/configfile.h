@@ -81,14 +81,14 @@ class cFileHeaderID;
 // DECLARATION OF CLASSES
 //=========================================================================
 
-TSS_EXCEPTION( eConfigFile,						eError );
-TSS_EXCEPTION( eConfigFileNoEq,					eConfigFile );
-TSS_EXCEPTION( eConfigFileNoKey,				eConfigFile );
-TSS_EXCEPTION( eConfigFileAssignToPredefVar,	eConfigFile );
-TSS_EXCEPTION( eConfigFileUseUndefVar,			eConfigFile );
-TSS_EXCEPTION( eConfigFileMissReqKey,			eConfigFile );
-TSS_EXCEPTION( eConfigFileEmptyVariable,		eConfigFile );
-TSS_EXCEPTION( eConfigFileMissingRightParen,	eConfigFile );
+TSS_EXCEPTION( eConfigFile,                     eError );
+TSS_EXCEPTION( eConfigFileNoEq,                 eConfigFile );
+TSS_EXCEPTION( eConfigFileNoKey,                eConfigFile );
+TSS_EXCEPTION( eConfigFileAssignToPredefVar,    eConfigFile );
+TSS_EXCEPTION( eConfigFileUseUndefVar,          eConfigFile );
+TSS_EXCEPTION( eConfigFileMissReqKey,           eConfigFile );
+TSS_EXCEPTION( eConfigFileEmptyVariable,        eConfigFile );
+TSS_EXCEPTION( eConfigFileMissingRightParen,    eConfigFile );
 
 ///////////////////////////////////////////////////////////////////////////////
 // cConfigFile
@@ -102,8 +102,8 @@ TSS_EXCEPTION( eConfigFileMissingRightParen,	eConfigFile );
 class cConfigFile
 {
 public:
-	cConfigFile();
-	virtual ~cConfigFile();
+    cConfigFile();
+    virtual ~cConfigFile();
 
     bool Lookup( const TSTRING& tstrKey, TSTRING& tstrVal ) const;
         // returns true if key is found in internal container and returns its value in tstrVal.
@@ -121,13 +121,13 @@ private:
     void DoVarSubst( TSTRING& rval ) const; //throw( eConfigFile )
     void CheckThatAllMandatoryKeyWordsExists(); // throw( eConfigFile )
     
-	TSTRING MakeErrorString( const TSTRING& strMsg = _T(""), bool fShowLineNum = true ) const;
-		// conststructs an error string. Appends "Line number: X" 
-		// if fShowLineNum is true
-		// This string can then be passed to the exception ctor.
+    TSTRING MakeErrorString( const TSTRING& strMsg = _T(""), bool fShowLineNum = true ) const;
+        // conststructs an error string. Appends "Line number: X" 
+        // if fShowLineNum is true
+        // This string can then be passed to the exception ctor.
 
     cHashTable< TSTRING, TSTRING > mStringHashTable;
-	friend class cConfigFileIter;
+    friend class cConfigFileIter;
     int  mnLine;
 };
 
@@ -140,56 +140,56 @@ private:
 class cConfigFileIter
 {
 public:
-	cConfigFileIter( cConfigFile& cf);
-	virtual ~cConfigFileIter();
+    cConfigFileIter( cConfigFile& cf);
+    virtual ~cConfigFileIter();
 
-	void	SeekBegin()		const;
-	bool	Done()			const;
-	void	Next()			const;
-	const   TSTRING& Key()  const;
-	TSTRING& Val();
+    void    SeekBegin()     const;
+    bool    Done()          const;
+    void    Next()          const;
+    const   TSTRING& Key()  const;
+    TSTRING& Val();
 protected:
-	cHashTableIter<TSTRING, TSTRING>	mIter;
+    cHashTableIter<TSTRING, TSTRING>    mIter;
 };
 
 //-----------------------------------------------------------------------------
 // inline implementation
 //-----------------------------------------------------------------------------
 inline cConfigFileIter::cConfigFileIter( cConfigFile& cf) :
-	mIter( cf.mStringHashTable )
+    mIter( cf.mStringHashTable )
 {
-	mIter.SeekBegin();
+    mIter.SeekBegin();
 }
 
 inline cConfigFileIter::~cConfigFileIter()
 {
 }
 
-inline void cConfigFileIter::SeekBegin()	const
+inline void cConfigFileIter::SeekBegin()    const
 {
-	mIter.SeekBegin();
+    mIter.SeekBegin();
 }
 
-inline bool cConfigFileIter::Done()			const
+inline bool cConfigFileIter::Done()         const
 {
-	return mIter.Done();
+    return mIter.Done();
 }
 
-inline void cConfigFileIter::Next()			const
+inline void cConfigFileIter::Next()         const
 {
-	mIter.Next();
+    mIter.Next();
 }
 
 inline const TSTRING& cConfigFileIter::Key() const
 {
-	ASSERT(! Done());
-	return mIter.Key();
+    ASSERT(! Done());
+    return mIter.Key();
 }
 
 inline TSTRING& cConfigFileIter::Val()
 {
-	ASSERT(! Done());
-	return mIter.Val();
+    ASSERT(! Done());
+    return mIter.Val();
 }
 
 

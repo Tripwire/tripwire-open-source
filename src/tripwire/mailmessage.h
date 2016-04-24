@@ -78,44 +78,44 @@ TSS_EXCEPTION( eMailPipedCmdFailed, eMailMessageError );
 class cMailMessage
 {
 public:
-	cMailMessage();
-	virtual ~cMailMessage();
+    cMailMessage();
+    virtual ~cMailMessage();
 
     void AddRecipient(const TSTRING& strRecipient);
     void SetFrom     (const TSTRING& strFrom);
     void SetFromName (const TSTRING& strFromName);
     void SetSubject  (const TSTRING& strSubject);
     void SetBody     (const TSTRING& strBody);
-	void AttachFile  (const TSTRING& strFullPath);
+    void AttachFile  (const TSTRING& strFullPath);
 
-	virtual bool Send() = 0; //throw(eMailMessageError)
-		// returns true upon success
+    virtual bool Send() = 0; //throw(eMailMessageError)
+        // returns true upon success
 
-	// This enumerates the choices of email notification methods
-	enum MailMethod
-	{
+    // This enumerates the choices of email notification methods
+    enum MailMethod
+    {
         NO_METHOD,
         INVALID_METHOD,
-		MAIL_BY_SMTP,
-		MAIL_BY_PIPE,
-		MAIL_BY_MAPI,
-		MAIL_NUM_ITEMS
-	};
+        MAIL_BY_SMTP,
+        MAIL_BY_PIPE,
+        MAIL_BY_MAPI,
+        MAIL_NUM_ITEMS
+    };
 
 
 protected:    
     
     
-    TSTRING					mstrFrom;
-    TSTRING					mstrFromName;
-    TSTRING					mstrSubject;
-    TSTRING					mstrBody;
-    std::vector<TSTRING>	mvstrRecipients;
-	std::vector<TSTRING>	mvstrAttachments;
+    TSTRING                 mstrFrom;
+    TSTRING                 mstrFromName;
+    TSTRING                 mstrSubject;
+    TSTRING                 mstrBody;
+    std::vector<TSTRING>    mvstrRecipients;
+    std::vector<TSTRING>    mvstrAttachments;
 
-	// Returns true if enough things have been set so that a useful 
-	// email message can be sent
-	bool					Ready();
+    // Returns true if enough things have been set so that a useful 
+    // email message can be sent
+    bool                    Ready();
     std::string             Create822Header();
         // creates 822 header with info from the class
     bool                    GetAttachmentsAsString( std::string& s );
@@ -222,88 +222,88 @@ class cSMTPMailMessage : public cMailMessage
 {
 public:
 
-	cSMTPMailMessage(TSTRING strServerName, unsigned short portNumber);
-	virtual ~cSMTPMailMessage();
+    cSMTPMailMessage(TSTRING strServerName, unsigned short portNumber);
+    virtual ~cSMTPMailMessage();
 
-	virtual bool Send(); //throw(eMailMessageError)
-		// returns true upon success
+    virtual bool Send(); //throw(eMailMessageError)
+        // returns true upon success
 
 private:
 
-	// socket related member variables
-	SOCKET  mSocket;
+    // socket related member variables
+    SOCKET  mSocket;
 
 #if USES_WINSOCK
-	//
-	// Types for the functions in winsock.dll
-	//
-	// These function prototypes and the pointers that use them allow us to use
-	// winsock without requiring the DLL to be on the end system for the application
-	// to run.  It seems unacceptable for tripwire to fail to run at all if wsock32.dll
-	// is not present on the system.
-	//
-	HINSTANCE mHlibWinsock;
-	typedef int (PASCAL * WSASTARTUPPROC) (WORD wVersionRequired, LPWSADATA lpWSAData);
-	typedef SOCKET (PASCAL * SOCKETPROC) (int af, int type, int protocol);
-	typedef unsigned long (PASCAL * INETADDRPROC) (const char FAR * cp);
-	typedef int (PASCAL FAR * GETHOSTNAMEPROC) (char FAR * name, int namelen);
-	typedef struct hostent FAR * (PASCAL * GETHOSTBYNAMEPROC)(const char FAR * name);
-	typedef int (PASCAL * CONNECTPROC) (SOCKET s, const struct sockaddr FAR *name, int namelen);
-	typedef int (PASCAL * CLOSESOCKETPROC) (SOCKET s);
-	typedef int (PASCAL * SENDPROC) (SOCKET s, const char FAR * buf, int len, int flags);
-	typedef int (PASCAL * RECVPROC) (SOCKET s, char FAR * buf, int len, int flags);
-	typedef int (PASCAL * SELECTPROC) (int nfds, fd_set FAR * readfds, fd_set FAR * writefds, fd_set FAR * exceptfds, const struct timeval FAR * timeout);
-	typedef u_long (PASCAL * LONGPROC) (u_long netlong);
-	typedef u_short (PASCAL * SHORTPROC) (u_short netlong);
+    //
+    // Types for the functions in winsock.dll
+    //
+    // These function prototypes and the pointers that use them allow us to use
+    // winsock without requiring the DLL to be on the end system for the application
+    // to run.  It seems unacceptable for tripwire to fail to run at all if wsock32.dll
+    // is not present on the system.
+    //
+    HINSTANCE mHlibWinsock;
+    typedef int (PASCAL * WSASTARTUPPROC) (WORD wVersionRequired, LPWSADATA lpWSAData);
+    typedef SOCKET (PASCAL * SOCKETPROC) (int af, int type, int protocol);
+    typedef unsigned long (PASCAL * INETADDRPROC) (const char FAR * cp);
+    typedef int (PASCAL FAR * GETHOSTNAMEPROC) (char FAR * name, int namelen);
+    typedef struct hostent FAR * (PASCAL * GETHOSTBYNAMEPROC)(const char FAR * name);
+    typedef int (PASCAL * CONNECTPROC) (SOCKET s, const struct sockaddr FAR *name, int namelen);
+    typedef int (PASCAL * CLOSESOCKETPROC) (SOCKET s);
+    typedef int (PASCAL * SENDPROC) (SOCKET s, const char FAR * buf, int len, int flags);
+    typedef int (PASCAL * RECVPROC) (SOCKET s, char FAR * buf, int len, int flags);
+    typedef int (PASCAL * SELECTPROC) (int nfds, fd_set FAR * readfds, fd_set FAR * writefds, fd_set FAR * exceptfds, const struct timeval FAR * timeout);
+    typedef u_long (PASCAL * LONGPROC) (u_long netlong);
+    typedef u_short (PASCAL * SHORTPROC) (u_short netlong);
 
-	// pointers to the functions in wsock32.dll
+    // pointers to the functions in wsock32.dll
 
-	// Berkeley functions
-	SOCKETPROC			mPfnSocket;
-	INETADDRPROC		mPfnInetAddr;
-	GETHOSTNAMEPROC		mPfnGethostname;
-	GETHOSTBYNAMEPROC	mPfnGethostbyname;
-	CONNECTPROC			mPfnConnect;
-	CLOSESOCKETPROC		mPfnCloseSocket;
-	SENDPROC			mPfnSend;
-	RECVPROC			mPfnRecv;
-	SELECTPROC			mPfnSelect;
+    // Berkeley functions
+    SOCKETPROC          mPfnSocket;
+    INETADDRPROC        mPfnInetAddr;
+    GETHOSTNAMEPROC     mPfnGethostname;
+    GETHOSTBYNAMEPROC   mPfnGethostbyname;
+    CONNECTPROC         mPfnConnect;
+    CLOSESOCKETPROC     mPfnCloseSocket;
+    SENDPROC            mPfnSend;
+    RECVPROC            mPfnRecv;
+    SELECTPROC          mPfnSelect;
 
-	// winsock functions
-	FARPROC				mPfnWSAGetLastError;
-	WSASTARTUPPROC		mPfnWSAStartup;
-	FARPROC				mPfnWSACleanup;
+    // winsock functions
+    FARPROC             mPfnWSAGetLastError;
+    WSASTARTUPPROC      mPfnWSAStartup;
+    FARPROC             mPfnWSACleanup;
 
-	// Endian convertion functions
-	LONGPROC			mPfnNtohl;
-	LONGPROC			mPfnHtonl;
-	SHORTPROC			mPfnNtohs;
-	SHORTPROC			mPfnHtons;
+    // Endian convertion functions
+    LONGPROC            mPfnNtohl;
+    LONGPROC            mPfnHtonl;
+    SHORTPROC           mPfnNtohs;
+    SHORTPROC           mPfnHtons;
 
-	// Methods to set the pointers to functions.
-	bool LoadDll();
-	bool UnloadDll();
+    // Methods to set the pointers to functions.
+    bool LoadDll();
+    bool UnloadDll();
 
 #endif
 
     void SendString( const std::string& str );
 
-	// methods common to windows and unix:
-	bool OpenConnection();
-	bool CloseConnection();
+    // methods common to windows and unix:
+    bool OpenConnection();
+    bool CloseConnection();
 
-	long GetServerAddress();
+    long GetServerAddress();
 
-	bool MailMessage();
-	bool SendAttachments();
+    bool MailMessage();
+    bool SendAttachments();
 
-	bool GetAcknowledgement();
+    bool GetAcknowledgement();
 
-	void DecodeError();
+    void DecodeError();
 
-	// the settings necessary for an SMTP connection:
-	TSTRING	mstrServerName;
-	unsigned short mPortNumber;
+    // the settings necessary for an SMTP connection:
+    TSTRING mstrServerName;
+    unsigned short mPortNumber;
 };
 
 
@@ -318,21 +318,21 @@ class cMAPIMailMessage : public cMailMessage
 {
 public:
 
-	cMAPIMailMessage();
-	virtual ~cMAPIMailMessage();
+    cMAPIMailMessage();
+    virtual ~cMAPIMailMessage();
 
-	virtual bool Send(); //throw(eMailMessageError) 
-		//returns true upon success
+    virtual bool Send(); //throw(eMailMessageError) 
+        //returns true upon success
 
 private:
 
-	bool InitMAPI();
-	bool FinitMAPI();
+    bool InitMAPI();
+    bool FinitMAPI();
 
-	HINSTANCE hlibMAPI;
+    HINSTANCE hlibMAPI;
 
-	bool DoSendMessage();
-	void PrintMAPIErrorMessage(ULONG errorMessage);
+    bool DoSendMessage();
+    void PrintMAPIErrorMessage(ULONG errorMessage);
 };
 
 #endif
@@ -348,33 +348,33 @@ private:
 class cPipedMailMessage : public cMailMessage
 {
 public:
-	cPipedMailMessage(TSTRING strSendMailExePath);
-	virtual ~cPipedMailMessage();
+    cPipedMailMessage(TSTRING strSendMailExePath);
+    virtual ~cPipedMailMessage();
 
-	virtual bool Send(); //throw(eMailMessageError)
-		// returns true upon success
+    virtual bool Send(); //throw(eMailMessageError)
+        // returns true upon success
 
 private:
 
-    TSTRING&	CreateHeader( TSTRING& strHeaderBuf ) const;
-	
-	void		SendInit();// throw (eMailMessageError)
-		// opens a pipe to sendmail and writes the header.
-	
-	FILE*		GetFilePointer() const;
-		// returns a pointer to the current file pointer. Only valid between
-		// SendInit() and SendFinit()
-	
-	void		SendFinit(); //throw (eMailMessageError)
-		// closes the file descriptor, sending the rest of the message
+    TSTRING&    CreateHeader( TSTRING& strHeaderBuf ) const;
+    
+    void        SendInit();// throw (eMailMessageError)
+        // opens a pipe to sendmail and writes the header.
+    
+    FILE*       GetFilePointer() const;
+        // returns a pointer to the current file pointer. Only valid between
+        // SendInit() and SendFinit()
+    
+    void        SendFinit(); //throw (eMailMessageError)
+        // closes the file descriptor, sending the rest of the message
 
-	bool        SendAttachments();
-		// called between SendInit and SendFinit to send the attachments
+    bool        SendAttachments();
+        // called between SendInit and SendFinit to send the attachments
 
     void        SendString( const TSTRING& s );
 
-	TSTRING mstrSendMailExePath;
-	FILE*	mpFile;	// only valid with Init/Finit and Send
+    TSTRING mstrSendMailExePath;
+    FILE*   mpFile; // only valid with Init/Finit and Send
 };
 
 //#endif

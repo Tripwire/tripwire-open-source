@@ -40,37 +40,37 @@
 eFileError::eFileError( const TSTRING& filename, const TSTRING& description, uint32 flags )
 :   eError( _T(""), flags )
 {
-	mFilename = filename;
-	mMsg = description;
+    mFilename = filename;
+    mMsg = description;
 }
 
 TSTRING eFileError::GetFilename() const
 {
-	return mFilename;
+    return mFilename;
 }
 
 TSTRING eFileError::GetDescription() const
 {
-	return mMsg;
+    return mMsg;
 }
 
 /* virtual */ TSTRING eFileError::GetMsg() const
 {
-	TSTRING ret;
+    TSTRING ret;
 
-	if( ! mFilename.empty() )
-	{
+    if( ! mFilename.empty() )
+    {
         ret = TSS_GetString( cCore, core::STR_ERROR_FILENAME ) + mFilename;
-	}
+    }
 
     if( ! mMsg.empty() )
-	{
-		if ( ! mFilename.empty() )
-			ret += _T("\n");
+    {
+        if ( ! mFilename.empty() )
+            ret += _T("\n");
 
         ret += mMsg;
-	}
+    }
 
-	return ret;
+    return ret;
 }
 

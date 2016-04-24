@@ -48,91 +48,91 @@
 class cDbDataSourceIter : public iFCODataSourceIter
 {
 public:
-	cDbDataSourceIter( cHierDatabase* pDb, int genreNum = -1)	; //throw (eError)
-		// this ctor asserts that the case-sensitiveness and delimiting char match that of the passed in genre...
-		// if -1 is passed for the genre num, then the current genre is used.
+    cDbDataSourceIter( cHierDatabase* pDb, int genreNum = -1)   ; //throw (eError)
+        // this ctor asserts that the case-sensitiveness and delimiting char match that of the passed in genre...
+        // if -1 is passed for the genre num, then the current genre is used.
 
-	cDbDataSourceIter			( const cDbDataSourceIter& rhs );
-	cDbDataSourceIter& operator=( const cDbDataSourceIter& rhs );
+    cDbDataSourceIter           ( const cDbDataSourceIter& rhs );
+    cDbDataSourceIter& operator=( const cDbDataSourceIter& rhs );
 
 
-	virtual ~cDbDataSourceIter();
+    virtual ~cDbDataSourceIter();
 
-	virtual iFCODataSourceIter* CreateCopy() const ;
+    virtual iFCODataSourceIter* CreateCopy() const ;
 
-	virtual const TCHAR*	GetShortName()	const ;
-	virtual cFCOName		GetName()		const ;
-	virtual cFCOName		GetParentName() const ;
+    virtual const TCHAR*    GetShortName()  const ;
+    virtual cFCOName        GetName()       const ;
+    virtual cFCOName        GetParentName() const ;
 
-	virtual bool		AtRoot()		const	; //throw (eError) 
-	virtual bool		CanDescend()	const	; //throw (eError)
-	virtual void		Descend()				; //throw (eError)
-	virtual void		Ascend()				; //throw (eError)
-	
-	virtual void		SeekBegin()		;	
-	virtual bool		Done() const	;
-	virtual void		Next()			;
-	virtual bool		SeekTo( const TCHAR* shortName );
-	virtual bool		IsCaseSensitive() const;
+    virtual bool        AtRoot()        const   ; //throw (eError) 
+    virtual bool        CanDescend()    const   ; //throw (eError)
+    virtual void        Descend()               ; //throw (eError)
+    virtual void        Ascend()                ; //throw (eError)
+    
+    virtual void        SeekBegin()     ;   
+    virtual bool        Done() const    ;
+    virtual void        Next()          ;
+    virtual bool        SeekTo( const TCHAR* shortName );
+    virtual bool        IsCaseSensitive() const;
 
-	virtual iFCO*		CreateFCO()		; //throw (eError)
-	virtual void		SetErrorBucket( cErrorBucket* pBucket );
+    virtual iFCO*       CreateFCO()     ; //throw (eError)
+    virtual void        SetErrorBucket( cErrorBucket* pBucket );
 
-	///////////////////////////////////////////////
-	// This stuff is in this derived class _only_
-	void				SeekToRoot(); //throw( eError )
-		// seeks to the root of the database
-	virtual void		AddFCO( const TSTRING& shortName, const iFCO* pFCO ) ; //throw (eFCODataSourceIter, eError)
-		// adds the fco to the current directory; this throws an exception if
-		// the insert fails or an fco already named the same exists in the directory. After the insertion, 
-		// the iterator points at the new node.
-	virtual void		RemoveFCO() ; //throw (eError)
-		// removes the current fco; iterator then points at the next object or done() is true if it is at the end.
-	virtual void		SetFCOData( const iFCO* pFCO ) ; //throw (eError)
-		// sets the data associated with the current FCO. This method pays no attention to the FCO's name. (maybe I 
-		// should assert?)
-	virtual void		RemoveFCOData() ; //throw (eError)
-		// removes the fco data associated with the current fco. This asserts the iterator is not done and contains
-		// data. 
-	bool				HasFCOData() const;
-		// this returns true if the current node contains fco data. If this returns false, then it is not
-		// legal to call CreateFCO()
-	void				CreatePath( const cFCOName& name ) ; //throw (eError)
-		// a convenience method that creates the named path (or any part that is currently not created)
-		// the iterator ends up with the named path as the current item (ie -- it will be returned from
-		// GetName())
-	void				AddChildArray() ; //throw (eError)
-		// this adds a child array to the current FCO. This asserts that one does not currently exist and
-		// that Done() is not true
-	void				RemoveChildArray() ; //throw (eError)
-		//this asserts that Done() is not true, and the child array contains nothing.
-	bool				CanRemoveChildArray(); //throw (eError)
-		// returns true if the child array is empty, and can thus be removed with RemoveChildArray()
-	void				Refresh(); // throw (eError)
+    ///////////////////////////////////////////////
+    // This stuff is in this derived class _only_
+    void                SeekToRoot(); //throw( eError )
+        // seeks to the root of the database
+    virtual void        AddFCO( const TSTRING& shortName, const iFCO* pFCO ) ; //throw (eFCODataSourceIter, eError)
+        // adds the fco to the current directory; this throws an exception if
+        // the insert fails or an fco already named the same exists in the directory. After the insertion, 
+        // the iterator points at the new node.
+    virtual void        RemoveFCO() ; //throw (eError)
+        // removes the current fco; iterator then points at the next object or done() is true if it is at the end.
+    virtual void        SetFCOData( const iFCO* pFCO ) ; //throw (eError)
+        // sets the data associated with the current FCO. This method pays no attention to the FCO's name. (maybe I 
+        // should assert?)
+    virtual void        RemoveFCOData() ; //throw (eError)
+        // removes the fco data associated with the current fco. This asserts the iterator is not done and contains
+        // data. 
+    bool                HasFCOData() const;
+        // this returns true if the current node contains fco data. If this returns false, then it is not
+        // legal to call CreateFCO()
+    void                CreatePath( const cFCOName& name ) ; //throw (eError)
+        // a convenience method that creates the named path (or any part that is currently not created)
+        // the iterator ends up with the named path as the current item (ie -- it will be returned from
+        // GetName())
+    void                AddChildArray() ; //throw (eError)
+        // this adds a child array to the current FCO. This asserts that one does not currently exist and
+        // that Done() is not true
+    void                RemoveChildArray() ; //throw (eError)
+        //this asserts that Done() is not true, and the child array contains nothing.
+    bool                CanRemoveChildArray(); //throw (eError)
+        // returns true if the child array is empty, and can thus be removed with RemoveChildArray()
+    void                Refresh(); // throw (eError)
 
-	//
-	///////////////////////////////////////////////
-	virtual void		SeekToFCO(const cFCOName& name, bool bCreatePeers = true) ; //throw(eFCODataSourceIter) 
-		// NOTE -- this class ignores bCreatePeers
+    //
+    ///////////////////////////////////////////////
+    virtual void        SeekToFCO(const cFCOName& name, bool bCreatePeers = true) ; //throw(eFCODataSourceIter) 
+        // NOTE -- this class ignores bCreatePeers
 
-	virtual int         GetIterFlags() const;
-	virtual void        SetIterFlags(int i);
+    virtual int         GetIterFlags() const;
+    virtual void        SetIterFlags(int i);
 
 private:
-	//
-	// helper methods
-	//
-	bool				SeekToDirectory( const cFCOName& parentName, bool bCreate = false );
-		// seeks the iterator to the named directory. This method attempts to take the most direct route possible,
-		// seeking from the current working directory instead of seeking to the root and then descending to the 
-		// named directory. When this operation returns, it is positioned at the first element in the named directory
-		// unless false is returned, in which case the iterator is positioned at an undefined location. If bCreate
-		// is true, the directory is created if it does not currently exist.
+    //
+    // helper methods
+    //
+    bool                SeekToDirectory( const cFCOName& parentName, bool bCreate = false );
+        // seeks the iterator to the named directory. This method attempts to take the most direct route possible,
+        // seeking from the current working directory instead of seeking to the root and then descending to the 
+        // named directory. When this operation returns, it is positioned at the first element in the named directory
+        // unless false is returned, in which case the iterator is positioned at an undefined location. If bCreate
+        // is true, the directory is created if it does not currently exist.
 
-	
-	
-	cHierDatabase::iterator			mDbIter;
-	iSerRefCountObj::CreateFunc		mFCOCreateFunc;		// points to the function that creates the fcos we return
+    
+    
+    cHierDatabase::iterator         mDbIter;
+    iSerRefCountObj::CreateFunc     mFCOCreateFunc;     // points to the function that creates the fcos we return
     uint32                          mFlags;             // flags used for iteration
     cErrorBucket*                   mpErrorBucket;
 };
@@ -141,9 +141,9 @@ private:
 // inline implementation
 //#############################################################################
 
-inline void	cDbDataSourceIter::Refresh()
+inline void cDbDataSourceIter::Refresh()
 {
-	mDbIter.Refresh();
+    mDbIter.Refresh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ inline void	cDbDataSourceIter::Refresh()
 ///////////////////////////////////////////////////////////////////////////////
 inline bool cDbDataSourceIter::SeekTo( const TCHAR* shortName )
 {
-	return mDbIter.SeekTo(shortName);
+    return mDbIter.SeekTo(shortName);
 }
 
 
@@ -160,7 +160,7 @@ inline bool cDbDataSourceIter::SeekTo( const TCHAR* shortName )
 ///////////////////////////////////////////////////////////////////////////////
 inline void cDbDataSourceIter::SeekToRoot()
 {
-	mDbIter.SeekToRoot();
+    mDbIter.SeekToRoot();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -168,8 +168,8 @@ inline void cDbDataSourceIter::SeekToRoot()
 ///////////////////////////////////////////////////////////////////////////////
 inline cFCOName cDbDataSourceIter::GetParentName() const 
 {
-	cFCOName rtn( mDbIter.GetCwd() );
-	return rtn;
+    cFCOName rtn( mDbIter.GetCwd() );
+    return rtn;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ inline cFCOName cDbDataSourceIter::GetParentName() const
 ///////////////////////////////////////////////////////////////////////////////
 inline bool cDbDataSourceIter::AtRoot() const  //throw (eError)
 {
-	return ( mDbIter.AtRoot() );
+    return ( mDbIter.AtRoot() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -185,7 +185,7 @@ inline bool cDbDataSourceIter::AtRoot() const  //throw (eError)
 ///////////////////////////////////////////////////////////////////////////////
 inline bool cDbDataSourceIter::CanDescend() const  //throw (eError)
 {
-	return ( mDbIter.CanDescend() );
+    return ( mDbIter.CanDescend() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -193,7 +193,7 @@ inline bool cDbDataSourceIter::CanDescend() const  //throw (eError)
 ///////////////////////////////////////////////////////////////////////////////
 inline void cDbDataSourceIter::Descend()  //throw (eError)
 {
-	mDbIter.Descend();
+    mDbIter.Descend();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -201,31 +201,31 @@ inline void cDbDataSourceIter::Descend()  //throw (eError)
 ///////////////////////////////////////////////////////////////////////////////
 inline void cDbDataSourceIter::Ascend()  //throw (eError)
 {
-	mDbIter.Ascend();
+    mDbIter.Ascend();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // SeekBegin
 ///////////////////////////////////////////////////////////////////////////////
-inline void cDbDataSourceIter::SeekBegin()		
+inline void cDbDataSourceIter::SeekBegin()      
 {
-	mDbIter.SeekBegin();
+    mDbIter.SeekBegin();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Done
 ///////////////////////////////////////////////////////////////////////////////
-inline bool cDbDataSourceIter::Done() const	
+inline bool cDbDataSourceIter::Done() const 
 {
-	return ( mDbIter.Done() );
+    return ( mDbIter.Done() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Next
 ///////////////////////////////////////////////////////////////////////////////
-inline void cDbDataSourceIter::Next()			
+inline void cDbDataSourceIter::Next()           
 {
-	mDbIter.Next();
+    mDbIter.Next();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -233,17 +233,17 @@ inline void cDbDataSourceIter::Next()
 ///////////////////////////////////////////////////////////////////////////////
 inline bool cDbDataSourceIter::IsCaseSensitive() const
 {
-	return mDbIter.IsCaseSensitive();
+    return mDbIter.IsCaseSensitive();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetShortName
 ///////////////////////////////////////////////////////////////////////////////
-inline const TCHAR*	cDbDataSourceIter::GetShortName() const 
+inline const TCHAR* cDbDataSourceIter::GetShortName() const 
 {
-	ASSERT( ! Done() );
+    ASSERT( ! Done() );
 
-	return mDbIter.GetName();
+    return mDbIter.GetName();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ inline const TCHAR*	cDbDataSourceIter::GetShortName() const
 ///////////////////////////////////////////////////////////////////////////////
 inline bool cDbDataSourceIter::CanRemoveChildArray() 
 {
-	return ( mDbIter.ChildArrayEmpty() );
+    return ( mDbIter.ChildArrayEmpty() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ inline bool cDbDataSourceIter::CanRemoveChildArray()
 ///////////////////////////////////////////////////////////////////////////////
 inline int cDbDataSourceIter::GetIterFlags() const
 {
-	return mFlags;
+    return mFlags;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -267,13 +267,13 @@ inline int cDbDataSourceIter::GetIterFlags() const
 ///////////////////////////////////////////////////////////////////////////////
 inline void cDbDataSourceIter::SetIterFlags( int i )
 {
-	mFlags = i;
+    mFlags = i;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // SetIterFlags
 ///////////////////////////////////////////////////////////////////////////////
-inline void	cDbDataSourceIter::SetErrorBucket( cErrorBucket* pBucket ) 
+inline void cDbDataSourceIter::SetErrorBucket( cErrorBucket* pBucket ) 
 { 
     mpErrorBucket = pBucket;
 }

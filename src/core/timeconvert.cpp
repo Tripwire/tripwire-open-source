@@ -52,7 +52,7 @@
 // METHOD CODE
 //=========================================================================
 
-#define	TIME_MAX	2147483647L	// largest signed 32 bit number
+#define TIME_MAX    2147483647L // largest signed 32 bit number
 
 #ifdef __AROS__
  #define tzset()

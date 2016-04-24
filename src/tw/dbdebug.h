@@ -29,7 +29,7 @@
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
-//dbdebug.h	
+//dbdebug.h 
 
 #ifndef __DBDEBUG_H
 #define __DBDEBUG_H
@@ -65,23 +65,23 @@ class cFCOName;
 
 /////////////////////////////////////////////////////////////////////////////////
 // cDebugHierDb --
-//		This derived class is a hack for accessing data that is usually protected.
-//		A static_cast is used to morph this class back into a (more candid)
-//		cHierDatabase..
+//      This derived class is a hack for accessing data that is usually protected.
+//      A static_cast is used to morph this class back into a (more candid)
+//      cHierDatabase..
 /////////////////////////////////////////////////////////////////////////////////
 
 class cDebugHierDb : public cHierDatabase
 {
 public:
-	cDebugHierDb() : cHierDatabase() {}
+    cDebugHierDb() : cHierDatabase() {}
 
-	typedef std::vector<cBlockRecordArray>	BlockArray;
+    typedef std::vector<cBlockRecordArray>  BlockArray;
 
-	//
-	// Methods for accessing the two data members of cBlockRecordFile that we
-	// are interested in.
-	cBlockFile*			myGetBlockFile	()		{ return GetBlockFile(); }
-	BlockArray*			myGetBlockArray	()		{ return GetBlockArray(); }		
+    //
+    // Methods for accessing the two data members of cBlockRecordFile that we
+    // are interested in.
+    cBlockFile*         myGetBlockFile  ()      { return GetBlockFile(); }
+    BlockArray*         myGetBlockArray ()      { return GetBlockArray(); }     
 private:
 };
 
@@ -91,73 +91,73 @@ private:
 class cDebugHierDbIter : public cHierDatabaseIter
 {
 public:
-	//
-	// Type Defines:
-	//
-	typedef std::vector< cHierEntry > EntryArray;
+    //
+    // Type Defines:
+    //
+    typedef std::vector< cHierEntry > EntryArray;
 
-	// Ctor, Dtor:
-	~cDebugHierDbIter	() {}
-	cDebugHierDbIter	( cHierDatabase* pDb ) : cHierDatabaseIter( pDb ) {}
+    // Ctor, Dtor:
+    ~cDebugHierDbIter   () {}
+    cDebugHierDbIter    ( cHierDatabase* pDb ) : cHierDatabaseIter( pDb ) {}
 
-	//
-	// Methods for obtaining protected members of cHierDatabaseIter:
-	//
-	cHierAddr			myGetCurrentAddr()  { return GetCurrentAddr(); }
-	// We need this method to match the hierarchy information with that of the
-	// quantum database.
+    //
+    // Methods for obtaining protected members of cHierDatabaseIter:
+    //
+    cHierAddr           myGetCurrentAddr()  { return GetCurrentAddr(); }
+    // We need this method to match the hierarchy information with that of the
+    // quantum database.
 
-	//
-	// Methods for accessing data members:
-	// TODO: Get rid of the stuff I don't end up using.
-	//
-	EntryArray::iterator&	myGetEntryArrayIt()	{ return mIter; }
-	EntryArray&				myGetEntryArray()	{ return mEntries; }
-	cHierArrayInfo&			myGetArrayInfo()	{ return mInfo; }
-	cHierAddr&				myGetInfoAddr()		{ return mInfoAddr; }
-	cHierDbPath&			myGetCurrPath()		{ return mCurPath; }
+    //
+    // Methods for accessing data members:
+    // TODO: Get rid of the stuff I don't end up using.
+    //
+    EntryArray::iterator&   myGetEntryArrayIt() { return mIter; }
+    EntryArray&             myGetEntryArray()   { return mEntries; }
+    cHierArrayInfo&         myGetArrayInfo()    { return mInfo; }
+    cHierAddr&              myGetInfoAddr()     { return mInfoAddr; }
+    cHierDbPath&            myGetCurrPath()     { return mCurPath; }
 
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 // cDbDebug --
-//		A tripwire mode for probing the hierarchical database
+//      A tripwire mode for probing the hierarchical database
 /////////////////////////////////////////////////////////////////////////////////
 //TODO: Would I ever want to create this class on the stack?
 class cDbDebug
 {
 public:
-	//Ctor, Dtor
-	cDbDebug();
-	~cDbDebug();
+    //Ctor, Dtor
+    cDbDebug();
+    ~cDbDebug();
 
-	static void		Execute				( cFCODatabaseFileIter& dbIter, const TSTRING& dbFile );
-	void			MapQuantumDatabase	( cDebugHierDb& db );
-		// Traverses a blockfile and records all valid addresses
-	void			TraverseHierarchy	( cDebugHierDbIter pIter );
-		// Traverses a hierarchical database and "updates" the map for addresses that it finds.
-	void			MapHierDbNodes		( std::map< std::pair<int, int>, int >& dbMap, std::pair<int, int>, cDebugHierDbIter& );
-		// Changes the map for a given address, in order to record entries that were found in the hierarchy.
-	void			CongruencyTest		( void );
-		// Looks at the map to see if all entries have been accounted for.
-	void			OutputResults		( void );
-		// Gives a clean report only if the two database representations match exactly.
-	
-	//
-	// The map that will be used to test for congruency between the quantum database
-	// and the hierarchical database.
-	//
-	typedef std::map< std::pair< int, int > , int > hierDbMap;
+    static void     Execute             ( cFCODatabaseFileIter& dbIter, const TSTRING& dbFile );
+    void            MapQuantumDatabase  ( cDebugHierDb& db );
+        // Traverses a blockfile and records all valid addresses
+    void            TraverseHierarchy   ( cDebugHierDbIter pIter );
+        // Traverses a hierarchical database and "updates" the map for addresses that it finds.
+    void            MapHierDbNodes      ( std::map< std::pair<int, int>, int >& dbMap, std::pair<int, int>, cDebugHierDbIter& );
+        // Changes the map for a given address, in order to record entries that were found in the hierarchy.
+    void            CongruencyTest      ( void );
+        // Looks at the map to see if all entries have been accounted for.
+    void            OutputResults       ( void );
+        // Gives a clean report only if the two database representations match exactly.
+    
+    //
+    // The map that will be used to test for congruency between the quantum database
+    // and the hierarchical database.
+    //
+    typedef std::map< std::pair< int, int > , int > hierDbMap;
 
-	hierDbMap*		GetHierDbMap		( void );
-	void			DisplayDbMap		( void );
-		// Displays the whole map TODO: Somehow the spacing in the output got messed up...
-	//void			ManipDb				( cFCODatabaseFileIter& dbIter );
-		// A hook to DbExplore-like code.  For convenience only.
+    hierDbMap*      GetHierDbMap        ( void );
+    void            DisplayDbMap        ( void );
+        // Displays the whole map TODO: Somehow the spacing in the output got messed up...
+    //void          ManipDb             ( cFCODatabaseFileIter& dbIter );
+        // A hook to DbExplore-like code.  For convenience only.
 
 private:
-	// (somewhat) Insulated implementation:
-	cDbDebug_i* mpData;
+    // (somewhat) Insulated implementation:
+    cDbDebug_i* mpData;
 };
 
 

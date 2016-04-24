@@ -53,9 +53,9 @@ public:
     
     static void PrintDB( cFCODatabaseFile& rd, const TSTRING& strFilename ); // throw
 
-	static void OutputFCO( cDbDataSourceIter& dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails = true );
-		// prints to the given ostream a text representation of the FCO pointed at by the iter. Silently
-		// does nothing if(dbIter.Done()).
+    static void OutputFCO( cDbDataSourceIter& dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails = true );
+        // prints to the given ostream a text representation of the FCO pointed at by the iter. Silently
+        // does nothing if(dbIter.Done()).
 private:
     //
     // private enums

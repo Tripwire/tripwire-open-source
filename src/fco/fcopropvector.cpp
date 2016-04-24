@@ -40,17 +40,17 @@
 #include "core/errorutil.h"
 
 int cFCOPropVector::msBitlength(sizeof (uint32) * 8);
-	//msBitlength is common to all objects of class.
+    //msBitlength is common to all objects of class.
 
 ///////////////////////////////////////////////////////////////////////////////
 // Constructor -- Sets mSize.  Default = 32.
 ///////////////////////////////////////////////////////////////////////////////
 cFCOPropVector::cFCOPropVector(int size) : iSerializable()
 {
-	mSize = 32;
-	mMask = 0;
-	mpBuf = NULL;
-	SetSize(size);
+    mSize = 32;
+    mMask = 0;
+    mpBuf = NULL;
+    SetSize(size);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -58,8 +58,8 @@ cFCOPropVector::cFCOPropVector(int size) : iSerializable()
 ///////////////////////////////////////////////////////////////////////////////
 cFCOPropVector::~cFCOPropVector()
 {
-	if (mpBuf!=NULL)
-		delete mpBuf;
+    if (mpBuf!=NULL)
+        delete mpBuf;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -67,13 +67,13 @@ cFCOPropVector::~cFCOPropVector()
 ///////////////////////////////////////////////////////////////////////////////
 cFCOPropVector::cFCOPropVector(const cFCOPropVector &rhs) : iSerializable()
 {
-	mSize = rhs.mSize;
-	mMask = rhs.mMask;
-	if (rhs.mpBuf != NULL) {
-		mpBuf = new std::vector<uint32>;
-		*mpBuf = *(rhs.mpBuf);
-	}
-	else mpBuf = NULL;
+    mSize = rhs.mSize;
+    mMask = rhs.mMask;
+    if (rhs.mpBuf != NULL) {
+        mpBuf = new std::vector<uint32>;
+        *mpBuf = *(rhs.mpBuf);
+    }
+    else mpBuf = NULL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -81,148 +81,148 @@ cFCOPropVector::cFCOPropVector(const cFCOPropVector &rhs) : iSerializable()
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOPropVector::operator==(const cFCOPropVector& rhs) const
 {
-	if (this != &rhs) {
-		if ((mpBuf == NULL) && (rhs.mpBuf==NULL))
-			return (mMask == rhs.mMask);
-		else if((mpBuf == NULL) && (rhs.mpBuf!=NULL))
-		{
-			if (rhs.isExtended())
-				return false;
-			else
-				return (mMask == ((*rhs.mpBuf)[0]));
-		}
-		else if ((mpBuf != NULL) && (rhs.mpBuf == NULL))
-		{
-			if ((*this).isExtended())
-				return false;
-			else
-				return (((*mpBuf)[0])==rhs.mMask);
-		}
-		else
-			return (*mpBuf == *(rhs.mpBuf));
-	}
-	else
-		return true;
+    if (this != &rhs) {
+        if ((mpBuf == NULL) && (rhs.mpBuf==NULL))
+            return (mMask == rhs.mMask);
+        else if((mpBuf == NULL) && (rhs.mpBuf!=NULL))
+        {
+            if (rhs.isExtended())
+                return false;
+            else
+                return (mMask == ((*rhs.mpBuf)[0]));
+        }
+        else if ((mpBuf != NULL) && (rhs.mpBuf == NULL))
+        {
+            if ((*this).isExtended())
+                return false;
+            else
+                return (((*mpBuf)[0])==rhs.mMask);
+        }
+        else
+            return (*mpBuf == *(rhs.mpBuf));
+    }
+    else
+        return true;
 }
 
 bool cFCOPropVector::operator!=(const cFCOPropVector& rhs) const
 {
-	return (! (*this == rhs));
+    return (! (*this == rhs));
 }
 
 
 
 cFCOPropVector& cFCOPropVector::operator=(const cFCOPropVector& rhs)
 {
-	if (this != &rhs)
-	{
-		if ((rhs.mpBuf!=NULL) && (mpBuf!=NULL))
-			*mpBuf= *(rhs.mpBuf);
-		else if ((rhs.mpBuf!=NULL) && (mpBuf==NULL))
-		{
-			mpBuf = new std::vector<uint32>;
-			*mpBuf = *(rhs.mpBuf);
-		}
-		else if((rhs.mpBuf==NULL) && (mpBuf!=NULL))
-		{
-			delete mpBuf;
-			mpBuf = NULL;
-		}
-		mSize = rhs.mSize;
-		mMask = rhs.mMask;
-	}//end if
-	return *this;
+    if (this != &rhs)
+    {
+        if ((rhs.mpBuf!=NULL) && (mpBuf!=NULL))
+            *mpBuf= *(rhs.mpBuf);
+        else if ((rhs.mpBuf!=NULL) && (mpBuf==NULL))
+        {
+            mpBuf = new std::vector<uint32>;
+            *mpBuf = *(rhs.mpBuf);
+        }
+        else if((rhs.mpBuf==NULL) && (mpBuf!=NULL))
+        {
+            delete mpBuf;
+            mpBuf = NULL;
+        }
+        mSize = rhs.mSize;
+        mMask = rhs.mMask;
+    }//end if
+    return *this;
 }
 
 cFCOPropVector cFCOPropVector::operator&(const cFCOPropVector& rhs) const
 {
-	cFCOPropVector temp = *this;
-	temp &= rhs;
-	return temp;
+    cFCOPropVector temp = *this;
+    temp &= rhs;
+    return temp;
 }
 
 cFCOPropVector cFCOPropVector::operator|(const cFCOPropVector& rhs) const
 {
-	cFCOPropVector temp = *this;
-	temp |= rhs;
-	return temp;
+    cFCOPropVector temp = *this;
+    temp |= rhs;
+    return temp;
 }
 
 cFCOPropVector cFCOPropVector::operator^(const cFCOPropVector& rhs) const
 {
-	cFCOPropVector temp = *this;
-	temp ^= rhs;
-	return temp;
+    cFCOPropVector temp = *this;
+    temp ^= rhs;
+    return temp;
 }
 
 
 cFCOPropVector& cFCOPropVector::operator&=(const cFCOPropVector& rhs)
 {
-	// make sure I am big enough
-	if(GetSize() < rhs.GetSize())
-		SetSize(rhs.GetSize());
-	if(mpBuf == 0)
-	{
-		ASSERT(GetSize() <= 32);
-		mMask &= rhs.mMask;
-	}
-	else if (rhs.mpBuf == 0)
-	{
-		ASSERT(rhs.GetSize() <= 32);
-		(*mpBuf)[0] &= rhs.mMask;
-	}
-	else
-	{
-		for(unsigned int i=0; i < rhs.mpBuf->size(); ++i)
-			(*mpBuf)[i] &= (*rhs.mpBuf)[i];
-	}
-	return *this;
+    // make sure I am big enough
+    if(GetSize() < rhs.GetSize())
+        SetSize(rhs.GetSize());
+    if(mpBuf == 0)
+    {
+        ASSERT(GetSize() <= 32);
+        mMask &= rhs.mMask;
+    }
+    else if (rhs.mpBuf == 0)
+    {
+        ASSERT(rhs.GetSize() <= 32);
+        (*mpBuf)[0] &= rhs.mMask;
+    }
+    else
+    {
+        for(unsigned int i=0; i < rhs.mpBuf->size(); ++i)
+            (*mpBuf)[i] &= (*rhs.mpBuf)[i];
+    }
+    return *this;
 }
 
 cFCOPropVector& cFCOPropVector::operator|=(const cFCOPropVector& rhs)
 {
-	// make sure I am big enough
-	if(GetSize() < rhs.GetSize())
-		SetSize(rhs.GetSize());
-	if(mpBuf == 0)
-	{
-		ASSERT(GetSize() <= 32);
-		mMask |= rhs.mMask;
-	}
-	else if (rhs.mpBuf == 0)
-	{
-		ASSERT(rhs.GetSize() <= 32);
-		(*mpBuf)[0] |= rhs.mMask;
-	}
-	else
-	{
-		for(unsigned int i=0; i < rhs.mpBuf->size(); ++i)
-			(*mpBuf)[i] |= (*rhs.mpBuf)[i];
-	}
-	return *this;
+    // make sure I am big enough
+    if(GetSize() < rhs.GetSize())
+        SetSize(rhs.GetSize());
+    if(mpBuf == 0)
+    {
+        ASSERT(GetSize() <= 32);
+        mMask |= rhs.mMask;
+    }
+    else if (rhs.mpBuf == 0)
+    {
+        ASSERT(rhs.GetSize() <= 32);
+        (*mpBuf)[0] |= rhs.mMask;
+    }
+    else
+    {
+        for(unsigned int i=0; i < rhs.mpBuf->size(); ++i)
+            (*mpBuf)[i] |= (*rhs.mpBuf)[i];
+    }
+    return *this;
 }
 
 cFCOPropVector& cFCOPropVector::operator^=(const cFCOPropVector& rhs)
 {
-	// make sure I am big enough
-	if(GetSize() < rhs.GetSize())
-		SetSize(rhs.GetSize());
-	if(mpBuf == 0)
-	{
-		ASSERT(GetSize() <= 32);
-		mMask ^= rhs.mMask;
-	}
-	else if (rhs.mpBuf == 0)
-	{
-		ASSERT(rhs.GetSize() <= 32);
-		(*mpBuf)[0] ^= rhs.mMask;
-	}
-	else
-	{
-		for(unsigned int i=0; i < rhs.mpBuf->size(); ++i)
-			(*mpBuf)[i] ^= (*rhs.mpBuf)[i];
-	}
-	return *this;
+    // make sure I am big enough
+    if(GetSize() < rhs.GetSize())
+        SetSize(rhs.GetSize());
+    if(mpBuf == 0)
+    {
+        ASSERT(GetSize() <= 32);
+        mMask ^= rhs.mMask;
+    }
+    else if (rhs.mpBuf == 0)
+    {
+        ASSERT(rhs.GetSize() <= 32);
+        (*mpBuf)[0] ^= rhs.mMask;
+    }
+    else
+    {
+        for(unsigned int i=0; i < rhs.mpBuf->size(); ++i)
+            (*mpBuf)[i] ^= (*rhs.mpBuf)[i];
+    }
+    return *this;
 }
 
 
@@ -234,7 +234,7 @@ cFCOPropVector& cFCOPropVector::operator^=(const cFCOPropVector& rhs)
 ///////////////////////////////////////////////////////////////////////////////
 int cFCOPropVector::GetSize(void) const
 {
-	return mSize;
+    return mSize;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -244,25 +244,25 @@ int cFCOPropVector::GetSize(void) const
 ///////////////////////////////////////////////////////////////////////////////
 int cFCOPropVector::SetSize(int max)
 {
-	if ((max <= msBitlength) && (mpBuf == NULL))
-		return mSize = msBitlength;
-	else if ((max <= msBitlength) && (mpBuf != NULL))
-	{
-		return mSize = (*mpBuf).capacity()*msBitlength;
-			//new operation already performed, stick with mpBuf.
-	}
-	else if ((mpBuf == NULL) && (max > msBitlength))
-	{
-		mpBuf = new std::vector<uint32>;
-		(*mpBuf).resize (((max/msBitlength)+1), 0);
-		(*mpBuf)[0] = mMask;
-		return mSize = ((*mpBuf).capacity() * msBitlength);
-	}
-	else	//mpBuf!=NULL && max>msBitlength
-	{
-		(*mpBuf).resize (((max/msBitlength)+1), 0);
-		return mSize = ((*mpBuf).capacity() * msBitlength);
-	}
+    if ((max <= msBitlength) && (mpBuf == NULL))
+        return mSize = msBitlength;
+    else if ((max <= msBitlength) && (mpBuf != NULL))
+    {
+        return mSize = (*mpBuf).capacity()*msBitlength;
+            //new operation already performed, stick with mpBuf.
+    }
+    else if ((mpBuf == NULL) && (max > msBitlength))
+    {
+        mpBuf = new std::vector<uint32>;
+        (*mpBuf).resize (((max/msBitlength)+1), 0);
+        (*mpBuf)[0] = mMask;
+        return mSize = ((*mpBuf).capacity() * msBitlength);
+    }
+    else    //mpBuf!=NULL && max>msBitlength
+    {
+        (*mpBuf).resize (((max/msBitlength)+1), 0);
+        return mSize = ((*mpBuf).capacity() * msBitlength);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -271,18 +271,18 @@ int cFCOPropVector::SetSize(int max)
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOPropVector::AddItem(int i)
 {
-	ASSERT(i < GetSize());
+    ASSERT(i < GetSize());
 
-	if (mpBuf == NULL)
-	{
-		ASSERT(mSize <= 32);
-		mMask |= 1<<(i);
-	}
-	else
-	{
-		((*mpBuf)[(i)/msBitlength]) |= 1<<((i) % msBitlength);
-	}
-	return ContainsItem(i);
+    if (mpBuf == NULL)
+    {
+        ASSERT(mSize <= 32);
+        mMask |= 1<<(i);
+    }
+    else
+    {
+        ((*mpBuf)[(i)/msBitlength]) |= 1<<((i) % msBitlength);
+    }
+    return ContainsItem(i);
 }
 
 
@@ -292,7 +292,7 @@ bool cFCOPropVector::AddItem(int i)
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOPropVector::AddItemAndGrow(int i)
 {
-	if(i >= GetSize())
+    if(i >= GetSize())
         SetSize( i );
 
     return AddItem( i );
@@ -304,17 +304,17 @@ bool cFCOPropVector::AddItemAndGrow(int i)
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOPropVector::RemoveItem(int i)
 {
-	ASSERT(i < GetSize());
+    ASSERT(i < GetSize());
 
-	if (!ContainsItem(i))
-		return true;
-	if (mpBuf == NULL)
-		mMask ^= 1<<(i);
-	else
-	{
-		((*mpBuf)[(i)/msBitlength]) ^= 1<<((i) % msBitlength);
-	}
-	return !ContainsItem(i);
+    if (!ContainsItem(i))
+        return true;
+    if (mpBuf == NULL)
+        mMask ^= 1<<(i);
+    else
+    {
+        ((*mpBuf)[(i)/msBitlength]) ^= 1<<((i) % msBitlength);
+    }
+    return !ContainsItem(i);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -323,16 +323,16 @@ bool cFCOPropVector::RemoveItem(int i)
 /////////////////////////////////////////////////////////////////////////////// 
 bool cFCOPropVector::ContainsItem(int i) const
 {
-	if (i > mSize-1)
-		return false;
-	else if (mpBuf == NULL)
-	{
-		return ((mMask & (1<<(i))) != 0);
-	}
-	else
-	{
-		return ((((*mpBuf)[(i)/msBitlength]) & (1<<((i) % msBitlength))) != 0);
-	}
+    if (i > mSize-1)
+        return false;
+    else if (mpBuf == NULL)
+    {
+        return ((mMask & (1<<(i))) != 0);
+    }
+    else
+    {
+        return ((((*mpBuf)[(i)/msBitlength]) & (1<<((i) % msBitlength))) != 0);
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////// 
@@ -340,11 +340,11 @@ bool cFCOPropVector::ContainsItem(int i) const
 /////////////////////////////////////////////////////////////////////////////// 
 void cFCOPropVector::Clear(void)
 {
-	mMask = 0;
-	if(mpBuf)
-	{
-		std::fill(mpBuf->begin(), mpBuf->end(), 0);
-	}
+    mMask = 0;
+    if(mpBuf)
+    {
+        std::fill(mpBuf->begin(), mpBuf->end(), 0);
+    }
 }
 
 
@@ -354,44 +354,44 @@ void cFCOPropVector::Clear(void)
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOPropVector::isExtended(void) const
 {
-	if (mpBuf == NULL)
-		return false;
-	else
-	{
-		if ((*mpBuf).size() <= 1)
-			return false;
-		else
-		{
-			int sum = 0;
-			for (int i=(*mpBuf).size(); i >= 2; i--)
-				sum += ((*mpBuf)[i]);
-			return (sum == 0);
-		}
-	}
+    if (mpBuf == NULL)
+        return false;
+    else
+    {
+        if ((*mpBuf).size() <= 1)
+            return false;
+        else
+        {
+            int sum = 0;
+            for (int i=(*mpBuf).size(); i >= 2; i--)
+                sum += ((*mpBuf)[i]);
+            return (sum == 0);
+        }
+    }
 }
 
 
 // TO DO: temp function, will delete after testing... DA
 void cFCOPropVector::check (cDebug& d) const
 {
-	d.TraceDetail("mSize = %i \n", mSize);
-	d.TraceDetail("msBitlength = %i \n", msBitlength);
-	d.TraceDetail("mMask = %u \n", mMask);
-	if (mpBuf!=NULL) {
-		d.TraceDetail("*mpBuf has size %i \n", (*mpBuf).size() );
-			for (unsigned int i = 0; i<(*mpBuf).size(); ++i)
-			d.TraceDetail("mpBuf element %i = %u \n", i, (*mpBuf)[i] );
-	}
+    d.TraceDetail("mSize = %i \n", mSize);
+    d.TraceDetail("msBitlength = %i \n", msBitlength);
+    d.TraceDetail("mMask = %u \n", mMask);
+    if (mpBuf!=NULL) {
+        d.TraceDetail("*mpBuf has size %i \n", (*mpBuf).size() );
+            for (unsigned int i = 0; i<(*mpBuf).size(); ++i)
+            d.TraceDetail("mpBuf element %i = %u \n", i, (*mpBuf)[i] );
+    }
 }//end check
 
 
 void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
 {
-	if (version > 0)
-		ThrowAndAssert(eSerializerVersionMismatch(_T("Property Vector Read")));
+    if (version > 0)
+        ThrowAndAssert(eSerializerVersionMismatch(_T("Property Vector Read")));
 
     int i;
-	int32 newSize;
+    int32 newSize;
     pSerializer->ReadInt32(newSize);
     ASSERT(newSize > 0);
 
@@ -399,18 +399,18 @@ void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
 
     if (mpBuf == NULL)
     {
-		int32 mask;
+        int32 mask;
         pSerializer->ReadInt32(mask);
-		mMask = mask;
+        mMask = mask;
     }
     else
     {
         for (i=0; i <= mSize / msBitlength; ++i)
-		{
-			int32 mask;
+        {
+            int32 mask;
             pSerializer->ReadInt32(mask);
-			(*mpBuf)[i] = mask;
-		}
+            (*mpBuf)[i] = mask;
+        }
     }
 
 }
@@ -438,17 +438,17 @@ void cFCOPropVector::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOPropVector::TraceContents(int dl) const
 {
-	if(dl < 0) 
-		dl = cDebug::D_DEBUG;
+    if(dl < 0) 
+        dl = cDebug::D_DEBUG;
 
-	cDebug d("cFCOPropVector::TraceContents");
-	TOSTRINGSTREAM ostr;
-	for(int i=0; i<GetSize(); i++)
-	{
-		if(ContainsItem(i))
-			ostr << i << _T(", ");
-	}
-	ostr << std::ends;
-	d.Trace(dl, _T("Size = %d Contents = %s\n"), GetSize(), ostr.str().c_str());
+    cDebug d("cFCOPropVector::TraceContents");
+    TOSTRINGSTREAM ostr;
+    for(int i=0; i<GetSize(); i++)
+    {
+        if(ContainsItem(i))
+            ostr << i << _T(", ");
+    }
+    ostr << std::ends;
+    d.Trace(dl, _T("Size = %d Contents = %s\n"), GetSize(), ostr.str().c_str());
 }
 

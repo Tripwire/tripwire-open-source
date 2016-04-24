@@ -46,7 +46,7 @@
 // converted it to hex and xor'ed with 0xffffffff, just in case you are wondering) - dmb
 const uint32 KEY_MAGIC_NUMBER = 0xffe09f5b; 
 static const uint32 CURRENT_FIXED_VERSION  = 0x02020000;
-static const uint32 TW_21_VERSION		   = 0x02010000;
+static const uint32 TW_21_VERSION          = 0x02010000;
 
 ///////////////////////////////////////////////////////////////////////////////
 // class cKeyFile
@@ -116,8 +116,8 @@ void cKeyFile::ReadFile(const TCHAR* filename) // throw eKeyFile()
 
     int16 len;
 
-	try
-	{
+    try
+    {
         cFileArchive inFile;
         cFileHeader fileHeader;
 
@@ -125,9 +125,9 @@ void cKeyFile::ReadFile(const TCHAR* filename) // throw eKeyFile()
 
         try
         {
-		    cSerializerImpl fhSer(inFile, cSerializerImpl::S_READ, filename);
-		    fileHeader.Read(&fhSer);
-	    }
+            cSerializerImpl fhSer(inFile, cSerializerImpl::S_READ, filename);
+            fileHeader.Read(&fhSer);
+        }
         catch (eError&)
         {
             throw eKeyFileInvalidFmt();
@@ -136,84 +136,84 @@ void cKeyFile::ReadFile(const TCHAR* filename) // throw eKeyFile()
         // check id and version
         if (fileHeader.GetID() != cKeyFile::GetFileHeaderID())
         {
-			ASSERT(false);
+            ASSERT(false);
             throw eKeyFileInvalidFmt();
         }
 
-		// NOTE:mdb 20 July 99 -- I changed this so that we can load both tw22 and
-		//		tw21 key files, since their formatting is exactly the same besides
-		//		the version number.
-		//
+        // NOTE:mdb 20 July 99 -- I changed this so that we can load both tw22 and
+        //      tw21 key files, since their formatting is exactly the same besides
+        //      the version number.
+        //
         if( (fileHeader.GetVersion() != CURRENT_FIXED_VERSION) &&
-			(fileHeader.GetVersion() != TW_21_VERSION) )
+            (fileHeader.GetVersion() != TW_21_VERSION) )
         {
-			ASSERT(false);
+            ASSERT(false);
             throw eKeyFileInvalidFmt();
         }
 
         // read public key
-		inFile.ReadInt16(len);
-		if (len <= 0 || len >= 9000)
-		{
-			ASSERT(false);
+        inFile.ReadInt16(len);
+        if (len <= 0 || len >= 9000)
+        {
+            ASSERT(false);
             throw eKeyFileInvalidFmt();
-		}
+        }
 
-		int8* publicMem = new int8[len];
-		if (inFile.ReadBlob(publicMem, len) != len)
-		{
-			ASSERT(false);
-			delete [] publicMem;
+        int8* publicMem = new int8[len];
+        if (inFile.ReadBlob(publicMem, len) != len)
+        {
+            ASSERT(false);
+            delete [] publicMem;
             throw eKeyFileInvalidFmt();
-		}
+        }
 
-		mpPublicKey = new cElGamalSigPublicKey(publicMem);
-		delete [] publicMem;
+        mpPublicKey = new cElGamalSigPublicKey(publicMem);
+        delete [] publicMem;
 
-		// read private key;
-		inFile.ReadInt16(len);
-		if (len <= 0 || len > 9000)
-		{
-			ASSERT(false);
-			delete mpPublicKey;
-			mpPublicKey = 0;
+        // read private key;
+        inFile.ReadInt16(len);
+        if (len <= 0 || len > 9000)
+        {
+            ASSERT(false);
+            delete mpPublicKey;
+            mpPublicKey = 0;
             throw eKeyFileInvalidFmt();
-		}
+        }
 
-		mPrivateKeyMemLen = len;
-		mpPrivateKeyMem = new int8[len];
-		if (inFile.ReadBlob(mpPrivateKeyMem, mPrivateKeyMemLen) < mPrivateKeyMemLen)
-		{
-			ASSERT(false);
-			delete mpPublicKey;
-			delete [] mpPrivateKeyMem;
-			mpPublicKey = 0;
-			mpPrivateKeyMem = 0;
-			mPrivateKeyMemLen = 0;
+        mPrivateKeyMemLen = len;
+        mpPrivateKeyMem = new int8[len];
+        if (inFile.ReadBlob(mpPrivateKeyMem, mPrivateKeyMemLen) < mPrivateKeyMemLen)
+        {
+            ASSERT(false);
+            delete mpPublicKey;
+            delete [] mpPrivateKeyMem;
+            mpPublicKey = 0;
+            mpPrivateKeyMem = 0;
+            mPrivateKeyMemLen = 0;
             throw eKeyFileInvalidFmt();
-		}
-	}
-	catch(eArchive&)
-	{
-		delete mpPublicKey;
+        }
+    }
+    catch(eArchive&)
+    {
+        delete mpPublicKey;
         delete [] mpPrivateKeyMem;
-		mpPublicKey = 0;
-		mpPrivateKeyMem = 0;
-		mPrivateKeyMemLen = 0;
-		throw eKeyFileArchive(filename);
-	}
-	catch(eKeyFile&)
-	{
+        mpPublicKey = 0;
+        mpPrivateKeyMem = 0;
+        mPrivateKeyMemLen = 0;
+        throw eKeyFileArchive(filename);
+    }
+    catch(eKeyFile&)
+    {
         throw;
-	}
+    }
 }
 
 void cKeyFile::WriteFile(const TCHAR* filename) const // throw eKeyFile()
 {
     ASSERT(KeysLoaded());
 
-	try
-	{
+    try
+    {
         cFileArchive outFile;
         cFileHeader fileHeader;
 
@@ -226,32 +226,32 @@ void cKeyFile::WriteFile(const TCHAR* filename) const // throw eKeyFile()
         // we will have to move this
         fileHeader.SetVersion(CURRENT_FIXED_VERSION);
 
-	    fileHeader.SetEncoding(cFileHeader::NO_ENCODING);
+        fileHeader.SetEncoding(cFileHeader::NO_ENCODING);
 
-	    {
-		    cSerializerImpl fhSer(outFile, cSerializerImpl::S_WRITE, filename);
-		    fileHeader.Write(&fhSer);
-	    }
+        {
+            cSerializerImpl fhSer(outFile, cSerializerImpl::S_WRITE, filename);
+            fileHeader.Write(&fhSer);
+        }
 
-		// save public key
-		int16 len = mpPublicKey->GetWriteLen();
-		int8* publicMem = new int8[len];
-		mpPublicKey->Write(publicMem);
+        // save public key
+        int16 len = mpPublicKey->GetWriteLen();
+        int8* publicMem = new int8[len];
+        mpPublicKey->Write(publicMem);
 
-		outFile.WriteInt16(len);
-		outFile.WriteBlob(publicMem, len);
+        outFile.WriteInt16(len);
+        outFile.WriteBlob(publicMem, len);
 
-		delete [] publicMem;
+        delete [] publicMem;
 
-		// save private key
-		len = mPrivateKeyMemLen;
-		outFile.WriteInt16(len);
-		outFile.WriteBlob(mpPrivateKeyMem, mPrivateKeyMemLen);
-	}
-	catch(eArchive&)
-	{
-		throw eKeyFileArchive(filename);
-	}
+        // save private key
+        len = mPrivateKeyMemLen;
+        outFile.WriteInt16(len);
+        outFile.WriteBlob(mpPrivateKeyMem, mPrivateKeyMemLen);
+    }
+    catch(eArchive&)
+    {
+        throw eKeyFileArchive(filename);
+    }
 }
 
 // Functions to read and write the key to memory.  GetWriteLen() will throw an

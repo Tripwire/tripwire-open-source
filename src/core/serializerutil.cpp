@@ -39,35 +39,35 @@ namespace {
 template<class FROM, class TO>
 int64 CopyImpl(TO* pTo, FROM* pFrom, int64 amt)
 {
-	enum { BUF_SIZE = 8192 };
-	int8	buf[BUF_SIZE];
-	int64	amtLeft = amt;
+    enum { BUF_SIZE = 8192 };
+    int8    buf[BUF_SIZE];
+    int64   amtLeft = amt;
 
-	while(amtLeft > 0)
-	{
+    while(amtLeft > 0)
+    {
         // NOTE: We use int's here rather than int64 because iSerializer and cArchive
         // only take int's as their size parameter - dmb
-		int amtToRead = amtLeft > BUF_SIZE ? BUF_SIZE : (int)amtLeft;
-		int amtRead = pFrom->ReadBlob(buf, amtToRead );
-		amtLeft -= amtRead;
-		pTo->WriteBlob(buf, amtRead);
-		if(amtRead < amtToRead)
-			break;
-	}
+        int amtToRead = amtLeft > BUF_SIZE ? BUF_SIZE : (int)amtLeft;
+        int amtRead = pFrom->ReadBlob(buf, amtToRead );
+        amtLeft -= amtRead;
+        pTo->WriteBlob(buf, amtRead);
+        if(amtRead < amtToRead)
+            break;
+    }
 
-	// return the amount copied ...
-	return (amt - amtLeft);
+    // return the amount copied ...
+    return (amt - amtLeft);
 }
 }
 
 
 int64 cSerializerUtil::Copy( iSerializer* pDest, cArchive* pSrc, int64 amt )
 {
-	return CopyImpl( pDest, pSrc, amt );
+    return CopyImpl( pDest, pSrc, amt );
 }
 
 int64 cSerializerUtil::Copy( cArchive* pDest, iSerializer* pSrc, int64 amt )
 {
-	return CopyImpl( pDest, pSrc, amt );
+    return CopyImpl( pDest, pSrc, amt );
 }
 

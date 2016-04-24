@@ -66,8 +66,8 @@ public:
     cCryptoSink(cArchive* pDestArchive, iCipher* pCipher);
     ~cCryptoSink();
 
-	virtual void Put(const byte *inString, unsigned int length);
-	virtual void InputFinished();
+    virtual void Put(const byte *inString, unsigned int length);
+    virtual void InputFinished();
 
     virtual void Put(byte inByte) { Put(&inByte, 1); }
 
@@ -84,11 +84,11 @@ private:
 class cCryptoSource : public Source
 {
 public:
-	cCryptoSource(cArchive* pSrcArchive, iCipher* pCipher, BufferedTransformation *outQueue);
+    cCryptoSource(cArchive* pSrcArchive, iCipher* pCipher, BufferedTransformation *outQueue);
     ~cCryptoSource();
 
-	unsigned int Pump(unsigned int size);
-	unsigned long PumpAll();
+    unsigned int Pump(unsigned int size);
+    unsigned long PumpAll();
 
 private:
     cArchive*   mpSrcArchive;
@@ -407,16 +407,16 @@ unsigned int cCryptoSource::Pump(unsigned int size)
 
 unsigned long cCryptoSource::PumpAll()
 {
-	unsigned long total=0;
-	unsigned int l;
+    unsigned long total=0;
+    unsigned int l;
 
     if (mBufferLen == 0)
         mBufferLen = mpCipher->GetBlockSizePlain();
 
-	while ((l=Pump(mBufferLen)) != 0)
-		total += l;
+    while ((l=Pump(mBufferLen)) != 0)
+        total += l;
 
-	return total;
+    return total;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -106,8 +106,8 @@ protected:
     cCryptoSource*  mpCryptoSource;
     cByteQueue*     mpInflatedBytes;
 
-	virtual int Read(void* pDest, int count);
-	virtual int Write(const void* pSrc, int count); // throw(eArchive);
+    virtual int Read(void* pDest, int count);
+    virtual int Write(const void* pSrc, int count); // throw(eArchive);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -133,8 +133,8 @@ protected:
     cCryptoArchive  mCryptoArchive;
     cNullCipher*    mpNullCipher;
     
-	virtual int Read(void* pDest, int count);
-	virtual int Write(const void* pSrc, int count); // throw(eArchive);
+    virtual int Read(void* pDest, int count);
+    virtual int Write(const void* pSrc, int count); // throw(eArchive);
 };
 
 #ifdef _RSA_ENCRYPTION
@@ -171,8 +171,8 @@ protected:
     const cRSAPublicKey*  mpPublicKey;
     const cRSAPrivateKey* mpPrivateKey;
 
-	virtual int Read(void* pDest, int count);
-	virtual int Write(const void* pSrc, int count); // throw(eArchive);
+    virtual int Read(void* pDest, int count);
+    virtual int Write(const void* pSrc, int count); // throw(eArchive);
 };
 #endif // _RSA_ENCRYPTION
 
@@ -207,8 +207,8 @@ protected:
     const cElGamalSigPublicKey*  mpPublicKey;
     const cElGamalSigPrivateKey* mpPrivateKey;
 
-	virtual int Read(void* pDest, int count);
-	virtual int Write(const void* pSrc, int count); // throw(eArchive);
+    virtual int Read(void* pDest, int count);
+    virtual int Write(const void* pSrc, int count); // throw(eArchive);
 };
 
 #endif // __CRYPTOARCHIVE_H

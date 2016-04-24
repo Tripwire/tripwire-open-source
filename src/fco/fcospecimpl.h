@@ -52,56 +52,56 @@ class cErrorBucket;
 class iFCOSpecHelper;
 ///////////////////////////////////////////////////////////////////////
 // NOTE: it is interesting that there is nothing about this class that
-//		is specific to files; it could potentially be used with other FCOs,
-//		so maybe its name should be changed to cFCOSpecImpl or something
-//		like that -- mdb
+//      is specific to files; it could potentially be used with other FCOs,
+//      so maybe its name should be changed to cFCOSpecImpl or something
+//      like that -- mdb
 ///////////////////////////////////////////////////////////////////////
 class cFCOSpecImpl : public iFCOSpec
 {
-	DECLARE_SERREFCOUNT()
+    DECLARE_SERREFCOUNT()
 public:
-	// TODO -- remove the iFCODataSource from the ctor; I am doing nothing with it right now and 
-	//		didn't change it simply because I don't want to touch 1000 files updateing the creation
-	//		parameters... 28 jan mdb
-	//
-	cFCOSpecImpl(const TSTRING& name, /* const iFCODataSource* */ void* pSrc = 0, iFCOSpecHelper* pHelper = NULL);	
-		// the spec will delegate fco creation to pSrc as needed. It is OK to pass NULL as the data
-		// source, but it must be set before this spec can be used.
-		// the spec will delete whatever helper it contains when it is destroyed
-	cFCOSpecImpl(const cFCOSpecImpl& rhs);
-	cFCOSpecImpl();
-	void operator=(const cFCOSpecImpl& rhs);
+    // TODO -- remove the iFCODataSource from the ctor; I am doing nothing with it right now and 
+    //      didn't change it simply because I don't want to touch 1000 files updateing the creation
+    //      parameters... 28 jan mdb
+    //
+    cFCOSpecImpl(const TSTRING& name, /* const iFCODataSource* */ void* pSrc = 0, iFCOSpecHelper* pHelper = NULL);  
+        // the spec will delegate fco creation to pSrc as needed. It is OK to pass NULL as the data
+        // source, but it must be set before this spec can be used.
+        // the spec will delete whatever helper it contains when it is destroyed
+    cFCOSpecImpl(const cFCOSpecImpl& rhs);
+    cFCOSpecImpl();
+    void operator=(const cFCOSpecImpl& rhs);
 
-	// from iFCOSpec
-	virtual bool					SpecContainsFCO	(const cFCOName& name) const;
-	virtual const TSTRING&			GetName			() const ;
-	virtual void					SetName			(const TSTRING& name);
-	virtual iFCOSpec*				Clone			() const;
-	virtual const cFCOName&			GetStartPoint	() const ;
-	virtual void					SetStartPoint	(const cFCOName& name) ; // throw (eError);
-	virtual const cFCOPropVector&	GetPropVector	(const iFCOSpecMask* pFCOSpecMask) const ;
-	virtual bool					SetPropVector	(const iFCOSpecMask* pMask, const cFCOPropVector& vector);
-	virtual const iFCOSpecMask*		GetSpecMask		(const iFCO* pFCO) const ;
-	virtual void					TraceContents	(int dl = -1) const;
-	virtual bool					ShouldStopDescent( const cFCOName& name ) const ;
+    // from iFCOSpec
+    virtual bool                    SpecContainsFCO (const cFCOName& name) const;
+    virtual const TSTRING&          GetName         () const ;
+    virtual void                    SetName         (const TSTRING& name);
+    virtual iFCOSpec*               Clone           () const;
+    virtual const cFCOName&         GetStartPoint   () const ;
+    virtual void                    SetStartPoint   (const cFCOName& name) ; // throw (eError);
+    virtual const cFCOPropVector&   GetPropVector   (const iFCOSpecMask* pFCOSpecMask) const ;
+    virtual bool                    SetPropVector   (const iFCOSpecMask* pMask, const cFCOPropVector& vector);
+    virtual const iFCOSpecMask*     GetSpecMask     (const iFCO* pFCO) const ;
+    virtual void                    TraceContents   (int dl = -1) const;
+    virtual bool                    ShouldStopDescent( const cFCOName& name ) const ;
 
-	virtual void                    SetHelper(iFCOSpecHelper* pHelper);
-	virtual const iFCOSpecHelper*	GetHelper() const;
-		// helper manipulation; note that the spec will delete whatever helper it contains when it is destroyed,
-		// but it will not delete the current helper when SetHelper() is called.
+    virtual void                    SetHelper(iFCOSpecHelper* pHelper);
+    virtual const iFCOSpecHelper*   GetHelper() const;
+        // helper manipulation; note that the spec will delete whatever helper it contains when it is destroyed,
+        // but it will not delete the current helper when SetHelper() is called.
 
-	// iSerializable interface
-	virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;	// throw (eSerializer, eArchive)
+    // iSerializable interface
+    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
 
 
-	virtual ~cFCOSpecImpl();
-		// only destroy with Release(). Don't create on the stack.
+    virtual ~cFCOSpecImpl();
+        // only destroy with Release(). Don't create on the stack.
 private:
-		
-	TSTRING							mName;
-	cFCOPropVector					mPropVector;
-	iFCOSpecHelper*					mpHelper;
+        
+    TSTRING                         mName;
+    cFCOPropVector                  mPropVector;
+    iFCOSpecHelper*                 mpHelper;
 };
 
 //#############################################################################
@@ -109,13 +109,13 @@ private:
 //#############################################################################
 inline void cFCOSpecImpl::SetHelper(iFCOSpecHelper* pHelper)
 {
-	mpHelper = pHelper;
+    mpHelper = pHelper;
 }
 
 inline const iFCOSpecHelper* cFCOSpecImpl::GetHelper() const
 {
-	ASSERT(mpHelper != 0);
-	return mpHelper;
+    ASSERT(mpHelper != 0);
+    return mpHelper;
 }
 
 

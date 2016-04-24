@@ -44,13 +44,13 @@
 #include "core/errorbucketimpl.h"
 #include "core/usernotifystdout.h"
 #include "core/timebomb.h"
-#include <memory>		// for auto_ptr
+#include <memory>       // for auto_ptr
 #include <iostream>
 #include <exception>
 
 #include "tw/twstrings.h"
 #include "tripwirestrings.h"
-#include "tripwire.h"			// package initialization
+#include "tripwire.h"           // package initialization
 
 #include "fco/fcogenre.h"
 #include "fco/genreswitcher.h"
@@ -72,19 +72,19 @@ static TSTRING util_GetWholeCmdLine( int argc, const TCHAR *argv[] );
 #if defined(HAVE_MALLOC_H)
 #include <malloc.h>
 #endif
-static int32	gCurAlloc=0, 
-				gMaxAlloc=0;
+static int32    gCurAlloc=0, 
+                gMaxAlloc=0;
 void* operator new(size_t size)
 {
-	gCurAlloc += size;
-	if(gCurAlloc > gMaxAlloc)
-		gMaxAlloc = gCurAlloc;
-	return malloc(size);
+    gCurAlloc += size;
+    if(gCurAlloc > gMaxAlloc)
+        gMaxAlloc = gCurAlloc;
+    return malloc(size);
 }
 void operator delete(void* addr)
 {
-	gCurAlloc -= 4;
-	free (addr);
+    gCurAlloc -= 4;
+    free (addr);
 }
 #endif //_DEBUG
 */
@@ -111,16 +111,16 @@ void tw_unexpected_handler()
 int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 {
 
-	if (TimeBombExploded())
+    if (TimeBombExploded())
         return 8;
 
-	int ret = 0;
+    int ret = 0;
 
-	cTWInit twInit;
-	
+    cTWInit twInit;
+    
 
-	try 
-	{
+    try 
+    {
         // set unexpected and terminate handlers
         // Note: we do this before Init() in case it attempts to call these handlers
         // TODO: move this into the Init() routine
@@ -128,22 +128,22 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
         // Initialization
-		//
+        //
         twInit.Init( argv[0] );
-		TSS_Dependency( cTripwire );
+        TSS_Dependency( cTripwire );
 
         // set up the debug output
-	    cDebug::SetDebugLevel( cDebug::D_DEBUG/*D_DETAIL*//*D_NEVER*/ );
+        cDebug::SetDebugLevel( cDebug::D_DEBUG/*D_DETAIL*//*D_NEVER*/ );
         
 
         // first, get the right mode...
-		std::auto_ptr<iTWMode> pMode(cTWCmdLine::GetMode(argc, argv));
-		if(! pMode.get())
-		{
-			// no valid mode passed; GetMode will display an appropriate string (include usage statement)
-			ret = 8;
+        std::auto_ptr<iTWMode> pMode(cTWCmdLine::GetMode(argc, argv));
+        if(! pMode.get())
+        {
+            // no valid mode passed; GetMode will display an appropriate string (include usage statement)
+            ret = 8;
             goto exit;
-		}
+        }
 
         // if version was requested, output version string and exit
         if (pMode.get()->GetModeID() == cTWCmdLine::MODE_VERSION)
@@ -152,22 +152,22 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
             ret = 0;
             goto exit;
         }
-		
-		// process the command line
-		cCmdLineParser cmdLine;
-		pMode->InitCmdLineParser(cmdLine);
-		try
-		{
-			cmdLine.Parse(argc, argv);
-		}
-		catch( eError& e )
-		{
-			cTWUtil::PrintErrorMsg(e);
+        
+        // process the command line
+        cCmdLineParser cmdLine;
+        pMode->InitCmdLineParser(cmdLine);
+        try
+        {
+            cmdLine.Parse(argc, argv);
+        }
+        catch( eError& e )
+        {
+            cTWUtil::PrintErrorMsg(e);
             TCERR << TSS_GetString( cTW, tw::STR_GET_HELP) << std::endl;
             
             ret = 8;
             goto exit;
-		}
+        }
 
         TSTRING commandLine = util_GetWholeCmdLine( argc, argv );
 
@@ -182,13 +182,13 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWCmdLine::HELP))
         {
-			TCOUT << TSS_GetString( cTripwire, tripwire::STR_TRIPWIRE_VERSION) << std::endl;
-			TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
-			//
-			//Since --help was passed, exit after emitting a mode-specific usage statement.
-			TCOUT << pMode->GetModeUsage();
-			ret = 8;
-			goto exit;
+            TCOUT << TSS_GetString( cTripwire, tripwire::STR_TRIPWIRE_VERSION) << std::endl;
+            TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
+            //
+            //Since --help was passed, exit after emitting a mode-specific usage statement.
+            TCOUT << pMode->GetModeUsage();
+            ret = 8;
+            goto exit;
         }
 
         if (iter.SeekToArg(cTWCmdLine::VERBOSE))
@@ -197,48 +197,48 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         }
 
         // open up the config file, possibly using the passed in path
-		cConfigFile config;
+        cConfigFile config;
         TSTRING strConfigFile;
         cErrorReporter errorReporter;
 
-		if( pMode->GetModeID() != cTWCmdLine::MODE_HELP )
-		{
-			try
-			{
-				//open cfg file
-				cTWUtil::OpenConfigFile(config, cmdLine, cTWCmdLine::CFG_FILE, errorReporter, strConfigFile);
-			}
-			catch (eError& error)
-			{
-				TSTRING extra;
-				extra += TSS_GetString( cTW, tw::STR_NEWLINE);
-				extra += TSS_GetString( cTW, tw::STR_ERR_TWCFG_CANT_READ);
+        if( pMode->GetModeID() != cTWCmdLine::MODE_HELP )
+        {
+            try
+            {
+                //open cfg file
+                cTWUtil::OpenConfigFile(config, cmdLine, cTWCmdLine::CFG_FILE, errorReporter, strConfigFile);
+            }
+            catch (eError& error)
+            {
+                TSTRING extra;
+                extra += TSS_GetString( cTW, tw::STR_NEWLINE);
+                extra += TSS_GetString( cTW, tw::STR_ERR_TWCFG_CANT_READ);
 
-				cTWUtil::PrintErrorMsg( error, extra );
-				ret = 8;
-				goto exit;
-			}
-		}
+                cTWUtil::PrintErrorMsg( error, extra );
+                ret = 8;
+                goto exit;
+            }
+        }
 
-		// ok, now we can initialize the mode object and have it execute
+        // ok, now we can initialize the mode object and have it execute
         pMode->SetCmdLine( commandLine );
 
         pMode->SetConfigFile( strConfigFile );
 
         if(! pMode->Init(config, cmdLine))
-		{
+        {
             TCERR << TSS_GetString( cTW, tw::STR_GET_HELP) << std::endl;
-			ret = 8;
+            ret = 8;
             goto exit;
-		}
+        }
 
         ret = pMode->Execute(&twInit.errorQueue);
 
-	}//end try block
+    }//end try block
 
-	catch (eError& error)
+    catch (eError& error)
     {
-		cTWUtil::PrintErrorMsg(error);
+        cTWUtil::PrintErrorMsg(error);
         ASSERT(false);
         ret = 8;
     }
@@ -273,15 +273,15 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 exit:
 
 
-	// print out the max memory usage...
+    // print out the max memory usage...
 /*
 #ifdef _DEBUG
-	TCOUT << _T("Maximum memory footprint = ") << gMaxAlloc << std::endl;
+    TCOUT << _T("Maximum memory footprint = ") << gMaxAlloc << std::endl;
 #endif
 */
 
-	
-	return ret;
+    
+    return ret;
 
 } //end MAIN
 
@@ -304,10 +304,10 @@ static TSTRING util_GetWholeCmdLine( int argc, const TCHAR *argv[] )
             tstrRet += _T(" ");
 
             // Passwords passed on the command line are not saved
-            if (_tcsncmp(argv[i], _T("-P"), 2)				== 0 ||
-                _tcsncmp(argv[i], _T("-Q"), 2)				== 0 ||
-                _tcscmp(argv[i], _T("--local-passphrase"))	== 0 ||
-                _tcscmp(argv[i], _T("--site-passphrase"))	== 0)
+            if (_tcsncmp(argv[i], _T("-P"), 2)              == 0 ||
+                _tcsncmp(argv[i], _T("-Q"), 2)              == 0 ||
+                _tcscmp(argv[i], _T("--local-passphrase"))  == 0 ||
+                _tcscmp(argv[i], _T("--site-passphrase"))   == 0)
             {
                 wipeNextItem = true;
             }

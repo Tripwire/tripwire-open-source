@@ -44,7 +44,7 @@
 TSS_BEGIN_ERROR_REGISTRATION( twprint )
 
 TSS_REGISTER_ERROR( eTWPrintInvalidParamHelp(),     _T("Invalid mode parameter to help:") );
-TSS_REGISTER_ERROR( eTWPrintInvalidReportLevel(),	_T("Invalid reporting level specified, valid levels: [0-4]") );
+TSS_REGISTER_ERROR( eTWPrintInvalidReportLevel(),   _T("Invalid reporting level specified, valid levels: [0-4]") );
 TSS_REGISTER_ERROR( eTWPrintInvalidReportLevelCfg(),_T("Invalid reporting level in configuration file, must be [0-4]") );
 
 TSS_END_ERROR_REGISTRATION()

@@ -54,17 +54,17 @@ public:
     // Add an object to the table, optionally specifying an ID. Returns a 
     // unique ID for the object.  ASSERTs and throws exception if object is 
     // already in table or the ID is already taken.
-    int Add(		iSerRefCountObj* pObj, int id = 0);
-	int Add(const	iSerRefCountObj* pObj, int id = 0);
-		// TODO -- Note that this class is not really const-correct in that the const version of
-		// Add() just casts away the constness. The right thing to do is to make the serializer
-		// use different versions of this class (const and non-const) depending on whether it is
-		// reading or writing and (maybe?) make this class a template class so that it can map 
-		// to either const or non-const objects.
+    int Add(        iSerRefCountObj* pObj, int id = 0);
+    int Add(const   iSerRefCountObj* pObj, int id = 0);
+        // TODO -- Note that this class is not really const-correct in that the const version of
+        // Add() just casts away the constness. The right thing to do is to make the serializer
+        // use different versions of this class (const and non-const) depending on whether it is
+        // reading or writing and (maybe?) make this class a template class so that it can map 
+        // to either const or non-const objects.
 
 
-	// clears out the table
-	void Clear();
+    // clears out the table
+    void Clear();
 
 protected:
     typedef std::map<int, iSerRefCountObj*> MapIDTObj;

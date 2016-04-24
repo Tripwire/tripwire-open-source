@@ -49,32 +49,32 @@
 class iFCOProp : public iTypedSerializable
 {
 public:
-	enum Op
-	{
-		OP_EQ = 1,		// ==
-		OP_NE = 2,		// !=
-		OP_GT = 4,		// >
-		OP_LT = 8,		// <
-		OP_GE = 16,		// >=
-		OP_LE = 32		// <=
-	};
-	enum CmpResult
-	{
-		CMP_TRUE = 1,
-		CMP_FALSE = 2,
-		CMP_WRONG_PROP_TYPE = 3,
-		CMP_UNSUPPORTED = 4
-	};
-	
-	virtual TSTRING AsString() const = 0;
-		// returns a string representation of the property
-	virtual CmpResult Compare(const iFCOProp* rhs, Op op) const = 0;
-	virtual void Copy(const iFCOProp* rhs) = 0;
-		// change my value so that it is the same as the passed in property.
-		// this will assert() that the two properties are of the same type.
+    enum Op
+    {
+        OP_EQ = 1,      // ==
+        OP_NE = 2,      // !=
+        OP_GT = 4,      // >
+        OP_LT = 8,      // <
+        OP_GE = 16,     // >=
+        OP_LE = 32      // <=
+    };
+    enum CmpResult
+    {
+        CMP_TRUE = 1,
+        CMP_FALSE = 2,
+        CMP_WRONG_PROP_TYPE = 3,
+        CMP_UNSUPPORTED = 4
+    };
+    
+    virtual TSTRING AsString() const = 0;
+        // returns a string representation of the property
+    virtual CmpResult Compare(const iFCOProp* rhs, Op op) const = 0;
+    virtual void Copy(const iFCOProp* rhs) = 0;
+        // change my value so that it is the same as the passed in property.
+        // this will assert() that the two properties are of the same type.
 
 protected:
-	virtual ~iFCOProp() {}
+    virtual ~iFCOProp() {}
 };
 
 #endif //__FCOPROP_H

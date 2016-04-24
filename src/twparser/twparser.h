@@ -47,7 +47,7 @@
 //--Classes
 
 TSS_BeginPackage( cTWParser )
-	
+    
     TSS_DECLARE_STRINGTABLE;
     
     public:

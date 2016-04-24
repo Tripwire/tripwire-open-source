@@ -31,10 +31,10 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 // policyparser.h -- wrapper around yacc generated classes.  intended to be used
-//					as interface to parser
+//                  as interface to parser
 //
-// cPolicyParser:			object responsible for reading policy file, and 
-//							generating list of FCOSpecs
+// cPolicyParser:           object responsible for reading policy file, and 
+//                          generating list of FCOSpecs
 //
 
 #ifndef __POLICYPARSER_H
@@ -71,17 +71,17 @@
 
 ///////////////////////////////////////////////
 // wrapper around yy_scan 
-//		we do this so we can overload member functions
+//      we do this so we can overload member functions
 class tw_yy_scan : public yy_scan
 {
     enum { MAX_TOKEN_LENGTH = 1024 };
 public:
     tw_yy_scan( std::istream& i ) : yy_scan( MAX_TOKEN_LENGTH ), mIn(i) {}; // need to increase token length over mks default
 
-    virtual int	yygetc() { return mIn.get(); };
+    virtual int yygetc() { return mIn.get(); };
     
-	virtual void yyerror( char *pszErr, ... );  //throw( eParserHelper )
-	    // this is the MKS error function.  But, since some operating systems (e.g. like AIX)
+    virtual void yyerror( const char *pszErr, ... );  //throw( eParserHelper )
+        // this is the MKS error function.  But, since some operating systems (e.g. like AIX)
         // don't offer a vnsprintf, so there's no way we can safely output the error 
         // from the va_arg list to a string without possible buffer overflow.
         // So, only call this function with a fully formatted message.
@@ -97,10 +97,10 @@ private:
     // input stream
     std::istream&           mIn;
 };
-	
+    
 ///////////////////////////////////////////////
 // wrapper around yy_parse
-//		we do this so we can overload member functions
+//      we do this so we can overload member functions
 class tw_yy_parse : public yy_parse
 {
     enum            { PARSER_STATE_STACK_SIZE = 150 };
@@ -113,18 +113,18 @@ private:
 
 ///////////////////////////////////////////////////////////////////////////////
 // cPolicyParser
-//		input:		istream& -- parser input
-//		output:		list of (iFCOSpec *) -- caller is responsible for freeing
+//      input:      istream& -- parser input
+//      output:     list of (iFCOSpec *) -- caller is responsible for freeing
 //
-//		when parsing is done, this object can be destroyed, and no trace of the
-//		parsing should exist
+//      when parsing is done, this object can be destroyed, and no trace of the
+//      parsing should exist
 //
 
 class cPolicyParser
 {
 public:
     cPolicyParser( std::istream& in ); // input source 
-	
+    
     void                    Execute( cGenreSpecListVector& policy, cErrorBucket* pError ); //throw(eError);
     void                    Check( cErrorBucket* pError ); //throw(eError);
         // do the parsing
@@ -135,8 +135,8 @@ private:
     std::string ConvertMultibyte( std::istream& in );
         // turns all mb chars > 1 byte or unrecognizable chars
         // into escaped hex (\xXX)
-	
-	tw_yy_parse				mParser;
+    
+    tw_yy_parse             mParser;
     std::istream&           mIn;
 };
 

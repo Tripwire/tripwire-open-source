@@ -97,29 +97,29 @@ public:
     DECLARE_TYPEDSERIALIZABLE()
 
     cFSPropDisplayer();
-	virtual ~cFSPropDisplayer();
+    virtual ~cFSPropDisplayer();
 
     virtual iFCOPropDisplayer* Clone() const;
 
     virtual void Merge( const iFCOPropDisplayer* const ppd );
-	virtual const cFCOPropVector& GetPropsConverted() const;
-	virtual TSTRING PropAsString(const iFCO* const pFCO, const int propIdx, int iOffset = 0, int iWidth = 0 ) const ;    
-	virtual TSTRING PropAsString( const iFCO* const pFCO, int const propIdx, int iOffset = 0, int iWidth = 0 );
+    virtual const cFCOPropVector& GetPropsConverted() const;
+    virtual TSTRING PropAsString(const iFCO* const pFCO, const int propIdx, int iOffset = 0, int iWidth = 0 ) const ;    
+    virtual TSTRING PropAsString( const iFCO* const pFCO, int const propIdx, int iOffset = 0, int iWidth = 0 );
     virtual bool IsMultiLineProp( int propID ) const;
     virtual TSTRING& GetDetails( const iFCO* const pfco, TSTRING& strBuf ) const ;
     virtual TSTRING& GetDetailsHeader( TSTRING& strBuf, int iMargin ) const;
     virtual void InitForProp(const iFCO* const pFCO, const int propIdx);
     virtual void InitForFCO( const iFCO* const ifco );
-	virtual void SetLazy( const bool bLazy = true );
-	virtual bool GetLazy() const;
-    virtual void Read (iSerializer* pSerializer, int32 version = 0);	// throw (eSerializer, eArchive)
-	virtual void Write(iSerializer* pSerializer) const;				// throw (eSerializer, eArchive)
+    virtual void SetLazy( const bool bLazy = true );
+    virtual bool GetLazy() const;
+    virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 private:        
     void AddMapping( const iFCOProp* const pProp, const TSTRING& tstrValue, const int propTypeEnum );
         // pass in a property value and its string representation.  for instance: ( FS::PROP_UID --> username )
 
 
-	cFCOPropVector      mpvPropsWeDisplay;  // if a given prop in this vector is valid, then this class 
+    cFCOPropVector      mpvPropsWeDisplay;  // if a given prop in this vector is valid, then this class 
                                             // can do a PropAsString that's different from iFCOProp::AsString()
     bool                mbLazy;
 

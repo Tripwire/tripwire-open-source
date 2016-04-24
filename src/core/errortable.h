@@ -34,8 +34,8 @@
 // Date:    30 April 99
 // Creator: mdb
 //
-// cErrorTable --	singleton derived from Resource_<> that serves as the global 
-//					error id to string mapping
+// cErrorTable --   singleton derived from Resource_<> that serves as the global 
+//                  error id to string mapping
 //
 #ifndef __ERRORTABLE_H
 #define __ERRORTABLE_H
@@ -54,16 +54,16 @@ class eError;
 class cErrorTable : public cMessages_<uint32, TCHAR>
 {
 public:
-	typedef cMessages_<uint32, TCHAR> inherited;
+    typedef cMessages_<uint32, TCHAR> inherited;
 
-	//
-	// Convenience Methods
-	//
-	void Put( const eError& e, const TCHAR* msg );
-	//
-	// Singleton Interface
-	//
-	static cErrorTable* GetInstance();
+    //
+    // Convenience Methods
+    //
+    void Put( const eError& e, const TCHAR* msg );
+    //
+    // Singleton Interface
+    //
+    static cErrorTable* GetInstance();
 
 private:
     #ifdef _DEBUG
@@ -85,55 +85,55 @@ inline void cErrorTable::Put( const eError& e, const TCHAR* msg )
 //-----------------------------------------------------------------------------
 //
 // These macros make it easy for a module to register errors with the global 
-//		error table. Them like this:
+//      error table. Them like this:
 //
-//		// animalerrors.h
-//		// 
-//		TSS_DECLARE_ERROR_REGISTRATION( animal )
+//      // animalerrors.h
+//      // 
+//      TSS_DECLARE_ERROR_REGISTRATION( animal )
 //
-//		// animalerrors.cpp
-//		//
-//		TSS_BEGIN_ERROR_REGISTRATION( animal )
-//		TSS_REGISTER_ERROR( eDog,		_T("Dog error") )
-//		TSS_REGISTER_ERROR( eDogBark,	_T("Barking error") )
-//		TSS_END_ERROR_REGISTRATION()
+//      // animalerrors.cpp
+//      //
+//      TSS_BEGIN_ERROR_REGISTRATION( animal )
+//      TSS_REGISTER_ERROR( eDog,       _T("Dog error") )
+//      TSS_REGISTER_ERROR( eDogBark,   _T("Barking error") )
+//      TSS_END_ERROR_REGISTRATION()
 //
-//		// pkg.h
-//		TSS_DeclarePackage( cWorld )
+//      // pkg.h
+//      TSS_DeclarePackage( cWorld )
 //
-//		// pkg.cpp
-//		cWorld::cWorld()
-//		{
-//			TSS_REGISTER_PKG_ERRORS( animal )
+//      // pkg.cpp
+//      cWorld::cWorld()
+//      {
+//          TSS_REGISTER_PKG_ERRORS( animal )
 //
 //===================
 // cpp file macros
 //===================
 #define TSS_BEGIN_ERROR_REGISTRATION( pkgName ) \
-	RegisterErrors##pkgName::RegisterErrors##pkgName() \
-	{ 
+    RegisterErrors##pkgName::RegisterErrors##pkgName() \
+    { 
 
 #define TSS_REGISTER_ERROR( err, str ) \
-		cErrorTable::GetInstance()->Put \
-			( err, str );
+        cErrorTable::GetInstance()->Put \
+            ( err, str );
 
 #define TSS_END_ERROR_REGISTRATION() \
-	} 
+    } 
 
 //===================
 // h file macros
 //===================
 #define TSS_DECLARE_ERROR_REGISTRATION( pkgName ) \
-	struct RegisterErrors##pkgName \
-	{\
-		RegisterErrors##pkgName(); \
-	};
+    struct RegisterErrors##pkgName \
+    {\
+        RegisterErrors##pkgName(); \
+    };
 
 //===================
 // package init macros
 //===================
 #define TSS_REGISTER_PKG_ERRORS( pkgName ) \
-	RegisterErrors##pkgName register##pkgName;
+    RegisterErrors##pkgName register##pkgName;
 
 
 #endif //__ERRORTABLE_H

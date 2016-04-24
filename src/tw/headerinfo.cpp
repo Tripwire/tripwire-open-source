@@ -31,7 +31,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //headerinfo.cpp : implementation for base class that stores and returns info.
-//		for database and report header objects.
+//      for database and report header objects.
 
 #include "stdtw.h"
 #include "headerinfo.h"
@@ -40,13 +40,13 @@
 #include "fco/fcopropdisplayer.h"
 #include "core/errorutil.h"
 
-IMPLEMENT_TYPEDSERIALIZABLE( cHeaderInfo,		_T("cHeaderInfo"),		0, 1 );
-IMPLEMENT_TYPEDSERIALIZABLE( cFCODbHeader,		_T("cFCODbHeader"),		0, 1 );
-IMPLEMENT_TYPEDSERIALIZABLE( cFCOReportHeader,	_T("cFCOReportHeader"), 0, 1 );
+IMPLEMENT_TYPEDSERIALIZABLE( cHeaderInfo,       _T("cHeaderInfo"),      0, 1 );
+IMPLEMENT_TYPEDSERIALIZABLE( cFCODbHeader,      _T("cFCODbHeader"),     0, 1 );
+IMPLEMENT_TYPEDSERIALIZABLE( cFCOReportHeader,  _T("cFCOReportHeader"), 0, 1 );
 
-IMPLEMENT_TYPEDSERIALIZABLE( cGenreHeaderInfo,	    _T("cGenreHeaderInfo"),      0, 1 );
-IMPLEMENT_TYPEDSERIALIZABLE( cFCODbGenreHeader,	    _T("cFCODbGenreHeader"),    0, 1 );
-IMPLEMENT_TYPEDSERIALIZABLE( cFCOReportGenreHeader,	_T("cFCOReportGenreHeader"),0, 1 );
+IMPLEMENT_TYPEDSERIALIZABLE( cGenreHeaderInfo,      _T("cGenreHeaderInfo"),      0, 1 );
+IMPLEMENT_TYPEDSERIALIZABLE( cFCODbGenreHeader,     _T("cFCODbGenreHeader"),    0, 1 );
+IMPLEMENT_TYPEDSERIALIZABLE( cFCOReportGenreHeader, _T("cFCOReportGenreHeader"),0, 1 );
 
 
 
@@ -64,23 +64,23 @@ cHeaderInfo::~cHeaderInfo()
 
 void cHeaderInfo::Clear()
 {
-	tstr_SystemName = _T("");
-	tstr_PolicyFilename= _T("");
-	tstr_ConfigFilename= _T("");
-	tstr_DBFilename= _T("");
-	tstr_CommandLineParams= _T("");
-	tstr_CreatedBy= _T("");
-	tstr_IPAddress= _T("");
+    tstr_SystemName = _T("");
+    tstr_PolicyFilename= _T("");
+    tstr_ConfigFilename= _T("");
+    tstr_DBFilename= _T("");
+    tstr_CommandLineParams= _T("");
+    tstr_CreatedBy= _T("");
+    tstr_IPAddress= _T("");
     tstr_HostID = _T("");
-	i64_CreationTime = 0;
-	i64_LastDBUpdateTime = 0;
+    i64_CreationTime = 0;
+    i64_LastDBUpdateTime = 0;
 }
 
 
 void cHeaderInfo::Read ( iSerializer* pSerializer, int32 version ) // throw (eSerializer, eArchive)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("cHeaderInfo Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("cHeaderInfo Read")));
 
     pSerializer->ReadString( tstr_SystemName );
     pSerializer->ReadString( tstr_PolicyFilename );
@@ -95,7 +95,7 @@ void cHeaderInfo::Read ( iSerializer* pSerializer, int32 version ) // throw (eSe
 }
 
 
-void cHeaderInfo::Write(iSerializer* pSerializer) const	// throw (eSerializer, eArchive)
+void cHeaderInfo::Write(iSerializer* pSerializer) const // throw (eSerializer, eArchive)
 {
     pSerializer->WriteString( tstr_SystemName );
     pSerializer->WriteString( tstr_PolicyFilename );
@@ -115,13 +115,13 @@ void cHeaderInfo::Write(iSerializer* pSerializer) const	// throw (eSerializer, e
 // Ctor, Dtor: Ctor intializes the Header data to zero or a NULL equivalent.
 cGenreHeaderInfo::cGenreHeaderInfo() 
     : mpPropDisplayer( 0 ),
-	  i32_ObjectsScanned( 0 )
+      i32_ObjectsScanned( 0 )
 {
 }
 
 cGenreHeaderInfo::~cGenreHeaderInfo()
 {
-	delete mpPropDisplayer;
+    delete mpPropDisplayer;
 }
 
 cGenreHeaderInfo::cGenreHeaderInfo( const cGenreHeaderInfo& rhs )
@@ -138,17 +138,17 @@ cGenreHeaderInfo::cGenreHeaderInfo( const cGenreHeaderInfo& rhs )
 
 void cGenreHeaderInfo::Clear()
 {
-	delete mpPropDisplayer;
-	mpPropDisplayer = 0;
+    delete mpPropDisplayer;
+    mpPropDisplayer = 0;
     i32_ObjectsScanned = 0;
 }
 
 void cGenreHeaderInfo::Read ( iSerializer* pSerializer, int32 version ) // throw (eSerializer, eArchive)
 {
-	if (version > Version())
-		ThrowAndAssert(eSerializerVersionMismatch(_T("cHeaderInfo Read")));
+    if (version > Version())
+        ThrowAndAssert(eSerializerVersionMismatch(_T("cHeaderInfo Read")));
 
-	// read the prop displayer
+    // read the prop displayer
     ASSERT( mpPropDisplayer == 0);
 
     int32 fMakePD;
@@ -161,9 +161,9 @@ void cGenreHeaderInfo::Read ( iSerializer* pSerializer, int32 version ) // throw
 }
 
 
-void cGenreHeaderInfo::Write(iSerializer* pSerializer) const	// throw (eSerializer, eArchive)
+void cGenreHeaderInfo::Write(iSerializer* pSerializer) const    // throw (eSerializer, eArchive)
 {
-	// write out the prop displayer
+    // write out the prop displayer
     if( mpPropDisplayer )
     {
         pSerializer->WriteInt32(1);

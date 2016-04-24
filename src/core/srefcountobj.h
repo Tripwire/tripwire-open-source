@@ -54,8 +54,8 @@
 class iSerRefCountObj : public cRefCountObj, public iTypedSerializable
 {
 public:
-	// the creation function
-	typedef iSerRefCountObj* (*CreateFunc)(void);
+    // the creation function
+    typedef iSerRefCountObj* (*CreateFunc)(void);
 
 protected:
     virtual ~iSerRefCountObj();
@@ -65,21 +65,21 @@ protected:
 //////////////////////////////
 // convenience macros
 #define DECLARE_SERREFCOUNT() \
-	DECLARE_TYPED() \
-public:	\
-	static iSerRefCountObj* Create(); \
-	virtual int32 Version() const;
+    DECLARE_TYPED() \
+public: \
+    static iSerRefCountObj* Create(); \
+    virtual int32 Version() const;
 
 #define IMPLEMENT_SERREFCOUNT(CLASS, TYPEDSTRING, VERSION_MAJOR, VERSION_MINOR) \
-	IMPLEMENT_TYPED(CLASS, TYPEDSTRING) \
-	iSerRefCountObj* CLASS::Create() \
-	{ \
-		return new CLASS; \
-	} \
-	int32 CLASS::Version() const \
-	{ \
-		return iTypedSerializable::MkVersion(VERSION_MAJOR, VERSION_MINOR); \
-	} 
+    IMPLEMENT_TYPED(CLASS, TYPEDSTRING) \
+    iSerRefCountObj* CLASS::Create() \
+    { \
+        return new CLASS; \
+    } \
+    int32 CLASS::Version() const \
+    { \
+        return iTypedSerializable::MkVersion(VERSION_MAJOR, VERSION_MINOR); \
+    } 
 
 
 #endif
