@@ -12,6 +12,9 @@
 /* Define to 1 if you have the <bits/signum.h> header file. */
 #undef HAVE_BITS_SIGNUM_H
 
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
 /* Uses the GNU gcc compiler */
 #undef HAVE_GCC
 
@@ -47,6 +50,9 @@
 
 /* Define to 1 if you have the <openssl/sha.h> header file. */
 #undef HAVE_OPENSSL_SHA_H
+
+/* Define to 1 if you have the `posix_fadvise' function. */
+#undef HAVE_POSIX_FADVISE
 
 /* Define to 1 if you have the <signum.h> header file. */
 #undef HAVE_SIGNUM_H

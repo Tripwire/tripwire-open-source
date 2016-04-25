@@ -106,6 +106,9 @@ dnl #############################
 AC_CHECK_FUNCS(strftime gethostname gethostid)
 AC_CHECK_FUNCS(mkstemp mktemp, break)
 
+dnl check for posix_fadvise
+AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
+
 dnl ##############################################
 dnl Checks for various platform specific libraries
 dnl ##############################################
