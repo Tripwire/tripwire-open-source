@@ -54,10 +54,12 @@ public:
     
     enum Flags
     {
-        FLAG_ERASE_FOOTPRINTS_GD            = 0x00000001
+        FLAG_ERASE_FOOTPRINTS_GD            = 0x00000001,
             // when this flag is set, cGenerateDb will attempt to leave no footprints when 
             // creating the database for instance, cGenerateDb will tell the property calculator 
             // to reset access times.
+        FLAG_DIRECT_IO                      = 0x00000002
+            // Use direct i/o when scanning files
     };
 };
 

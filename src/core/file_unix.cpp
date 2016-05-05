@@ -169,9 +169,15 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
             perm |= O_CREAT;
 
 #ifdef O_NONBLOCK
-        if( flags & OPEN_NONBLOCKING )
+        if( flags & OPEN_SCANNING )
             perm |= O_NONBLOCK;
 #endif
+    
+#ifdef O_DIRECT
+        if (flags & OPEN_DIRECT)
+            perm |= O_DIRECT
+#endif
+            
     //
     // actually open the file
     //
@@ -202,6 +208,17 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     mpData->mFileName = sFileName;  //Set mFileName to the newly opened file.
     
     cFile::Rewind();
+
+#ifdef F_NOCACHE
+    if (flags & OPEN_DIRECT)
+        fcntl(fh, F_NOCACHE, 1);
+#endif
+    
+#ifdef HAVE_POSIX_FADVISE
+    if (flags & OPEN_SCANNING)
+        posix_fadvise(fh,0,0, POSIX_FADV_DONTNEED);
+#endif
+    
 }
 
 

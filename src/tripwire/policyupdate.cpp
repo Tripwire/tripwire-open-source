@@ -177,6 +177,11 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
     {
         icFlags |= cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC;
     }
+    
+    if (flags & FLAG_DIRECT_IO)
+    {
+        icFlags |= cIntegrityCheck::FLAG_DIRECT_IO;
+    }
 
     ic.Execute( icFlags );
         //TODO-- the second flag I just added probably makes the flag to cUpdateDb::Execute() unnecessary;
@@ -208,7 +213,7 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
             {
                 // this is an error that should be reported to the user.
                 ePolicyUpdateAddedFCO e( pTrans->ToStringDisplay( pIter->FCO()->GetName() ) );
-                if( (flags & ANAL) == 0 )
+                if( (flags & FLAG_SECURE_MODE) == 0 )
                     e.SetFlags( eError::NON_FATAL );
                 else
                     e.SetFlags( eError::SUPRESS_THIRD_MSG );
@@ -229,7 +234,7 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
                 // this is an error that should be reported to the user.
                 ePolicyUpdateRemovedFCO e( pTrans->ToStringDisplay( pRmIter->FCO()->GetName() ) );
 
-                if( (flags & ANAL) == 0 )
+                if( (flags & FLAG_SECURE_MODE) == 0 )
                     e.SetFlags( eError::NON_FATAL );
                 else
                     e.SetFlags( eError::SUPRESS_THIRD_MSG );
@@ -262,7 +267,7 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
 
             // add this to the error bucket
             ePolicyUpdateChangedFCO e( badPropStr );
-            if( (flags & ANAL) == 0 )
+            if( (flags & FLAG_SECURE_MODE) == 0 )
                 e.SetFlags( eError::NON_FATAL );
             else
                 e.SetFlags( eError::SUPRESS_THIRD_MSG );
@@ -272,7 +277,7 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
     }
     //
     // now, we will update the database with everything in the report...
-    // TODO -- don't do this if the anal flag was passed in
+    // TODO -- don't do this if the secure mode flag was passed in
     //
     TW_NOTIFY_NORMAL( TSS_GetString( cTripwire, tripwire::STR_PU_UPDATE_DB ).c_str() );
     //
@@ -283,7 +288,7 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
     {
         updateDBFlags |= cUpdateDb::FLAG_ERASE_FOOTPRINTS_UD;
     }
-
+    
     update.Execute( updateDBFlags );
     
     // the last thing that we have to do is to remove everything that is still
@@ -303,6 +308,7 @@ bool cPolicyUpdate::Execute( uint32 flags )  // throw (eError)
     {
         i.SetIterFlags( iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
     }
+    
     const cFCOSpecListCanonicalIter newPolIter( mNewPolicy );
     util_PruneExtraObjects( i, newPolIter );
 

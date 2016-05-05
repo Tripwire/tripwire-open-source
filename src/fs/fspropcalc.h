@@ -73,6 +73,7 @@ public:
 
     virtual int                     GetCalcFlags() const;
     virtual void                    SetCalcFlags( int i );
+    
 private:
     cFSPropCalc( const cFSPropCalc& );
     void operator =( const cFSPropCalc& );

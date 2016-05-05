@@ -433,6 +433,14 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         pModeInfo->mbCrossFileSystems = false;
     }
 
+    if(cf.Lookup(TSTRING(_T("DIRECT_IO")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            pModeInfo->mbDirectIO = true;
+        else
+            pModeInfo->mbDirectIO = false;
+    }
+    
   // 
   // turn all of the file names into full paths (they're relative to the exe dir)
   // 
@@ -621,7 +629,7 @@ bool cTWModeDbInit::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
@@ -663,7 +671,8 @@ int cTWModeDbInit::Execute(cErrorQueue* pQueue)
         
         uint32 gdbFlags = 0;
         gdbFlags |= ( mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0 );
-
+        gdbFlags |= ( mpData->mbDirectIO ? cGenerateDb::FLAG_DIRECT_IO : 0 );
+       
         // loop through the genres
         cGenreSpecListVector::iterator genreIter;
         for (genreIter = genreSpecList.begin(); genreIter != genreSpecList.end(); ++genreIter)
@@ -776,7 +785,7 @@ public:
    TSTRING     mSeverityName;       // gets mapped to number, then treated like mSeverityLevel
    TSTRING     mRuleName;           // only the named rule will be checked
    TSTRING     mGenreName;          // if not empty, specifies the genre to check
-   bool     mbAnal;              // are we in anal mode? (only valid with mbUpdate == true)
+   bool     mbSecureMode;              // are we in extra-pedantic mode? (only valid with mbUpdate == true)
 
 #ifdef GMMS
    bool     mbGmms;              // Send violation reports via gmms?
@@ -790,7 +799,7 @@ public:
 
    // ctor can set up some default values
    cTWModeIC_i() : cTWModeCommon(), mbUpdate(false),  mbPrintToStdout(true),     mbEmail(false), mbEncryptReport(false), 
-               mSeverityLevel(-1), mbTrimBySeverity(false), mbAnal(false)
+               mSeverityLevel(-1), mbTrimBySeverity(false), mbSecureMode(false)
 #ifdef GMMS
                , mbGmms(false),     mGmmsVerbosity(2)
 #endif
@@ -1080,7 +1089,7 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
@@ -1223,7 +1232,8 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                     uint32 icFlags = 0;
                     icFlags |= ( mpData->mfLooseDirs ?          cIntegrityCheck::FLAG_LOOSE_DIR : 0 );
                     icFlags |= ( mpData->mbResetAccessTime ?    cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0 );
-
+                    icFlags |= ( mpData->mbDirectIO ?           cIntegrityCheck::FLAG_DIRECT_IO : 0 );
+                
                ic.ExecuteOnObjectList( fcoNames, icFlags );
                     
                // put all info into report
@@ -1354,7 +1364,8 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                     uint32 icFlags = 0;
                     icFlags |= ( mpData->mfLooseDirs ?          cIntegrityCheck::FLAG_LOOSE_DIR : 0 );
                     icFlags |= ( mpData->mbResetAccessTime ?    cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0 );
-
+                    icFlags |= ( mpData->mbDirectIO ?           cIntegrityCheck::FLAG_DIRECT_IO : 0 );
+                
                ic.Execute( icFlags );
                
                // put all display info into report
@@ -1531,7 +1542,7 @@ class cTWModeDbUpdate_i : public cTWModeCommon
 {
 public:
    bool  mbInteractive; // don't do interactive update; just integrate the report file
-   bool  mbAnal;        // are we in anal mode?
+   bool  mbSecureMode;        // are we in extra-pedantic mode?
    //std::string  mSitePassphrase;  // pass phrase for site key
     //bool    mSiteProvided;
 
@@ -1544,7 +1555,7 @@ public:
    cFCOReportHeader* mpReportHeader;
 
    // ctor can set up some default values
-   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbAnal(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
+   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbSecureMode(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1572,7 +1583,7 @@ void cTWModeDbUpdate::InitCmdLineParser(cCmdLineParser& cmdLine)
 
    cmdLine.AddArg(cTWCmdLine::MODE_UPDATE_DB,   TSTRING(_T("")),  TSTRING(_T("update")),        cCmdLineParser::PARAM_NONE);
    cmdLine.AddArg(cTWCmdLine::ACCEPT_ALL,    TSTRING(_T("a")), TSTRING(_T("accept-all")),    cCmdLineParser::PARAM_NONE);
-   cmdLine.AddArg(cTWCmdLine::ANAL_LEVEL,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),      cCmdLineParser::PARAM_ONE);
+   cmdLine.AddArg(cTWCmdLine::SECURE_MODE,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),      cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::EDITOR,        TSTRING(_T("V")), TSTRING(_T("visual")),        cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::PARAMS,        TSTRING(_T("")),  TSTRING(_T("")),           cCmdLineParser::PARAM_NONE);
 
@@ -1601,15 +1612,15 @@ bool cTWModeDbUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
          case cTWCmdLine::ACCEPT_ALL:
             mpData->mbInteractive = false;
             break;
-         case cTWCmdLine::ANAL_LEVEL:
+         case cTWCmdLine::SECURE_MODE:
             ASSERT(iter.NumParams() > 0); 
             if(iter.ParamAt(0).compare(_T("high")) == 0)
-               mpData->mbAnal = true;
+               mpData->mbSecureMode = true;
             else if(iter.ParamAt(0).compare(_T("low")) == 0)
-               mpData->mbAnal = false;
+               mpData->mbSecureMode = false;
             else
             {
-               // invalid parameter to anal switch...
+               // invalid parameter to secure mode switch...
                // TODO -- print this to stderr; how do I display (1) the switch name 
                // and (2) the possible values?
                // TODO -- move {high, low} somewhere else
@@ -1658,14 +1669,14 @@ bool cTWModeDbUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
 void cTWModeDbUpdate::Init(const cTWModeIC_i* pICData, cFCODatabaseFile* dbFile, cFCOReportHeader* prh, cFCOReport* pReport, bool bEncryptDb)
 {
    mpData->mbInteractive   = true;           // always interactive
-   mpData->mbAnal       = pICData->mbAnal;
+   mpData->mbSecureMode    = pICData->mbSecureMode;
    //mpData->mbBackup      = pICData->mbBackup;
    mpData->mDbFile         = pICData->mDbFile;
    mpData->mLocalKeyFile   = pICData->mLocalKeyFile;
@@ -1819,9 +1830,9 @@ int cTWModeDbUpdate::Execute(cErrorQueue* pQueue)
          //            
             uint32 udFlags = 0;
             udFlags |= ( mpData->mbResetAccessTime ? cUpdateDb::FLAG_ERASE_FOOTPRINTS_UD : 0 );
-
+          
          cUpdateDb update( dbIter.GetDb(), *mpData->mpReport, pQueue );
-         if( (! update.Execute( udFlags )) && mpData->mbAnal )
+         if( (! update.Execute( udFlags )) && mpData->mbSecureMode )
          {
             // we will not perform the update; simply exit.
             TCOUT << TSS_GetString( cTripwire, tripwire::STR_DB_NOT_UPDATED) << std::endl;
@@ -1906,10 +1917,10 @@ public:
    TSTRING        mTextPolFile;
    wc16_string    mSitePassphrase;
     bool            mSiteProvided;
-   bool        mbAnal;
+   bool        mbSecureMode;
 
    // ctor can set up some default values
-   cTWModePolUpdate_i() : cTWModeCommon(), mSiteProvided(false), mbAnal(true) {}
+   cTWModePolUpdate_i() : cTWModeCommon(), mSiteProvided(false), mbSecureMode(true) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1937,7 +1948,7 @@ void cTWModePolUpdate::InitCmdLineParser(cCmdLineParser& cmdLine)
    cmdLine.AddArg(cTWCmdLine::TEXT_POL_FILE, TSTRING(_T("")),  TSTRING(_T("")),              cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::LOCAL_PASSPHRASE,TSTRING(_T("P")),  TSTRING(_T("local-passphrase")), cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::SITE_PASSPHRASE,  TSTRING(_T("Q")), TSTRING(_T("site-passphrase")),     cCmdLineParser::PARAM_ONE);
-   cmdLine.AddArg(cTWCmdLine::ANAL_LEVEL,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),         cCmdLineParser::PARAM_ONE);
+   cmdLine.AddArg(cTWCmdLine::SECURE_MODE,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),         cCmdLineParser::PARAM_ONE);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1973,15 +1984,15 @@ bool cTWModePolUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine
             mpData->mSitePassphrase = cStringUtil::TstrToWstr(iter.ParamAt(0));
                 mpData->mSiteProvided = true;
             break;
-         case cTWCmdLine::ANAL_LEVEL:
+         case cTWCmdLine::SECURE_MODE:
             ASSERT(iter.NumParams() > 0); 
             if(iter.ParamAt(0).compare(_T("high")) == 0)
-               mpData->mbAnal = true;
+               mpData->mbSecureMode = true;
             else if(iter.ParamAt(0).compare(_T("low")) == 0)
-               mpData->mbAnal = false;
+               mpData->mbSecureMode = false;
             else
             {
-               // invalid parameter to anal switch...
+               // invalid parameter to secure mode  switch...
                // TODO -- print this to stderr; how do I display (1) the switch name 
                // and (2) the possible values?
                // TODO -- move {high, low} somewhere else
@@ -2025,13 +2036,12 @@ bool cTWModePolUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine
    //
    if (cTWUtil::VerifyCfgSiteKey( mstrConfigFile, mpData->mSiteKeyFile ) == false)
         cTWUtil::PrintErrorMsg(eTWCfgUnencrypted(_T(""), eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
-      
-   
+    
     #if IS_UNIX
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
@@ -2133,11 +2143,13 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
             //
             cPolicyUpdate pu( genreIter->GetGenre(), dbIter.GetSpecList(), genreIter->GetSpecList(), dbIter.GetDb(), pQueue );
             uint32 puFlags = 0;
-                puFlags |= mpData->mbAnal ? cPolicyUpdate::ANAL : 0;
+                puFlags |= mpData->mbSecureMode ? cPolicyUpdate::FLAG_SECURE_MODE : 0;
                 puFlags |= ( mpData->mbResetAccessTime ? cPolicyUpdate::FLAG_ERASE_FOOTPRINTS_PU : 0 );
-            if( (! pu.Execute(puFlags)) && (mpData->mbAnal) )
+                puFlags |= ( mpData->mbDirectIO ? cPolicyUpdate::FLAG_DIRECT_IO : 0 );
+             
+            if( (! pu.Execute(puFlags)) && (mpData->mbSecureMode) )
             {
-               // they were in anal mode and errors occured; an error condition
+               // they were in secure mode and errors occured; an error condition
                TCOUT << TSS_GetString( cTripwire, tripwire::STR_ERR_POL_UPDATE) << std::endl;
                return 8;
             }
@@ -2163,7 +2175,9 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
             // TODO -- turn pQueue into an error bucket
                 
             uint32 gdbFlags = 0;
-                gdbFlags |= ( mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0 );
+            gdbFlags |= ( mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0 );
+            gdbFlags |= ( mpData->mbDirectIO        ? cGenerateDb::FLAG_DIRECT_IO : 0 );
+             
             cGenerateDb::Execute( dbIter.GetSpecList(), dbIter.GetDb(), dbIter.GetGenreHeader().GetPropDisplayer(), pQueue, gdbFlags );
 
             //TODO -- what other prop displayer stuff do I have to do here?

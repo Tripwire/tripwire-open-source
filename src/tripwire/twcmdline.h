@@ -131,7 +131,7 @@ public:
       RULE_NAME,
       GENRE_NAME,
       ACCEPT_ALL,    // update db with entire report
-      ANAL_LEVEL,
+      SECURE_MODE,
       TEXT_POL_FILE,
       LOCAL_PASSPHRASE,
       SITE_PASSPHRASE,
@@ -174,6 +174,7 @@ class cTWModeCommon
   bool         mbResetAccessTime;      // do we reset access time when calculating properties of files?
   bool         mbLogToSyslog;          // log significant events and level 0 reports to SYSLOG
   bool         mbCrossFileSystems;     // automatically recurse across mount points on Unis FS genre
+  bool         mbDirectIO;             // Use direct i/o when scanning files, if platform supports it.
 
   cTextReportViewer::ReportingLevel mEmailReportLevel;   // What level of email reporting we should use
   cMailMessage::MailMethod       mMailMethod;      // What mechanism should we use to send the report
@@ -190,7 +191,8 @@ class cTWModeCommon
     mfLooseDirs(false), 
     mbResetAccessTime(false), 
     mbLogToSyslog(false),
-    mbCrossFileSystems(false)
+    mbCrossFileSystems(false),
+    mbDirectIO(false)
     {
     }
 };

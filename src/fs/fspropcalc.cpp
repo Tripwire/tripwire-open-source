@@ -45,6 +45,7 @@
 #include "fspropcalc.h"
 #include "fsobject.h"
 
+
 #if IS_UNIX
 #include <unistd.h>
 #endif
@@ -300,8 +301,10 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
             {
                 pTheArch = &arch;
                 try 
-                {
-                    arch.OpenRead(strName.c_str(), cFileArchive::FA_NONBLOCKING);
+                {                    
+                    arch.OpenRead(strName.c_str(), ((mCalcFlags & iFCOPropCalc::DIRECT_IO) ?
+                                  cFileArchive::FA_SCANNING | cFileArchive::FA_DIRECT :
+                                  cFileArchive::FA_SCANNING) );
                 }
                 catch (eArchive&)
                 {

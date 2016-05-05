@@ -260,7 +260,8 @@ public:
     {
         FA_OPEN_TEXT        = 0x1,
         FA_OPEN_TRUNCATE    = 0x2,
-        FA_NONBLOCKING      = 0x4   
+        FA_SCANNING         = 0x4,
+        FA_DIRECT           = 0x8
     };
 
     // TODO: Open should throw

@@ -98,7 +98,8 @@ public:
             OPEN_CREATE         = 0x00000010,   // create the file if it doesn't exist; this is implicit if OF_TRUNCATE is set
             OPEN_TEXT           = 0x00000020,
             OPEN_EXCLUSIVE      = 0x00000040,   // Use O_CREAT | O_EXCL
-            OPEN_NONBLOCKING    = 0x00000080,    // Use non-blocking i/o [Unix]
+            OPEN_SCANNING       = 0x00000080,   // Open for scanning; set nonblocking & caching accordingly, where available
+            OPEN_DIRECT         = 0x00000100    // Use O_DIRECT or platform equivalent
     };
 
     //Ctor, Dtor, CpyCtor, Operator=:
