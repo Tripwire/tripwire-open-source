@@ -174,8 +174,10 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 #endif
     
 #ifdef O_DIRECT
-        if (flags & OPEN_DIRECT)
-            perm |= O_DIRECT
+        //Only use O_DIRECT for scanning, since cfg/policy/report reads
+        // don't happen w/ a nice round block size.
+        if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
+	    perm |= O_DIRECT;
 #endif
             
     //
@@ -212,11 +214,11 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 #ifdef F_NOCACHE
     if (flags & OPEN_DIRECT)
         fcntl(fh, F_NOCACHE, 1);
-#endif
-    
+#endif   
+
 #ifdef HAVE_POSIX_FADVISE
     if (flags & OPEN_SCANNING)
-        posix_fadvise(fh,0,0, POSIX_FADV_DONTNEED);
+        posix_fadvise(fh,0,0, POSIX_FADV_SEQUENTIAL);
 #endif
     
 }
@@ -227,6 +229,10 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 ///////////////////////////////////////////////////////////////////////////
 void cFile::Close() //throw(eFile)
 {
+#ifdef HAVE_POSIX_FADVISE
+    posix_fadvise(fileno(mpData->mpCurrStream),0,0, POSIX_FADV_DONTNEED);
+#endif
+
     if(mpData->mpCurrStream != NULL)
     {
         fclose( mpData->mpCurrStream );
