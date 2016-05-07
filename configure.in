@@ -64,7 +64,7 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #endif
 ]])
 AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h)
-AC_CHECK_HEADERS(unistd.h syslog.h iconv.h langinfo.h sys/statfs.h)
+AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
 
@@ -128,9 +128,12 @@ AC_CHECK_LIB(c, gethostbyname, [:], [
   ]) ])
 
 dnl iconv? check the usual locations
-AC_CHECK_LIB(c, iconv, [:], [
+AC_CHECK_LIB(c, iconv, [
+   AC_CHECK_HEADERS(iconv.h)
+  ], [
  AC_CHECK_LIB(iconv, iconv, [
    LIBS="-liconv $LIBS"
+   AC_CHECK_HEADERS(iconv.h)
   ], [:]) ])
 
 dnl check for stl library
