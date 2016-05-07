@@ -127,6 +127,12 @@ AC_CHECK_LIB(c, gethostbyname, [:], [
     AC_CHECK_LIB(network, gethostbyname, [LIBS="-lnetwork $LIBS"] [:])
   ]) ])
 
+dnl iconv? check the usual locations
+AC_CHECK_LIB(c, iconv, [:], [
+ AC_CHECK_LIB(iconv, iconv, [
+   LIBS="-liconv $LIBS"
+  ], [:]) ])
+
 dnl check for stl library
 AC_LANG_SAVE
 AC_LANG_CPLUSPLUS
