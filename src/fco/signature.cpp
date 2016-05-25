@@ -97,7 +97,22 @@ iFCOProp::CmpResult iSignature::Compare(const iFCOProp* rhs, Op op) const
         return (op == iFCOProp::OP_NE) ? iFCOProp::CMP_TRUE : iFCOProp::CMP_FALSE;
 }
 
-bool cArchiveSigGen::mHex = false;
+bool  cArchiveSigGen::s_hex = false;
+int32 cArchiveSigGen::s_blocks = 1;
+int32 cArchiveSigGen::s_bytes = iSignature::SUGGESTED_BLOCK_SIZE;
+byte* cArchiveSigGen::s_buf = 0;
+byte* cArchiveSigGen::s_base = 0;
+bool  cArchiveSigGen::s_direct = false;
+
+
+void cArchiveSigGen::SetBlocks( int32 n )
+{ 
+    s_blocks=n; 
+    s_base = new byte[iSignature::SUGGESTED_BLOCK_SIZE * (s_blocks+1)]; 
+    unsigned long nMod = (unsigned long)s_base % iSignature::SUGGESTED_BLOCK_SIZE;
+    s_buf = s_base + (iSignature::SUGGESTED_BLOCK_SIZE - nMod);
+    s_bytes = iSignature::SUGGESTED_BLOCK_SIZE * s_blocks;
+}
 
 void cArchiveSigGen::AddSig( iSignature* pSig )
 {
@@ -107,9 +122,10 @@ void cArchiveSigGen::AddSig( iSignature* pSig )
 void cArchiveSigGen::CalculateSignatures( cArchive& a )
 {
     byte        abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
-    const int   cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
     int         cbRead;
     container_type::size_type i;
+
+    byte* pBuf = s_buf ? s_buf : abBuf;
 
     // init hash
     for( i = 0; i < mSigList.size(); i++ )
@@ -118,12 +134,12 @@ void cArchiveSigGen::CalculateSignatures( cArchive& a )
     // hash data
     do
     {
-        cbRead = a.ReadBlob( abBuf, cbToRead );
+        cbRead = a.ReadBlob( pBuf, s_bytes );
 
         for( i = 0; i < mSigList.size(); i++ )
-            mSigList[i]->Update( abBuf, cbRead );
+            mSigList[i]->Update( pBuf, cbRead );
     }
-    while( cbRead == cbToRead );
+    while( cbRead == s_bytes );
 
     // finalize hash
     for( i = 0; i < mSigList.size(); i++ )
@@ -132,12 +148,12 @@ void cArchiveSigGen::CalculateSignatures( cArchive& a )
 
 bool cArchiveSigGen::Hex()
 {
-    return mHex;
+    return s_hex;
 }
 
 void cArchiveSigGen::SetHex(bool hex)
 {
-    mHex = hex;    
+    s_hex = hex;    
 }
 
 ///////////////////////////////////////////////////////////////////////////////

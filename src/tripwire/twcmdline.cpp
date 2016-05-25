@@ -433,14 +433,24 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         pModeInfo->mbCrossFileSystems = false;
     }
 
-    if(cf.Lookup(TSTRING(_T("DIRECT_IO")), str))
+	int blocks = 0;
+    if (cf.Lookup(TSTRING(_T("HASH_DIRECT")), str))
     {
         if (_tcsicmp(str.c_str(), _T("true")) == 0)
+        {
             pModeInfo->mbDirectIO = true;
-        else
-            pModeInfo->mbDirectIO = false;
+            cArchiveSigGen::SetUseDirectIO(true);
+			blocks = 1;
+        }
     }
     
+    if (cf.Lookup(TSTRING(_T("HASH_BLOCKS")), str))
+    {
+        blocks = _ttoi( str.c_str() );
+    }
+
+    if( blocks > 0 )
+        cArchiveSigGen::SetBlocks(blocks);
   // 
   // turn all of the file names into full paths (they're relative to the exe dir)
   // 

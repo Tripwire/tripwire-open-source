@@ -150,6 +150,10 @@ public:
     static bool Hex();
     static void SetHex(bool);
     
+    static void SetBlocks( int32 n );
+    static bool UseDirectIO() { return s_direct; }
+    static void SetUseDirectIO( bool b ) { s_direct = b; }
+
 private:    
     // don't let C++ create these functions
     cArchiveSigGen( const cArchiveSigGen& );
@@ -158,7 +162,12 @@ private:
     typedef std::vector< iSignature* > container_type;
     container_type mSigList;
     
-    static bool mHex;
+    static bool  s_hex;
+    static int32 s_blocks;
+    static int32 s_bytes;
+    static byte* s_buf;
+    static byte* s_base;
+    static bool  s_direct;
 };
 
 

@@ -1,4 +1,4 @@
-//
+
 // The developer of the original code and/or files is Tripwire, Inc.
 // Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
@@ -234,12 +234,12 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 ///////////////////////////////////////////////////////////////////////////
 void cFile::Close() //throw(eFile)
 {
-#ifdef HAVE_POSIX_FADVISE
-    posix_fadvise(fileno(mpData->mpCurrStream),0,0, POSIX_FADV_DONTNEED);
-#endif
-
     if(mpData->mpCurrStream != NULL)
     {
+#ifdef HAVE_POSIX_FADVISE
+        posix_fadvise(fileno(mpData->mpCurrStream),0,0, POSIX_FADV_DONTNEED);
+#endif
+
         fclose( mpData->mpCurrStream );
         mpData->mpCurrStream = NULL;
     }
