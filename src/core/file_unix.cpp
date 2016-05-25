@@ -129,22 +129,22 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     TSTRING sFileName = cArosPath::AsNative(sFileNameC);
 #endif
     mode_t openmode = 0664;
-    if ( mpData->mpCurrStream != NULL )
+    if (mpData->mpCurrStream != NULL)
         Close();
     
     //
-    // set up the sopen permissions
+    // set up the open permissions
     //
     int perm = 0;
 
     TSTRING mode;
 
-    if( flags & OPEN_WRITE )
+    if (flags & OPEN_WRITE)
     {
         perm        |= O_RDWR;
         isWritable  = true;
         mode        = _T("rb");
-        if( flags & OPEN_TRUNCATE )
+        if (flags & OPEN_TRUNCATE)
         {
             perm |= O_TRUNC;
             perm |= O_CREAT;
@@ -160,24 +160,29 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
         mode        = _T("rb");
     }
 
-    if ( flags & OPEN_EXCLUSIVE ) {
+    if (flags & OPEN_EXCLUSIVE) {
         perm |= O_CREAT | O_EXCL;
         openmode = (mode_t) 0600; // Make sure only root can read the file
     }
 
-        if ( flags & OPEN_CREATE )
-            perm |= O_CREAT;
+    if (flags & OPEN_CREATE)
+        perm |= O_CREAT;
 
 #ifdef O_NONBLOCK
-        if( flags & OPEN_SCANNING )
-            perm |= O_NONBLOCK;
+    if (flags & OPEN_SCANNING)
+        perm |= O_NONBLOCK;
 #endif
-    
+
+#ifdef O_NOATIME
+    if (flags & OPEN_SCANNING)
+        perm |= O_NOATIME;
+#endif
+
 #ifdef O_DIRECT
-        //Only use O_DIRECT for scanning, since cfg/policy/report reads
-        // don't happen w/ a nice round block size.
-        if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
-	    perm |= O_DIRECT;
+    //Only use O_DIRECT for scanning, since cfg/policy/report reads
+    // don't happen w/ a nice round block size.
+    if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
+	perm |= O_DIRECT;
 #endif
             
     //
