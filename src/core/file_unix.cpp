@@ -222,8 +222,10 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 #endif   
 
 #ifdef HAVE_POSIX_FADVISE
-    if (flags & OPEN_SCANNING)
+    if (flags & OPEN_SCANNING) {
         posix_fadvise(fh,0,0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(fh,0,0, POSIX_FADV_NOREUSE);
+    }
 #endif
     
 }
