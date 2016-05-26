@@ -217,9 +217,14 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     cFile::Rewind();
 
 #ifdef F_NOCACHE
-    if (flags & OPEN_DIRECT)
+    if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
         fcntl(fh, F_NOCACHE, 1);
 #endif   
+
+#ifdef __sun
+    if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
+        directio(fh, DIRECTIO_ON);
+#endif
 
 #ifdef HAVE_POSIX_FADVISE
     if (flags & OPEN_SCANNING) {
