@@ -61,7 +61,11 @@
 #define TSS_USE_UCS2_CCONV16        (!(HAVE_ICONV_H) && WCHAR_REP_IS_UCS2 && WCHAR_IS_16_BITS)
 #define TSS_USE_UCS2_CCONV32        (!(HAVE_ICONV_H) && WCHAR_REP_IS_UCS2 && WCHAR_IS_32_BITS)
 
-#define ICONV_SOURCE_TYPE char
+#ifdef __minix__
+# define ICONV_SOURCE_TYPE const char
+#else
+# define ICONV_SOURCE_TYPE char
+#endif
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Static Data
