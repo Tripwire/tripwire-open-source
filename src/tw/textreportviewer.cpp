@@ -844,7 +844,7 @@ void cTextReportViewer::GetGenreInfo( FCOList** ppCurList )
     cGenre::Genre g = cGenreSwitcher::GetInstance()->StringToGenre( strGenre.c_str() );
     if( cGenre::GENRE_INVALID == g)
     {
-        throw eTextReportViewerReportCorrupt(); // TODO: ERR_UKNOWN_GENRE
+        throw eTextReportViewerReportCorrupt("Invalid Genre"); // TODO: ERR_UKNOWN_GENRE
     }
     cGenreSwitcher::GetInstance()->SelectGenre( g );
 
@@ -853,7 +853,7 @@ void cTextReportViewer::GetGenreInfo( FCOList** ppCurList )
     //
     GenreList::iterator curIter = mFCOsRemoveFromReport.find( g );
     if( curIter == mFCOsRemoveFromReport.end() )        
-        throw eTextReportViewerReportCorrupt(); // TODO: ERR_UKNOWN_GENRE
+        throw eTextReportViewerReportCorrupt("No files found in report"); // TODO: ERR_UKNOWN_GENRE
     *ppCurList = curIter->second;
 
     //
@@ -866,7 +866,7 @@ void cTextReportViewer::GetGenreInfo( FCOList** ppCurList )
 void cTextReportViewer::GetBallotInfo( FCOList* pCurList )
 {
     if( ! pCurList )
-        throw eTextReportViewerReportCorrupt();
+        throw eTextReportViewerReportCorrupt("No ballot list found");
 
     // if the box is checked, then the user elected to leave the item
     // in the report, so we do nothing.  If the box isn't checked, then
@@ -885,7 +885,7 @@ void cTextReportViewer::GetBallotInfo( FCOList* pCurList )
         iter = pCurList->find( fcoName );
         if( iter == pCurList->end() )
         {
-            throw eTextReportViewerReportCorrupt();// TODO: ERR_UKNOWN_NAME
+            throw eTextReportViewerReportCorrupt("Unknown file name in report");// TODO: ERR_UKNOWN_NAME
         }
 
         pCurList->erase( fcoName );
@@ -979,7 +979,7 @@ void cTextReportViewer::GetFCONameFromBallotLine( cFCOName& fcoName ) //throw (e
         else if( TW_IS_EOL( chIn ) )
         {
             // if EOL, there was no name!
-            throw eTextReportViewerReportCorrupt(); 
+            throw eTextReportViewerReportCorrupt("Ballot item without a name");
         }
         else
         {
@@ -1014,7 +1014,8 @@ void cTextReportViewer::GetFCONameFromBallotLine( cFCOName& fcoName ) //throw (e
                 cStringUtil::StrToTstr( strFCOName ), 
                 fcoName ) )
     {
-        throw eTextReportViewerReportCorrupt(); // TODO -- it might be nice to be able to specify what line of the report got corrupted
+        std::string msg = "Invalid object name: " + strFCOName;
+        throw eTextReportViewerReportCorrupt(msg); // TODO -- it might be nice to be able to specify what line of the report got corrupted
     }
 }
 
@@ -1118,7 +1119,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
     if( nFCOsToRemove != nFCOsRemoved )
     {
         // TODO -- maybe have a different enumeration for this?
-        throw eTextReportViewerReportCorrupt(); 
+        throw eTextReportViewerReportCorrupt("Mismatch in objects to remove");
     }
 }
 
@@ -1942,20 +1943,21 @@ void cTextReportViewer::GetChar()
 
     // initialize mCurrentChar
     mCurrentCharSize = 0;
-    for( int i = 0; i < (int)sizeof( mCurrentChar ); i++ )
+    for( uint32 i = 0; i < sizeof( mCurrentChar ); i++ )
         mCurrentChar[i] = 0;
 
     static const std::istream::char_type eof = 
-                        std::char_traits< char >::to_char_type( 
-                                std::char_traits< char >::eof() );
+        std::char_traits< char >::to_char_type(std::char_traits< char >::eof() );
 
+    std::streampos pos = mpIn->tellg();
+    
     for( size_t nch = 0; nch < (size_t)MB_CUR_MAX; nch++ )
     {
         if( mpIn->eof() || PeekIsEOF() )
         {
             // should be first byte we read
             if( nch != 0 )
-                throw eTextReportViewerReportCorrupt();
+                throw eTextReportViewerReportCorrupt("Expected EOF");
 
             if( PeekIsEOF() )
             {
@@ -1975,13 +1977,11 @@ void cTextReportViewer::GetChar()
             if( ! mpIn->good() )
             {
                 d.TraceDebug( _T("Input stream error.\n") );
-                throw eTextReportViewerReportCorrupt();
+                throw eTextReportViewerReportCorrupt("Input stream error");
             }
             
             // get character from input stream
-            std::istream::char_type ch = 
-                        std::char_traits<char>::to_char_type( 
-                                                    mpIn->get() );
+            std::istream::char_type ch = std::char_traits<char>::to_char_type(mpIn->get());
 
             // add character to mb buffer
             mCurrentChar[nch] = ch;
@@ -1999,6 +1999,16 @@ void cTextReportViewer::GetChar()
             }
         }
     }
+    
+    mpIn->seekg( pos );
+    std::istream::char_type c = std::char_traits<char>::to_char_type( mpIn->get() );
+    if( (unsigned char)c > 0x7f )
+    {
+        mCurrentChar[0] = c;
+        mCurrentChar[1] = 0;
+        mCurrentCharSize = 1;
+        return;
+    }
 
     // sequence was not a valid mb character
     // (searched MB_CUR_MAX chars and didn't find a complete mb character)
@@ -2008,7 +2018,7 @@ void cTextReportViewer::GetChar()
             d.TraceDebug( _T("%u\n"), (size_t)(unsigned char)mCurrentChar[j] );
 #endif
     ASSERT( false );
-    throw eTextReportViewerReportCorrupt();
+    throw eTextReportViewerReportCorrupt("Invalid multibyte sequence");
 }
 
 void cTextReportViewer::AppendChar( std::string& str )

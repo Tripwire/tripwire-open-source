@@ -41,28 +41,6 @@
 #include "charutil.h"
 #include "ntmbs.h"
 
-/* NOW WE USE tss::strinc
-// like mblen but also for wchar_t
-int util_tlen( const TCHAR* cur, size_t count )
-{    
-    int nch = -2; // 'unused' value
-
-    ASSERT( count >= 0 );
-    #ifdef _UNICODE   
-        if( count > 0 )
-            nch = 1;   // next char is always one TCHAR long
-        else
-            nch = 0;   // no more chars
-    #else
-        nch = ::mblen( cur, count ); // here sizeof(TCHAR) == 1
-    #endif
-
-    ASSERT( nch != -2 ); // make sure nch was set
-    return nch;
-}
-*/
-
-
 //  
 // finds the next whole character in string identified by ['cur'-'end')
 // identifies beginning of char in 'first', then end of character in 'last'
@@ -105,50 +83,15 @@ bool cCharUtil::PeekNextChar(  const TSTRING::const_iterator& cur,
     }
 
     first = cur;
-//    last = tss::strinc( cur );
-    last = *cur ? cur + 1 : cur;
+    mblen (NULL, 0);
+    int len = mblen(&*cur, MB_CUR_MAX);
+    if (len < 0) //invalid multibyte sequence, but let's not blow up.
+        len = 1;
+    
+    last = cur + len;
     return true;
 }
 
-
-/*  OLD way of doing this...
-    NOW WE USE tss::strinc
-int cCharUtil::PeekNextChar(   const TSTRING::const_iterator& cur, 
-                               const TSTRING::const_iterator& end, 
-                                     TSTRING::const_iterator& first, 
-                                     TSTRING::const_iterator& last, 
-                                     bool fThrowOnError )
-{
-    //
-    // do we have a valid string here?
-    //
-    if( cur > end )
-        return -1;
-
-    //
-    // determine length of character in TCHARs
-    //
-    int charSizeInTCHARs = util_tlen( cur, (size_t)end - (size_t)cur );
-    if( charSizeInTCHARs == -1 ) // TODO:BAM -- what if size is zero?  does that make sense?
-    {
-        if( fThrowOnError )
-            throw eCharUtilUnrecognizedChar();
-        else
-            return -1;
-    }
-
-    //
-    // denote beginning and end of character
-    //
-    first   = cur;          // first char always starts at 'cur'
-    last    = first + charSizeInTCHARs;
-    
-    //
-    // there exist more characters
-    //
-    return charSizeInTCHARs;
-}
-*/
 
 //=============================================================================
 // 

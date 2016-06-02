@@ -120,8 +120,8 @@ std::string WideToNarrow( const TSTRING& strWide )
     std::string strA;
     for( TSTRING::const_iterator i = strWide.begin(); i != strWide.end(); i++ )
     {
-        char ach[4];
-        ASSERT( MB_CUR_MAX <= 4 );
+        char ach[6];
+        ASSERT( MB_CUR_MAX <= 6 );
 
         int n = wctomb( ach, *i );
         ASSERT( n != -1 );
