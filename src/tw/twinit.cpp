@@ -80,6 +80,7 @@
 #endif
 
 #ifdef __AROS__
+#include <errno.h>
 #include <proto/exec.h>
 #include <proto/bsdsocket.h>
 #include <bsdsocket/socketbasetags.h>
