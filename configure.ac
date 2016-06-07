@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT([tripwire], [2.4.3.2])
+AC_INIT([tripwire], [2.4.3.2], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
@@ -109,6 +109,9 @@ AC_CHECK_FUNCS(mkstemp mktemp, break)
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
 
+dnl check for OSX builtin hash algorithms
+AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+
 dnl ##############################################
 dnl Checks for various platform specific libraries
 dnl ##############################################
@@ -127,14 +130,21 @@ AC_CHECK_LIB(c, gethostbyname, [:], [
     AC_CHECK_LIB(network, gethostbyname, [LIBS="-lnetwork $LIBS"] [:])
   ]) ])
 
-dnl iconv? check the usual locations
-AC_CHECK_LIB(c, iconv, [
-   AC_CHECK_HEADERS(iconv.h)
-  ], [
- AC_CHECK_LIB(iconv, iconv, [
-   LIBS="-liconv $LIBS"
-   AC_CHECK_HEADERS(iconv.h)
-  ], [:]) ])
+
+AC_ARG_ENABLE(iconv,
+        [  --enable-iconv          Use iconv for locale-independent report and db files])
+
+if test "x${enable_iconv}" = xyes
+then
+  dnl iconv? check the usual locations
+  AC_CHECK_LIB(c, iconv, [
+     AC_CHECK_HEADERS(iconv.h)
+    ], [
+   AC_CHECK_LIB(iconv, iconv, [
+     LIBS="-liconv $LIBS"
+     AC_CHECK_HEADERS(iconv.h)
+    ], [:]) ])
+fi
 
 dnl check for stl library
 AC_LANG_SAVE

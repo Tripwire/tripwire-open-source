@@ -12,6 +12,9 @@
 /* Define to 1 if you have the <bits/signum.h> header file. */
 #undef HAVE_BITS_SIGNUM_H
 
+/* Define to 1 if you have the <CommonCrypto/CommonDigest.h> header file. */
+#undef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
