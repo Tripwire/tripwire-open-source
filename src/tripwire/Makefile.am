@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_INSTALL_PROGRAM_FLAGS = -m 755
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 LIBS = -ltripwire -lcryptlib @LIBS@
 LDFLAGS = @LDFLAGS@ -L../../lib
 LN_S = @LN@
@@ -13,7 +13,7 @@ tripwire_SOURCES =	\
   tripwire.cpp tripwireerrors.cpp tripwiremain.cpp tripwirestrings.cpp	 \
   tripwireutil.cpp twcmdline.cpp twcmdlineutil.cpp updatedb.cpp
 
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../bin/tripwire ../../lib/libtripwire.a
 
 all: $(sbin_PROGRAMS)

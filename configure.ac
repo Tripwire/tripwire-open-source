@@ -2,10 +2,10 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT
+AC_INIT([tripwire], [2.4.3.2])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
-AM_INIT_AUTOMAKE(tripwire, 2.4.3.2)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 dnl #################################

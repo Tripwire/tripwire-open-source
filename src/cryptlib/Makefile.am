@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-INCLUDES = -I.. -I../..
+AM_CPPFLAGS = -I.. -I../..
 LN=@LN@
 DEFAULT_INCLUDES = $(D_INCLUDES)
 
@@ -11,7 +11,7 @@ libcryptlib_a_SOURCES = \
   nbtheory.cpp pch.cpp queue.cpp rng.cpp sha.cpp zbits.cpp zdeflate.cpp \
   zinflate.cpp ztrees.cpp
  
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../lib/libcryptlib.a
 
 all: $(noinst_LIBRARIES)

@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 noinst_LIBRARIES = libtw.a
 libtw_a_SOURCES = \

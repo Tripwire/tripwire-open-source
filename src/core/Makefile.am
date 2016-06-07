@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 noinst_LIBRARIES = libcore.a
 libcore_a_SOURCES = \
@@ -21,7 +21,7 @@ libcore_a_SOURCES = \
 libcore_a_LIBADD = @CORE_CRYPT_O@
 libcore_a_DEPENDENCIES = @CORE_CRYPT_O@
  
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libcore_a_OBJECTS) $(libcore_a_LIBADD)

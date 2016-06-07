@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_INSTALL_PROGRAM_FLAGS = -m 755
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 LIBS = -ltripwire -lcryptlib @LIBS@
 LDFLAGS = @LDFLAGS@ -L../../lib
 LN_S = @LN@
@@ -73,7 +73,7 @@ unixfsservices_t.cpp \
 usernotifystdout_t.cpp \
 wchar16_t.cpp
 
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../bin/twtest
 
 all: $(sbin_PROGRAMS)

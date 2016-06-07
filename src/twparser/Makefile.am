@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 noinst_LIBRARIES = libtwparser.a
 libtwparser_a_SOURCES = \
@@ -8,7 +8,7 @@ libtwparser_a_SOURCES = \
    policyparser.cpp stdtwparser.cpp twparser.cpp twparsererrors.cpp	\
    twparserstrings.cpp yylex.cpp yyparse.cpp
 
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libtwparser_a_OBJECTS)

@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I..
 
 noinst_LIBRARIES = libfs.a
 libfs_a_SOURCES = \
@@ -9,7 +9,7 @@ libfs_a_SOURCES = \
    fspropcalc.cpp fspropdisplayer.cpp fspropset.cpp		\
    fsstrings.cpp fsvisitor.cpp stdfs.cpp
  
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libfs_a_OBJECTS)
