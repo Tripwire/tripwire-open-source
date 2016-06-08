@@ -110,7 +110,13 @@ dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
 
 dnl check for OSX builtin hash algorithms
-AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+AC_ARG_ENABLE(commoncrypto,
+        [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
+
+if test "x${enable_commoncrypto}" != "xno"
+then
+  AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+fi
 
 dnl ##############################################
 dnl Checks for various platform specific libraries
@@ -304,7 +310,7 @@ if you are trying to compile a static binary.
 
 dnl Check for OpenSSL, now that we have a working compiler
 AC_ARG_ENABLE(openssl,
-        [  --disable-openssl       don't link against OpenSSL libraries])
+        [  --disable-openssl       Don't link against OpenSSL libraries])
 AC_ARG_WITH(ssl-dir,
 	[  --with-ssl-dir=PATH     Specify path to OpenSSL installation ],
 	[

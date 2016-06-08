@@ -495,7 +495,11 @@ IMPLEMENT_TYPEDSERIALIZABLE(cMD5Signature,  _T("cMD5Signature"), 0, 1)
 
 cMD5Signature::cMD5Signature()
 {
-    memset( mMD5Info.digest, 0, sizeof( mMD5Info.digest ) );
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    memset( mMD5Info.data, 0, sizeof( mMD5Info.data ) );
+#else
+     memset( mMD5Info.digest, 0, sizeof( mMD5Info.digest ) );
+#endif
     memset( md5_digest, 0, MD5_DIGEST_LENGTH );
 }
 
@@ -505,7 +509,9 @@ cMD5Signature::~cMD5Signature()
 
 void cMD5Signature::Init()
 {
-#ifdef HAVE_OPENSSL_MD5_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    CC_MD5_Init(&mMD5Info);
+#elif HAVE_OPENSSL_MD5_H
     MD5_Init( &mMD5Info );
 #else
     MD5Init( &mMD5Info );
@@ -514,7 +520,9 @@ void cMD5Signature::Init()
 
 void cMD5Signature::Update( const byte* const pbData, int cbDataLen )
 {
-#ifdef HAVE_OPENSSL_MD5_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    CC_MD5_Update(&mMD5Info, (uint8*)pbData, cbDataLen);
+#elif HAVE_OPENSSL_MD5_H
     MD5_Update( &mMD5Info, (uint8*)pbData, cbDataLen );
 #else
     MD5Update( &mMD5Info, (uint8*)pbData, cbDataLen );
@@ -523,7 +531,9 @@ void cMD5Signature::Update( const byte* const pbData, int cbDataLen )
 
 void cMD5Signature::Finit()
 {
-#ifdef HAVE_OPENSSL_MD5_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    CC_MD5_Final(md5_digest, &mMD5Info);
+#elif HAVE_OPENSSL_MD5_H
     MD5_Final( md5_digest, &mMD5Info );
 #else
     MD5Final( &mMD5Info );
@@ -616,7 +626,10 @@ IMPLEMENT_TYPEDSERIALIZABLE(cSHASignature,  _T("cSHASignature"), 0, 1)
 cSHASignature::cSHASignature()
 {
     memset( &mSHAInfo, 0, sizeof( mSHAInfo ) );
-#ifdef HAVE_OPENSSL_SHA_H
+
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+     memset( sha_digest, 0, CC_SHA1_DIGEST_LENGTH );
+#elif HAVE_OPENSSL_SHA_H
     memset( sha_digest, 0, SHA_DIGEST_LENGTH );
 #endif
 }
@@ -626,7 +639,9 @@ cSHASignature::~cSHASignature()
 
 void cSHASignature::Init()
 {
-#ifdef HAVE_OPENSSL_SHA_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    CC_SHA1_Init( &mSHAInfo );
+#elif HAVE_OPENSSL_SHA_H
     SHA1_Init( &mSHAInfo );
 #else
     shsInit( &mSHAInfo );
@@ -636,7 +651,9 @@ void cSHASignature::Init()
 void cSHASignature::Update( const byte* const pbData, int cbDataLen )
 {    
     ASSERT( sizeof( byte ) == sizeof( uint8 ) );
-#ifdef HAVE_OPENSSL_SHA_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+     CC_SHA1_Update( &mSHAInfo, (uint8*)pbData, cbDataLen );
+#elif HAVE_OPENSSL_SHA_H
     SHA1_Update( &mSHAInfo, (uint8*)pbData, cbDataLen );
 #else
     shsUpdate( &mSHAInfo, (uint8*)pbData, cbDataLen );
@@ -645,7 +662,9 @@ void cSHASignature::Update( const byte* const pbData, int cbDataLen )
 
 void cSHASignature::Finit()
 {
-#ifdef HAVE_OPENSSL_SHA_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    CC_SHA1_Final( (unsigned char *)sha_digest, &mSHAInfo );
+#elif HAVE_OPENSSL_SHA_H
     SHA1_Final( (unsigned char *)sha_digest, &mSHAInfo );
 #else
     shsFinal( &mSHAInfo );
@@ -654,7 +673,7 @@ void cSHASignature::Finit()
 
 ////////////////////////////////////////////////////////////////////////////////
 // AsString -- Converts to Base64 representation and returns a TSTRING
-#ifdef HAVE_OPENSSL_SHA_H
+#if defined(HAVE_OPENSSL_SHA_H) || defined(HAVE_COMMONCRYPTO_COMMONDIGEST_H)
 TSTRING cSHASignature::AsString(void) const
 {
     if (cArchiveSigGen::Hex())

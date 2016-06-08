@@ -746,6 +746,7 @@ enable_silent_rules
 enable_static
 enable_debug
 enable_dependency_tracking
+enable_commoncrypto
 enable_iconv
 enable_openssl
 with_ssl_dir
@@ -1392,8 +1393,9 @@ Optional Features:
                           do not reject slow dependency extractors
   --disable-dependency-tracking
                           speeds up one-time build
+  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)
   --enable-iconv          Use iconv for locale-independent report and db files
-  --disable-openssl       don't link against OpenSSL libraries
+  --disable-openssl       Don't link against OpenSSL libraries
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -6175,7 +6177,15 @@ fi
 done
 
 
-for ac_header in CommonCrypto/CommonDigest.h
+# Check whether --enable-commoncrypto was given.
+if test "${enable_commoncrypto+set}" = set; then :
+  enableval=$enable_commoncrypto;
+fi
+
+
+if test "x${enable_commoncrypto}" != "xno"
+then
+  for ac_header in CommonCrypto/CommonDigest.h
 do :
   ac_fn_c_check_header_mongrel "$LINENO" "CommonCrypto/CommonDigest.h" "ac_cv_header_CommonCrypto_CommonDigest_h" "$ac_includes_default"
 if test "x$ac_cv_header_CommonCrypto_CommonDigest_h" = xyes; then :
@@ -6187,6 +6197,7 @@ fi
 
 done
 
+fi
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for socket in -lc" >&5
