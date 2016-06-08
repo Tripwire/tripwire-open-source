@@ -31,6 +31,13 @@
 //
 // file_unix.cpp : Specific implementation of file operations for Unix.
 
+
+/* On GNU/Hurd, need to define _GNU_SOURCE in order to use  O_NOATIME
+   which technically is still a nonstandard extension to open() */
+#ifdef __gnu_hurd__
+# define _GNU_SOURCE
+#endif
+
 #include "core/stdcore.h"
 
 #if !IS_UNIX
