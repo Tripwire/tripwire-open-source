@@ -53,6 +53,10 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#ifdef __hpux__
+# include <sys/fs/vx_ioctl.h>
+#endif
+
 #include "core/debug.h"
 #include "core/corestrings.h"
 #include "core/fsservices.h"
@@ -223,7 +227,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     
     cFile::Rewind();
 
-#ifdef F_NOCACHE
+#ifdef F_NOCACHE //OSX
     if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
         fcntl(fh, F_NOCACHE, 1);
 #endif   
@@ -233,8 +237,22 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
         directio(fh, DIRECTIO_ON);
 #endif
 
+#ifdef __hpux__
+
+    if (flags & OPEN_SCANNING) 
+    {
+        if (flags & OPEN_DIRECT)
+            ioctl(fh, VX_SETCACHE, VX_DIRECT);
+        else
+            ioctl(fh, VX_SETCACHE, VX_SEQ | VX_NOREUSE); 
+    }
+
+#endif
+
+
 #ifdef HAVE_POSIX_FADVISE
-    if (flags & OPEN_SCANNING) {
+    if (flags & OPEN_SCANNING) 
+    {
         posix_fadvise(fh,0,0, POSIX_FADV_SEQUENTIAL);
         posix_fadvise(fh,0,0, POSIX_FADV_NOREUSE);
     }
