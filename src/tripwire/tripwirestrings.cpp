@@ -47,10 +47,18 @@
 #define MAPI_OPTION
 #endif
 
+#ifdef __AROS__
+# define VERSION_PREFIX "$VER: "
+#else
+# define VERSION_PREFIX "@(#)"
+#endif
+
+
 TSS_BeginStringtable( cTripwire )
 
     TSS_StringEntry( tripwire::STR_TRIPWIRE_VERSION,            _T("tripwire: File integrity assessment application.\n")),
-    
+    TSS_StringEntry( tripwire::STR_EMBEDDED_VERSION,            _T(VERSION_PREFIX "tripwire " PACKAGE_VERSION)),
+
     TSS_StringEntry( tripwire::STR_TRIPWIRE_USAGE_SUMMARY,
                 _T("Usage:\n")
                 _T("\n")

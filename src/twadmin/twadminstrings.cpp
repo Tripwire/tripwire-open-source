@@ -39,9 +39,16 @@
 #include "twadmin.h"
 #include "twadminstrings.h"
 
+#ifdef __AROS__
+# define VERSION_PREFIX "$VER: "
+#else
+# define VERSION_PREFIX "@(#)"
+#endif
+
 TSS_BeginStringtable( cTWAdmin )
     
     TSS_StringEntry( twadmin::STR_TWADMIN_VERSION,              _T("twadmin: Tripwire administrative tool.\n") ),
+    TSS_StringEntry( twadmin::STR_EMBEDDED_VERSION,            _T(VERSION_PREFIX "twadmin " PACKAGE_VERSION)),
 
     TSS_StringEntry( twadmin::STR_TWADMIN_USAGE_SUMMARY,            
                 _T("Usage:\n")

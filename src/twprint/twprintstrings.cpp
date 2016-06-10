@@ -39,6 +39,12 @@
 #include "twprint.h"
 #include "twprintstrings.h"
 
+#ifdef __AROS__
+# define VERSION_PREFIX "$VER: "
+#else
+# define VERSION_PREFIX "@(#)"
+#endif
+
 TSS_BeginStringtable( cTWPrint )
     
     TSS_StringEntry( twprint::STR_TWPRINT_USAGE_SUMMARY,           
@@ -82,7 +88,8 @@ TSS_BeginStringtable( cTWPrint )
                 _T("\n")
               ),
     
-    TSS_StringEntry( twprint::STR_TWPRINT_VERSION, _T("twprint: Tripwire database and report printer.\n") ),
+    TSS_StringEntry( twprint::STR_TWPRINT_VERSION,   _T("twprint: Tripwire database and report printer.\n") ),
+    TSS_StringEntry( twprint::STR_EMBEDDED_VERSION,  _T(VERSION_PREFIX "twprint " PACKAGE_VERSION)),
 
 TSS_EndStringtable( cTWPrint )
 
