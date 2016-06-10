@@ -39,6 +39,7 @@
 #include "core/archive.h"
 #include "core/upperbound.h"
 #include "core/errorbucket.h"
+#include "core/errorbucketimpl.h"
 
 // TODO -- all of these util_ functions should throw an eArchive if an attempt is made to 
 //      write to a null address
@@ -288,7 +289,19 @@ void cHierDatabaseIter::LoadArrayAt(const cHierAddr& addr) //throw (eArchive, eH
     while( ! curAddr.IsNull() )
     {
         mEntries.push_back( cHierEntry() );
-        util_ReadObject( mpDb, &mEntries.back(), curAddr );
+        //Catch db errors, in case only part of db is broken
+        try
+        {
+            util_ReadObject( mpDb, &mEntries.back(), curAddr );
+        }
+        catch( eError& e )
+        {
+            e.SetFatality(false);
+            cErrorReporter::PrintErrorMsg(e);
+            mEntries.pop_back();
+            break;
+        }
+
         curAddr = mEntries.back().mNext;
     }
     
