@@ -190,8 +190,16 @@ void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>&
 #endif
 
     //Get all the filenames
-    DIR* dp;
+    DIR* dp=0;
+
+#if defined(O_DIRECTORY) && defined(O_NOATIME)
+    //dfd will be autoclosed by closedir(), should not be explicitly closed.
+    int dfd=open(strFilename.c_str(), O_RDONLY|O_DIRECTORY|O_NOATIME);
+    if (dfd>0)
+        dp = fdopendir(dfd);
+#else
     dp = opendir( strFilename.c_str() );
+#endif
 
     if (dp == NULL) 
     {
