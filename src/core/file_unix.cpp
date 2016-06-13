@@ -89,6 +89,7 @@ struct cFile_i
 
     FILE* mpCurrStream; //currently defined file stream
     TSTRING mFileName;  //the name of the file we are currently referencing.
+    uint32 mFlags;      //Flags used to open the file
 };
 
 //Ctor
@@ -102,6 +103,17 @@ cFile_i::~cFile_i()
     if (mpCurrStream != NULL)
         fclose( mpCurrStream );
     mpCurrStream = NULL;
+
+#ifdef __AROS__
+    if( mFlags & cFile::OPEN_LOCKED_TEMP )
+    {
+        // unlink this file 
+        if( 0 != unlink(mFileName.c_str()))
+        {
+            throw( eFileOpen( mFileName, iFSServices::GetInstance()->GetErrString() ) );
+        }
+    }
+#endif
 
     mFileName.empty();
 }
@@ -142,6 +154,8 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     mode_t openmode = 0664;
     if (mpData->mpCurrStream != NULL)
         Close();
+    
+    mpData->mFlags = flags;
     
     //
     // set up the open permissions
@@ -275,6 +289,8 @@ void cFile::Close() //throw(eFile)
         fclose( mpData->mpCurrStream );
         mpData->mpCurrStream = NULL;
     }
+    
+    
     mpData->mFileName.empty();
 }
 

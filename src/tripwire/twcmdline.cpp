@@ -292,37 +292,40 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         pModeInfo->mfLooseDirs = true; 
     }    
 
-  if (cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), str)) {
+  TSTRING temp_directory;
+  cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
 
-    if (str.length() == 0)
-      str = "/tmp/";
+    if (temp_directory.length() == 0) {
+#ifdef __AROS__
+      temp_directory = "T:";
+#else
+      temp_directory = "/tmp/";
+#endif
+    }
 
     // make sure we have a trailing slash -- thanks Jarno...
     //
-    if (str[_tcslen(str.c_str())-1] != '/') {
-      str += '/';
+    if (temp_directory[_tcslen(str.c_str())-1] != '/') {
+      temp_directory += '/';
     }
-
     // make sure it exists...
     //
 
-
 #ifdef __AROS__
-    str = cArosPath::AsNative(str);
+    temp_directory = cArosPath::AsNative(temp_directory);
 #endif
 
-    if (access(str.c_str(), F_OK) != 0) {
+    if (access(temp_directory.c_str(), F_OK) != 0) {
       TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
       TSTRING tmpStr = _T("Directory: ");
-      tmpStr += (str + _T("\n"));
+      tmpStr += (temp_directory + _T("\n"));
       tmpStr += errStr;
       throw eTWInvalidTempDirectory(tmpStr);
     }
     else {
-      iFSServices::GetInstance()->SetTempDirName(str);
+      iFSServices::GetInstance()->SetTempDirName(temp_directory);
     }
 
-  }
 
   if (cf.Lookup(TSTRING(_T("GLOBALEMAIL")), str)) {
 

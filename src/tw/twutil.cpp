@@ -1143,6 +1143,12 @@ void cTWUtil::GetString(wc16_string& ret)
 #error We depend on Unix not being Unicode 
 #endif
 
+// tcsetattr doesn't seem to work on AROS, so tweak ANSI terminal settings to hide passphrases.
+#ifdef __AROS__
+    printf("\e[8m"); // set the 'concealed' flag
+    fflush(stdout);
+#endif
+
     // get the string
     const int MAX_STRING = 1024;
     char  buf[MAX_STRING];
@@ -1150,6 +1156,11 @@ void cTWUtil::GetString(wc16_string& ret)
 
     TCOUT.flush();
     len = read( 0, buf, MAX_STRING );
+
+#ifdef __AROS__
+    printf("\e[0m"); // reset back to normal text
+    fflush(stdout);
+#endif
 
     // TODO:BAM -- mb-enable this!
     if (len < MAX_STRING - 1)
@@ -1184,7 +1195,8 @@ cTWUtil::NoEcho::NoEcho()
     }
 }
 
-cTWUtil::NoEcho::~NoEcho() {
+cTWUtil::NoEcho::~NoEcho() 
+{
     tcsetattr( 0, TCSAFLUSH, &Otty);
     tw_signal(SIGINT, old_SIGINT);
     tw_signal(SIGQUIT, old_SIGQUIT);
