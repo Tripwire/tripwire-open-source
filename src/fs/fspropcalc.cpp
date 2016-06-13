@@ -97,9 +97,18 @@ static bool GetSymLinkStr(const cFCOName& fileName, cArchive& arch)
 #ifdef _UNICODE
 #error GetSymLinkStr in fspropcalc.cpp is not unicode compliant 
 #else // ifdef _UNICODE
+
     char buf[1024];
+#if defined(O_PATH) 
+    int fd = open(iTWFactory::GetInstance()->GetNameTranslator()->ToStringAPI( fileName ).c_str(), 
+		  (O_PATH | O_NOFOLLOW | O_NOATIME));
+    int rtn = readlinkat(fd, 0, buf, 1024);
+    close(fd);
+#else
     int rtn = readlink( iTWFactory::GetInstance()->GetNameTranslator()->ToStringAPI( fileName ).c_str(),
-                        buf, 1024 );
+                   buf, 1024 );
+#endif
+
     if(rtn == -1)
         return false;
 
