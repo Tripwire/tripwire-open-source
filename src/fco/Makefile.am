@@ -3,6 +3,7 @@ AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_CPPFLAGS = -I..
 
 noinst_LIBRARIES = libfco.a
+libfco_adir=.
 libfco_a_SOURCES = \
    fco.cpp fcocompare.cpp fcodatasourceiter.cpp				\
    fcodatasourceiterimpl.cpp fcoerrors.cpp fconame.cpp			\
@@ -11,7 +12,20 @@ libfco_a_SOURCES = \
    fcospecimpl.cpp fcospeclist.cpp fcospecutil.cpp fcostrings.cpp	\
    fcoundefprop.cpp genreinfo.cpp genrespeclist.cpp			\
    genreswitcher.cpp signature.cpp stdfco.cpp twfactory.cpp
- 
+
+libfco_a_HEADERS = \
+   fco.h fcocompare.h fcodatasource.h fcodatasourceiter.h      \
+   fcodatasourceiterimpl.h fcoerrors.h fcogenre.h fconame.h    \
+   fconameinfo.h fconametbl.h fconametranslator.h fcoprop.h    \
+   fcopropcalc.h fcopropdisplayer.h fcopropimpl.h fcopropset.h \
+   fcopropsetimpl.h fcopropvector.h fcosetimpl.h fcosetws.h    \
+   fcospec.h fcospecattr.h fcospechelper.h fcospecimpl.h       \
+   fcospeclist.h fcospecutil.h fcostrings.h fcoundefprop.h     \
+   fcovisitor.h genreinfo.h genrespeclist.h genreswitcher.h    \
+   iterproxy.h parsergenreutil.h propset.h signature.h         \
+   stdfco.h twfactory.h
+
+
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 
 all: $(noinst_LIBRARIES)

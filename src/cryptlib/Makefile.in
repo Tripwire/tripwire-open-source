@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -95,7 +96,8 @@ am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am $(libcryptlib_a_HEADERS) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
@@ -151,6 +153,35 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(libcryptlib_adir)"
+HEADERS = $(libcryptlib_a_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -288,11 +319,18 @@ AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_CPPFLAGS = -I.. -I../..
 DEFAULT_INCLUDES = $(D_INCLUDES)
 noinst_LIBRARIES = libcryptlib.a
+libcryptlib_adir = l
 libcryptlib_a_SOURCES = \
   algebra.cpp asn.cpp cryptlib.cpp des.cpp dessp.cpp elgamal.cpp \
   eprecomp.cpp filters.cpp forkjoin.cpp integer.cpp iterhash.cpp misc.cpp \
   nbtheory.cpp pch.cpp queue.cpp rng.cpp sha.cpp zbits.cpp zdeflate.cpp \
   zinflate.cpp ztrees.cpp
+
+libcryptlib_a_HEADERS = \
+  algebra.h asn.h config.h cryptlib.h des.h elgamal.h eprecomp.h filters.h \
+  forkjoin.h integer.h iterhash.h misc.h modarith.h nbtheory.h pch.h \
+  queue.h rng.h sha.h smartptr.h words.h zbits.h zdeflate.h zinflate.h \
+  ztrees.h
 
 CLEANFILES = ../../lib/libcryptlib.a
 all: all-am
@@ -348,6 +386,27 @@ distclean-compile:
 
 .cpp.obj:
 	$(AM_V_CXX)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+install-libcryptlib_aHEADERS: $(libcryptlib_a_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(libcryptlib_a_HEADERS)'; test -n "$(libcryptlib_adir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libcryptlib_adir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libcryptlib_adir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libcryptlib_adir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libcryptlib_adir)" || exit $$?; \
+	done
+
+uninstall-libcryptlib_aHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libcryptlib_a_HEADERS)'; test -n "$(libcryptlib_adir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(libcryptlib_adir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -433,8 +492,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile $(LIBRARIES) $(HEADERS)
 installdirs:
+	for dir in "$(DESTDIR)$(libcryptlib_adir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -487,7 +549,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-libcryptlib_aHEADERS
 
 install-dvi: install-dvi-am
 
@@ -531,7 +593,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-libcryptlib_aHEADERS
 
 .MAKE: install-am install-strip
 
@@ -541,12 +603,13 @@ uninstall-am:
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am
+	install-info install-info-am install-libcryptlib_aHEADERS \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-libcryptlib_aHEADERS
 
 .PRECIOUS: Makefile
 

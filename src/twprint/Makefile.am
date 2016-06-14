@@ -7,9 +7,14 @@ LDFLAGS = @LDFLAGS@ -L../../lib
 LN_S = @LN@
 
 sbin_PROGRAMS = twprint
+twprintdir=.
 twprint_SOURCES = \
   stdtwprint.cpp twprint.cpp twprintcmdline.cpp twprinterrors.cpp \
   twprintmain.cpp twprintstrings.cpp
+
+twprint_HEADERS = \
+  resource.h stdtwprint.h twprint.h twprintcmdline.h \
+  twprinterrors.h twprintstrings.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../bin/twprint

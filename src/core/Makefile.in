@@ -14,6 +14,7 @@
 
 @SET_MAKE@
 
+
 VPATH = @srcdir@
 am__is_gnu_make = { \
   if test -z '$(MAKELEVEL)'; then \
@@ -95,7 +96,8 @@ am__aclocal_m4_deps = $(top_srcdir)/acinclude.m4 \
 	$(top_srcdir)/configure.ac
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
-DIST_COMMON = $(srcdir)/Makefile.am $(am__DIST_COMMON)
+DIST_COMMON = $(srcdir)/Makefile.am $(libcore_a_HEADERS) \
+	$(am__DIST_COMMON)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
@@ -162,6 +164,35 @@ am__can_run_installinfo = \
     n|no|NO) false;; \
     *) (install-info --version) >/dev/null 2>&1;; \
   esac
+am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+am__vpath_adj = case $$p in \
+    $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
+    *) f=$$p;; \
+  esac;
+am__strip_dir = f=`echo $$p | sed -e 's|^.*/||'`;
+am__install_max = 40
+am__nobase_strip_setup = \
+  srcdirstrip=`echo "$(srcdir)" | sed 's/[].[^$$\\*|]/\\\\&/g'`
+am__nobase_strip = \
+  for p in $$list; do echo "$$p"; done | sed -e "s|$$srcdirstrip/||"
+am__nobase_list = $(am__nobase_strip_setup); \
+  for p in $$list; do echo "$$p $$p"; done | \
+  sed "s| $$srcdirstrip/| |;"' / .*\//!s/ .*/ ./; s,\( .*\)/[^/]*$$,\1,' | \
+  $(AWK) 'BEGIN { files["."] = "" } { files[$$2] = files[$$2] " " $$1; \
+    if (++n[$$2] == $(am__install_max)) \
+      { print $$2, files[$$2]; n[$$2] = 0; files[$$2] = "" } } \
+    END { for (dir in files) print dir, files[dir] }'
+am__base_list = \
+  sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+  sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+am__uninstall_files_from_dir = { \
+  test -z "$$files" \
+    || { test ! -d "$$dir" && test ! -f "$$dir" && test ! -r "$$dir"; } \
+    || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+         $(am__cd) "$$dir" && rm -f $$files; }; \
+  }
+am__installdirs = "$(DESTDIR)$(libcore_adir)"
+HEADERS = $(libcore_a_HEADERS)
 am__tagged_files = $(HEADERS) $(SOURCES) $(TAGS_FILES) $(LISP)
 # Read a list of newline-separated strings from the standard input,
 # and print each of them once, without duplicates.  Input order is
@@ -298,6 +329,7 @@ top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_CPPFLAGS = -I..
 noinst_LIBRARIES = libcore.a
+libcore_adir = .
 libcore_a_SOURCES = \
    file_unix.cpp unixfsservices.cpp					\
    archive.cpp charutil.cpp		\
@@ -307,11 +339,23 @@ libcore_a_SOURCES = \
    errorutil.cpp fileerror.cpp fileheader.cpp fsservices.cpp		\
    growheap.cpp hashtable.cpp haval.cpp msystem.cpp ntmbs.cpp		\
    objectpool.cpp refcountobj.cpp serializable.cpp serializer.cpp	\
-   serializerimpl.cpp serializerutil.cpp serstring.cpp			\
+   serializerimpl.cpp serializerutil.cpp serstring.cpp 			\
    srefcountobj.cpp srefcounttbl.cpp stdcore.cpp stringutil.cpp		\
    timebomb.cpp timeconvert.cpp tw_signal.cpp twlimits.cpp twlocale.cpp	\
    unixexcept.cpp usernotify.cpp usernotifystdout.cpp utf8.cpp		\
    wchar16.cpp
+
+libcore_a_HEADERS = archive.h charutil.h cmdlineparser.h codeconvert.h       \
+   core.h coreerrors.h corestrings.h crc32.h debug.h displayencoder.h        \
+   displayutil.h error.h errorbucket.h errorbucketimpl.h errorgeneral.h      \
+   errortable.h errorutil.h file.h fileerror.h fileheader.h fixedfilebuf.h   \
+   fsservices.h growheap.h hashtable.h haval.h md5.h msystem.h ntdbs.h       \
+   ntmbs.h objectpool.h package.h platform.h refcountobj.h resources.h       \
+   serializable.h serializer.h serializerimpl.h serializerutil.h serstring.h \
+   sha.h srefcountobj.h srefcounttbl.h stdcore.h stringutil.h tasktimer.h    \
+   tchar.h timebomb.h timeconvert.h tw_signal.h twlimits.h twlocale.h        \
+   twstringslang.h typed.h types.h unixexcept.h unixfsservices.h upperbound.h \
+   usernotify.h usernotifystdout.h userstring.h userstringmem.h utf8.h wchar16.h
 
 libcore_a_LIBADD = @CORE_CRYPT_O@
 libcore_a_DEPENDENCIES = @CORE_CRYPT_O@
@@ -368,6 +412,27 @@ distclean-compile:
 
 .cpp.obj:
 	$(AM_V_CXX)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+install-libcore_aHEADERS: $(libcore_a_HEADERS)
+	@$(NORMAL_INSTALL)
+	@list='$(libcore_a_HEADERS)'; test -n "$(libcore_adir)" || list=; \
+	if test -n "$$list"; then \
+	  echo " $(MKDIR_P) '$(DESTDIR)$(libcore_adir)'"; \
+	  $(MKDIR_P) "$(DESTDIR)$(libcore_adir)" || exit 1; \
+	fi; \
+	for p in $$list; do \
+	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
+	  echo "$$d$$p"; \
+	done | $(am__base_list) | \
+	while read files; do \
+	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(libcore_adir)'"; \
+	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(libcore_adir)" || exit $$?; \
+	done
+
+uninstall-libcore_aHEADERS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(libcore_a_HEADERS)'; test -n "$(libcore_adir)" || list=; \
+	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+	dir='$(DESTDIR)$(libcore_adir)'; $(am__uninstall_files_from_dir)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -453,8 +518,11 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LIBRARIES)
+all-am: Makefile $(LIBRARIES) $(HEADERS)
 installdirs:
+	for dir in "$(DESTDIR)$(libcore_adir)"; do \
+	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+	done
 install: install-am
 install-exec: install-exec-am
 install-data: install-data-am
@@ -506,7 +574,7 @@ info: info-am
 
 info-am:
 
-install-data-am:
+install-data-am: install-libcore_aHEADERS
 
 install-dvi: install-dvi-am
 
@@ -550,7 +618,7 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am:
+uninstall-am: uninstall-libcore_aHEADERS
 
 .MAKE: install-am install-strip
 
@@ -560,12 +628,13 @@ uninstall-am:
 	dvi-am html html-am info info-am install install-am \
 	install-data install-data-am install-dvi install-dvi-am \
 	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
-	uninstall-am
+	install-info install-info-am install-libcore_aHEADERS \
+	install-man install-pdf install-pdf-am install-ps \
+	install-ps-am install-strip installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags tags-am uninstall uninstall-am \
+	uninstall-libcore_aHEADERS
 
 .PRECIOUS: Makefile
 
