@@ -30,11 +30,11 @@
 // info@tripwire.org or www.tripwire.org.
 //
 // blockfile_t
-#include "stddb.h"
-#include "blockfile.h"
-#include "block.h"
+#include "db/stddb.h"
+#include "db/blockfile.h"
+#include "db/block.h"
 #include "core/archive.h"
-#include "test/test.h"
+#include "test.h"
 #include "core/debug.h"
 
 void TestBlockFile()

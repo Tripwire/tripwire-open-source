@@ -9,6 +9,8 @@ LN_S = @LN@
 sbin_PROGRAMS = twtest
 twtest_SOURCES = \
 archive_t.cpp \
+blockfile_t.cpp \
+blockrecordarray_t.cpp \
 charutil_t.cpp \
 cmdlineparser_t.cpp \
 codeconvert_t.cpp \
@@ -48,6 +50,7 @@ genrespeclist_t.cpp \
 genreswitcher_t.cpp \
 growheap_t.cpp \
 hashtable_t.cpp \
+hierdatabase_t.cpp \
 keyfile_t.cpp \
 objectpool_t.cpp \
 platform_t.cpp \
