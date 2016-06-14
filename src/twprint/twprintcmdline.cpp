@@ -288,14 +288,7 @@ static void FillOutCmdLineInfo(cTWPrintModeCommon* pModeInfo, const cCmdLinePars
             {
                 // this bites! I have to make sure it is a narrow char string
                 ASSERT(iter.NumParams() > 0);   // should be caught by cmd line parser
-#ifdef _UNICODE
-                char* buf = new char[2*(wcslen(iter.ParamAt(0).c_str()) + 1)];
-                wcstombs(buf, iter.ParamAt(0).c_str(), sizeof(buf));
-                pModeInfo->mPassPhrase = buf;
-                delete [] buf;
-#else
                 pModeInfo->mPassPhrase = iter.ParamAt(0);
-#endif
             }
             break;
             case cTWPrintCmdLine::REPORTLEVEL:

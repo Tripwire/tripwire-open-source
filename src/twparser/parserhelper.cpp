@@ -430,18 +430,11 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
     // leaves it alone.  After we have the wide string, we convert these encoded Unicode chars into true 16 bit 
     // Unicode chars.
 
-    #ifdef _UNICODE
-    typedef char INTERCHAR;
-    const char unicodeEscape = '\x01'; // This value must be chosen carefully so not to conflict with escape chars or mb chars
-    const char unicodeBase = 'A';    // This value must not fool the convertion from single to multibyte
-    bool unicodeWasEscaped = false;
-    std::string strIntermediateString;
-    #else
+
     // for unix we cheat a bit and do the initial interpretation 
     // directly to the final string.
     typedef TCHAR INTERCHAR;
     TSTRING& strIntermediateString = strInterpretedString;
-    #endif
     
     const char* pchCur = strEscapedString.c_str();
 
@@ -451,15 +444,6 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
     {
         if( *pchCur != '\\' ) // just regular char
         {
-            #ifdef _UNICODE
-            // check for our special unicode escape char, and escape it if necessary
-            if ( *pchCur == unicodeEscape )
-            {
-                strIntermediateString += unicodeEscape;
-                unicodeWasEscaped = true;
-            }
-            #endif
-
             strIntermediateString += *pchCur;
         }
         else // deal with escaped character sequence
@@ -497,10 +481,6 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
                     {
                         throw eParserBadHex( cStringUtil::StrToTstr( pchCur - (( nCharsRead == 0 ) ? 0 : nCharsRead - 1) ) );
                     }
-
-                    // For non-unicode Unix, we don't support > 0xff characters.
-                    // Unicode Windows supports it just fine.
-                    #ifndef _UNICODE
                     else if (wcEscapedChar > 0xff)
                     {
                         throw eParserBadHex( cStringUtil::StrToTstr( pchCur - (( nCharsRead == 0 ) ? 0 : nCharsRead - 1) ) );
@@ -509,21 +489,6 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
                     {
                         strIntermediateString += static_cast<INTERCHAR>(wcEscapedChar);
                     }
-                    #else
-                    else if (wcEscapedChar <= 0xff)
-                    {
-                        strIntermediateString += static_cast<INTERCHAR>(wcEscapedChar);
-                    }
-                    else
-                    {
-                        strIntermediateString += unicodeEscape;
-                        strIntermediateString += static_cast<INTERCHAR>((wcEscapedChar >> 12 & 0xf)  + unicodeBase);
-                        strIntermediateString += static_cast<INTERCHAR>((wcEscapedChar >> 8 & 0xf) + unicodeBase);
-                        strIntermediateString += static_cast<INTERCHAR>((wcEscapedChar >> 4 & 0xf) + unicodeBase);
-                        strIntermediateString += static_cast<INTERCHAR>((wcEscapedChar & 0xf) + unicodeBase);
-                        unicodeWasEscaped = true;
-                    }
-                    #endif
                 }
                 else if( util_IsOctal( *pchCur ) ) // deal with \xxx where 'x' is an octal digit
                 {
@@ -537,48 +502,6 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
             }
         }
     }
-
-    #ifdef _UNICODE
-    // now convert to the wide vertion
-    strInterpretedString = cStringUtil::StrToTstr(strIntermediateString);
-
-    // search for unicode escapes
-    if (unicodeWasEscaped)
-    {
-        TSTRING::iterator i;
-        for (i = strInterpretedString.begin(); i != strInterpretedString.end(); ++i)
-        {
-            if (*i == static_cast<TCHAR>(unicodeEscape))
-            {
-                i = strInterpretedString.erase(i);
-                ASSERT(i != strInterpretedString.end());  // This would indicate a logic error above
-
-                if (*i != static_cast<TCHAR>(unicodeEscape)) // check that this is escaped unicode
-                {
-                    wchar_t wc;
-                    TSTRING::iterator j = i;
-
-                    ASSERT(*j >= unicodeBase && *j < unicodeBase + 16);
-                    wc = static_cast<wchar_t>((*j++ - unicodeBase) << 12);
-                    ASSERT(j != strInterpretedString.end());
-
-                    ASSERT(*j >= unicodeBase && *j < unicodeBase + 16);
-                    wc |= static_cast<wchar_t>((*j++ - unicodeBase) << 8);
-                    ASSERT(j != strInterpretedString.end());
-
-                    ASSERT(*j >= unicodeBase && *j < unicodeBase + 16);
-                    wc |= static_cast<wchar_t>((*j++ - unicodeBase) << 4);
-                    ASSERT(j != strInterpretedString.end());
-
-                    ASSERT(*j >= unicodeBase && *j < unicodeBase + 16);
-                    wc |= static_cast<wchar_t>((*j++ - unicodeBase));
-                    i = strInterpretedString.erase(i, j);
-                    i = strInterpretedString.insert(i, wc);
-                }
-            }
-        }
-    }
-    #endif
 
 #ifdef _DEBUG
     std::string str;

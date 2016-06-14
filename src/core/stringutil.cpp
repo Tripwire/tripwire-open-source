@@ -128,19 +128,6 @@ inline bool tss_find_in_hash( const wc16_string& lhs, TSTRING& rhs )
     return( tss_GetHashTable().Lookup( lhs, rhs ) );
 }
 
-#ifdef _UNICODE
-
-inline bool tss_find_in_hash( const wc16_string& lhs, std::string& rhs )
-{
-    return false; // don't have a hash table for this!
-}
-
-inline void tss_insert_in_hash( const wc16_string& lhs, const std::string& rhs )
-{
-    return; // don't have a hash table for this!
-}
-
-#endif
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Type Dispatched Conversions

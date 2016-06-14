@@ -40,15 +40,7 @@
 #include "twstrings.h"
 #include "buildnum.h"
 
-#ifdef _UNICODE
-#   ifdef _DEBUG // lets leave out the "u" for non-debug
-#       define UNICODE_STR _T("u")
-#   else
-#       define UNICODE_STR _T("") 
-#   endif
-#else
-#   define UNICODE_STR _T("") 
-#endif
+#define UNICODE_STR _T("")
 
 #ifdef _DEBUG
 #   define DEBUG_STR _T("d")
@@ -115,7 +107,6 @@ TSS_BeginStringtable( cTW )
     TSS_StringEntry( tw::STR_DEF_CFG_FILENAME,      _T("/etc/tw.cfg")),
 #endif
 
-    TSS_StringEntry( tw::STR_WIN_NT_ONLY,           _T("Open Source Tripwire(R) runs only on Windows NT.")),
     TSS_StringEntry( tw::STR_GET_HELP,              _T("Use --help to get help.")),
     TSS_StringEntry( tw::STR_NEWLINE,               _T("\n")),
     TSS_StringEntry( tw::STR_ERR_TWCFG_CANT_READ,   _T("Configuration file could not be read.")),

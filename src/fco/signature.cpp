@@ -342,12 +342,9 @@ TSTRING cChecksumSignature::AsString() const
 
     ps_signature = pltob64(local, buf, 2);
         //ps_signature holds base64 representation of mCRC
-#ifdef _UNICODE
-    ret.resize(strlen(ps_signature));
-    mbstowcs((TCHAR*)ret.data(), ps_signature, strlen(ps_signature));
-#else
+
     ret.append(ps_signature);
-#endif
+
     return ret;
 }
 
@@ -436,12 +433,7 @@ TSTRING cCRC32Signature::AsString() const
 
     ps_signature = pltob64(&local, buf, 1);
     //ps_signature holds base64 representation of mCRCInfo.crc
-#ifdef _UNICODE
-    ret.resize(strlen(ps_signature));
-    mbstowcs((TCHAR*)ret.data(), ps_signature, strlen(ps_signature));
-#else
     ret.append(ps_signature);
-#endif
     return ret;
 }
 
@@ -555,14 +547,7 @@ TSTRING cMD5Signature::AsString() const
     btob64((byte*)md5_digest, buf, SIG_BYTE_SIZE*8);
         //converting to base64 representation.
 
-#ifdef _UNICODE     //making it TSTRING sensitive
-    int length;
-    length = strlen(buf);
-    ret.resize(length);
-    mbstowcs((TCHAR*) ret.data(), buf, length);
-#else
     ret.append(buf);
-#endif
     
     return ret;
 }
@@ -686,14 +671,7 @@ TSTRING cSHASignature::AsString(void) const
     ps_signature = btob64((uint8*)sha_digest, buf, SIG_UINT32_SIZE*sizeof(uint32)*8);
     //converting to base64 representation.
 
-#ifdef _UNICODE                //making it TSTRING sensitive
-    int length;
-    length = strlen(ps_signature);
-    ret.resize(length);
-    mbstowcs((TCHAR*) ret.data(), ps_signature, length);
-#else
     ret.append(ps_signature);
-#endif
     return ret;
 }
 
@@ -768,13 +746,7 @@ TSTRING cSHASignature::AsString(void) const
     ps_signature = pltob64((uint32*)mSHAInfo.digest, buf, SIG_UINT32_SIZE);
     //converting to base64 representation.
     
-#ifdef _UNICODE     //making it TSTRING sensitive
-    int length = strlen(ps_signature);
-    ret.resize(length);
-    mbstowcs((TCHAR*) ret.data(), ps_signature, length);
-#else
     ret.append(ps_signature);
-#endif
     return ret;
     //return ret;
 }
@@ -877,15 +849,7 @@ TSTRING cHAVALSignature::AsString() const
     btob64((byte*)mSignature, buf, 128);
     //converting to base64 representation.
 
-#ifdef _UNICODE     //making it TSTRING sensitive
-    int length;
-    length = strlen(buf);
-    ret.resize(length);
-    mbstowcs((TCHAR*) ret.data(), buf, length);
-#else
     ret.append(buf);
-#endif
-    
     return ret;
 }
 

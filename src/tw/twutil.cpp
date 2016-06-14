@@ -80,9 +80,6 @@
 int _getch(void);
 #endif
 
-#ifdef _UNICODE // right now we only need this for unicode
-#include <mbstring.h> 
-#endif
 
 // constants
 static const char* POLICY_FILE_MAGIC_8BYTE = "#POLTXT\n";

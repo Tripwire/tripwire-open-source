@@ -447,19 +447,6 @@ void cDebug::DebugOut( const char* lpOutputString, ... )
     vsprintf(buf, lpOutputString, args);
     va_end(args);
     
-#ifdef _UNICODE
-    wchar_t wbuf[2048];
-    if (mbstowcs(wbuf, buf, strlen(buf)+1) == -1) 
-        wcscpy(wbuf, _T("XXX Unconvertable mb character detected in cDebug::DebugOut()\n") );
-
-    #if !USE_OUTPUT_DEBUG_STRING 
-    #ifdef _DEBUG
-        TCERR << wbuf;
-    #endif  //_DEBUG
-    #else   // USE_OUTPUT_DEBUG_STRING
-    ::OutputDebugString(wbuf);
-    #endif  // USE_OUTPUT_DEBUG_STRING
-#else   // _UNICODE
     #if !USE_OUTPUT_DEBUG_STRING 
         #ifdef _DEBUG
         TCERR << buf;
@@ -467,7 +454,6 @@ void cDebug::DebugOut( const char* lpOutputString, ... )
     #else   // USE_OUTPUT_DEBUG_STRING
         ::OutputDebugString(buf);
     #endif  // USE_OUTPUT_DEBUG_STRING
-#endif  // _UNICODE
 
     TCOUT.flush();
 }
@@ -491,22 +477,12 @@ void cDebug::DebugOut( const wchar_t* lpOutputString, ... )
 #endif
     va_end(args);
     
-#ifdef _UNICODE
-    #if !USE_OUTPUT_DEBUG_STRING 
-        #ifdef _DEBUG
-        TCERR << buf;
-        #endif  //_DEBUG
-    #else   // USE_OUTPUT_DEBUG_STRING
-    ::OutputDebugString(buf);
-    #endif  // USE_OUTPUT_DEBUG_STRING
-#else
     char nbuf[1024];
     #if IS_UNIX
     strcpy(nbuf, buf);
     #else
     if (wcstombs(nbuf, buf, wcslen(buf)+1) == -1)
         strcpy(nbuf, "XXX Unconvertable wide char detected in cDebug::DebugOut()\n");
-#endif 
 
 #if !USE_OUTPUT_DEBUG_STRING 
     #ifdef _DEBUG

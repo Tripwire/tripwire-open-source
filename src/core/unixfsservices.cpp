@@ -147,13 +147,7 @@ TSTRING cUnixFSServices::GetErrString() const
 {
     TSTRING ret;
     char* pErrorStr = strerror(errno);
-#ifdef _UNICODE
-    wchar_t pBuf[1024];
-    mbstowcs(pBuf, pErrorStr, 1024);
-    ret = pBuf;
-#else
     ret = pErrorStr;
-#endif
     return ret;
 }
 
@@ -268,14 +262,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
     char szTemplate[iFSServices::TW_MAX_PATH];
     int fd;
 
-#ifdef _UNICODE
-    // convert template from wide character to multi-byte string
-    char mbBuf[iFSServices::TW_MAX_PATH];
-    wcstombs( mbBuf, strName.c_str(), strName.length() + 1 );
-    strcpy( szTemplate, mbBuf );
-#else
     strcpy( szTemplate, strName.c_str() );
-#endif
 
 #ifdef HAVE_MKSTEMP
      // create temp filename and check to see if mkstemp failed                 
@@ -297,15 +284,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
 #endif
 
     // change name so that it has the XXXXXX part filled in
-#ifdef _UNICODE
-    // convert name from multi-byte to wide character string
-    wchar_t wcsbuf[1024];
-    mbstowcs( wcsbuf, pchTempFileName, strlen( pchTempFileName ) + 1 ));
-    strName = wcsbuf;
-#else   
     strName = pchTempFileName;
-#endif
-
 
     // Linux creates the file!!  Doh!
     // So I'll always attempt to delete it -bam

@@ -139,17 +139,7 @@ void cPolicyParser::Execute( cGenreSpecListVector& policy, cErrorBucket* pError 
 void tw_yy_scan::yyerror( const char* pszErr, ... )  //throw( eParserHelper )
 {
     TOSTRINGSTREAM  ssError;        // final error string
-
-#ifdef _UNICODE
-    // passed in strings are narrow so we need to convert them to wide
-    wchar_t szErrorW[1024];    
-    size_t nWrote = ::mbstowcs( szErrorW, pszErr, strlen( pszErr ) + 1 );
-    if ( nWrote == (size_t)-1 )
-        throw eCharacterEncoding( TSS_GetString( cCore, core::STR_ERR_BADCHAR ) );
-    ssError << szErrorW;
-#else 
     ssError << pszErr;
-#endif
     
     throw eParseFailed( ssError.str() );
 }

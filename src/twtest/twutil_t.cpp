@@ -116,23 +116,6 @@ void TestTWUtil()
 
 std::string WideToNarrow( const TSTRING& strWide )
 {
-#ifdef _UNICODE
-    std::string strA;
-    for( TSTRING::const_iterator i = strWide.begin(); i != strWide.end(); i++ )
-    {
-        char ach[6];
-        ASSERT( MB_CUR_MAX <= 6 );
-
-        int n = wctomb( ach, *i );
-        ASSERT( n != -1 );
-    
-        for( int j = 0; j < n; j++ )
-            strA += ach[j];
-    }
-
-    return strA;
-#else
-    return strWide;
-#endif 
+    return strWide; 
 }
 

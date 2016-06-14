@@ -74,28 +74,9 @@ void cSyslog::Log(const TCHAR* programName, cSyslog::LogType logType, const TCHA
 
     (void)logType; // logType is not used for Unix syslog
 
-#ifdef _UNICODE
-    std::basic_string identString;
-    std::basic_string msgString;
-    int count;
-
-    count = sizeof(char) * MB_CUR_MAX * _tcslen(programName); // note we use sizeof(char) * 2 because mb chars can be two bytes long
-    identString.resize(count); 
-    count = wcstombs((char*)identString.data(), programName, count);
-    identString.resize(count); // count will be set to number of bytes written
-
-    count = sizeof(char) * MB_CUR_MAX * _tcslen(message); 
-    msgString.resize(count); 
-    count = wcstombs((char*)msgString.data(), message, count);
-    msgString.resize(count);
-
-    const char* ident = programName.data();
-    const char* msg = message.data();
-#else
     ASSERT(sizeof(TCHAR) == sizeof(char));
     const char* ident = programName;
     const char* msg = message;
-#endif
 
 #ifndef SKYOS // Handle an oddball OS that has syslog.h but doesn't implement the calls.
     openlog(ident, LOG_PID, LOG_USER);

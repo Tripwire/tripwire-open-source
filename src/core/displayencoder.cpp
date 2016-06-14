@@ -235,32 +235,7 @@ bool cNonNarrowableCharEncoder::NeedsEncoding(
                                     TSTRING::const_iterator first, 
                                     TSTRING::const_iterator last ) const
 {
-
-#ifdef _UNICODE
-
-    ASSERT( IsSingleTCHAR( first, last ) );
-
-    char amb[ MB_LEN_MAX ];
-    TCHAR awch[] = { *first, 0 }; 
-
-    // TODO:BAM -- this is not really correct!  Convert will not honor nSource!!  
-    // it looks for the first null char!
-    try
-    {
-        int ret = iCodeConverter::GetInstance()->Convert( amb, sizeof( amb ), awch, 1 );
-        return( -1 == ret );
-    }
-    catch( eError& )
-    {
-        return true;
-    }
-
-#else
-
     return false; // all chars are narrow
-
-#endif
-
 }
 
 
