@@ -434,6 +434,9 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "xnot found") 
  fi
 fi
 
+AC_CONFIG_COMMANDS([mk_lib], [test -d lib || mkdir lib])
+AC_CONFIG_COMMANDS([mk_bin], [test -d bin || mkdir bin])
+
 dnl #####################################
 dnl Export the variables we use
 dnl #####################################

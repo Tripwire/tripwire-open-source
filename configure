@@ -7137,6 +7137,11 @@ done
  fi
 fi
 
+ac_config_commands="$ac_config_commands mk_lib"
+
+ac_config_commands="$ac_config_commands mk_bin"
+
+
 
 
 ac_config_files="$ac_config_files Makefile man/Makefile man/man4/Makefile man/man5/Makefile man/man8/Makefile src/Makefile src/cryptlib/Makefile src/core/Makefile src/db/Makefile src/fco/Makefile src/fs/Makefile src/tw/Makefile src/twcrypto/Makefile src/twparser/Makefile src/util/Makefile src/twprint/Makefile src/twadmin/Makefile src/siggen/Makefile src/tripwire/Makefile src/twtest/Makefile"
@@ -7873,6 +7878,8 @@ do
   case $ac_config_target in
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
+    "mk_lib") CONFIG_COMMANDS="$CONFIG_COMMANDS mk_lib" ;;
+    "mk_bin") CONFIG_COMMANDS="$CONFIG_COMMANDS mk_bin" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "man/Makefile") CONFIG_FILES="$CONFIG_FILES man/Makefile" ;;
     "man/man4/Makefile") CONFIG_FILES="$CONFIG_FILES man/man4/Makefile" ;;
@@ -8581,6 +8588,8 @@ $as_echo X"$file" |
   done
 }
  ;;
+    "mk_lib":C) test -d lib || mkdir lib ;;
+    "mk_bin":C) test -d bin || mkdir bin ;;
 
   esac
 done # for ac_tag
