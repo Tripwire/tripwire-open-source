@@ -3,9 +3,10 @@ AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_CPPFLAGS = -I.. -I../..
 LN=@LN@
 DEFAULT_INCLUDES = $(D_INCLUDES)
+EXTRA_DIST=license.txt readme.txt rmcr.pl
 
 noinst_LIBRARIES = libcryptlib.a
-libcryptlib_adir=l
+libcryptlib_adir=.
 libcryptlib_a_SOURCES = \
   algebra.cpp asn.cpp cryptlib.cpp des.cpp dessp.cpp elgamal.cpp \
   eprecomp.cpp filters.cpp forkjoin.cpp integer.cpp iterhash.cpp misc.cpp \
