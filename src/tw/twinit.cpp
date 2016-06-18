@@ -284,7 +284,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     mpData->et.SetChild( &mpData->er );
     errorQueue.SetChild( &mpData->et );
 
-#if IS_UNIX
+#if IS_UNIX && !defined(__DJGPP__)
     // ignore SIGPIPE
     tw_sigign(SIGPIPE); //TODO: somebody add comment here!
 

@@ -37,9 +37,11 @@
 #endif
 
 
-#if IS_UNIX
-#include <sys/socket.h>
-#define SOCKET int
+#if IS_UNIX 
+# if HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+# endif
+# define SOCKET int
 #endif
 
 

@@ -72,9 +72,13 @@
 #endif
 #include <sys/utsname.h>
 #include <pwd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
+
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+# include <netdb.h>
+# include <netinet/in.h>
+#endif
+
 #include <grp.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -365,7 +369,11 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     stat.size       = statbuf.st_size;
     stat.uid        = statbuf.st_uid;
     stat.blksize    = statbuf.st_blksize;
+#ifndef __DJGPP__
     stat.blocks     = statbuf.st_blocks;
+#else
+    stat.blocks     = 0;
+#endif
 
     // set the file type
     if(S_ISREG(statbuf.st_mode))    stat.mFileType = cFSStatArgs::TY_FILE;
@@ -374,7 +382,9 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     else if(S_ISBLK(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
     else if(S_ISCHR(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_CHARDEV;
     else if(S_ISFIFO(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_FIFO;
+#ifdef S_ISSOCK
     else if(S_ISSOCK(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_SOCK;
+#endif
 #ifdef S_IFDOOR
     else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
@@ -399,7 +409,7 @@ void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
     char buf[256];
     if (gethostname(buf, 256) != 0)
     {
-#if defined(SOLARIS_NO_GETHOSTBYNAME) || defined(_SORTIX_SOURCE)
+#if defined(SOLARIS_NO_GETHOSTBYNAME) || defined(_SORTIX_SOURCE) || defined(__DJGPP__)
         strName = buf;
         return;
 #else
@@ -454,7 +464,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     bool    fGotAddress = false;    
     cDebug  d( _T("cUnixFSServices::GetIPAddress") );
 
-#ifndef _SORTIX_SOURCE
+#if !defined(_SORTIX_SOURCE) && !defined(__DJGPP__)
     struct utsname utsnameBuf;    
     if( EFAULT != uname( &utsnameBuf) )
     {
@@ -556,6 +566,10 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
 
     return( fSuccess );
 }
+
+#ifndef S_ISVTX // DOS/DJGPP doesn't have this
+# define S_ISVTX 0
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 // Function name    : cUnixFSServices::ConvertModeToString

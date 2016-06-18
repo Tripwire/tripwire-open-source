@@ -46,12 +46,14 @@
 
 //All the spleck that it takes to run sockets in Unix...
 #include <stdio.h>
-#include <sys/socket.h>
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+# include <netdb.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+#endif
 #include <sys/types.h>
 #include <sys/time.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
 #include <sys/utsname.h>
 
 #ifdef _SORTIX_SOURCE
@@ -191,12 +193,16 @@ long cSMTPMailMessage::GetServerAddress()
 
     if (bIsNumeric)
     {
+#ifndef HAVE_SYS_SOCKET_H
+        return 0;
+#else
         // convert the numberic address to a long
         return mPfnInetAddr(sNarrowString.c_str());
+#endif
     }
     else
     {
-#ifdef _SORTIX_SOURCE
+#if defined(_SORTIX_SOURCE) || !defined(HAVE_SYS_SOCKET_H)
         return INADDR_NONE;
 #else
         // do a DNS lookup of the hostname and get the long
@@ -216,6 +222,9 @@ long cSMTPMailMessage::GetServerAddress()
 //
 bool cSMTPMailMessage::OpenConnection()
 {
+#ifndef HAVE_SYS_SOCKET_H
+    return false;
+#else
     // Initialize the socket structure
     sockaddr_in sockAddrIn;
     memset(&sockAddrIn, 0, sizeof(sockaddr));
@@ -262,6 +271,7 @@ bool cSMTPMailMessage::OpenConnection()
     }
 
     return true;
+#endif
 }
 
 
@@ -485,6 +495,9 @@ bool cSMTPMailMessage::MailMessage()
 //
 bool cSMTPMailMessage::GetAcknowledgement()
 {
+#ifndef HAVE_SYS_SOCKET_H
+    return false;
+#else  
     cDebug d( "cSMTPMailMessage::GetAcknowledgement" );
 
     const int bufsize = 512;
@@ -547,17 +560,19 @@ bool cSMTPMailMessage::GetAcknowledgement()
         throw eMailSMTPServer(estr.str());
         return false;
     }
+#endif
 }
 
 void cSMTPMailMessage::SendString( const std::string& str )
 {
     cDebug d("util_SendString()");
-
+#if HAVE_SYS_SOCKET_H
     if( str.length() < 800 )
         d.TraceDebug( "Sending \"%s\"\n", str.c_str() );
     else
         d.TraceDebug( "Sending (truncated in this debug output)\"%s\"\n", std::string( str.c_str(), 800 ).c_str() );
     mPfnSend( mSocket, str.c_str(), str.length(), 0 );
+#endif
 }
 
 

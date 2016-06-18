@@ -63,7 +63,7 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #include <sys/param.h>
 #endif
 ]])
-AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h)
+AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
 AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
