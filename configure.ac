@@ -44,6 +44,10 @@ AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
 AC_PROG_LN
+AN_MAKEVAR([AR], [AC_PROG_AR])
+AN_PROGRAM([ar], [AC_PROG_AR])
+AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
+AC_PROG_AR
 AC_PATH_PROG(path_to_vi, vi)
 AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
 
