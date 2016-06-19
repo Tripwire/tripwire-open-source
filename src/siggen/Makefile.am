@@ -13,7 +13,7 @@ siggen_SOURCES = \
   siggenstrings.cpp stdsiggen.cpp
 
 siggen_HEADERS = \
-  resource.h siggen.h siggencmdline.h siggenstrings.h stdsiggen.h
+  siggen.h siggencmdline.h siggenstrings.h stdsiggen.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../bin/siggen
