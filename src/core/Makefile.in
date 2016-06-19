@@ -355,7 +355,7 @@ libcore_a_HEADERS = archive.h charutil.h cmdlineparser.h codeconvert.h       \
    sha.h srefcountobj.h srefcounttbl.h stdcore.h stringutil.h tasktimer.h    \
    tchar.h timebomb.h timeconvert.h tw_signal.h twlimits.h twlocale.h        \
    twstringslang.h typed.h types.h unixexcept.h unixfsservices.h upperbound.h \
-   usernotify.h usernotifystdout.h userstring.h userstringmem.h utf8.h wchar16.h
+   usernotify.h usernotifystdout.h utf8.h wchar16.h
 
 libcore_a_LIBADD = @CORE_CRYPT_O@
 libcore_a_DEPENDENCIES = @CORE_CRYPT_O@

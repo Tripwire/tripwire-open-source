@@ -338,7 +338,7 @@ libfco_a_HEADERS = \
    fcodatasourceiterimpl.h fcoerrors.h fcogenre.h fconame.h    \
    fconameinfo.h fconametbl.h fconametranslator.h fcoprop.h    \
    fcopropcalc.h fcopropdisplayer.h fcopropimpl.h fcopropset.h \
-   fcopropsetimpl.h fcopropvector.h fcosetimpl.h fcosetws.h    \
+   fcopropvector.h fcosetimpl.h fcosetws.h		       \
    fcospec.h fcospecattr.h fcospechelper.h fcospecimpl.h       \
    fcospeclist.h fcospecutil.h fcostrings.h fcoundefprop.h     \
    fcovisitor.h genreinfo.h genrespeclist.h genreswitcher.h    \
