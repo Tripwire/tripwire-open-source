@@ -367,8 +367,6 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     {
       if (_tcsicmp(str.c_str(), _T("SENDMAIL")) == 0)
         pModeInfo->mMailMethod = cMailMessage::MAIL_BY_PIPE;
-      else if (_tcsicmp(str.c_str(), _T("MAPI")) == 0)
-        pModeInfo->mMailMethod = cMailMessage::MAIL_BY_MAPI; // NT support only
       else if( _tcsicmp( str.c_str(), _T("SMTP") ) == 0 )
         pModeInfo->mMailMethod = cMailMessage::MAIL_BY_SMTP;
       else                

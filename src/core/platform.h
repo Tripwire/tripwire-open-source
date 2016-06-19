@@ -185,7 +185,7 @@
 // Miscellaneous
 #define FSEEK_TAKES_INT32       IS_UNIX     // True if fseek takes 32-bit offsets
 #define USE_OUTPUT_DEBUG_STRING IS_WIN32    // Use the Win32 OutputDebugString() for debug messages.
-#define SUPPORTS_MAPI           IS_WIN32
+#define SUPPORTS_MAPI           0
 #define WCHAR_IS_16_BITS        IS_WIN32
 #define WCHAR_IS_32_BITS        IS_UNIX
 #define WCHAR_REP_IS_UCS2       IS_WIN32

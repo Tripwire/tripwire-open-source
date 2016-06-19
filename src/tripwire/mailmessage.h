@@ -309,37 +309,6 @@ private:
 };
 
 
-#if SUPPORTS_MAPI
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// This class implements sending a message via MAPI under Win32
-//
-class cMAPIMailMessage : public cMailMessage
-{
-public:
-
-    cMAPIMailMessage();
-    virtual ~cMAPIMailMessage();
-
-    virtual bool Send(); //throw(eMailMessageError) 
-        //returns true upon success
-
-private:
-
-    bool InitMAPI();
-    bool FinitMAPI();
-
-    HINSTANCE hlibMAPI;
-
-    bool DoSendMessage();
-    void PrintMAPIErrorMessage(ULONG errorMessage);
-};
-
-#endif
-
-
 //#ifdef IS_UNIX
 
 ///////////////////////////////////////////////////////////////////////////////

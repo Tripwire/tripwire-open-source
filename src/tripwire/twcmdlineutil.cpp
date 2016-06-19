@@ -555,13 +555,8 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
       reportMail = std::auto_ptr<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
     case cMailMessage::MAIL_BY_MAPI:
-#if SUPPORTS_MAPI
-      reportMail = std::auto_ptr<cMailMessage>(new cMAPIMailMessage);
-      break;
-#else
       ASSERT(false);
       return false;
-#endif
     }
 
   TSTRING strTempFilename;
@@ -717,13 +712,8 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
       reportMail = std::auto_ptr<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
    case cMailMessage::MAIL_BY_MAPI:
-#if SUPPORTS_MAPI
-      reportMail = std::auto_ptr<cMailMessage>(new cMAPIMailMessage);
-      break;
-#else
       ASSERT(false);
       return false;
-#endif
    }
 
 
