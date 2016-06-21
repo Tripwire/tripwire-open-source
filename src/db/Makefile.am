@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 
-AM_CPPFLAGS = -I..
+AM_CPPFLAGS = -I$(srcdir)/..
 
 noinst_LIBRARIES = libdb.a
 libdb_adir=.

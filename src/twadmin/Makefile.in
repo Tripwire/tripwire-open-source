@@ -309,7 +309,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_INSTALL_PROGRAM_FLAGS = -m 755
-AM_CPPFLAGS = -I..
+AM_CPPFLAGS = -I$(srcdir)/..
 twadmindir = .
 twadmin_SOURCES = \
   keygeneration.cpp stdtwadmin.cpp twadmin.cpp twadmincl.cpp \
