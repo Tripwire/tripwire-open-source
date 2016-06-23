@@ -48,11 +48,6 @@ class cTWModeCommon;
 class cErrorBucket;
 class cFCODatabaseFile;
 
-TSS_EXCEPTION( eGmmsError,              eError );
-TSS_EXCEPTION( eGmmsCouldntOpenPipe,    eGmmsError );
-TSS_EXCEPTION( eGmmsCouldntWritePipe,   eGmmsError );
-TSS_EXCEPTION( eGmmsCmdFailed,          eGmmsError );
-
 class cTWCmdLineUtil
 {
 public:
@@ -102,12 +97,6 @@ public:
     static void VerifySpecs( const cFCOSpecList& parsedList, const cFCOSpecList& dbList );//throw (eError)
         // determines whether the policy in the policy file (parsedList) is equal to the database's current
         // policy (dbList). If it is not, an exception is thrown
-
-#ifdef GMMS
-    static bool GmmsReport(const cFCOReportHeader& header, const cFCOReport& report, 
-                           const TSTRING &gmmsProg, const TSTRING &gmmsOptions, int verbosity); // throw (eGmmsError)
-        // Use gmms to send violation notification
-#endif
 };
 
 #endif

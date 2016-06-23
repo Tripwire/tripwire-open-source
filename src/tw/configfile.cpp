@@ -650,10 +650,6 @@ void cConfigFile::CheckThatAllMandatoryKeyWordsExists() // throw( eConfigFile )
                 _T("REPORTFILE"), 
                 _T("SITEKEYFILE"), 
                 _T("LOCALKEYFILE"), 
-#ifdef GMMS
-                _T("GMMS"),
-                _T("GMMSOPTIONS")
-#endif
             };
 
 

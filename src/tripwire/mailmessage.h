@@ -61,11 +61,6 @@ TSS_EXCEPTION( eMailSMTPOpenConnection, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPCloseConnection, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPServer, eMailMessageError );
 
-// MAPI
-TSS_EXCEPTION( eMailMAPINotAvailable, eMailMessageError );
-TSS_EXCEPTION( eMailMAPIUnload, eMailMessageError );
-TSS_EXCEPTION( eMailMAPISend, eMailMessageError );
-
 // piped
 TSS_EXCEPTION( eMailPipedOpen, eMailMessageError );
 TSS_EXCEPTION( eMailPipedWrite, eMailMessageError );
@@ -100,7 +95,6 @@ public:
         INVALID_METHOD,
         MAIL_BY_SMTP,
         MAIL_BY_PIPE,
-        MAIL_BY_MAPI,
         MAIL_NUM_ITEMS
     };
 

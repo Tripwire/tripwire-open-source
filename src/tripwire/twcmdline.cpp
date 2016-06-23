@@ -798,22 +798,12 @@ public:
    TSTRING     mGenreName;          // if not empty, specifies the genre to check
    bool     mbSecureMode;              // are we in extra-pedantic mode? (only valid with mbUpdate == true)
 
-#ifdef GMMS
-   bool     mbGmms;              // Send violation reports via gmms?
-   TSTRING     mGmmsProg;           // full path to gmms executable
-   TSTRING     mGmmsOptions;        // additional options for gmms command line
-   int         mGmmsVerbosity;         // level 1 or 2 verbosity?
-#endif
-
     //TSTRING     mCmdLine;               // entire command line
    std::vector<TSTRING> mFilesToCheck;
 
    // ctor can set up some default values
    cTWModeIC_i() : cTWModeCommon(), mbUpdate(false),  mbPrintToStdout(true),     mbEmail(false), mbEncryptReport(false), 
                mSeverityLevel(-1), mbTrimBySeverity(false), mbSecureMode(false)
-#ifdef GMMS
-               , mbGmms(false),     mGmmsVerbosity(2)
-#endif
    {}
 };
 
@@ -855,14 +845,6 @@ void cTWModeIC::InitCmdLineParser(cCmdLineParser& cmdLine)
    // multiple levels of reporting
    cmdLine.AddArg(cTWCmdLine::REPORTLEVEL,      TSTRING(_T("t")), TSTRING(_T("email-report-level")),  cCmdLineParser::PARAM_ONE);
 
-#ifdef GMMS
-   // gmms command line options
-   cmdLine.AddArg(cTWCmdLine::USE_GMMS,      TSTRING(_T("g")), TSTRING(_T("gmms")),       cCmdLineParser::PARAM_NONE);
-   cmdLine.AddArg(cTWCmdLine::GMMS_VERBOSITY,   TSTRING(_T("b")), TSTRING(_T("gmms-verbosity")),   cCmdLineParser::PARAM_ONE);
-#endif
-    
-
-
    // mutual exclusion...
    // you can't specify any of these 3 things together...
    cmdLine.AddMutEx(cTWCmdLine::SEVERITY_LEVEL, cTWCmdLine::RULE_NAME);
@@ -882,40 +864,12 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    // We will use this to access the parsed cmdLine.
    cCmdLineIter iter(cmdLine);
 
-#ifdef GMMS
-
-   // Get path to gmms executable from config file
-   TSTRING str;
-   if(cf.Lookup(TSTRING(_T("GMMS")), str))
-   {
-      // Path was specified in the configuration file
-      mpData->mGmmsProg = str;
-   }
-   else
-   {
-      // Path was not specified in the configuration file, try environment variable
-      const TCHAR *gmmsDeploy = _tgetenv(_T("GEOPLEX_DEPLOY"));
-      if (gmmsDeploy)
-         mpData->mGmmsProg = TSTRING(gmmsDeploy) + _T("/bin/gmms"); // Assign by env.var.
-      else
-         mpData->mGmmsProg = _T("/home/geoplex/bin/gmms"); // No env.var., Take a wild guess.
-   }
-
-   // Get any additional command line options for running gmms from config file
-   if(cf.Lookup(TSTRING(_T("GMMSOPTIONS")), str))
-      mpData->mGmmsOptions = str;
-
-   bool bGmmsSpecified=false, bGmmsVerbositySpecified=false;
-
-#endif
-
    // First, fill out everything with the config file info...
    FillOutConfigInfo(mpData, cf);
 
    // Now, parse the command line...
    // this takes care of the common stuff...
    FillOutCmdLineInfo(mpData, cmdLine);
-
 
    // now do the stuff specific to this mode..
 
@@ -1004,36 +958,7 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
                   mpData->mFilesToCheck.push_back(iter.ParamAt(i));
                }
             }
-#ifdef GMMS
-         case cTWCmdLine::USE_GMMS:
-            mpData->mbGmms = true;
-            bGmmsSpecified = true;
-            break;
-         case cTWCmdLine::GMMS_VERBOSITY:
-            {
-                const TCHAR* psz = iter.ParamAt(0).c_str();
-                if ( psz != 0 )
-                    while ( _istdigit( *psz ) ) ++psz;
 
-                /// NOTE:RAD -- Come on man! There isn't even a pStr!!!
-                //  if ( !cStringUtil::StringIsInteger( pStr ) ) 
-                if ( *psz != 0x00 )
-                {
-               TCERR << TSS_GetString( cTripwire, tripwire::STR_ERR_BAD_GMMS_VERBOSITY ) << std::endl;
-               return false;
-            }
-                else
-                {
-                mpData->mGmmsVerbosity = _ttoi(iter.ParamAt(0).c_str());
-                if (mpData->mGmmsVerbosity < 1 || mpData->mGmmsVerbosity > 2) {
-                   TCERR << TSS_GetString( cTripwire, tripwire::STR_ERR_BAD_GMMS_VERBOSITY ) << std::endl;
-                   return false;
-                }
-                bGmmsVerbositySpecified = true;
-                }
-            break;
-            }
-#endif
          default:
             // should I do anything, or just ignore this?
             ;
@@ -1062,14 +987,6 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    TEST_INIT_REQUIREMENT((! mpData->mReportFile.empty()),               cTW, tw::STR_ERR_MISSING_REPORT);
    TEST_INIT_REQUIREMENT((! (mpData->mEditor.empty() && mpData->mbUpdate)),cTW, tw::STR_ERR_MISSING_EDITOR);
 
-#ifdef GMMS
-   if (bGmmsSpecified==false && bGmmsVerbositySpecified==true)
-   {
-      TCERR << TSS_GetString( cTripwire, tripwire::STR_ERR_GMMS_VERBOSITY_ONLY ) << std::endl;
-      return false;
-   }
-#endif
-
    ///////////////////////////////////////////
    // do some email-related verifications
    ///////////////////////////////////////////
@@ -1085,10 +1002,6 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
         // error if method is SENDMAIL and no MAILPROGRAM
         TEST_INIT_REQUIREMENT( ( cMailMessage::MAIL_BY_PIPE != mpData->mMailMethod || !mpData->mMailProgram.empty()),
                                cTripwire, tripwire::STR_ERR_MISSING_MAILPROGRAM );
-
-#if !SUPPORTS_MAPI
-       TEST_INIT_REQUIREMENT( ( cMailMessage::MAIL_BY_MAPI != mpData->mMailMethod ), cTripwire, tripwire::STR_ERR_MAPI_NOT_SUPPORTED );
-#endif
    }
 
    // make sure that the config file and site key file are in sync...
@@ -1412,22 +1325,6 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                                            );
 
         cFCOReportUtil::FinalizeReport( report );
-
-#ifdef GMMS
-      // gmms reporting?
-      if (mpData->mbGmms)
-      {
-         try
-         {
-            cTWCmdLineUtil::GmmsReport(reportHeader, report, mpData->mGmmsProg, mpData->mGmmsOptions, mpData->mGmmsVerbosity);
-         }
-         catch(eGmmsError& e)
-         {
-            cTWUtil::PrintErrorMsg(e); 
-            // Do not return. Gmms errors are not fatal.
-         }
-      }
-#endif
 
       // email the report if that is desired...
       if(mpData->mbEmail)
@@ -2373,9 +2270,6 @@ bool cTWModeTest::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
         // make sure that we have a valid mail method
         TEST_INIT_REQUIREMENT( ( cMailMessage::NO_METHOD != mpData->mMailMethod ),      cTripwire, tripwire::STR_ERR_NO_MAIL_METHOD );
         TEST_INIT_REQUIREMENT( ( cMailMessage::INVALID_METHOD != mpData->mMailMethod ), cTripwire, tripwire::STR_ERR_INVALID_MAIL_METHOD );
-#if !SUPPORTS_MAPI
-        TEST_INIT_REQUIREMENT( ( cMailMessage::MAIL_BY_MAPI != mpData->mMailMethod ), cTripwire, tripwire::STR_ERR_MAPI_NOT_SUPPORTED );
-#endif
     }
 
     return true;

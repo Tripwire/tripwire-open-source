@@ -138,12 +138,6 @@ public:
       TEST_EMAIL,
       REPORTLEVEL,
       HEXADECIMAL,
-       
-#ifdef GMMS
-      USE_GMMS,
-      GMMS_VERBOSITY,
-#endif
-
       PARAMS,        // the final parameters
 
       NUM_CMDLINEARGS

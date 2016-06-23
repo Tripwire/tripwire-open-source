@@ -60,11 +60,6 @@ TSS_REGISTER_ERROR( eMailSMTPOpenConnection(),      _T("The SMTP connection coul
 TSS_REGISTER_ERROR( eMailSMTPCloseConnection(),     _T("The SMTP connection could not be properly closed.") );
 TSS_REGISTER_ERROR( eMailSMTPServer(),              _T("The SMTP server returned an error.") );
 
-// MAPI
-TSS_REGISTER_ERROR( eMailMAPINotAvailable(),        _T("MAPI is not available.") );
-TSS_REGISTER_ERROR( eMailMAPIUnload(),              _T("MAPI32.DLL could not be loaded.") );
-TSS_REGISTER_ERROR( eMailMAPISend(),                _T("Sending message via MAPI failed.") );
-
 // Piped
 TSS_REGISTER_ERROR( eMailPipedOpen(),               _T("Problem opening mail pipe.") );
 TSS_REGISTER_ERROR( eMailPipedWrite(),              _T("Problem writing to mail pipe.") );
@@ -103,11 +98,5 @@ TSS_REGISTER_ERROR( eTWInvalidReportLevel(),        _T("Invalid reporting level 
 TSS_REGISTER_ERROR( eTWInvalidReportLevelCfg(),     _T("Invalid reporting level in configuration file\nValid levels: [0-4]\n") );
 TSS_REGISTER_ERROR( eTWInvalidPortNumber(),         _T("Invalid SMTP port number.\nValid ports: [0-65535]\n") );
 TSS_REGISTER_ERROR( eTWInvalidTempDirectory(),      _T("Cannot access temp directory.") );
-
-// GMMS
-TSS_REGISTER_ERROR( eGmmsError(),                   _T("GMMS error.") );
-TSS_REGISTER_ERROR( eGmmsCouldntOpenPipe(),         _T("GMMS executable not found: ") );
-TSS_REGISTER_ERROR( eGmmsCouldntWritePipe(),        _T("There was a problem writing to gmms: ") );
-TSS_REGISTER_ERROR( eGmmsCmdFailed(),               _T("GMMS exited with non-zero status: ") );
 
 TSS_END_ERROR_REGISTRATION()
