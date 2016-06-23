@@ -228,60 +228,6 @@ private:
 
     // socket related member variables
     SOCKET  mSocket;
-
-#if USES_WINSOCK
-    //
-    // Types for the functions in winsock.dll
-    //
-    // These function prototypes and the pointers that use them allow us to use
-    // winsock without requiring the DLL to be on the end system for the application
-    // to run.  It seems unacceptable for tripwire to fail to run at all if wsock32.dll
-    // is not present on the system.
-    //
-    HINSTANCE mHlibWinsock;
-    typedef int (PASCAL * WSASTARTUPPROC) (WORD wVersionRequired, LPWSADATA lpWSAData);
-    typedef SOCKET (PASCAL * SOCKETPROC) (int af, int type, int protocol);
-    typedef unsigned long (PASCAL * INETADDRPROC) (const char FAR * cp);
-    typedef int (PASCAL FAR * GETHOSTNAMEPROC) (char FAR * name, int namelen);
-    typedef struct hostent FAR * (PASCAL * GETHOSTBYNAMEPROC)(const char FAR * name);
-    typedef int (PASCAL * CONNECTPROC) (SOCKET s, const struct sockaddr FAR *name, int namelen);
-    typedef int (PASCAL * CLOSESOCKETPROC) (SOCKET s);
-    typedef int (PASCAL * SENDPROC) (SOCKET s, const char FAR * buf, int len, int flags);
-    typedef int (PASCAL * RECVPROC) (SOCKET s, char FAR * buf, int len, int flags);
-    typedef int (PASCAL * SELECTPROC) (int nfds, fd_set FAR * readfds, fd_set FAR * writefds, fd_set FAR * exceptfds, const struct timeval FAR * timeout);
-    typedef u_long (PASCAL * LONGPROC) (u_long netlong);
-    typedef u_short (PASCAL * SHORTPROC) (u_short netlong);
-
-    // pointers to the functions in wsock32.dll
-
-    // Berkeley functions
-    SOCKETPROC          mPfnSocket;
-    INETADDRPROC        mPfnInetAddr;
-    GETHOSTNAMEPROC     mPfnGethostname;
-    GETHOSTBYNAMEPROC   mPfnGethostbyname;
-    CONNECTPROC         mPfnConnect;
-    CLOSESOCKETPROC     mPfnCloseSocket;
-    SENDPROC            mPfnSend;
-    RECVPROC            mPfnRecv;
-    SELECTPROC          mPfnSelect;
-
-    // winsock functions
-    FARPROC             mPfnWSAGetLastError;
-    WSASTARTUPPROC      mPfnWSAStartup;
-    FARPROC             mPfnWSACleanup;
-
-    // Endian convertion functions
-    LONGPROC            mPfnNtohl;
-    LONGPROC            mPfnHtonl;
-    SHORTPROC           mPfnNtohs;
-    SHORTPROC           mPfnHtons;
-
-    // Methods to set the pointers to functions.
-    bool LoadDll();
-    bool UnloadDll();
-
-#endif
-
     void SendString( const std::string& str );
 
     // methods common to windows and unix:

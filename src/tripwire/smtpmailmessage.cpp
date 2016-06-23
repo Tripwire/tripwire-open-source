@@ -132,29 +132,6 @@ cSMTPMailMessage::cSMTPMailMessage(TSTRING strServerName, unsigned short portNum
     mstrServerName      = strServerName;
     mPortNumber         = portNumber;
     mSocket             = INVALID_SOCKET;
-
-#if USES_WINSOCK
-    mHlibWinsock        = NULL;
-
-    mPfnSocket          = NULL;
-    mPfnInetAddr        = NULL;
-    mPfnGethostname     = NULL;
-    mPfnGethostbyname   = NULL;
-    mPfnConnect         = NULL;
-    mPfnCloseSocket     = NULL;
-    mPfnSend            = NULL;
-    mPfnRecv            = NULL;
-    mPfnSelect          = NULL;
-
-    mPfnWSAStartup      = NULL;
-    mPfnWSACleanup      = NULL;
-    mPfnWSAGetLastError = NULL;
-    
-    mPfnNtohl           = NULL;
-    mPfnHtonl           = NULL;
-    mPfnNtohs           = NULL;
-    mPfnHtons           = NULL;
-#endif // USES_WINSOCK
 }
 
 
@@ -165,8 +142,6 @@ cSMTPMailMessage::cSMTPMailMessage(TSTRING strServerName, unsigned short portNum
 cSMTPMailMessage::~cSMTPMailMessage()
 {
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -584,88 +559,6 @@ void cSMTPMailMessage::SendString( const std::string& str )
 void cSMTPMailMessage::DecodeError()
 {
 #if defined(_DEBUG)
-
-#if USES_WINSOCK
-    //
-    // decode an error condition encountered by Windows sockets.
-    // TODO -  write something less technical to explain what when wrong. Windows
-    // message names are not good error strings for a shipping product.
-    //
-    int error = mPfnWSAGetLastError();
-    fprintf(stderr, "Encountered winsock error message %d", error);
-    struct ErrorStruct 
-    {
-        const char *msg;
-        int error;
-    }
-    static const errors[52] = 
-    {
-        { "WSAEINTR",                (WSABASEERR+4) },
-        { "WSAEBADF",                (WSABASEERR+9) },
-        { "WSAEACCES",               (WSABASEERR+13) },
-        { "WSAEFAULT",               (WSABASEERR+14) },
-        { "WSAEINVAL",               (WSABASEERR+22) },
-        { "WSAEMFILE",               (WSABASEERR+24) },
-        { "WSAEWOULDBLOCK",          (WSABASEERR+35) },
-        { "WSAEINPROGRESS",          (WSABASEERR+36) },
-        { "WSAEALREADY",             (WSABASEERR+37) },
-        { "WSAENOTSOCK",             (WSABASEERR+38) },
-        { "WSAEDESTADDRREQ",         (WSABASEERR+39) },
-        { "WSAEMSGSIZE",             (WSABASEERR+40) },
-        { "WSAEPROTOTYPE",           (WSABASEERR+41) },
-        { "WSAENOPROTOOPT",          (WSABASEERR+42) },
-        { "WSAEPROTONOSUPPORT",      (WSABASEERR+43) },
-        { "WSAESOCKTNOSUPPORT",      (WSABASEERR+44) },
-        { "WSAEOPNOTSUPP",           (WSABASEERR+45) },
-        { "WSAEPFNOSUPPORT",         (WSABASEERR+46) },
-        { "WSAEAFNOSUPPORT",         (WSABASEERR+47) },
-        { "WSAEADDRINUSE",           (WSABASEERR+48) },
-        { "WSAEADDRNOTAVAIL",        (WSABASEERR+49) },
-        { "WSAENETDOWN",             (WSABASEERR+50) },
-        { "WSAENETUNREACH",          (WSABASEERR+51) },
-        { "WSAENETRESET",            (WSABASEERR+52) },
-        { "WSAECONNABORTED",         (WSABASEERR+53) },
-        { "WSAECONNRESET",           (WSABASEERR+54) },
-        { "WSAENOBUFS",              (WSABASEERR+55) },
-        { "WSAEISCONN",              (WSABASEERR+56) },
-        { "WSAENOTCONN",             (WSABASEERR+57) },
-        { "WSAESHUTDOWN",            (WSABASEERR+58) },
-        { "WSAETOOMANYREFS",         (WSABASEERR+59) },
-        { "WSAETIMEDOUT",            (WSABASEERR+60) },
-        { "WSAECONNREFUSED",         (WSABASEERR+61) },
-        { "WSAELOOP",                (WSABASEERR+62) },
-        { "WSAENAMETOOLONG",         (WSABASEERR+63) },
-        { "WSAEHOSTDOWN",            (WSABASEERR+64) },
-        { "WSAEHOSTUNREACH",         (WSABASEERR+65) },
-        { "WSAENOTEMPTY",            (WSABASEERR+66) },
-        { "WSAEPROCLIM",             (WSABASEERR+67) },
-        { "WSAEUSERS",               (WSABASEERR+68) },
-        { "WSAEDQUOT",               (WSABASEERR+69) },
-        { "WSAESTALE",               (WSABASEERR+70) },
-        { "WSAEREMOTE",              (WSABASEERR+71) },
-        { "WSAEDISCON",              (WSABASEERR+101) },
-        { "WSASYSNOTREADY",          (WSABASEERR+91) },
-        { "WSAVERNOTSUPPORTED",      (WSABASEERR+92) },
-        { "WSANOTINITIALISED",       (WSABASEERR+93) },
-        { "WSAHOST_NOT_FOUND",       (WSABASEERR+1001) },
-        { "WSATRY_AGAIN",            (WSABASEERR+1002) },
-        { "WSANO_RECOVERY",          (WSABASEERR+1003) },
-        { "WSANO_DATA",              (WSABASEERR+1004) },
-        { NULL, 0 }
-    };
-
-    int i = 0;
-    while (errors[i].msg) 
-    {
-        if (errors[i].error == error) 
-        {
-            fprintf(stderr, ": %s", errors[i].msg);
-            break;
-        } 
-        i++;
-    }
-    fprintf(stderr, "\n");
-#endif // USES_WINSOCK
 
 #if IS_UNIX
 

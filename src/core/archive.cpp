@@ -51,15 +51,6 @@
 
 #include "corestrings.h"    // for: STR_ERR2_ARCH_CRYPTO_ERR
 
-
-
-#if FSEEK_TAKES_INT32
-#define FSEEK(x, y, z) fseek((x), (int32)(y), (z))
-#else
-#define FSEEK(x, y, z) fseek((x), (y), (z)) 
-#endif 
-
-
 //=============================================================================
 // Utility Functions
 //=============================================================================
