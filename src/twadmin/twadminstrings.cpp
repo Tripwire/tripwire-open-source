@@ -39,7 +39,7 @@
 #include "twadmin.h"
 #include "twadminstrings.h"
 
-#ifdef __AROS__
+#if IS_AROS
 # define VERSION_PREFIX "$VER: "
 #else
 # define VERSION_PREFIX "@(#)"

@@ -49,7 +49,7 @@
 #include "tw/twerrors.h"
 #include "tw/twstrings.h"
 
-#ifdef __AROS__
+#if IS_AROS
   #include <proto/bsdsocket.h>
   #define openlog(a,b,c)
   #define closelog()
@@ -60,8 +60,9 @@
 ///////////////////////////////////////////////////////////////////////////////
 void cSyslog::Log(const TCHAR* programName, cSyslog::LogType logType, const TCHAR* message)
 {
-#if HAVE_SYSLOG_H && !defined(SKYOS) // Handle an oddball OS that has syslog.h but doesn't implement the calls.
-
+// SkyOS has syslog.h but doesn't actually implement the calls.
+#if SUPPORTS_SYSLOG
+    
     (void)logType; // logType is not used for Unix syslog
 
     ASSERT(sizeof(TCHAR) == sizeof(char));

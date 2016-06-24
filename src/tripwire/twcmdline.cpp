@@ -296,7 +296,7 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
   cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
 
     if (temp_directory.length() == 0) {
-#ifdef __AROS__
+#if IS_AROS
       temp_directory = "T:";
 #else
       temp_directory = "/tmp/";
@@ -311,7 +311,7 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     // make sure it exists...
     //
 
-#ifdef __AROS__
+#if IS_AROS
     temp_directory = cArosPath::AsNative(temp_directory);
 #endif
 

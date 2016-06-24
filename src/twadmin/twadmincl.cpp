@@ -63,7 +63,7 @@
 #include "core/displayencoder.h"
 
 //Provide a swab() impl. from glibc, for platforms that don't have one
-#if defined(__SYLLABLE__) || defined(__ANDROID_API__) || defined(_SORTIX_SOURCE)
+#if NEEDS_SWAB_IMPL
 void swab (const void *bfrom, void *bto, ssize_t n)
 {
   const char *from = (const char *) bfrom;

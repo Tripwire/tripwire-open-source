@@ -79,7 +79,7 @@
 #include "core/tw_signal.h"         // to ignore SIGPIPE
 #endif
 
-#ifdef __AROS__
+#if IS_AROS
 #include <errno.h>
 #include <proto/exec.h>
 #include <proto/bsdsocket.h>
@@ -246,7 +246,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     // END:RAD
     // ------------------------------------------------------------
 
-#ifdef __AROS__
+#if IS_AROS
     aros_socketbase_init();
 #endif
     //
@@ -284,7 +284,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     mpData->et.SetChild( &mpData->er );
     errorQueue.SetChild( &mpData->et );
 
-#if IS_UNIX && !defined(__DJGPP__)
+#if SUPPORTS_POSIX_SIGNALS
     // ignore SIGPIPE
     tw_sigign(SIGPIPE); //TODO: somebody add comment here!
 
@@ -316,7 +316,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
 
 }
 
-#ifdef __AROS__
+#if IS_AROS
 struct Library* SocketBase=0;
 
 bool aros_socketbase_init()

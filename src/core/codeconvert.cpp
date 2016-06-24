@@ -61,7 +61,7 @@
 #define TSS_USE_UCS2_CCONV16        (!(HAVE_ICONV_H) && WCHAR_REP_IS_UCS2 && WCHAR_IS_16_BITS)
 #define TSS_USE_UCS2_CCONV32        (!(HAVE_ICONV_H) && WCHAR_REP_IS_UCS2 && WCHAR_IS_32_BITS)
 
-#ifdef __minix__
+#if ICONV_CONST_SOURCE
 # define ICONV_SOURCE_TYPE const char
 #else
 # define ICONV_SOURCE_TYPE char

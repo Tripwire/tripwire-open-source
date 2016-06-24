@@ -74,7 +74,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
-#ifndef _SORTIX_SOURCE
+#if !IS_SORTIX
 # include <sys/file.h>
 #endif
 #include <sys/stat.h>
@@ -871,7 +871,7 @@ FILE *fp[];
         return(mfpclose(indx, fp));
 }
 
-#ifdef __AROS__
+#if IS_AROS
  #define fork() vfork()
 #endif
 

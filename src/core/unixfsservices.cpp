@@ -178,7 +178,7 @@ TCHAR  cUnixFSServices::GetPathSeparator() const
     return '/';
 }
 
-#ifndef __AROS__
+#if !IS_AROS
 void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const throw(eFSServices)
 {
 #else
@@ -326,7 +326,7 @@ void cUnixFSServices::SetTempDirName(TSTRING& tmpPath) {
 }
 
 
-#ifndef __AROS__
+#if !IS_AROS
 void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const throw(eFSServices)
 {
 #else
@@ -369,7 +369,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     stat.size       = statbuf.st_size;
     stat.uid        = statbuf.st_uid;
     stat.blksize    = statbuf.st_blksize;
-#ifndef __DJGPP__
+#if SUPPORTS_ST_BLOCKS
     stat.blocks     = statbuf.st_blocks;
 #else
     stat.blocks     = 0;
@@ -409,7 +409,7 @@ void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
     char buf[256];
     if (gethostname(buf, 256) != 0)
     {
-#if defined(SOLARIS_NO_GETHOSTBYNAME) || defined(_SORTIX_SOURCE) || defined(__DJGPP__)
+#if defined(SOLARIS_NO_GETHOSTBYNAME) || !SUPPORTS_NETWORKING
         strName = buf;
         return;
 #else
@@ -464,7 +464,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     bool    fGotAddress = false;    
     cDebug  d( _T("cUnixFSServices::GetIPAddress") );
 
-#if !defined(_SORTIX_SOURCE) && !defined(__DJGPP__)
+#if SUPPORTS_NETWORKING
     struct utsname utsnameBuf;    
     if( EFAULT != uname( &utsnameBuf) )
     {

@@ -90,7 +90,7 @@ bool cCharUtil::PeekNextChar(  const TSTRING::const_iterator& cur,
     }   
     else
     {
-#ifndef __AROS__
+#if !IS_AROS
     mblen (NULL, 0);
     int len = mblen(&*cur, MB_CUR_MAX);
     if (len < 0) //invalid multibyte sequence, but let's not blow up.

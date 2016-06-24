@@ -64,7 +64,6 @@
 #define OS_DARWIN       0x0304
 #define OS_DRAGONFLYBSD 0x0305
 #define OS_MIDNIGHTBSD  0x0306
-#define OS_HARDENEDBSD  0x0307
 
 #define OS_SOLARIS      0x0400
 #define OS_AIX          0x0401
@@ -137,14 +136,28 @@
     #define OS                  OS_FREEBSD
     #define IS_FREEBSD          1	
 
-// add NetBSD, OpenBSD, other BSDs	
-	
+#elif defined(__NetBSD__)
+    #define OS                  OS_NETBSD
+    #define IS_NETBSD           1
+
+#elif defined(__OpenBSD__)
+    #define OS                  OS_OPENBSD
+    #define IS_OPENBSD          1
+
 #elif defined(_OSX)
     #define OS                  OS_DARWIN
     #define IS_DARWIN           1	
-	
 
-#elif defined(_SOLARIS)
+#elif defined(__DragonFly__)
+    #define OS                  OS_DRAGONFLYBSD
+    #define IS_DRAGONFLYBSD     1
+
+#elif defined(__MidnightBSD__)
+    #define OS                  OS_MIDNIGHTBSD
+    #define IS_MIDNIGHTBSD      1
+
+
+#elif defined(_SOLARIS) || defined(__sun)
     #define OS					OS_SOLARIS
     #define IS_SOLARIS          1	
 	
@@ -164,13 +177,19 @@
     #define OS                  OS_OSF1
     #define IS_OSF1             1
 	
-	
-// need Minix, Haiku	
-	
+
+#elif defined(__minix__)
+    #define OS					OS_MINIX
+    #define IS_MINIX			1
+
 #elif defined(__gnu_hurd__)
     #define OS					OS_HURD
 	#define IS_HURD				1 
-	
+
+#elif defined(__HAIKU__)
+    #define OS                  OS_HAIKU
+    #define IS_HAIKU            1
+
 #elif defined(__SYLLABLE__)
     #define OS                  OS_SYLLABLE
     #define IS_SYLLABLE         1	
@@ -273,6 +292,16 @@
 #define USES_GLIBC              ((COMP == COMP_KAI_GLIBC) || HAVE_GCC)
 #define SUPPORTS_MEMBER_TEMPLATES               ( ! IS_SUNPRO )
 #define SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST    ( ! IS_SUNPRO )
+
+#define SUPPORTS_ST_BLOCKS          (!IS_DOS_DJGPP)
+#define SUPPORTS_POSIX_SIGNALS      (!IS_DOS_DJGPP)
+#define SUPPORTS_NETWORKING         (!IS_SORTIX && !IS_DOS_DJGPP)
+#define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS)
+#define NEEDS_SWAB_IMPL             (IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
+#define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
+#define ICONV_CONST_SOURCE          (IS_MINIX)
+
+
 
 //=============================================================================
 // Miscellaneous

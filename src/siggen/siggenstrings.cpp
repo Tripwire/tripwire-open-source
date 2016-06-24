@@ -42,7 +42,7 @@
 #include "stdsiggen.h"
 #include "siggenstrings.h"
 
-#ifdef __AROS__
+#if IS_AROS
 # define VERSION_PREFIX "$VER: "
 #else
 # define VERSION_PREFIX "@(#)"

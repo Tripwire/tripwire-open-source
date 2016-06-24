@@ -209,7 +209,7 @@ std::string convert_to_encoded_hex( char ch )
 
 std::string util_ConvertMB( const std::string& sIn )
 {
-#if defined(__ANDROID_API__) || defined(__AROS__)
+#if !USES_MBLEN
   return sIn;
 #else
     cDebug d( "cPolicyParser::util_ConvertMB" );

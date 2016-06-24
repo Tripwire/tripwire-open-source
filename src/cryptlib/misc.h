@@ -9,7 +9,7 @@
  #include <string.h>
 #endif
 
-#if defined(__MINT__) || defined(__MSDOS__) // has memory.h, but memset defined in string.h anyway.
+#if IS_MINT || IS_DOS_DJGPP // has memory.h, but memset defined in string.h anyway.
  #include <string.h>
 #endif
 

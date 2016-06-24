@@ -34,7 +34,7 @@
 
 /* On GNU/Hurd, need to define _GNU_SOURCE in order to use  O_NOATIME
    which technically is still a nonstandard extension to open() */
-#ifdef __gnu_hurd__
+#if IS_HURD
 # define _GNU_SOURCE
 #endif
 
@@ -53,7 +53,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#ifdef __hpux__
+#if IS_HPUX
 # include <sys/fs/vx_ioctl.h>
 #endif
 
@@ -104,7 +104,7 @@ cFile_i::~cFile_i()
         fclose( mpCurrStream );
     mpCurrStream = NULL;
 
-#ifdef __AROS__
+#if IS_AROS
     if( mFlags & cFile::OPEN_LOCKED_TEMP )
     {
         // unlink this file 
@@ -219,7 +219,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
         throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
     }
 
-#ifndef __AROS__
+#if !IS_AROS
     if( flags & OPEN_LOCKED_TEMP )
     {
         // unlink this file 
@@ -246,13 +246,11 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
         fcntl(fh, F_NOCACHE, 1);
 #endif   
 
-#ifdef __sun
+#if IS_SOLARIS
     if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
         directio(fh, DIRECTIO_ON);
-#endif
-
-#ifdef __hpux__
-
+    
+#elif IS_HPUX
     if (flags & OPEN_SCANNING) 
     {
         if (flags & OPEN_DIRECT)
@@ -460,7 +458,7 @@ void cFile::Truncate( File_t offset ) // throw(eFile)
 }
 
 
-#ifdef __AROS__
+#if IS_AROS
 TSTRING cArosPath::AsPosix( const TSTRING& in )
 {
     if (in[0] == '/')

@@ -34,7 +34,7 @@
 #include "stdtripwire.h"
 #include "tripwirestrings.h"
 
-#ifdef __AROS__
+#if IS_AROS
 # define VERSION_PREFIX "$VER: "
 #else
 # define VERSION_PREFIX "@(#)"

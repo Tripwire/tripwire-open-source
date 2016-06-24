@@ -137,7 +137,7 @@ void cFSParserUtil::InterpretFCOName( const std::list<TSTRING>& l, cFCOName& nam
     for( std::list<TSTRING>::const_iterator i = l.begin(); i != l.end(); i++ )
         strT += *i;
 
-#ifdef __AROS__
+#if IS_AROS
     strT = cArosPath::AsPosix(strT);
 #endif
 

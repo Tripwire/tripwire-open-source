@@ -1141,7 +1141,7 @@ void cTWUtil::GetString(wc16_string& ret)
 #endif
 
 // tcsetattr doesn't seem to work on AROS, so tweak ANSI terminal settings to hide passphrases.
-#ifdef __AROS__
+#if IS_AROS
     printf("\e[8m"); // set the 'concealed' flag
     fflush(stdout);
 #endif
@@ -1154,7 +1154,7 @@ void cTWUtil::GetString(wc16_string& ret)
     TCOUT.flush();
     len = read( 0, buf, MAX_STRING );
 
-#ifdef __AROS__
+#if IS_AROS
     printf("\e[0m"); // reset back to normal text
     fflush(stdout);
 #endif

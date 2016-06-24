@@ -68,7 +68,7 @@ static TSTRING& util_FormatTimeCPlusPlus( struct tm* ptm, TSTRING& strBuf );
 // PUBLIC METHOD CODE
 //=========================================================================
 
-#ifdef __AROS__
+#if IS_AROS
   #define tzset()
 #endif
 

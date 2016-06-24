@@ -47,7 +47,7 @@
 #include "fileerror.h"
 #endif
 
-#ifdef __MINT__ // for off_t
+#if IS_MINT // for off_t
 #include <sys/types.h>
 #endif
 
@@ -143,7 +143,7 @@ public:
 };
 
 
-#ifdef __AROS__
+#if IS_AROS
 class cArosPath
 {
 public:

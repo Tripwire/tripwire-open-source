@@ -56,7 +56,7 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
-#ifdef _SORTIX_SOURCE
+#if !IS_SORTIX
 # include <sys/select.h>
 #endif
 
@@ -72,7 +72,7 @@
 
 #define INVALID_SOCKET -1
 
-#ifdef __AROS__
+#if IS_AROS
  #ifndef HAVE_GETHOSTNAME
   #define HAVE_GETHOSTNAME 1
  #endif
@@ -177,7 +177,7 @@ long cSMTPMailMessage::GetServerAddress()
     }
     else
     {
-#if defined(_SORTIX_SOURCE) || !defined(HAVE_SYS_SOCKET_H)
+#if IS_SORTIX || !defined(HAVE_SYS_SOCKET_H)
         return INADDR_NONE;
 #else
         // do a DNS lookup of the hostname and get the long
