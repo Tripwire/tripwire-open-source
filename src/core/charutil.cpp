@@ -41,6 +41,13 @@
 #include "charutil.h"
 #include "ntmbs.h"
 
+#if IS_ANDROID
+int mblen(const char *s, size_t n)
+{
+  return mbtowc(0, s, n);
+}
+#endif
+
 //  
 // finds the next whole character in string identified by ['cur'-'end')
 // identifies beginning of char in 'first', then end of character in 'last'

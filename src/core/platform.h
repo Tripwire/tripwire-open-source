@@ -123,7 +123,7 @@
 	#define IS_DOS_DJGPP        1
 	
 	
-#elif defined(__ANDROID_API__)
+#elif defined(__ANDROID__)
     #define OS					OS_ANDROID
 	#define IS_ANDROID          1
 	
