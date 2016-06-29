@@ -371,7 +371,7 @@ then
 
 		# Basic test to check for compatible library and
 		# correct linking
-		AC_TRY_RUN(
+		AC_TRY_COMPILE(
 			[
 #include <string.h>
 #include <openssl/rand.h>
