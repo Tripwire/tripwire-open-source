@@ -371,7 +371,10 @@ then
 
 		# Basic test to check for compatible library and
 		# correct linking
-		AC_TRY_COMPILE(
+		if test "$cross_compiling" = yes; then
+                        found_crypto=1
+                else       
+		AC_TRY_RUN(
 			[
 #include <string.h>
 #include <openssl/rand.h>
@@ -388,6 +391,7 @@ int main(void)
 				break;
 			], []
 		)
+                fi
 
 		if test ! -z "$found_crypto" ; then
 			break;
