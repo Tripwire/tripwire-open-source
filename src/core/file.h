@@ -143,8 +143,8 @@ public:
 };
 
 
-#if IS_AROS
-class cArosPath
+#if USES_DEVICE_PATH
+class cDevicePath
 {
 public:
     static TSTRING AsPosix(const TSTRING& in);
