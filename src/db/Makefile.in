@@ -111,8 +111,8 @@ am__v_AR_1 =
 libdb_a_AR = $(AR) $(ARFLAGS)
 libdb_a_LIBADD =
 am_libdb_a_OBJECTS = blockfile.$(OBJEXT) blockrecordarray.$(OBJEXT) \
-	blockrecordfile.$(OBJEXT) db.$(OBJEXT) hierdatabase.$(OBJEXT) \
-	hierdbpath.$(OBJEXT) stddb.$(OBJEXT)
+	blockrecordfile.$(OBJEXT) db.$(OBJEXT) dberrors.$(OBJEXT) \
+	hierdatabase.$(OBJEXT) hierdbpath.$(OBJEXT) stddb.$(OBJEXT)
 libdb_a_OBJECTS = $(am_libdb_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -318,11 +318,11 @@ noinst_LIBRARIES = libdb.a
 libdb_adir = .
 libdb_a_SOURCES = \
    blockfile.cpp blockrecordarray.cpp blockrecordfile.cpp 	\
-   db.cpp hierdatabase.cpp hierdbpath.cpp stddb.cpp
+   db.cpp dberrors.cpp hierdatabase.cpp hierdbpath.cpp stddb.cpp
 
 libdb_a_HEADERS = \
    block.h blockfile.h blockrecordarray.h blockrecordfile.h \
-   db.h hierdatabase.h hierdbnode.h hierdbpath.h stddb.h
+   db.h dberrors.h hierdatabase.h hierdbnode.h hierdbpath.h stddb.h
 
 all: all-am
 
