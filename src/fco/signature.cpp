@@ -41,6 +41,7 @@
 #include <iomanip>
 #include "fcoundefprop.h"
 #include "core/archive.h"
+#include "core/debug.h"
 #ifndef HAVE_OPENSSL_MD5_H
 # ifdef HAVE_STRINGS_H
 # include <strings.h>       /* for bcopy(), this is only needed for Solaris */
@@ -107,10 +108,15 @@ bool  cArchiveSigGen::s_direct = false;
 
 void cArchiveSigGen::SetBlocks( int32 n )
 { 
+    cDebug d("cArchiveSigGen::SetBlocks");
+
     s_blocks=n; 
-    s_base = new byte[iSignature::SUGGESTED_BLOCK_SIZE * (s_blocks+1)]; 
-    unsigned long nMod = (unsigned long)s_base % iSignature::SUGGESTED_BLOCK_SIZE;
-    s_buf = s_base + (iSignature::SUGGESTED_BLOCK_SIZE - nMod);
+    d.TraceDebug("Num blocks = %u\n", s_blocks);
+    s_base = new byte[iSignature::SUGGESTED_BLOCK_SIZE * (s_blocks+2)]; 
+    unsigned long mod = (unsigned long)s_base % iSignature::SUGGESTED_BLOCK_SIZE;
+    unsigned long offset = (iSignature::SUGGESTED_BLOCK_SIZE - mod);
+    d.TraceDebug("mod = %u | offset = %u\n", mod, offset);
+    s_buf = s_base + offset;
     s_bytes = iSignature::SUGGESTED_BLOCK_SIZE * s_blocks;
 }
 

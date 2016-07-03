@@ -671,7 +671,8 @@ void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
         flags |= ( ( openFlags & FA_SCANNING      ) ? cFile::OPEN_SCANNING : 0 );
         flags |= ( ( openFlags & FA_DIRECT        ) ? cFile::OPEN_DIRECT   : 0 );
-        
+
+        mOpenFlags = openFlags; 
         mCurrentFilename = filename;
         mCurrentFile.Open( filename, flags );
         isWritable = false;
@@ -699,6 +700,7 @@ void cFileArchive::OpenReadWrite(const TCHAR* filename, uint32 openFlags)
         flags |= ( ( openFlags & FA_SCANNING      ) ? cFile::OPEN_SCANNING : 0 );
         flags |= ( ( openFlags & FA_DIRECT        ) ? cFile::OPEN_DIRECT   : 0 );
 
+        mOpenFlags = openFlags;
         mCurrentFilename = filename;
         mCurrentFile.Open( filename, flags );
         isWritable = true;
@@ -746,9 +748,10 @@ void cFileArchive::Close()
 /////////////////////////////////////////////////////////////////////////
 int cFileArchive::Read(void* pDest, int count)
 {
+
     try 
     {
-        if ( mReadHead + count > mFileSize )
+        if ( mReadHead + count > mFileSize && !(mOpenFlags & FA_DIRECT))
             count = static_cast<int>( mFileSize - mReadHead );
 
         if ( pDest != NULL )

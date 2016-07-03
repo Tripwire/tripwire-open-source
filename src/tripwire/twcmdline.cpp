@@ -435,7 +435,7 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     }
 
 	int blocks = 0;
-    if (cf.Lookup(TSTRING(_T("HASH_DIRECT")), str))
+    if (cf.Lookup(TSTRING(_T("HASH_DIRECT_IO")), str))
     {
         if (_tcsicmp(str.c_str(), _T("true")) == 0)
         {

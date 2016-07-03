@@ -62,22 +62,6 @@
 #include "core/fsservices.h"
 #include "core/errorutil.h"
 
-///////////////////////////////////////////////////////////////////////////////
-// util_GetErrnoString -- return the result of strerror(errno) as a tstring
-///////////////////////////////////////////////////////////////////////////////
-/*static TSTRING util_GetErrnoString()
-{
-    TSTRING ret;
-    char* pErrorStr = strerror(errno);
-#ifdef _UNICODE
-#error  We dont currently support unicode on unix
-#else
-    ret = pErrorStr;
-#endif
-    return ret;
-}*/
-
-///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 // cFile_i : Insulated implementation for cFile objects.
 ///////////////////////////////////////////////////////////////////////////
@@ -87,6 +71,7 @@ struct cFile_i
     cFile_i();
     ~cFile_i();
 
+    int   m_fd;         //underlying file descriptor
     FILE* mpCurrStream; //currently defined file stream
     TSTRING mFileName;  //the name of the file we are currently referencing.
     uint32 mFlags;      //Flags used to open the file
@@ -218,6 +203,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     {
         throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
     }
+    mpData->m_fd = fh;
 
 #if !IS_AROS
     if( flags & OPEN_LOCKED_TEMP )
@@ -263,7 +249,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 
 
 #ifdef HAVE_POSIX_FADVISE
-    if (flags & OPEN_SCANNING) 
+    if (flags & OPEN_SCANNING && !(flags & OPEN_DIRECT)) 
     {
         posix_fadvise(fh,0,0, POSIX_FADV_SEQUENTIAL);
         posix_fadvise(fh,0,0, POSIX_FADV_NOREUSE);
@@ -363,12 +349,19 @@ cFile::File_t cFile::Read( void* buffer, File_t nBytes ) const //throw(eFile)
     if( nBytes == 0 )
         return 0;
 
-    iBytesRead = fread( buffer, sizeof(byte), nBytes, mpData->mpCurrStream );
-    
-    if( ferror( mpData->mpCurrStream ) != 0 )
-        throw eFileRead( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) ;
-    else
-        return iBytesRead;
+    if (mpData->mFlags & OPEN_DIRECT) {
+        iBytesRead = read(mpData->m_fd, buffer, nBytes);
+        if (iBytesRead<0) {
+            throw eFileRead(mpData->mFileName, iFSServices::GetInstance()->GetErrString()); 
+        }
+    } else { 
+        iBytesRead = fread( buffer, sizeof(byte), nBytes, mpData->mpCurrStream );
+        if( ferror( mpData->mpCurrStream ) != 0 ) {
+            throw eFileRead( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) ; 
+        }
+    }
+
+    return iBytesRead;
 }
 
 ///////////////////////////////////////////////////////////////////////////

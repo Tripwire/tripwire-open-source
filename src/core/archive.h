@@ -293,6 +293,7 @@ protected:
     bool            isWritable;
     cFile           mCurrentFile;
     TSTRING         mCurrentFilename;                       //current file
+    uint32          mOpenFlags;
 };
 
 ///////////////////////////////////////////////////////////////
