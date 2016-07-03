@@ -29,24 +29,20 @@
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
-//////////////////////////////////////////////////////////////////////
-// dberrors.cpp
 //
-// Registers all error strings in the db package
+// Name....: dberrors.h
+// Date....: 5/17/99
+// Creator.: Matthew Brinkley (brinkley)
 //
-
-#include "stddb.h"
-#include "dberrors.h"
-#include "hierdatabase.h"
-
-TSS_BEGIN_ERROR_REGISTRATION( db )
-
-//
-// HierDatabase
 //
 
-TSS_REGISTER_ERROR( eHierDatabase(),    _T("Database Error.") )
-TSS_REGISTER_ERROR( eHierDbInternal(),  _T("Internal database error.") )
-TSS_REGISTER_ERROR( eHierDbDupeName(),  _T("Attempt to add duplicate name to database.") )
+#ifndef __DBERRORS_H
+#define __DBERRORS_H
 
-TSS_END_ERROR_REGISTRATION()
+#include "core/errortable.h"
+
+TSS_DECLARE_ERROR_REGISTRATION( db )
+    
+
+#endif//__DBERRORS_H
+

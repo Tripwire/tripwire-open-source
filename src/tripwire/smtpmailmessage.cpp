@@ -56,7 +56,7 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
-#if !IS_SORTIX
+#if HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
 

@@ -68,7 +68,7 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #endif
 ]])
 AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
-AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h)
+AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h sys/select.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
 
@@ -371,7 +371,10 @@ then
 
 		# Basic test to check for compatible library and
 		# correct linking
-		AC_TRY_COMPILE(
+		if test "$cross_compiling" = yes; then
+                        found_crypto=1
+                else       
+		AC_TRY_RUN(
 			[
 #include <string.h>
 #include <openssl/rand.h>
@@ -388,6 +391,7 @@ int main(void)
 				break;
 			], []
 		)
+                fi
 
 		if test ! -z "$found_crypto" ; then
 			break;

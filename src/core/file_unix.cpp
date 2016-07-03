@@ -128,13 +128,13 @@ cFile::~cFile()
 // Open
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __AROS
+#if !USES_DEVICE_PATH
 void cFile::Open( const TSTRING& sFileName, uint32 flags )
 {
 #else
 void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 {
-    TSTRING sFileName = cArosPath::AsNative(sFileNameC);
+    TSTRING sFileName = cDevicePath::AsNative(sFileNameC);
 #endif
     mode_t openmode = 0664;
     if (mpData->mpCurrStream != NULL)
@@ -451,30 +451,51 @@ void cFile::Truncate( File_t offset ) // throw(eFile)
 }
 
 
-#if IS_AROS
-TSTRING cArosPath::AsPosix( const TSTRING& in )
+#if USES_DEVICE_PATH
+// For paths of type DH0:/dir/file
+TSTRING cDevicePath::AsPosix( const TSTRING& in )
 {
     if (in[0] == '/')
         return in;
 
+#if IS_DOS_DJGPP
+    TSTRING out = "/dev/" + in;
+    std::replace(out.begin(), out.end(), '\\', '/');
+#else
     TSTRING out = '/' + in;
+#endif
+    
     std::replace(out.begin(), out.end(), ':', '/');
 
     return out;
 }
 
-TSTRING cArosPath::AsNative( const TSTRING& in )
+TSTRING cDevicePath::AsNative( const TSTRING& in )
 {
     if (in[0] != '/')
         return in;
 
-    int x;
-    for (x=1; in[x] == '/' && x<in.length(); x++);
+#if IS_DOS_DJGPP
+    if (in.find("/dev") != 0 || in.length() < 6)
+        return in;
+    
+    TSTRING out = "?:/";
+    out[0] = in[5];
+    
+    if (in.length() >= 8)
+        out.append(in.substr(7));
+    
+    return out;
+    
+#elif IS_AROS
+    int x = 1;
+    for ( x; in[x] == '/' && x<in.length(); x++);
 
     TSTRING out = in.substr(x); 
     TSTRING::size_type t = out.find_first_of('/');
     out[t] = ':';
 
     return out;
+#endif
 } 
 #endif

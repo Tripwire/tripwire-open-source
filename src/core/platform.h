@@ -299,6 +299,7 @@
 #define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS)
 #define NEEDS_SWAB_IMPL             (IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
+#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP)
 #define ICONV_CONST_SOURCE          (IS_MINIX)
 
 

@@ -311,8 +311,8 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     // make sure it exists...
     //
 
-#if IS_AROS
-    temp_directory = cArosPath::AsNative(temp_directory);
+#if USES_DEVICE_PATH
+    temp_directory = cDevicePath::AsNative(temp_directory);
 #endif
 
     if (access(temp_directory.c_str(), F_OK) != 0) {

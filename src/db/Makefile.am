@@ -6,11 +6,11 @@ noinst_LIBRARIES = libdb.a
 libdb_adir=.
 libdb_a_SOURCES = \
    blockfile.cpp blockrecordarray.cpp blockrecordfile.cpp 	\
-   db.cpp hierdatabase.cpp hierdbpath.cpp stddb.cpp
+   db.cpp dberrors.cpp hierdatabase.cpp hierdbpath.cpp stddb.cpp
  
 libdb_a_HEADERS = \
    block.h blockfile.h blockrecordarray.h blockrecordfile.h \
-   db.h hierdatabase.h hierdbnode.h hierdbpath.h stddb.h
+   db.h dberrors.h hierdatabase.h hierdbnode.h hierdbpath.h stddb.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 

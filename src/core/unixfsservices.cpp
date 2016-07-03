@@ -178,13 +178,13 @@ TCHAR  cUnixFSServices::GetPathSeparator() const
     return '/';
 }
 
-#if !IS_AROS
+#if !USES_DEVICE_PATH
 void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const throw(eFSServices)
 {
 #else
 void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const throw(eFSServices)
 {
-    TSTRING strFilename = cArosPath::AsNative(strFilenameC);
+    TSTRING strFilename = cDevicePath::AsNative(strFilenameC);
 #endif
 
     //Get all the filenames
@@ -326,13 +326,13 @@ void cUnixFSServices::SetTempDirName(TSTRING& tmpPath) {
 }
 
 
-#if !IS_AROS
+#if !USES_DEVICE_PATH
 void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const throw(eFSServices)
 {
 #else
 void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const throw(eFSServices)
 {
-    TSTRING strName = cArosPath::AsNative(strNameC);
+    TSTRING strName = cDevicePath::AsNative(strNameC);
 #endif
     //local variable for obtaining info on file.
     struct stat statbuf;
