@@ -76,6 +76,9 @@ TSS_EXCEPTION( eTWInvalidPortNumber,      eError );
 TSS_EXCEPTION( eTWPassForUnencryptedDb,   eError );
 TSS_EXCEPTION( eTWInvalidTempDirectory,   eError );
 
+TSS_EXCEPTION( eTWSyslogNotSupported,     eError );
+TSS_EXCEPTION( eTWDirectIONotSupported,   eError );
+
 ///////////////////////////////////////////////////////////////////////////////
 // cTWCmdLine -- class with a bunch of static member functions helpful in parsing
 //    the tripwire command line

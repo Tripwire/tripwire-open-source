@@ -5733,6 +5733,18 @@ fi
 
 done
 
+for ac_header in sys/fs/vx_ioctl.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "sys/fs/vx_ioctl.h" "ac_cv_header_sys_fs_vx_ioctl_h" "$ac_includes_default"
+if test "x$ac_cv_header_sys_fs_vx_ioctl_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SYS_FS_VX_IOCTL_H 1
+_ACEOF
+
+fi
+
+done
+
 
 CPPFLAGS_SAVE="${CPPFLAGS}"
 CPPFLAGS="${CPPFLAGS} -Werror"

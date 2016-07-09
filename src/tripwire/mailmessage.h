@@ -60,6 +60,7 @@ TSS_EXCEPTION( eMailSMTPSocket, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPOpenConnection, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPCloseConnection, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPServer, eMailMessageError );
+TSS_EXCEPTION( eMailSMTPNotSupported, eMailMessageError);
 
 // piped
 TSS_EXCEPTION( eMailPipedOpen, eMailMessageError );

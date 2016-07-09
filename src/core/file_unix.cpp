@@ -53,7 +53,7 @@
 #include <fcntl.h>
 #include <errno.h>
 
-#if IS_HPUX
+#if HAVE_SYS_FS_VX_IOCTL_H
 # include <sys/fs/vx_ioctl.h>
 #endif
 
@@ -235,24 +235,22 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 #if IS_SOLARIS
     if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
         directio(fh, DIRECTIO_ON);
-    
-#elif IS_HPUX
-    if (flags & OPEN_SCANNING) 
-    {
-        if (flags & OPEN_DIRECT)
-            ioctl(fh, VX_SETCACHE, VX_DIRECT);
-        else
-            ioctl(fh, VX_SETCACHE, VX_SEQ | VX_NOREUSE); 
-    }
-
 #endif
-
-
-#ifdef HAVE_POSIX_FADVISE
+    
+#if HAVE_POSIX_FADVISE
     if (flags & OPEN_SCANNING && !(flags & OPEN_DIRECT)) 
     {
         posix_fadvise(fh,0,0, POSIX_FADV_SEQUENTIAL);
         posix_fadvise(fh,0,0, POSIX_FADV_NOREUSE);
+    }
+    
+#elif HAVE_SYS_FS_VX_IOCTL_H
+    if (flags & OPEN_SCANNING)
+    {
+        if (flags & OPEN_DIRECT)
+            ioctl(fh, VX_SETCACHE, VX_DIRECT);
+        else
+            ioctl(fh, VX_SETCACHE, VX_SEQ | VX_NOREUSE);
     }
 #endif
     

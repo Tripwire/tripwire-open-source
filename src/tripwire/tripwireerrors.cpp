@@ -59,7 +59,7 @@ TSS_REGISTER_ERROR( eMailSMTPSocket(),              _T("Socket for an SMTP conne
 TSS_REGISTER_ERROR( eMailSMTPOpenConnection(),      _T("The SMTP connection could not be established.") );
 TSS_REGISTER_ERROR( eMailSMTPCloseConnection(),     _T("The SMTP connection could not be properly closed.") );
 TSS_REGISTER_ERROR( eMailSMTPServer(),              _T("The SMTP server returned an error.") );
-
+TSS_REGISTER_ERROR( eMailSMTPNotSupported(),        _T("SMTP email is not supported on this platform") );
 // Piped
 TSS_REGISTER_ERROR( eMailPipedOpen(),               _T("Problem opening mail pipe.") );
 TSS_REGISTER_ERROR( eMailPipedWrite(),              _T("Problem writing to mail pipe.") );
@@ -99,4 +99,7 @@ TSS_REGISTER_ERROR( eTWInvalidReportLevelCfg(),     _T("Invalid reporting level 
 TSS_REGISTER_ERROR( eTWInvalidPortNumber(),         _T("Invalid SMTP port number.\nValid ports: [0-65535]\n") );
 TSS_REGISTER_ERROR( eTWInvalidTempDirectory(),      _T("Cannot access temp directory.") );
 
+TSS_REGISTER_ERROR( eTWSyslogNotSupported(),        _T("Syslog reporting is not supported on this platform.") );
+TSS_REGISTER_ERROR( eTWDirectIONotSupported(),      _T("Direct I/O hashing is not supported on this platform.") );
+                   
 TSS_END_ERROR_REGISTRATION()

@@ -72,6 +72,7 @@
 #include "integritycheck.h"
 #include "updatedb.h"
 #include "policyupdate.h"
+#include "core/platform.h"
 
 #ifdef TW_PROFILE
 #include "tasktimer.h"
@@ -377,6 +378,11 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
       pModeInfo->mMailMethod = cMailMessage::NO_METHOD;
     }
 
+#if !SUPPORTS_NETWORKING
+    if (pModeInfo->mMailMethod == cMailMessage::MAIL_BY_SMTP)
+        throw eMailSMTPNotSupported();
+#endif
+    
   // Get the SMTP server
   if(cf.Lookup(TSTRING(_T("SMTPHOST")), str))
     pModeInfo->mSmtpHost = str;
@@ -417,10 +423,14 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
   // SYSLOG reporting
   if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
     {
+#if SUPPORTS_SYSLOG
       if (_tcsicmp(str.c_str(), _T("true")) == 0)
         pModeInfo->mbLogToSyslog = true;
       else
         pModeInfo->mbLogToSyslog = false;
+#else
+        throw eTWSyslogNotSupported();
+#endif
     }
   else
     pModeInfo->mbLogToSyslog = false;
@@ -437,17 +447,24 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 	int blocks = 0;
     if (cf.Lookup(TSTRING(_T("HASH_DIRECT_IO")), str))
     {
+#if SUPPORTS_DIRECT_IO
         if (_tcsicmp(str.c_str(), _T("true")) == 0)
         {
             pModeInfo->mbDirectIO = true;
             cArchiveSigGen::SetUseDirectIO(true);
 			blocks = 1;
         }
+#else
+        throw eTWDirectIONotSupported();
+#endif
+        
     }
     
     if (cf.Lookup(TSTRING(_T("HASH_BLOCKS")), str))
     {
-        blocks = _ttoi( str.c_str() );
+        int requested_blocks = _ttoi(str.c_str());
+        if (requested_blocks > 0)
+            blocks = requested_blocks;
     }
 
     if( blocks > 0 )

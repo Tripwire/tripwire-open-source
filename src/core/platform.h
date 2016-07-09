@@ -301,6 +301,7 @@
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
 #define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP)
 #define ICONV_CONST_SOURCE          (IS_MINIX)
+#define SUPPORTS_DIRECT_IO          (IS_LINUX) // Others may work, but only tested & verified on Linux so far.
 
 
 

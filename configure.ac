@@ -71,6 +71,7 @@ AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
 AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h sys/select.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
+AC_CHECK_HEADERS(sys/fs/vx_ioctl.h)
 
 dnl # Special case for malloc.h, because it's depreciated on most systems.
 CPPFLAGS_SAVE="${CPPFLAGS}"

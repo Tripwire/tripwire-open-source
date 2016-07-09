@@ -81,6 +81,9 @@
 /* Define to 1 if you have the <syslog.h> header file. */
 #undef HAVE_SYSLOG_H
 
+/* Define to 1 if you have the <sys/fs/vx_ioctl.h> header file. */
+#undef HAVE_SYS_FS_VX_IOCTL_H
+
 /* Define to 1 if you have the <sys/mount.h> header file. */
 #undef HAVE_SYS_MOUNT_H
 
