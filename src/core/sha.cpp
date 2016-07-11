@@ -64,7 +64,10 @@
 #include "stdcore.h"
 #include <stdio.h>
 #include <sys/types.h>
-#include <memory.h>
+
+#if HAVE_MEMORY_H
+# include <memory.h>
+#endif
 
 #include "sha.h"
 

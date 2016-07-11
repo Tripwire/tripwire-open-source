@@ -308,8 +308,14 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     tw_HandleSignal( SIGSYS );  // Bad system call.
 #endif
     tw_HandleSignal( SIGFPE );  // Floating point exception.
+
+#ifdef SIGXCPU
     tw_HandleSignal( SIGXCPU ); // CPU time exceeded.  Might very well be an issue for us.
+#endif
+
+#ifdef SIGXFSZ
     tw_HandleSignal( SIGXFSZ ); // File size limit exceeded.
+#endif
 
 #endif
 

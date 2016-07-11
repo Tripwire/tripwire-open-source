@@ -54,7 +54,10 @@
 #endif
 #include <sys/types.h>
 #include <sys/time.h>
-#include <sys/utsname.h>
+
+#if HAVE_SYS_UTSNAME_H
+# include <sys/utsname.h>
+#endif
 
 #if HAVE_SYS_SELECT_H
 # include <sys/select.h>
@@ -82,7 +85,8 @@
 static int gethostname( char* name, int namelen )
 {
     name[0] = '\0';
-    
+
+#if HAVE_SYS_UTSNAME_H    
     struct utsname myname;
     uname( & myname );
     
@@ -97,6 +101,10 @@ static int gethostname( char* name, int namelen )
         return -1;
             // equivalent of SOCKET_ERROR
     }
+#else
+    strncpy(name, "localhost", namelen);
+#endif
+
 }
 #endif
     // Unix does not require us to go though any silly DLL hoops, so we'll

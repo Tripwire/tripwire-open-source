@@ -70,7 +70,11 @@
 #ifdef HAVE_SYS_SYSMACROS_H
 # include <sys/sysmacros.h>
 #endif
-#include <sys/utsname.h>
+
+#if HAVE_SYS_UTSNAME_H
+# include <sys/utsname.h>
+#endif
+
 #include <pwd.h>
 
 #if HAVE_SYS_SOCKET_H
@@ -397,15 +401,20 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
 
 void cUnixFSServices::GetMachineName( TSTRING& strName ) const throw( eFSServices )
 {
+#if HAVE_SYS_UTSNAME_H
     struct utsname namebuf;
     if( uname( &namebuf ) == -1 )
         throw eFSServicesGeneric( strName );
     else
         strName = namebuf.nodename;
+#else
+    strName = "localhost";
+#endif
 }
 
 void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
 {
+#if HAVE_SYS_UTSNAME_H
     char buf[256];
     if (gethostname(buf, 256) != 0)
     {
@@ -423,7 +432,7 @@ void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
         }
 #endif
     }
-
+#endif
     try 
     {
         cUnixFSServices::GetMachineName(strName);
@@ -464,7 +473,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     bool    fGotAddress = false;    
     cDebug  d( _T("cUnixFSServices::GetIPAddress") );
 
-#if SUPPORTS_NETWORKING
+#if SUPPORTS_NETWORKING && HAVE_SYS_UTSNAME_H
     struct utsname utsnameBuf;    
     if( EFAULT != uname( &utsnameBuf) )
     {

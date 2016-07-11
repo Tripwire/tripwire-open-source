@@ -78,8 +78,8 @@
 #define OS_SKYOS        0x0505
 #define OS_SORTIX       0x0506
 #define OS_MINT         0x0507
-#define OS_AROS         0x0506
-   
+#define OS_AROS         0x0508
+#define OS_RTEMS        0x0509   
 
 #define COMP_UNKNOWN        0
 #define COMP_GCC            0x0001
@@ -196,20 +196,24 @@
 	
 #elif defined(SKYOS)
     #define OS                  OS_SKYOS
-	#define IS_SKYOS            1 
+    #define IS_SKYOS            1 
 	
 #elif defined(_SORTIX_SOURCE)
-  	#define OS                  OS_SORTIX
-	#define IS_SORTIX           1
+    #define OS                  OS_SORTIX
+    #define IS_SORTIX           1
 	
 #elif defined(__MINT__)
     #define OS                  OS_MINT
-	#define IS_MINT             1 
+    #define IS_MINT             1 
 	
 #elif defined(__AROS__)
     #define OS                  OS_AROS
     #define IS_AROS             1 
 		
+#elif defined(__rtems__)
+    #define OS                  OS_RTEMS
+    #define IS_RTEMS            1
+
 #else
 //  OK for OS not to resolve, it's being phased out.
 //    #error Unknown OS
@@ -301,8 +305,10 @@
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
 #define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP)
 #define ICONV_CONST_SOURCE          (IS_MINIX)
-#define SUPPORTS_DIRECT_IO          (IS_LINUX) // Others may work, but only tested & verified on Linux so far.
-
+#define SUPPORTS_DIRECT_IO          (IS_LINUX) 
+// Linux is the only platform where direct i/o hashing has been tested & works properly so far.
+#define SUPPORTS_TERMIOS            (!IS_RTEMS)
+// RTEMS errors are probably just a buildsys issue & this will change or go away.
 
 
 //=============================================================================

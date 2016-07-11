@@ -74,8 +74,11 @@
 #if IS_UNIX
 #include <unistd.h>
 #include <fcntl.h>
-#include <termios.h>
-#include <sys/ioctl.h>
+#if SUPPORTS_TERMIOS
+# include <termios.h>
+# include <sys/ioctl.h>
+#endif
+
 #include "core/tw_signal.h"
 int _getch(void);
 #endif
@@ -1118,10 +1121,15 @@ void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const
 #if IS_UNIX
 static void (*old_SIGINT)(int);
 static void (*old_SIGQUIT)(int);
+
+#if SUPPORTS_TERMIOS
 static struct termios Otty;
+#endif
+
 
 static void RestoreEcho(int sig)
 {
+#if SUPPORTS_TERMIOS
 #ifdef _DEBUG
     std::cout << "Caught signal, resetting echo."<< std::endl;
     sleep(2);
@@ -1130,7 +1138,7 @@ static void RestoreEcho(int sig)
     tcsetattr( 0, TCSAFLUSH, &Otty);
     tw_signal(SIGINT, old_SIGINT);
     tw_signal(SIGQUIT, old_SIGQUIT);
-
+#endif
     tw_raise(sig);
 }
 
@@ -1173,6 +1181,7 @@ void cTWUtil::GetString(wc16_string& ret)
 
 cTWUtil::NoEcho::NoEcho()
 {
+#if SUPPORTS_TERMIOS
     // set the terminal to no echo mode
     static struct termios Ntty;
 
@@ -1190,13 +1199,16 @@ cTWUtil::NoEcho::NoEcho()
     {
         ThrowAndAssert(eTWUtilEchoModeSet());
     }
+#endif
 }
 
 cTWUtil::NoEcho::~NoEcho() 
 {
+#if SUPPORTS_TERMIOS
     tcsetattr( 0, TCSAFLUSH, &Otty);
     tw_signal(SIGINT, old_SIGINT);
     tw_signal(SIGQUIT, old_SIGQUIT);
+#endif
 }
 
 void cTWUtil::GetStringNoEcho(wc16_string& ret)

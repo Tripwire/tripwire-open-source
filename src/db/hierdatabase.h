@@ -49,6 +49,11 @@
 #include "hierdbpath.h"
 #endif
 
+#if HAVE_STRINGS_H // RTEMS needs this for strcasecmp
+# include <strings.h>
+#endif
+
+
 class cHierDatabaseIter;
 class cErrorBucket;
 
