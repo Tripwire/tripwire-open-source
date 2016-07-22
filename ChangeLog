@@ -1,7 +1,20 @@
-2016-04-25 Brian Cox <bcox@tripwire.com>
+2016-07-25 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.2
+	* DOS/DJGPP platform support.
 	* Use posix_fadvise() to reduce disk cache impact (where available).
-
+	* Use O_NOATIME where available, so scans don't update file access times.
+	* Optional HASH_DIRECT_IO (Linux only) to access files via direct i/o when hashing, per user request.
+	* Optional support for iconv character conversion, for db/report file portability.
+	* Improved display of multibyte characters in reports.
+	* On OSX, use builtin CommonCrypto hashes instead of impls provided with OST.
+	* Update build system to automake 1.15
+	* Cross compiling can use OpenSSL now.
+	* 'make dist' now creates a buildable source bundle.
+	* Can use build dir outside of source tree
+	* Include 'what'-style version strings.
+	* AROS: Correctly hide passphrases & delete temp files.
+	* Remove dead code & unused files.
+	
 2016-04-20 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.1
 	* Revive old 'twtest' unit test suite (such as it is); move _t.cpp files into twtest dir.
