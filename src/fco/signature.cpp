@@ -98,27 +98,8 @@ iFCOProp::CmpResult iSignature::Compare(const iFCOProp* rhs, Op op) const
         return (op == iFCOProp::OP_NE) ? iFCOProp::CMP_TRUE : iFCOProp::CMP_FALSE;
 }
 
-bool  cArchiveSigGen::s_hex = false;
-int32 cArchiveSigGen::s_blocks = 1;
-int32 cArchiveSigGen::s_bytes = iSignature::SUGGESTED_BLOCK_SIZE;
-byte* cArchiveSigGen::s_buf = 0;
-byte* cArchiveSigGen::s_base = 0;
+bool  cArchiveSigGen::s_hex    = false;
 bool  cArchiveSigGen::s_direct = false;
-
-
-void cArchiveSigGen::SetBlocks( int32 n )
-{ 
-    cDebug d("cArchiveSigGen::SetBlocks");
-
-    s_blocks=n; 
-    d.TraceDebug("Num blocks = %u\n", s_blocks);
-    s_base = new byte[iSignature::SUGGESTED_BLOCK_SIZE * (s_blocks+2)]; 
-    unsigned long mod = (unsigned long)s_base % iSignature::SUGGESTED_BLOCK_SIZE;
-    unsigned long offset = (iSignature::SUGGESTED_BLOCK_SIZE - mod);
-    d.TraceDebug("mod = %u | offset = %u\n", mod, offset);
-    s_buf = s_base + offset;
-    s_bytes = iSignature::SUGGESTED_BLOCK_SIZE * s_blocks;
-}
 
 void cArchiveSigGen::AddSig( iSignature* pSig )
 {
@@ -127,12 +108,18 @@ void cArchiveSigGen::AddSig( iSignature* pSig )
    
 void cArchiveSigGen::CalculateSignatures( cArchive& a )
 {
-    byte        abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    byte        abBuf[iSignature::SUGGESTED_BLOCK_SIZE * 2];
     int         cbRead;
     container_type::size_type i;
+    byte*       pBuf = abBuf;
 
-    byte* pBuf = s_buf ? s_buf : abBuf;
-
+    if (s_direct)
+    {
+        unsigned long mod = (unsigned long)abBuf % iSignature::SUGGESTED_BLOCK_SIZE;
+        unsigned long offset = (iSignature::SUGGESTED_BLOCK_SIZE - mod);
+        pBuf = abBuf + offset;
+    }
+    
     // init hash
     for( i = 0; i < mSigList.size(); i++ )
         mSigList[i]->Init();
@@ -140,12 +127,12 @@ void cArchiveSigGen::CalculateSignatures( cArchive& a )
     // hash data
     do
     {
-        cbRead = a.ReadBlob( pBuf, s_bytes );
+        cbRead = a.ReadBlob( pBuf, iSignature::SUGGESTED_BLOCK_SIZE );
 
         for( i = 0; i < mSigList.size(); i++ )
             mSigList[i]->Update( pBuf, cbRead );
     }
-    while( cbRead == s_bytes );
+    while( cbRead == iSignature::SUGGESTED_BLOCK_SIZE );
 
     // finalize hash
     for( i = 0; i < mSigList.size(); i++ )

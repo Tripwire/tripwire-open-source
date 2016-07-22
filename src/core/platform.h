@@ -127,7 +127,7 @@
     #define OS					OS_ANDROID
 	#define IS_ANDROID          1
 	
-#elif defined(_LINUX)
+#elif defined(__linux__)
 	#define OS                  OS_LINUX
 	#define IS_LINUX 			1
 	

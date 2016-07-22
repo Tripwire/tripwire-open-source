@@ -444,7 +444,6 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         pModeInfo->mbCrossFileSystems = false;
     }
 
-	int blocks = 0;
     if (cf.Lookup(TSTRING(_T("HASH_DIRECT_IO")), str))
     {
 #if SUPPORTS_DIRECT_IO
@@ -452,7 +451,6 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         {
             pModeInfo->mbDirectIO = true;
             cArchiveSigGen::SetUseDirectIO(true);
-			blocks = 1;
         }
 #else
         throw eTWDirectIONotSupported();
@@ -460,15 +458,6 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         
     }
     
-    if (cf.Lookup(TSTRING(_T("HASH_BLOCKS")), str))
-    {
-        int requested_blocks = _ttoi(str.c_str());
-        if (requested_blocks > 0)
-            blocks = requested_blocks;
-    }
-
-    if( blocks > 0 )
-        cArchiveSigGen::SetBlocks(blocks);
   // 
   // turn all of the file names into full paths (they're relative to the exe dir)
   // 
