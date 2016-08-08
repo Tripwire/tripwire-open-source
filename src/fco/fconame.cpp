@@ -234,7 +234,12 @@ void cFCOName::ParseString( const TCHAR* pszin )
 
       TSTRING name(begin, at);      
 
-      if (name.length() > 0 || components == 0) 
+//NOTE: To be truly standards compliant we ought to turn >2 slashes into 1, not 2.
+#if SUPPORTS_DOUBLE_SLASH_PATH
+      if (name.length() > 0 || components < 2)
+#else 
+      if (name.length() > 0 || components == 0)
+#endif
       {
          cFCONameTblNode* pNode = 
             cFCOName_i::msNameTbl.CreateNode(name);

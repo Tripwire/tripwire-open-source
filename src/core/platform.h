@@ -307,9 +307,16 @@
 #define ICONV_CONST_SOURCE          (IS_MINIX)
 #define SUPPORTS_DIRECT_IO          (IS_LINUX) 
 // Linux is the only platform where direct i/o hashing has been tested & works properly so far.
+
 #define SUPPORTS_TERMIOS            (!IS_RTEMS)
 // RTEMS errors are probably just a buildsys issue & this will change or go away.
 
+#define SUPPORTS_DOUBLE_SLASH_PATH  (IS_CYGWIN)
+// POSIX standard says paths beginning with 2 slashes are "implementation defined"
+// (see http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap04.html#tag_04_11 )
+// The only platform OST works on (afaik) that actually defines a double-slash behavior is Cygwin
+// which uses this syntax for UNC paths.  So we'll allow leading double slashes there, but
+// continue removing them on all other platforms
 
 //=============================================================================
 // Miscellaneous
