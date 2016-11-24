@@ -10,6 +10,12 @@
 #include <exception>
 #include <string>
 
+#if __cplusplus >= 201103L
+# define NOEXCEPT_FALSE noexcept(false)
+#else
+# define NOEXCEPT_FALSE
+#endif
+
 /// base class for all exceptions thrown by Crypto++
 class CryptlibException : public std::exception
 {
@@ -198,7 +204,7 @@ class BufferedTransformation
 {
 public:
     ///
-    virtual ~BufferedTransformation() {}
+    virtual ~BufferedTransformation() NOEXCEPT_FALSE {}
 
     //@Man: INPUT
     //@{

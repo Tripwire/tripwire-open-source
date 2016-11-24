@@ -25,7 +25,7 @@ class BERSequenceDecoder : public BufferedTransformation
 {
 public:
     BERSequenceDecoder(BufferedTransformation &inQueue);
-    ~BERSequenceDecoder();
+    ~BERSequenceDecoder() NOEXCEPT_FALSE;
 
     void Put(byte) {}
     void Put(const byte *, unsigned int) {}

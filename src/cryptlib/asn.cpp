@@ -81,7 +81,7 @@ BERSequenceDecoder::BERSequenceDecoder(BufferedTransformation &inQueue)
     definiteLength = BERLengthDecode(inQueue, length);
 }
 
-BERSequenceDecoder::~BERSequenceDecoder()
+BERSequenceDecoder::~BERSequenceDecoder() NOEXCEPT_FALSE
 {
     if (!definiteLength)
     {   // remove end-of-content octects
