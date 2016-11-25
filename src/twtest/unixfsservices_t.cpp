@@ -119,23 +119,6 @@ void TestUnixFSServices()
         d.TraceDetail("Testing MakeTempFilename: \n");
         d.TraceDetail("%s \n", _template.c_str() );
 
-        //Test ChangeDir
-        d.TraceDetail("Testing ChangeDir: (should be /usr)\n");
-        TSTRING newdir(_T("/usr"));
-        pFSServices->ChangeDir(newdir);
-        pFSServices->GetCurrentDir(currpath);
-        d.TraceDetail("%s \n", currpath.c_str() );
-            //Did we get there??
-
-        //Test Mkdir:
-        d.TraceDetail("Testing Mkdir: \n");
-        TSTRING makedir(_T("/tmp/tw_mkdir"));
-        pFSServices->Mkdir(makedir); // throws on error
-
-        //Test Rmdir
-        d.TraceDetail("Testing Rmdir:\n");
-        TEST( pFSServices->Rmdir(makedir) );
-
         // Test GetMachineName
         d.TraceDetail("Testing GetMachineName:\n");
         TSTRING uname;

@@ -455,7 +455,14 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 #else
         throw eTWDirectIONotSupported();
 #endif
+    }
         
+    if(cf.Lookup(TSTRING(_T("RESOLVE_IDS_TO_NAMES")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            iFSServices::GetInstance()->SetResolveNames(true);
+        else
+            iFSServices::GetInstance()->SetResolveNames(false);
     }
     
   // 

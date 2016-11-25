@@ -138,7 +138,7 @@ template< typename T > static inline void util_ZeroMemory( T& obj );
 // PUBLIC METHOD CODE
 //=========================================================================
 
-cUnixFSServices::cUnixFSServices()
+cUnixFSServices::cUnixFSServices() : mResolveNames(true)
 {}
 
 cUnixFSServices::~cUnixFSServices()
@@ -257,12 +257,6 @@ void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSService
     strCurDir = pathname;
 }
 
-void cUnixFSServices::ChangeDir( const TSTRING& strDir ) const throw(eFSServices)
-{
-    if( chdir( strDir.c_str() ) < 0 )
-        throw eFSServicesGeneric( strDir, iFSServices::GetInstance()->GetErrString() );
-}
-
 
 TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSServices)
 {
@@ -296,27 +290,9 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
 
     // Linux creates the file!!  Doh!
     // So I'll always attempt to delete it -bam
-    FileDelete( strName );
+    FileDelete( strName.c_str() );
 
     return( strName );
-}
-
-void cUnixFSServices::Mkdir( const TSTRING& strName ) const throw ( eFSServices )
-{
-    if( 0 != _tmkdir( strName.c_str(), 0777 ) )
-    {
-        // if mkdir failed because the dir existed, that's OK
-        if( errno != EEXIST )
-            throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
-    }
-}   
-
-bool cUnixFSServices::Rmdir( const TSTRING& strName ) const
-{
-    if( 0 == rmdir( strName.c_str() ) )
-        return true;
-
-    return false;
 }
 
 void cUnixFSServices::GetTempDirName( TSTRING& strName ) const throw(eFSServices)
@@ -516,35 +492,27 @@ bool cUnixFSServices::IsCaseSensitive() const
 }
 
 
+void cUnixFSServices::SetResolveNames(bool resolve)
+{
+    mResolveNames=resolve;
+}
+    
 bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const 
 {
     bool fSuccess = true;
+    
     struct stat statbuf;
-
     int ret = lstat(tstrFilename.c_str(), &statbuf);    
     if(ret < 0)
     {
         fSuccess = false;
     }
-
-    if( fSuccess )
+    else
     {
-        struct passwd* pp = getpwuid( statbuf.st_uid );
-        //ASSERT( pp );
-        // We shouldn't assert this, because it might be the case that a file
-        // is associated with some old user that no longer exists... we should
-        // not fail this case.  Instead, the method will just return false per
-        // the test below.
-        if( pp == NULL )
-        {
-            fSuccess = false;
-        }
-        else
-            tstrUser = pp->pw_name;
+        fSuccess = GetUserName(statbuf.st_uid, tstrUser);
     }
 
     return( fSuccess );
-
 }
 
 
@@ -558,12 +526,48 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
     {
         fSuccess = false;
     }
-
-    if( fSuccess )
+    else
     {
-        struct group* pg = getgrgid( statbuf.st_gid );
-        //ASSERT( pg ); this assert stops everything in debug mode if we can't lookup a groupid
+        fSuccess = GetGroupName(statbuf.st_gid, tstrGroup);
+    }   
+
+    return( fSuccess );
+}
+
     
+bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
+{
+    bool fSuccess = true;
+    
+    if( mResolveNames )
+    {
+        struct passwd* pp = getpwuid( user_id );
+        if( pp == NULL )
+        {
+            fSuccess = false;
+            tstrUser = TSS_GetString(cCore, core::STR_UNKNOWN);
+        }
+        else
+            tstrUser = pp->pw_name;
+    }
+    else
+    {
+        std::stringstream sstr;
+        sstr << user_id;
+        tstrUser = sstr.str();
+    }
+    
+    return( fSuccess );
+}
+
+
+bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
+{
+    bool fSuccess = true;
+    
+    if( mResolveNames )
+    {
+        struct group* pg = getgrgid( group_id );
         if( pg == NULL )
         {
             fSuccess = false;
@@ -571,11 +575,19 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
         }
         else
             tstrGroup = pg->gr_name;
-    }   
-
+    }
+    else
+    {
+        std::stringstream sstr;
+        sstr << group_id;
+        tstrGroup = sstr.str();
+    }
+    
     return( fSuccess );
 }
-
+    
+    
+    
 #ifndef S_ISVTX // DOS/DJGPP doesn't have this
 # define S_ISVTX 0
 #endif
@@ -750,7 +762,7 @@ bool cUnixFSServices::GetExecutableFilename( TSTRING& strFullPath, const TSTRING
 //      a bool? I think it is ... mdb
 ///////////////////////////////////////////////////////////////////////////////
 bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC, const TSTRING& pathRelFromC ) const
-{    
+{
     // don't do anything with an empty path
     if( strRelPathC.empty() )
         return false;
@@ -842,39 +854,6 @@ const TCHAR* cUnixFSServices::GetStandardBackupExtension() const
     return _T(".bak");
 }
 
-
-    // TODO: remove this function
-    // Matt theorized that this is no longer used - dmb Aug 23 1999
-/*
-int cUnixFSServices::CreateLockedTemporaryFile( const TCHAR* szFilename, int perm ) const
-{    
-    // make sure perm is AT LEAST one of: O_RDWR, O_WRONLY
-    ASSERT( 0 != ( perm & ( O_RDWR | O_WRONLY ) ) );
-    // make sure perm is ONLY composed of: O_RDWR, O_WRONLY
-    ASSERT( 0 == ( perm & ~( O_RDWR | O_WRONLY ) ) );
-    // get rid of any unsupported bits caller may have supplied
-    perm &= ( O_RDWR | O_WRONLY );
-
-    // set flags
-    int oflags = perm | 
-                 O_CREAT | O_EXCL;    // only create a new file -- error if it exists already
-
-    // create file
-    int fh = _topen( szFilename, oflags, 0666 );    
-    if( fh >= 0 )
-    {
-        // file was created.  Now unlink it
-        if( 0 != unlink( szFilename ) )
-        {
-            // we weren't able to unlink file, so close handle and fail
-            close( fh );
-            fh = -1;
-        }
-    }
-        
-    return( fh );
-}
-*/
 
 void cUnixFSServices::Sleep( int nSeconds ) const
 {

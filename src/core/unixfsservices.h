@@ -54,38 +54,8 @@
 // DECLARATION OF CLASSES
 //=========================================================================
 
-//Set up in constructor. Stores pertinent information about the filesystem
-//serviced by each instantiation.
-
-struct UnixSysInfo
-{
-        uint32 maxcomplen;
-                //max name length of a file on filesystem
-        uint32 fsflags;
-                //bitmask of flags
-        TSTRING fsname;
-                //The filesystem basename
-        uint32 fsid;
-                //unique indentifier for the filesystem
-};
-
 class cUnixFSServices : public iFSServices 
 {
-  ///////////////////////////////////////////////////////////////
-  // ENUMS
-  ///////////////////////////////////////////////////////////////
-    
-  ////////////////////////////////////////
-  // file system types
-  ////////////////////////////////////////
-  enum FSType
-  {
-    FS_UFS = 0,
-    FS_NFS,
-    FS_HSFS,
-    FS_PCFS
-  };
-
   ///////////////////////////////////////////////////////////////
   // MEMBER FUNCTIONS
   ///////////////////////////////////////////////////////////////
@@ -127,10 +97,6 @@ class cUnixFSServices : public iFSServices
   //      strName must have the form ("baseXXXXXX"), where the X's are replaced with 
   //      characters to make it a unique file.  There must be at least 6 Xs.        
     
-  // TODO: remove this function
-  // Matt theorized that this is no longer used - dmb Aug 23 1999
-  //virtual int         CreateLockedTemporaryFile( const TCHAR* szFilename, int perm  ) const;
-
 
   ////////////////////////////////////////
   // minor filesystem functions
@@ -153,29 +119,29 @@ class cUnixFSServices : public iFSServices
   // puts the contents of the specified directory, except for . and .., into the supplied vector. 
   virtual void        GetCurrentDir( TSTRING& strCurDir ) const throw( eFSServices );
   // returns the current working directory
-  virtual void        ChangeDir( const TSTRING& strName ) const throw( eFSServices );
-  // sets the current working directory
-  virtual void    Mkdir( const TSTRING& strName ) const throw( eFSServices );
 
-  virtual bool        Rmdir( const TSTRING& strName ) const;
-
-
+    
   ////////////////////////////////////////
   // file specific functions
   ////////////////////////////////////////
   virtual bool        FileDelete( const TSTRING& name ) const;
-
     
   ////////////////////////////////////////
   // directory and file functions
   ////////////////////////////////////////
   virtual bool    Rename( const TSTRING& strOldName, const TSTRING& strNewName, bool fOverWrite = true ) const;
   // rename a file
+    
   virtual bool        GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const;
-
   virtual bool        GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const;
+  virtual bool        GetUserName( uid_t user_id, TSTRING& tstrUser ) const;
+  virtual bool        GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const;
 
-
+  //Set whether we try to resolve uid/gid to a name, since Linux static binaries can
+  //have trouble (read: segfaulting) with name resolution given the right nsswitch.conf setup.
+  //This defaults to true if not specified.
+  virtual void        SetResolveNames(bool resolve);
+    
   ////////////////////////////////////////
   // miscellaneous utility functions
   ////////////////////////////////////////
@@ -195,11 +161,9 @@ class cUnixFSServices : public iFSServices
   virtual TSTRING     GetErrString() const;
     
  private:
-  UnixSysInfo info;
-  //struct stores pertinent system info. to be used by member functions
 
   TSTRING mTempPath;
-
+  bool    mResolveNames;
 };
 
 #endif //__UNIXFSSERVICES_H
