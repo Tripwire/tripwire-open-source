@@ -44,7 +44,9 @@
 #include "core/wchar16.h"
 #endif
 
-bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase);
+#include "twcrypto/crypto.h"
+
+bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig::KeySize key_size);
 
 #endif
 

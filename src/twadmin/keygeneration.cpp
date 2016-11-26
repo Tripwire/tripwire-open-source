@@ -42,13 +42,6 @@
 #include "twadminstrings.h"
 #include "core/usernotify.h"
 
-
-#ifndef _DEBUG
-const cElGamalSig::KeySize TRIPWIRE_PUBLIC_KEYSIZE = cElGamalSig::KEY1024;
-#else
-const cElGamalSig::KeySize TRIPWIRE_PUBLIC_KEYSIZE = cElGamalSig::KEY1024;
-#endif
-
 struct tGK
 {
     bool    doneFlag;
@@ -76,7 +69,7 @@ struct tGK
     }
 };
 
-static void GeneratePublicPrivateKeys(void* pParams)
+static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize key_size)
 {
     tGK* pGK = (tGK*)pParams;
 
@@ -99,7 +92,7 @@ static void GeneratePublicPrivateKeys(void* pParams)
         
         try
         {
-            keyfile.GenerateKeys(TRIPWIRE_PUBLIC_KEYSIZE, pGK->passphrase, pGK->passphraseLen);
+            keyfile.GenerateKeys(key_size, pGK->passphrase, pGK->passphraseLen);
         }
         catch(eKeyFile&)
         {
@@ -136,7 +129,7 @@ static void GeneratePublicPrivateKeys(void* pParams)
     return;
 }
 
-bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase)
+bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig::KeySize key_size)
 {
 #ifndef WORDS_BIGENDIAN
     passphrase.swapbytes();
@@ -160,7 +153,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase)
     gk.keyPath = keyPath;
 
 #if IS_UNIX
-    GeneratePublicPrivateKeys(&gk);
+    GeneratePublicPrivateKeys(&gk, key_size);
 #endif
 
     if (gk.retValue != tGK::OK)

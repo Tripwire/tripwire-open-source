@@ -1625,6 +1625,7 @@ private:
     wc16_string mLocalPassphrase;
     bool        mGenerateSite;  // A Site key has been specified.
     bool        mGenerateLocal; // A Local key has been specified.
+    cElGamalSig::KeySize mKeySize;
 };
 
 cTWAModeGenerateKeys::cTWAModeGenerateKeys()
@@ -1633,6 +1634,7 @@ cTWAModeGenerateKeys::cTWAModeGenerateKeys()
     mSiteProvided = false;
     mGenerateSite = false;
     mGenerateLocal = false;
+    mKeySize = cElGamalSig::KEY1024;
 }
 
 cTWAModeGenerateKeys::~cTWAModeGenerateKeys()
@@ -1648,6 +1650,8 @@ void cTWAModeGenerateKeys::InitCmdLineParser(cCmdLineParser& parser)
     parser.AddArg(cTWAdminCmdLine::LOCAL_KEY_FILE,      TSTRING(_T("L")),   TSTRING(_T("local-keyfile")),       cCmdLineParser::PARAM_ONE);
     parser.AddArg(cTWAdminCmdLine::SITEPASSPHRASE,      TSTRING(_T("Q")),   TSTRING(_T("site-passphrase")),     cCmdLineParser::PARAM_ONE);
     parser.AddArg(cTWAdminCmdLine::LOCALPASSPHRASE,     TSTRING(_T("P")),   TSTRING(_T("local-passphrase")),    cCmdLineParser::PARAM_ONE);
+    parser.AddArg(cTWAdminCmdLine::KEY_SIZE,            TSTRING(_T("K")),   TSTRING(_T("key-size")),
+        cCmdLineParser::PARAM_ONE);
 }
 
 bool cTWAModeGenerateKeys::Init(const cConfigFile* cf, const cCmdLineParser& parser)
@@ -1678,6 +1682,14 @@ bool cTWAModeGenerateKeys::Init(const cConfigFile* cf, const cCmdLineParser& par
             break;
         case cTWAdminCmdLine::LOCAL_KEY_FILE:
             mGenerateLocal = true;
+            break;
+        case cTWAdminCmdLine::KEY_SIZE:
+            if(iter.ParamAt(0) == "2048")
+                mKeySize = cElGamalSig::KEY2048;
+            else if(iter.ParamAt(0) == "1024")
+                mKeySize = cElGamalSig::KEY1024;
+            else
+                throw eBadCmdLine(TSS_GetString(cTWAdmin, twadmin::STR_ERR2_INVALID_KEY_SIZE));
             break;
         }
     }
@@ -1810,7 +1822,7 @@ int cTWAModeGenerateKeys::Execute(cErrorQueue* pQueue)
         // backup current file if it exists
         cFileUtil::BackupFile(mSiteKeyFile);
 
-        if (GenerateKey(mSiteKeyFile.c_str(), mSitePassphrase) == false)
+        if (GenerateKey(mSiteKeyFile.c_str(), mSitePassphrase, mKeySize) == false)
             return 1;
     }
 
@@ -1856,7 +1868,7 @@ int cTWAModeGenerateKeys::Execute(cErrorQueue* pQueue)
         // backup current file if it exists
         cFileUtil::BackupFile(mLocalKeyFile);
 
-        if (GenerateKey(mLocalKeyFile.c_str(), mLocalPassphrase) == false)
+        if (GenerateKey(mLocalKeyFile.c_str(), mLocalPassphrase, mKeySize) == false)
             return 1;
     }
 
