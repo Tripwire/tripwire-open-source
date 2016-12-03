@@ -81,13 +81,17 @@ BERSequenceDecoder::BERSequenceDecoder(BufferedTransformation &inQueue)
     definiteLength = BERLengthDecode(inQueue, length);
 }
 
-BERSequenceDecoder::~BERSequenceDecoder() NOEXCEPT_FALSE
+BERSequenceDecoder::~BERSequenceDecoder()
 {
     if (!definiteLength)
     {   // remove end-of-content octects
         word16 i;
         if (!inQueue.GetShort(i) || (i!=0))
-            BERDecodeError();
+        {
+	    fputs("### Internal Error.\n### Invalid or corrupt key.\n### Exiting...\n\
+", stderr);
+	    exit(1); 
+        }
     }
 }
 
