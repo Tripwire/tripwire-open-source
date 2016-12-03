@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "asn.h"
 #include "misc.h"
+#include <stdlib.h>
 
 unsigned int DERLengthEncode(unsigned int length, byte *output)
 {
