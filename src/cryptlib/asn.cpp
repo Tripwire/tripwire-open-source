@@ -4,6 +4,7 @@
 #include "asn.h"
 #include "misc.h"
 #include <stdlib.h>
+#include <stdio.h>
 
 unsigned int DERLengthEncode(unsigned int length, byte *output)
 {
