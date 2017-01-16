@@ -7,10 +7,30 @@ for the sake of compatibility with existing db & report files.
 
 * Use posix_fadvise (or equivalent) to avoid filling system disk cache with files we've already
 read and aren't about to read again.  Also use O_NOATIME where available, to avoid updating
-file access times when we read a file.  Optional new config param "HASH_DIRECT_IO" to use 
+file access times when we read a file.  Add an optional new config param "HASH_DIRECT_IO" to use 
 direct i/o when hashing files.  This doesn't seem to be any faster than normal i/o, but 
 including it anyway due to user request.
 
+* Add a new config file option RESOLVE_IDS_TO_NAMES to control whether we try to
+resolve uid/gid values to user & group names.  Static binaries are known to segfault when
+doing this given certain nsswitch.conf setups (particularly LDAP/AD), so setting this
+to false bypasses name resolution and just displays the numeric uid/gid.
+
+* Add a new optional --key-size argument to twadmin --generate-keys mode, with available
+sizes of 1024 or 2048 bits.  Previously twadmin always created 1024-bit El Gamal keys,
+and this remains the default if --key-size is not specified, at least for the time being.
+
+* Fix a compilation issue with C++11 and -Werror=terminate.
+
+* Move build files to automake 1.15, and make a few build system fixes: "make dist" now
+works properly, cross-compiled binaries can now compile with OpenSSL if available, and
+specifying a build directory outside the source dir now works as expected.
+
+* Assorted platform tweaks:  Add DOS/FreeDOS + DJGPP as a new platform; support Cygwin
+//host/share/path syntax for UNC paths; passphrase & tempfile fixes for AROS.
+
+
+======================================
 
 What was new in earlier 2.4.3 versions:
 
