@@ -41,8 +41,8 @@ fi
 dnl ###################
 dnl Checks for programs
 dnl ###################
-AC_PROG_CC
-AC_PROG_CXX
+AC_PROG_CC([gcc clang suncc aCC xlC_r xlC cl.exe])
+AC_PROG_CXX([g++ clang++ sunCC aCC xlC_r xlC cl.exe])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
