@@ -50,13 +50,9 @@
 // UTIL 
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifdef _UNICODE
-    #define TSS_TCHAR_MIN   WCHAR_MIN
-    #define TSS_TCHAR_MAX   WCHAR_MAX
-#else
-    #define TSS_TCHAR_MIN   CHAR_MIN
-    #define TSS_TCHAR_MAX   CHAR_MAX
-#endif
+#define TSS_TCHAR_MIN   CHAR_MIN
+#define TSS_TCHAR_MAX   CHAR_MAX
+
 
 template< class CharT > bool IsPrintable( const std::basic_string< CharT >& str )
 {
@@ -288,12 +284,8 @@ public:
             //=============================================================
             TSTRING strMessWithMe  = _T("Mess with me...");
             for( size_t c = TSS_TCHAR_MIN; 
-                 c < TSS_TCHAR_MAX; 
-#ifdef _UNICODE 
-                 c += ( TSS_TCHAR_MAX / 150 ) )
-#else
+                 c < TSS_TCHAR_MAX;
                  c++ )
-#endif
             {
                 if( ( c != '\0' ) )
                 {
@@ -322,12 +314,8 @@ public:
             //=============================================================
             TSTRING strMessWithMe2  = _T("Mess with me...");
             for( size_t ch = TSS_TCHAR_MIN; 
-                 ch < TSS_TCHAR_MAX; 
-#ifdef _UNICODE 
-                 ch += ( TSS_TCHAR_MAX / 150 ) )
-#else
+                 ch < TSS_TCHAR_MAX;
                  ch++ )
-#endif
             {
                 if( ( ch != '\0' ) )
                 {

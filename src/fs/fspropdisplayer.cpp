@@ -270,7 +270,7 @@ void cFSPropDisplayer::InitForProp( const iFCO* const pFCO, const int propIdx)
             if( ! GetUsername( i64UID, tstrDummy ) )
             {
                 TSTRING tstrUsername;
-                if( iFSServices::GetInstance()->GetOwnerForFile( pFCO->GetName().AsString(), tstrUsername ) )
+                if( iFSServices::GetInstance()->GetUserName( i64UID, tstrUsername ) )
                     AddUsernameMapping ( i64UID, tstrUsername  ); 
                 else                    
                     AddUsernameMapping ( i64UID, _T("") ); // on failure, enter error value into mapping so we don't search for this value again.
@@ -286,7 +286,7 @@ void cFSPropDisplayer::InitForProp( const iFCO* const pFCO, const int propIdx)
             if( ! GetGroupname( i64GID, tstrDummy ) )
             {
                 TSTRING tstrGroupname;
-                if( iFSServices::GetInstance()->GetGroupForFile( pFCO->GetName().AsString(), tstrGroupname ) )
+                if( iFSServices::GetInstance()->GetGroupName( i64GID, tstrGroupname ) )
                     AddGroupnameMapping( i64GID, tstrGroupname ); 
                 else                    
                     AddGroupnameMapping( i64GID, _T("") );  // on failure, enter error value into mapping so we don't search for this value again.

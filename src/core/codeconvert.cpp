@@ -1,4 +1,4 @@
-//
+
 // The developer of the original code and/or files is Tripwire, Inc.
 // Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
@@ -57,20 +57,15 @@
 // DEFINES
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-/*
- * ICONV conversion seems to be broken under Linux, so until
- * this is fixed, we'll wing it ourselves - 20010310 PH
- */
-#if 0
 #define TSS_USE_ICONV_CCONV16       HAVE_ICONV_H
 #define TSS_USE_UCS2_CCONV16        (!(HAVE_ICONV_H) && WCHAR_REP_IS_UCS2 && WCHAR_IS_16_BITS)
 #define TSS_USE_UCS2_CCONV32        (!(HAVE_ICONV_H) && WCHAR_REP_IS_UCS2 && WCHAR_IS_32_BITS)
-#else
-#define TSS_USE_UCS2_CCONV16        (WCHAR_REP_IS_UCS2 && WCHAR_IS_16_BITS)
-#define TSS_USE_UCS2_CCONV32        (WCHAR_REP_IS_UCS2 && WCHAR_IS_32_BITS)
-#endif
 
-    #define ICONV_SOURCE_TYPE const char
+#if ICONV_CONST_SOURCE
+# define ICONV_SOURCE_TYPE const char
+#else
+# define ICONV_SOURCE_TYPE char
+#endif
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Static Data
@@ -245,7 +240,6 @@ namespace /*Unique*/
                     eConverterUnknownCodepage(
                         TSS_GetString( cCore, core::STR_UNKNOWN ) );
                 break;
-
             default:
                 throw 
                     eConverterFatal(
@@ -677,31 +671,44 @@ namespace /*Unique*/
         BufferT* pBuf       = pBuffer;
         const SourceT* pSrc = pSource;
 
-
-        //--Start Iterative Conversion
-
         while ( nSourceLeft > 0  )
         {
             // Convert as much of the sequence as we can.
+            SourceT* pIconvSrc   = (SourceT*)pSrc;
+            BufferT* pIconvDest  = (BufferT*)pBuf;
+            size_t   nbIconvSrc  = (size_t)nSourceLeft;
+            size_t   nbIconvDest = (size_t)nBufferLeft;
 
-            // NOTE: On solaris sparc, iconv will attempt to NULL terminate the output,
-            // so make sure that the buffer has space for a terminating NULL
-            size_t nConv =                          // NOTE:
+            size_t nConv = iconv( convForward,  (ICONV_SOURCE_TYPE**)&pIconvSrc, &nbIconvSrc, (char**)&pIconvDest, &nbIconvDest );
+
+            if( nConv == -1 )
+            {
+                // NOTE: On solaris sparc, iconv will attempt to NULL terminate the output,
+                // so make sure that the buffer has space for a terminating NULL
+                size_t nConv =                          // NOTE:
 #if SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST
-                tss_ConvertOneCharacter<BufferT, SourceT>( 
+                    tss_ConvertOneCharacter<BufferT, SourceT>( 
 #else
-                tss_ConvertOneCharacter( 
+                    tss_ConvertOneCharacter( 
 #endif
-                    convForward,
-                    convReverse,                    // On return, these addresses                    
-                    (const char**)&pSrc,             // are set for one past the last
-                    &nSourceLeft,                   // "item" converted successfully
-                    (char**)&pBuf, 
-                    &nBufferLeft
+                        convForward,
+                        convReverse,                    // On return, these addresses                    
+                        (const char**)&pSrc,             // are set for one past the last
+                        &nSourceLeft,                   // "item" converted successfully
+                        (char**)&pBuf, 
+                        &nBufferLeft
 #if ( ! SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST )
-                    , BufferT(), SourceT()
+                        , BufferT(), SourceT()
 #endif
-                    );
+                        );
+            }
+            else 
+            {
+                pSrc = pIconvSrc;
+                pBuf = pIconvDest;
+                nSourceLeft = nbIconvSrc;
+                nBufferLeft = nbIconvDest;
+            }
 
             if ( nConv == (size_t)-1 )              // Indidates Conversion Error!
             {
@@ -1131,7 +1138,7 @@ const char* cIconvUtil::GetCodePageID()
     const char* pCurCodePage;
 
     if( ! GetCodePageID( &pCurCodePage ) )
-        throw eConverterUnknownCodepage();
+      return NULL;
 
     return pCurCodePage;
 }
@@ -1139,9 +1146,11 @@ const char* cIconvUtil::GetCodePageID()
 /* static */
 const char* cIconvUtil::GetIconvDbIdentifier()
 {
-        ASSERT( false );
-        throw eConverterUnknownCodepage();
-        return NULL;
+#ifdef WORDS_BIGENDIAN
+    return "UTF-16BE";
+#else
+    return "UTF-16LE";
+#endif
 }
 
 /* static */
@@ -1177,6 +1186,9 @@ void cIconvUtil::CloseHandle( iconv_t ic )
 /* static */
 bool cIconvUtil::TestConverter( const char* pTo, const char* pFrom )
 {
+    if (!pTo || !pFrom)
+        return false;
+
     cDebug d( "cIconvUtil::TestConverter()" );
 
     iconv_t i = iconv_open( pTo, pFrom );

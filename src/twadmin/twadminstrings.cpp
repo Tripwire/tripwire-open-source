@@ -39,9 +39,16 @@
 #include "twadmin.h"
 #include "twadminstrings.h"
 
+#if IS_AROS
+# define VERSION_PREFIX "$VER: "
+#else
+# define VERSION_PREFIX "@(#)"
+#endif
+
 TSS_BeginStringtable( cTWAdmin )
     
     TSS_StringEntry( twadmin::STR_TWADMIN_VERSION,              _T("twadmin: Tripwire administrative tool.\n") ),
+    TSS_StringEntry( twadmin::STR_EMBEDDED_VERSION,            _T(VERSION_PREFIX "twadmin " PACKAGE_VERSION)),
 
     TSS_StringEntry( twadmin::STR_TWADMIN_USAGE_SUMMARY,            
                 _T("Usage:\n")
@@ -175,6 +182,7 @@ TSS_BeginStringtable( cTWAdmin )
                 _T("  -S sitekey           --site-keyfile sitekey\n")
                 _T("  -P passphrase        --local-passphrase passphrase\n")
                 _T("  -Q passphrase        --site-passphrase passphrase\n")
+                _T("  -K size              --key-size size [1024 or 2048]\n")                    
                 _T("\n")
                 _T("The -v and -s options are mutually exclusive.\n")
                 _T("Exactly one of -S or -L must be specified.\n")
@@ -293,6 +301,8 @@ TSS_BeginStringtable( cTWAdmin )
     TSS_StringEntry( twadmin::STR_ERR2_CREATE_CFG_SITEKEY_MISMATCH1, _T("The specified keyfile \"") ),
     TSS_StringEntry( twadmin::STR_ERR2_CREATE_CFG_SITEKEY_MISMATCH2, _T("\" does not match the keyfile specified in the new config file text \"") ),
     TSS_StringEntry( twadmin::STR_ERR2_CREATE_CFG_SITEKEY_MISMATCH3, _T("\".") ),
+
+    TSS_StringEntry( twadmin::STR_ERR2_INVALID_KEY_SIZE,             _T("Invalid key size specified. Valid sizes are 1024 & 2048 bits.") ),
 
 TSS_EndStringtable( cTWAdmin )
 

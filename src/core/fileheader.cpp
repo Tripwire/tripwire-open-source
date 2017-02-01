@@ -61,30 +61,6 @@ void cFileHeaderID::operator=( const TCHAR* pszId )
     //    mIDLen = 0;
     //    return;
     //}
-
-#ifdef _UNICODE
-    
-    size_t N = (::wcslen( pszId ) * MB_CUR_MAX);    // Try the easy way!
-    if ( !(N < cFileHeaderID::MAXBYTES) )
-    {
-        N = ::wcstombs( 0, pszId, (size_t)-1 );     // Try again!
-        if ( N == (size_t)-1 )
-        {
-            throw 
-                eCharacterEncoding( 
-                    TSS_GetString( cCore, core::STR_ERR_BADCHAR ) );
-        }
-        else if ( !(N < cFileHeaderID::MAXBYTES) )
-        {
-            throw
-                eCharacter(
-                    TSS_GetString( cCore, core::STR_ERR_OVERFLOW ) );
-        }
-    }
-
-    mIDLen = (int16)(::wcstombs( mID, pszId, N ));  // Do it
-
-#else
     
     size_t N = ::strlen( pszId );
     if ( !(N < cFileHeaderID::MAXBYTES) )
@@ -92,8 +68,6 @@ void cFileHeaderID::operator=( const TCHAR* pszId )
 
     mIDLen = static_cast<int16>( N ); // know len is less than MAXBYTES
     ::memcpy( mID, pszId, N * sizeof(char) );
-
-#endif
 }
 
 void cFileHeaderID::operator=( const cFileHeaderID& rhs )

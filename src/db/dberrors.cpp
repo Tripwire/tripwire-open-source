@@ -36,8 +36,7 @@
 //
 
 #include "stddb.h"
-#include "core/errortable.h"
-
+#include "dberrors.h"
 #include "hierdatabase.h"
 
 TSS_BEGIN_ERROR_REGISTRATION( db )

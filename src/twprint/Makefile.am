@@ -1,17 +1,22 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_INSTALL_PROGRAM_FLAGS = -m 755
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I$(srcdir)/..
 LIBS = -ltripwire -lcryptlib @LIBS@
 LDFLAGS = @LDFLAGS@ -L../../lib
 LN_S = @LN@
 
 sbin_PROGRAMS = twprint
+twprintdir=.
 twprint_SOURCES = \
   stdtwprint.cpp twprint.cpp twprintcmdline.cpp twprinterrors.cpp \
   twprintmain.cpp twprintstrings.cpp
 
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+twprint_HEADERS = \
+  resource.h stdtwprint.h twprint.h twprintcmdline.h \
+  twprinterrors.h twprintstrings.h
+
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../bin/twprint
 
 all: $(sbin_PROGRAMS)

@@ -9,7 +9,8 @@
  #include <string.h>
 #endif
 
-#ifdef __MINT__ // has memory.h, but memset defined in string.h anyway.
+#if defined(__MINT__) || defined(__DJGPP__)
+ // OS has memory.h, but memset defined in string.h anyway.
  #include <string.h>
 #endif
 

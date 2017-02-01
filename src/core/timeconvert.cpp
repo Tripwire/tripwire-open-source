@@ -54,7 +54,7 @@
 
 #define TIME_MAX    2147483647L // largest signed 32 bit number
 
-#ifdef __AROS__
+#if IS_AROS
  #define tzset()
 #endif
 

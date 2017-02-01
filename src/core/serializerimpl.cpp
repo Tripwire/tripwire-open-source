@@ -41,24 +41,6 @@
 cSerializerImpl::SerMap         cSerializerImpl::mSerCreateMap ;
 cSerializerImpl::SerRefCountMap cSerializerImpl::mSerRefCountCreateMap ;
 
-
-// RAD:09/01/99 -- No longer needed!
-///////////////////////////////////////////////////////////////////////////////
-// util_TstrToStr -- converts the passed in tstring into a narrow string. maxSize
-//      indicates the size of the narrow buffer
-///////////////////////////////////////////////////////////////////////////////
-//  static inline void util_TstrToStr(char* pStr, const TCHAR* pTstr, int maxSize)
-//  {
-//  #ifdef _UNICODE
-//      ASSERT( maxSize >= wcstombs( 0, pTstr
-//      wcstombs(pStr, pTstr, maxSize);
-//  #else
-//      strncpy( pStr, pTstr, maxSize );
-//  #endif
-//  }
-//  
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // util_GetCrc -- calculates the crc for the narrow version of the type's AsString()
 ///////////////////////////////////////////////////////////////////////////////
@@ -74,29 +56,11 @@ static uint32 util_GetCRC( const cType& type )
     //           - Increased performance by removing superflous conversion
     //             when type.AsString() is already narrow.
     //
-#ifdef _UNICODE
-
-    char sz[256];
-    const uint8* pszType = (const uint8*)(&sz[0]);
-    const wchar_t* wsz = type.AsString();
-
-    ASSERT( countof(sz) >= ::wcstombs( 0, wsz, size_t(-1) ) );
-
-    int nBytes = (int)::wcstombs( (char*)pszType, wsz, countof(sz) );
-    if ( nBytes == -1 )     // Bad character conversion!
-    {
-        throw eCharacterEncoding( 
-            TSS_GetString( cCore, core::STR_ERR_BADCHAR ) );
-    }
-
-#else//!_UNICODE
 
     // We only need to count the characters
     // RAD: Yeesh! This is already done for us in cType::mString!!!
     const uint8* pszType = (const uint8*)( type.AsString() );
     int nBytes = ::strlen( (const char*)pszType );
-
-#endif//_UNICODE
 
     ASSERT( sizeof(uint8) == sizeof(byte) );
     ASSERT( pszType && *pszType );

@@ -31,9 +31,9 @@
 //
 // blockrecordarray_t.cpp
 
-#include "stddb.h"
+#include "db/stddb.h"
 #include "db/blockrecordarray.h"
-#include "test/test.h"
+#include "test.h"
 #include "core/debug.h"
 #include "core/error.h"
 

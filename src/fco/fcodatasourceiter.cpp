@@ -40,6 +40,10 @@
 #include "stdfco.h"
 #include "fcodatasourceiter.h"
 
+#if HAVE_STRINGS_H // for strcasecmp on RTEMS
+# include <strings.h>
+#endif
+
 //=========================================================================
 // METHOD CODE
 //=========================================================================

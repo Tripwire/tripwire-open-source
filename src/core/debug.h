@@ -113,22 +113,15 @@ public:
     void    TraceDebug      (const char *format, ...);
     void    TraceDetail     (const char *format, ...);
     void    TraceNever      (const char *format, ...);
-    void    TraceAlways     (const wchar_t *format, ...);
-    void    TraceError      (const wchar_t *format, ...);
-    void    TraceWarning    (const wchar_t *format, ...);
-    void    TraceDebug      (const wchar_t *format, ...);
-    void    TraceDetail     (const wchar_t *format, ...);
-    void    TraceNever      (const wchar_t *format, ...);
+
 
     // these are of use if you are inside a function with a "..." as an argument
     // and you want to trace those args
     void    TraceVaArgs     (int iDebugLevel, const char *format,   va_list &args);
-    void    TraceVaArgs     (int iDebugLevel, const wchar_t *format, va_list &args);
 
     // ...but you can still choose to use this interface...
 
     void Trace(int levelNum, const char* format, ...);
-    void Trace(int levelNum, const wchar_t* format, ...);
         // Outputs based on levelnum.  If levelnum <= global debug, print.
 
 public:
@@ -146,7 +139,6 @@ public:
         // level will be output.
     
     static void DebugOut    ( const char* lpOutputString, ... );
-    static void DebugOut    ( const wchar_t* lpOutputString, ... );
         // Works just like TRACE
         // note: there is an internal buffer size of 1024; traces larger
         // than that will have unpredictable and probably bad results
@@ -161,7 +153,6 @@ private:
 
     // helper functions
     void DoTrace(const char *format, va_list &args);
-    void DoTrace(const wchar_t *format, va_list &args);
 #endif
 };
 
@@ -199,16 +190,8 @@ inline void cDebug::TraceWarning    (const char *, ...) {}
 inline void cDebug::TraceDebug      (const char *, ...) {}
 inline void cDebug::TraceDetail     (const char *, ...) {}
 inline void cDebug::TraceNever      (const char *, ...) {}
-inline void cDebug::TraceAlways     (const wchar_t *, ...) {}
-inline void cDebug::TraceError      (const wchar_t *, ...) {}
-inline void cDebug::TraceWarning    (const wchar_t *, ...) {}
-inline void cDebug::TraceDebug      (const wchar_t *, ...) {}
-inline void cDebug::TraceDetail     (const wchar_t *, ...) {}
-inline void cDebug::TraceNever      (const wchar_t *, ...) {}
 inline void cDebug::TraceVaArgs     (int, const char *, va_list &) {}
-inline void cDebug::TraceVaArgs     (int, const wchar_t *, va_list &) {}
 inline void cDebug::Trace           (int, const char*, ...) {}
-inline void cDebug::Trace           (int, const wchar_t*, ...) {}
 inline bool cDebug::AddOutTarget    (OutTarget) { return false; }
 inline bool cDebug::RemoveOutTarget (OutTarget) { return false; }
 inline bool cDebug::HasOutTarget    (OutTarget) { return false; }
@@ -216,7 +199,6 @@ inline bool cDebug::SetOutputFile   (const char*) { return false; }
 inline void cDebug::SetDebugLevel   (int) {}
 inline int  cDebug::GetDebugLevel   (void) { return 0; }
 inline void cDebug::DebugOut        ( const char*, ... ) {}
-inline void cDebug::DebugOut        ( const wchar_t*, ... ) {}
 
 #endif // DEBUG
 

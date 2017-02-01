@@ -51,15 +51,6 @@
 
 #include "corestrings.h"    // for: STR_ERR2_ARCH_CRYPTO_ERR
 
-
-
-#if FSEEK_TAKES_INT32
-#define FSEEK(x, y, z) fseek((x), (int32)(y), (z))
-#else
-#define FSEEK(x, y, z) fseek((x), (y), (z)) 
-#endif 
-
-
 //=============================================================================
 // Utility Functions
 //=============================================================================
@@ -678,8 +669,10 @@ void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
         uint32 flags = cFile::OPEN_READ;
         flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
-        flags |= ( ( openFlags & FA_NONBLOCKING ) ?   cFile::OPEN_NONBLOCKING :0 ); 
+        flags |= ( ( openFlags & FA_SCANNING      ) ? cFile::OPEN_SCANNING : 0 );
+        flags |= ( ( openFlags & FA_DIRECT        ) ? cFile::OPEN_DIRECT   : 0 );
 
+        mOpenFlags = openFlags; 
         mCurrentFilename = filename;
         mCurrentFile.Open( filename, flags );
         isWritable = false;
@@ -704,8 +697,10 @@ void cFileArchive::OpenReadWrite(const TCHAR* filename, uint32 openFlags)
         uint32 flags = cFile::OPEN_WRITE;
         flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
         flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
-        flags |= ( ( openFlags & FA_NONBLOCKING ) ?   cFile::OPEN_NONBLOCKING :0 ); 
+        flags |= ( ( openFlags & FA_SCANNING      ) ? cFile::OPEN_SCANNING : 0 );
+        flags |= ( ( openFlags & FA_DIRECT        ) ? cFile::OPEN_DIRECT   : 0 );
 
+        mOpenFlags = openFlags;
         mCurrentFilename = filename;
         mCurrentFile.Open( filename, flags );
         isWritable = true;
@@ -753,9 +748,10 @@ void cFileArchive::Close()
 /////////////////////////////////////////////////////////////////////////
 int cFileArchive::Read(void* pDest, int count)
 {
+
     try 
     {
-        if ( mReadHead + count > mFileSize )
+        if ( mReadHead + count > mFileSize && !(mOpenFlags & FA_DIRECT))
             count = static_cast<int>( mFileSize - mReadHead );
 
         if ( pDest != NULL )

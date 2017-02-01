@@ -78,11 +78,7 @@ public:
     DECLARE_TYPEDSERIALIZABLE()
 };
 
-#ifdef _UNICODE
-typedef cSerializableWString    cSerializableTSTRING;
-#else
 typedef cSerializableNString    cSerializableTSTRING;
-#endif
 
 #endif 
 

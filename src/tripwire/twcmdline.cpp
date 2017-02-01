@@ -72,6 +72,7 @@
 #include "integritycheck.h"
 #include "updatedb.h"
 #include "policyupdate.h"
+#include "core/platform.h"
 
 #ifdef TW_PROFILE
 #include "tasktimer.h"
@@ -292,37 +293,40 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         pModeInfo->mfLooseDirs = true; 
     }    
 
-  if (cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), str)) {
+  TSTRING temp_directory;
+  cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
 
-    if (str.length() == 0)
-      str = "/tmp/";
+    if (temp_directory.length() == 0) {
+#if IS_AROS
+      temp_directory = "T:";
+#else
+      temp_directory = "/tmp/";
+#endif
+    }
 
     // make sure we have a trailing slash -- thanks Jarno...
     //
-    if (str[_tcslen(str.c_str())-1] != '/') {
-      str += '/';
+    if (temp_directory[_tcslen(str.c_str())-1] != '/') {
+      temp_directory += '/';
     }
-
     // make sure it exists...
     //
 
-
-#ifdef __AROS__
-    str = cArosPath::AsNative(str);
+#if USES_DEVICE_PATH
+    temp_directory = cDevicePath::AsNative(temp_directory);
 #endif
 
-    if (access(str.c_str(), F_OK) != 0) {
+    if (access(temp_directory.c_str(), F_OK) != 0) {
       TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
       TSTRING tmpStr = _T("Directory: ");
-      tmpStr += (str + _T("\n"));
+      tmpStr += (temp_directory + _T("\n"));
       tmpStr += errStr;
       throw eTWInvalidTempDirectory(tmpStr);
     }
     else {
-      iFSServices::GetInstance()->SetTempDirName(str);
+      iFSServices::GetInstance()->SetTempDirName(temp_directory);
     }
 
-  }
 
   if (cf.Lookup(TSTRING(_T("GLOBALEMAIL")), str)) {
 
@@ -364,8 +368,6 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     {
       if (_tcsicmp(str.c_str(), _T("SENDMAIL")) == 0)
         pModeInfo->mMailMethod = cMailMessage::MAIL_BY_PIPE;
-      else if (_tcsicmp(str.c_str(), _T("MAPI")) == 0)
-        pModeInfo->mMailMethod = cMailMessage::MAIL_BY_MAPI; // NT support only
       else if( _tcsicmp( str.c_str(), _T("SMTP") ) == 0 )
         pModeInfo->mMailMethod = cMailMessage::MAIL_BY_SMTP;
       else                
@@ -376,6 +378,11 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
       pModeInfo->mMailMethod = cMailMessage::NO_METHOD;
     }
 
+#if !SUPPORTS_NETWORKING
+    if (pModeInfo->mMailMethod == cMailMessage::MAIL_BY_SMTP)
+        throw eMailSMTPNotSupported();
+#endif
+    
   // Get the SMTP server
   if(cf.Lookup(TSTRING(_T("SMTPHOST")), str))
     pModeInfo->mSmtpHost = str;
@@ -416,10 +423,14 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
   // SYSLOG reporting
   if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
     {
+#if SUPPORTS_SYSLOG
       if (_tcsicmp(str.c_str(), _T("true")) == 0)
         pModeInfo->mbLogToSyslog = true;
       else
         pModeInfo->mbLogToSyslog = false;
+#else
+        throw eTWSyslogNotSupported();
+#endif
     }
   else
     pModeInfo->mbLogToSyslog = false;
@@ -433,6 +444,27 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         pModeInfo->mbCrossFileSystems = false;
     }
 
+    if (cf.Lookup(TSTRING(_T("HASH_DIRECT_IO")), str))
+    {
+#if SUPPORTS_DIRECT_IO
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+        {
+            pModeInfo->mbDirectIO = true;
+            cArchiveSigGen::SetUseDirectIO(true);
+        }
+#else
+        throw eTWDirectIONotSupported();
+#endif
+    }
+        
+    if(cf.Lookup(TSTRING(_T("RESOLVE_IDS_TO_NAMES")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            iFSServices::GetInstance()->SetResolveNames(true);
+        else
+            iFSServices::GetInstance()->SetResolveNames(false);
+    }
+    
   // 
   // turn all of the file names into full paths (they're relative to the exe dir)
   // 
@@ -621,7 +653,7 @@ bool cTWModeDbInit::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
@@ -663,7 +695,8 @@ int cTWModeDbInit::Execute(cErrorQueue* pQueue)
         
         uint32 gdbFlags = 0;
         gdbFlags |= ( mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0 );
-
+        gdbFlags |= ( mpData->mbDirectIO ? cGenerateDb::FLAG_DIRECT_IO : 0 );
+       
         // loop through the genres
         cGenreSpecListVector::iterator genreIter;
         for (genreIter = genreSpecList.begin(); genreIter != genreSpecList.end(); ++genreIter)
@@ -776,24 +809,14 @@ public:
    TSTRING     mSeverityName;       // gets mapped to number, then treated like mSeverityLevel
    TSTRING     mRuleName;           // only the named rule will be checked
    TSTRING     mGenreName;          // if not empty, specifies the genre to check
-   bool     mbAnal;              // are we in anal mode? (only valid with mbUpdate == true)
-
-#ifdef GMMS
-   bool     mbGmms;              // Send violation reports via gmms?
-   TSTRING     mGmmsProg;           // full path to gmms executable
-   TSTRING     mGmmsOptions;        // additional options for gmms command line
-   int         mGmmsVerbosity;         // level 1 or 2 verbosity?
-#endif
+   bool     mbSecureMode;              // are we in extra-pedantic mode? (only valid with mbUpdate == true)
 
     //TSTRING     mCmdLine;               // entire command line
    std::vector<TSTRING> mFilesToCheck;
 
    // ctor can set up some default values
    cTWModeIC_i() : cTWModeCommon(), mbUpdate(false),  mbPrintToStdout(true),     mbEmail(false), mbEncryptReport(false), 
-               mSeverityLevel(-1), mbTrimBySeverity(false), mbAnal(false)
-#ifdef GMMS
-               , mbGmms(false),     mGmmsVerbosity(2)
-#endif
+               mSeverityLevel(-1), mbTrimBySeverity(false), mbSecureMode(false)
    {}
 };
 
@@ -835,14 +858,6 @@ void cTWModeIC::InitCmdLineParser(cCmdLineParser& cmdLine)
    // multiple levels of reporting
    cmdLine.AddArg(cTWCmdLine::REPORTLEVEL,      TSTRING(_T("t")), TSTRING(_T("email-report-level")),  cCmdLineParser::PARAM_ONE);
 
-#ifdef GMMS
-   // gmms command line options
-   cmdLine.AddArg(cTWCmdLine::USE_GMMS,      TSTRING(_T("g")), TSTRING(_T("gmms")),       cCmdLineParser::PARAM_NONE);
-   cmdLine.AddArg(cTWCmdLine::GMMS_VERBOSITY,   TSTRING(_T("b")), TSTRING(_T("gmms-verbosity")),   cCmdLineParser::PARAM_ONE);
-#endif
-    
-
-
    // mutual exclusion...
    // you can't specify any of these 3 things together...
    cmdLine.AddMutEx(cTWCmdLine::SEVERITY_LEVEL, cTWCmdLine::RULE_NAME);
@@ -862,40 +877,12 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    // We will use this to access the parsed cmdLine.
    cCmdLineIter iter(cmdLine);
 
-#ifdef GMMS
-
-   // Get path to gmms executable from config file
-   TSTRING str;
-   if(cf.Lookup(TSTRING(_T("GMMS")), str))
-   {
-      // Path was specified in the configuration file
-      mpData->mGmmsProg = str;
-   }
-   else
-   {
-      // Path was not specified in the configuration file, try environment variable
-      const TCHAR *gmmsDeploy = _tgetenv(_T("GEOPLEX_DEPLOY"));
-      if (gmmsDeploy)
-         mpData->mGmmsProg = TSTRING(gmmsDeploy) + _T("/bin/gmms"); // Assign by env.var.
-      else
-         mpData->mGmmsProg = _T("/home/geoplex/bin/gmms"); // No env.var., Take a wild guess.
-   }
-
-   // Get any additional command line options for running gmms from config file
-   if(cf.Lookup(TSTRING(_T("GMMSOPTIONS")), str))
-      mpData->mGmmsOptions = str;
-
-   bool bGmmsSpecified=false, bGmmsVerbositySpecified=false;
-
-#endif
-
    // First, fill out everything with the config file info...
    FillOutConfigInfo(mpData, cf);
 
    // Now, parse the command line...
    // this takes care of the common stuff...
    FillOutCmdLineInfo(mpData, cmdLine);
-
 
    // now do the stuff specific to this mode..
 
@@ -984,36 +971,7 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
                   mpData->mFilesToCheck.push_back(iter.ParamAt(i));
                }
             }
-#ifdef GMMS
-         case cTWCmdLine::USE_GMMS:
-            mpData->mbGmms = true;
-            bGmmsSpecified = true;
-            break;
-         case cTWCmdLine::GMMS_VERBOSITY:
-            {
-                const TCHAR* psz = iter.ParamAt(0).c_str();
-                if ( psz != 0 )
-                    while ( _istdigit( *psz ) ) ++psz;
 
-                /// NOTE:RAD -- Come on man! There isn't even a pStr!!!
-                //  if ( !cStringUtil::StringIsInteger( pStr ) ) 
-                if ( *psz != 0x00 )
-                {
-               TCERR << TSS_GetString( cTripwire, tripwire::STR_ERR_BAD_GMMS_VERBOSITY ) << std::endl;
-               return false;
-            }
-                else
-                {
-                mpData->mGmmsVerbosity = _ttoi(iter.ParamAt(0).c_str());
-                if (mpData->mGmmsVerbosity < 1 || mpData->mGmmsVerbosity > 2) {
-                   TCERR << TSS_GetString( cTripwire, tripwire::STR_ERR_BAD_GMMS_VERBOSITY ) << std::endl;
-                   return false;
-                }
-                bGmmsVerbositySpecified = true;
-                }
-            break;
-            }
-#endif
          default:
             // should I do anything, or just ignore this?
             ;
@@ -1042,14 +1000,6 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    TEST_INIT_REQUIREMENT((! mpData->mReportFile.empty()),               cTW, tw::STR_ERR_MISSING_REPORT);
    TEST_INIT_REQUIREMENT((! (mpData->mEditor.empty() && mpData->mbUpdate)),cTW, tw::STR_ERR_MISSING_EDITOR);
 
-#ifdef GMMS
-   if (bGmmsSpecified==false && bGmmsVerbositySpecified==true)
-   {
-      TCERR << TSS_GetString( cTripwire, tripwire::STR_ERR_GMMS_VERBOSITY_ONLY ) << std::endl;
-      return false;
-   }
-#endif
-
    ///////////////////////////////////////////
    // do some email-related verifications
    ///////////////////////////////////////////
@@ -1065,10 +1015,6 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
         // error if method is SENDMAIL and no MAILPROGRAM
         TEST_INIT_REQUIREMENT( ( cMailMessage::MAIL_BY_PIPE != mpData->mMailMethod || !mpData->mMailProgram.empty()),
                                cTripwire, tripwire::STR_ERR_MISSING_MAILPROGRAM );
-
-#if !SUPPORTS_MAPI
-       TEST_INIT_REQUIREMENT( ( cMailMessage::MAIL_BY_MAPI != mpData->mMailMethod ), cTripwire, tripwire::STR_ERR_MAPI_NOT_SUPPORTED );
-#endif
    }
 
    // make sure that the config file and site key file are in sync...
@@ -1080,7 +1026,7 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
@@ -1223,7 +1169,8 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                     uint32 icFlags = 0;
                     icFlags |= ( mpData->mfLooseDirs ?          cIntegrityCheck::FLAG_LOOSE_DIR : 0 );
                     icFlags |= ( mpData->mbResetAccessTime ?    cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0 );
-
+                    icFlags |= ( mpData->mbDirectIO ?           cIntegrityCheck::FLAG_DIRECT_IO : 0 );
+                
                ic.ExecuteOnObjectList( fcoNames, icFlags );
                     
                // put all info into report
@@ -1354,7 +1301,8 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                     uint32 icFlags = 0;
                     icFlags |= ( mpData->mfLooseDirs ?          cIntegrityCheck::FLAG_LOOSE_DIR : 0 );
                     icFlags |= ( mpData->mbResetAccessTime ?    cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0 );
-
+                    icFlags |= ( mpData->mbDirectIO ?           cIntegrityCheck::FLAG_DIRECT_IO : 0 );
+                
                ic.Execute( icFlags );
                
                // put all display info into report
@@ -1390,22 +1338,6 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                                            );
 
         cFCOReportUtil::FinalizeReport( report );
-
-#ifdef GMMS
-      // gmms reporting?
-      if (mpData->mbGmms)
-      {
-         try
-         {
-            cTWCmdLineUtil::GmmsReport(reportHeader, report, mpData->mGmmsProg, mpData->mGmmsOptions, mpData->mGmmsVerbosity);
-         }
-         catch(eGmmsError& e)
-         {
-            cTWUtil::PrintErrorMsg(e); 
-            // Do not return. Gmms errors are not fatal.
-         }
-      }
-#endif
 
       // email the report if that is desired...
       if(mpData->mbEmail)
@@ -1531,7 +1463,7 @@ class cTWModeDbUpdate_i : public cTWModeCommon
 {
 public:
    bool  mbInteractive; // don't do interactive update; just integrate the report file
-   bool  mbAnal;        // are we in anal mode?
+   bool  mbSecureMode;        // are we in extra-pedantic mode?
    //std::string  mSitePassphrase;  // pass phrase for site key
     //bool    mSiteProvided;
 
@@ -1544,7 +1476,7 @@ public:
    cFCOReportHeader* mpReportHeader;
 
    // ctor can set up some default values
-   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbAnal(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
+   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbSecureMode(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1572,7 +1504,7 @@ void cTWModeDbUpdate::InitCmdLineParser(cCmdLineParser& cmdLine)
 
    cmdLine.AddArg(cTWCmdLine::MODE_UPDATE_DB,   TSTRING(_T("")),  TSTRING(_T("update")),        cCmdLineParser::PARAM_NONE);
    cmdLine.AddArg(cTWCmdLine::ACCEPT_ALL,    TSTRING(_T("a")), TSTRING(_T("accept-all")),    cCmdLineParser::PARAM_NONE);
-   cmdLine.AddArg(cTWCmdLine::ANAL_LEVEL,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),      cCmdLineParser::PARAM_ONE);
+   cmdLine.AddArg(cTWCmdLine::SECURE_MODE,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),      cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::EDITOR,        TSTRING(_T("V")), TSTRING(_T("visual")),        cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::PARAMS,        TSTRING(_T("")),  TSTRING(_T("")),           cCmdLineParser::PARAM_NONE);
 
@@ -1601,15 +1533,15 @@ bool cTWModeDbUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
          case cTWCmdLine::ACCEPT_ALL:
             mpData->mbInteractive = false;
             break;
-         case cTWCmdLine::ANAL_LEVEL:
+         case cTWCmdLine::SECURE_MODE:
             ASSERT(iter.NumParams() > 0); 
             if(iter.ParamAt(0).compare(_T("high")) == 0)
-               mpData->mbAnal = true;
+               mpData->mbSecureMode = true;
             else if(iter.ParamAt(0).compare(_T("low")) == 0)
-               mpData->mbAnal = false;
+               mpData->mbSecureMode = false;
             else
             {
-               // invalid parameter to anal switch...
+               // invalid parameter to secure mode switch...
                // TODO -- print this to stderr; how do I display (1) the switch name 
                // and (2) the possible values?
                // TODO -- move {high, low} somewhere else
@@ -1658,14 +1590,14 @@ bool cTWModeDbUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
 void cTWModeDbUpdate::Init(const cTWModeIC_i* pICData, cFCODatabaseFile* dbFile, cFCOReportHeader* prh, cFCOReport* pReport, bool bEncryptDb)
 {
    mpData->mbInteractive   = true;           // always interactive
-   mpData->mbAnal       = pICData->mbAnal;
+   mpData->mbSecureMode    = pICData->mbSecureMode;
    //mpData->mbBackup      = pICData->mbBackup;
    mpData->mDbFile         = pICData->mDbFile;
    mpData->mLocalKeyFile   = pICData->mLocalKeyFile;
@@ -1819,9 +1751,9 @@ int cTWModeDbUpdate::Execute(cErrorQueue* pQueue)
          //            
             uint32 udFlags = 0;
             udFlags |= ( mpData->mbResetAccessTime ? cUpdateDb::FLAG_ERASE_FOOTPRINTS_UD : 0 );
-
+          
          cUpdateDb update( dbIter.GetDb(), *mpData->mpReport, pQueue );
-         if( (! update.Execute( udFlags )) && mpData->mbAnal )
+         if( (! update.Execute( udFlags )) && mpData->mbSecureMode )
          {
             // we will not perform the update; simply exit.
             TCOUT << TSS_GetString( cTripwire, tripwire::STR_DB_NOT_UPDATED) << std::endl;
@@ -1906,10 +1838,10 @@ public:
    TSTRING        mTextPolFile;
    wc16_string    mSitePassphrase;
     bool            mSiteProvided;
-   bool        mbAnal;
+   bool        mbSecureMode;
 
    // ctor can set up some default values
-   cTWModePolUpdate_i() : cTWModeCommon(), mSiteProvided(false), mbAnal(true) {}
+   cTWModePolUpdate_i() : cTWModeCommon(), mSiteProvided(false), mbSecureMode(true) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1937,7 +1869,7 @@ void cTWModePolUpdate::InitCmdLineParser(cCmdLineParser& cmdLine)
    cmdLine.AddArg(cTWCmdLine::TEXT_POL_FILE, TSTRING(_T("")),  TSTRING(_T("")),              cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::LOCAL_PASSPHRASE,TSTRING(_T("P")),  TSTRING(_T("local-passphrase")), cCmdLineParser::PARAM_ONE);
    cmdLine.AddArg(cTWCmdLine::SITE_PASSPHRASE,  TSTRING(_T("Q")), TSTRING(_T("site-passphrase")),     cCmdLineParser::PARAM_ONE);
-   cmdLine.AddArg(cTWCmdLine::ANAL_LEVEL,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),         cCmdLineParser::PARAM_ONE);
+   cmdLine.AddArg(cTWCmdLine::SECURE_MODE,    TSTRING(_T("Z")), TSTRING(_T("secure-mode")),         cCmdLineParser::PARAM_ONE);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1973,15 +1905,15 @@ bool cTWModePolUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine
             mpData->mSitePassphrase = cStringUtil::TstrToWstr(iter.ParamAt(0));
                 mpData->mSiteProvided = true;
             break;
-         case cTWCmdLine::ANAL_LEVEL:
+         case cTWCmdLine::SECURE_MODE:
             ASSERT(iter.NumParams() > 0); 
             if(iter.ParamAt(0).compare(_T("high")) == 0)
-               mpData->mbAnal = true;
+               mpData->mbSecureMode = true;
             else if(iter.ParamAt(0).compare(_T("low")) == 0)
-               mpData->mbAnal = false;
+               mpData->mbSecureMode = false;
             else
             {
-               // invalid parameter to anal switch...
+               // invalid parameter to secure mode  switch...
                // TODO -- print this to stderr; how do I display (1) the switch name 
                // and (2) the possible values?
                // TODO -- move {high, low} somewhere else
@@ -2025,13 +1957,12 @@ bool cTWModePolUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine
    //
    if (cTWUtil::VerifyCfgSiteKey( mstrConfigFile, mpData->mSiteKeyFile ) == false)
         cTWUtil::PrintErrorMsg(eTWCfgUnencrypted(_T(""), eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
-      
-   
+    
     #if IS_UNIX
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
     #endif
-
+    
    return true;
 }
 
@@ -2133,11 +2064,13 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
             //
             cPolicyUpdate pu( genreIter->GetGenre(), dbIter.GetSpecList(), genreIter->GetSpecList(), dbIter.GetDb(), pQueue );
             uint32 puFlags = 0;
-                puFlags |= mpData->mbAnal ? cPolicyUpdate::ANAL : 0;
+                puFlags |= mpData->mbSecureMode ? cPolicyUpdate::FLAG_SECURE_MODE : 0;
                 puFlags |= ( mpData->mbResetAccessTime ? cPolicyUpdate::FLAG_ERASE_FOOTPRINTS_PU : 0 );
-            if( (! pu.Execute(puFlags)) && (mpData->mbAnal) )
+                puFlags |= ( mpData->mbDirectIO ? cPolicyUpdate::FLAG_DIRECT_IO : 0 );
+             
+            if( (! pu.Execute(puFlags)) && (mpData->mbSecureMode) )
             {
-               // they were in anal mode and errors occured; an error condition
+               // they were in secure mode and errors occured; an error condition
                TCOUT << TSS_GetString( cTripwire, tripwire::STR_ERR_POL_UPDATE) << std::endl;
                return 8;
             }
@@ -2163,7 +2096,9 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
             // TODO -- turn pQueue into an error bucket
                 
             uint32 gdbFlags = 0;
-                gdbFlags |= ( mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0 );
+            gdbFlags |= ( mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0 );
+            gdbFlags |= ( mpData->mbDirectIO        ? cGenerateDb::FLAG_DIRECT_IO : 0 );
+             
             cGenerateDb::Execute( dbIter.GetSpecList(), dbIter.GetDb(), dbIter.GetGenreHeader().GetPropDisplayer(), pQueue, gdbFlags );
 
             //TODO -- what other prop displayer stuff do I have to do here?
@@ -2348,9 +2283,6 @@ bool cTWModeTest::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
         // make sure that we have a valid mail method
         TEST_INIT_REQUIREMENT( ( cMailMessage::NO_METHOD != mpData->mMailMethod ),      cTripwire, tripwire::STR_ERR_NO_MAIL_METHOD );
         TEST_INIT_REQUIREMENT( ( cMailMessage::INVALID_METHOD != mpData->mMailMethod ), cTripwire, tripwire::STR_ERR_INVALID_MAIL_METHOD );
-#if !SUPPORTS_MAPI
-        TEST_INIT_REQUIREMENT( ( cMailMessage::MAIL_BY_MAPI != mpData->mMailMethod ), cTripwire, tripwire::STR_ERR_MAPI_NOT_SUPPORTED );
-#endif
     }
 
     return true;

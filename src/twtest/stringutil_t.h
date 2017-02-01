@@ -41,10 +41,10 @@
 #ifndef __STRINGUTIL_T_H
 #define __STRINGUTIL_T_H
 
-#include "ntmbs.h"
+#include "core/ntmbs.h"
 
 #if USING_NTDBS_STUFF
-#include "ntdbs.h"
+#include "core/ntdbs.h"
 #endif // USING_NTDBS_STUFF
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

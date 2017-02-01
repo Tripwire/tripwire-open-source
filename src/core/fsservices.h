@@ -112,10 +112,10 @@ typedef int64  cFSType;
 
 // filesystem access control lists
 //     it is the union of MAX(elem) for all the file systems that we support 
-class cACLElem {
+/*class cACLElem {
    // TODO this is just a place holder
    // uint32   mUid;
-};
+};*/
 
 // this class is used only to pass arguments to iFSServices
 //     it is the union of MAX(elem) for all the file systems that we support 
@@ -155,8 +155,8 @@ struct cFSStatArgs {
    FileType mFileType;     // redundant with other information in this struct, but
                      // broken out for convenience
 
-   // access control list should go here, too
-   std::list <cACLElem> mACL; // indep
+   //TODO: access control list should go here, too
+   //std::list <cACLElem> mACL; // indep
 };
 
 
@@ -252,16 +252,6 @@ class iFSServices
   //      TSTRING must have the form ("baseXXXXXX"), where the X's are replaced with 
   //      characters to make it a unique file.  There must be at least 6 Xs.
 
-  // TODO: remove this function
-  // Matt theorized that this is no longer used - dmb Aug 23 1999
-  //    virtual int         CreateLockedTemporaryFile( const TCHAR* szFilename, int perm ) const = 0;
-  // creates a temporary file to which only the current process has read or write access.  
-  // returns an open C file descriptor on success and -1 on error.  Returns error if filename already exists on the filesystem.
-  // the file will automatically be deleted when the file descriptor is closed.
-  // perm should be zero or more of:  
-  //      O_WRONLY: create with read write only permission
-  //      O_RDWR: create with read and write permission
-
 
   ////////////////////////////////////////
   // minor filesystem functions
@@ -286,29 +276,29 @@ class iFSServices
   // short names.
   virtual void        GetCurrentDir( TSTRING& strCurDir ) const throw( eFSServices ) = 0;
   // returns the current working directory
-  virtual void        ChangeDir( const TSTRING& strName ) const throw( eFSServices ) = 0;
-  // sets the current working directory
-  virtual void    Mkdir( const TSTRING& strName ) const throw( eFSServices ) = 0;
-
-  virtual bool        Rmdir( const TSTRING& strName ) const = 0;
 
 
   ////////////////////////////////////////
   // file specific functions
   ////////////////////////////////////////
   virtual bool        FileDelete( const TSTRING& name ) const = 0;
-
     
   ////////////////////////////////////////
   // directory and file functions
   ////////////////////////////////////////
   virtual bool    Rename( const TSTRING& strOldName, const TSTRING& strNewName, bool fOverWrite = true ) const = 0;
   // rename a file
+    
   virtual bool        GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const = 0;
-
   virtual bool        GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const = 0;
+  virtual bool        GetUserName( uid_t user_id, TSTRING& tstrUser ) const = 0;
+  virtual bool        GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const = 0;
 
-
+  //Set whether we try to resolve uid/gid to a name, since Linux static binaries can
+  //have trouble (read: segfaulting) with name resolution given the right nsswitch.conf setup.
+  //This defaults to true if not specified.
+  virtual void        SetResolveNames(bool resolve)=0;
+    
   ////////////////////////////////////////
   // miscellaneous utility functions
   ////////////////////////////////////////
@@ -347,44 +337,6 @@ class iFSServices
   ///////////////////////////////////////////////////////////////
  private:
   static iFSServices* mpInstance;
-    
-  //virtual cFSStatArgs::FileType GetFileType(const cFCOName &filename) throw(eFSServices) = 0;
-  // returns the type of the file specified by filename. Separated from Stat() for convenience
-  // and potential efficiency (if a file system doesn't need to do a stat to get the file type)
-    
-  //virtual char*&   MakeTempFile( char*& name) throw(eFSServices) = 0;
-  //virtual wchar_t*&   MakeTempFile( wchar_t*& name) throw(eFSServices) = 0;
-
-  //
-  // file ops
-  //
-  // these are commented out for timeliness reasons; we should uncomment and implement as needed...
-  //     -- mdb
-  /*
-    virtual int         Create(cFSName &name, Mode mode = MODE_DEFAULT) = 0;
-    virtual bool     Mkdir(cFSName &name, Mode mode = MODE_DEFAULT) = 0;
-    virtual bool     Delete(cFSName &name) = 0;
-    virtual bool     Link(cFSName &src, cFSName &dest) = 0; 
-   
-    virtual bool     Chmod(cFSName &name, Mode mode) = 0;
-    virtual Mode     Umask(Mode mode) = 0;
-    // file system types (e.g., "FAT", "NTFS", "UFS", "NFS") 
-    virtual bool     FSTypeAsString(cFSName &name, TSTRING &str) = 0;
-    // file type (e.g., "file", "symbolic link", "block device")
-    // TODO -- this should either be static or in another utility class, since it does not rely on the
-    //      instance of the class (there is a global enumeration of file types; this fn should take a
-    //      cFSStatArgs::FileType instead of a name.
-    virtual bool     FileTypeAsString(cFSName &filename, TSTRING &str) = 0; 
-    // TODO -- does this beling here? Is it always true that st_dev defines the file system? If not, then the
-    //      Stat() call should add some extra piece of data that identifies the file system.
-    virtual bool     IsSameFileSystem(cFSStatArgs &file1, cFSStatArgs &file2) = 0;
-    // to determine whether to recurse - musn't traverse mount points
-
-    // capabilities
-    virtual bool     IsUnicodeFilename(cFSName &name) = 0;
-    virtual bool     IsACLCapable(cFSName &name) = 0;
-    virtual bool     Is8bitFilename(cFSName &name) = 0;
-  */
 };
 
 

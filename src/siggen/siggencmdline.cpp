@@ -50,8 +50,10 @@
 #if IS_UNIX
 #include <unistd.h>
 #include <fcntl.h>
-#include <termios.h>
-#include <sys/ioctl.h>
+#if SUPPORTS_TERMIOS
+# include <termios.h>
+# include <sys/ioctl.h>
+#endif
 //#include <signal.h>
 int _getch(void);
 #endif

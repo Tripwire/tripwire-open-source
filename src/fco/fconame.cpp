@@ -234,7 +234,12 @@ void cFCOName::ParseString( const TCHAR* pszin )
 
       TSTRING name(begin, at);      
 
-      if (name.length() > 0 || components == 0) 
+//NOTE: To be truly standards compliant we ought to turn >2 slashes into 1, not 2.
+#if SUPPORTS_DOUBLE_SLASH_PATH
+      if (name.length() > 0 || components < 2)
+#else 
+      if (name.length() > 0 || components == 0)
+#endif
       {
          cFCONameTblNode* pNode = 
             cFCOName_i::msNameTbl.CreateNode(name);
@@ -372,12 +377,8 @@ void cFCOName::Read(iSerializer* pSerializer, int32 version)
     int16 dummy = 0;
 
     // serialize the delimiter
-#ifdef _UNICODE
-    pSerializer->ReadInt16( (int16&)mDelimiter );
-#else
     pSerializer->ReadInt16( dummy ); // delimiter, but it's always '/' anyway in OST.
-        mDelimiter = '/';
-#endif
+    mDelimiter = '/';
 
     // read the case-sensitiveness
     pSerializer->ReadInt16(dummy);
@@ -402,13 +403,8 @@ void cFCOName::Write(iSerializer* pSerializer) const
     pSerializer->WriteString(AsString());
 
     // serialize the delimiter
-#ifdef _UNICODE
-    pSerializer->WriteInt16(mDelimiter);
-#else
-        unsigned short wc = (unsigned short)'/';
+    unsigned short wc = (unsigned short)'/';
     pSerializer->WriteInt16(wc);
-#endif
-
     pSerializer->WriteInt16( mbCaseSensitive ? (int16)1 : (int16)0);
 }
 

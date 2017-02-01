@@ -54,6 +54,9 @@
 /*
  * forward declarations
  */
+
+#include "platform.h"
+
 #ifdef __STDC__
 void le_clobber(void);
 int le_set(const char*);
@@ -114,7 +117,7 @@ int echild();
 #   define GID_RESET    -2      /* reset EGID to RGID */
 #endif
 #ifndef DEF_PATH
-#   ifdef __FreeBSD_cc_version
+#   if IS_FREEBSD
 #       define DEF_PATH "PATH=/sbin:/usr/sbin:/bin:/usr/bin"  /* default search path */
 #   else
 #       define DEF_PATH "PATH=/bin:/usr/bin:/usr/ucb"   /* default search path */

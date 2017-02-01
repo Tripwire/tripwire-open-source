@@ -30,9 +30,9 @@
 // info@tripwire.org or www.tripwire.org.
 //
 // hierdatabase_t
-#include "stddb.h"
-#include "hierdatabase.h"
-#include "test/test.h"
+#include "db/stddb.h"
+#include "db/hierdatabase.h"
+#include "test.h"
 #include "core/error.h"
 
 static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )

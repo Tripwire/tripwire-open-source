@@ -70,11 +70,19 @@
 #ifdef HAVE_SYS_SYSMACROS_H
 # include <sys/sysmacros.h>
 #endif
-#include <sys/utsname.h>
+
+#if HAVE_SYS_UTSNAME_H
+# include <sys/utsname.h>
+#endif
+
 #include <pwd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
+
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+# include <netdb.h>
+# include <netinet/in.h>
+#endif
+
 #include <grp.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -130,7 +138,7 @@ template< typename T > static inline void util_ZeroMemory( T& obj );
 // PUBLIC METHOD CODE
 //=========================================================================
 
-cUnixFSServices::cUnixFSServices()
+cUnixFSServices::cUnixFSServices() : mResolveNames(true)
 {}
 
 cUnixFSServices::~cUnixFSServices()
@@ -147,13 +155,7 @@ TSTRING cUnixFSServices::GetErrString() const
 {
     TSTRING ret;
     char* pErrorStr = strerror(errno);
-#ifdef _UNICODE
-    wchar_t pBuf[1024];
-    mbstowcs(pBuf, pErrorStr, 1024);
-    ret = pBuf;
-#else
     ret = pErrorStr;
-#endif
     return ret;
 }
 
@@ -180,18 +182,26 @@ TCHAR  cUnixFSServices::GetPathSeparator() const
     return '/';
 }
 
-#ifndef __AROS__
+#if !USES_DEVICE_PATH
 void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const throw(eFSServices)
 {
 #else
 void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const throw(eFSServices)
 {
-    TSTRING strFilename = cArosPath::AsNative(strFilenameC);
+    TSTRING strFilename = cDevicePath::AsNative(strFilenameC);
 #endif
 
     //Get all the filenames
-    DIR* dp;
+    DIR* dp=0;
+
+#if defined(O_DIRECTORY) && defined(O_NOATIME)
+    //dfd will be autoclosed by closedir(), should not be explicitly closed.
+    int dfd=open(strFilename.c_str(), O_RDONLY|O_DIRECTORY|O_NOATIME);
+    if (dfd>0)
+        dp = fdopendir(dfd);
+#else
     dp = opendir( strFilename.c_str() );
+#endif
 
     if (dp == NULL) 
     {
@@ -247,12 +257,6 @@ void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSService
     strCurDir = pathname;
 }
 
-void cUnixFSServices::ChangeDir( const TSTRING& strDir ) const throw(eFSServices)
-{
-    if( chdir( strDir.c_str() ) < 0 )
-        throw eFSServicesGeneric( strDir, iFSServices::GetInstance()->GetErrString() );
-}
-
 
 TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSServices)
 {
@@ -260,14 +264,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
     char szTemplate[iFSServices::TW_MAX_PATH];
     int fd;
 
-#ifdef _UNICODE
-    // convert template from wide character to multi-byte string
-    char mbBuf[iFSServices::TW_MAX_PATH];
-    wcstombs( mbBuf, strName.c_str(), strName.length() + 1 );
-    strcpy( szTemplate, mbBuf );
-#else
     strcpy( szTemplate, strName.c_str() );
-#endif
 
 #ifdef HAVE_MKSTEMP
      // create temp filename and check to see if mkstemp failed                 
@@ -289,39 +286,13 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
 #endif
 
     // change name so that it has the XXXXXX part filled in
-#ifdef _UNICODE
-    // convert name from multi-byte to wide character string
-    wchar_t wcsbuf[1024];
-    mbstowcs( wcsbuf, pchTempFileName, strlen( pchTempFileName ) + 1 ));
-    strName = wcsbuf;
-#else   
     strName = pchTempFileName;
-#endif
-
 
     // Linux creates the file!!  Doh!
     // So I'll always attempt to delete it -bam
-    FileDelete( strName );
+    FileDelete( strName.c_str() );
 
     return( strName );
-}
-
-void cUnixFSServices::Mkdir( const TSTRING& strName ) const throw ( eFSServices )
-{
-    if( 0 != _tmkdir( strName.c_str(), 0777 ) )
-    {
-        // if mkdir failed because the dir existed, that's OK
-        if( errno != EEXIST )
-            throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
-    }
-}   
-
-bool cUnixFSServices::Rmdir( const TSTRING& strName ) const
-{
-    if( 0 == rmdir( strName.c_str() ) )
-        return true;
-
-    return false;
 }
 
 void cUnixFSServices::GetTempDirName( TSTRING& strName ) const throw(eFSServices)
@@ -335,13 +306,13 @@ void cUnixFSServices::SetTempDirName(TSTRING& tmpPath) {
 }
 
 
-#ifndef __AROS__
+#if !USES_DEVICE_PATH
 void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const throw(eFSServices)
 {
 #else
 void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const throw(eFSServices)
 {
-    TSTRING strName = cArosPath::AsNative(strNameC);
+    TSTRING strName = cDevicePath::AsNative(strNameC);
 #endif
     //local variable for obtaining info on file.
     struct stat statbuf;
@@ -378,7 +349,11 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     stat.size       = statbuf.st_size;
     stat.uid        = statbuf.st_uid;
     stat.blksize    = statbuf.st_blksize;
+#if SUPPORTS_ST_BLOCKS
     stat.blocks     = statbuf.st_blocks;
+#else
+    stat.blocks     = 0;
+#endif
 
     // set the file type
     if(S_ISREG(statbuf.st_mode))    stat.mFileType = cFSStatArgs::TY_FILE;
@@ -387,7 +362,9 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     else if(S_ISBLK(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
     else if(S_ISCHR(statbuf.st_mode))   stat.mFileType = cFSStatArgs::TY_CHARDEV;
     else if(S_ISFIFO(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_FIFO;
+#ifdef S_ISSOCK
     else if(S_ISSOCK(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_SOCK;
+#endif
 #ifdef S_IFDOOR
     else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
@@ -400,19 +377,24 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
 
 void cUnixFSServices::GetMachineName( TSTRING& strName ) const throw( eFSServices )
 {
+#if HAVE_SYS_UTSNAME_H
     struct utsname namebuf;
     if( uname( &namebuf ) == -1 )
         throw eFSServicesGeneric( strName );
     else
         strName = namebuf.nodename;
+#else
+    strName = "localhost";
+#endif
 }
 
 void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
 {
+#if HAVE_SYS_UTSNAME_H
     char buf[256];
     if (gethostname(buf, 256) != 0)
     {
-#if defined(SOLARIS_NO_GETHOSTBYNAME) || defined(_SORTIX_SOURCE)
+#if defined(SOLARIS_NO_GETHOSTBYNAME) || !SUPPORTS_NETWORKING
         strName = buf;
         return;
 #else
@@ -426,7 +408,7 @@ void cUnixFSServices::GetMachineNameFullyQualified( TSTRING& strName ) const
         }
 #endif
     }
-
+#endif
     try 
     {
         cUnixFSServices::GetMachineName(strName);
@@ -467,7 +449,7 @@ bool cUnixFSServices::GetIPAddress( uint32& uiIPAddress )
     bool    fGotAddress = false;    
     cDebug  d( _T("cUnixFSServices::GetIPAddress") );
 
-#ifndef _SORTIX_SOURCE
+#if SUPPORTS_NETWORKING && HAVE_SYS_UTSNAME_H
     struct utsname utsnameBuf;    
     if( EFAULT != uname( &utsnameBuf) )
     {
@@ -510,35 +492,27 @@ bool cUnixFSServices::IsCaseSensitive() const
 }
 
 
+void cUnixFSServices::SetResolveNames(bool resolve)
+{
+    mResolveNames=resolve;
+}
+    
 bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const 
 {
     bool fSuccess = true;
+    
     struct stat statbuf;
-
     int ret = lstat(tstrFilename.c_str(), &statbuf);    
     if(ret < 0)
     {
         fSuccess = false;
     }
-
-    if( fSuccess )
+    else
     {
-        struct passwd* pp = getpwuid( statbuf.st_uid );
-        //ASSERT( pp );
-        // We shouldn't assert this, because it might be the case that a file
-        // is associated with some old user that no longer exists... we should
-        // not fail this case.  Instead, the method will just return false per
-        // the test below.
-        if( pp == NULL )
-        {
-            fSuccess = false;
-        }
-        else
-            tstrUser = pp->pw_name;
+        fSuccess = GetUserName(statbuf.st_uid, tstrUser);
     }
 
     return( fSuccess );
-
 }
 
 
@@ -552,12 +526,48 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
     {
         fSuccess = false;
     }
-
-    if( fSuccess )
+    else
     {
-        struct group* pg = getgrgid( statbuf.st_gid );
-        //ASSERT( pg ); this assert stops everything in debug mode if we can't lookup a groupid
+        fSuccess = GetGroupName(statbuf.st_gid, tstrGroup);
+    }   
+
+    return( fSuccess );
+}
+
     
+bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
+{
+    bool fSuccess = true;
+    
+    if( mResolveNames )
+    {
+        struct passwd* pp = getpwuid( user_id );
+        if( pp == NULL )
+        {
+            fSuccess = false;
+            tstrUser = TSS_GetString(cCore, core::STR_UNKNOWN);
+        }
+        else
+            tstrUser = pp->pw_name;
+    }
+    else
+    {
+        std::stringstream sstr;
+        sstr << user_id;
+        tstrUser = sstr.str();
+    }
+    
+    return( fSuccess );
+}
+
+
+bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
+{
+    bool fSuccess = true;
+    
+    if( mResolveNames )
+    {
+        struct group* pg = getgrgid( group_id );
         if( pg == NULL )
         {
             fSuccess = false;
@@ -565,10 +575,22 @@ bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tst
         }
         else
             tstrGroup = pg->gr_name;
-    }   
-
+    }
+    else
+    {
+        std::stringstream sstr;
+        sstr << group_id;
+        tstrGroup = sstr.str();
+    }
+    
     return( fSuccess );
 }
+    
+    
+    
+#ifndef S_ISVTX // DOS/DJGPP doesn't have this
+# define S_ISVTX 0
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 // Function name    : cUnixFSServices::ConvertModeToString
@@ -740,7 +762,7 @@ bool cUnixFSServices::GetExecutableFilename( TSTRING& strFullPath, const TSTRING
 //      a bool? I think it is ... mdb
 ///////////////////////////////////////////////////////////////////////////////
 bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC, const TSTRING& pathRelFromC ) const
-{    
+{
     // don't do anything with an empty path
     if( strRelPathC.empty() )
         return false;
@@ -832,39 +854,6 @@ const TCHAR* cUnixFSServices::GetStandardBackupExtension() const
     return _T(".bak");
 }
 
-
-    // TODO: remove this function
-    // Matt theorized that this is no longer used - dmb Aug 23 1999
-/*
-int cUnixFSServices::CreateLockedTemporaryFile( const TCHAR* szFilename, int perm ) const
-{    
-    // make sure perm is AT LEAST one of: O_RDWR, O_WRONLY
-    ASSERT( 0 != ( perm & ( O_RDWR | O_WRONLY ) ) );
-    // make sure perm is ONLY composed of: O_RDWR, O_WRONLY
-    ASSERT( 0 == ( perm & ~( O_RDWR | O_WRONLY ) ) );
-    // get rid of any unsupported bits caller may have supplied
-    perm &= ( O_RDWR | O_WRONLY );
-
-    // set flags
-    int oflags = perm | 
-                 O_CREAT | O_EXCL;    // only create a new file -- error if it exists already
-
-    // create file
-    int fh = _topen( szFilename, oflags, 0666 );    
-    if( fh >= 0 )
-    {
-        // file was created.  Now unlink it
-        if( 0 != unlink( szFilename ) )
-        {
-            // we weren't able to unlink file, so close handle and fail
-            close( fh );
-            fh = -1;
-        }
-    }
-        
-    return( fh );
-}
-*/
 
 void cUnixFSServices::Sleep( int nSeconds ) const
 {

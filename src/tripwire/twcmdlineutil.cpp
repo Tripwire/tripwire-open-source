@@ -67,15 +67,6 @@
 
 #include <memory>
 
-#ifdef GMMS
-
-// local helper functions for GMMS notification
-static TSTRING FormatGmmsReportSummary(int32 date, int violationCount, int maxSeverity);
-static TSTRING FormatGmmsViolationSummary(int32 date, const TSTRING& rulename, const TSTRING& filename, int severity);
-static void    SendGmmsAlert(const TSTRING& gmmsProg, const TSTRING& gmmsOptions, const TSTRING& alerts); // throw (eGmmsError)
-
-#endif
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // ParsePolicyFile
@@ -554,14 +545,6 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
     case cMailMessage::MAIL_BY_PIPE:
       reportMail = std::auto_ptr<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
-    case cMailMessage::MAIL_BY_MAPI:
-#if SUPPORTS_MAPI
-      reportMail = std::auto_ptr<cMailMessage>(new cMAPIMailMessage);
-      break;
-#else
-      ASSERT(false);
-      return false;
-#endif
     }
 
   TSTRING strTempFilename;
@@ -716,14 +699,6 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
    case cMailMessage::MAIL_BY_PIPE:
       reportMail = std::auto_ptr<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
-   case cMailMessage::MAIL_BY_MAPI:
-#if SUPPORTS_MAPI
-      reportMail = std::auto_ptr<cMailMessage>(new cMAPIMailMessage);
-      break;
-#else
-      ASSERT(false);
-      return false;
-#endif
    }
 
 
@@ -764,193 +739,5 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
 }
 
 
-#ifdef GMMS
 
-//
-// Use gmms to send violation notification
-//
-// verbosity==1 One line summary of whole report
-// verbosity==2 One line summary of each violation
-//
-bool cTWCmdLineUtil::GmmsReport(const cFCOReportHeader& header, const cFCOReport& report, 
-                        const TSTRING &gmmsProg, const TSTRING &gmmsOptions, int verbosity) // throw (eGmmsError)
-{
-   int violationCount = 0, maxSeverity = 0;
-   TSTRING alerts;
-
-   // loop through all generes
-    cFCOReportGenreIter genreIter(report);
-    for (genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next())
-   {
-      // loop through all specs
-      cFCOReportSpecIter specIter(report, genreIter.GetGenre());
-      for (specIter.SeekBegin(); ! specIter.Done(); specIter.Next())
-      {
-
-         ASSERT(true);
-
-         // Get severity
-         int32 severity = specIter.GetAttr()->GetSeverity();
-
-         // Get rulename
-         TSTRING rulename = specIter.GetAttr()->GetName();
-
-         // Go through all of the added file rule violations
-         cIterProxy<iFCOIter> addedIter(specIter.GetAddedSet()->GetIter());
-         for (addedIter->SeekBegin(); !addedIter->Done(); addedIter->Next())
-         {
-            if (severity > maxSeverity)
-               maxSeverity = severity;
-            
-            if (verbosity == 2)
-            {
-               // get filename, send one line summary of this violation
-               TSTRING filename = addedIter->FCO()->GetName().AsString();
-               alerts += FormatGmmsViolationSummary(header.GetCreationTime(), rulename, filename, severity);
-               alerts += _T("\n");
-            }
-            
-            violationCount++;
-         }
-
-         // Go through all of the removed file rule violations
-         cIterProxy<iFCOIter> removedIter(specIter.GetRemovedSet()->GetIter());
-         for (removedIter->SeekBegin(); !removedIter->Done(); removedIter->Next())
-         {
-            if (severity > maxSeverity)
-               maxSeverity = severity;
-            
-            if (verbosity == 2)
-            {
-               // get filename, send one line summary of this violation
-               TSTRING filename = removedIter->FCO()->GetName().AsString();
-               alerts += FormatGmmsViolationSummary(header.GetCreationTime(), rulename, filename, severity);
-               alerts += _T("\n");
-            }
-
-            violationCount++;
-         }
-
-         // Go through all of the changed file rule violations
-         cFCOReportChangeIter changedIter(specIter);
-         for (changedIter.SeekBegin(); !changedIter.Done(); changedIter.Next())
-         {
-            if (severity > maxSeverity)
-               maxSeverity = severity;
-
-            if (verbosity == 2)
-            {
-               // get filename, send one line summary of this violation
-               TSTRING filename = changedIter.GetOld()->GetName().AsString();
-               alerts += FormatGmmsViolationSummary(header.GetCreationTime(), rulename, filename, severity);
-               alerts += _T("\n");
-            }
-
-            violationCount++;
-         }
-      }
-   }
-
-   // Send one line summary of the whole report if that's what they want,
-   // or if there were no violations and the verbosity level is 2. That way
-   // verbosity level 2 and no violations will still send an all-is-well notification.
-   if (verbosity == 1 || (verbosity == 2 && violationCount==0))
-   {
-      alerts += FormatGmmsReportSummary(header.GetCreationTime(), violationCount, maxSeverity);
-      alerts += _T("\n");
-   }
-
-   ASSERT(!alerts.empty());
-   SendGmmsAlert(gmmsProg, gmmsOptions, alerts);
-
-   return true;
-}
-
-
-//
-// Use this with gmms verbosity level 1
-//
-TSTRING FormatGmmsReportSummary(int32 date, int violationCount, int maxSeverity)
-{
-   TSTRING strDate;
-   cTWLocale::FormatTime(date, strDate);
-
-   TOSTRINGSTREAM summary;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_START);
-   summary << strDate;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_VERBOSITY1A);
-   summary << violationCount;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_VERBOSITY1B);
-   summary << maxSeverity;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_END);
-
-   return summary.str();
-}
-
-
-//
-// Use this with gmms verbosity level 2
-//
-TSTRING FormatGmmsViolationSummary(int32 date, const TSTRING& rulename, const TSTRING& filename, int severity)
-{
-   TSTRING strDate;
-   cTWLocale::FormatTime(date, strDate);
-
-   TOSTRINGSTREAM summary;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_START);
-   summary << strDate;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_VERBOSITY2A);
-   summary << rulename;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_VERBOSITY2B);
-   summary << filename;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_VERBOSITY2C);
-   summary << severity;
-   summary << TSS_GetString( cTripwire, tripwire::STR_GMMS_END);
-
-   return summary.str();
-}
-
-static void SendGmmsAlert(const TSTRING& gmmsProg, const TSTRING& gmmsOptions, const TSTRING& alerts) // throw (eGmmsError)
-{
-#if IS_UNIX
-
-   // construct the command line for starting gmms
-   TSTRING command = gmmsProg + _T(" ") + gmmsOptions;
-
-   // preserve environment variables necessary for gmms to run
-    le_set("GEOPLEX_DEPLOY");
-   le_set("LD_LIBRARY_PATH");
-   le_set("PATH");
-    
-   // open the process
-   FILE *mpFile = mpopen((char*)command.c_str(), _T("w"));
-   if(!mpFile)
-        throw eGmmsError(eGmmsError::ERR_COULDNT_OPEN_PIPE, gmmsProg);
-
-   // write the alert(s) to the process's standard-in.
-   if (_ftprintf(mpFile, "%s", alerts.c_str()) < 0)
-        throw eGmmsError(eGmmsError::ERR_COULDNT_WRITE_TO_PIPE, gmmsProg);
-
-   // end the process by closing standard-in
-   int result = mpclose( mpFile );
-   if (result != 0)
-   {
-      // complain about gmms returning an error code.
-      throw eGmmsError(eGmmsError::ERR_CMD_FAILED, gmmsProg);
-   }  
-
-   // unset environment variables necessary for gmms to run
-    le_unset("GEOPLEX_DEPLOY");
-   le_unset("LD_LIBRARY_PATH");
-   le_unset("PATH");
-
-#else
-
-   // GMMS is not for NT, so just do something cheap and easy for debugging purposes.
-   std::cerr << cStringUtil::TstrToStr(alerts);
-
-#endif
-}
-
-#endif
 

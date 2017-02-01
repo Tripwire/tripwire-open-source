@@ -483,6 +483,11 @@ void cIntegrityCheck::Execute( uint32 flags )
         pDSIter->SetIterFlags   ( iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
     }
     
+    if (flags & FLAG_DIRECT_IO)
+    {
+        mpPropCalc->SetCalcFlags(mpPropCalc->GetCalcFlags() | iFCOPropCalc::DIRECT_IO);
+    }
+    
     //
     // iterate over all of the specs...
     //
@@ -574,6 +579,11 @@ void cIntegrityCheck::ExecuteOnObjectList( const std::list<cFCOName>& fcoNames, 
         mpPropCalc->SetCalcFlags( iFCOPropCalc::DO_NOT_MODIFY_PROPERTIES );  
         dbIter.SetIterFlags     ( iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
         pDSIter->SetIterFlags   ( iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
+    }
+    
+    if (flags & FLAG_DIRECT_IO)
+    {
+        mpPropCalc->SetCalcFlags(mpPropCalc->GetCalcFlags() | iFCOPropCalc::DIRECT_IO);
     }
 
     //

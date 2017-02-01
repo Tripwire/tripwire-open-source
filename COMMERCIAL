@@ -1,6 +1,10 @@
 
-If you desire enterprise capable software with commercial support, check out
-Tripwire, Inc. at http://www.tripwire.com.
+Tripwire, Inc also offers several commercial, supported security and compliance solutions:
 
-For a more detailed comparison of the Open Source Tripwire software and
-commercial Tripwire(R) product(s) please visit http://www.tripwire.org.
+* Tripwire for Servers is most similar to Open Source Tripwire (OST was forked from it in 2000), with additional features such as native Windows support, audit event correlation, and Tripwire Manager, a central management console.  http://www.tripwire.com/it-security-software/scm/tripwire-for-servers/
+
+* Tripwire Enterprise is an enterprise-grade product with features such as real-time file and registry change detection; change monitoring for databases, directory servers, and network devices; and policy compliance monitoring for standards including PCI, HIPAA, and NERC.  http://www.tripwire.com/it-security-software/scm/tripwire-enterprise/
+
+* Tripwire Configuration Compliance Manager is an agentless solution with some features similar to Tripwire Enterprise, as well as advanced asset discovery capabilities.  http://www.tripwire.com/it-security-software/scm/ccm/
+
+

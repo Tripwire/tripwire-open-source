@@ -43,6 +43,10 @@
 #include "genreinfo.h"
 #include "core/errorutil.h"
 
+#if HAVE_STRINGS_H // for strcasecmp on RTEMS
+# include <strings.h>
+#endif
+
 //=========================================================================
 // STATIC MEMBERS
 //=========================================================================

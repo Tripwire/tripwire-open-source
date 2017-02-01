@@ -147,6 +147,11 @@ void cGenerateDb::Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCO
         dbIter.SetIterFlags(    iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
         pDSIter->SetIterFlags(  iFCODataSourceIter::DO_NOT_MODIFY_OBJECTS );
     }
+    
+    if (flags & FLAG_DIRECT_IO)
+    {
+        pPC->SetCalcFlags( pPC->GetCalcFlags() | iFCOPropCalc::DIRECT_IO);
+    }
 
     //
     // iterate over all of the specs...

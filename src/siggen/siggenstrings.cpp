@@ -42,6 +42,12 @@
 #include "stdsiggen.h"
 #include "siggenstrings.h"
 
+#if IS_AROS
+# define VERSION_PREFIX "$VER: "
+#else
+# define VERSION_PREFIX "@(#)"
+#endif
+
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // String Table
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -62,10 +68,11 @@ TSS_BeginStringtable( cSiggen )
                 _T("\n")
               ),
     TSS_StringEntry( siggen::STR_SIGGEN_VERSION,        _T("siggen: Display signature function values. \n")),
+    TSS_StringEntry( siggen::STR_EMBEDDED_VERSION,      _T(VERSION_PREFIX "siggen " PACKAGE_VERSION)),
     TSS_StringEntry( siggen::STR_ERR_OPEN_FAILED,       _T("File could not be opened") ),
     TSS_StringEntry( siggen::STR_ERR_NO_FILE,           _T("File does not exist") ),
     TSS_StringEntry( siggen::STR_SIGGEN_NOT_REG_FILE,   _T(" is not a regular file; ignoring.") )
-    
+
 TSS_EndStringtable( cSiggen )
 
 // eof: siggenstrings.cpp

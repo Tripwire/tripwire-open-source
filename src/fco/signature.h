@@ -71,6 +71,12 @@
 # endif
 #endif
 
+/*Use OSX CommonCrypto lib if available*/
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+# include <CommonCrypto/CommonDigest.h>
+#endif
+
+
 #include "core/haval.h"
 // TODO: figure out a way to do this without including these headers.
 // pool of objects?
@@ -150,6 +156,9 @@ public:
     static bool Hex();
     static void SetHex(bool);
     
+    static bool UseDirectIO() { return s_direct; }
+    static void SetUseDirectIO( bool b ) { s_direct = b; }
+
 private:    
     // don't let C++ create these functions
     cArchiveSigGen( const cArchiveSigGen& );
@@ -158,7 +167,8 @@ private:
     typedef std::vector< iSignature* > container_type;
     container_type mSigList;
     
-    static bool mHex;
+    static bool  s_direct;
+    static bool  s_hex;
 };
 
 
@@ -272,8 +282,13 @@ protected:
     enum { SIG_BYTE_SIZE = MD5_DIGEST_LENGTH };
 
     virtual bool    IsEqual(const iSignature& rhs) const;
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    CC_MD5_CTX  mMD5Info;
+    uint8       md5_digest[CC_MD5_DIGEST_LENGTH];
+#else
     MD5_CTX     mMD5Info;
     uint8       md5_digest[MD5_DIGEST_LENGTH];
+#endif
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -301,10 +316,14 @@ protected:
     
     virtual bool    IsEqual(const iSignature& rhs) const;
     
-#ifdef HAVE_OPENSSL_SHA_H
+#ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+    enum { SIG_UINT32_SIZE = CC_SHA1_DIGEST_LENGTH/4 };
+    CC_SHA1_CTX mSHAInfo;
+    uint32      sha_digest[SIG_UINT32_SIZE];
+#elif HAVE_OPENSSL_SHA_H
     enum { SIG_UINT32_SIZE = SHA_DIGEST_LENGTH/4 };
     SHA_CTX     mSHAInfo;
-    uint32      sha_digest[SHA_DIGEST_LENGTH/4];
+    uint32      sha_digest[SIG_UINT32_SIZE];
 #else
     enum { SIG_UINT32_SIZE = 5 };
     SHS_INFO mSHAInfo;

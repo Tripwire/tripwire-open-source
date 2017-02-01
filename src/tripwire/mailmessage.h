@@ -37,9 +37,11 @@
 #endif
 
 
-#if IS_UNIX
-#include <sys/socket.h>
-#define SOCKET int
+#if IS_UNIX 
+# if HAVE_SYS_SOCKET_H
+#  include <sys/socket.h>
+# endif
+# define SOCKET int
 #endif
 
 
@@ -58,11 +60,7 @@ TSS_EXCEPTION( eMailSMTPSocket, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPOpenConnection, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPCloseConnection, eMailMessageError );
 TSS_EXCEPTION( eMailSMTPServer, eMailMessageError );
-
-// MAPI
-TSS_EXCEPTION( eMailMAPINotAvailable, eMailMessageError );
-TSS_EXCEPTION( eMailMAPIUnload, eMailMessageError );
-TSS_EXCEPTION( eMailMAPISend, eMailMessageError );
+TSS_EXCEPTION( eMailSMTPNotSupported, eMailMessageError);
 
 // piped
 TSS_EXCEPTION( eMailPipedOpen, eMailMessageError );
@@ -98,7 +96,6 @@ public:
         INVALID_METHOD,
         MAIL_BY_SMTP,
         MAIL_BY_PIPE,
-        MAIL_BY_MAPI,
         MAIL_NUM_ITEMS
     };
 
@@ -232,60 +229,6 @@ private:
 
     // socket related member variables
     SOCKET  mSocket;
-
-#if USES_WINSOCK
-    //
-    // Types for the functions in winsock.dll
-    //
-    // These function prototypes and the pointers that use them allow us to use
-    // winsock without requiring the DLL to be on the end system for the application
-    // to run.  It seems unacceptable for tripwire to fail to run at all if wsock32.dll
-    // is not present on the system.
-    //
-    HINSTANCE mHlibWinsock;
-    typedef int (PASCAL * WSASTARTUPPROC) (WORD wVersionRequired, LPWSADATA lpWSAData);
-    typedef SOCKET (PASCAL * SOCKETPROC) (int af, int type, int protocol);
-    typedef unsigned long (PASCAL * INETADDRPROC) (const char FAR * cp);
-    typedef int (PASCAL FAR * GETHOSTNAMEPROC) (char FAR * name, int namelen);
-    typedef struct hostent FAR * (PASCAL * GETHOSTBYNAMEPROC)(const char FAR * name);
-    typedef int (PASCAL * CONNECTPROC) (SOCKET s, const struct sockaddr FAR *name, int namelen);
-    typedef int (PASCAL * CLOSESOCKETPROC) (SOCKET s);
-    typedef int (PASCAL * SENDPROC) (SOCKET s, const char FAR * buf, int len, int flags);
-    typedef int (PASCAL * RECVPROC) (SOCKET s, char FAR * buf, int len, int flags);
-    typedef int (PASCAL * SELECTPROC) (int nfds, fd_set FAR * readfds, fd_set FAR * writefds, fd_set FAR * exceptfds, const struct timeval FAR * timeout);
-    typedef u_long (PASCAL * LONGPROC) (u_long netlong);
-    typedef u_short (PASCAL * SHORTPROC) (u_short netlong);
-
-    // pointers to the functions in wsock32.dll
-
-    // Berkeley functions
-    SOCKETPROC          mPfnSocket;
-    INETADDRPROC        mPfnInetAddr;
-    GETHOSTNAMEPROC     mPfnGethostname;
-    GETHOSTBYNAMEPROC   mPfnGethostbyname;
-    CONNECTPROC         mPfnConnect;
-    CLOSESOCKETPROC     mPfnCloseSocket;
-    SENDPROC            mPfnSend;
-    RECVPROC            mPfnRecv;
-    SELECTPROC          mPfnSelect;
-
-    // winsock functions
-    FARPROC             mPfnWSAGetLastError;
-    WSASTARTUPPROC      mPfnWSAStartup;
-    FARPROC             mPfnWSACleanup;
-
-    // Endian convertion functions
-    LONGPROC            mPfnNtohl;
-    LONGPROC            mPfnHtonl;
-    SHORTPROC           mPfnNtohs;
-    SHORTPROC           mPfnHtons;
-
-    // Methods to set the pointers to functions.
-    bool LoadDll();
-    bool UnloadDll();
-
-#endif
-
     void SendString( const std::string& str );
 
     // methods common to windows and unix:
@@ -305,37 +248,6 @@ private:
     TSTRING mstrServerName;
     unsigned short mPortNumber;
 };
-
-
-#if SUPPORTS_MAPI
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// This class implements sending a message via MAPI under Win32
-//
-class cMAPIMailMessage : public cMailMessage
-{
-public:
-
-    cMAPIMailMessage();
-    virtual ~cMAPIMailMessage();
-
-    virtual bool Send(); //throw(eMailMessageError) 
-        //returns true upon success
-
-private:
-
-    bool InitMAPI();
-    bool FinitMAPI();
-
-    HINSTANCE hlibMAPI;
-
-    bool DoSendMessage();
-    void PrintMAPIErrorMessage(ULONG errorMessage);
-};
-
-#endif
 
 
 //#ifdef IS_UNIX

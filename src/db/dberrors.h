@@ -29,19 +29,20 @@
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
-//{{NO_DEPENDENCIES}}
-// Microsoft Developer Studio generated include file.
-// Used by Script2.rc
+//
+// Name....: dberrors.h
+// Date....: 5/17/99
+// Creator.: Matthew Brinkley (brinkley)
+//
 //
 
-// Next default values for new objects
-// 
-#ifdef APSTUDIO_INVOKED
-#ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        102
-#define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1000
-#define _APS_NEXT_SYMED_VALUE           101
-#endif
-#endif
+#ifndef __DBERRORS_H
+#define __DBERRORS_H
+
+#include "core/errortable.h"
+
+TSS_DECLARE_ERROR_REGISTRATION( db )
+    
+
+#endif//__DBERRORS_H
 

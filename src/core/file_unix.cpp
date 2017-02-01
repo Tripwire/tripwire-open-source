@@ -1,4 +1,4 @@
-//
+
 // The developer of the original code and/or files is Tripwire, Inc.
 // Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
@@ -31,6 +31,13 @@
 //
 // file_unix.cpp : Specific implementation of file operations for Unix.
 
+
+/* On GNU/Hurd, need to define _GNU_SOURCE in order to use  O_NOATIME
+   which technically is still a nonstandard extension to open() */
+#if IS_HURD
+# define _GNU_SOURCE
+#endif
+
 #include "core/stdcore.h"
 
 #if !IS_UNIX
@@ -46,27 +53,15 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#if HAVE_SYS_FS_VX_IOCTL_H
+# include <sys/fs/vx_ioctl.h>
+#endif
+
 #include "core/debug.h"
 #include "core/corestrings.h"
 #include "core/fsservices.h"
 #include "core/errorutil.h"
 
-///////////////////////////////////////////////////////////////////////////////
-// util_GetErrnoString -- return the result of strerror(errno) as a tstring
-///////////////////////////////////////////////////////////////////////////////
-/*static TSTRING util_GetErrnoString()
-{
-    TSTRING ret;
-    char* pErrorStr = strerror(errno);
-#ifdef _UNICODE
-#error  We dont currently support unicode on unix
-#else
-    ret = pErrorStr;
-#endif
-    return ret;
-}*/
-
-///////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////
 // cFile_i : Insulated implementation for cFile objects.
 ///////////////////////////////////////////////////////////////////////////
@@ -76,8 +71,10 @@ struct cFile_i
     cFile_i();
     ~cFile_i();
 
+    int   m_fd;         //underlying file descriptor
     FILE* mpCurrStream; //currently defined file stream
     TSTRING mFileName;  //the name of the file we are currently referencing.
+    uint32 mFlags;      //Flags used to open the file
 };
 
 //Ctor
@@ -91,6 +88,17 @@ cFile_i::~cFile_i()
     if (mpCurrStream != NULL)
         fclose( mpCurrStream );
     mpCurrStream = NULL;
+
+#if IS_AROS
+    if( mFlags & cFile::OPEN_LOCKED_TEMP )
+    {
+        // unlink this file 
+        if( 0 != unlink(mFileName.c_str()))
+        {
+            throw( eFileOpen( mFileName, iFSServices::GetInstance()->GetErrString() ) );
+        }
+    }
+#endif
 
     mFileName.empty();
 }
@@ -120,31 +128,33 @@ cFile::~cFile()
 // Open
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef __AROS
+#if !USES_DEVICE_PATH
 void cFile::Open( const TSTRING& sFileName, uint32 flags )
 {
 #else
 void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
 {
-    TSTRING sFileName = cArosPath::AsNative(sFileNameC);
+    TSTRING sFileName = cDevicePath::AsNative(sFileNameC);
 #endif
     mode_t openmode = 0664;
-    if ( mpData->mpCurrStream != NULL )
+    if (mpData->mpCurrStream != NULL)
         Close();
     
+    mpData->mFlags = flags;
+    
     //
-    // set up the sopen permissions
+    // set up the open permissions
     //
     int perm = 0;
 
     TSTRING mode;
 
-    if( flags & OPEN_WRITE )
+    if (flags & OPEN_WRITE)
     {
         perm        |= O_RDWR;
         isWritable  = true;
         mode        = _T("rb");
-        if( flags & OPEN_TRUNCATE )
+        if (flags & OPEN_TRUNCATE)
         {
             perm |= O_TRUNC;
             perm |= O_CREAT;
@@ -160,18 +170,31 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
         mode        = _T("rb");
     }
 
-    if ( flags & OPEN_EXCLUSIVE ) {
+    if (flags & OPEN_EXCLUSIVE) {
         perm |= O_CREAT | O_EXCL;
         openmode = (mode_t) 0600; // Make sure only root can read the file
     }
 
-        if ( flags & OPEN_CREATE )
-            perm |= O_CREAT;
+    if (flags & OPEN_CREATE)
+        perm |= O_CREAT;
 
 #ifdef O_NONBLOCK
-        if( flags & OPEN_NONBLOCKING )
-            perm |= O_NONBLOCK;
+    if (flags & OPEN_SCANNING)
+        perm |= O_NONBLOCK;
 #endif
+
+#ifdef O_NOATIME
+    if (flags & OPEN_SCANNING)
+        perm |= O_NOATIME;
+#endif
+
+#ifdef O_DIRECT
+    //Only use O_DIRECT for scanning, since cfg/policy/report reads
+    // don't happen w/ a nice round block size.
+    if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
+	perm |= O_DIRECT;
+#endif
+            
     //
     // actually open the file
     //
@@ -180,8 +203,9 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     {
         throw( eFileOpen( sFileName, iFSServices::GetInstance()->GetErrString() ) );
     }
+    mpData->m_fd = fh;
 
-#ifndef __AROS__
+#if !IS_AROS
     if( flags & OPEN_LOCKED_TEMP )
     {
         // unlink this file 
@@ -202,6 +226,34 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     mpData->mFileName = sFileName;  //Set mFileName to the newly opened file.
     
     cFile::Rewind();
+
+#ifdef F_NOCACHE //OSX
+    if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
+        fcntl(fh, F_NOCACHE, 1);
+#endif   
+
+#if IS_SOLARIS
+    if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
+        directio(fh, DIRECTIO_ON);
+#endif
+    
+#if HAVE_POSIX_FADVISE
+    if (flags & OPEN_SCANNING && !(flags & OPEN_DIRECT)) 
+    {
+        posix_fadvise(fh,0,0, POSIX_FADV_SEQUENTIAL);
+        posix_fadvise(fh,0,0, POSIX_FADV_NOREUSE);
+    }
+    
+#elif HAVE_SYS_FS_VX_IOCTL_H
+    if (flags & OPEN_SCANNING)
+    {
+        if (flags & OPEN_DIRECT)
+            ioctl(fh, VX_SETCACHE, VX_DIRECT);
+        else
+            ioctl(fh, VX_SETCACHE, VX_SEQ | VX_NOREUSE);
+    }
+#endif
+    
 }
 
 
@@ -212,9 +264,15 @@ void cFile::Close() //throw(eFile)
 {
     if(mpData->mpCurrStream != NULL)
     {
+#ifdef HAVE_POSIX_FADVISE
+        posix_fadvise(fileno(mpData->mpCurrStream),0,0, POSIX_FADV_DONTNEED);
+#endif
+
         fclose( mpData->mpCurrStream );
         mpData->mpCurrStream = NULL;
     }
+    
+    
     mpData->mFileName.empty();
 }
 
@@ -289,12 +347,19 @@ cFile::File_t cFile::Read( void* buffer, File_t nBytes ) const //throw(eFile)
     if( nBytes == 0 )
         return 0;
 
-    iBytesRead = fread( buffer, sizeof(byte), nBytes, mpData->mpCurrStream );
-    
-    if( ferror( mpData->mpCurrStream ) != 0 )
-        throw eFileRead( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) ;
-    else
-        return iBytesRead;
+    if (mpData->mFlags & OPEN_DIRECT) {
+        iBytesRead = read(mpData->m_fd, buffer, nBytes);
+        if (iBytesRead<0) {
+            throw eFileRead(mpData->mFileName, iFSServices::GetInstance()->GetErrString()); 
+        }
+    } else { 
+        iBytesRead = fread( buffer, sizeof(byte), nBytes, mpData->mpCurrStream );
+        if( ferror( mpData->mpCurrStream ) != 0 ) {
+            throw eFileRead( mpData->mFileName, iFSServices::GetInstance()->GetErrString() ) ; 
+        }
+    }
+
+    return iBytesRead;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -384,30 +449,51 @@ void cFile::Truncate( File_t offset ) // throw(eFile)
 }
 
 
-#ifdef __AROS__
-TSTRING cArosPath::AsPosix( const TSTRING& in )
+#if USES_DEVICE_PATH
+// For paths of type DH0:/dir/file
+TSTRING cDevicePath::AsPosix( const TSTRING& in )
 {
     if (in[0] == '/')
         return in;
 
+#if IS_DOS_DJGPP
+    TSTRING out = "/dev/" + in;
+    std::replace(out.begin(), out.end(), '\\', '/');
+#else
     TSTRING out = '/' + in;
+#endif
+    
     std::replace(out.begin(), out.end(), ':', '/');
 
     return out;
 }
 
-TSTRING cArosPath::AsNative( const TSTRING& in )
+TSTRING cDevicePath::AsNative( const TSTRING& in )
 {
     if (in[0] != '/')
         return in;
 
-    int x;
-    for (x=1; in[x] == '/' && x<in.length(); x++);
+#if IS_DOS_DJGPP
+    if (in.find("/dev") != 0 || in.length() < 6)
+        return in;
+    
+    TSTRING out = "?:/";
+    out[0] = in[5];
+    
+    if (in.length() >= 8)
+        out.append(in.substr(7));
+    
+    return out;
+    
+#elif IS_AROS
+    int x = 1;
+    for ( x; in[x] == '/' && x<in.length(); x++);
 
     TSTRING out = in.substr(x); 
     TSTRING::size_type t = out.find_first_of('/');
     out[t] = ':';
 
     return out;
+#endif
 } 
 #endif

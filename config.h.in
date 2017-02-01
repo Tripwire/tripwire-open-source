@@ -1,4 +1,4 @@
-/* config.h.in.  Generated from configure.in by autoheader.  */
+/* config.h.in.  Generated from configure.ac by autoheader.  */
 
 /* Define if building universal (internal helper macro) */
 #undef AC_APPLE_UNIVERSAL_BUILD
@@ -11,6 +11,12 @@
 
 /* Define to 1 if you have the <bits/signum.h> header file. */
 #undef HAVE_BITS_SIGNUM_H
+
+/* Define to 1 if you have the <CommonCrypto/CommonDigest.h> header file. */
+#undef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
 
 /* Uses the GNU gcc compiler */
 #undef HAVE_GCC
@@ -48,6 +54,9 @@
 /* Define to 1 if you have the <openssl/sha.h> header file. */
 #undef HAVE_OPENSSL_SHA_H
 
+/* Define to 1 if you have the `posix_fadvise' function. */
+#undef HAVE_POSIX_FADVISE
+
 /* Define to 1 if you have the <signum.h> header file. */
 #undef HAVE_SIGNUM_H
 
@@ -72,11 +81,20 @@
 /* Define to 1 if you have the <syslog.h> header file. */
 #undef HAVE_SYSLOG_H
 
+/* Define to 1 if you have the <sys/fs/vx_ioctl.h> header file. */
+#undef HAVE_SYS_FS_VX_IOCTL_H
+
 /* Define to 1 if you have the <sys/mount.h> header file. */
 #undef HAVE_SYS_MOUNT_H
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #undef HAVE_SYS_PARAM_H
+
+/* Define to 1 if you have the <sys/select.h> header file. */
+#undef HAVE_SYS_SELECT_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
 
 /* Define to 1 if you have the <sys/statfs.h> header file. */
 #undef HAVE_SYS_STATFS_H
@@ -95,6 +113,9 @@
 
 /* Define to 1 if you have the <sys/ustat.h> header file. */
 #undef HAVE_SYS_USTAT_H
+
+/* Define to 1 if you have the <sys/utsname.h> header file. */
+#undef HAVE_SYS_UTSNAME_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H

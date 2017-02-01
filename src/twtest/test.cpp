@@ -146,7 +146,7 @@ void TestFileUtil();
 void TestFCONameTranslator();
 void TestCodeConverter();
 /// This is easier than all the (cpp) files and declarations
-#include "core/stringutil_t.h"
+#include "stringutil_t.h"
 
 void Usage()
 {

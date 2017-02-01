@@ -128,19 +128,6 @@ inline bool tss_find_in_hash( const wc16_string& lhs, TSTRING& rhs )
     return( tss_GetHashTable().Lookup( lhs, rhs ) );
 }
 
-#ifdef _UNICODE
-
-inline bool tss_find_in_hash( const wc16_string& lhs, std::string& rhs )
-{
-    return false; // don't have a hash table for this!
-}
-
-inline void tss_insert_in_hash( const wc16_string& lhs, const std::string& rhs )
-{
-    return; // don't have a hash table for this!
-}
-
-#endif
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Type Dispatched Conversions
@@ -150,7 +137,7 @@ inline void tss_insert_in_hash( const wc16_string& lhs, const std::string& rhs )
 std::string::const_iterator
 cStringUtil::Convert( std::string& nbs, const wc16_string& dbs )
 {
-#ifdef __AROS__
+#if IS_AROS
     nbs.resize(dbs.length());
     for (int x=0; x<dbs.length(); ++x)
         nbs[x] = (unsigned char)dbs[x];
@@ -205,7 +192,7 @@ cStringUtil::Convert( std::string& nbs, const wc16_string& dbs )
 wc16_string::const_iterator
 cStringUtil::Convert( wc16_string& dbs, const std::string& nbs )
 {
-#ifdef __AROS__
+#if IS_AROS
     dbs.resize(nbs.length());
     for (int x=0; x<nbs.length(); x++)
        dbs[x] = (unsigned short)nbs[x];

@@ -149,7 +149,7 @@ void cFSDataSourceIter::GetChildrenNames( const TSTRING& strParentName, std::vec
     {
         iFSServices::GetInstance()->ReadDir( strParentName, vChildrenNames, false );
     }
-    catch( eFSServices& e )
+    catch( eError& e )
     {
         cDebug d("cFSDataSourceIter::GeneratePeers");
         d.TraceError("**** ReadDir failed for %s\n", strParentName.c_str() );
@@ -184,7 +184,7 @@ bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
     {
         iFSServices::GetInstance()->Stat( pTrans->ToStringAPI( pObj->GetName() ), statArgs);
     }
-    catch(eFSServices& e)
+    catch(eError& e)
     {
         cDebug d("CreateObject");
         d.TraceError( "*** Stat of %s failed!!!\n", pObj->GetName().AsString().c_str() );

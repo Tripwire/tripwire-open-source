@@ -160,7 +160,7 @@ CLR_CONFIG_FILE="twcfg.txt"
 CLR_POLICY_FILE="twpol.txt"
 
 # Default installation script configuration file.
-INSTALL_CONFIG_FILE="./install/install.cfg"
+INSTALL_CONFIG_FILE="./installer/install.cfg"
 
 # Relative path to dir that contains the pkg files.
 PKG_DIR="pkg"

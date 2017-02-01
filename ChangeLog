@@ -1,3 +1,21 @@
+2017-01-15 Brian Cox <bcox@tripwire.com>
+	* Bump version to 2.4.3.2
+	* DOS/DJGPP platform support.
+	* Use posix_fadvise() to reduce disk cache impact (where available).
+	* Use O_NOATIME where available, so scans don't update file access times.
+	* Optional HASH_DIRECT_IO (Linux only) to access files via direct i/o when hashing, per user request.
+	* Optional support for iconv character conversion, for db/report file portability.
+	* Improved display of multibyte characters in reports.
+	* On OSX, use builtin CommonCrypto hashes instead of impls provided with OST.
+	* Update build system to automake 1.15
+	* Cross compiling can use OpenSSL now.
+	* 'make dist' now creates a buildable source bundle.
+	* Can use build dir outside of source tree
+	* Include 'what'-style version strings.
+	* AROS: Correctly hide passphrases & delete temp files.
+	* Remove dead code & unused files.
+	* Optional RESOLVE_IDS_TO_NAMES option to disable uid/gid to name resolution, if needed.
+	* New --key-size option to twadmin --generate-keys, to generate 1024 (default) or 2048 bit El Gamal keys.  
 2016-04-20 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.1
 	* Revive old 'twtest' unit test suite (such as it is); move _t.cpp files into twtest dir.
@@ -26,7 +44,7 @@
 	* Add MAILFROMADDRESS config param (see twconfig man page)
 	* Use O_NONBLOCK, to avoid blocking on fifos & mandatory-locked files
 	* Report Solaris door & event port file types correctly
-	
+
 2014-01-01 Barry Allard <barry.allard@gmail.com>
 
 	* Bumping version to 2.4.2.3
@@ -59,24 +77,21 @@
 	* Fixed bug in install script when sendmail isn't installed
 	  target system.
 	* Removed some non-existent files from installer
-	
+
 2005-08-18 Ron Forrester <rjf@theforrest.org>
 
 	* Wow, has it been 4+ years? :)
-	
 	* Starting fresh with Paul's autoconf'ed code base
-	
 	* Bumped version number, misc cleanup, etc.
-
 
 2001-02-25  Ron Forrester  <rjf@theforrest.org>
 
 	* Bumped version to 2.3.1.
-	
+
 	* BSD support, thanks to Paul Herman <pherman@frenchfries.net>.
 	The support was added for FreeBSD 4.2, your mileage may vary on
 	other BSD's.
-	
+
 	* Fixed long standing bug with recurse=3
 
 	* If TEMPDIRECTORY was missing trailing /, bad things could
@@ -88,8 +103,7 @@
 	file. Additionally, reports were being sliced to global
 	recipients, despite the fact that global recipients should get
 	the full report.
-	
-	
+
 2001-02-03  Ron Forrester  <rjf@theforrest.org>
 
 	* Fixed possible security problem with the handling of temp

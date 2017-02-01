@@ -46,15 +46,20 @@
 
 //All the spleck that it takes to run sockets in Unix...
 #include <stdio.h>
-#include <sys/socket.h>
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+# include <netdb.h>
+# include <netinet/in.h>
+# include <arpa/inet.h>
+#endif
 #include <sys/types.h>
 #include <sys/time.h>
-#include <netdb.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <sys/utsname.h>
 
-#ifdef _SORTIX_SOURCE
+#if HAVE_SYS_UTSNAME_H
+# include <sys/utsname.h>
+#endif
+
+#if HAVE_SYS_SELECT_H
 # include <sys/select.h>
 #endif
 
@@ -70,7 +75,7 @@
 
 #define INVALID_SOCKET -1
 
-#ifdef __AROS__
+#if IS_AROS
  #ifndef HAVE_GETHOSTNAME
   #define HAVE_GETHOSTNAME 1
  #endif
@@ -80,7 +85,8 @@
 static int gethostname( char* name, int namelen )
 {
     name[0] = '\0';
-    
+
+#if HAVE_SYS_UTSNAME_H    
     struct utsname myname;
     uname( & myname );
     
@@ -95,6 +101,10 @@ static int gethostname( char* name, int namelen )
         return -1;
             // equivalent of SOCKET_ERROR
     }
+#else
+    strncpy(name, "localhost", namelen);
+#endif
+
 }
 #endif
     // Unix does not require us to go though any silly DLL hoops, so we'll
@@ -130,29 +140,6 @@ cSMTPMailMessage::cSMTPMailMessage(TSTRING strServerName, unsigned short portNum
     mstrServerName      = strServerName;
     mPortNumber         = portNumber;
     mSocket             = INVALID_SOCKET;
-
-#if USES_WINSOCK
-    mHlibWinsock        = NULL;
-
-    mPfnSocket          = NULL;
-    mPfnInetAddr        = NULL;
-    mPfnGethostname     = NULL;
-    mPfnGethostbyname   = NULL;
-    mPfnConnect         = NULL;
-    mPfnCloseSocket     = NULL;
-    mPfnSend            = NULL;
-    mPfnRecv            = NULL;
-    mPfnSelect          = NULL;
-
-    mPfnWSAStartup      = NULL;
-    mPfnWSACleanup      = NULL;
-    mPfnWSAGetLastError = NULL;
-    
-    mPfnNtohl           = NULL;
-    mPfnHtonl           = NULL;
-    mPfnNtohs           = NULL;
-    mPfnHtons           = NULL;
-#endif // USES_WINSOCK
 }
 
 
@@ -163,8 +150,6 @@ cSMTPMailMessage::cSMTPMailMessage(TSTRING strServerName, unsigned short portNum
 cSMTPMailMessage::~cSMTPMailMessage()
 {
 }
-
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,12 +176,16 @@ long cSMTPMailMessage::GetServerAddress()
 
     if (bIsNumeric)
     {
+#ifndef HAVE_SYS_SOCKET_H
+        return 0;
+#else
         // convert the numberic address to a long
         return mPfnInetAddr(sNarrowString.c_str());
+#endif
     }
     else
     {
-#ifdef _SORTIX_SOURCE
+#if IS_SORTIX || !defined(HAVE_SYS_SOCKET_H)
         return INADDR_NONE;
 #else
         // do a DNS lookup of the hostname and get the long
@@ -216,6 +205,9 @@ long cSMTPMailMessage::GetServerAddress()
 //
 bool cSMTPMailMessage::OpenConnection()
 {
+#ifndef HAVE_SYS_SOCKET_H
+    return false;
+#else
     // Initialize the socket structure
     sockaddr_in sockAddrIn;
     memset(&sockAddrIn, 0, sizeof(sockaddr));
@@ -262,6 +254,7 @@ bool cSMTPMailMessage::OpenConnection()
     }
 
     return true;
+#endif
 }
 
 
@@ -485,6 +478,9 @@ bool cSMTPMailMessage::MailMessage()
 //
 bool cSMTPMailMessage::GetAcknowledgement()
 {
+#ifndef HAVE_SYS_SOCKET_H
+    return false;
+#else  
     cDebug d( "cSMTPMailMessage::GetAcknowledgement" );
 
     const int bufsize = 512;
@@ -547,17 +543,19 @@ bool cSMTPMailMessage::GetAcknowledgement()
         throw eMailSMTPServer(estr.str());
         return false;
     }
+#endif
 }
 
 void cSMTPMailMessage::SendString( const std::string& str )
 {
     cDebug d("util_SendString()");
-
+#if HAVE_SYS_SOCKET_H
     if( str.length() < 800 )
         d.TraceDebug( "Sending \"%s\"\n", str.c_str() );
     else
         d.TraceDebug( "Sending (truncated in this debug output)\"%s\"\n", std::string( str.c_str(), 800 ).c_str() );
     mPfnSend( mSocket, str.c_str(), str.length(), 0 );
+#endif
 }
 
 
@@ -569,88 +567,6 @@ void cSMTPMailMessage::SendString( const std::string& str )
 void cSMTPMailMessage::DecodeError()
 {
 #if defined(_DEBUG)
-
-#if USES_WINSOCK
-    //
-    // decode an error condition encountered by Windows sockets.
-    // TODO -  write something less technical to explain what when wrong. Windows
-    // message names are not good error strings for a shipping product.
-    //
-    int error = mPfnWSAGetLastError();
-    fprintf(stderr, "Encountered winsock error message %d", error);
-    struct ErrorStruct 
-    {
-        const char *msg;
-        int error;
-    }
-    static const errors[52] = 
-    {
-        { "WSAEINTR",                (WSABASEERR+4) },
-        { "WSAEBADF",                (WSABASEERR+9) },
-        { "WSAEACCES",               (WSABASEERR+13) },
-        { "WSAEFAULT",               (WSABASEERR+14) },
-        { "WSAEINVAL",               (WSABASEERR+22) },
-        { "WSAEMFILE",               (WSABASEERR+24) },
-        { "WSAEWOULDBLOCK",          (WSABASEERR+35) },
-        { "WSAEINPROGRESS",          (WSABASEERR+36) },
-        { "WSAEALREADY",             (WSABASEERR+37) },
-        { "WSAENOTSOCK",             (WSABASEERR+38) },
-        { "WSAEDESTADDRREQ",         (WSABASEERR+39) },
-        { "WSAEMSGSIZE",             (WSABASEERR+40) },
-        { "WSAEPROTOTYPE",           (WSABASEERR+41) },
-        { "WSAENOPROTOOPT",          (WSABASEERR+42) },
-        { "WSAEPROTONOSUPPORT",      (WSABASEERR+43) },
-        { "WSAESOCKTNOSUPPORT",      (WSABASEERR+44) },
-        { "WSAEOPNOTSUPP",           (WSABASEERR+45) },
-        { "WSAEPFNOSUPPORT",         (WSABASEERR+46) },
-        { "WSAEAFNOSUPPORT",         (WSABASEERR+47) },
-        { "WSAEADDRINUSE",           (WSABASEERR+48) },
-        { "WSAEADDRNOTAVAIL",        (WSABASEERR+49) },
-        { "WSAENETDOWN",             (WSABASEERR+50) },
-        { "WSAENETUNREACH",          (WSABASEERR+51) },
-        { "WSAENETRESET",            (WSABASEERR+52) },
-        { "WSAECONNABORTED",         (WSABASEERR+53) },
-        { "WSAECONNRESET",           (WSABASEERR+54) },
-        { "WSAENOBUFS",              (WSABASEERR+55) },
-        { "WSAEISCONN",              (WSABASEERR+56) },
-        { "WSAENOTCONN",             (WSABASEERR+57) },
-        { "WSAESHUTDOWN",            (WSABASEERR+58) },
-        { "WSAETOOMANYREFS",         (WSABASEERR+59) },
-        { "WSAETIMEDOUT",            (WSABASEERR+60) },
-        { "WSAECONNREFUSED",         (WSABASEERR+61) },
-        { "WSAELOOP",                (WSABASEERR+62) },
-        { "WSAENAMETOOLONG",         (WSABASEERR+63) },
-        { "WSAEHOSTDOWN",            (WSABASEERR+64) },
-        { "WSAEHOSTUNREACH",         (WSABASEERR+65) },
-        { "WSAENOTEMPTY",            (WSABASEERR+66) },
-        { "WSAEPROCLIM",             (WSABASEERR+67) },
-        { "WSAEUSERS",               (WSABASEERR+68) },
-        { "WSAEDQUOT",               (WSABASEERR+69) },
-        { "WSAESTALE",               (WSABASEERR+70) },
-        { "WSAEREMOTE",              (WSABASEERR+71) },
-        { "WSAEDISCON",              (WSABASEERR+101) },
-        { "WSASYSNOTREADY",          (WSABASEERR+91) },
-        { "WSAVERNOTSUPPORTED",      (WSABASEERR+92) },
-        { "WSANOTINITIALISED",       (WSABASEERR+93) },
-        { "WSAHOST_NOT_FOUND",       (WSABASEERR+1001) },
-        { "WSATRY_AGAIN",            (WSABASEERR+1002) },
-        { "WSANO_RECOVERY",          (WSABASEERR+1003) },
-        { "WSANO_DATA",              (WSABASEERR+1004) },
-        { NULL, 0 }
-    };
-
-    int i = 0;
-    while (errors[i].msg) 
-    {
-        if (errors[i].error == error) 
-        {
-            fprintf(stderr, ": %s", errors[i].msg);
-            break;
-        } 
-        i++;
-    }
-    fprintf(stderr, "\n");
-#endif // USES_WINSOCK
 
 #if IS_UNIX
 

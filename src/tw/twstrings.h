@@ -52,7 +52,6 @@ TSS_BeginStringIds( tw )
     STR_ERR_WRONG_PASSPHRASE_LOCAL,
     STR_ERR_WRONG_PASSPHRASE_SITE,
     STR_DEF_CFG_FILENAME,
-    STR_WIN_NT_ONLY,
     STR_GET_HELP,
     STR_VERSION,
     STR_VERSION_LONG,
@@ -73,7 +72,7 @@ TSS_BeginStringIds( tw )
     STR_ENTER_LOCAL_PASSPHRASE,
     STR_ENTER_SITE_PASSPHRASE,
     STR_ENTER_PROVIDED_PASSPHRASE,
-    STR_DB_NOT_UPDATED,     // db update not performed due to anal mode
+    STR_DB_NOT_UPDATED,     // db update not performed due to secure mode
     STR_IGNORE_PROPS,       // ignoring properties
     STR_NOT_IMPLEMENTED,
     STR_REPORT_EMPTY,       

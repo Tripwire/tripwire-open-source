@@ -89,17 +89,6 @@ void cDebug::Trace(int levelNum, const char* format, ...)
 
 }
 
-void cDebug::Trace(int levelNum, const wchar_t* format, ...)
-{
-    if (levelNum > mDebugLevel)
-        return;
-    // create the output buffer 
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //  DoTrace()
@@ -146,56 +135,6 @@ void cDebug::DoTrace(const char *format, va_list &args)
         logfile.flush();
     }
 }
-
-void cDebug::DoTrace(const wchar_t *format, va_list &args)
-{
-#if IS_UNIX
-    // we don't support vswprintf on UNIX
-    ASSERT(false);
-    THROW_INTERNAL("debug.cpp");
-#else
-
-    size_t guard1 = 0xBABABABA;
-    wchar_t out[2048];
-    size_t guard2 = 0xBABABABA;
-
-    vswprintf(out, format, args);
-    
-    ASSERT(guard1 == 0xBABABABA && guard2 == 0xBABABABA); // string was too long
-    char nout[1024];
-    if (wcstombs(nout, out, 1024) == -1) 
-        strcpy(nout, "XXX Unconvertable wide char detected in cDebug::DoTrace()\n");
-
-    std::ostringstream ostr;
-    ostr.setf(std::ios::left);
-    ostr.width(40);
-    ostr << mLabel;
-    ostr.width(0);
-    ostr << nout;
-
-
-    if ((mOutMask & OUT_STDOUT) != 0)
-    {
-        std::cout << ostr.str().c_str();
-        std::cout.flush();
-    }
-
-    //
-    //make it output to log file!
-    //
-    if ((mOutMask & OUT_FILE) != 0)
-    {
-        // the logfile is narrow chars only...
-        logfile.setf(std::ios::left);
-        logfile.width(40);
-        logfile << mLabel;
-        logfile.width(0);
-        logfile << out;
-        logfile.flush();
-    }
-#endif // IS_UNIX
-}
-
 #ifdef DEBUG
 
 //
@@ -275,90 +214,11 @@ void cDebug::TraceNever(const char *format, ...)
     va_end(args);
 }
 
-void cDebug::TraceAlways(const wchar_t *format, ...)
-{
-    if (D_ALWAYS > mDebugLevel)
-        return;
-
-    // fill up arglist, and pass to printing routine
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-}
-
-void cDebug::TraceError(const wchar_t *format, ...)
-{
-    if (D_ERROR > mDebugLevel)
-        return;
-
-    // fill up arglist, and pass to printing routine
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-}
-
-void cDebug::TraceWarning(const wchar_t *format, ...)
-{
-    if (D_WARNING > mDebugLevel)
-        return;
-
-    // fill up arglist, and pass to printing routine
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-}
-
-void cDebug::TraceDebug(const wchar_t *format, ...)
-{
-    if (D_DEBUG > mDebugLevel)
-        return;
-
-    // fill up arglist, and pass to printing routine
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-}
-
-void cDebug::TraceDetail(const wchar_t *format, ...)
-{
-    if (D_DETAIL > mDebugLevel)
-        return;
-
-    // fill up arglist, and pass to printing routine
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-}
-
-void cDebug::TraceNever(const wchar_t *format, ...)
-{
-    if (D_NEVER > mDebugLevel)
-        return;
-
-    // fill up arglist, and pass to printing routine
-    va_list args;
-    va_start(args, format);
-    DoTrace(format, args);
-    va_end(args);
-}
-
 void cDebug::TraceVaArgs( int iDebugLevel, const char *format, va_list &args )
 {
     if ( iDebugLevel <= mDebugLevel )
         DoTrace( format, args);
 }
-
-void cDebug::TraceVaArgs( int iDebugLevel, const wchar_t *format, va_list &args )
-{
-    if ( iDebugLevel <= mDebugLevel )
-        DoTrace( format, args );
-}
-
 #endif // DEBUG
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -447,79 +307,12 @@ void cDebug::DebugOut( const char* lpOutputString, ... )
     vsprintf(buf, lpOutputString, args);
     va_end(args);
     
-#ifdef _UNICODE
-    wchar_t wbuf[2048];
-    if (mbstowcs(wbuf, buf, strlen(buf)+1) == -1) 
-        wcscpy(wbuf, _T("XXX Unconvertable mb character detected in cDebug::DebugOut()\n") );
-
-    #if !USE_OUTPUT_DEBUG_STRING 
-    #ifdef _DEBUG
-        TCERR << wbuf;
-    #endif  //_DEBUG
-    #else   // USE_OUTPUT_DEBUG_STRING
-    ::OutputDebugString(wbuf);
-    #endif  // USE_OUTPUT_DEBUG_STRING
-#else   // _UNICODE
-    #if !USE_OUTPUT_DEBUG_STRING 
-        #ifdef _DEBUG
-        TCERR << buf;
-        #endif  //_DEBUG
-    #else   // USE_OUTPUT_DEBUG_STRING
-        ::OutputDebugString(buf);
-    #endif  // USE_OUTPUT_DEBUG_STRING
-#endif  // _UNICODE
+	#ifdef _DEBUG
+	TCERR << buf;
+	#endif  //_DEBUG
 
     TCOUT.flush();
 }
-
-void cDebug::DebugOut( const wchar_t* lpOutputString, ... )
-{
-    va_list args;
-    va_start(args, lpOutputString);
-
-#if IS_UNIX
-    char mbformatbuf[1024];
-    char buf[1024];
-//  if (wcstombs(mbformatbuf, lpOutputString, wcslen(lpOutputString)) == -1)
-//      strcpy(mbformatbuf, "XXX Unconvertable wide char detected in cDebug::DebugOut()\n");
-
-    vsprintf(buf, mbformatbuf, args);
-#else
-
-    wchar_t buf[1024];
-    vswprintf(buf, lpOutputString, args);
-#endif
-    va_end(args);
-    
-#ifdef _UNICODE
-    #if !USE_OUTPUT_DEBUG_STRING 
-        #ifdef _DEBUG
-        TCERR << buf;
-        #endif  //_DEBUG
-    #else   // USE_OUTPUT_DEBUG_STRING
-    ::OutputDebugString(buf);
-    #endif  // USE_OUTPUT_DEBUG_STRING
-#else
-    char nbuf[1024];
-    #if IS_UNIX
-    strcpy(nbuf, buf);
-    #else
-    if (wcstombs(nbuf, buf, wcslen(buf)+1) == -1)
-        strcpy(nbuf, "XXX Unconvertable wide char detected in cDebug::DebugOut()\n");
-#endif 
-
-#if !USE_OUTPUT_DEBUG_STRING 
-    #ifdef _DEBUG
-    TCERR << nbuf;
-    #endif  //_DEBUG
-#else   // USE_OUTPUT_DEBUG_STRING
-    ::OutputDebugString(nbuf);
-#endif  // USE_OUTPUT_DEBUG_STRING
-    #endif
-
-    TCOUT.flush();
-}
-
 #endif // DEBUG
 
 //////////////////////////////////////////////////////////////////////////////////

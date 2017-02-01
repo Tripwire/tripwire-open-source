@@ -135,13 +135,7 @@ void cTextDBViewer::PrintDB( cFCODatabaseFile& rd, const TSTRING& strFilename )
     else
     {
         //Gonna have to insert a lame hack here, since ostr.open DEMANDS a const char*!!
-#ifdef _UNICODE
-        char ncBuf[ iFSServices::TW_MAX_PATH ];
-        wcstombs( ncBuf, strFilename.c_str(), sizeof(char));
-        fileOut.open( ncBuf );
-#else //narrow character mode
         fileOut.open( strFilename.c_str() );
-#endif
 
         if( fileOut.is_open() )
         {

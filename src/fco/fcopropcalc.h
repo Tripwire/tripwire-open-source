@@ -84,8 +84,10 @@ public:
     
     enum CalcFlags
     {
-        DO_NOT_MODIFY_PROPERTIES = 0x00000001  // reset any properties that may have been altered due to measurement
+        DO_NOT_MODIFY_PROPERTIES = 0x00000001, // reset any properties that may have been altered due to measurement
+        DIRECT_IO                = 0x00000002  // use direct i/o when scanning files
     };
+    
     virtual int     GetCalcFlags() const = 0;
     virtual void    SetCalcFlags(int i) = 0;
         // any calculation flags needed for calculation.

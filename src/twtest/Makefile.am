@@ -1,14 +1,19 @@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 AM_INSTALL_PROGRAM_FLAGS = -m 755
 
-INCLUDES = -I..
+AM_CPPFLAGS = -I$(srcdir)/..
 LIBS = -ltripwire -lcryptlib @LIBS@
 LDFLAGS = @LDFLAGS@ -L../../lib
 LN_S = @LN@
 
 sbin_PROGRAMS = twtest
+
+twtestdir=.
+
 twtest_SOURCES = \
 archive_t.cpp \
+blockfile_t.cpp \
+blockrecordarray_t.cpp \
 charutil_t.cpp \
 cmdlineparser_t.cpp \
 codeconvert_t.cpp \
@@ -48,6 +53,7 @@ genrespeclist_t.cpp \
 genreswitcher_t.cpp \
 growheap_t.cpp \
 hashtable_t.cpp \
+hierdatabase_t.cpp \
 keyfile_t.cpp \
 objectpool_t.cpp \
 platform_t.cpp \
@@ -73,7 +79,9 @@ unixfsservices_t.cpp \
 usernotifystdout_t.cpp \
 wchar16_t.cpp
 
-DEFS = @DEFS@		# This gets rid of the -I. so INCLUDES must be more explicit
+twtest_HEADERS = stdtest.h stringutil_t.h test.h
+
+DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
 CLEANFILES = ../../bin/twtest
 
 all: $(sbin_PROGRAMS)

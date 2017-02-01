@@ -1,4 +1,38 @@
-What's new in Open Source Tripwire 2.4.3:
+What's new in Open Source Tripwire 2.4.3.2:
+
+* OST now includes optional iconv support when configured with --enable-iconv.
+When enabled, binary database & report files store paths as UTF-16, making these files more
+portable across machines with different character encodings.  This is disabled by default
+for the sake of compatibility with existing db & report files.
+
+* Use posix_fadvise (or equivalent) to avoid filling system disk cache with files we've already
+read and aren't about to read again.  Also use O_NOATIME where available, to avoid updating
+file access times when we read a file.  Add an optional new config param "HASH_DIRECT_IO" to use 
+direct i/o when hashing files.  This doesn't seem to be any faster than normal i/o, but 
+including it anyway due to user request.
+
+* Add a new config file option RESOLVE_IDS_TO_NAMES to control whether we try to
+resolve uid/gid values to user & group names.  Static binaries are known to segfault when
+doing this given certain nsswitch.conf setups (particularly LDAP/AD), so setting this
+to false bypasses name resolution and just displays the numeric uid/gid.
+
+* Add a new optional --key-size argument to twadmin --generate-keys mode, with available
+sizes of 1024 or 2048 bits.  Previously twadmin always created 1024-bit El Gamal keys,
+and this remains the default if --key-size is not specified, at least for the time being.
+
+* Fix a compilation issue with C++11 and -Werror=terminate.
+
+* Move build files to automake 1.15, and make a few build system fixes: "make dist" now
+works properly, cross-compiled binaries can now compile with OpenSSL if available, and
+specifying a build directory outside the source dir now works as expected.
+
+* Assorted platform tweaks:  Add DOS/FreeDOS + DJGPP as a new platform; support Cygwin
+//host/share/path syntax for UNC paths; passphrase & tempfile fixes for AROS.
+
+
+======================================
+
+What was new in earlier 2.4.3 versions:
 
 * This update fixes compilation errors on modern compilers (GCC 4.7+ and LLVM/clang), 
 as well as some additional errors encountered on various platforms.  This is intended
@@ -26,6 +60,7 @@ defined incorrectly otherwise.
 * Added '-h' argument to display hashes as hex instead of base64 (siggen already allowed this)
 
 * Added the long-requested MAILFROMADDRESS config param for email reporting.
+
 
 
 The update has been tested on a variety of platforms: 
@@ -69,26 +104,25 @@ Other
 - Sortix 1.0 + gcc 5.3.0
 - Icaros 2.1 (AROS) + gcc 4.6.4
 - MiNT 1.17 (Atari ST/TT) + gcc 4.6.4
+- FreeDOS 1.1 + gcc 6.1.0 (DJGPP)
 
 Building Notes:
 
-* If cross compiling, a '--disable-openssl' argument must be passed to ./configure,
-since its OpenSSL existence check currently uses an AC_TRY_RUN macro.  Additionally,
-generated Makefiles don't automagically find the cross-compiler's 'ar' and try to
-use the local one, which fails. Until this is resolved, this can be fixed with a symlink
-named 'ar' pointing at the cross-compiler copy, with a path such that make finds it
-instead of the local 'ar'.
-
 * The '--enable-static' configure argument is not guaranteed to work on all
-platforms, and your mileage may vary. And when it works, it may not be doing
-what you expect. For example, even if a program is statically linked with
-glibc, the static glibc code may still load shared libraries behind the
-scenes, for things like iconv character conversion and nsswitch name lookups.
+platforms (it's known not to work on MacOS, for instance) and your mileage may vary. 
+And when it works, it may not be doing what you expect. For example, even if 
+a program is statically linked with glibc, the static glibc code may still load 
+shared libraries behind the scenes, for things like iconv character conversion 
+and nsswitch name lookups.  
 
-* To create PIE (Position-Independent Executable) binaries, add “-fPIE" to CFLAGS 
-and "-fPIE -pie" to LDFLAGS.  This is required by recent Android versions, and 
-may be desirable elsewhere. It's simplest to add these to configure.in and run 
-autoreconf -i instead of hand-editing each Makefile individually.
+* The build system currently doesn't autodetect clang at configure time 
+(though it detects llvm-gcc).  To use clang, you'll need to set CC and CXX to 
+point at clang and clang++ before configuring & building.
+
+* The default compile flags don't include hardening options such as creating
+PIE (Position-Independent Executable) binaries. To set these, you'll want to
+set CFLAGS/CXXFLAGS/LDFLAGS by hand before running 'configure', or use a tool
+such as dpkg-buildflags to set them to recommended values.
 
 * Older versions of Open Source Tripwire reportedly do not build on Tru64 UNIX.
 This is likely to be true with 2.4.3 as well, due to the lack of appropriate

@@ -119,6 +119,7 @@ public:
         LOCALPASSPHRASE,
         SITEPASSPHRASEOLD,
         LOCALPASSPHRASEOLD,
+        KEY_SIZE,
 
         PARAMS, // the final params
 

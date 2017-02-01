@@ -2,11 +2,14 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT
+AC_INIT([tripwire], [2.4.3.2], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
-AM_INIT_AUTOMAKE(tripwire, 2.4.3.1)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
+
+AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2017 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
+AC_REVISION([$Revision: 2.4.3.2 $])
 
 dnl #################################
 dnl Cleanup Cruft Leftover From Patch
@@ -38,12 +41,16 @@ fi
 dnl ###################
 dnl Checks for programs
 dnl ###################
-AC_PROG_CC
-AC_PROG_CXX
+AC_PROG_CC([gcc clang suncc aCC xlC_r xlC cl.exe])
+AC_PROG_CXX([g++ clang++ sunCC aCC xlC_r xlC cl.exe])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
 AC_PROG_LN
+AN_MAKEVAR([AR], [AC_PROG_AR])
+AN_PROGRAM([ar], [AC_PROG_AR])
+AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
+AC_PROG_AR
 AC_PATH_PROG(path_to_vi, vi)
 AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
 
@@ -63,10 +70,12 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #include <sys/param.h>
 #endif
 ]])
-AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h)
-AC_CHECK_HEADERS(unistd.h syslog.h iconv.h langinfo.h sys/statfs.h)
+AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
+AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h sys/select.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
+AC_CHECK_HEADERS(sys/utsname.h memory.h)
+AC_CHECK_HEADERS(sys/fs/vx_ioctl.h)
 
 dnl # Special case for malloc.h, because it's depreciated on most systems.
 CPPFLAGS_SAVE="${CPPFLAGS}"
@@ -106,6 +115,18 @@ dnl #############################
 AC_CHECK_FUNCS(strftime gethostname gethostid)
 AC_CHECK_FUNCS(mkstemp mktemp, break)
 
+dnl check for posix_fadvise
+AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
+
+dnl check for OSX builtin hash algorithms
+AC_ARG_ENABLE(commoncrypto,
+        [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
+
+if test "x${enable_commoncrypto}" != "xno"
+then
+  AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+fi
+
 dnl ##############################################
 dnl Checks for various platform specific libraries
 dnl ##############################################
@@ -123,6 +144,22 @@ AC_CHECK_LIB(c, gethostbyname, [:], [
   ], [
     AC_CHECK_LIB(network, gethostbyname, [LIBS="-lnetwork $LIBS"] [:])
   ]) ])
+
+
+AC_ARG_ENABLE(iconv,
+        [  --enable-iconv          Use iconv for locale-independent report and db files])
+
+if test "x${enable_iconv}" = xyes
+then
+  dnl iconv? check the usual locations
+  AC_CHECK_LIB(c, iconv, [
+     AC_CHECK_HEADERS(iconv.h)
+    ], [
+   AC_CHECK_LIB(iconv, iconv, [
+     LIBS="-liconv $LIBS"
+     AC_CHECK_HEADERS(iconv.h)
+    ], [:]) ])
+fi
 
 dnl check for stl library
 AC_LANG_SAVE
@@ -282,7 +319,7 @@ if you are trying to compile a static binary.
 
 dnl Check for OpenSSL, now that we have a working compiler
 AC_ARG_ENABLE(openssl,
-        [  --disable-openssl       don't link against OpenSSL libraries])
+        [  --disable-openssl       Don't link against OpenSSL libraries])
 AC_ARG_WITH(ssl-dir,
 	[  --with-ssl-dir=PATH     Specify path to OpenSSL installation ],
 	[
@@ -339,6 +376,9 @@ then
 
 		# Basic test to check for compatible library and
 		# correct linking
+		if test "$cross_compiling" = yes; then
+                        found_crypto=1
+                else       
 		AC_TRY_RUN(
 			[
 #include <string.h>
@@ -356,6 +396,7 @@ int main(void)
 				break;
 			], []
 		)
+                fi
 
 		if test ! -z "$found_crypto" ; then
 			break;
@@ -405,6 +446,9 @@ if (test ! -z "$ac_cv_openssldir" && test "x$ac_cv_openssldir" != "xnot found") 
         CORE_CRYPT_O=""
  fi
 fi
+
+AC_CONFIG_COMMANDS([mk_lib], [test -d lib || mkdir lib])
+AC_CONFIG_COMMANDS([mk_bin], [test -d bin || mkdir bin])
 
 dnl #####################################
 dnl Export the variables we use

@@ -110,9 +110,11 @@ public:
             // previous enumeration. This flag indicates that any valid properties in the new FCO during
             // an integrity check that are not valid in the database FCO should be copied to the db's fco.
             // Yuck!
-        FLAG_ERASE_FOOTPRINTS_IC        = 0x00000010
+        FLAG_ERASE_FOOTPRINTS_IC        = 0x00000010,
             // when this flag is set, IC will attempt to leave no footprints when doing an integrity check.
             // for instance, IC will tell the property calculator to reset access times.
+        FLAG_DIRECT_IO                  = 0x00000020
+            // Use direct i/o when scanning files
     };
 
 private:

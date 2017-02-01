@@ -45,6 +45,7 @@
 #include "fspropcalc.h"
 #include "fsobject.h"
 
+
 #if IS_UNIX
 #include <unistd.h>
 #endif
@@ -96,9 +97,18 @@ static bool GetSymLinkStr(const cFCOName& fileName, cArchive& arch)
 #ifdef _UNICODE
 #error GetSymLinkStr in fspropcalc.cpp is not unicode compliant 
 #else // ifdef _UNICODE
+
     char buf[1024];
+#if defined(O_PATH) 
+    int fd = open(iTWFactory::GetInstance()->GetNameTranslator()->ToStringAPI( fileName ).c_str(), 
+		  (O_PATH | O_NOFOLLOW | O_NOATIME));
+    int rtn = readlinkat(fd, 0, buf, 1024);
+    close(fd);
+#else
     int rtn = readlink( iTWFactory::GetInstance()->GetNameTranslator()->ToStringAPI( fileName ).c_str(),
-                        buf, 1024 );
+                   buf, 1024 );
+#endif
+
     if(rtn == -1)
         return false;
 
@@ -167,7 +177,7 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
             bDidStat = true;
         }
     }
-    catch(eFSServices& e)
+    catch(eError& e)
     {
         d.TraceError("Error getting stat info for %s : %s\n", strName.c_str(), e.GetMsg().c_str());
 
@@ -268,6 +278,8 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
         }   
     }
 
+    bool hash_success = false;
+
     // if the file type is not a regular file, we will
     // not try to open the file for signature generation
     ASSERT( propSet.GetValidVector().ContainsItem(cFSPropSet::PROP_FILETYPE) );
@@ -283,7 +295,8 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
             cFileArchive    arch;
             cMemoryArchive  memArch;
             cBidirArchive*  pTheArch; 
-            bool            bInitSuccess = true;
+            hash_success = true;
+            
             if(propSet.GetFileType() == cFSPropSet::FT_SYMLINK)
             {
                 pTheArch = &memArch;
@@ -292,7 +305,7 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
                     // add it to the bucket...
                     if(mpErrorBucket)
                         mpErrorBucket->AddError( eArchiveOpen( strName, iFSServices::GetInstance()->GetErrString(), eError::NON_FATAL ) );
-                    bInitSuccess = false;
+                    hash_success = false;
                 }
 
             }
@@ -300,22 +313,24 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
             {
                 pTheArch = &arch;
                 try 
-                {
-                    arch.OpenRead(strName.c_str(), cFileArchive::FA_NONBLOCKING);
+                {                    
+                    arch.OpenRead(strName.c_str(), ((mCalcFlags & iFCOPropCalc::DIRECT_IO) ?
+                                  cFileArchive::FA_SCANNING | cFileArchive::FA_DIRECT :
+                                  cFileArchive::FA_SCANNING) );
                 }
-                catch (eArchive&)
+                catch (eError&)
                 {
                     // add it to the bucket...
                     if(mpErrorBucket)
                         mpErrorBucket->AddError( eArchiveOpen( strName, iFSServices::GetInstance()->GetErrString(), eError::NON_FATAL ) );
-                    bInitSuccess = false;
+                    hash_success = false;
                 }
             }
             
             //
             // if we have successfully initialized the archive
             //
-            if (bInitSuccess)
+            if (hash_success)
             {
                 cArchiveSigGen asg;
 
@@ -346,13 +361,26 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
                 //
                 // calculate the signatures
                 //
-                pTheArch->Seek( 0, cBidirArchive::BEGINNING );
-                asg.CalculateSignatures( *pTheArch );
-                arch.Close();
+                try
+	        {
+                    pTheArch->Seek( 0, cBidirArchive::BEGINNING );
+                    asg.CalculateSignatures( *pTheArch );
+                    arch.Close();
+                }
+                catch (eError& e)
+                {
+                    d.TraceError("Error generating hashes for %s : %s\n", strName.c_str(), e.GetMsg().c_str());
+
+		    e.SetFatality(false);
+                    if(mpErrorBucket)
+  		        mpErrorBucket->AddError(e);
+                    hash_success = false;
+                }           
             }
         }
     }
-    else
+    
+    if (!hash_success)
     {
         // We can't calculate signatures, set them to undefined
         if (propsToCheck.ContainsItem(cFSPropSet::PROP_CRC32))

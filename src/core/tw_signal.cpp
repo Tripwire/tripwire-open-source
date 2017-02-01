@@ -78,8 +78,14 @@ void util_SignalHandler( int sig )
 
 #if IS_UNIX
 
+/* For the morbidly curious, here's a thread where a POSIX standards committee
+   wrings its hands about how to define NSIG: http://austingroupbugs.net/view.php?id=741#c1834 */ 
 #ifndef NSIG
-  #define NSIG 32
+# ifdef SIGMAX
+#  define NSIG (SIGMAX+1)
+# else
+#  define NSIG 32
+# endif
 #endif
 
 void tw_psignal(int sig, const TCHAR *str)

@@ -64,15 +64,18 @@ public:
 
     bool Execute( uint32 flags = 0 ) ; // throw (eError)
         // if false is returned, then there was at least one conflict that came up during the policy
-        // update, and if tripwire was run in anal mode then the policy update should fail. 
+        // update, and if tripwire was run in secure mode then the policy update should fail. 
 
     enum Flags
     {
-        ANAL                    = 0x00000001,   // if this is set, then we are in anal mode. This affects whether error
+        FLAG_SECURE_MODE        = 0x00000001,   // if this is set, then we're in pedantic mode. This affects whether error
                                                 // messages appear as "Error" or "Warning"
-        FLAG_ERASE_FOOTPRINTS_PU= 0x00000002
+        FLAG_ERASE_FOOTPRINTS_PU= 0x00000002,
             // when this flag is set, cPolicyUpdate will attempt undo any inadvertant modifications
             // it may make when executing.
+        
+        FLAG_DIRECT_IO          = 0x00000004
+            // Use direct i/o when scanning files
     };
 
 private:

@@ -74,15 +74,15 @@
 #if IS_UNIX
 #include <unistd.h>
 #include <fcntl.h>
-#include <termios.h>
-#include <sys/ioctl.h>
+#if SUPPORTS_TERMIOS
+# include <termios.h>
+# include <sys/ioctl.h>
+#endif
+
 #include "core/tw_signal.h"
 int _getch(void);
 #endif
 
-#ifdef _UNICODE // right now we only need this for unicode
-#include <mbstring.h> 
-#endif
 
 // constants
 static const char* POLICY_FILE_MAGIC_8BYTE = "#POLTXT\n";
@@ -1121,10 +1121,15 @@ void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const
 #if IS_UNIX
 static void (*old_SIGINT)(int);
 static void (*old_SIGQUIT)(int);
+
+#if SUPPORTS_TERMIOS
 static struct termios Otty;
+#endif
+
 
 static void RestoreEcho(int sig)
 {
+#if SUPPORTS_TERMIOS
 #ifdef _DEBUG
     std::cout << "Caught signal, resetting echo."<< std::endl;
     sleep(2);
@@ -1133,7 +1138,7 @@ static void RestoreEcho(int sig)
     tcsetattr( 0, TCSAFLUSH, &Otty);
     tw_signal(SIGINT, old_SIGINT);
     tw_signal(SIGQUIT, old_SIGQUIT);
-
+#endif
     tw_raise(sig);
 }
 
@@ -1143,6 +1148,12 @@ void cTWUtil::GetString(wc16_string& ret)
 #error We depend on Unix not being Unicode 
 #endif
 
+// tcsetattr doesn't seem to work on AROS, so tweak ANSI terminal settings to hide passphrases.
+#if IS_AROS
+    printf("\e[8m"); // set the 'concealed' flag
+    fflush(stdout);
+#endif
+
     // get the string
     const int MAX_STRING = 1024;
     char  buf[MAX_STRING];
@@ -1150,6 +1161,11 @@ void cTWUtil::GetString(wc16_string& ret)
 
     TCOUT.flush();
     len = read( 0, buf, MAX_STRING );
+
+#if IS_AROS
+    printf("\e[0m"); // reset back to normal text
+    fflush(stdout);
+#endif
 
     // TODO:BAM -- mb-enable this!
     if (len < MAX_STRING - 1)
@@ -1165,6 +1181,7 @@ void cTWUtil::GetString(wc16_string& ret)
 
 cTWUtil::NoEcho::NoEcho()
 {
+#if SUPPORTS_TERMIOS
     // set the terminal to no echo mode
     static struct termios Ntty;
 
@@ -1182,12 +1199,16 @@ cTWUtil::NoEcho::NoEcho()
     {
         ThrowAndAssert(eTWUtilEchoModeSet());
     }
+#endif
 }
 
-cTWUtil::NoEcho::~NoEcho() {
+cTWUtil::NoEcho::~NoEcho() 
+{
+#if SUPPORTS_TERMIOS
     tcsetattr( 0, TCSAFLUSH, &Otty);
     tw_signal(SIGINT, old_SIGINT);
     tw_signal(SIGQUIT, old_SIGQUIT);
+#endif
 }
 
 void cTWUtil::GetStringNoEcho(wc16_string& ret)

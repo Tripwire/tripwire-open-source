@@ -418,8 +418,8 @@ void MakeFile( TSTRING& strNameMakeMe )
         std::string strA;
         for( TSTRING::iterator i = strNameMakeMe.begin(); i != strNameMakeMe.end(); i++ )
         {
-            char ach[4];
-            ASSERT( MB_CUR_MAX <= 4 );
+            char ach[6];
+            ASSERT( MB_CUR_MAX <= 6 );
 
             int n = wctomb( ach, *i );
             ASSERT( n != -1 );

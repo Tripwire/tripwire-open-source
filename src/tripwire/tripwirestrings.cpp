@@ -34,23 +34,18 @@
 #include "stdtripwire.h"
 #include "tripwirestrings.h"
 
-
-#ifdef GMMS
-#define GMMS_OPTION             _T("  -g                   --gmms\n")
-#define GMMS_VERBOSITY_OPTION   _T("  -b 1|2               --gmms-verbosity 1|2\n")
+#if IS_AROS
+# define VERSION_PREFIX "$VER: "
 #else
-#define GMMS_OPTION             
-#define GMMS_VERBOSITY_OPTION   
+# define VERSION_PREFIX "@(#)"
 #endif
 
-#if IS_UNIX
-#define MAPI_OPTION
-#endif
 
 TSS_BeginStringtable( cTripwire )
 
     TSS_StringEntry( tripwire::STR_TRIPWIRE_VERSION,            _T("tripwire: File integrity assessment application.\n")),
-    
+    TSS_StringEntry( tripwire::STR_EMBEDDED_VERSION,            _T(VERSION_PREFIX "tripwire " PACKAGE_VERSION)),
+
     TSS_StringEntry( tripwire::STR_TRIPWIRE_USAGE_SUMMARY,
                 _T("Usage:\n")
                 _T("\n")
@@ -107,13 +102,6 @@ TSS_BeginStringtable( cTripwire )
                 _T("  -i list              --ignore list\n")
                 _T("  -M                   --email-report\n")
                 _T("  -t { 0|1|2|3|4 }     --email-report-level { 0|1|2|3|4 }\n")
-                
-                // Only insert the description of these two options if GMMS is defined.
-                // Otherwise these two lines will be blank. You cannot have #ifdef in
-                // the middle of this big concatenated string.
-                GMMS_OPTION             
-                GMMS_VERBOSITY_OPTION   
-
                 _T("[object1 [object2...]]\n")
                 _T("\n")
                 _T("The -v and -s options are mutually exclusive.\n")
@@ -170,8 +158,6 @@ TSS_BeginStringtable( cTripwire )
                 _T("  -m t                 --test\n")
                 _T("  -e user@domain.com   --email user@domain.com\n")
                 _T("\n")
-                // Only insert the MAPI option under NT.
-                MAPI_OPTION
                 _T("Only one address may be entered.\n")
                 _T("\n")
                 ),
@@ -199,31 +185,6 @@ TSS_BeginStringtable( cTripwire )
     TSS_StringEntry( tripwire::STR_PU_BAD_PROPS,            _T("Conflicting properties for object ") ),
     TSS_StringEntry( tripwire::STR_PROCESSING_GENRE,        _T("*** Processing %s ***\n") ),
 
-    // gmms reporting, these strings are for the gmms command line
-    TSS_StringEntry( tripwire::STR_GMMS_START,              _T("alert Tripwire: ")),
-    TSS_StringEntry( tripwire::STR_GMMS_END,                _T(")")),
-    TSS_StringEntry( tripwire::STR_GMMS_VERBOSITY1A,        _T(", Violations found (")),
-    TSS_StringEntry( tripwire::STR_GMMS_VERBOSITY1B,        _T("), Max severity (")),
-    TSS_StringEntry( tripwire::STR_GMMS_VERBOSITY2A,        _T(", Rule Violated (")),
-    TSS_StringEntry( tripwire::STR_GMMS_VERBOSITY2B,        _T("), File (")),
-    TSS_StringEntry( tripwire::STR_GMMS_VERBOSITY2C,        _T("), Severity (")),
-
-
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR1,             _T("A recipient matched more than one of the recipient descriptor structures. No message was sent.\n(MAPI error: MAPI_E_AMBIGUOUS_RECIPIENT)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR2,             _T("The specified attachment was not found. No message was sent.\n(MAPI error: MAPI_E_ATTACHMENT_NOT_FOUND)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR3,             _T("The specified attachment could not be opened. No message was sent.\n(MAPI error: MAPI_E_ATTACHMENT_OPEN_FAILURE)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR4,             _T("The type of a recipient was not MAPI_TO, MAPI_CC, or MAPI_BCC. No message was sent.\n(MAPI error: MAPI_E_BAD_RECIPTYPE)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR5,             _T("One or more unspecified errors occurred. No message was sent.\n(MAPI error: MAPI_E_FAILURE)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR6,             _T("There was insufficient memory to proceed. No message was sent.\n(MAPI error: MAPI_E_INSUFFICIENT_MEMORY)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR7,             _T("One or more recipients were invalid or did not resolve to any address.\n(MAPI error: MAPI_E_INVALID_RECIPS)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR8,             _T("There was no default logon, and the user failed to log on successfully when the logon dialog box was displayed. No message was sent.\n(MAPI error: MAPI_E_LOGIN_FAILURE)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR9,             _T("The text in the message was too large. No message was sent.\n(MAPI error: MAPI_E_TEXT_TOO_LARGE)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR10,            _T("There were too many file attachments. No message was sent.\n(MAPI error: MAPI_E_TOO_MANY_FILES)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR11,            _T("There were too many recipients. No message was sent.\n(MAPI error: MAPI_E_TOO_MANY_RECIPIENTS)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR12,            _T("A recipient did not appear in the address list. No message was sent.\n(MAPI error: MAPI_E_UNKNOWN_RECIPIENT)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR13,            _T("The user canceled one of the dialog boxes. No message was sent.\n(MAPI error: MAPI_E_USER_ABORT)")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR14,            _T("MAPI returned a unrecognized error (")),
-    TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_MAPI_SEND_ERRROR14_1,          _T(").")),
 
     TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_SERVER,                        _T("Server: ")),
     TSS_StringEntry( tripwire::STR_ERR2_MAIL_MESSAGE_SERVER_RETURNED_ERROR,         _T("Error Number:")),
@@ -235,7 +196,6 @@ TSS_BeginStringtable( cTripwire )
     TSS_StringEntry( tripwire::STR_ERR_IC_EMAIL_AND_FILES,      _T("Email reporting cannot be specified when checking a list of objects.")),
     TSS_StringEntry( tripwire::STR_ERR_NO_MAIL_METHOD,          _T("No mail method specified in configuration file.")),
     TSS_StringEntry( tripwire::STR_ERR_INVALID_MAIL_METHOD,     _T("Invalid mail method in configuration file.")),
-    TSS_StringEntry( tripwire::STR_ERR_MAPI_NOT_SUPPORTED,      _T("Configuration option MAILMETHOD=MAPI is not supported on this platform.")),
     TSS_StringEntry( tripwire::STR_ERR_MISSING_MAILPROGRAM,     _T("Mail method is set to SENDMAIL but MAILPROGRAM was not defined in configuration file")),
     TSS_StringEntry( tripwire::STR_ERR_NO_TEST_MODE,            _T("No test area specified.")),
     TSS_StringEntry( tripwire::STR_GENERATING_DB,               _T("Generating the database...\n")),
@@ -282,12 +242,6 @@ TSS_BeginStringtable( cTripwire )
     TSS_StringEntry( tripwire::STR_EMAIL_SUBJECT_OK,        _T("Tripwire found no violations")),
     TSS_StringEntry( tripwire::STR_ERR_EMAIL_REPORT,        _T("Email reporting failed.")), 
     TSS_StringEntry( tripwire::STR_ERR_EMAIL_TEST,          _T("Email test failed.")),
-    //
-    // Gmms errors
-    //
-    TSS_StringEntry( tripwire::STR_ERR_BAD_GMMS_VERBOSITY,  _T("Error: gmms verbosity must be 1 or 2. ")),
-    TSS_StringEntry( tripwire::STR_ERR_GMMS_VERBOSITY_ONLY, _T("Error: --gmms-verbosity specified without --gmms. ")),
-
 
     TSS_StringEntry( tripwire::STR_NOTIFY_PROCESSING,       _T("Processing: ")),
     TSS_StringEntry( tripwire::STR_NOTIFY_CHECKING,         _T("Checking: ")),

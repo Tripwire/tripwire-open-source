@@ -137,8 +137,8 @@ void cFSParserUtil::InterpretFCOName( const std::list<TSTRING>& l, cFCOName& nam
     for( std::list<TSTRING>::const_iterator i = l.begin(); i != l.end(); i++ )
         strT += *i;
 
-#ifdef __AROS__
-    strT = cArosPath::AsPosix(strT);
+#if USES_DEVICE_PATH
+    strT = cDevicePath::AsPosix(strT);
 #endif
 
     // let cFCOName handle interpretation
