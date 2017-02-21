@@ -492,7 +492,6 @@ installdirs: installdirs-recursive
 installdirs-am:
 install-exec: install-exec-recursive
 install-data: install-data-recursive
-uninstall: uninstall-recursive
 
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
@@ -603,7 +602,10 @@ uninstall-am:
 
 
 install:
-	/bin/true
+	true
+
+uninstall:
+	true
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
