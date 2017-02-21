@@ -1519,6 +1519,9 @@ void cTextReportViewer::DisplayChangedProps( const iFCO* const pfcoOld, const iF
        
 void cTextReportViewer::OutputAddedSummary( const cFCOReportSpecIter& ri, FCOList* pFCONameList )
 {
+    if (!pFCONameList)
+        return;
+    
     if( ! ri.GetAddedSet()->IsEmpty() )
     {
         (*mpOut) << TSS_GetString( cTW, tw::STR_ADDED ) << _T(":") << endl;
@@ -1538,7 +1541,10 @@ void cTextReportViewer::OutputAddedSummary( const cFCOReportSpecIter& ri, FCOLis
 }
 
 void cTextReportViewer::OutputRemovedSummary( const cFCOReportSpecIter& ri, FCOList* pFCONameList)
-{    
+{
+    if (!pFCONameList)
+        return;
+    
     if( ! ri.GetRemovedSet()->IsEmpty() )
     {
         (*mpOut) << TSS_GetString( cTW, tw::STR_REMOVED ) << _T(":") << endl;
@@ -1558,7 +1564,10 @@ void cTextReportViewer::OutputRemovedSummary( const cFCOReportSpecIter& ri, FCOL
 }
 
 void cTextReportViewer::OutputChangedSummary( const cFCOReportSpecIter& ri, FCOList* pFCONameList )
-{    
+{
+    if (!pFCONameList)
+        return;
+    
     if( ri.GetNumChanged() > 0 )
     {
         (*mpOut) << TSS_GetString( cTW, tw::STR_CHANGED ) << _T(":") << endl;

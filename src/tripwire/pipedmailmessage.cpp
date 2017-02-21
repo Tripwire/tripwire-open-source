@@ -80,8 +80,7 @@ bool cPipedMailMessage::Send()
 
     SendInit();
     
-    FILE* sendPipe = GetFilePointer();
-    ASSERT( sendPipe != 0 );
+    ASSERT( mpFile != 0 );
    //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     // Get Body and Attachments
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -212,9 +211,4 @@ void cPipedMailMessage::SendFinit() //throw ( eMailMessageError )
     mpFile = 0;
 }
 
-
-FILE* cPipedMailMessage::GetFilePointer() const
-{
-    return mpFile;
-}
 

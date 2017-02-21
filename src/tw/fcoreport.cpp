@@ -514,13 +514,6 @@ cFCOReportChangeIter::cFCOReportChangeIter(const cFCOReportSpecIter& specIter)
     SetSpecIter(specIter);
 }
 
-cFCOReportChangeIter::cFCOReportChangeIter()
-{
-    mpData = new cFCOReportChangeIter_i;
-    mpData->mpList  = 0;
-    mpData->mIter   = mpData->mpList->begin();
-}
-
 cFCOReportChangeIter::cFCOReportChangeIter(const cFCOReportChangeIter& rhs)
 {
     mpData = new cFCOReportChangeIter_i;

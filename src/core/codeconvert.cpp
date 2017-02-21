@@ -1323,7 +1323,9 @@ cWcharIs32BitUcs2Converterer::Convert(
         throw eConverterFatal( TSS_GetString( cCore, core::STR_ERR_ISNULL ) );
 
     // cast our dbchar_t to wchar_t's first
-    ntwcs_t pwzBuffer = new wchar_t[ nCount + 1 ];
+    std::vector<wchar_t> buf(nCount+1);
+    wchar_t* pwzBuffer = &buf[0];
+    
     for( size_t n = 0; n < nCount; n++ )
         pwzBuffer[n] = pwz[n];
     pwzBuffer[nCount] = 0x00; // null terminate
@@ -1358,7 +1360,8 @@ cWcharIs32BitUcs2Converterer::Convert(
         throw eConverterFatal( TSS_GetString( cCore, core::STR_ERR_ISNULL ) );
 
     // mb to wc to a buffer of wide chars then....
-    wchar_t* pwzBuffer = new wchar_t[ nCount ];
+    std::vector<wchar_t> buf(nCount);
+    wchar_t* pwzBuffer = &buf[0];
 
     int nConv = tss_mbstowcs( pwzBuffer, pbz, nCount );
     if ( nConv == -1 )
@@ -1451,22 +1454,26 @@ cGoodEnoughConverterer::Convert(
         throw eConverterFatal( TSS_GetString( cCore, core::STR_ERR_ISNULL ) );
     
     char* at = pbz;
-    const dbchar_t* dat = pwz;
-    while ( *dat )
+    
+    if (pwz)
     {
-        if( *dat > 0xFF )
+        const dbchar_t* dat = pwz;
+        while ( *dat )
         {
-            *at = cConvertUtil::ConvertNonChar( *dat );
+            if( *dat > 0xFF )
+            {
+                *at = cConvertUtil::ConvertNonChar( *dat );
+            }
+            else
+            {
+                *at = (char)*dat;
+            }
+            
+            at++;
+            dat++;
         }
-        else
-        {
-            *at = (char)*dat;
-        }
-        
-        at++;
-        dat++;
     }
-
+    
     *at = 0x00;
 
     return( (size_t)at - (size_t)pbz );
@@ -1481,23 +1488,26 @@ cGoodEnoughConverterer::Convert(
     if ( pwz == 0 || ( pbz == 0 && nBytes ) )
         throw eConverterFatal( TSS_GetString( cCore, core::STR_ERR_ISNULL ) );
     
-    const char* at = pbz;
     dbchar_t* dat = pwz;
-    while ( *at )
+    
+    if (pbz)
     {
-        if( (unsigned char)*at > (unsigned char)0x7Fu )
+        const char* at = pbz;
+        while ( *at )
         {
-            *dat = cConvertUtil::ConvertNonChar( *at );
-        }
-        else
-        {
-            *dat = (uint16)(unsigned char)*at;
-        }
+            if( (unsigned char)*at > (unsigned char)0x7Fu )
+            {
+                *dat = cConvertUtil::ConvertNonChar( *at );
+            }
+            else
+            {
+                *dat = (uint16)(unsigned char)*at;
+            }
 
-        dat++;
-        at++;
+            dat++;
+            at++;
+        }
     }
-
     *dat = 0x0000;
 
     return( ( (size_t)dat - (size_t)pwz ) / sizeof( dbchar_t ) );
