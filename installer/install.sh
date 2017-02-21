@@ -569,10 +569,10 @@ echo
 #f1=' ff=$README ; d="" ; dd=$TWDOCS ; rr=0444 '
 #f2=' ff=$REL_NOTES ; d="" ; dd=$TWDOCS ; rr=0444 '
 f3=' ff=$TWLICENSEFILE ; d="" ; dd=$TWDOCS ; rr=0444 '
-#f4=' ff=tripwire ; d="/bin" ; dd=$TWBIN ; rr=0550 '
-#f5=' ff=twadmin ; d="/bin" ; dd=$TWBIN ; rr=0550 '
-#f6=' ff=twprint ; d="/bin" ; dd=$TWBIN ; rr=0550 '
-#f7=' ff=siggen ; d="/bin" ; dd=$TWBIN ; rr=0550 '
+f4=' ff=tripwire ; d="/bin" ; dd=$TWBIN ; rr=0550 '
+f5=' ff=twadmin ; d="/bin" ; dd=$TWBIN ; rr=0550 '
+f6=' ff=twprint ; d="/bin" ; dd=$TWBIN ; rr=0550 '
+f7=' ff=siggen ; d="/bin" ; dd=$TWBIN ; rr=0550 '
 f8=' ff=TRADEMARK ; d="" ; dd=$TWDOCS ; rr=0444 '
 f9=' ff=policyguide.txt ; d="/policy" ; dd=$TWDOCS ; rr=0444 '
 f10=' ff=${POLICYSRC} ; d="/policy" ; dd=$TWPOLICY ; rr=0640 '
@@ -586,7 +586,7 @@ f10=' ff=${POLICYSRC} ; d="/policy" ; dd=$TWPOLICY ; rr=0640 '
 #f18=' ff=twprint.8 ; d="/man/man8" ; dd=$TWMAN/man8 ; rr=0444 '
 
 # Binaries and manpages are already installed by the install target
-loosefiles="f3 f8 f9 f10"
+loosefiles="f3 f4 f5 f6 f7 f8 f9 f10"
 
 for i in $loosefiles; do
 	eval "eval \"\$$i\""
