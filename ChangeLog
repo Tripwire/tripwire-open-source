@@ -1,3 +1,10 @@
+2017-02-21 Brian Cox <bcox@tripwire.com>
+	* Bump version to 2.4.3.3
+	* Run Clang static analyzer & fix some of its quibbles
+	* Fix compilation error on Alpine Linux 3.x
+	* Fix file permissions on a couple of source files
+	* Fix some errors w/ make install/uninstall/dist
+
 2017-01-15 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.2
 	* DOS/DJGPP platform support.
