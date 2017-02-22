@@ -450,6 +450,7 @@ void cDbDebug::OutputResults( void )
 // Begin code for manipulating Database -- This is just a straight port from the DbExplore code.  It's presence is
 // purely for convenience, and for debugging this class.
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/*
 static inline bool IsSpace( TCHAR c )
 {
     return ( (c == _T(' ')) || (c == _T('\t')) || (c == _T('\r')) || (c == _T('\n')) || (c == _T('\0')) );
@@ -460,7 +461,6 @@ static inline bool IsEnd( TCHAR c )
     return ( (c == _T('\0')) );
 }
 
-/*
 ///////////////////////////////////////////////////////////////////////////////
 // util_PrintFCO
 ///////////////////////////////////////////////////////////////////////////////

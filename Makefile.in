@@ -307,6 +307,7 @@ pdfdir = @pdfdir@
 prefix = @prefix@
 program_transform_name = @program_transform_name@
 psdir = @psdir@
+runstatedir = @runstatedir@
 sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
@@ -321,7 +322,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign no-dependencies
 SUBDIRS = man src
-EXTRA_DIST = COMMERCIAL MAINTAINERS TRADEMARK LICENSE Packaging README-2.4.3 README.md autogen.sh autogen.sh.README touchconfig.sh contrib policy installer
+EXTRA_DIST = COMMERCIAL MAINTAINERS TRADEMARK LICENSE Packaging ReadMe-2.4.3 README.md autogen.sh autogen.sh.README touchconfig.sh contrib policy installer
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

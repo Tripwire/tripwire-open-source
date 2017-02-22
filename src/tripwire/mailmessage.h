@@ -273,10 +273,6 @@ private:
     void        SendInit();// throw (eMailMessageError)
         // opens a pipe to sendmail and writes the header.
     
-    FILE*       GetFilePointer() const;
-        // returns a pointer to the current file pointer. Only valid between
-        // SendInit() and SendFinit()
-    
     void        SendFinit(); //throw (eMailMessageError)
         // closes the file descriptor, sending the rest of the message
 

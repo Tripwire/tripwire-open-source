@@ -1556,16 +1556,12 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
                 // Output the keys that decrypt the file.
                 iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_KEYS_DECRYPT ).c_str());
                 iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTW, tw::STR_NEWLINE ).c_str());
-
-                bool siteDecrypts = false, localDecrypts = false;
         
                 if (siteKey.KeysLoaded())
                 try
                 {
                     if (manip.TestDecryption(*siteKey.GetPublicKey(), false) != false)
                     {
-                        siteDecrypts = true;
-
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTWAdmin, twadmin::STR_SITEKEYFILE ).c_str());
 
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, cDisplayEncoder::EncodeInline( mSiteKeyFile ).c_str());
@@ -1579,7 +1575,6 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
                 {
                     if (manip.TestDecryption(*localKey.GetPublicKey(), false) != false)
                     {
-                        localDecrypts = true;
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTWAdmin, twadmin::STR_LOCALKEYFILE ).c_str());
 
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, cDisplayEncoder::EncodeInline( mLocalKeyFile ).c_str());
@@ -1834,7 +1829,6 @@ int cTWAModeGenerateKeys::Execute(cErrorQueue* pQueue)
             //
             if(! bPrintedPassphraseHint)
             {
-                bPrintedPassphraseHint = true;
                 iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_PASSPHRASE_HINT).c_str() );
             }
             
@@ -2162,7 +2156,6 @@ int cTWAModeChangePassphrases::Execute(cErrorQueue* pQueue)
             //
             if(! bPrintedPassphraseHint)
             {
-                bPrintedPassphraseHint = true;
                 iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_PASSPHRASE_HINT).c_str() );
             }
             

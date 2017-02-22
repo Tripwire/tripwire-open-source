@@ -227,7 +227,6 @@ class cFCOReportChangeIter
 {
 public:
     cFCOReportChangeIter(const cFCOReportSpecIter& specIter);
-    cFCOReportChangeIter();
     cFCOReportChangeIter(const cFCOReportChangeIter& rhs);
     ~cFCOReportChangeIter();
 
@@ -251,6 +250,8 @@ public:
     const cFCOPropVector&   GetChangeVector() const;
 
 private:
+    cFCOReportChangeIter() {}
+    
     cFCOReportChangeIter_i* mpData;
     // TODO -- if it turns out that we are creating a lot of these, we should consider
     // making a pool of them.

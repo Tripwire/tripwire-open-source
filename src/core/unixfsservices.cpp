@@ -1105,8 +1105,8 @@ bool util_GetNextPathElement( const TSTRING& strPathC, TSTRING& strElem, int ind
     TSTRING strPath = strPathC; // writable local version
     
     bool fMoreSeps = true;
-    TSTRING::size_type firstSep, nextSep, nextNonSep;
-    firstSep = nextSep = nextNonSep = (TSTRING::size_type)-1;
+    TSTRING::size_type nextSep, nextNonSep;
+    nextSep = nextNonSep = (TSTRING::size_type)-1;
     for( int i = 0; i <= index && fMoreSeps; i++ )
     {        
         // go past leading separators

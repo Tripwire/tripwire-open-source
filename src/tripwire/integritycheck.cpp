@@ -353,12 +353,15 @@ void cIntegrityCheck::ProcessDir( cDbDataSourceIter dbIter, iFCODataSourceIter* 
         if( dbIter.Done() )
         {
             ASSERT( pIter != 0);
-            d.TraceDetail( "Examining <done> and %s\n", pIter->GetName().AsString().c_str() );
-            //
-            // these are all new entries, add them to the "Added" set...
-            //
-            ProcessAddedFCO( dbIter, pIter );
-            pIter->Next();
+            if (pIter)
+            {
+                d.TraceDetail( "Examining <done> and %s\n", pIter->GetName().AsString().c_str() );
+                //
+                // these are all new entries, add them to the "Added" set...
+                //
+                ProcessAddedFCO( dbIter, pIter );
+                pIter->Next();
+            }
         }
         else if( ! pIter )
         {

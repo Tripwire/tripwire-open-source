@@ -260,8 +260,12 @@ int cFCOPropVector::SetSize(int max)
     }
     else    //mpBuf!=NULL && max>msBitlength
     {
-        (*mpBuf).resize (((max/msBitlength)+1), 0);
-        return mSize = ((*mpBuf).capacity() * msBitlength);
+        if (mpBuf)
+        {
+            (*mpBuf).resize (((max/msBitlength)+1), 0);
+            mSize = ((*mpBuf).capacity() * msBitlength);
+        }
+        return mSize;
     }
 }
 
