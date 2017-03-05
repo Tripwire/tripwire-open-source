@@ -798,6 +798,7 @@ uninstall-am:
 
 
 install-data-hook:
+	export INSTALL_STRIP_FLAG
 	prefix="$(prefix)" sysconfdir="$(sysconfdir)" \
         path_to_vi="$(path_to_vi)" path_to_sendmail="$(path_to_sendmail)" \
         ./installer/install.sh

@@ -605,6 +605,11 @@ for i in $loosefiles; do
        	fi
 done
 
+if [ -n "$INSTALL_STRIP_FLAG" ] ; then
+  echo "INSTALL_STRIP_FLAG is set, stripping binaries"
+  strip "$TWBIN/siggen" "$TWBIN/tripwire" "$TWBIN/twadmin" "$TWBIN/twprint" 
+fi
+
 #Make extra sure we don't install the unit test binary to sbin
 if  [ -e "$TWBIN/twtest" ] ; then
   rm -f "$TWBIN/twtest"
