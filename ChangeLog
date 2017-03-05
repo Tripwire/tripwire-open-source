@@ -1,3 +1,8 @@
+2017-03-05 Brian Cox <bcox@tripwire.com>
+	* Bump version to 2.4.3.4
+	* Fix issue with printing level 2 reports, introduced by fixing a Clang static analyzer quibble in 2.4.3.3. Sigh.
+	* 'make install-strip' actually strips binaries now.
+
 2017-02-21 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.3
 	* Run Clang static analyzer & fix some of its quibbles

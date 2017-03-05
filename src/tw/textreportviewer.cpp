@@ -1519,9 +1519,6 @@ void cTextReportViewer::DisplayChangedProps( const iFCO* const pfcoOld, const iF
        
 void cTextReportViewer::OutputAddedSummary( const cFCOReportSpecIter& ri, FCOList* pFCONameList )
 {
-    if (!pFCONameList)
-        return;
-    
     if( ! ri.GetAddedSet()->IsEmpty() )
     {
         (*mpOut) << TSS_GetString( cTW, tw::STR_ADDED ) << _T(":") << endl;
@@ -1533,7 +1530,7 @@ void cTextReportViewer::OutputAddedSummary( const cFCOReportSpecIter& ri, FCOLis
             PrintBallotLine( *pSetIterAdded->FCO() );
 
             // if we're updating, save a list of FCO names
-            if( mfUpdate )
+            if( mfUpdate && pFCONameList)
                 pFCONameList->insert( pSetIterAdded->FCO()->GetName() );
         }
         (*mpOut) << endl;
@@ -1542,9 +1539,6 @@ void cTextReportViewer::OutputAddedSummary( const cFCOReportSpecIter& ri, FCOLis
 
 void cTextReportViewer::OutputRemovedSummary( const cFCOReportSpecIter& ri, FCOList* pFCONameList)
 {
-    if (!pFCONameList)
-        return;
-    
     if( ! ri.GetRemovedSet()->IsEmpty() )
     {
         (*mpOut) << TSS_GetString( cTW, tw::STR_REMOVED ) << _T(":") << endl;
@@ -1556,7 +1550,7 @@ void cTextReportViewer::OutputRemovedSummary( const cFCOReportSpecIter& ri, FCOL
             PrintBallotLine( *pSetIterRemoved->FCO() );
         
             // if we're updating, save a list of FCO names
-            if( mfUpdate )
+            if( mfUpdate && pFCONameList)
                 pFCONameList->insert( pSetIterRemoved->FCO()->GetName() );
         }
         (*mpOut) << endl;
@@ -1565,9 +1559,6 @@ void cTextReportViewer::OutputRemovedSummary( const cFCOReportSpecIter& ri, FCOL
 
 void cTextReportViewer::OutputChangedSummary( const cFCOReportSpecIter& ri, FCOList* pFCONameList )
 {
-    if (!pFCONameList)
-        return;
-    
     if( ri.GetNumChanged() > 0 )
     {
         (*mpOut) << TSS_GetString( cTW, tw::STR_CHANGED ) << _T(":") << endl;
@@ -1579,7 +1570,7 @@ void cTextReportViewer::OutputChangedSummary( const cFCOReportSpecIter& ri, FCOL
             PrintBallotLine( *changedIter.GetNew() );
 
             // if we're updating, save a list of FCO names
-            if( mfUpdate )
+            if( mfUpdate && pFCONameList)
                 pFCONameList->insert( changedIter.GetNew()->GetName() );
         }
 
