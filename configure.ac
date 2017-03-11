@@ -2,14 +2,14 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT([tripwire], [2.4.3.4], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
+AC_INIT([tripwire], [2.4.3.5], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2017 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
-AC_REVISION([$Revision: 2.4.3.4 $])
+AC_REVISION([$Revision: 2.4.3.5 $])
 
 dnl #################################
 dnl Cleanup Cruft Leftover From Patch
@@ -42,7 +42,7 @@ dnl ###################
 dnl Checks for programs
 dnl ###################
 AC_PROG_CC([gcc clang suncc aCC xlC_r xlC cl.exe])
-AC_PROG_CXX([g++ clang++ sunCC aCC xlC_r xlC cl.exe])
+AC_PROG_CXX([g++ c++ clang++ sunCC aCC xlC_r xlC cl.exe])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S

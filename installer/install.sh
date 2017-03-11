@@ -607,7 +607,9 @@ done
 
 if [ -n "$INSTALL_STRIP_FLAG" ] ; then
   echo "INSTALL_STRIP_FLAG is set, stripping binaries"
-  strip "$TWBIN/siggen" "$TWBIN/tripwire" "$TWBIN/twadmin" "$TWBIN/twprint" 
+  chmod u+w "$TWBIN/siggen" "$TWBIN/tripwire" "$TWBIN/twadmin" "$TWBIN/twprint"
+  strip "$TWBIN/siggen" "$TWBIN/tripwire" "$TWBIN/twadmin" "$TWBIN/twprint"
+  chmod u-w "$TWBIN/siggen" "$TWBIN/tripwire" "$TWBIN/twadmin" "$TWBIN/twprint"
 fi
 
 #Make extra sure we don't install the unit test binary to sbin
