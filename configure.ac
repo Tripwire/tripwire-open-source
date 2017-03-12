@@ -20,16 +20,26 @@ chmod 755 install-sh 2> /dev/null
 dnl ###############
 dnl Setup defaults
 dnl ###############
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 
 dnl #####################
 dnl Configuration options
 dnl #####################
+
+# This is primarily to support old compilers that don’t understand -Wextra
+AC_ARG_ENABLE(extrawarnings,  [  —-disable-extrawarnings do not compile with -Wextra warnings enabled])
+if test "x$enable_extrawarnings" != "xno"
+then
+   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
+   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
+fi
+
 AC_ARG_ENABLE(static, [  --enable-static         compile static binaries])
 if test "x$enable_static" = xyes
 then LDFLAGS="${LDFLAGS} -static"
 fi
+
 AC_ARG_ENABLE(debug,  [  --enable-debug          compile with debuging enabled])
 if test "x$enable_debug" = xyes
 then

@@ -748,6 +748,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_silent_rules
+enable_extrawarnings
 enable_static
 enable_debug
 enable_dependency_tracking
@@ -1403,6 +1404,7 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
+  —-disable-extrawarnings do not compile with -Wextra warnings enabled
   --enable-static         compile static binaries
   --enable-debug          compile with debuging enabled
   --enable-dependency-tracking
@@ -3467,8 +3469,21 @@ ac_config_headers="$ac_config_headers config.h"
 rm -f src/tripwire/syslog.h 2> /dev/null
 chmod 755 install-sh 2> /dev/null
 
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+
+
+# This is primarily to support old compilers that don’t understand -Wextra
+# Check whether --enable-extrawarnings was given.
+if test "${enable_extrawarnings+set}" = set; then :
+  enableval=$enable_extrawarnings;
+fi
+
+if test "x$enable_extrawarnings" != "xno"
+then
+   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
+   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
+fi
 
 # Check whether --enable-static was given.
 if test "${enable_static+set}" = set; then :
@@ -3478,6 +3493,7 @@ fi
 if test "x$enable_static" = xyes
 then LDFLAGS="${LDFLAGS} -static"
 fi
+
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
   enableval=$enable_debug;
@@ -4349,7 +4365,7 @@ if test -z "$CXX"; then
     CXX=$CCC
   else
     if test -n "$ac_tool_prefix"; then
-  for ac_prog in g++ clang++ sunCC aCC xlC_r xlC cl.exe
+  for ac_prog in g++ c++ clang++ sunCC aCC xlC_r xlC cl.exe
   do
     # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
@@ -4393,7 +4409,7 @@ fi
 fi
 if test -z "$CXX"; then
   ac_ct_CXX=$CXX
-  for ac_prog in g++ clang++ sunCC aCC xlC_r xlC cl.exe
+  for ac_prog in g++ c++ clang++ sunCC aCC xlC_r xlC cl.exe
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
