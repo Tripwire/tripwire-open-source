@@ -7,3 +7,7 @@ install-data-hook:
 	prefix="$(prefix)" sysconfdir="$(sysconfdir)" \
         path_to_vi="$(path_to_vi)" path_to_sendmail="$(path_to_sendmail)" \
         ./installer/install.sh
+
+uninstall-hook:
+	rm -f ${prefix}/sbin/tripwire $(prefix)/sbin/twadmin $(prefix)/sbin/twprint $(prefix)/sbin/siggen
+	rm -Rf $(prefix)/doc
