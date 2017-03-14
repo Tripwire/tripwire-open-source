@@ -316,11 +316,13 @@ int _tmain(int argc, TCHAR** argv)
     {        
         cTWUtil::PrintErrorMsg(error);
         ASSERT(false);
+        return 1;
     }
     catch (...)
     {        
         TCERR << _T("Unhandled exception caught!");
         ASSERT(false);
+        return 1;
     }
 
     // make sure all the refrence counted objects have been destroyed
@@ -329,7 +331,9 @@ int _tmain(int argc, TCHAR** argv)
 
     // force user to hit <CR>
     
-    return 1;
+    std::cout << std::endl << "Tests completed" << std::endl;
+    
+    return 0;
 }
 
 

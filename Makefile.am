@@ -11,3 +11,8 @@ install-data-hook:
 uninstall-hook:
 	rm -f ${prefix}/sbin/tripwire $(prefix)/sbin/twadmin $(prefix)/sbin/twprint $(prefix)/sbin/siggen
 	rm -Rf $(prefix)/doc
+
+check:
+	rm -Rf $(top_srcdir)/src/test-harness/twtest
+	cd $(top_srcdir)/src/test-harness && ./twtest.pl
+	$(top_srcdir)/bin/twtest all

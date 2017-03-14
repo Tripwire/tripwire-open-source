@@ -808,6 +808,11 @@ uninstall-hook:
 	rm -f ${prefix}/sbin/tripwire $(prefix)/sbin/twadmin $(prefix)/sbin/twprint $(prefix)/sbin/siggen
 	rm -Rf $(prefix)/doc
 
+check:
+	rm -Rf $(top_srcdir)/src/test-harness/twtest
+	cd $(top_srcdir)/src/test-harness && ./twtest.pl
+	$(top_srcdir)/bin/twtest all
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
