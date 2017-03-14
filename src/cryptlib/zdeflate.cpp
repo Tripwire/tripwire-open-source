@@ -236,7 +236,7 @@ int Deflator::longest_match(IPos cur_match)
    if (prev_length >= good_match) {
        chain_length >>= 2;
    }
-   assert(strstart <= (unsigned)WINDOW_SIZE-MIN_LOOKAHEAD);
+   //assert(strstart <= (unsigned)WINDOW_SIZE-MIN_LOOKAHEAD);
 
    do {
        assert(cur_match < strstart);
