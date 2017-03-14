@@ -243,9 +243,8 @@ cat << END_OF_TEXT
 Installer program for:
 Tripwire(R) 2.4 Open Source
 
-Copyright (C) 1998-2000 Tripwire (R) Security Systems, Inc.  Tripwire (R)
-is a registered trademark of the Purdue Research Foundation and is
-licensed exclusively to Tripwire (R) Security Systems, Inc.
+Copyright (C) 1998-2017 Tripwire, Inc.
+Tripwire is a registered trademark of Tripwire, Inc. All rights reserved.
 
 END_OF_TEXT
 
