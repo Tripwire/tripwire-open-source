@@ -584,9 +584,12 @@ f10=' ff=${POLICYSRC} ; d="/policy" ; dd=$TWPOLICY ; rr=0640 '
 #f16=' ff=twadmin.8 ; d="/man/man8" ; dd=$TWMAN/man8 ; rr=0444 '
 #f17=' ff=twintro.8 ; d="/man/man8" ; dd=$TWMAN/man8 ; rr=0444 '
 #f18=' ff=twprint.8 ; d="/man/man8" ; dd=$TWMAN/man8 ; rr=0444 '
+f19=' ff=COMMERCIAL ; d="" ; dd=$TWDOCS ; rr=0444 '
+f20=' ff=ReadMe-2.4.3 ; d="" ; dd=$TWDOCS ; rr=0444 '
+f21=' ff=ChangeLog ; d="" ; dd=$TWDOCS ; rr=0444 '
 
 # Binaries and manpages are already installed by the install target
-loosefiles="f3 f4 f5 f6 f7 f8 f9 f10"
+loosefiles="f3 f4 f5 f6 f7 f8 f9 f10 f19 f20 f21"
 
 for i in $loosefiles; do
 	eval "eval \"\$$i\""
