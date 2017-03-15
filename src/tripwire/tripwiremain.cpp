@@ -243,7 +243,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         ret = 8;
     }
 
-    catch (std::bad_alloc e)
+    catch (std::bad_alloc& e)
     {
         // Note: We use fputs rather than TCERR as it will probably require the
         // least amount of memory to do its thing.  If we ran out of memory we
@@ -253,7 +253,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         ret = 8;
     }
 
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         TCERR << _T("*** Fatal exception: ");
         std::cerr << e.what() << std::endl;

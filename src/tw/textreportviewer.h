@@ -153,7 +153,7 @@ protected:
         int     mChangedObjects;
         TSTRING mStartPoint;
 
-        RuleSummaryLine() {}
+        RuleSummaryLine() : mSeverity(0), mAddedObjects(0), mRemovedObjects(0), mChangedObjects(0) {}
         RuleSummaryLine(const RuleSummaryLine& rhs) { *this = rhs; }
         void operator = (const RuleSummaryLine& rhs)
         { 

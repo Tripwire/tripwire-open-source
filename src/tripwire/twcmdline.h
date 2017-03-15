@@ -182,14 +182,17 @@ class cTWModeCommon
   bool            mMailNoViolations; // Email out reports with no violations?
   TSTRING         mMailFrom;
     
-  cTWModeCommon() :  mVerbosity(1), 
+  cTWModeCommon() :  mVerbosity(1),
     mLocalProvided(false), 
     mbLatePassphrase(false), 
     mfLooseDirs(false), 
     mbResetAccessTime(false), 
     mbLogToSyslog(false),
     mbCrossFileSystems(false),
-    mbDirectIO(false)
+    mbDirectIO(false),
+    mMailMethod(cMailMessage::NO_METHOD),
+    mSmtpPort(25),
+    mMailNoViolations(true)
     {
     }
 };

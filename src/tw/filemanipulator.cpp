@@ -61,7 +61,8 @@ cFileManipulator::cFileManipulator(const TCHAR* filename)
 }
 
 cFileManipulator::cFileManipulator(const cFileManipulator& rhs)
-:   mFileName(rhs.mFileName),
+:   mbInit(false),
+    mFileName(rhs.mFileName),
     mFileHeader(rhs.mFileHeader)
 {
 }

@@ -52,7 +52,7 @@
 //=========================================================================
 
 cFCODataSourceIterImpl::cFCODataSourceIterImpl()
-    : mFlags(0)
+    : mpErrorBucket(0), mFlags(0)
 {
 }
 

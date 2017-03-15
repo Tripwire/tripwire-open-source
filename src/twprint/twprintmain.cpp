@@ -217,14 +217,14 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         ret = 1;
     }
 
-    catch (std::bad_alloc e)
+    catch (std::bad_alloc& e)
     {
         TCERR << _T("*** Fatal exception: Out of memory ");
         TCERR << _T("*** Exiting...\n");
         ret = 1;
     }
 
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         TCERR << _T("*** Fatal exception: ");
         std::cerr << e.what() << std::endl;

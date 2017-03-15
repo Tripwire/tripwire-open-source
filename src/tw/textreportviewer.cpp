@@ -143,7 +143,8 @@ int cTextReportViewer::Init( const cFCOReportHeader& h, cFCOReport& r )
 {
     mpHeader = &h;
     mpReport = &r;
-    mpOut = NULL; 
+    mpOut = NULL;
+    mpIn  = NULL;
     mpCurPD = NULL;
     mpCurNT = NULL;
     mfUpdate = false;
@@ -152,6 +153,7 @@ int cTextReportViewer::Init( const cFCOReportHeader& h, cFCOReport& r )
     mErrorNum = 1;
     mReportingLevel = FULL_REPORT;
     mfGotNumbers = false;
+    mCurrentChar[0] = '\0';
     mCurrentCharSize = 0;
     return 0;
 }

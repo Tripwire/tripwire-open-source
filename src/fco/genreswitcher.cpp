@@ -99,13 +99,11 @@ cGenre::Genre cGenreSwitcher::GetDefaultGenre()
 void cGenreSwitcher::RegisterGenre( const cGenreInfo* pGI, RegisterFlags flags /* = REGISTER_FLAGS_NONE */ )
 {
     cDebug d("cGenreSwitcher::RegisterGenre");
-    d.TraceDebug( _T("ID: %x, long name: %s, short name: %s\n"), pGI->m_ID, pGI->m_sLongName.c_str(), pGI->m_sShortName.c_str() );
 
-    //
-    // validate params
-    //
     ASSERT( NULL != pGI );
     ASSERT( pGI->IsValid() );
+
+    d.TraceDebug( _T("ID: %x, long name: %s, short name: %s\n"), pGI->m_ID, pGI->m_sLongName.c_str(), pGI->m_sShortName.c_str() );
 
     //
     // can only be one of each genre ID

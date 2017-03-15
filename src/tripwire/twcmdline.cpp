@@ -1476,7 +1476,7 @@ public:
    cFCOReportHeader* mpReportHeader;
 
    // ctor can set up some default values
-   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbSecureMode(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
+   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbSecureMode(true), mbEncryptDb(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
