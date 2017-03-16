@@ -55,10 +55,8 @@
 #include <iostream>
 #include <exception>
 
-#if IS_UNIX
 #include "core/unixfsservices.h"
 #include <unistd.h>
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // terminate and unexpected handlers
@@ -93,9 +91,7 @@ static void SiggenInit()
     //
     // set up the file system services    
     //
-#if IS_UNIX
     static cUnixFSServices  fss;
-#endif
     iFSServices::SetInstance( &fss );
 
     //

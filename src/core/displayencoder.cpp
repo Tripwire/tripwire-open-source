@@ -506,11 +506,8 @@ bool cCharEncoderUtil::IsPrintable( TCHAR ch )
     return( ! isprint( ch ) );    // kludge for KAI
 
 #else // USE_CLIB_LOCALE
-    
-#if IS_UNIX
-        return( ! std::isprint<TCHAR>( ch, std::locale() ) );
 
-    #endif
+    return( ! std::isprint<TCHAR>( ch, std::locale() ) );
 
 #endif // USE_CLIB_LOCALE
 }

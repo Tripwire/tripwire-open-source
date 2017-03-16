@@ -41,7 +41,6 @@
 eUnix::eUnix( const TCHAR* szFunctionName, const TCHAR* szObjectName, bool fCallGetLastError)
 :   eError( _T(""))
 {
-#if IS_UNIX
     ASSERT( szFunctionName || szObjectName || fCallGetLastError );
     //
     // construct the error message:
@@ -78,7 +77,6 @@ eUnix::eUnix( const TCHAR* szFunctionName, const TCHAR* szObjectName, bool fCall
             mMsg += strErr;
         }
     }
-#endif // IS_UNIX
 }
 
 // eof - unixexcept.cpp

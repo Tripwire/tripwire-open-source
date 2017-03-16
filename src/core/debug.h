@@ -208,16 +208,10 @@ inline void cDebug::DebugOut        ( const char*, ... ) {}
 // ASSERT macro
 //////////////////////////////////////////////////////////////////////////////////
 
-
-#if IS_UNIX
-
-    #define ASSERTMSG( exp, s ) assert( (exp) != 0 )
-    #define ASSERT( exp )       assert( (exp) != 0 )
-        // if we are not windows we will just use the standard assert()
-    #define TSS_DebugBreak()    ASSERT( false );
-
-#endif// IS_UNIX
-
+#define ASSERTMSG( exp, s ) assert( (exp) != 0 )
+#define ASSERT( exp )       assert( (exp) != 0 )
+    // if we are not windows we will just use the standard assert()
+#define TSS_DebugBreak()    ASSERT( false );
 
 #ifndef ASSERT
 #error  ASSERT did not get defined!!!

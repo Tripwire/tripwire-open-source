@@ -696,9 +696,6 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
     // make sure we can read from this file
     cFileUtil::TestFileReadable( strFilename );
 
-#if IS_UNIX
-
-
     // editor is going to need terminal type, so tell msystem to include
     // it in environment when it makes its system call.
     le_set("TERM");
@@ -720,8 +717,6 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
         //ASSERT( false );
         throw eTextReportViewerEditorLaunch( edName );
     }
-
-#endif //if IS_WIN32
     
     return( fRanViewer );
 }
@@ -1166,8 +1161,6 @@ void cTextReportViewer::OutputReportHeader()
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString( cTW, tw::STR_HOST_IP ) << mpHeader->GetIPAddress() << endl;
     
-// only output host ID on UNIX systems
-#if IS_UNIX
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString( cTW, tw::STR_HOST_ID );
 
@@ -1175,8 +1168,6 @@ void cTextReportViewer::OutputReportHeader()
         (*mpOut) << mpHeader->GetHostID() << endl;
     else
         (*mpOut) << TSS_GetString( cTW, tw::STR_NONE ) << endl;
-#endif
-
     
     (*mpOut)    << setw(headerColumnWidth)
                 << TSS_GetString( cTW, tw::STR_POLICY_FILE_USED ) 

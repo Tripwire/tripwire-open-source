@@ -241,14 +241,9 @@ Resource_Class::Get( ConstKeyRef id ) const
     
     if ( at == m_table.end() )
     {
-        #if IS_UNIX
         #ifdef _DEBUG
         std::cerr << "*** Error Resource_Class::Get() [" __FILE__ ":" << __LINE__ << "]: Resource not found\n";
         #endif
-        #else
-        ASSERTMSG( 0, "Resource does not exist!" );
-        #endif
-        // TSS_Raise( eInternal, "Resource does not exist!" );
 
         return DefaultValueRef();
     }

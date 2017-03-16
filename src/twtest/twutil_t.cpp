@@ -37,13 +37,9 @@
 #include "twtest/test.h"
 #include <fstream>
 
-
-
-#if IS_UNIX
 //#include <statbuf.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#endif
 
 std::string WideToNarrow( const TSTRING& strWide );
 
@@ -69,12 +65,7 @@ void TestTWUtil()
     tmpFN += _T("/fileexiststest.tmp");
 
     // make a subdir in the TEMP_DIR
-    #if IS_UNIX
     _tmkdir(tmpDir.c_str(), 0700);
-    #else
-    _tmkdir(tmpDir.c_str());
-    #endif
-
     _tchmod(tmpDir.c_str(), 0700);
 
     // make sure file is not there
@@ -88,11 +79,10 @@ void TestTWUtil()
     TEST(cTWUtil::FileExists(tmpFN) == false);
 
     // make the dir read only and make sure write tests false
-    #if IS_UNIX // windows fails this test, perhaps because I am an administrator?
+    // windows fails this test, perhaps because I am an administrator?
     _tchmod(tmpDir.c_str(), 0500);
     TEST(cTWUtil::FileWritable(tmpFN) == false);
     _tchmod(tmpDir.c_str(), 0700);
-    #endif
 
     // create the file
     {

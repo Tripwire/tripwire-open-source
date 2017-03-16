@@ -71,13 +71,11 @@
 
 #include "core/fsservices.h" // for the util_IsDir() stuff
 
-#if IS_UNIX
 #include <unistd.h>
 #include <fcntl.h>
 #if SUPPORTS_TERMIOS
 # include <termios.h>
 # include <sys/ioctl.h>
-#endif
 
 #include "core/tw_signal.h"
 int _getch(void);
@@ -1117,8 +1115,6 @@ void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const
 // GetStringNoEcho -- Get a string from the user without echoing it
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#if IS_UNIX
 static void (*old_SIGINT)(int);
 static void (*old_SIGQUIT)(int);
 
@@ -1216,7 +1212,6 @@ void cTWUtil::GetStringNoEcho(wc16_string& ret)
     NoEcho noEcho;
     GetString(ret);
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // ParseObjectList

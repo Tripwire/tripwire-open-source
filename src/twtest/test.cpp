@@ -91,9 +91,7 @@ void TestSerializerImpl();
 void TestRefCountObj();
 void TestSignature();
 void TestSerRefCountObj();
-#if IS_UNIX
 void TestUnixFSServices();
-#endif
 //void TestFCODatabase();
 void TestError();
 void TestDebug();
@@ -203,9 +201,7 @@ static void Test(int testID)
     //case 41: TestFCODatabase(); break;
     case 42: TestHashTable(); break;
     case 43: TestTCHAR(); break;
-    #if IS_UNIX
     case 44: TestUnixFSServices(); break;
-    #endif
     case 46: TestConfigFile(); break;
 #ifdef PARSER_PRESENT
     case 47: TestPolicyParser(); break;

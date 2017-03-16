@@ -98,11 +98,9 @@ TSS_REGISTER_ERROR( eFileFlush(),       _T("File could not be flushed.") )
 TSS_REGISTER_ERROR( eFileRewind(),      _T("File could not be rewound.") )
 
 
-/// Win32
-
-#if IS_UNIX
+/// General API failures
 TSS_REGISTER_ERROR(eUnix(),               _T("Unix API failure.") )
-#endif
+
 
 /// FSServices
 

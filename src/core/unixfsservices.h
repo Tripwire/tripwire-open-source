@@ -39,7 +39,7 @@
 #define __UNIXFSSERVICES_H
 
 #if !IS_UNIX
-#error unixfsservices.h should only be included for instantiating cUnixFSServices objects.  If you just want to use iFSServices methods, include fsservices.h. Same goes for cWin32FSServices.
+#error unixfsservices.h should only be included for instantiating cUnixFSServices objects.  If you just want to use iFSServices methods, include fsservices.h.
 #endif
 
 //=========================================================================

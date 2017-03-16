@@ -38,8 +38,6 @@
 #include "core/archive.h"
 #include "fco/fconame.h"
 
-#if IS_UNIX
-
 #ifndef __TEST_H
 #include "twtest/test.h"
 #endif
@@ -182,7 +180,7 @@ void TestUnixFSServices()
     }
 
 }
-#endif // IS_UNIX
+
 
 
 

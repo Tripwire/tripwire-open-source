@@ -48,10 +48,8 @@
 #include "core/debug.h"
 #endif
 
-#if IS_UNIX
 #include <iostream>
 using namespace std;
-#endif
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // Dependencies
@@ -68,23 +66,16 @@ TSS_EndPackage( cTest )
 
 ///////////////////////////////////////////////////////////////////////////////
 // TEST() -- Works like ASSERT() but it also breaks during release mode
-
-#if IS_UNIX
-
 #define TEST(exp)   if (!(exp)) \
                     { \
                         std::cerr<<"TEST(" << #exp << ") failure, file " << __FILE__ << " line " << __LINE__ << std::endl; \
                         exit(-1); \
                     } 
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Platform dependancies
-
-#if IS_UNIX
 #define TEMP_DIR   _T("/tmp")
 #define TEMP_DIR_N "/tmp"
-#endif
 
 #endif // __TEST_H
 

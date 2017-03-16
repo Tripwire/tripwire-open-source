@@ -66,8 +66,6 @@
 
 #include "stdcore.h"
 
-#if IS_UNIX
-
 /*
  * set, reset environment to be passed to mpopem
  */
@@ -1038,6 +1036,3 @@ int pid;
      */
     return(status);
 }
-
-#endif //#if IS_UNIX
-

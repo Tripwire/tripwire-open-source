@@ -36,13 +36,10 @@
 #include "core/error.h"
 #endif
 
-
-#if IS_UNIX 
-# if HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-# endif
-# define SOCKET int
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
 #endif
+#define SOCKET int
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -249,8 +246,6 @@ private:
     unsigned short mPortNumber;
 };
 
-
-//#ifdef IS_UNIX
 
 ///////////////////////////////////////////////////////////////////////////////
 //

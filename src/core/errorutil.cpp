@@ -40,7 +40,6 @@
 // class eInternal 
 //=============================================================================
 
-#if IS_UNIX
 namespace //unique
 {
     TCHAR* tw_itot( int value, TCHAR* string, int radix, int size)
@@ -49,9 +48,6 @@ namespace //unique
         return string;
     }
 }
-#else
-  #define tw_itot _itot
-#endif //IS_UNIX
 
 eInternal::eInternal(TCHAR* sourceFile, int lineNum)
 :   eError(_T(""))

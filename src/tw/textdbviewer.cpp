@@ -283,8 +283,6 @@ static void OutputDatabaseHeader( const cFCODbHeader& dbHeader, TOSTREAM* pOut )
     (*pOut) << TSS_GetString( cTW, tw::STR_HOST_IP ) << dbHeader.GetIPAddress() << endl;
 
     
-// only output host ID on UNIX systems
-#if IS_UNIX
     (*pOut).width(headerColumnWidth);    
     (*pOut) << TSS_GetString( cTW, tw::STR_HOST_ID );
 
@@ -292,7 +290,7 @@ static void OutputDatabaseHeader( const cFCODbHeader& dbHeader, TOSTREAM* pOut )
         (*pOut) << dbHeader.GetHostID() << endl;
     else
         (*pOut) << TSS_GetString( cTW, tw::STR_NONE ) << endl;
-#endif
+
 
     (*pOut) << setw(headerColumnWidth)
             << TSS_GetString( cTW, tw::STR_POLICY_FILE_USED ) 

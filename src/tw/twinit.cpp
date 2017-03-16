@@ -74,10 +74,8 @@
 #include "fco/fconame.h"
 
 #include "fs/fs.h" // object initialization
-#if IS_UNIX
 #include "core/unixfsservices.h"
 #include "core/tw_signal.h"         // to ignore SIGPIPE
-#endif
 
 #if IS_AROS
 #include <errno.h>
@@ -252,9 +250,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     //
     // set up the file system services    
     //
-#if IS_UNIX
     mpData->pFSServices = new cUnixFSServices;
-#endif
     ASSERT( mpData->pFSServices != 0 );
     iFSServices::SetInstance( mpData->pFSServices );
             

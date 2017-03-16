@@ -65,15 +65,14 @@
 // STANDARD LIBRARY INCLUDES
 //=========================================================================
 
-#if IS_UNIX
- #if HAVE_SYS_PARAM_H
-  #include <sys/param.h>
- #endif
+#if HAVE_SYS_PARAM_H
+# include <sys/param.h>
+#endif
 
 #if HAVE_SYS_STAT_H
-#include <sys/stat.h>
+# include <sys/stat.h>
 #endif
-#endif
+
 
 //=========================================================================
 // DEFINES AND MACROS
@@ -209,13 +208,11 @@ class iFSServices
   // maximum path length on platform
   ////////////////////////////////////////
   enum
-  {        
-#if IS_UNIX
-  #ifdef MAXPATHLEN
+  {
+#ifdef MAXPATHLEN
       TW_MAX_PATH = MAXPATHLEN
-  #else
+#else
       TW_MAX_PATH = 1024
-  #endif
 #endif
   };
 

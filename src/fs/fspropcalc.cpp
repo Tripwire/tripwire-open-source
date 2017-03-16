@@ -45,10 +45,7 @@
 #include "fspropcalc.h"
 #include "fsobject.h"
 
-
-#if IS_UNIX
 #include <unistd.h>
-#endif
 
 
 cFSPropCalc::cFSPropCalc() :
@@ -93,11 +90,6 @@ static bool NeedsStat(const cFCOPropVector& v)
 
 static bool GetSymLinkStr(const cFCOName& fileName, cArchive& arch)
 {
-#if !IS_WIN32
-#ifdef _UNICODE
-#error GetSymLinkStr in fspropcalc.cpp is not unicode compliant 
-#else // ifdef _UNICODE
-
     char buf[1024];
 #if defined(O_PATH) 
     int fd = open(iTWFactory::GetInstance()->GetNameTranslator()->ToStringAPI( fileName ).c_str(), 
@@ -116,11 +108,6 @@ static bool GetSymLinkStr(const cFCOName& fileName, cArchive& arch)
     arch.WriteBlob(buf, rtn);   
 
     return true;
-
-#endif // ifdef _UNICODE
-#else  // if !IS_WIN32
-    return false; // TODO: find better way to do this -- just a place holder
-#endif // if !IS_WIN32
 }
 
 

@@ -53,10 +53,8 @@
 
 #include "twprint.h"    // package initialization
 
-#if IS_UNIX
 #include "core/unixfsservices.h"
 #include <unistd.h>
-#endif
 
 #include <memory>       // for auto_ptr
 #include <iostream>
@@ -155,13 +153,11 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
             goto exit;
         }
 
-        #if IS_UNIX
         // erase the command line
         // TODO: it might be a good idea to move this to cTWUtil
         int i;
         for (i = 1; i < argc; ++i)
             memset((char*)argv[i], 0, strlen(argv[i])*sizeof(char));
-        #endif
 
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWPrintCmdLine::HELP))
