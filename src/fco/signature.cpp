@@ -556,8 +556,8 @@ TSTRING cMD5Signature::AsStringHex() const
 
     for(int i = 0; i < SIG_BYTE_SIZE; ++i)
     {
-        _stprintf(stringBuffer, _T("%02lx"), (unsigned long)dbuf[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%02lx"), (unsigned long)dbuf[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
 
@@ -679,8 +679,8 @@ TSTRING cSHASignature::AsStringHex() const
     
     for (int i=0; i < SIG_UINT32_SIZE*(int)sizeof(uint32); ++i)
     {
-        _stprintf(stringBuffer, _T("%02x"), dbuf[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%02x"), dbuf[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
     
@@ -754,8 +754,8 @@ TSTRING cSHASignature::AsStringHex() const
     
     for (int i=0; i < SIG_UINT32_SIZE; ++i)
     {
-        _stprintf(stringBuffer, _T("%08x"), mSHAInfo.digest[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%08x"), mSHAInfo.digest[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
     
@@ -856,8 +856,8 @@ TSTRING cHAVALSignature::AsStringHex() const
 
     for (int i=0; i < SIG_BYTE_SIZE; ++i)
     {
-        _stprintf(stringBuffer, _T("%02x"), mSignature[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%02x"), mSignature[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
 

@@ -92,7 +92,7 @@ static int gethostname( char* name, int namelen )
     
     if ( strlen( myname.nodename ) < (unsigned int)namelen )
     {
-        strcpy( name, myname.nodename );
+        strncpy( name, myname.nodename, namelen );
         return 0;
     }
     else
