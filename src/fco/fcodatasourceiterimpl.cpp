@@ -265,7 +265,8 @@ void cFCODataSourceIterImpl::SeekToFCO(const cFCOName& name, bool bCreatePeers) 
         GeneratePeers();
     }
 
-    SeekToPeerByName( (*mCurPos)->GetName().GetShortName() );
+    if(mCurPos != mPeers.end() && *mCurPos)
+        SeekToPeerByName( (*mCurPos)->GetName().GetShortName() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
