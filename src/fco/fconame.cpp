@@ -177,7 +177,7 @@ void cFCOName::SetNameInfo(iFCONameInfo* pNI)
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOName::operator = (const cFCOName& rhs)
+cFCOName& cFCOName::operator = (const cFCOName& rhs)
 {
     mpPathName->Release();
     // TODO -- I am sure this won't work (const-ness)
@@ -188,16 +188,19 @@ void cFCOName::operator = (const cFCOName& rhs)
 #ifdef _DEBUG
     mDebugStrName = AsString();
 #endif 
+    return *this;
 }
-void cFCOName::operator = (const TSTRING& rhs)
+
+cFCOName& cFCOName::operator = (const TSTRING& rhs)
 {
     *this = rhs.c_str();
 #ifdef _DEBUG
     mDebugStrName = AsString();
 #endif 
+    return *this;
 }
 
-void cFCOName::operator = (const TCHAR* rhs)
+cFCOName&  cFCOName::operator = (const TCHAR* rhs)
 {
     // if I have the only handle on this vector, I can reuse it
     // otherwise, I have to release it.
@@ -210,6 +213,7 @@ void cFCOName::operator = (const TCHAR* rhs)
 #ifdef _DEBUG
     mDebugStrName = AsString();
 #endif 
+    return *this;
 }
 
 void cFCOName::ParseString( const TCHAR* pszin )

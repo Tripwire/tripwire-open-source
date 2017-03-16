@@ -56,7 +56,7 @@ public:
     cFCOSetImpl();
     cFCOSetImpl(const cFCOSetImpl& rhs);    
     virtual ~cFCOSetImpl();
-    void operator=(const cFCOSetImpl& rhs); 
+    cFCOSetImpl& operator=(const cFCOSetImpl& rhs);
     
     virtual const   iFCOIter*   Lookup(const cFCOName& name) const;
     virtual         iFCOIter*   Lookup(const cFCOName& name);
@@ -85,8 +85,9 @@ private:
         const cFCOName* mpFCOName;
 
         cFCONode()                      : mpFCO(0),         mpFCOName(0)                {}
-        cFCONode(iFCO* pFCO)            : mpFCO(pFCO),      mpFCOName(&pFCO->GetName()) {}
-        cFCONode(const cFCOName& name)  : mpFCO(0),         mpFCOName(&name)            {}
+        //TODO: make the iFCO* constructor explicit
+        cFCONode(iFCO* pFCO)   : mpFCO(pFCO),               mpFCOName(&pFCO->GetName()) {}
+        explicit cFCONode(const cFCOName& name) : mpFCO(0), mpFCOName(&name)            {}
         cFCONode(const cFCONode& rhs)   : mpFCO(rhs.mpFCO), mpFCOName(rhs.mpFCOName)    {}
         bool operator < (const cFCONode& rhs) const { if(mpFCOName) return (*mpFCOName <  *rhs.mpFCOName); else return false; }
         bool operator ==(const cFCONode& rhs) const { if(mpFCOName) return (*mpFCOName == *rhs.mpFCOName); else return false; }
@@ -101,8 +102,8 @@ class cFCOIterImpl : public iFCOIter
     friend class cFCOSetImpl;
 
 public:
-    cFCOIterImpl(cFCOSetImpl* pSet);
-    cFCOIterImpl(const cFCOSetImpl* pSet);
+    explicit cFCOIterImpl(cFCOSetImpl* pSet);
+    explicit cFCOIterImpl(const cFCOSetImpl* pSet);
 
     virtual void    SeekBegin()     const;
     virtual bool    Done()          const;

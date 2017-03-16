@@ -91,7 +91,7 @@ TSS_FILE_EXCEPTION( eFileManipUnrecognizedFileType, eFileManip )
 class cFileManipulator
 {
 public:
-    cFileManipulator(const TCHAR* filename);
+    explicit cFileManipulator(const TCHAR* filename);
         // throws eArchive if file does not exist
     cFileManipulator(const cFileManipulator& rhs);
     ~cFileManipulator();

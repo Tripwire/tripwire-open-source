@@ -98,7 +98,7 @@ public:
 
     // Ctor, Dtor:
     ~cDebugHierDbIter   () {}
-    cDebugHierDbIter    ( cHierDatabase* pDb ) : cHierDatabaseIter( pDb ) {}
+    explicit cDebugHierDbIter    ( cHierDatabase* pDb ) : cHierDatabaseIter( pDb ) {}
 
     //
     // Methods for obtaining protected members of cHierDatabaseIter:

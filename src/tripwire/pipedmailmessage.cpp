@@ -49,7 +49,7 @@
 //
 // Constructor.  Not much to do beside initialize the handle to the DLL
 //
-cPipedMailMessage::cPipedMailMessage(TSTRING strSendMailExePath)
+cPipedMailMessage::cPipedMailMessage(const TSTRING& strSendMailExePath)
 {
     mstrSendMailExePath = strSendMailExePath;
     mpFile = NULL;

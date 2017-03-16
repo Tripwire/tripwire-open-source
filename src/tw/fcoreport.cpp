@@ -239,10 +239,12 @@ cFCOReportGenreIter::~cFCOReportGenreIter()
     delete mpData;
 }
 
-void cFCOReportGenreIter::operator=(const cFCOReportGenreIter& rhs)
+cFCOReportGenreIter& cFCOReportGenreIter::operator=(const cFCOReportGenreIter& rhs)
 {
     mpData->mpList = rhs.mpData->mpList;
     mpData->mIter = rhs.mpData->mIter;
+    
+    return *this;
 }
 
 // iteration methods
@@ -380,13 +382,15 @@ cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReportSpecIter& rhs)
     *this = rhs;
 }
 
-void cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
+cFCOReportSpecIter& cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
 {
     if (mpData == 0)
         mpData = new cFCOReportSpecIter_i();
 
     mpData->mpList  = rhs.mpData->mpList;
     mpData->mIter   = rhs.mpData->mIter;
+    
+    return *this;
 }
 
 int cFCOReportSpecIter::GetNumChanged() const
@@ -525,10 +529,12 @@ cFCOReportChangeIter::~cFCOReportChangeIter()
     delete mpData;
 }
 
-void cFCOReportChangeIter::operator=(const cFCOReportChangeIter& rhs)
+cFCOReportChangeIter& cFCOReportChangeIter::operator=(const cFCOReportChangeIter& rhs)
 {
     mpData->mpList  = rhs.mpData->mpList;
     mpData->mIter   = rhs.mpData->mIter;
+    
+    return *this;
 }
 
 void cFCOReportChangeIter::SetSpecIter(const cFCOReportSpecIter& specIter)

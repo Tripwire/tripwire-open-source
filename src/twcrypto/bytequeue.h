@@ -45,7 +45,7 @@ class cByteQueueNode;
 class cByteQueue : public BufferedTransformation
 {
 public:
-    cByteQueue(int nodeSize=1024);
+    explicit cByteQueue(int nodeSize=1024);
     cByteQueue(const cByteQueue &copy);
     ~cByteQueue();
 

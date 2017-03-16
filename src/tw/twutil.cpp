@@ -855,7 +855,7 @@ void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBag
 // of the policy file text to disk.  
 // Will throw eError on failure.
 
-void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
+void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string& polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
     cSerializableNString nstring;
 
@@ -874,7 +874,7 @@ void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string polText, 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
-void cTWUtil::WritePolicyText(cArchive &archive, const std::string polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
+void cTWUtil::WritePolicyText(cArchive &archive, const std::string& polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
     cSerializableNString nstring;
 

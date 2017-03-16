@@ -103,7 +103,7 @@ protected:
 class cFCOSpecListAddedIter
 {
 public:
-    cFCOSpecListAddedIter(const cFCOSpecList& list);
+    explicit cFCOSpecListAddedIter(const cFCOSpecList& list);
     ~cFCOSpecListAddedIter();
 
     void                SeekBegin()     const;
@@ -129,7 +129,7 @@ protected:
 class cFCOSpecListCanonicalIter
 {
 public:
-    cFCOSpecListCanonicalIter(const cFCOSpecList& list);
+    explicit cFCOSpecListCanonicalIter(const cFCOSpecList& list);
     ~cFCOSpecListCanonicalIter();
 
     void                SeekBegin()     const;

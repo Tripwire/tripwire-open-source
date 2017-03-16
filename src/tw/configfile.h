@@ -140,7 +140,7 @@ private:
 class cConfigFileIter
 {
 public:
-    cConfigFileIter( cConfigFile& cf);
+    explicit cConfigFileIter( cConfigFile& cf);
     virtual ~cConfigFileIter();
 
     void    SeekBegin()     const;

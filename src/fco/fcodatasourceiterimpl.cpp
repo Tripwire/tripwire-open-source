@@ -440,7 +440,7 @@ bool cFCODataSourceIterImpl::CompareForUpperBound( const iFCO* pFCO, const TCHAR
 class cFCODataSourceIterImplCallCompare
 {
 public:
-    cFCODataSourceIterImplCallCompare( const cFCODataSourceIterImpl* pcls )
+    explicit cFCODataSourceIterImplCallCompare( const cFCODataSourceIterImpl* pcls )
         : pc( pcls ) {};
     
     bool operator()( const iFCO* a1, const TCHAR* a2 )

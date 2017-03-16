@@ -53,7 +53,7 @@ public:
     };
 
     cFCOCompare();
-    cFCOCompare( const cFCOPropVector& propsToCompare);
+    explicit cFCOCompare( const cFCOPropVector& propsToCompare);
     virtual ~cFCOCompare();
 
     void                    SetPropsToCmp(const cFCOPropVector& pv);

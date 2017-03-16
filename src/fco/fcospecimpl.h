@@ -70,7 +70,7 @@ public:
         // the spec will delete whatever helper it contains when it is destroyed
     cFCOSpecImpl(const cFCOSpecImpl& rhs);
     cFCOSpecImpl();
-    void operator=(const cFCOSpecImpl& rhs);
+    cFCOSpecImpl& operator=(const cFCOSpecImpl& rhs);
 
     // from iFCOSpec
     virtual bool                    SpecContainsFCO (const cFCOName& name) const;

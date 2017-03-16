@@ -50,6 +50,7 @@ template<class TYPE>
 class cIterProxy
 {
 public:
+    //TODO: Can these 2 constructors be made explicit?
     cIterProxy(TYPE* pIter = NULL)      : mpIter(pIter)         {};
     cIterProxy(const TYPE* pIter)   : mpIter((TYPE*)pIter)  {};
     ~cIterProxy()                   { if (mpIter) mpIter->DestroyIter(); }

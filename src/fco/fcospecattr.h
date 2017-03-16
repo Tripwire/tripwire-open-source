@@ -94,7 +94,7 @@ private:
 class cFCOSpecAttrEmailIter
 {
 public:
-    cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr);
+    explicit cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr);
     ~cFCOSpecAttrEmailIter();
 
     void SeekBegin()    const;

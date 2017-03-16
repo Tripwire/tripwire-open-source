@@ -394,7 +394,6 @@ void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
     if (version > 0)
         ThrowAndAssert(eSerializerVersionMismatch(_T("Property Vector Read")));
 
-    int i;
     int32 newSize;
     pSerializer->ReadInt32(newSize);
     ASSERT(newSize > 0);
@@ -409,7 +408,7 @@ void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
     }
     else
     {
-        for (i=0; i <= mSize / msBitlength; ++i)
+        for (int i=0; i <= mSize / msBitlength; ++i)
         {
             int32 mask;
             pSerializer->ReadInt32(mask);
@@ -421,7 +420,6 @@ void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
 
 void cFCOPropVector::Write(iSerializer* pSerializer) const
 {
-    int i;
     pSerializer->WriteInt32(mSize);
 
     if (mpBuf == NULL)
@@ -430,7 +428,7 @@ void cFCOPropVector::Write(iSerializer* pSerializer) const
     }
     else
     {
-        for (i=0; i <= mSize / msBitlength; ++i)
+        for (int i=0; i <= mSize / msBitlength; ++i)
             pSerializer->WriteInt32((*mpBuf)[i]);
     }
 

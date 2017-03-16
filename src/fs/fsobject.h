@@ -60,7 +60,7 @@ class cFSObject : public iFCO
     DECLARE_SERREFCOUNT()
     
 public:
-    cFSObject(const cFCOName& name);
+    explicit cFSObject(const cFCOName& name);
 
     virtual void                    SetName(const cFCOName& name) ;
     virtual const cFCOName&         GetName() const ;

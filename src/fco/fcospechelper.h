@@ -159,7 +159,7 @@ protected:
 class cFCOSpecStopPointIter
 {
 public:
-    cFCOSpecStopPointIter(cFCOSpecStopPointSet& set);
+    explicit cFCOSpecStopPointIter(cFCOSpecStopPointSet& set);
     
     void    SeekBegin()     const;
         // seeks to the beginning of the stop point list

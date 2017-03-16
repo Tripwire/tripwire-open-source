@@ -114,7 +114,7 @@ private:
 class cHierDatabaseIter
 {
 public:
-    cHierDatabaseIter( cHierDatabase* pDb ); //throw (eArchive)
+    explicit cHierDatabaseIter( cHierDatabase* pDb ); //throw (eArchive)
     ~cHierDatabaseIter();
 
     //

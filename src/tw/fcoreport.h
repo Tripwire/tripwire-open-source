@@ -147,7 +147,7 @@ public:
     cFCOReportGenreIter(const cFCOReportGenreIter& rhs);
     ~cFCOReportGenreIter();
 
-    void operator=(const cFCOReportGenreIter& rhs);
+    cFCOReportGenreIter& operator=(const cFCOReportGenreIter& rhs);
 
     // iteration methods
     void SeekBegin()    const;
@@ -179,13 +179,13 @@ public:
     cFCOReportSpecIter(cFCOReport& report, cGenre::Genre genre);
         // if genre does not exist in the report, it will be added to the report with
         // and empty spec list.
-    cFCOReportSpecIter(const cFCOReportGenreIter& genreIter);
+    explicit cFCOReportSpecIter(const cFCOReportGenreIter& genreIter);
         // thorws eInternal if genreIter is not at a valid genre or is Done()
 
     cFCOReportSpecIter(const cFCOReportSpecIter& rhs);
     ~cFCOReportSpecIter();
 
-    void operator=(const cFCOReportSpecIter& rhs);
+    cFCOReportSpecIter& operator=(const cFCOReportSpecIter& rhs);
 
     // iteration methods
     void SeekBegin()    const;
@@ -226,11 +226,11 @@ private:
 class cFCOReportChangeIter
 {
 public:
-    cFCOReportChangeIter(const cFCOReportSpecIter& specIter);
+    explicit cFCOReportChangeIter(const cFCOReportSpecIter& specIter);
     cFCOReportChangeIter(const cFCOReportChangeIter& rhs);
     ~cFCOReportChangeIter();
 
-    void operator=(const cFCOReportChangeIter& rhs);
+    cFCOReportChangeIter& operator=(const cFCOReportChangeIter& rhs);
     void SetSpecIter(const cFCOReportSpecIter& specIter);
         // assocaite this iterator with a different spec. We will assert 
         // that specIter.Done() is not true.

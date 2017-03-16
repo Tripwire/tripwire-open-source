@@ -238,7 +238,7 @@ public:
     //
     // ctors and dtor
     //
-    cParseRule( const cParseSpecMask& defSpecMask ) :mDefSpecMask( defSpecMask ), mpAttrList(0), mpSpecMaskList(0), mName(_T("")) {}
+    explicit cParseRule( const cParseSpecMask& defSpecMask ) :mDefSpecMask( defSpecMask ), mpAttrList(0), mpSpecMaskList(0), mName(_T("")) {}
     ~cParseRule();
 
     //

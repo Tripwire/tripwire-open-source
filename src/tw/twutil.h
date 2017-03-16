@@ -122,8 +122,8 @@ public:
         // eSerializer is thrown if reading or writing fails
         // eConfigFile is thrown if config file does not parse correctly during reading
 
-    static void WritePolicyText(const TCHAR* filename, const std::string policyText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);
-    static void WritePolicyText(cArchive &archive,     const std::string policyText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);
+    static void WritePolicyText(const TCHAR* filename, const std::string& policyText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);
+    static void WritePolicyText(cArchive &archive,     const std::string& policyText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);
     static void ReadPolicyText(const TCHAR* filename, std::string& policyText, const cElGamalSigPublicKey* pPublicKey);
     static void ReadPolicyText(cArchive &archive,     std::string& policyText, const cElGamalSigPublicKey* pPublicKey);
         // read and write policy file to and from disk

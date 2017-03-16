@@ -80,7 +80,7 @@ cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs) : iFCOSet()
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
+cFCOSetImpl& cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
 {
     std::set<cFCONode>::const_iterator i;
     for(i = rhs.mFCOSet.begin(); i != rhs.mFCOSet.end(); ++i)
@@ -88,6 +88,8 @@ void cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
         i->mpFCO->AddRef();
         mFCOSet.insert(cFCONode(i->mpFCO));
     }
+    
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -46,7 +46,7 @@
 class cByteQueueNode
 {
 public:
-    cByteQueueNode(unsigned int maxSize);
+    explicit cByteQueueNode(unsigned int maxSize);
 
     unsigned int CurrentSize() const
         {return tail-head;}

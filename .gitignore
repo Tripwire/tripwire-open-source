@@ -12,6 +12,7 @@ src/tripwire/tripwire
 src/twadmin/twadmin
 src/twprint/twprint
 src/twtest/twtest
+src/test-harness/twtest
 **/Makefile
 **/*.o
 **/*.dylib

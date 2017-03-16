@@ -751,7 +751,7 @@ bool cHierDatabaseIter::CompareForUpperBound( const cHierEntry& he, const TCHAR*
 class cHierDatabaseIterCallCompare
 {
 public:
-    cHierDatabaseIterCallCompare( const cHierDatabaseIter* pcls )
+    explicit cHierDatabaseIterCallCompare( const cHierDatabaseIter* pcls )
         : pc( pcls ) {};
     
     bool operator()( const cHierEntry& a1, const TCHAR* a2 )

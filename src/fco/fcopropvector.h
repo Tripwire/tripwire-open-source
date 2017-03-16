@@ -49,7 +49,7 @@
 class cFCOPropVector : public iSerializable // note: this is not iTypedSerializable
 {
 public:
-    cFCOPropVector              (int size = 32);
+    explicit cFCOPropVector     (int size = 32);
     cFCOPropVector              (const cFCOPropVector& rhs);
     virtual ~cFCOPropVector             (void);
     bool operator==             (const cFCOPropVector& rhs) const;

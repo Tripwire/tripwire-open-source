@@ -255,7 +255,7 @@ private:
 class cPipedMailMessage : public cMailMessage
 {
 public:
-    cPipedMailMessage(TSTRING strSendMailExePath);
+    explicit cPipedMailMessage(const TSTRING& strSendMailExePath);
     virtual ~cPipedMailMessage();
 
     virtual bool Send(); //throw(eMailMessageError)

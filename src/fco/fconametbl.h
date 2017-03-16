@@ -110,7 +110,7 @@ private:
 class cFCONameTbl
 {
 public:
-    cFCONameTbl(int defSize = HASH_VERY_LARGE);
+    explicit cFCONameTbl(int defSize = HASH_VERY_LARGE);
         // defSize is the initial hash table size
     ~cFCONameTbl();
 
