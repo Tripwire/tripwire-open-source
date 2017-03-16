@@ -41,9 +41,6 @@
 #include "core/error.h"
 #include "core/errorutil.h"
 
-//uncomment to allocate fsobjects from a pool
-//cObjectPoolBase cFSObject::msAllocator(sizeof(cFSObject), 1000);
-
 // FCO Type information...
 IMPLEMENT_SERREFCOUNT(cFSObject, _T("FSObject"), 0, 1)
 

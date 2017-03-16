@@ -126,14 +126,14 @@ am_twtest_OBJECTS = archive_t.$(OBJEXT) blockfile_t.$(OBJEXT) \
 	genrespeclist_t.$(OBJEXT) genreswitcher_t.$(OBJEXT) \
 	growheap_t.$(OBJEXT) hashtable_t.$(OBJEXT) \
 	hierdatabase_t.$(OBJEXT) keyfile_t.$(OBJEXT) \
-	objectpool_t.$(OBJEXT) platform_t.$(OBJEXT) \
-	policyparser_t.$(OBJEXT) refcountobj_t.$(OBJEXT) \
-	resources_t.$(OBJEXT) serializer_t.$(OBJEXT) \
-	serializerimpl_t.$(OBJEXT) signature_t.$(OBJEXT) \
-	srefcountobj_t.$(OBJEXT) stdtest.$(OBJEXT) \
-	stringencoder_t.$(OBJEXT) tasktimer_t.$(OBJEXT) \
-	tchar_t.$(OBJEXT) test.$(OBJEXT) textreportviewer_t.$(OBJEXT) \
-	twlocale_t.$(OBJEXT) twutil_t.$(OBJEXT) types_t.$(OBJEXT) \
+	platform_t.$(OBJEXT) policyparser_t.$(OBJEXT) \
+	refcountobj_t.$(OBJEXT) resources_t.$(OBJEXT) \
+	serializer_t.$(OBJEXT) serializerimpl_t.$(OBJEXT) \
+	signature_t.$(OBJEXT) srefcountobj_t.$(OBJEXT) \
+	stdtest.$(OBJEXT) stringencoder_t.$(OBJEXT) \
+	tasktimer_t.$(OBJEXT) tchar_t.$(OBJEXT) test.$(OBJEXT) \
+	textreportviewer_t.$(OBJEXT) twlocale_t.$(OBJEXT) \
+	twutil_t.$(OBJEXT) types_t.$(OBJEXT) \
 	unixfsservices_t.$(OBJEXT) usernotifystdout_t.$(OBJEXT) \
 	wchar16_t.$(OBJEXT)
 twtest_OBJECTS = $(am_twtest_OBJECTS)
@@ -397,7 +397,6 @@ growheap_t.cpp \
 hashtable_t.cpp \
 hierdatabase_t.cpp \
 keyfile_t.cpp \
-objectpool_t.cpp \
 platform_t.cpp \
 policyparser_t.cpp \
 refcountobj_t.cpp \

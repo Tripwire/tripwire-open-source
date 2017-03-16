@@ -12,11 +12,11 @@ libcore_a_SOURCES = \
    displayutil.cpp error.cpp errorbucketimpl.cpp errortable.cpp		\
    errorutil.cpp fileerror.cpp fileheader.cpp fsservices.cpp		\
    growheap.cpp hashtable.cpp haval.cpp msystem.cpp ntmbs.cpp		\
-   objectpool.cpp refcountobj.cpp serializable.cpp serializer.cpp	\
+   refcountobj.cpp serializable.cpp serializer.cpp	\
    serializerimpl.cpp serializerutil.cpp serstring.cpp 			\
    srefcountobj.cpp srefcounttbl.cpp stdcore.cpp stringutil.cpp		\
    timebomb.cpp timeconvert.cpp tw_signal.cpp twlimits.cpp twlocale.cpp	\
-   unixexcept.cpp usernotify.cpp usernotifystdout.cpp utf8.cpp		\
+   unixexcept.cpp usernotify.cpp usernotifystdout.cpp		\
    wchar16.cpp
 
 libcore_a_HEADERS = archive.h charutil.h cmdlineparser.h codeconvert.h       \
@@ -24,12 +24,12 @@ libcore_a_HEADERS = archive.h charutil.h cmdlineparser.h codeconvert.h       \
    displayutil.h error.h errorbucket.h errorbucketimpl.h errorgeneral.h      \
    errortable.h errorutil.h file.h fileerror.h fileheader.h fixedfilebuf.h   \
    fsservices.h growheap.h hashtable.h haval.h md5.h msystem.h ntdbs.h       \
-   ntmbs.h objectpool.h package.h platform.h refcountobj.h resources.h       \
+   ntmbs.h package.h platform.h refcountobj.h resources.h       \
    serializable.h serializer.h serializerimpl.h serializerutil.h serstring.h \
    sha.h srefcountobj.h srefcounttbl.h stdcore.h stringutil.h tasktimer.h    \
    tchar.h timebomb.h timeconvert.h tw_signal.h twlimits.h twlocale.h        \
    twstringslang.h typed.h types.h unixexcept.h unixfsservices.h upperbound.h \
-   usernotify.h usernotifystdout.h utf8.h wchar16.h
+   usernotify.h usernotifystdout.h wchar16.h
 
 libcore_a_LIBADD = @CORE_CRYPT_O@
 libcore_a_DEPENDENCIES = @CORE_CRYPT_O@

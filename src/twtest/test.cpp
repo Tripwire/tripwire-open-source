@@ -114,7 +114,7 @@ void TestCryptoArchive();
 void TestFCOSpecAttr();
 void TestCmdLineParser();
 void TestTaskTimer();
-void TestObjectPool();
+//void TestObjectPool();
 void TestKeyFile();
 void TestFCOSetCached();
 void TestTWUtil();
@@ -188,7 +188,7 @@ static void Test(int testID)
     //case 27: TestFSPropCalc(); break;
     case 28: TestFCOSpecImpl(); break;
     case 29: TestHashTable(); break;
-    case 30: TestObjectPool(); break;
+//    case 30: TestObjectPool(); break;
     case 31: TestRefCountObj(); break;
     case 32: TestSerializerImpl(); break;
     case 33: TestSerRefCountObj(); break;

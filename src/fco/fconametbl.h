@@ -46,15 +46,6 @@
 #include "core/hashtable.h"
 #endif
 
-// uncomment this to allocate fconametblnodes from a pool.
-/*
-#ifndef __OBJECTPOOL_H
-#include "objectpool.h"
-#endif
-*/
-// end TODO 
-
-
 class cFCONameTbl_i;
 
 ///////////////////////////////////////////////////////////////////////////////
