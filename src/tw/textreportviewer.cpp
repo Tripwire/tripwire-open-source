@@ -436,8 +436,8 @@ void cTextReportViewer::PrintErrors()
         cFCOReportSpecIter rsi( genreIter );
         for( rsi.SeekBegin(); !rsi.Done(); rsi.Next() )
         {
-            cErrorQueueIter eqIter( *( rsi.GetErrorQueue() ) );
-            for( eqIter.SeekBegin(); !eqIter.Done(); eqIter.Next() )
+            cErrorQueueIter eqIter2( *( rsi.GetErrorQueue() ) );
+            for( eqIter2.SeekBegin(); !eqIter2.Done(); eqIter2.Next() )
             {                   
                 if( fFirstErrorInGenre )
                 {
@@ -445,7 +445,7 @@ void cTextReportViewer::PrintErrors()
                     fFirstErrorInGenre = false;
                 }
 
-                ReportError( eqIter );
+                ReportError( eqIter2 );
             }        
         }
 

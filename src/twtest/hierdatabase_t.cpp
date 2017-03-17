@@ -35,7 +35,7 @@
 #include "test.h"
 #include "core/error.h"
 
-static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )
+/*static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )
 {
     if( ! bFirst )
     {
@@ -54,7 +54,7 @@ static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true 
     }
 
     d.TraceDebug( "-- Done Processing directory %s\n", iter.GetCwd().c_str() );
-}
+}*/
 
 static void GetNoun( TSTRING& noun )
 {

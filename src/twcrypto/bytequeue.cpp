@@ -133,9 +133,9 @@ unsigned int cByteQueueNode::Peek(byte &outByte) const
 // cByteQueue
 //-----------------------------------------------------------------------------
 
-cByteQueue::cByteQueue(int mNodeSize)
+cByteQueue::cByteQueue(int nodeSize)
     :   BufferedTransformation(),
-        mNodeSize(mNodeSize),
+        mNodeSize(nodeSize),
         mCurrentSize(0)
 {
     head = tail = new cByteQueueNode(mNodeSize);

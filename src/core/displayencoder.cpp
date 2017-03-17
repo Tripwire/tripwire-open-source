@@ -81,6 +81,8 @@ inline bool IsSingleTCHAR(  TSTRING::const_iterator first,
 class iCharEncoder
 {
     public:
+        virtual ~iCharEncoder() {};
+
         virtual bool    NeedsEncoding(  TSTRING::const_iterator first, 
                                         TSTRING::const_iterator last ) const = 0;
         // Determines if character identified by [first,last) needs encoding.
@@ -107,7 +109,7 @@ class iCharEncoder
 
         static TCHAR    EscapeChar() { return char_escape; }
 
-    protected:    
+    protected:
 
         static TCHAR        char_escape;
 };
@@ -116,6 +118,8 @@ class iCharEncoder
 class cNonNarrowableCharEncoder : public iCharEncoder
 {
     public:
+        virtual ~cNonNarrowableCharEncoder() {}
+
         virtual bool    NeedsEncoding(  TSTRING::const_iterator first, 
                                         TSTRING::const_iterator last ) const;
 
@@ -141,7 +145,9 @@ class cNonPrintableCharEncoder : public iCharEncoder
         cNonPrintableCharEncoder( bool f_allowWS )
             : m_allowWS( f_allowWS ) {};
 
-        virtual bool    NeedsEncoding(  TSTRING::const_iterator first, 
+        virtual ~cNonPrintableCharEncoder() {}
+
+        virtual bool    NeedsEncoding(  TSTRING::const_iterator first,
                                         TSTRING::const_iterator last ) const;
 
         virtual TSTRING EncodeRoundtrip(TSTRING::const_iterator first, 
@@ -164,6 +170,8 @@ class cNonPrintableCharEncoder : public iCharEncoder
 class cQuoteCharEncoder : public iCharEncoder
 {
     public:
+        virtual ~cQuoteCharEncoder() {}
+
         virtual bool    NeedsEncoding(  TSTRING::const_iterator first, 
                                         TSTRING::const_iterator last ) const;
 
@@ -187,6 +195,8 @@ class cQuoteCharEncoder : public iCharEncoder
 class cBackslashCharEncoder : public iCharEncoder
 {
     public:
+        virtual ~cBackslashCharEncoder() {}
+
         virtual bool    NeedsEncoding(  TSTRING::const_iterator first, 
                                         TSTRING::const_iterator last ) const;
 

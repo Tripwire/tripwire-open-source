@@ -498,9 +498,6 @@ bool cTWPrintReportMode::Init(const cConfigFile& cf, const cCmdLineParser& cmdLi
 ///////////////////////////////////////////////////////////////////////////////
 int cTWPrintReportMode::Execute(cErrorQueue* pQueue)
 {
-    cFCOReport          report;
-    cFCOReportHeader    reportHeader;
-
     try
     {
         ASSERT( ! mpData->mReportFile.empty() );
@@ -510,6 +507,7 @@ int cTWPrintReportMode::Execute(cErrorQueue* pQueue)
         cKeyFile                localKeyfile;
         const cElGamalSigPublicKey*    pKey;
         cFCOReport              report;
+        cFCOReportHeader        reportHeader;
 
         cTWUtil::OpenKeyFile( localKeyfile, mpData->mLocalKeyFile );
         pKey = localKeyfile.GetPublicKey();

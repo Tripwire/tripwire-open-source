@@ -325,18 +325,18 @@ bool cTWAModeCreateCfg::Init(const cConfigFile* cf, const cCmdLineParser& parser
     }
 
     // get full path to files
-    TSTRING strFullPath;
-    if( iFSServices::GetInstance()->FullPath( strFullPath, mPlaintextConfig ) )
-        mPlaintextConfig = strFullPath;
+    TSTRING strPlaintextConfigPath;
+    if( iFSServices::GetInstance()->FullPath( strPlaintextConfigPath, mPlaintextConfig ) )
+        mPlaintextConfig = strPlaintextConfigPath;
 
     // OK, now we need to figure out where to put the new config file.
     // If the location was specified on the command line, get the full path to it.
     // otherwise, the location is the dir that this exe is in.
     if( fConfigOnCmdLine )
     {
-        TSTRING strFullPath;
-        if( iFSServices::GetInstance()->FullPath( strFullPath, mEncryptedConfig ) )
-            mEncryptedConfig = strFullPath;
+        TSTRING strEncryptedConfigPath;
+        if( iFSServices::GetInstance()->FullPath( strEncryptedConfigPath, mEncryptedConfig ) )
+            mEncryptedConfig = strEncryptedConfigPath;
     }
     else
     {
