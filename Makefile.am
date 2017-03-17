@@ -14,5 +14,5 @@ uninstall-hook:
 
 check:
 	rm -Rf $(top_srcdir)/src/test-harness/twtest
-	cd $(top_srcdir)/src/test-harness && ./twtest.pl
+	cd $(top_srcdir)/src/test-harness && perl ./twtest.pl
 	$(top_srcdir)/bin/twtest all
