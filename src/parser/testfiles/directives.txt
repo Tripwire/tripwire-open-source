@@ -2,16 +2,16 @@
 # parser will echo YES1 through YES9
 # there's a problem with the parser if it echoes NO
 
-@@ifhost turd
+@@ifhost foo
     @@error NO1
 @@else
     @@echo +YES1;
 @@endif
 
-@@ifhost crap || your_host||poo
+@@ifhost bar || your_host||baz
 
 
-    @@ifhost turd
+    @@ifhost foo
     
         @@ifhost your_host
             @@error +NO2;
@@ -23,7 +23,7 @@
 
     @@else
     
-        @@ifhost turd
+        @@ifhost foo
             @@error +NO5;
         @@else
             @@echo +YES2;
@@ -63,29 +63,29 @@
         @@error +NO10;
     @@endif
 
-    @@ifhost turd
+    @@ifhost foo
         @@error +NO11;
     @@else
         @@echo +YES7;
     @@endif
 
     
-    @@ifhost your_host || poo
+    @@ifhost your_host || baz
         @@echo +YES8;
     @@endif    
 
-    @@ifhost poo || your_host
+    @@ifhost baz || your_host
         @@echo +YES9;
     @@endif
 
-    @@ifhost poo
+    @@ifhost baz
         @@error +NO12;
     @@endif
 
 @@else
 
 
-    @@ifhost turd
+    @@ifhost foo
     
         @@ifhost your_host
             @@error +NO13;
@@ -97,7 +97,7 @@
 
     @@else
     
-        @@ifhost turd
+        @@ifhost foo
             @@error +NO16;
         @@else
             @@error +NO17;
@@ -107,7 +107,7 @@
 
     @@endif
 
-    @@ifhost turd
+    @@ifhost foo
         @@error +NO19;
     @@else
         @@error +NO20;
@@ -120,13 +120,13 @@
     @@endif
 
 
-    @@ifhost turd
+    @@ifhost foo
         @@error +NO23;
     @@else
         @@error +NO24;
     @@endif
     
-    @@ifhost poo
+    @@ifhost baz
         @@error +NO25;
     @@endif
 

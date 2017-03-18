@@ -1,17 +1,16 @@
 
 # test weird file names
 /lost+found	->		+p							;
-/l-o_st+fo/und	->	+ping	(l-o_st+fo/und2 l-o_st+fo/und3) ;
+/l-o_st+fo/und	->	+ping;
 
 # test variables
-$(ReadOnly) = ping;
-/simplevar	->	$(ReadOnly) ;
-/var	    ->	$(ReadOnly)-p ;
+FOO = ping;
+/simplevar	->	$(FOO) ;
+/var	    ->	$(FOO)-p ;
 
 # test line continuations
-c:/test		->		+p							;
 
-/turd    \
+/bar    \
     ->\
     +p
     ;
@@ -19,26 +18,25 @@ c:/test		->		+p							;
 # test quoted strings
 "/qfoo"		->		+p							;
 "/Program Files"    ->		+p					;
-"  /lots o' spaces      "    ->		+p			;
-"  colon: semicolon; quote' "    ->		+p	    ;
+#"  /lots o' spaces      "    ->		+p			;
+#"  colon: semicolon; quote' "    ->		+p	    ;
 
 # test attributes
-/namedattr2	-> +p ( name1 value1; name2 value2; ) ;
-/namedattr	-> +p (name1 value1; ) ;
+#/namedattr2	-> +p ( name1 value1; name2 value2; ) ;
+#/namedattr	-> +p (name1 value1; ) ;
 
 # test propvector
-c:/test		->		+p							;
 
-/test		->		+p							;
-/test		->		+p-p						;
-/test		->		+pinugs-am					;
-/test		->		+pinugs---am				;
-/test		->		+pinugs-+-am				;
+/test1		->		+p							;
+/test2		->		+p-p						;
+/test3		->		+pinugs-am					;
+/test4		->		+pinugs---am				;
+/test5		->		+pinugs-+-am				;
 
 
 # attributes and props
-/namedattr3	->	+pinug		( name1 value1; name2 value2; ) ;
-/namedattr4	->	+pinug		(name1 value1; ) ;
+#/namedattr3	->	+pinug		( name1 value1; name2 value2; ) ;
+#/namedattr4	->	+pinug		(name1 value1; ) ;
 
 # simple default policy
 /simple		->	+ppp;
@@ -48,38 +46,39 @@ c:/test		->		+p							;
 ! /omit ;
 
 # omit with no space separation
- !/omit ;
+ !/omit2 ;
 
 # multiple attributes
-/namedattr	->	+pinug		(emailreport on; emailsendto genek; name3 val3; name4 val4; name5 val5; ) ;
+#/namedattr	->	+pinug		(emailreport on; emailsendto genek; name3 val3; name4 val4; name5 val5; ) ;
 
 
-@@END
+#@@END
 # the following isn't implemented yet
 #########################################3
 
 # multiple specmasks
-/conditions		->	{
-						xxx ->		+pinug ;
-						yyy ->		+pinug ;
-						zzz ->		+pinug ;
-						default ->	+pinug ;
-					};
+#/conditions		->	{
+#						xxx ->		+pinug ;
+#						yyy ->		+pinug ;
+#						zzz ->		+pinug ;
+#						default ->	+pinug ;
+#					};
 
 # attributes on specifers
-/conditions		->	{
-						xxx ->		+pinug		(inside1 name1 ;) ;
-						yyy ->		+pinug ;
-						zzz ->		+pinug ;
-						default ->	+pinug ;
-					};
+#/conditions		->	{
+#						xxx ->		+pinug		(inside1 name1 ;) ;
+#						yyy ->		+pinug ;
+#						zzz ->		+pinug ;
+#						default ->	+pinug ;
+#					};
 
 
 # hard ones
 
-/conditions		->	{
-						xxx ->		+pinug		(inside1 name1 ;) ;
-						yyy ->		$(poo)+pinug ;
-						zzz ->		+pinug ( inside1 name1 ; outside name2);
-						default ->	$(turd)-p ;
-					};
+#/conditions		->	{
+#						xxx ->		+pinug		(inside1 name1 ;) ;
+#						yyy ->		$(baz)+pinug ;
+#						zzz ->		+pinug ( inside1 name1 ; outside name2);
+#						default ->	$(bar)-p ;
+#					};
+
