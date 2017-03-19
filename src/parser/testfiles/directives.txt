@@ -5,7 +5,7 @@
 @@ifhost foo
     @@error NO1
 @@else
-    @@echo +YES1;
+    @@print +YES1
 @@endif
 
 @@ifhost bar || your_host||baz
@@ -26,10 +26,10 @@
         @@ifhost foo
             @@error +NO5;
         @@else
-            @@echo +YES2;
+            @@print +YES2;
         @@endif
 
-            @@echo +YES3;
+            @@print +YES3;
 
     @@endif
 
@@ -38,12 +38,12 @@
     @@ifhost your_host
     
         @@ifhost your_host
-            @@echo +YES4;
+            @@print +YES4;
         @@else
             @@error +NO6;
         @@endif
 
-            @@echo +YES5;
+            @@print +YES5;
 
     @@else
     
@@ -58,7 +58,7 @@
     @@endif
 
     @@ifhost your_host
-        @@echo +YES6;
+        @@print +YES6;
     @@else
         @@error +NO10;
     @@endif
@@ -66,16 +66,16 @@
     @@ifhost foo
         @@error +NO11;
     @@else
-        @@echo +YES7;
+        @@print +YES7;
     @@endif
 
     
     @@ifhost your_host || baz
-        @@echo +YES8;
+        @@print +YES8;
     @@endif    
 
     @@ifhost baz || your_host
-        @@echo +YES9;
+        @@print +YES9;
     @@endif
 
     @@ifhost baz
@@ -132,4 +132,6 @@
 
 @@endif
 
+#A token rule at the end to avoid 'no rules in policy file' errors 
+/asdf -> +a;
 
