@@ -18,7 +18,7 @@ FOO = ping;
 # test quoted strings
 "/qfoo"		->		+p							;
 "/Program Files"    ->		+p					;
-#"  /lots o' spaces      "    ->		+p			;
+"  /lots o' spaces      "    ->		+p			;
 #"  colon: semicolon; quote' "    ->		+p	    ;
 
 # test attributes

@@ -131,6 +131,11 @@ void cFSParserUtil::AddSubTypeProps( cFCOPropVector& v ) const
     v.AddItemAndGrow( cFSPropSet::PROP_FILETYPE );
 }
 
+static inline void trim_leading_whitespace(std::string &str)
+{
+    str.erase(str.begin(), std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+}
+
 void cFSParserUtil::InterpretFCOName( const std::list<TSTRING>& l, cFCOName& nameOut ) const
 {
     TSTRING strT;
@@ -140,6 +145,12 @@ void cFSParserUtil::InterpretFCOName( const std::list<TSTRING>& l, cFCOName& nam
 #if USES_DEVICE_PATH
     strT = cDevicePath::AsPosix(strT);
 #endif
+
+    //Trim any remaining whitespace before actual path, for cases like " /foo",
+    // otherwise it'll be flagged as a relative path.
+    //Don't trim trailing whitespace, since that could potentially be a valid path.
+    if(strT[0] != '/')
+        trim_leading_whitespace(strT);
 
     // let cFCOName handle interpretation
     nameOut = strT;
