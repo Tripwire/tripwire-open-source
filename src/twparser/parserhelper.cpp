@@ -63,7 +63,6 @@ static int  util_ConvertOctal( const char* psz, int* const pnCharsRead );
 static bool util_IsOctal( const char ch );
 static int  util_GetEscapeValueOfChar( char ch );
 static int  util_GetRecurseDepth( const cParseNamedAttrList* pList ); //throw( eParserHelper )
-static void util_EatAllSpaces( TSTRING& str );
 static void util_LoseSurroundingWS( TSTRING& str );
 #ifdef _DEBUG
 static bool util_AsciiCharsActLikeTheyShould();
@@ -671,7 +670,7 @@ void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropV
 
     // clear out all spaces in the string    
     TSTRING strPropList = strPropListC;
-    util_EatAllSpaces( strPropList );
+    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(), std::ptr_fun<int, int>(std::isspace)), strPropList.end());
 
     // zero it out
     v.Clear();
@@ -740,17 +739,6 @@ void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropV
         else 
             v.RemoveItem( propIndex );
     }
-
-    /* for 1.5, allow no properties (just track file existence)
-    // if v is empty, error
-    cFCOPropVector emptyPropVector;
-    emptyPropVector.Clear();    
-    if( v == emptyPropVector )
-    {
-        d.TraceError("CreatePropVector failed!!\n");
-        throw eError( ERR_BAD_PROP_STRING, strPropV.c_str() );
-    }
-    */
 
     return;
 }
@@ -1077,18 +1065,6 @@ TSTRING::size_type util_FindNextDelim( const TSTRING& str, TSTRING::size_type i 
         min = minus;
 
     return min;
-}
-
-// deletes each space in the string
-void util_EatAllSpaces( TSTRING& str )
-{
-    for( TSTRING::iterator i = str.begin(); i != str.end(); i++ )
-    {
-        if( *i == _T(' ') )
-        {
-            str.erase( i );
-        }
-    }
 }
 
 void util_LoseSurroundingWS( TSTRING& str )
