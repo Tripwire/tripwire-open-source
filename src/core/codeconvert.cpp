@@ -1016,7 +1016,7 @@ cDoubleIconvConverter::Convert(
     //
     size_t nBufBytes = nChars * MB_LEN_MAX;
     ntmbs_t pszBuffer = (ntmbs_t)::operator new( nBufBytes + 1 );
-    std::auto_ptr<mbchar_t> pBuf( pszBuffer );
+    TW_UNIQUE_PTR<mbchar_t> pBuf( pszBuffer );
 
     //
     // do first conversion
@@ -1074,7 +1074,7 @@ cDoubleIconvConverter::Convert(
     //
     size_t nBufBytes = nBytes * MB_LEN_MAX;
     ntmbs_t pszBuffer = (ntmbs_t)::operator new( nBufBytes + 1 );
-    std::auto_ptr<mbchar_t> pBuf( pszBuffer );
+    TW_UNIQUE_PTR<mbchar_t> pBuf( pszBuffer );
 
     //
     // do first conversion

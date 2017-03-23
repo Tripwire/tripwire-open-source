@@ -1247,7 +1247,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
             //
             if( g == cGenre::GENRE_INVALID )
             {
-                std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+                TW_UNIQUE_PTR<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
                 if( ! pParseUtil->IsAbsolutePath( *i ) )
                     throw eTWUnknownSectionName( *i );
             }
@@ -1310,7 +1310,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName cTWUtil::ParseObjectName( const TSTRING& fcoName )
 {
-    std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+    TW_UNIQUE_PTR<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
     cFCOName name( iTWFactory::GetInstance()->GetNameInfo() );
     //
     // make sure the fco name is a full path...

@@ -68,7 +68,7 @@ void TestUnixFSServices()
             d.TraceDebug("name: %d entries\n", v.size());
 
             std::vector <TSTRING>::iterator p;
-            int n = 0;
+            size_t n = 0;
             for (p = v.begin(); p != v.end(); p++) {
                 d.TraceDetail("    %s\n", p->c_str());
                 n++;

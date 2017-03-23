@@ -207,6 +207,7 @@ char *getenv();             /* get variable from environment */
  * on some systems, this is a library function, so define STRDUP
  * if it is on yours
  */
+#if 0
 #ifdef STRDUP
 #   ifndef __STDC__
     char *strdup();
@@ -230,7 +231,7 @@ char *getenv();             /* get variable from environment */
         return(p);
     }
 #endif
-    
+#endif //0
     
 /*
  * allocate space for an array of pointers, OR

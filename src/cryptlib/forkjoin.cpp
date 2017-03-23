@@ -5,6 +5,12 @@
 #include "queue.h"
 #include <memory>
 
+#if __cplusplus >= 201103L
+# define TW_UNIQUE_PTR std::unique_ptr
+#else
+# define TW_UNIQUE_PTR std::auto_ptr
+#endif
+
 Fork::Fork(int n, BufferedTransformation *const *givenOutPorts)
     : numberOfPorts(n), outPorts(n)
 {
@@ -21,7 +27,7 @@ void Fork::SelectOutPort(int portNumber)
 
 void Fork::Detach(BufferedTransformation *newOut)
 {
-    std::auto_ptr<BufferedTransformation> out(newOut ? newOut : new ByteQueue);
+    TW_UNIQUE_PTR<BufferedTransformation> out(newOut ? newOut : new ByteQueue);
     outPorts[currentPort]->Close();
     outPorts[currentPort]->TransferTo(*out);
     outPorts[currentPort].reset(out.release());

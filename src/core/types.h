@@ -187,5 +187,16 @@ inline int64 SWAPBYTES64(int64 i)
 
 #endif //WORDS_BIGENDIAN
 
+////////////////////////////////////////////
+
+#if __cplusplus >= 201103L
+# define TW_UNIQUE_PTR std::unique_ptr
+#else
+# define TW_UNIQUE_PTR std::auto_ptr
+#endif
+
+
+
+
 #endif // __TYPES_H
 

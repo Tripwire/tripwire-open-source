@@ -44,7 +44,7 @@
 #include "core/errorbucketimpl.h"
 #include "core/usernotifystdout.h"
 #include "core/timebomb.h"
-#include <memory>       // for auto_ptr
+#include <memory>       // for auto_ptr / unique_ptr
 #include <iostream>
 #include <exception>
 
@@ -133,7 +133,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         
 
         // first, get the right mode...
-        std::auto_ptr<iTWMode> pMode(cTWCmdLine::GetMode(argc, argv));
+        TW_UNIQUE_PTR<iTWMode> pMode(cTWCmdLine::GetMode(argc, argv));
         if(! pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)

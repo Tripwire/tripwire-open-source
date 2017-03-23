@@ -90,7 +90,7 @@ void cIntegrityCheck::ProcessAddedFCO( cDbDataSourceIter dbIter, iFCODataSourceI
                 // to done...
                 //
                 while( ! dbIter.Done() ) dbIter.Next();
-                std::auto_ptr<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
+                TW_UNIQUE_PTR<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
                 ProcessDir( dbIter, pCopy.get() );
             }
         }
@@ -231,7 +231,7 @@ void cIntegrityCheck::ProcessChangedFCO( cDbDataSourceIter dbIter, iFCODataSourc
     {
         if( pIter->CanDescend() || dbIter.CanDescend() )
         {
-            std::auto_ptr<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
+            TW_UNIQUE_PTR<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
             ProcessDir( dbIter, pCopy.get() );
         }
     }
@@ -453,7 +453,7 @@ void cIntegrityCheck::Execute( uint32 flags )
     mFlags = flags;
     // create the data source iterator
     //
-    std::auto_ptr<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
+    TW_UNIQUE_PTR<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
     //
     // set up the database's iterator...
     // I assume the current genre is correct...
@@ -560,7 +560,7 @@ void cIntegrityCheck::ExecuteOnObjectList( const std::list<cFCOName>& fcoNames, 
     //
     // create the data source iterator
     //
-    std::auto_ptr<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
+    TW_UNIQUE_PTR<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
     //
     // set up the database's iterator...
     // I assume the current genre is correct...

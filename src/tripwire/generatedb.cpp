@@ -100,7 +100,7 @@ static void util_ProcessDir( cDbDataSourceIter dbIter, iFCODataSourceIter* pIter
                 {
                     dbIter.AddChildArray();
                 }
-                std::auto_ptr<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
+                TW_UNIQUE_PTR<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
                 util_ProcessDir( dbIter, pCopy.get(), pSpec, pPC, pPD );
                 //
                 // if no files were added, remove the child array...
@@ -122,7 +122,7 @@ void cGenerateDb::Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCO
 {
     // TODO -- assert the db is empty or clear it out myself!
 
-    std::auto_ptr<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
+    TW_UNIQUE_PTR<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
 
     //
     // set up the database's iterator...
@@ -139,7 +139,7 @@ void cGenerateDb::Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCO
     //
     // this is the object that will calculate all of the properties of the fcos.
     //
-    std::auto_ptr<iFCOPropCalc> pPC(iTWFactory::GetInstance()->CreatePropCalc());
+    TW_UNIQUE_PTR<iFCOPropCalc> pPC(iTWFactory::GetInstance()->CreatePropCalc());
     pPC->SetErrorBucket( pBucket );
     if( flags & FLAG_ERASE_FOOTPRINTS_GD )
     {
@@ -193,7 +193,7 @@ void cGenerateDb::Execute( const cFCOSpecList& specList, cHierDatabase& db, iFCO
                     {
                         dbIter.AddChildArray();
                     }
-                    std::auto_ptr<iFCODataSourceIter> pCopy( pDSIter->CreateCopy() );
+                    TW_UNIQUE_PTR<iFCODataSourceIter> pCopy( pDSIter->CreateCopy() );
                     util_ProcessDir( dbIter, pCopy.get(), specIter.Spec(), pPC.get(), pPD   );
                     //
                     // if no files were added, remove the child array...

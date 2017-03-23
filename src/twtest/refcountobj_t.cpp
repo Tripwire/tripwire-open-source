@@ -39,7 +39,7 @@ class cRefCountTestObj : public cRefCountObj
 public:
     cRefCountTestObj();
 
-    virtual void Release();
+    virtual void Release() const;
 
     void AddChild(cRefCountTestObj* pChild);
 
@@ -74,7 +74,7 @@ void cRefCountTestObj::AddChild(cRefCountTestObj* pChild)
     mChildren.push_back(pChild);
 }
  
-void cRefCountTestObj::Release()
+void cRefCountTestObj::Release() const
 {
     cRefCountObj::Release();
 }

@@ -1129,7 +1129,7 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
             if( ! dbIter.Done() )
             {
                cGenreSwitcher::GetInstance()->SelectGenre( (cGenre::Genre)dbIter.GetGenre() );
-               std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+               TW_UNIQUE_PTR<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
                //
                // I have to turn this into a list of cFCONames
                //

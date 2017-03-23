@@ -128,7 +128,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         }
 
         // Next, set the mode... exit with error if now valid mode specified.
-        std::auto_ptr<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
+        TW_UNIQUE_PTR<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
         if(! pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)

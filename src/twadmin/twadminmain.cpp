@@ -94,7 +94,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 
 
         // first, get the right mode...
-        std::auto_ptr<iTWAMode> pMode(cTWAdminCmdLine::GetMode(argc, argv));
+        TW_UNIQUE_PTR<iTWAMode> pMode(cTWAdminCmdLine::GetMode(argc, argv));
         if(! pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)

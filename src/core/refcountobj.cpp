@@ -135,9 +135,6 @@ void cRefCountObj::AddRef() const
 
 void cRefCountObj::Release() const
 {
-    if (this == 0)
-        return;
-
     if (--mRefCount == 0)
     {
         Delete();

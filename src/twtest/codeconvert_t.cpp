@@ -182,9 +182,10 @@ char NonZeroChar( char ch )
 }
 
 // mbchar_t to dbchar_t
+//TestMbToDb in codeconvert_t.cpp seems to hit an infinite loop or runs verrrry long; ifdef'd"
 void TestMbToDb()
 {
-  TCERR << "TODO: TestMbToDb in codeconvert_t.cpp seems to hit an infinite loop or runs verrrry long; ifdef'd" << std::endl;
+  TCERR << "\nTODO: TestMbToDb in codeconvert_t.cpp is flaky & needs to be fixed/replaced; currently disabled." << std::endl;
 #if 0
     std::string s;
     s.resize( 0x10000 * 2 ); // two bytes for each combination
