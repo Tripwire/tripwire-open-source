@@ -78,7 +78,7 @@ void TestGenerateDb()
         // ok, time to integrity check!
         //
         cGenreSpecListVector::iterator at;
-        for( at = slv.begin(); at != slv.end(); at++ )
+        for( at = slv.begin(); at != slv.end(); ++at )
         {
             cGenerateDb::Execute( 
                                     at->GetSpecList(), 

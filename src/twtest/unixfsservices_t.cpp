@@ -69,7 +69,7 @@ void TestUnixFSServices()
 
             std::vector <TSTRING>::iterator p;
             size_t n = 0;
-            for (p = v.begin(); p != v.end(); p++) {
+            for (p = v.begin(); p != v.end(); ++p) {
                 d.TraceDetail("    %s\n", p->c_str());
                 n++;
             }

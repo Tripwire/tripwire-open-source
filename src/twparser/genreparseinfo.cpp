@@ -108,7 +108,7 @@ bool cGenreParseInfo::RulePointAlreadyDefined( const cFCOName& fcoName )
     bool fFound = false;
 
     // check start points
-    for( RuleListType::iterator i = mRuleList.begin(); i != mRuleList.end(); i++ )
+    for( RuleListType::iterator i = mRuleList.begin(); i != mRuleList.end(); ++i )
     {
         if( (*i)->GetName() == fcoName )
             fFound = true;
@@ -117,7 +117,7 @@ bool cGenreParseInfo::RulePointAlreadyDefined( const cFCOName& fcoName )
     // check stop points
     if( ! fFound )
     {
-        for( StopListType::iterator j = mStopList.begin(); j != mStopList.end(); j++ )
+        for( StopListType::iterator j = mStopList.begin(); j != mStopList.end(); ++j )
         {
             if( *j == fcoName )
                 fFound = true;

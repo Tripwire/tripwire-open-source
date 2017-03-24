@@ -1228,7 +1228,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
 
     // iterate over all of the input...
     //
-    for( ObjList::const_iterator i = listIn.begin(); i != listIn.end(); i++ )
+    for( ObjList::const_iterator i = listIn.begin(); i != listIn.end(); ++i )
     {
         // first, try to interperate the current string as a genre name...
         // 17 Mar 99 mdb -- we now only do this if the string ends in a ':'
@@ -1261,7 +1261,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
             {
                 // seek to right list; create it if it is not there...
                 //
-                for( curIter = listOut.begin(); curIter != listOut.end(); curIter++ )
+                for( curIter = listOut.begin(); curIter != listOut.end(); ++curIter )
                 {
                     if( curIter->first == curGenre )
                         break;
@@ -1282,7 +1282,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
             // add this to the list; assert that it has not been added yet.
             //
             ObjList::iterator oi;
-            for( oi = curIter->second.begin(); oi != curIter->second.end(); oi++ )
+            for( oi = curIter->second.begin(); oi != curIter->second.end(); ++oi )
             {
                 if( *oi == *i )
                 {

@@ -593,7 +593,7 @@ void cIntegrityCheck::ExecuteOnObjectList( const std::list<cFCOName>& fcoNames, 
     // iterate over all the objects to integrity check..
     //
     std::list<cFCOName>::const_iterator it;
-    for( it = fcoNames.begin(); it != fcoNames.end(); it++ )
+    for( it = fcoNames.begin(); it != fcoNames.end(); ++it )
     {
         TW_NOTIFY_VERBOSE(  _T("%s%s\n"), 
                             TSS_GetString( cTripwire, tripwire::STR_NOTIFY_CHECKING ).c_str(),

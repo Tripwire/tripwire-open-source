@@ -719,7 +719,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
             // now, iterate through the list of objects...
             //
             cFCODatabaseFile::iterator dbIter( db );
-            for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); genreIter++ )
+            for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); ++genreIter )
             {
                 dbIter.SeekToGenre( genreIter->first );
                 if( ! dbIter.Done() )
@@ -731,7 +731,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
                     //
                     // iterate over all the objects in this genre....
                     //
-                    for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); it++)
+                    for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); ++it)
                     {
                         try
                         {

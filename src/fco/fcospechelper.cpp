@@ -221,7 +221,7 @@ void cFCOSpecStopPointSet::Add(const cFCOName& name)
             break;
 
         default:
-            i++;
+            ++i;
         }
     }
 
@@ -306,7 +306,7 @@ iFCOSpecHelper::CompareResult cFCOSpecStopPointSet::Compare(const iFCOSpecHelper
 
     std::set<cFCOName>::const_iterator  myIter  = mStopPoints.begin(),
                                         rhsIter = pStopPtSet->mStopPoints.begin();
-    for(; myIter != mStopPoints.end(); myIter++, rhsIter++)
+    for(; myIter != mStopPoints.end(); ++myIter, ++rhsIter)
     {
         if(*myIter != *rhsIter)
             return ((*myIter < *rhsIter) ? CMP_LT : CMP_GT);

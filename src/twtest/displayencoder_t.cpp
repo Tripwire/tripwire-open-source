@@ -57,7 +57,7 @@
 template< class CharT > bool IsPrintable( const std::basic_string< CharT >& str )
 {
     const std::ctype< CharT > *pct = 0, &ct = tss::GetFacet( std::locale(), pct );
-    for( std::basic_string< CharT >::const_iterator at = str.begin(); at != str.end(); at++ )
+    for( std::basic_string< CharT >::const_iterator at = str.begin(); at != str.end(); ++at )
     {           
         if( ! ct.is( std::ctype_base::print, *at ) ) // if not printable
             return false;

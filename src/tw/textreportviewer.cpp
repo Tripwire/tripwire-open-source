@@ -162,7 +162,7 @@ cTextReportViewer::~cTextReportViewer()
 {
     if( mfUpdate )
     {
-        for( GenreList::iterator i = mFCOsRemoveFromReport.begin(); i != mFCOsRemoveFromReport.end(); i++ )
+        for( GenreList::iterator i = mFCOsRemoveFromReport.begin(); i != mFCOsRemoveFromReport.end(); ++i )
         {
             ASSERT( i->second != 0 );
             i->second->clear();
@@ -1051,7 +1051,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
             //
             // see if any FCOs to remove are in this set
             // 
-            for( iter = pFCOList->begin(); iter != pFCOList->end(); iter++ )
+            for( iter = pFCOList->begin(); iter != pFCOList->end(); ++iter )
             {
                 fcoIter = pAddedSet->Lookup( *iter );
                 if( fcoIter )
@@ -1071,7 +1071,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
             //
             // see if any FCOs to remove are in this set
             // 
-            for( iter = pFCOList->begin(); iter != pFCOList->end(); iter++ )
+            for( iter = pFCOList->begin(); iter != pFCOList->end(); ++iter )
             {
                 fcoIter = pRemovedSet->Lookup( *iter );
                 if( fcoIter )
@@ -1084,7 +1084,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
             }
 
             
-            for( iter = pFCOList->begin(); iter != pFCOList->end(); iter++ )
+            for( iter = pFCOList->begin(); iter != pFCOList->end(); ++iter )
             {
                 // search changed
                 // get changed set iterator
@@ -1110,7 +1110,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
     //
     int nFCOsToRemove = 0;
     cTextReportViewer::GenreList::const_iterator iter = mFCOsRemoveFromReport.begin();
-    for( ; iter != mFCOsRemoveFromReport.end(); iter++ )
+    for( ; iter != mFCOsRemoveFromReport.end(); ++iter )
         nFCOsToRemove += iter->second->size();
 
     if( nFCOsToRemove != nFCOsRemoved )

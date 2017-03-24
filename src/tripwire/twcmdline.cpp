@@ -1123,7 +1123,7 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
          //
          // now, we will iterate over the list, performing an integrity check for each genre
          //
-         for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); genreIter++ )
+         for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); ++genreIter )
          {
             dbIter.SeekToGenre( genreIter->first );
             if( ! dbIter.Done() )
@@ -1134,7 +1134,7 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                // I have to turn this into a list of cFCONames
                //
                std::list<cFCOName> fcoNames;
-               for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); it++)
+               for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); ++it)
                {
                   // if this is not an absolute path, warn and continue...
                   //

@@ -171,7 +171,7 @@ inline bool cFCOSpecAttrEmailIter::IsEmpty() const
 }
 inline void cFCOSpecAttrEmailIter::Next() const
 {
-    mIter++;
+    ++mIter;
 }
 inline const TSTRING& cFCOSpecAttrEmailIter::EmailAddress() const
 {

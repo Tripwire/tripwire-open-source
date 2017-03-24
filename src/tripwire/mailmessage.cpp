@@ -130,7 +130,7 @@ bool cMailMessage::GetAttachmentsAsString( std::string& s )
     bool allOK = true;
     for(    std::vector<TSTRING>::const_iterator at = mvstrAttachments.begin();
             at != mvstrAttachments.end();
-            at++ )
+            ++at )
     {
         s += "\r\n";
 
@@ -349,7 +349,7 @@ cQuotedPrintableEncoding::Encode( const std::string& sIn,
     std::string::size_type lineLen = 0;
     for( at =  sIn.begin();
          at != sIn.end();
-         at++, lineLen += _ENCODED_CHAR_LEN )
+         ++at, lineLen += _ENCODED_CHAR_LEN )
     {
         if( NeedsEncoding( *at ) )
         {
@@ -481,7 +481,7 @@ cMailMessageUtil::HasNonAsciiChars( const std::string& s )
 {
     for( std::string::const_iterator at = s.begin();
          at != s.end();
-         at ++ )
+         ++at )
     {
         if( (unsigned char)*at > (unsigned char)0x7F )
             return true;

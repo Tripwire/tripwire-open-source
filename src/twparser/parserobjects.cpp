@@ -211,7 +211,7 @@ void
 cParseSpecMaskList::Dump(cDebug &d) const
 {
     std::list<cParseSpecMask *>::const_iterator ispec;
-    for (ispec = mList.begin(); ispec != mList.end(); ispec++) {
+    for (ispec = mList.begin(); ispec != mList.end(); ++ispec) {
         (*ispec)->Dump(d);
     }
 }
@@ -295,7 +295,7 @@ cParseNamedAttrList::~cParseNamedAttrList()
 
 void cParseNamedAttrList::Clear()
 {     
-    for( std::list<cParseNamedAttr*>::iterator iter = mList.begin(); iter != mList.end(); iter++ )
+    for( std::list<cParseNamedAttr*>::iterator iter = mList.begin(); iter != mList.end(); ++iter )
     {
         delete *iter;
     }
@@ -307,7 +307,7 @@ cParseNamedAttrList::Dump(cDebug &d) const
 {
     // dump out each named attribute
     std::list<cParseNamedAttr *>::const_iterator iattr;
-    for (iattr = mList.begin(); iattr != mList.end(); iattr++) {
+    for (iattr = mList.begin(); iattr != mList.end(); ++iattr) {
         (*iattr)->Dump(d);
     }
 }
@@ -339,7 +339,7 @@ cParseNamedAttrList::constListIter cParseNamedAttrList::Find( const cParseNamedA
     for( 
         std::list< cParseNamedAttr * >::const_iterator iter = mList.begin();
         iter != mList.end();
-        iter++
+        ++iter
        )
     {
         if( (*iter)->GetName() == pa->GetName() )
@@ -356,7 +356,7 @@ void cParseNamedAttrList::MergeNoOverwrite( const cParseNamedAttrList* const pal
     if( pal )
     {
         // foreach attribute in pal
-        for( constListIter newIter = pal->mList.begin(); newIter != pal->mList.end(); newIter++ )
+        for( constListIter newIter = pal->mList.begin(); newIter != pal->mList.end(); ++newIter )
         {
             // look for this attribute in this list
             constListIter thisIter = Find( *newIter );
@@ -384,7 +384,7 @@ const cParseNamedAttr* cParseNamedAttrList::Lookup( const TSTRING& tstrAttrName 
 {
     constListIter i;
 
-    for( i = mList.begin(); i != mList.end(); i++)
+    for( i = mList.begin(); i != mList.end(); ++i)
     {
         if( 0 == tstrAttrName.compare( (*i)->GetName() ) )
         {

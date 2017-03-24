@@ -223,7 +223,7 @@ cGenre::Genre cGenreSwitcher::StringToGenre( const wchar_t* wsz )
 cGenreInfoVec::const_iterator cGenreInfoVec::find( cGenre::Genre g ) const
 {
     const_iterator i;
-    for( i = begin(); i != end(); i++ )
+    for( i = begin(); i != end(); ++i )
     {
         ASSERT( (*i)->m_ID != cGenre::GENRE_INVALID );
 
@@ -244,7 +244,7 @@ cGenreInfoVec::const_iterator cGenreInfoVec::find( const cGenreInfo* pGI ) const
 cGenreInfoVec::const_iterator cGenreInfoVec::find( const TSTRING& sGenre ) const
 {
     const_iterator i;
-    for( i = begin(); i != end(); i++ )
+    for( i = begin(); i != end(); ++i )
     {
         ASSERT( (*i)->m_ID != cGenre::GENRE_INVALID );
  

@@ -139,7 +139,7 @@ static inline void trim_leading_whitespace(std::string &str)
 void cFSParserUtil::InterpretFCOName( const std::list<TSTRING>& l, cFCOName& nameOut ) const
 {
     TSTRING strT;
-    for( std::list<TSTRING>::const_iterator i = l.begin(); i != l.end(); i++ )
+    for( std::list<TSTRING>::const_iterator i = l.begin(); i != l.end(); ++i )
         strT += *i;
 
 #if USES_DEVICE_PATH

@@ -80,7 +80,7 @@ void TestIntegrityCheck()
         // ok, time to integrity check!
         //
         cGenreSpecListVector::iterator at;
-        for( at = slv.begin(); at != slv.end(); at++ )
+        for( at = slv.begin(); at != slv.end(); ++at )
         {
             cIntegrityCheck ic( at->GetGenre(), at->GetSpecList(), db, report, &et );
             ic.Execute();

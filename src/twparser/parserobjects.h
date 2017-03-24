@@ -64,7 +64,7 @@ class iParserGenreUtil;
 // INLINE FUNCTIONS
 //=========================================================================
 
-#define KILL_LIST(type, name) do { for( std::list<type*>::iterator iter = mList.begin(); iter != mList.end(); iter++ ) { delete *iter; } } while(0)
+#define KILL_LIST(type, name) do { for( std::list<type*>::iterator iter = mList.begin(); iter != mList.end(); ++iter ) { delete *iter; } } while(0)
 
 
 ///////////////////////////////////////////////////////////////////////////////

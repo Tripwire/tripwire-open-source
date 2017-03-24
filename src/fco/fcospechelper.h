@@ -257,7 +257,7 @@ inline bool cFCOSpecStopPointIter::IsEmpty()        const
 
 inline void cFCOSpecStopPointIter::Next()           const
 {
-    mIter++;
+    ++mIter;
 }
 
 inline void cFCOSpecStopPointIter::Remove()
