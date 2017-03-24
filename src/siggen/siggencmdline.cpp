@@ -279,7 +279,6 @@ int cSiggenCmdLine::Init(cCmdLineParser& parser)
             case HELP:
                 {
                 return 0;
-                break;
                 }
             case CRC32:
                 {

@@ -231,10 +231,8 @@ bool cMailMessageUtil::ReadDate( TSTRING& strDateBuf )
 #if HAVE_STRFTIME
 
     TCHAR szDate[1024];
-    struct tm *tm = NULL;
-    
     time_t current_time = time(NULL);
-    tm = localtime ( &current_time );
+    struct tm* tm = localtime ( &current_time );
     
     const TCHAR* szFormat = _T("%a, %d %b %Y %H:%M:%S %z");
     

@@ -34,6 +34,7 @@
 #include "fco/stdfco.h"
 #include "fco/fcospec.h"
 #include "core/debug.h"
+#include "twtest/test.h"
 #include <iostream>
 
 using namespace std;
@@ -43,9 +44,9 @@ void TestFCOSpec()
     cout << "Begin\tTestFCOSpec" << endl;
     // all it seems I can test here is that the default mask works
     const iFCOSpecMask* pDefMask = iFCOSpecMask::GetDefaultMask();
-    ASSERT(pDefMask->GetName().compare(TSTRING(_T("Default"))) == 0);
+    TEST(pDefMask->GetName().compare(TSTRING(_T("Default"))) == 0);
     iFCO* pf1 = (iFCO*)0xbad, *pf2 = (iFCO*)0xcab;
-    ASSERT( pDefMask->Accept(pf1) && pDefMask->Accept(pf2) );
+    TEST( pDefMask->Accept(pf1) && pDefMask->Accept(pf2) );
 
     cout << "End\tTestFCOSpec" << endl;
     return;

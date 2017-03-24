@@ -474,14 +474,8 @@ int cNullCryptoArchive::Write(const void* pSrc, int count)
     cRSAPublicKey*  mpPublicKey;
     cRSAPrivateKey* mpPrivateKey;
     
-cRSAArchive::cRSAArchive()
+cRSAArchive::cRSAArchive() : mAction(MA_UNSTARTED), mpArchive(0), mpPublicKey(0), mpPrivaeKey(0), mpIDEA(new cIDEA)
 {
-    mAction = MA_UNSTARTED;
-    mpArchive = 0;
-    mpPublicKey = 0;
-    mpPrivateKey = 0;
-
-    mpIDEA = new cIDEA;
 }
 
 cRSAArchive::~cRSAArchive()
@@ -662,12 +656,8 @@ bool cRSAArchive::EndOfFile()
 // class cElGamalSigArchive 
 
 cElGamalSigArchive::cElGamalSigArchive()
+: mAction(MA_UNSTARTED), mpArchive(0), mpElGamal(0), mpPublicKey(0), mpPrivateKey(0)
 {
-    mAction = MA_UNSTARTED;
-    mpArchive = 0;
-    mpPublicKey = 0;
-    mpPrivateKey = 0;
-    mpElGamal = 0;
 }
 
 cElGamalSigArchive::~cElGamalSigArchive()
