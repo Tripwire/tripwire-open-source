@@ -1393,7 +1393,7 @@ yy_parse::yyExpandName(int num, int isrule, char * buf, int len)
 
     for (endp = buf + len - 8; *s; s++) {
         if (buf >= endp) {      /* too large: return 0 */
-        full:   (void) strlcpy(buf, " ...\n", len);
+        full:   (void) strncpy(buf, " ...\n", len);
             return 0;
         } else if (*s == '%') {     /* nonterminal */
             type = 0;
@@ -1423,7 +1423,7 @@ yy_parse::yyExpandName(int num, int isrule, char * buf, int len)
 
             if ((i = strlen(cp)) + buf > endp)
                 goto full;
-            (void) strlcpy(buf, cp, len);
+            (void) strncpy(buf, cp, len);
             buf += i;
         } else
             *buf++ = *s;

@@ -264,7 +264,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const
     char szTemplate[iFSServices::TW_MAX_PATH];
     int fd;
 
-    strlcpy( szTemplate, strName.c_str(), iFSServices::TW_MAX_PATH );
+    strncpy( szTemplate, strName.c_str(), iFSServices::TW_MAX_PATH );
 
 #ifdef HAVE_MKSTEMP
      // create temp filename and check to see if mkstemp failed                 
@@ -605,7 +605,7 @@ bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
 void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) const
 {   
     TCHAR szPerm[11]; //10 permission bits plus the NULL
-    strlcpy( szPerm, _T("----------"), 11);
+    strncpy( szPerm, _T("----------"), 9);
 
     ASSERT( sizeof(unsigned short) <= sizeof(uint32) );
     // We do this in case an "unsigned short" is ever larger than the

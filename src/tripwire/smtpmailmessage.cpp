@@ -90,7 +90,7 @@ static int gethostname( char* name, int namelen )
     
     if ( strlen( myname.nodename ) < (unsigned int)namelen )
     {
-        strlcpy( name, myname.nodename, namelen );
+        strncpy( name, myname.nodename, namelen );
         return 0;
     }
     else
@@ -100,7 +100,7 @@ static int gethostname( char* name, int namelen )
             // equivalent of SOCKET_ERROR
     }
 #else
-    strlcpy(name, "localhost", namelen);
+    strncpy(name, "localhost", namelen);
 #endif
 
 }

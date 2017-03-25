@@ -228,7 +228,7 @@ char *getenv();             /* get variable from environment */
         size_t p_size = (strlen(str)+1)*sizeof(char);
         if ((p = (char*)malloc((unsigned)(p_size)))
                                     != NULL)
-            (void) strlcpy(p, str, p_size);
+            (void) strncpy(p, str, p_size);
         return(p);
     }
 #endif
@@ -416,9 +416,9 @@ char *env;
             return(SE_NOMEM);
         }
         else{
-            (void) strlcpy(p, env, p_size);
-            (void) strlcat(p, "=", p_size);
-            (void) strlcat(p, q, p_size);
+            (void) strncpy(p, env, p_size);
+            (void) strncat(p, "=", p_size);
+            (void) strncat(p, q, p_size);
         }
     }
     else if ((p = strdup(env)) == NULL){

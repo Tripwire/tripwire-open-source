@@ -112,7 +112,7 @@ void cFCONameTblNode::SetString(const TSTRING& newStr)
     
     size_t alloc_size = sizeof(TCHAR)*(newStr.length()+1);
     mpString = (TCHAR*)util_AllocMem(alloc_size);
-    strlcpy( mpString, newStr.c_str(), alloc_size );
+    strncpy( mpString, newStr.c_str(), alloc_size );
 
     // NOTE -- the lower case pointer is now invalid.
 }
