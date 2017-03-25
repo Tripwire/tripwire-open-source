@@ -241,14 +241,14 @@ class iFSServices
   ////////////////////////////////////////
   // major filesystem functions
   ////////////////////////////////////////
-  virtual void       Stat( const TSTRING& strFileName, cFSStatArgs& pStat ) const throw( eFSServices ) = 0;
+  virtual void       Stat( const TSTRING& strFileName, cFSStatArgs& pStat ) const = 0;
   // fills out the cFSStatArgs structure with the stat info for the named file
-  virtual void       GetTempDirName( TSTRING& strName ) const throw( eFSServices ) = 0;
+  virtual void       GetTempDirName( TSTRING& strName ) const = 0;
   // makes directory if it doesn't exist already.  Dirname will end with a delimiter ( '/' )
     
   virtual void       SetTempDirName( TSTRING& tmpName ) = 0;
   
-  virtual TSTRING&   MakeTempFilename( TSTRING& strName ) const throw( eFSServices ) = 0;
+  virtual TSTRING&   MakeTempFilename( TSTRING& strName ) const = 0;
   // create temporary file
   //      TSTRING must have the form ("baseXXXXXX"), where the X's are replaced with 
   //      characters to make it a unique file.  There must be at least 6 Xs.
@@ -259,7 +259,7 @@ class iFSServices
   ////////////////////////////////////////
   virtual void    GetHostID( TSTRING& name ) const = 0;
 
-  virtual void    GetMachineName( TSTRING& name ) const throw(eFSServices) = 0;
+  virtual void    GetMachineName( TSTRING& name ) const = 0;
 
   virtual void    GetMachineNameFullyQualified( TSTRING& name ) const = 0;
 
@@ -271,11 +271,11 @@ class iFSServices
   ////////////////////////////////////////
   // directory specific functions
   ////////////////////////////////////////
-  virtual void        ReadDir( const TSTRING& strName, std::vector<TSTRING> &vDirContents, bool bFullPaths = true ) const throw( eFSServices ) = 0;
+  virtual void        ReadDir( const TSTRING& strName, std::vector<TSTRING> &vDirContents, bool bFullPaths = true ) const = 0;
   // puts the contents of the specified directory, except for . and .., into the supplied vector. 
   // if bFullPaths is true, then the vector contains fully qualified path names; otherwise, it only contains the 
   // short names.
-  virtual void        GetCurrentDir( TSTRING& strCurDir ) const throw( eFSServices ) = 0;
+  virtual void        GetCurrentDir( TSTRING& strCurDir ) const = 0;
   // returns the current working directory
 
 

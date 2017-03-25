@@ -83,16 +83,16 @@ class cUnixFSServices : public iFSServices
   ////////////////////////////////////////
   // major filesystem functions
   ////////////////////////////////////////
-  virtual void       Stat( const TSTRING& strFileName, cFSStatArgs& pStat ) const throw( eFSServices );
+  virtual void       Stat( const TSTRING& strFileName, cFSStatArgs& pStat ) const ;
   // fills out the cFSStatArgs structure with the stat info for the named file
 
-  virtual void        GetTempDirName( TSTRING& strName ) const throw( eFSServices );
+  virtual void        GetTempDirName( TSTRING& strName ) const ;
   // makes directory if it doesn't exist already.  Dirname will end with a delimiter ( '/' )
 
   virtual void        SetTempDirName(TSTRING& tmpName);
   // set the default dir name which GetTempDirName will use...
 
-  virtual TSTRING&    MakeTempFilename( TSTRING& strName ) const throw( eFSServices );
+  virtual TSTRING&    MakeTempFilename( TSTRING& strName ) const ;
   // create temporary file
   //      strName must have the form ("baseXXXXXX"), where the X's are replaced with 
   //      characters to make it a unique file.  There must be at least 6 Xs.        
@@ -103,7 +103,7 @@ class cUnixFSServices : public iFSServices
   ////////////////////////////////////////
   virtual void        GetHostID( TSTRING& name ) const;
 
-  virtual void    GetMachineName( TSTRING& name) const throw(eFSServices);
+  virtual void    GetMachineName( TSTRING& name) const;
 
   virtual void    GetMachineNameFullyQualified( TSTRING& name ) const;
 
@@ -115,9 +115,9 @@ class cUnixFSServices : public iFSServices
   ////////////////////////////////////////
   // directory specific functions
   ////////////////////////////////////////
-  virtual void        ReadDir( const TSTRING& strName, std::vector<TSTRING> &vDirContents, bool bFullPaths = true ) const throw( eFSServices );
+  virtual void        ReadDir( const TSTRING& strName, std::vector<TSTRING> &vDirContents, bool bFullPaths = true ) const;
   // puts the contents of the specified directory, except for . and .., into the supplied vector. 
-  virtual void        GetCurrentDir( TSTRING& strCurDir ) const throw( eFSServices );
+  virtual void        GetCurrentDir( TSTRING& strCurDir ) const;
   // returns the current working directory
 
     

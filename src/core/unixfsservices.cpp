@@ -183,10 +183,10 @@ TCHAR  cUnixFSServices::GetPathSeparator() const
 }
 
 #if !USES_DEVICE_PATH
-void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const throw(eFSServices)
+void cUnixFSServices::ReadDir(const TSTRING& strFilename, std::vector<TSTRING> &v, bool bFullPaths) const
 {
 #else
-void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const throw(eFSServices)
+void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>& v, bool bFullPaths) const
 {
     TSTRING strFilename = cDevicePath::AsNative(strFilenameC);
 #endif
@@ -237,7 +237,7 @@ void cUnixFSServices::ReadDir(const TSTRING& strFilenameC, std::vector<TSTRING>&
 }
 
 /* needs to and with S_IFMT, check EQUALITY with S_*, and return more types
-cFSStatArgs::FileType cUnixFSServices::GetFileType(const cFCOName &filename) throw(eFSServices)
+cFSStatArgs::FileType cUnixFSServices::GetFileType(const cFCOName &filename) 
 {
     cFSStatArgs stat;
     Stat(filename, stat);
@@ -245,7 +245,7 @@ cFSStatArgs::FileType cUnixFSServices::GetFileType(const cFCOName &filename) thr
 }
 */
 
-void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSServices)
+void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const 
 {
     TCHAR pathname[iFSServices::TW_MAX_PATH];
     pathname[0] = '\0';
@@ -258,7 +258,7 @@ void cUnixFSServices::GetCurrentDir( TSTRING& strCurDir ) const throw(eFSService
 }
 
 
-TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSServices)
+TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const 
 {
     char* pchTempFileName;
     char szTemplate[iFSServices::TW_MAX_PATH];
@@ -295,7 +295,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
     return( strName );
 }
 
-void cUnixFSServices::GetTempDirName( TSTRING& strName ) const throw(eFSServices)
+void cUnixFSServices::GetTempDirName( TSTRING& strName ) const 
 {
   strName = mTempPath;
 }
@@ -307,10 +307,10 @@ void cUnixFSServices::SetTempDirName(TSTRING& tmpPath) {
 
 
 #if !USES_DEVICE_PATH
-void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const throw(eFSServices)
+void cUnixFSServices::Stat( const TSTRING& strName, cFSStatArgs &stat ) const 
 {
 #else
-void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const throw(eFSServices)
+void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const 
 {
     TSTRING strName = cDevicePath::AsNative(strNameC);
 #endif
@@ -375,7 +375,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const th
     else stat.mFileType = cFSStatArgs::TY_INVALID;
 }
 
-void cUnixFSServices::GetMachineName( TSTRING& strName ) const throw( eFSServices )
+void cUnixFSServices::GetMachineName( TSTRING& strName ) const 
 {
 #if HAVE_SYS_UTSNAME_H
     struct utsname namebuf;
