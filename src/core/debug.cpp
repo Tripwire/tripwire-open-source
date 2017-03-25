@@ -63,7 +63,7 @@ cDebug::cDebug(const char* label)
 
 cDebug::cDebug(const cDebug &rhs)
 {
-    strncpy(mLabel, rhs.mLabel, MAX_LABEL);
+    strlcpy(mLabel, rhs.mLabel, MAX_LABEL);
 }
 
 cDebug::~cDebug()

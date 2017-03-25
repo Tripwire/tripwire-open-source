@@ -557,7 +557,7 @@ TSTRING cMD5Signature::AsStringHex() const
     for(int i = 0; i < SIG_BYTE_SIZE; ++i)
     {
         snprintf(stringBuffer, 128, _T("%02lx"), (unsigned long)dbuf[i]);
-        strncat(sigStringOut, stringBuffer, 128);
+        strlcat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
 
@@ -680,7 +680,7 @@ TSTRING cSHASignature::AsStringHex() const
     for (int i=0; i < SIG_UINT32_SIZE*(int)sizeof(uint32); ++i)
     {
         snprintf(stringBuffer, 128, _T("%02x"), dbuf[i]);
-        strncat(sigStringOut, stringBuffer, 128);
+        strlcat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
     
@@ -755,7 +755,7 @@ TSTRING cSHASignature::AsStringHex() const
     for (int i=0; i < SIG_UINT32_SIZE; ++i)
     {
         snprintf(stringBuffer, 128, _T("%08x"), mSHAInfo.digest[i]);
-        strncat(sigStringOut, stringBuffer, 128);
+        strlcat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
     
@@ -857,7 +857,7 @@ TSTRING cHAVALSignature::AsStringHex() const
     for (int i=0; i < SIG_BYTE_SIZE; ++i)
     {
         snprintf(stringBuffer, 128, _T("%02x"), mSignature[i]);
-        strncat(sigStringOut, stringBuffer, 128);
+        strlcat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
 

@@ -264,7 +264,7 @@ TSTRING& cUnixFSServices::MakeTempFilename( TSTRING& strName ) const throw(eFSSe
     char szTemplate[iFSServices::TW_MAX_PATH];
     int fd;
 
-    strncpy( szTemplate, strName.c_str(), iFSServices::TW_MAX_PATH );
+    strlcpy( szTemplate, strName.c_str(), iFSServices::TW_MAX_PATH );
 
 #ifdef HAVE_MKSTEMP
      // create temp filename and check to see if mkstemp failed                 
@@ -605,7 +605,7 @@ bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
 void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) const
 {   
     TCHAR szPerm[11]; //10 permission bits plus the NULL
-    strncpy( szPerm, _T("----------"), 11);
+    strlcpy( szPerm, _T("----------"), 11);
 
     ASSERT( sizeof(unsigned short) <= sizeof(uint32) );
     // We do this in case an "unsigned short" is ever larger than the
@@ -912,7 +912,7 @@ bool util_PathFind( TSTRING& strFullPath, const TSTRING& strFilename )
     //
     // get the path environment variable
     //
-    TCHAR* pszPathVar = _tgetenv("PATH");
+    TCHAR* pszPathVar = getenv("PATH");
     if( pszPathVar != NULL )
     {
         //

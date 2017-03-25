@@ -225,9 +225,10 @@ char *getenv();             /* get variable from environment */
         /*
          * allocate space for the string, and copy if successful
          */
-        if ((p = (char*)malloc((unsigned)((strlen(str)+1)*sizeof(char)))) 
+        size_t p_size = (strlen(str)+1)*sizeof(char);
+        if ((p = (char*)malloc((unsigned)(p_size)))
                                     != NULL)
-            (void) strcpy(p, str);
+            (void) strlcpy(p, str, p_size);
         return(p);
     }
 #endif
@@ -402,21 +403,22 @@ char *env;
      * just include it from the current environment
      * (if not defined there, don't define it here)
      */
+    size_t p_size=0;
     if (strchr(env, '=') == NULL){
         /* is it defined locally? */
         if ((q = getenv(env)) == NULL){
             /* no -- don't define it here */
             return(SE_NONE);
         }
-        else if ((p = (char*)malloc((unsigned) (strlen(env)+strlen(q)+2)))
+        else if ((p = (char*)malloc((unsigned) (p_size = (strlen(env)+strlen(q)+2))))
                                       == NULL){
             ERMSG("ran out of memory");
             return(SE_NOMEM);
         }
         else{
-            (void) strcpy(p, env);
-            (void) strcat(p, "=");
-            (void) strcat(p, q);
+            (void) strlcpy(p, env, p_size);
+            (void) strlcat(p, "=", p_size);
+            (void) strlcat(p, q, p_size);
         }
     }
     else if ((p = strdup(env)) == NULL){
