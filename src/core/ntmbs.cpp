@@ -96,7 +96,7 @@ tss::mbsdec( const_ntmbs_t beg, const_ntmbs_t curr )
     const_ntmbs_t prev = curr - 1;
     for ( ; prev > beg && ::mblen( (char*)prev, curr - prev ) == -1; --prev );
 
-    if ( curr - prev > MB_CUR_MAX )
+    if ( (size_t)(curr - prev) > MB_CUR_MAX )
     {
         prev = (curr - 1);
 

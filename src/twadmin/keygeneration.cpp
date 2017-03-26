@@ -158,6 +158,8 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
         {
         case tGK::FILE_WRITE_ERROR:
             TCERR << std::endl << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN_FILEWRITE) << gk.keyPath << std::endl;
+            break;
+
         default:
             TCERR << std::endl << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN) << gk.keyPath 
                   << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN2) << std::endl;
