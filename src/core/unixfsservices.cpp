@@ -604,8 +604,8 @@ bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
 //
 void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) const
 {   
-    TCHAR szPerm[11]; //10 permission bits plus the NULL
-    strncpy( szPerm, _T("----------"), 9);
+    TCHAR szPerm[12]; //10 permission bits plus the NULL
+    strncpy( szPerm, _T("----------"), 11);
 
     ASSERT( sizeof(unsigned short) <= sizeof(uint32) );
     // We do this in case an "unsigned short" is ever larger than the
