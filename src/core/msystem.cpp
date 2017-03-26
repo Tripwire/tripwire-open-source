@@ -382,7 +382,7 @@ char *env;
     register int n;         /* where a previous definition is */
 
     /*
-     * seeif youneed to create the environment list
+     * see if you need to create the environment list
      */
     if (sz_envp == 0){
             if ((envp = c2alloc((const char**)envp, &sz_envp)) == NULL){
@@ -404,18 +404,23 @@ char *env;
      * (if not defined there, don't define it here)
      */
     size_t p_size=0;
-    if (strchr(env, '=') == NULL){
+    if (strchr(env, '=') == NULL) {
+
+        q = getenv(env);
+
         /* is it defined locally? */
-        if ((q = getenv(env)) == NULL){
+        if (NULL == q) {
             /* no -- don't define it here */
             return(SE_NONE);
         }
-        else if ((p = (char*)malloc((unsigned) (p_size = (strlen(env)+strlen(q)+2))))
-                                      == NULL){
+
+        size_t p_size = strlen(env) + strlen(q) + 2;
+
+        if ((p = (char*)malloc((unsigned)(p_size))) == NULL) {
             ERMSG("ran out of memory");
             return(SE_NOMEM);
         }
-        else{
+        else {
             (void) strncpy(p, env, p_size);
             (void) strncat(p, "=", p_size);
             (void) strncat(p, q, p_size);
