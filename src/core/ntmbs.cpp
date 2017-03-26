@@ -58,7 +58,7 @@
 // NTMBS Utils -- Definition
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-
+#if 0
 /*
 * TSS::mbsdec
 *
@@ -117,7 +117,7 @@ tss::mbsdec( const_ntmbs_t beg, const_ntmbs_t curr )
 
     return (ntmbs_t)prev;
 }
-
+#endif
 
 /*
 * TSS::mbsinc
