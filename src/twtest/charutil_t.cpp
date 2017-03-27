@@ -40,6 +40,7 @@
 #include "core/charutil.h"
 #include "core/debug.h"
 #include "core/errorbucketimpl.h"
+#include "twtest/test.h"
 
 
 void PrintChars( const TSTRING& str )
@@ -78,7 +79,7 @@ void TestCharUtilBasic()
     catch( eError& e )
     {
         cErrorReporter::PrintErrorMsg( e ); 
-        ASSERT(false);
+        TEST(false);
     }
 }
 

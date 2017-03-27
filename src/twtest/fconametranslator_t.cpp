@@ -39,7 +39,7 @@
 #include "fco/fconametranslator.h"
 #include "fco/genreswitcher.h"
 #include "fco/fconame.h"
-
+#include "twtest/test.h"
 
 void TestName( const TCHAR* pchName, const TCHAR* pchGenre );
 void TestUnprintable( const TCHAR* pchName, const TCHAR* pchGenre );
@@ -61,9 +61,9 @@ void TestName( const TCHAR* pchName, const TCHAR* pchGenre )
     // set up name translator
     //
     iFCONameTranslator* mpCurNT = NULL;
-    cGenre::Genre gNTFS = cGenreSwitcher::GetInstance()->StringToGenre( pchGenre );
-    ASSERT( gNTFS != cGenre::GENRE_INVALID );
-    mpCurNT = cGenreSwitcher::GetInstance()->GetFactoryForGenre( gNTFS )->GetNameTranslator();
+    cGenre::Genre genre = cGenreSwitcher::GetInstance()->StringToGenre( pchGenre );
+    TEST( genre != cGenre::GENRE_INVALID );
+    mpCurNT = cGenreSwitcher::GetInstance()->GetFactoryForGenre( genre )->GetNameTranslator();
 
     //
     // encode name
@@ -76,13 +76,13 @@ void TestName( const TCHAR* pchName, const TCHAR* pchGenre )
     // unencode name
     //
     cFCOName fcoNameNew;
-    ASSERT( mpCurNT->DisplayStringToFCOName( strName, fcoNameNew ) );
+    TEST( mpCurNT->DisplayStringToFCOName( strName, fcoNameNew ) );
     TCOUT << _T("> back to: <") << fcoNameNew.AsString() << _T(">") << std::endl;
     
     //
     // check result
     //
-    ASSERT( fcoNameNew == fcoName );
+    TEST( fcoNameNew == fcoName );
 }
 
 
@@ -92,9 +92,9 @@ void TestUnprintable( const TCHAR* pchName, const TCHAR* pchGenre )
     // set up name translator
     //
     iFCONameTranslator* mpCurNT = NULL;
-    cGenre::Genre gNTFS = cGenreSwitcher::GetInstance()->StringToGenre( pchGenre );
-    ASSERT( gNTFS != cGenre::GENRE_INVALID );
-    mpCurNT = cGenreSwitcher::GetInstance()->GetFactoryForGenre( gNTFS )->GetNameTranslator();
+    cGenre::Genre genre = cGenreSwitcher::GetInstance()->StringToGenre( pchGenre );
+    TEST( genre != cGenre::GENRE_INVALID );
+    mpCurNT = cGenreSwitcher::GetInstance()->GetFactoryForGenre( genre )->GetNameTranslator();
 
     //
     // encode name
@@ -107,11 +107,11 @@ void TestUnprintable( const TCHAR* pchName, const TCHAR* pchGenre )
     // unencode name
     //
     cFCOName fcoNameNew;
-    ASSERT( mpCurNT->DisplayStringToFCOName( strName, fcoNameNew ) );
+    TEST( mpCurNT->DisplayStringToFCOName( strName, fcoNameNew ) );
     
     //
     // check result
     //
-    ASSERT( fcoNameNew == fcoName );
+    TEST( fcoNameNew == fcoName );
 }
 

@@ -568,7 +568,7 @@ TCHAR cCharEncoderUtil::hex_to_char( TSTRING::const_iterator first,
     
     if( ss.bad() || ss.fail() )
         ThrowAndAssert( eBadHexConversion( TSTRING( first, last ) ) );
-    if( ch > (unsigned long)max_char || ch < (unsigned long)min_char )
+    if( (TCHAR)ch > max_char || (TCHAR)ch < min_char )
         ThrowAndAssert( eBadHexConversion( TSTRING( first, last ) ) );
 
     return (TCHAR)ch;

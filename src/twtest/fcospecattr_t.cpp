@@ -50,6 +50,7 @@ static void TraceSpecAttr(const cFCOSpecAttr* pAttr, cDebug d)
     }
 }
 
+//TODO: This doesn't actually TEST() anything right now, & will only fail if something throws
 void TestFCOSpecAttr()
 {
     cDebug d("TestFCOSpecAttr");

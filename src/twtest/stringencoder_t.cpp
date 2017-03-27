@@ -39,6 +39,7 @@
 
 #include "util/stdutil.h"
 #include "util/stringencoder.h"
+#include "twtest/test.h"
 
 //=========================================================================
 // STANDARD LIBRARY INCLUDES
@@ -88,5 +89,7 @@ void OutputString( TSTRING& str )
     TCOUT << _T("Plain string:   <") << str << _T(">") << endl;
     TCOUT << _T("Encoded string: <") << qe.Encode( str ) << _T(">") << endl;
     TCOUT << _T("Decoded string: <") << qe.Unencode( str ) << _T(">") << endl << endl ;
+    
+    TEST( str == qe.Unencode(qe.Encode(str)) );
 }
 

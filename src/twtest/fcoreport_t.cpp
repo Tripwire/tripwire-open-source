@@ -88,6 +88,7 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
     }
 }
 
+//TODO: This doesn't actually TEST() anything right now, & will only fail if something throws
 void TestFCOReport()
 {
     cDebug d("TestFCOReport");

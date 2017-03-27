@@ -293,6 +293,11 @@ bool cConfigFile::Lookup( const TSTRING& sKey, TSTRING& sVal  ) const
     return( fFound );
 }
 
+void cConfigFile::Insert( const TSTRING& sKey, const TSTRING& sVal  )
+{
+    mStringHashTable.Insert(sKey, sVal);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // GetFileHeaderID()
 ///////////////////////////////////////////////////////////////////////////////

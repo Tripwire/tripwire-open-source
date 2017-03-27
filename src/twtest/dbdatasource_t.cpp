@@ -40,6 +40,7 @@
 #include "fco/fcopropset.h"
 #include "fco/fcoprop.h"
 #include "fco/fco.h"
+#include "twtest/test.h"
 
 static void GetNoun( TSTRING& noun )
 {
@@ -84,11 +85,16 @@ static void PrintFCO( const iFCO* pFCO )
 
 void TestDbDataSource()
 {
+    TCERR << std::endl << "TestDbDataSource needs to be redesigned so it doesn't require user interaction" << std::endl;
+    
+#if 0
     cDebug d("TestDbDataSource");
     cHierDatabase db;
 
-    const TSTRING dbName = _T("c:/tmp/tw.db");
+    const TSTRING dbName = _T("tw.db");
 
+
+    
     try
     {
         // TODO -- get the case sensitiveness  and delimiting char out of the factory instead of iFSServices
@@ -296,5 +302,7 @@ void TestDbDataSource()
     catch( eError& e )
     {
         d.TraceError("*** Caught error: %d %s\n", e.GetID(), e.GetMsg().c_str() );
+        TEST(false);
     }
+#endif
 }

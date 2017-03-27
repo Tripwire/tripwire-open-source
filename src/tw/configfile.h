@@ -107,6 +107,10 @@ public:
 
     bool Lookup( const TSTRING& tstrKey, TSTRING& tstrVal ) const;
         // returns true if key is found in internal container and returns its value in tstrVal.
+    
+    void Insert( const TSTRING& tstrKey, const TSTRING& tstrVal );
+    // add key+value to config data. visible for unit testing.
+    
     void WriteString( TSTRING& configText ); 
         // writes all key/value pairs from internal container to filename as "name=value\n"
     void ReadString( const TSTRING configText ); // throw( eConfigFile );

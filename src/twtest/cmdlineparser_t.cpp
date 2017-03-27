@@ -41,7 +41,7 @@
 const int argc1 = 9;
 const TCHAR* argv1[] = 
 {
-    _T("tripwire.exe"),
+    _T("tripwire"),
     _T("-m"),
     _T("Init"),
     _T("-tp"),
@@ -55,7 +55,7 @@ const TCHAR* argv1[] =
 const int argc2 = 3;
 const TCHAR* argv2[] = 
 {
-    _T("tripwire.exe"),
+    _T("tripwire"),
     _T("-m"),
     _T("-v")
 };
@@ -63,7 +63,7 @@ const TCHAR* argv2[] =
 const int argc3 = 3;
 const TCHAR* argv3[] = 
 {
-    _T("tripwire.exe"),
+    _T("tripwire"),
     _T("dog"),
     _T("-v"),
 };
@@ -72,7 +72,7 @@ const TCHAR* argv3[] =
 const int argc4 = 5;
 const TCHAR* argv4[] = 
 {
-    _T("tripwire.exe"),
+    _T("tripwire"),
     _T("-tp"),
     _T("-v"),
     _T("frog"),
@@ -82,7 +82,7 @@ const TCHAR* argv4[] =
 const int argc5 = 4;
 const TCHAR* argv5[] = 
 {
-    _T("tripwire.exe"),
+    _T("tripwire"),
     _T("-tp"),
     _T("-v"),
     _T("frog")
@@ -100,6 +100,33 @@ static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
     d.TraceDebug(_T(">>>%s\n"), str.c_str());
 }
 
+static void test_parse(cCmdLineParser& parser, const int argc, const TCHAR** argv, bool should_throw)
+{
+#ifdef _DEBUG
+    cDebug d("test_parse");
+    PrintCmdLine(argc, argv, d);
+#endif
+    
+    bool threw = false;
+    
+    try {
+        parser.Parse(argc, argv);
+        
+    } catch (eError& e) {
+        if (!should_throw)
+            TCERR << e.GetMsg() << std::endl;
+        threw = true;
+    }
+    
+    TEST(threw == should_throw);
+    
+#ifdef _DEBUG
+    parser.TraceContents();
+#endif
+}
+
+
+
 void TestCmdLineParser()
 {
     enum ArgId { ID_M, ID_TP, ID_V, ID_UNNAMED };
@@ -113,58 +140,22 @@ void TestCmdLineParser()
 
         cDebug d("TestCmdLineParser");
 
-        PrintCmdLine(argc1, argv1, d);
-        p.Parse(argc1, argv1);
-        #ifdef _DEBUG
-        p.TraceContents();
-        #endif
+        test_parse(p, argc1, argv1, false);
+        test_parse(p, argc2, argv2, true);
+        test_parse(p, argc3, argv3, true);
+        test_parse(p, argc4, argv4, false);
 
-        PrintCmdLine(argc2, argv2, d);
-        p.Parse(argc2, argv2); // should fail.
-        #ifdef _DEBUG
-        p.TraceContents();
-        #endif
-
-        PrintCmdLine(argc3, argv3, d);
-        p.Parse(argc3, argv3); // should fail
-        #ifdef _DEBUG
-        p.TraceContents();
-        #endif
-
-        PrintCmdLine(argc4, argv4, d);
-        p.Parse(argc4, argv4);
-        #ifdef _DEBUG
-        p.TraceContents();
-        #endif
-
-        /*
-        // TODO - test mutual exclusion...
-
-        cCmdLineParser::ErrorType   et;
-        TSTRING                     errStr;
+        // command line arg mutual exclusion
         d.TraceDebug("** Making -m and -v mutually exclusive, then running on first cmd line...\n");
         p.AddMutEx(ID_M, ID_V);
-        p.Parse(argc1, argv1); // should fail
-        p.GetErrorInfo(et, errStr);
-        TEST(et == cCmdLineParser::ERR_MUTUAL_EXCLUSION);
-        d.TraceDebug(_T("Mutual exclusion test worked; here is the error string: %s\n"), errStr.c_str());
-        */
+        test_parse(p, argc1, argv1, true);  // should fail
         
         // make the command line want one parameter
         d.TraceDebug("** Changing cmd line to only want one last param...\n");
         p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_ONE);
-        PrintCmdLine(argc4, argv4, d);
-        p.Parse(argc4, argv4); // should fail
-        #ifdef _DEBUG
-        p.TraceContents();
-        #endif
+        test_parse(p, argc4, argv4, true);
 
-        PrintCmdLine(argc5, argv5, d);
-        p.Parse(argc5, argv5);
-        #ifdef _DEBUG
-        p.TraceContents();
-        #endif
-
+        test_parse(p, argc5, argv5, false);
 
         // TODO -- test a bunch more!!!
     }
@@ -172,7 +163,8 @@ void TestCmdLineParser()
     {
         TCERR << _T("Command line error: ");
         TCERR << e.GetMsg() << std::endl;
-        //TODO... TEST(false);
+        //TODO...
+        TEST(false);
     }
 }
 

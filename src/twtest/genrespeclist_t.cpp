@@ -37,12 +37,10 @@
 #include "fco/genrespeclist.h"
 #include "twtest/test.h"
 #include "fco/fcospecimpl.h"
+#include "fs/fs.h"
 
 void TestGenreSpecList()
 {
-#pragma message( __FILE__ "(1) : TODO - implement this test file")
-#if 0
-
     cDebug d("TestGenreSpecList");
     d.TraceDebug("Entering...\n");
 
@@ -51,8 +49,8 @@ void TestGenreSpecList()
 
     TEST(gslPair.GetGenre() == cGenre::GENRE_INVALID);
 
-    gslPair.SetGenre(cGenre::FS);
-    TEST(gslPair.GetGenre() == cGenre::FS);
+    gslPair.SetGenre(cFS::GenreID());
+    TEST(gslPair.GetGenre() == cFS::GenreID());
 
     cFCOSpecList speclist;
     cFCOSpecImpl*     fsSpec = new cFCOSpecImpl(_T("test fsspce name"), NULL);
@@ -91,6 +89,5 @@ void TestGenreSpecList()
     TEST(gslVector.at(2).GetSpecList().Lookup(fsSpec)->GetName() == gslPair3.GetSpecList().Lookup(fsSpec)->GetName());
 
     d.TraceDebug("All tests passed.\n");
-#endif
 }
 

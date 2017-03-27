@@ -145,6 +145,7 @@ void TestHexToString();
 void TestQuoteAndBackSlash();
 void TestDisplayEncoderBasic();
 void TestCharUtilBasic();
+void TestConfigFile2();
 
 /// This is easier than all the (cpp) files and declarations
 #include "stringutil_t.h"
@@ -170,7 +171,7 @@ static void Test(int testID)
     case 5: TestDebug(); break;
     case 6: TestError(); break;
     case 7: TestErrorBucketImpl(); break;
-    //case 8: TestFCOCompare(); break;
+    case 8: TestFCOCompare(); break;
     //case 9: TestFCODatabase(); break;
     //case 11: TestFCOErrorQueue(); break;
     case 12: TestFCOName(); break;
@@ -188,7 +189,7 @@ static void Test(int testID)
     case 24: TestFileHeader(); break;
     //case 25: TestFSDataSource(); break;
     case 26: TestFSPropSet(); break;
-    //case 27: TestFSPropCalc(); break;
+    case 27: TestFSPropCalc(); break;
     case 28: TestFCOSpecImpl(); break;
     case 29: TestHashTable(); break;
 //    case 30: TestObjectPool(); break;
@@ -241,6 +242,7 @@ static void Test(int testID)
     case 85: TestQuoteAndBackSlash(); break;
     case 86: TestDisplayEncoderBasic(); break;
     case 87: TestCharUtilBasic(); break;
+    case 88: TestConfigFile2(); break;
     }
 }
 

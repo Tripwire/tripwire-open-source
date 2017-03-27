@@ -117,8 +117,10 @@ void TestConfigFile(void)
             cTWUtil::PrintErrorMsg( e );
         }
     }
+}
 
-#ifdef NOT_BRIANS_TEST
+void TestConfigFile2(void)
+{
     cDebug d("Testconfigfile");
     d.TraceDetail("Entering...\n");
     iFSServices* pFSServices = iFSServices::GetInstance();
@@ -129,32 +131,21 @@ void TestConfigFile(void)
     TSTRING currpath;
     pFSServices->GetCurrentDir(currpath);
     const TSTRING testTWROOT = currpath;
-    const TSTRING testTWBIN = (testTWROOT + _T("/bin/"));
-    const TSTRING testTWCFG = (testTWROOT + _T("/etc/"));
-    const TSTRING testTWMAN = (testTWROOT + _T("/man/"));
-    const TSTRING testTWHTML = (testTWROOT + _T("/html/"));
-    const TSTRING testTWDB = (testTWROOT + _T("/db/"));
-    const TSTRING testTWKEY = (testTWROOT + _T("/key/"));
-    const TSTRING testTWREPORT = (testTWROOT + _T("/report/"));
-    const TSTRING testTWPASSWORD = (testTWROOT + _T("/null_password"));
 
+    //TODO maybe also test read failure when mandatory config values aren't set
+    
+    
     //Begin tests of config. module parser:
     cConfigFile write_cfgmod;
-    //Filename for writing/reading some value pairs:
-    const TSTRING testfile = testTWCFG + _T("tripwire.cfg");
+    //Add all the mandatory config options.
+    write_cfgmod.Insert( _T("POLFILE"), "test.pol");
+    write_cfgmod.Insert( _T("DBFILE"),  "test.twd");
+    write_cfgmod.Insert( _T("REPORTFILE"), "test.twr");
+    write_cfgmod.Insert( _T("SITEKEYFILE"), "site.key");
+    write_cfgmod.Insert( _T("LOCALKEYFILE"), "local.key");
 
-    //Insert the test values into cConfigFile's hashtable:
-    /*
-    write_cfgmod.Insert( _T("TWROOT"), testTWROOT);
-    write_cfgmod.Insert( _T("TWBIN"), testTWBIN);
-    write_cfgmod.Insert( _T("TWCFG"), testTWCFG);
-    write_cfgmod.Insert( _T("TWMAN"), testTWMAN);
-    write_cfgmod.Insert( _T("TWHTML"), testTWHTML);
-    write_cfgmod.Insert( _T("TWDB"), testTWDB);
-    write_cfgmod.Insert( _T("TWKEY"), testTWKEY);
-    write_cfgmod.Insert( _T("TWREPORT"), testTWREPORT);
-    write_cfgmod.Insert( _T("TWPASSWORD"), testTWPASSWORD);
-    */
+    //Filename for writing/reading some value pairs:
+    const TSTRING testfile = testTWROOT + _T("/tripwire.cfg");
 
     //Store these values on disk.
     TSTRING configText;
@@ -173,19 +164,19 @@ void TestConfigFile(void)
     catch (eError& error)
     {
         TCERR << (int)error.GetID() << std::endl << error.GetMsg() << std::endl;
-        ASSERT(false);
+        TEST(false);
     }
 
     //These TSTRINGS will hold info. from .Lookup:
     TSTRING lookup1, lookup2;
 
-    read_cfgmod.Lookup( _T("TWROOT"), lookup1);
-    read_cfgmod.Lookup( _T("TWDB"), lookup2);
+    read_cfgmod.Lookup( _T("POLFILE"), lookup1);
+    read_cfgmod.Lookup( _T("DBFILE"), lookup2);
     d.TraceDetail("First lookup's value: %s \n", lookup1.c_str());
     d.TraceDetail("Second lookup's value: %s \n", lookup2.c_str());
-    TEST( lookup1 == testTWROOT );
-    TEST( lookup2 == testTWDB );
+    TEST( lookup1 == "test.pol" );
+    TEST( lookup2 == "test.twd" );
 
     d.TraceDetail("Tests Passed!\n");
-#endif // NOT_BRIANS_TEST
+//#endif // NOT_BRIANS_TEST
 }

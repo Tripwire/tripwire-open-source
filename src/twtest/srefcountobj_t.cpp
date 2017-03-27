@@ -40,6 +40,7 @@
 #include "core/debug.h"
 #include "core/archive.h"
 #include "core/srefcountobj.h"
+#include "twtest/test.h"
 
 class cSerRefCountObjTest : public iSerRefCountObj
 {
@@ -133,9 +134,9 @@ void TestSerRefCountObj()
         serializer.Finit();
     }
 
-    ASSERT(pObj1 == pObj3);
-    ASSERT(pObj1 == pObj4);
-    ASSERT(pObj1 != pObj2);
+    TEST(pObj1 == pObj3);
+    TEST(pObj1 == pObj4);
+    TEST(pObj1 != pObj2);
 
     pObj1->Release();
     pObj2->Release();

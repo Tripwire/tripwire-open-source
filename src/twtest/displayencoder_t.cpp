@@ -104,17 +104,25 @@ void TestCharToHex()
 ///////////////////////////////////////////////////////////////////////////
 // TestHexToChar
 ///////////////////////////////////////////////////////////////////////////
-void test_hex_to_char(const TSTRING& str, char expected)
+void test_hex_to_char(const TSTRING& str, char expected, bool should_throw=false)
 {
-    char observed = cCharEncoderUtil::hex_to_char( str.begin(), str.end() );
-    TEST(expected == observed);
+    bool threw = false;
+    try
+    {
+        char observed = cCharEncoderUtil::hex_to_char( str.begin(), str.end() );
+        TEST(expected == observed);
+    }
+    catch(eError& e)
+    {
+        threw = true;
+    }
+    
+    TEST(should_throw == threw);
 }
 
 
 void TestHexToChar()
 {
-  TCERR << "\nTODO: TestHexToChar in displayencoder_t.cpp needs to be fixed; currently disabled." << std::endl;
-#if 0
     test_hex_to_char( "fe", 0xfe );
     test_hex_to_char( "ff", 0xff );
     test_hex_to_char( "00", 0x00 );
@@ -122,9 +130,8 @@ void TestHexToChar()
     test_hex_to_char( "7f", 0x7f );
     test_hex_to_char( "80", 0x80 );
     
-    test_hex_to_char( "100", 0); // should throw
-    test_hex_to_char( "-01", 0); // should throw
-#endif
+    test_hex_to_char( "100", 0, true); // should throw
+    test_hex_to_char( "-01", 0, true); // should throw
 }
 
 
@@ -157,13 +164,10 @@ void test_hex_to_string(const std::string& str, const std::string& expected)
 
 void TestHexToString()
 {
-    TCERR << "\nTODO: TestHexToString in displayencoder_t.cpp needs to be fixed; currently disabled." << std::endl;
-#if 0
     test_hex_to_string( "0a", "\n");
     test_hex_to_string( "0d", "\r");
     test_hex_to_string( "0d0a", "\r\n");
     test_hex_to_string( "610d0a62", "a\r\nb");
-#endif
 }
 
 #if 0
