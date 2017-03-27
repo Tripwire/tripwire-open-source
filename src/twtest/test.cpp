@@ -39,11 +39,7 @@
 #include "core/core.h"
 #include "db/db.h"
 #include "twcrypto/twcrypto.h"
-
-#ifdef PARSER_PRESENT
-#include "parser/parser.h"
-#endif
-
+#include "twparser/twparser.h"
 #include "tw/tw.h"
 #include "fco/fco.h"
 
@@ -104,9 +100,7 @@ void TestHashTable();
 void TestFCONameTbl();
 void TestConfigFile();
 
-#ifdef PARSER_PRESENT
 void TestPolicyParser();
-#endif//PARSER_PRESENT
 
 void TestFCOSpecHelper();
 void TestCrypto();
@@ -131,9 +125,7 @@ void TestIntegrityCheck();
 void TestFCODatabaseFile();
 void TestWchar16();
 void TestStringEncoder();
-#ifdef TSS_TEST
-void TestDisplayEncoder();
-#endif
+//void TestDisplayEncoder();
 void TestGrowHeap();
 void TestPlatform();
 //void TestBlockFile();
@@ -143,6 +135,17 @@ void TestTWLocale();
 void TestFileUtil();
 void TestFCONameTranslator();
 void TestCodeConverter();
+
+void TestCharToHex();
+void TestHexToChar();
+void TestStringToHex();
+void TestHexToString();
+//void TestUnconvertable();
+//void TestUnprintable();
+void TestQuoteAndBackSlash();
+void TestDisplayEncoderBasic();
+void TestCharUtilBasic();
+
 /// This is easier than all the (cpp) files and declarations
 #include "stringutil_t.h"
 
@@ -203,9 +206,7 @@ static void Test(int testID)
     case 43: TestTCHAR(); break;
     case 44: TestUnixFSServices(); break;
     case 46: TestConfigFile(); break;
-#ifdef PARSER_PRESENT
     case 47: TestPolicyParser(); break;
-#endif//PARSER_PRESENT
     case 48: TestKeyFile(); break;
     case 49: TestTWUtil(); break;
     case 50: TestFSPropDisplayer(); break;
@@ -218,10 +219,8 @@ static void Test(int testID)
     case 58: TestGenreSpecList(); break;
     //case 59: TestIntegrityCheck(); break;
     case 65: TestWchar16(); break;        
-    case 66: TestStringEncoder(); break;        
-#ifdef TSS_TEST
-    case 67: TestDisplayEncoder(); break;
-#endif
+    case 66: TestStringEncoder(); break;
+    //case 67: TestDisplayEncoder(); break;
     case 69: TestGrowHeap(); break;
     case 70: TestPlatform(); break;
       //case 71: TestBlockFile(); break;
@@ -231,7 +230,17 @@ static void Test(int testID)
     case 75: TestTWLocale(); break; 
     case 76: TestFCONameTranslator(); break; 
     case 77: TestStringUtil(); break; 
-    case 78: TestCodeConverter(); break; 
+    case 78: TestCodeConverter(); break;
+            
+    case 79: TestCharToHex(); break;
+    case 80: TestHexToChar(); break;
+    case 81: TestStringToHex(); break;
+    case 82: TestHexToString(); break;
+        //    case 83: TestUnconvertable(); break;
+        //    case 84: TestUnprintable(); break;
+    case 85: TestQuoteAndBackSlash(); break;
+    case 86: TestDisplayEncoderBasic(); break;
+    case 87: TestCharUtilBasic(); break;
     }
 }
 
@@ -245,9 +254,7 @@ cTest::cTest()
     TSS_Dependency( cCore );
     TSS_Dependency( cDb );
     TSS_Dependency( cTWCrypto );
-#ifdef PARSER_PRESENT
-    TSS_Dependency( cParser );
-#endif//PARSER_PRESENT
+    TSS_Dependency( cTWParser );
     TSS_Dependency( cTW );
     TSS_Dependency( cFCO );
     TSS_Dependency( cFS );
