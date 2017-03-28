@@ -43,18 +43,6 @@ else
 fi
 
 ##-------------------------------------------------------
-## Better have a copy of tar!
-## If /bin/sh does not exist or is not readable (seems
-## fairly unlikely), then this will fail.
-##-------------------------------------------------------
-
-(tar cvf /dev/null /bin/sh) 2> /dev/null 1>&2
-if [ $? -ne 0 ]; then
-    echo "tar command not found -- aborting install."
-	exit 1
-fi
-
-##-------------------------------------------------------
 ## Can't live without sed.
 ##-------------------------------------------------------
 
