@@ -51,7 +51,7 @@ void TestHex();
     try \
     { \
         x; \
-        ASSERT( false ); \
+        TEST( false ); \
     } catch( error& ) {}
 
 void TestTWLocale()
@@ -80,21 +80,21 @@ void TestAtoi()
     //
     cTWLocale::InitGlobalLocale();
     n = cTWLocale::FormatNumber( str );
-    ASSERT( n == 123456 );
+    TEST( n == 123456 );
 
     //    
     // Try formatting with "" locale
     //
     std::locale::global( std::locale("") );
     n = cTWLocale::FormatNumber( str );
-    ASSERT( n == 123456 );
+    TEST( n == 123456 );
     
     //    
     // Try formatting with "C" locale
     //
     std::locale::global( std::locale("") );
     n = cTWLocale::FormatNumber( str );
-    ASSERT( n == 123456 );
+    TEST( n == 123456 );
 }
 
 void TestItoa()
@@ -147,7 +147,7 @@ void TestRoundtrip()
     strOut = cTWLocale::FormatNumber( cTWLocale::FormatNumber( strIn ), strOut );
     // don't know if string will be the same due to possible changes in formatting from locale
     // ASSERT( strOut == strIn ); <---- can't do this ^^^
-    ASSERT( 123456 == cTWLocale::FormatNumber( strOut ) );
+    TEST( 123456 == cTWLocale::FormatNumber( strOut ) );
 
     
     //
@@ -156,7 +156,7 @@ void TestRoundtrip()
     int32 nIn  = 654321;
     int32 nOut;
     nOut = cTWLocale::FormatNumber( cTWLocale::FormatNumber( nIn, strIn ) );
-    ASSERT( nOut == nIn );
+    TEST( nOut == nIn );
 }
 
 
@@ -172,7 +172,7 @@ void TestFlags()
     // 
     TSTRING str = _T("FF");
     int n = cTWLocale::FormatNumber( str, std::ios_base::hex );
-    ASSERT( n == 0xFF );
+    TEST( n == 0xFF );
 
     // 
     // bad number for dec
@@ -184,21 +184,21 @@ void TestFlags()
     // 
     TSTRING strOct = _T("0712");
     n = cTWLocale::FormatNumber( strOct, std::ios_base::oct );
-    ASSERT( n == 0712 );
+    TEST( n == 0712 );
     
     // 
     // oct again
     // 
     strOct = _T("00712");
     n = cTWLocale::FormatNumber( strOct, std::ios_base::oct );
-    ASSERT( n == 0712 );
+    TEST( n == 0712 );
     
     // 
     // oct again again
     // 
     strOct = _T("712");
     n = cTWLocale::FormatNumber( strOct, std::ios_base::oct );
-    ASSERT( n == 0712 );    
+    TEST( n == 0712 );
 
     // 
     // try bad oct
@@ -212,16 +212,16 @@ void TestHex()
     TSTRING str;
 
     str = cTWLocale::FormatNumberAsHex( 0x1234 );
-    ASSERT( str == _T("1234") );
+    TEST( str == _T("1234") );
     
     str = cTWLocale::FormatNumberAsHex( 16 );
-    ASSERT( str == _T("10") );
+    TEST( str == _T("10") );
 
     str = cTWLocale::FormatNumberAsHex( 0x12344321 );
-    ASSERT( str == _T("12344321") );
+    TEST( str == _T("12344321") );
     
     str = cTWLocale::FormatNumberAsHex( 0xFFFFFFFF );
-    ASSERT( str == _T("FFFFFFFF") || str == _T("ffffffff") );
+    TEST( str == _T("FFFFFFFF") || str == _T("ffffffff") );
 }
 #endif//DOESNTWORK
 

@@ -75,7 +75,7 @@ static void util_TestUnprintable( const TSTRING& strCUnprintable )
     TSTRING strOut = strEncoded;
     e.Decode( strOut );
 
-    ASSERT( strOut == strCUnprintable );
+    TEST( strOut == strCUnprintable );
 }
 
 
@@ -186,8 +186,8 @@ void TestUnconvertable()
         ch = 0x ## n; \
         str = ch; \
         e.Encode( str ); \
-//        ct.tolower( str.begin(), str.end() ); \
-        ASSERT( str == _T("\\x") _T( #n ) _T("x") );
+        ct.tolower( str.begin(), str.end() ); \
+        TEST( str == _T("\\x") _T( #n ) _T("x") );
 
     TSS_UNCONVERTABLE_TEST( fefe );
     TSS_UNCONVERTABLE_TEST( 1234 );
@@ -215,8 +215,8 @@ void TestUnprintable()
         ch = 0x ## n; \
         str = ch; \
         e.Encode( str ); \
-//        ct.tolower( str.begin(), str.end() ); \
-        ASSERT( str == _T("\\x") _T( #n ) _T("x") );
+        ct.tolower( str.begin(), str.end() ); \
+        TEST( str == _T("\\x") _T( #n ) _T("x") );
 
     TSS_UNPRINTABLE_TEST( 000a );
     TSS_UNPRINTABLE_TEST( 000d );
@@ -233,11 +233,11 @@ void TestQuoteAndBackSlash()
 
     str = _T("\\");
     e.Encode( str );
-    ASSERT( str == _T("\\\\") );
+    TEST( str == _T("\\\\") );
         
     str = _T("\"");
     e.Encode( str );
-    ASSERT( str == _T("\\\"") );
+    TEST( str == _T("\\\"") );
 }
 
 // TODO:BAM -- try multibyte now.....
@@ -325,7 +325,7 @@ void TestDisplayEncoderBasic()
     catch( eError& e )
     {
         cErrorReporter::PrintErrorMsg( e ); 
-        ASSERT(false);
+        TEST(false);
     }
 }
 

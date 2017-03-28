@@ -43,7 +43,7 @@ void TestBlockFile()
 
     try
     {
-        static const TCHAR fileName[] = _T("c:/tmp/test.bf");
+        static const TCHAR fileName[] = _T("test.bf");
         // truncate the file I am going to use...
         //
         cFileArchive a;
@@ -113,6 +113,7 @@ void TestBlockFile()
     }
     catch( eError& e )
     {
+        TCERR << "Exception: " << e.GetMsg() << std::endl;
         d.TraceError( _T("Exception caught: %d %s\n"), e.GetID(), e.GetMsg().c_str() );
         TEST( false );
     }

@@ -34,12 +34,13 @@
 #include "fco/stdfco.h"
 #include "fco/fcospecimpl.h"
 #include "core/debug.h"
-//#include "fs/fsdatasource.h"
+#include "fs/fsdatasourceiter.h"
 #include "fco/iterproxy.h"
 #include "core/error.h"
 #include "twtest/test.h"
 #include "fco/fcospechelper.h"
 #include "core/fsservices.h"
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintFCOTree -- recursively prints an fco's name and all of it's children's
@@ -69,43 +70,35 @@ void TestFCOSpecImpl()
     cDebug d("TestFCOSpecImpl");
     d.TraceDebug("Entering...\n");
 
-    //*********************
-    //
-    // TODO -- As of tripwire 2.1, this needs to be updated!
-    // 28 Jan 99 mdb
-    //
-    //*********************
-    ASSERT( false );
-/*
-    cFSDataSource dataSrc;
-    iFSServices* pFSS = iFSServices::GetInstance();
-
+    cFSDataSourceIter dataSrc;
 
     // test AllChildStopPoint fcos...
     d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TEMP_DIR);
     cFCOSpecImpl* pSpec2 = new cFCOSpecImpl(TEMP_DIR, &dataSrc, new cFCOSpecNoChildren);
     pSpec2->SetStartPoint(cFCOName(TEMP_DIR));
-    iFCO* pFCO = pSpec2->CreateFCO(pSpec2->GetStartPoint(), iFCODataSource::CHILDREN_ALL);
-    PrintFCOTree(pFCO, d, 0);
+    dataSrc.SeekToFCO(pSpec2->GetStartPoint(), false);
+    iFCO* pFCO = dataSrc.CreateFCO();
+    TEST(pFCO);
+    //PrintFCOTree(pFCO, d, 0);
     pFCO->Release();
 
     // create an FSSpec and set up some start and stop points...
     cFCOSpecStopPointSet* pSet = new cFCOSpecStopPointSet;
     cFCOSpecImpl* pSpec = new cFCOSpecImpl(_T("Test FSSpec"), &dataSrc, pSet);
-    pSpec->SetStartPoint(cFCOName(_T("d:/code")));
-    pSet->Add(cFCOName(_T("d:/code/open gl")));
-    pSet->Add(cFCOName(_T("d:/code/pclient")));
+    pSpec->SetStartPoint(cFCOName(_T("/etc")));
+    pSet->Add(cFCOName(_T("/etc/open gl")));
+    pSet->Add(cFCOName(_T("/etc/pclient")));
 
     // create all the fcos...
-    pFCO = pSpec->CreateFCO(pSpec->GetStartPoint(), iFCODataSource::CHILDREN_ALL);
-    ASSERT(pFCO);
-    PrintFCOTree(pFCO, d, 0);
-    pFCO->Release();
+    cFSDataSourceIter dataSrc2;
+    dataSrc2.SeekToFCO(pSpec->GetStartPoint(), false);
+    iFCO* pFCO2 = dataSrc2.CreateFCO();
+    TEST(pFCO2);
+    //PrintFCOTree(pFCO, d, 0);
+    pFCO2->Release();
 
     // TODO -- test Clone(), copy ctor, operator=
 
     pSpec->Release();
-    return;
-*/
 }
 

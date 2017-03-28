@@ -403,7 +403,6 @@ char *env;
      * just include it from the current environment
      * (if not defined there, don't define it here)
      */
-    size_t p_size=0;
     if (strchr(env, '=') == NULL) {
 
         q = getenv(env);

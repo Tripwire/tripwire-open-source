@@ -36,6 +36,7 @@
 #include "tw/stdtw.h"
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "tw/fcoreport.h"
 #include "fco/fcospecimpl.h"
@@ -56,7 +57,7 @@
 #include "tw/fcoreportutil.h"
 #include "tw/headerinfo.h"
 
-#ifdef FIXED_TRV_TEST_SUITE
+//#ifdef FIXED_TRV_TEST_SUITE
 
 void MakeFile( TSTRING& fcoNameMakeMe );
 void MakeDir( const TCHAR* const lpszDirName );
@@ -80,7 +81,7 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
         for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ct++)
         {
             d.TraceDebug(">>> Spec [%d]:\n", ct);
-            ASSERT(specIter.GetSpec());
+            TEST(specIter.GetSpec());
             specIter.GetSpec()->TraceContents();
             specIter.GetErrorQueue()->TraceContents();
 
@@ -105,8 +106,30 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
     }
 }
 
+/*
+ //
+ // basic functionality
+ //
+ void DisplayReportAndHaveUserUpdateIt( const TSTRING& edName, ReportingLevel level = FULL_REPORT ); //throw (eFSServices, eTextReportViewer, eInternal);
+ // outputs the given report to a temp file, opens an editor, has
+ // the user view changes to the database, and, by selecting FCO entries,
+ // chooses which changes to write to the database.  Unchecked entries
+ // are removed from the report
+ // edName is the name of the editor to use to update the report
+ 
+ virtual void PrintTextReport( const TSTRING& strFilename, ReportingLevel level = FULL_REPORT ); //throw (eTextReportViewer);
+ // if strFilename is "-", will print to TCOUT
+ virtual void PrintTextReport( TOSTREAM& ostr, ReportingLevel level = FULL_REPORT ); //throw (eTextReportViewer);
+ // prints the report to the specified ostream
+ */
+
+
+
 void TestTextReportViewer()
 {
+    TCERR << std::endl << "TestTextReportViewer needs to be cleaned up & fixed, currently disabled" << std::endl;
+    
+#if 0
     cFCOReport  report;
     cFCOReportGenreIter genreIter(report);
     cFCOReportSpecIter specIter(genreIter);
@@ -119,7 +142,7 @@ void TestTextReportViewer()
     try
     {
         iFSServices* pFSServices = iFSServices::GetInstance();
-        ASSERT( pFSServices );
+        TEST( pFSServices );
 
         TSTRING fcoNameTempDir;
         pFSServices->GetTempDirName( fcoNameTempDir );
@@ -127,9 +150,9 @@ void TestTextReportViewer()
         fcoNameSpec1 = fcoNameTempDir += _T("SPEC1/");
         fcoNameSpec2 = fcoNameTempDir += _T("SPEC2/");
         
-        pFSServices->Mkdir( fcoNameTempDir );
-        pFSServices->Mkdir( fcoNameSpec1.AsString() );
-        pFSServices->Mkdir( fcoNameSpec2.AsString() );
+        mkdir( fcoNameTempDir.c_str(), 0777 );
+        mkdir( fcoNameSpec1.AsString().c_str(), 0777 );
+        mkdir( fcoNameSpec2.AsString().c_str(), 0777 );
         
         fcoNameTempFile = fcoNameTempDir += _T("twtempXXXXXX");
         pFSServices->MakeTempFilename( fcoNameTempFile );
@@ -137,12 +160,12 @@ void TestTextReportViewer()
     catch(eFSServices& /* e */)
     {
         // TODO: properly handle error
-        ASSERT( false );
+        TEST( false );
     }
-
+ 
     // need two prop calcs because.....
     // if cFSPropCalc::VisitFSObject succeeds, cFSPropCalc stores the FCO in
-    // an internal set (why, I don't know), and the cFCOSet ASSERTs that the same 
+    // an internal set (why, I don't know), and the cFCOSet TESTs that the same 
     // FCO isn't inserted more than once.  But since we visit changed FCOs twice 
     // in this test routine, we need two calcs.  Make sense?  Oh, well.
     cFSPropCalc* pPropCalc = new cFSPropCalc;
@@ -153,14 +176,13 @@ void TestTextReportViewer()
     cFCOSpecImpl*    pSpec          = new cFCOSpecImpl( fcoNameSpec1.AsString(), NULL, pStopPts);
     cFCOSpecAttr* pAttr         = new cFCOSpecAttr;
     
-    
+ 
     cFCOPropVector v;    
     for( int i = 0; i < 32; i++ )
         v.AddItem( i );
     
     pPropCalc->SetPropVector(v);
     pPropCalc2->SetPropVector(v);
-
 
     TSTRING fcoNameMakeMe;
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/added_fileXXXXXX");
@@ -172,9 +194,10 @@ void TestTextReportViewer()
     // MakeTempFile can't handle strings with escaped quotes, so we'll have to do this ourselves
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/\"quoted\\_and_backslashed_file1\"");    
     //TOFSTREAM file1( fcoNameMakeMe.c_str() );
-    //ASSERT( file1 );
+    //TEST( file1 );
     //file1.close();
 
+  
     cFSObject*  addedFCO2       = new cFSObject( cFCOName(fcoNameMakeMe) );
     //pPropCalc->VisitFSObject( *addedFCO2 );
     
@@ -182,7 +205,7 @@ void TestTextReportViewer()
     // MakeTempFile can't handle strings with escaped quotes, so we'll have to do this ourselves
     fcoNameMakeMe = fcoNameSpec1.AsString() + _T("/quoted_file\"2\"XXXXXX");
     //TOFSTREAM file2( fcoNameMakeMe.c_str() );
-    //ASSERT( file2 );
+    //TEST( file2 );
     //file2.close();
 
     cFSObject*  addedFCO3       = new cFSObject( cFCOName(fcoNameMakeMe) );
@@ -199,6 +222,7 @@ void TestTextReportViewer()
     MakeFile( fcoNameMakeMe );
     cFSObject*  removedFCO2     = new cFSObject( cFCOName(fcoNameMakeMe) );
     pPropCalc->VisitFSObject( *removedFCO2 );
+    
 
     pSpec->SetStartPoint( fcoNameSpec1 );
     pAttr->SetName( fcoNameSpec1.AsString() );
@@ -207,7 +231,9 @@ void TestTextReportViewer()
     report.AddSpec(0x00020001, pSpec, pAttr, &specIter); // TODO:bam - use cFS::Genre
     pAttr->Release();    
 
-    
+    TEST(specIter.GetAddedSet());
+    TEST(specIter.GetRemovedSet());
+
     specIter.GetAddedSet()->Insert(addedFCO);
     specIter.GetAddedSet()->Insert(addedFCO2);
     specIter.GetAddedSet()->Insert(addedFCO3);
@@ -234,6 +260,7 @@ void TestTextReportViewer()
     changedPropVector1.AddItem(cFSPropSet::PROP_UID);
     report.AddChangedFCO(specIter, oldChangedFCO, newChangedFCO, changedPropVector1);
 
+    
     // make changed FCO2
     cFCOPropVector changedPropVector2;
 
@@ -280,7 +307,7 @@ void TestTextReportViewer()
     specIter.GetAddedSet()->Insert(addedFCO5);
     specIter.GetRemovedSet()->Insert(removedFCO5);
 
-        
+    
 
     // make changed FCO3
     cFCOPropVector changedPropVector3;
@@ -321,14 +348,13 @@ void TestTextReportViewer()
     specIter.Next();
     //specIter.GetErrorQueue()->AddError(2, "this is an \"/etc2\" spec error",NULL);
 
-
     d.TraceDebug(_T("\n======================================================\nStart PrintTextReport...\n======================================================\n\n\n"));
         
     TSTRING tstrEmpty( _T("") );
     cFCOReportHeader rhi;
     cFCOReportUtil::FinalizeReport( report );
-    cTextReportViewer trv;
-    trv.DisplayReportAndHaveUserUpdateIt( rhi, report, _T("") );
+    cTextReportViewer trv(rhi, report);
+    trv.DisplayReportAndHaveUserUpdateIt( _T("") );
 
             // test writing of USID
             cFileArchive outFile;
@@ -354,20 +380,20 @@ void TestTextReportViewer()
 
             d.TraceDebug("Read in serialized report:\n");
             //TraceReport(inReport, d);
-            trv.PrintTextReport( rhi, inReport, TSTRING( TEMP_DIR _T( "/test2.txt" ) ) );    
+            trv.PrintTextReport(TSTRING( TEMP_DIR _T( "/test2.txt" ) ) );
 
             //TODO: this does not work any more
             //trv.LaunchEditorOnFile( TSTRING( TEMP_DIR _T("/test2.txt") ), _T("") );
 
 
     // look at results
-    trv.PrintTextReport( rhi, report, fcoNameTempFile );    
+    trv.PrintTextReport(fcoNameTempFile );
     //TODO: this does not work any more
     //cTextReportViewer::LaunchEditorOnFile( fcoNameTempFile, _T("") );
 
     
     iFSServices* pFSServices = iFSServices::GetInstance();
-    ASSERT( pFSServices );
+    TEST( pFSServices );
     pFSServices->FileDelete( addedFCO->GetName().AsString() );
     pFSServices->FileDelete( addedFCO2->GetName().AsString() );
     pFSServices->FileDelete( addedFCO3->GetName().AsString() );
@@ -382,8 +408,8 @@ void TestTextReportViewer()
     pFSServices->FileDelete( fcoNameTempFile );
 
     // don't remove TEMP_DIR since other people may be using it
-    pFSServices->Rmdir( fcoNameSpec1.AsString() );
-    pFSServices->Rmdir( fcoNameSpec2.AsString() );
+    rmdir( fcoNameSpec1.AsString().c_str() );
+    rmdir( fcoNameSpec2.AsString().c_str() );
 
     pSpec->Release();
     pSpec2->Release();
@@ -404,7 +430,8 @@ void TestTextReportViewer()
     newChangedFCO3->Release();
     oldChangedFCO4->Release();
     newChangedFCO4->Release();
-
+#endif
+    
     return;
 }
 
@@ -412,50 +439,40 @@ void MakeFile( TSTRING& strNameMakeMe )
 {
     try
     {
-        iFSServices* pFSServices = iFSServices::GetInstance(); ASSERT( pFSServices );
+        iFSServices* pFSServices = iFSServices::GetInstance(); TEST( pFSServices );
         pFSServices->MakeTempFilename( strNameMakeMe );
 
         std::string strA;
         for( TSTRING::iterator i = strNameMakeMe.begin(); i != strNameMakeMe.end(); ++i )
         {
             char ach[6];
-            ASSERT( MB_CUR_MAX <= 6 );
+            TEST( MB_CUR_MAX <= 6 );
 
             int n = wctomb( ach, *i );
-            ASSERT( n != -1 );
+            TEST( n != -1 );
             
             for( int j = 0; j < n; j++ )
                 strA += ach[j];
         }
 
         TOFSTREAM file( strA.c_str() );
-        ASSERT( file );
+        TEST( file );
         file.close();
     }
     catch( eFSServices e )
     {
-        ASSERT( false );
+        TEST( false );
     }
     catch( ... )
     {
-        ASSERT( false );
+        TEST( false );
     }
 }
 
 void MakeDir( const TCHAR* const lpszDirName )
 {
-    try
-    {
-        iFSServices* pFSServices = iFSServices::GetInstance();
-        TSTRING newdir(lpszDirName);
-
-        pFSServices->Mkdir( newdir );
-    }
-    catch( eFSServices e )
-    {
-        ASSERT( false );
-    }
+    TEST(0 == mkdir(lpszDirName, 0777 ))
 }
 
-#endif //FIXED_TRV_TEST_SUITE
+//#endif //FIXED_TRV_TEST_SUITE
 

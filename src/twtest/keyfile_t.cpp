@@ -70,8 +70,8 @@ void TestKeyFile()
     {
         cElGamalSig elGamal(*keyfile.GetPublicKey());
 
-        ASSERT(elGamal.GetBlockSizePlain() < 9000);
-        ASSERT(elGamal.GetBlockSizeCipher() < 9000);
+        TEST(elGamal.GetBlockSizePlain() < 9000);
+        TEST(elGamal.GetBlockSizeCipher() < 9000);
         std::string s = "haybaby";
         cPrivateKeyProxy key;
         TEST(key.AquireKey(keyfile, (int8*)s.data(), 7));

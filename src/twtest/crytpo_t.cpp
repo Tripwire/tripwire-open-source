@@ -128,11 +128,11 @@ void TestCrypto()
     cRSAPublicKey* pPublic2;
     cRSAPrivateKey* pPrivate2;
 
-    ASSERT(pPublic->GetWriteLen() < BUFSIZE);
+    TEST(pPublic->GetWriteLen() < BUFSIZE);
     pPublic->Write(buf);
     pPublic2 = new cRSAPublicKey(buf);
 
-    ASSERT(pPrivate->GetWriteLen() < BUFSIZE);
+    TEST(pPrivate->GetWriteLen() < BUFSIZE);
     pPrivate->Write(buf);
     pPrivate2 = new cRSAPrivateKey(buf);
 
@@ -298,11 +298,11 @@ void TestCrypto()
     cElGamalSigPublicKey* pPublic2;
     cElGamalSigPrivateKey* pPrivate2;
 
-    ASSERT(pPublic->GetWriteLen() < BUFSIZE);
+    TEST(pPublic->GetWriteLen() < BUFSIZE);
     pPublic->Write(buf);
     pPublic2 = new cElGamalSigPublicKey(buf);
 
-    ASSERT(pPrivate->GetWriteLen() < BUFSIZE);
+    TEST(pPrivate->GetWriteLen() < BUFSIZE);
     pPrivate->Write(buf);
     pPrivate2 = new cElGamalSigPrivateKey(buf);
 

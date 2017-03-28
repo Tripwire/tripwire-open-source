@@ -91,7 +91,7 @@ void TestFSPropCalc()
     // get the fco but none of its children...
     ds.SeekToFCO(cFCOName(foo_bin), false);
     iFCO* pFCO = ds.CreateFCO();
-    ASSERT(pFCO);
+    TEST(pFCO);
 
     // create the calculator and set some properties to calculate...
     cFSPropCalc propCalc;
