@@ -75,7 +75,7 @@ void test_policy_file(const std::string& polfile)
         pol_path.append(polfile);
         
         std::ifstream in;
-        in.open(pol_path);
+        in.open(pol_path.c_str());
         if( ! in.good() )
             throw eParserHelper( _T("couldn't open test file") );
         

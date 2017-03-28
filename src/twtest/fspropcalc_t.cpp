@@ -75,7 +75,7 @@ void TestFSPropCalc()
     // oh boy! I finally get to test property calculation!
     d.TraceDebug("Creating FCO c:\\temp\\foo.bin\n");
 
-    std::ofstream fstr(foo_bin);
+    std::ofstream fstr(foo_bin.c_str());
     if(fstr.bad())
     {
         d.TraceError("Unable to create test file %s!\n", foo_bin.c_str());
