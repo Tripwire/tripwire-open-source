@@ -33,6 +33,8 @@
 // genre_t.cpp
 //
 
+#include <typeinfo>
+
 #include "fco/stdfco.h"
 #include "fco/genreswitcher.h"
 #include "twtest/test.h"
