@@ -49,6 +49,8 @@
 #endif
 
 #include <iostream>
+#include <stdexcept>
+
 using namespace std;
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -69,7 +71,7 @@ TSS_EndPackage( cTest )
 #define TEST(exp)   if (!(exp)) \
                     { \
                         std::cerr<<"TEST(" << #exp << ") failure, file " << __FILE__ << " line " << __LINE__ << std::endl; \
-                        exit(-1); \
+                        throw std::runtime_error(#exp); \
                     } 
 
 ///////////////////////////////////////////////////////////////////////////////
