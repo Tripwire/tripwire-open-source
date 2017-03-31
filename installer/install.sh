@@ -893,7 +893,7 @@ cat << END_OF_TEXT
 ----------------------------------------------
 The installation succeeded.
 
-Please refer to $README_LOC
+Please refer to documentation in $TWDOCS
 for release information and to the printed user documentation
 for further instructions on using Tripwire 2.4 Open Source.
 
