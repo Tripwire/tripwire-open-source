@@ -119,7 +119,7 @@ void TestRefCountObj()
 
     db.TraceAlways("Entering...\n");
 
-    // Note the following test of Reference counted objects containing 
+    // Note the following test of Reference counted objects containing
     // copies of themselves failed.  Perhaps someday we will upgrade the
     // reference counting interface to allow this type of structure.
     /*
@@ -157,11 +157,12 @@ void TestRefCountObj()
         }
     }
 
+    //These fields only exist in debug builds, so we can't use TEST() here.
     ASSERT(cRefCountObj::objectCounter == 0);
     ASSERT(cRefCountObj::referenceCounter == 0);
 
     db.TraceAlways("Done...\n");
-
+    
     return;
 }
 

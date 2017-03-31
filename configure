@@ -3462,13 +3462,6 @@ fi
 
 ac_config_headers="$ac_config_headers config.h"
 
-
-
-
-
-rm -f src/tripwire/syslog.h 2> /dev/null
-chmod 755 install-sh 2> /dev/null
-
 CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 

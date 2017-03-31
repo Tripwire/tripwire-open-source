@@ -203,15 +203,15 @@ void TestAlignment()
 void TestSizes()
 {
     /*
-    ASSERT( CanBeRepresentedAs( char(), char() ) );
-    ASSERT( CanBeRepresentedAs( char(), unsigned char() ) );
-    ASSERT( CanBeRepresentedAs( unsigned char(), char() ) );
-    ASSERT( CanBeRepresentedAs( unsigned char(), unsigned char() ) );
-    ASSERT( CanBeRepresentedAs( signed char(), char() ) );
-    ASSERT( CanBeRepresentedAs( char(), signed char() ) );
-    ASSERT( CanBeRepresentedAs( signed char(), signed char() ) );
-    ASSERT( CanBeRepresentedAs( signed char(), unsigned char() ) );
-    ASSERT( CanBeRepresentedAs( char(), signed char() ) );
+    TEST( CanBeRepresentedAs( char(), char() ) );
+    TEST( CanBeRepresentedAs( char(), unsigned char() ) );
+    TEST( CanBeRepresentedAs( unsigned char(), char() ) );
+    TEST( CanBeRepresentedAs( unsigned char(), unsigned char() ) );
+    TEST( CanBeRepresentedAs( signed char(), char() ) );
+    TEST( CanBeRepresentedAs( char(), signed char() ) );
+    TEST( CanBeRepresentedAs( signed char(), signed char() ) );
+    TEST( CanBeRepresentedAs( signed char(), unsigned char() ) );
+    TEST( CanBeRepresentedAs( char(), signed char() ) );
     */
 }
  

@@ -125,7 +125,7 @@ void TestFCOCompare()
     cFSDataSourceIter ds2;
     ds2.SeekToFCO(cFCOName(FILE_NAME), false);
     iFCO* pFCO2 = ds2.CreateFCO();
-    ASSERT(pFCO2);
+    TEST(pFCO2);
     pFCO2->AcceptVisitor(&propCalc);
     d.TraceDebug("Second FCO's properties:\n");
     PrintProps(pFCO2);

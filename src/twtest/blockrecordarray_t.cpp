@@ -42,7 +42,7 @@ void TestBlockRecordArray()
     cDebug d( "TestBlockRecordArray" );
     try
     {
-        static const TCHAR fileName[] = _T("c:/tmp/test.bf");
+        static const TCHAR fileName[] = _T("test.bf");
 
         cBlockFile bf;
         bf.Open( fileName, 2, true );   // opened up with two pages

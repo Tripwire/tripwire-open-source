@@ -36,38 +36,26 @@
 #include "fco/stdfco.h"
 #include "fco/genreswitcher.h"
 #include "twtest/test.h"
+#include "fs/fs.h"
 
-#ifdef _CPPRTTI 
 #include "fs/fsfactory.h"
-#include "ntfs/ntfsfactory.h"
-#endif
 
 void TestGenreSwitcher()
 {
-#pragma message( __FILE__ "(1) : TODO - implement this test file")
-#if 0
     cDebug d("TestGenreSwitcher");
     d.TraceDebug("Entering...\n");
 
-    // normally we use the cGenreSwitcher::GetInstance() interface
-    // to get access the class singleton.  But for testing purposes 
-    // we will put have one reside on the stack.
-    cGenreSwitcher genreSwitcher;
+    cGenreSwitcher* genreSwitcher = cGenreSwitcher::GetInstance();
 
-    TEST(genreSwitcher.CurrentGenre() == cGenre::GENRE_INVALID);
+    TEST(genreSwitcher->CurrentGenre() == cFS::GenreID());
+    
+    // can't switch to invalid genre
+    //genreSwitcher->SelectGenre(cGenre::GENRE_INVALID);
+    //TEST(genreSwitcher->CurrentGenre() == cGenre::GENRE_INVALID);
 
-    genreSwitcher.SelectGenre(cGenre::FS);
-    TEST(genreSwitcher.CurrentGenre() == cGenre::FS);
-    #ifdef _CPPRTTI 
+    genreSwitcher->SelectGenre(cFS::GenreID());
+    TEST(genreSwitcher->CurrentGenre() == cFS::GenreID());
     TEST(typeid(*iTWFactory::GetInstance()) == typeid(cFSFactory));
-    #endif
-
-    genreSwitcher.SelectGenre(cGenre::NTFS);
-    TEST(genreSwitcher.CurrentGenre() == cGenre::NTFS);
-    #ifdef _CPPRTTI 
-    TEST(typeid(*iTWFactory::GetInstance()) == typeid(cNTFSFactory));
-    #endif
 
     d.TraceDebug("All tests passed.\n");
-#endif //#if 0
 }

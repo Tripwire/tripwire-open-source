@@ -1,4 +1,14 @@
-What's new in Open Source Tripwire 2.4.3.2:
+What's new in Open Source Tripwire 2.4.3.x:
+
+* Useful ‘install-strip’, ‘check’, ‘uninstall’ & ‘distcheck’ make targets as of OST 2.4.3.5.  Check target invokes both the test-harness framework and twtest unit tests.
+
+* Verify OST builds without errors w/ GCC 7.0.x; fix new warnings from the new compiler, including deprecation warnings; use std::unique_ptr instead of std::auto_ptr where available.
+
+* Add ‘--disable-extrawarnings’ configure option, for old compilers that don’t support the ’-Wextra’ compile option.
+
+* Clean up unit tests, enable various disabled tests, make results more useful.
+
+* Additional cleanup due to static analysis tool results (CppCheck, Flawfinder, Clang analyzer).
 
 * OST now includes optional iconv support when configured with --enable-iconv.
 When enabled, binary database & report files store paths as UTF-16, making these files more
@@ -28,11 +38,6 @@ specifying a build directory outside the source dir now works as expected.
 
 * Assorted platform tweaks:  Add DOS/FreeDOS + DJGPP as a new platform; support Cygwin
 //host/share/path syntax for UNC paths; passphrase & tempfile fixes for AROS.
-
-
-======================================
-
-What was new in earlier 2.4.3 versions:
 
 * This update fixes compilation errors on modern compilers (GCC 4.7+ and LLVM/clang), 
 as well as some additional errors encountered on various platforms.  This is intended
@@ -66,15 +71,22 @@ defined incorrectly otherwise.
 The update has been tested on a variety of platforms: 
 
 Linuxes
-- CentOS 7 (amd64) + gcc 4.8.5
-- Ubuntu 14.0.4 (amd64) + gcc 4.x
-- RHEL 3.4 (Itanium) + gcc 3.4.3
 - Alpine Linux 3.3.3 + gcc 5.3.0
-- Android 6.0 (arm) + gcc 4.9
-- Raspbian 7 (wheezy) (armv6l) + gcc 4.6.3
-- openSuSE Tumbleweed (20160408) (i586) + gcc 5.3.1
-- RHEL 6.0 (powerpc64) + gcc 4.4.4
+- Alpine Linux 3.5.1 + gcc 6.2.1
+- Arch Linux 232 + gcc 6.3.1
+- Amazon Linux AMI 2016.09 + gcc 4.8.3
+- Android 6.0 (arm) + gcc 4.9 (NDK)
+- CentOS 7 (amd64) + gcc 4.8.5
 - Fedora 24 Alpha 7 (amd64) + gcc 6.0.0
+- Fedora 27 Rawhide (amd64) + gcc 7.0.1
+- Raspbian 7 (wheezy) (armv6l) + gcc 4.6.3
+- RHEL 3.4 (Itanium) + gcc 3.4.3
+- RHEL 6.0 (powerpc64) + gcc 4.4.4
+- openSuSE Tumbleweed (20160408) (i586) + gcc 5.3.1
+- Oracle Linux 6.8 + gcc 4.4.7
+- Ubuntu 14.0.4 (amd64) + gcc 4.x
+- Ubuntu 16.0.4 (amd64) + gcc 5.4.0
+- Wind River Pulsar Linux 8 + gcc 5.2.0
 
 OSX
 - Mac OS X 10.11 + LLVM 7.0.2 / clang-700.1.81
@@ -90,7 +102,7 @@ BSDs
 UNIXes
 - Solaris 10 SPARC + gcc 3.4.6
 - Solaris 10 x86 + gcc 3.4.3
-- OpenIndiana 151 + gcc 4.8.5 [an OpenSolaris/illumos distro]
+- OpenIndiana 151 + gcc 4.8.5
 - AIX 5.2 + gcc 4.3.1
 - HP-UX 11.23 + gcc 4.2.3
 

@@ -71,13 +71,11 @@ void TestFCOSpec();
 void TestFCOPropVector();
 void TestFileHeader();
 void TestFSPropSet();
-void TestFSDataSource();
 void TestFCOSpecImpl();
 void TestFSPropCalc();
 void TestFCOPropImpl();
 void TestFCOCompare();
 //void TestTripwire();
-void TestFCOSetUtil();
 void TestWin32FSServices();
 void TestFCOSpecList();
 void TestFCOReport();
@@ -88,7 +86,6 @@ void TestRefCountObj();
 void TestSignature();
 void TestSerRefCountObj();
 void TestUnixFSServices();
-//void TestFCODatabase();
 void TestError();
 void TestDebug();
 void TestFcoSpecUtil();
@@ -96,7 +93,7 @@ void TestTypes();
 void TestTCHAR();
 void TestErrorBucketImpl();
 void TestHashTable();
-//void TestTextReportViewer();
+void TestTextReportViewer();
 void TestFCONameTbl();
 void TestConfigFile();
 
@@ -108,16 +105,14 @@ void TestCryptoArchive();
 void TestFCOSpecAttr();
 void TestCmdLineParser();
 void TestTaskTimer();
-//void TestObjectPool();
 void TestKeyFile();
-void TestFCOSetCached();
 void TestTWUtil();
 void TestFSPropDisplayer();
 void TestFSPropDisplayer();
 void TestGenre();
 void TestFSDataSourceIter();
 void TestGenerateDb();
-//void TestHierDatabaseInteractive();
+void TestHierDatabaseInteractive();
 void TestGenreSwitcher();
 void TestDbDataSource();
 void TestGenreSpecList();
@@ -125,12 +120,11 @@ void TestIntegrityCheck();
 void TestFCODatabaseFile();
 void TestWchar16();
 void TestStringEncoder();
-//void TestDisplayEncoder();
+
 void TestGrowHeap();
 void TestPlatform();
-//void TestBlockFile();
-//void TestBlockRecordArray();
-//void TestHierDatabaseInteractive();
+void TestBlockFile();
+void TestBlockRecordArray();
 void TestTWLocale();
 void TestFileUtil();
 void TestFCONameTranslator();
@@ -158,92 +152,114 @@ void Usage()
              _T("(runs test id's 1, 2, 3, and 12)\n\n");
 }
 
-const int MAX_TEST_ID = 100;
+const int MAX_TEST_ID = 88;
+
+static int failed_count = 0;
 
 static void Test(int testID)
 {
-    switch (testID)
-    {
-    case 1: TestArchive(); break;
-    case 2: TestCmdLineParser(); break;
-    case 3: TestCrypto(); break;
-    case 4: TestCryptoArchive(); break;
-    case 5: TestDebug(); break;
-    case 6: TestError(); break;
-    case 7: TestErrorBucketImpl(); break;
-    case 8: TestFCOCompare(); break;
-    //case 9: TestFCODatabase(); break;
-    //case 11: TestFCOErrorQueue(); break;
-    case 12: TestFCOName(); break;
-    case 13: TestFCONameTbl(); break;
-    case 14: TestFCOPropVector(); break;
-    case 15: TestFCOPropImpl(); break;
-    case 16: TestFCOReport(); break;
-    //case 17: TestFCOSetCached(); break;
-    case 18: TestFCOSetImpl(); break;
-    //case 19: TestFCOSetUtil(); break;
-    case 20: TestFCOSpecAttr(); break;
-    case 21: TestFCOSpecHelper(); break;
-    case 22: TestFCOSpecList(); break;
-    case 23: TestFcoSpecUtil(); break;
-    case 24: TestFileHeader(); break;
-    //case 25: TestFSDataSource(); break;
-    case 26: TestFSPropSet(); break;
-    case 27: TestFSPropCalc(); break;
-    case 28: TestFCOSpecImpl(); break;
-    case 29: TestHashTable(); break;
-//    case 30: TestObjectPool(); break;
-    case 31: TestRefCountObj(); break;
-    case 32: TestSerializerImpl(); break;
-    case 33: TestSerRefCountObj(); break;
-    case 34: TestSignature(); break;
-    case 35: TestTaskTimer(); break;
-    //case 36: TestTripwire(); break;
-    //case 37: TestTextReportViewer(); break;
-    case 39: TestSerRefCountObj(); break;
-    case 40: TestError(); break;
-    //case 41: TestFCODatabase(); break;
-    case 42: TestHashTable(); break;
-    case 43: TestTCHAR(); break;
-    case 44: TestUnixFSServices(); break;
-    case 46: TestConfigFile(); break;
-    case 47: TestPolicyParser(); break;
-    case 48: TestKeyFile(); break;
-    case 49: TestTWUtil(); break;
-    case 50: TestFSPropDisplayer(); break;
-    case 52: TestGenre(); break;        
-    case 53: TestFSDataSourceIter(); break;
-    //case 54: TestGenerateDb(); break;
-    //case 55: TestHierDatabaseInteractive(); break;
-    case 56: TestGenreSwitcher(); break;
-    case 57: TestDbDataSource(); break;
-    case 58: TestGenreSpecList(); break;
-    //case 59: TestIntegrityCheck(); break;
-    case 65: TestWchar16(); break;        
-    case 66: TestStringEncoder(); break;
-    //case 67: TestDisplayEncoder(); break;
-    case 69: TestGrowHeap(); break;
-    case 70: TestPlatform(); break;
-      //case 71: TestBlockFile(); break;
-      //case 72: TestBlockRecordArray(); break;
-      //case 73: TestHierDatabaseInteractive(); break;
-    case 74: TestFileUtil(); break;
-    case 75: TestTWLocale(); break; 
-    case 76: TestFCONameTranslator(); break; 
-    case 77: TestStringUtil(); break; 
-    case 78: TestCodeConverter(); break;
-            
-    case 79: TestCharToHex(); break;
-    case 80: TestHexToChar(); break;
-    case 81: TestStringToHex(); break;
-    case 82: TestHexToString(); break;
-        //    case 83: TestUnconvertable(); break;
-        //    case 84: TestUnprintable(); break;
-    case 85: TestQuoteAndBackSlash(); break;
-    case 86: TestDisplayEncoderBasic(); break;
-    case 87: TestCharUtilBasic(); break;
-    case 88: TestConfigFile2(); break;
+    TCERR << std::endl << "=== Running test ID #" << testID << " ===" << std::endl;
+    
+    try {
+    
+        switch (testID)
+        {
+        case 1: TestArchive(); break;
+        case 2: TestCmdLineParser(); break;
+        case 3: TestCrypto(); break;
+        case 4: TestCryptoArchive(); break;
+        case 5: TestDebug(); break;
+        case 6: TestError(); break;
+        case 7: TestErrorBucketImpl(); break;
+        case 8: TestFCOCompare(); break;
+                
+        case 12: TestFCOName(); break;
+        case 13: TestFCONameTbl(); break;
+        case 14: TestFCOPropVector(); break;
+        case 15: TestFCOPropImpl(); break;
+        case 16: TestFCOReport(); break;
+                
+        case 18: TestFCOSetImpl(); break;
+
+        case 20: TestFCOSpecAttr(); break;
+        case 21: TestFCOSpecHelper(); break;
+        case 22: TestFCOSpecList(); break;
+        case 23: TestFcoSpecUtil(); break;
+        case 24: TestFileHeader(); break;
+
+        case 26: TestFSPropSet(); break;
+        case 27: TestFSPropCalc(); break;
+        case 28: TestFCOSpecImpl(); break;
+        case 29: TestHashTable(); break;
+
+        case 31: TestRefCountObj(); break;
+        case 32: TestSerializerImpl(); break;
+        case 33: TestSerRefCountObj(); break;
+        case 34: TestSignature(); break;
+        case 35: TestTaskTimer(); break;
+        //case 36: TestTripwire(); break;
+        case 37: TestTextReportViewer(); break;
+        case 39: TestSerRefCountObj(); break;
+        case 40: TestError(); break;
+        case 41: TestFCODatabaseFile(); break;
+        case 42: TestHashTable(); break;
+        case 43: TestTCHAR(); break;
+        case 44: TestUnixFSServices(); break;
+        case 46: TestConfigFile(); break;
+        case 47: TestPolicyParser(); break;
+        case 48: TestKeyFile(); break;
+        case 49: TestTWUtil(); break;
+        case 50: TestFSPropDisplayer(); break;
+        case 52: TestGenre(); break;        
+        case 53: TestFSDataSourceIter(); break;
+        //case 54: TestGenerateDb(); break;
+        case 55: TestHierDatabaseInteractive(); break;
+        case 56: TestGenreSwitcher(); break;
+        case 57: TestDbDataSource(); break;
+        case 58: TestGenreSpecList(); break;
+        //case 59: TestIntegrityCheck(); break;
+                
+        case 65: TestWchar16(); break;        
+        case 66: TestStringEncoder(); break;
+
+        case 69: TestGrowHeap(); break;
+        case 70: TestPlatform(); break;
+        case 71: TestBlockFile(); break;
+        case 72: TestBlockRecordArray(); break;
+        case 74: TestFileUtil(); break;
+        case 75: TestTWLocale(); break; 
+        case 76: TestFCONameTranslator(); break; 
+        case 77: TestStringUtil(); break; 
+        case 78: TestCodeConverter(); break;
+                
+        case 79: TestCharToHex(); break;
+        case 80: TestHexToChar(); break;
+        case 81: TestStringToHex(); break;
+        case 82: TestHexToString(); break;
+            //    case 83: TestUnconvertable(); break;
+            //    case 84: TestUnprintable(); break;
+        case 85: TestQuoteAndBackSlash(); break;
+        case 86: TestDisplayEncoderBasic(); break;
+        case 87: TestCharUtilBasic(); break;
+        case 88: TestConfigFile2(); break;
+        }
+
     }
+    catch (eError& error)
+    {
+        cTWUtil::PrintErrorMsg(error);
+        failed_count++;
+    }
+    catch (std::exception& e) {
+        TCERR << "FAILED: " << e.what() << std::endl;
+        failed_count++;
+    }
+    catch (...) {
+        TCERR << "FAILED: <unknown>" << std::endl;
+        failed_count++;
+    }
+    
+    TCERR << std::endl << "=== test ID #" << testID << " completed ===" << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -336,9 +352,9 @@ int _tmain(int argc, TCHAR** argv)
 
     // force user to hit <CR>
     
-    std::cout << std::endl << "Tests completed" << std::endl;
-    
-    return 0;
+    std::cout << std::endl << "Tests completed with " << failed_count << " failures." << std::endl;
+        
+    return failed_count ? -1 : 0;
 }
 
 

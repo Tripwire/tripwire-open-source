@@ -114,6 +114,8 @@ static bool init (cFCOPropVector &testV)
     return true;
 } //end init
 
+
+#if 0 // TODO: rework this so it doesn't need user interaction
 static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
 {
     int var1 = 0 , var2 = 64, var3 = 2;
@@ -191,6 +193,7 @@ static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
     out &= local;   //and-ing of results.
     return out;
 }//end addRemove
+#endif
 
 static bool objManip (cFCOPropVector &testV, cDebug& d)
 {

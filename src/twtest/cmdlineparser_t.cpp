@@ -88,6 +88,7 @@ const TCHAR* argv5[] =
     _T("frog")
 };
 
+#ifdef _DEBUG
 static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
 {
     TSTRING str;
@@ -99,6 +100,7 @@ static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
     }
     d.TraceDebug(_T(">>>%s\n"), str.c_str());
 }
+#endif
 
 static void test_parse(cCmdLineParser& parser, const int argc, const TCHAR** argv, bool should_throw)
 {

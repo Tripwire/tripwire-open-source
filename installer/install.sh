@@ -17,7 +17,7 @@
 ## from Larry Wall's metaconfig.
 ##-------------------------------------------------------
 
-PATH='.:/bin:/usr/bin'
+PATH=".:/bin:/usr/bin:/usr/local/bin:$PATH"
 export PATH || (echo 'You must use sh to run this script'; kill $$)
 if [ ! -t 0 ] ; then
 	echo "Say 'sh install.sh', not 'sh < install.sh'"
@@ -40,18 +40,6 @@ if [ "`echo -n`" = "-n" ] ; then
 else
 	n=" -n"
 	c=""
-fi
-
-##-------------------------------------------------------
-## Better have a copy of tar!
-## If /bin/sh does not exist or is not readable (seems
-## fairly unlikely), then this will fail.
-##-------------------------------------------------------
-
-(tar cvf /dev/null /bin/sh) 2> /dev/null 1>&2
-if [ $? -ne 0 ]; then
-    echo "tar command not found -- aborting install."
-	exit 1
 fi
 
 ##-------------------------------------------------------
@@ -79,51 +67,23 @@ for p in $awknames; do
 done
 
 ##-------------------------------------------------------
-## Does this system have a copy of grep we can use?
-## Some greps don't return status (amazing, huh?),
-## so we look for a copy of grep that
-## returns 0 status for an exact match
-## returns 0 status for a case-insensitive match
-## returns 0 status for a wildcard match
-## returns non-zero status for a failed match
-##-------------------------------------------------------
-
-GREP=""
-grepnames="grep egrep"
-lcgrepstr="findensiemich"     # all lower case
-mcgrepstr="FindenSieMich"     # mixed case
-wcgrepstr="sie.ich$"          # wild card match
-nogrepstr="WoBistDu"          # should not be able to find this
-for p in $grepnames; do
-	(echo "$lcgrepstr" | $p "$lcgrepstr") 2> /dev/null 1>&2
-	if [ $? -eq 0 ]; then
-		(echo "$lcgrepstr" | $p -i "$mcgrepstr") 2> /dev/null 1>&2
-		if [ $? -eq 0 ]; then
-			(echo "$lcgrepstr" | $p "$wcgrepstr") 2> /dev/null 1>&2
-			if [ $? -eq 0 ]; then
-				(echo "$lcgrepstr" | $p "$nogrepstr") 2> /dev/null 1>&2
-				if [ $? -ne 0 ]; then
-					GREP=$p
-					break
-				fi
-			fi
-		fi
-	fi
-done
-
-##-------------------------------------------------------
 ## Does this system have a pager that we can use?
 ## Use cat if desperate.
 ##-------------------------------------------------------
 
 MORE="cat"
-morenames="more less cat"
+morenames="less more most pg cat"
 for p in $morenames; do
-	($p $0 < /dev/null) 2> /dev/null 1>&2
-	if [ $? -eq 0 ]; then
-		MORE=$p
-		break
-	fi
+    pagerpath=`command -v $p`
+
+    if [ -z $pagerpath ]; then
+        continue
+    fi
+
+    if [ -x $pagerpath ]; then
+        MORE=$pagerpath
+        break
+    fi
 done
 
 ##-------------------------------------------------------
@@ -416,15 +376,21 @@ else
 ##-------------------------------------------------------
 ## Verify that the specified editor program exists
 ##-------------------------------------------------------
- 
-TWEDITOR=${TWEDITOR:-'/bin/vi'}
+
+DEFAULTEDITOR=${EDITOR:-‘/bin/vi’}
+TWEDITOR=${TWEDITOR:-$DEFAULTEDITOR}
+TWEDITOR_PATH=`command -v $TWEDITOR`
+
+if [ -n ${TWEDITOR_PATH} ]; then
+    TWEDITOR=$TWEDITOR_PATH
+fi
 
 if [ -x ${TWEDITOR} ]; then
-        echo "${TWEDITOR} exists.  Continuing installation."
-        echo
+    echo "${TWEDITOR} exists.  Continuing installation."
+    echo
 else
-        echo "${TWEDITOR} does not exist.  Exiting."
-        exit 1
+    echo "${TWEDITOR} not found. Continuing, but your configuration may need to be edited after installation."
+    echo
 fi
 
 ##-------------------------------------------------------
@@ -927,7 +893,7 @@ cat << END_OF_TEXT
 ----------------------------------------------
 The installation succeeded.
 
-Please refer to $README_LOC
+Please refer to documentation in $TWDOCS
 for release information and to the printed user documentation
 for further instructions on using Tripwire 2.4 Open Source.
 
