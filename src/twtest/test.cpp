@@ -247,6 +247,7 @@ static void Test(int testID)
     }
     catch (eError& error)
     {
+        TCERR << "FAILED: " ;
         cTWUtil::PrintErrorMsg(error);
         failed_count++;
     }
@@ -351,9 +352,9 @@ int _tmain(int argc, TCHAR** argv)
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
 
     // force user to hit <CR>
-    
+
     std::cout << std::endl << "Tests completed with " << failed_count << " failures." << std::endl;
-        
+
     return failed_count ? -1 : 0;
 }
 
