@@ -531,7 +531,7 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
                           const cTWModeCommon *modeCommon,
                           const bool bForceFullReport)
 {
-  std::auto_ptr<cMailMessage> reportMail;
+  TW_UNIQUE_PTR<cMailMessage> reportMail;
 
   // allocate the right kind of emailer object based on what came out of the config file.
   switch (modeCommon->mMailMethod) 
@@ -540,10 +540,10 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
       ASSERT(false);
       return false;
     case cMailMessage::MAIL_BY_SMTP:
-      reportMail = std::auto_ptr<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
+      reportMail = TW_UNIQUE_PTR<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
       break;
     case cMailMessage::MAIL_BY_PIPE:
-      reportMail = std::auto_ptr<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
+      reportMail = TW_UNIQUE_PTR<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
     }
 
@@ -685,7 +685,7 @@ bool cTWCmdLineUtil::EmailReport(const cFCOReportHeader& header, const cFCORepor
 
 bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWModeCommon *modeCommon)
 {
-   std::auto_ptr<cMailMessage> reportMail;
+   TW_UNIQUE_PTR<cMailMessage> reportMail;
 
    // allocate the right kind of emailer object based on what came out of the config file.
    switch (modeCommon->mMailMethod) 
@@ -694,10 +694,10 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
       ASSERT(false);
       return false;
    case cMailMessage::MAIL_BY_SMTP:
-      reportMail = std::auto_ptr<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
+      reportMail = TW_UNIQUE_PTR<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
       break;
    case cMailMessage::MAIL_BY_PIPE:
-      reportMail = std::auto_ptr<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
+      reportMail = TW_UNIQUE_PTR<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
    }
 

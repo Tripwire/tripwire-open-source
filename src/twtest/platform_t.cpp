@@ -85,6 +85,13 @@ void TestPlatform()
 template<int ALIGN_SIZE> 
 AlignMe<ALIGN_SIZE>::AlignMe()
 {
+// HP-UX does not play your silly alignment games, at least unless you
+// first invoke something called "allow_unaligned_data_access()", which
+// apparently incurs a substantial perf penalty. Luckily we don't appear
+// to have any need for that behavior, which begs the question of why
+// this test exists in the first place.
+//  -bcox
+#if (!IS_HPUX)
     TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
     // access a double in the byte array to see if it is aligned.  if it isn't and the CPU
@@ -101,6 +108,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     *pi = i; // access memory for write
     TCOUT << _T("Write succeeded.") << std::endl;
 
+
     // this should choke if the CPU can't 
     // handle misaligned memory access
     int64* pb = (int64*)&a[ALIGN_SIZE];
@@ -111,6 +119,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     TCOUT << _T("Writing...") << std::endl;
     *pb = I; // access memory for write
     TCOUT << _T("Write succeeded.") << std::endl;
+#endif
     
     TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
           << _T("=========================================\n");
@@ -194,15 +203,15 @@ void TestAlignment()
 void TestSizes()
 {
     /*
-    ASSERT( CanBeRepresentedAs( char(), char() ) );
-    ASSERT( CanBeRepresentedAs( char(), unsigned char() ) );
-    ASSERT( CanBeRepresentedAs( unsigned char(), char() ) );
-    ASSERT( CanBeRepresentedAs( unsigned char(), unsigned char() ) );
-    ASSERT( CanBeRepresentedAs( signed char(), char() ) );
-    ASSERT( CanBeRepresentedAs( char(), signed char() ) );
-    ASSERT( CanBeRepresentedAs( signed char(), signed char() ) );
-    ASSERT( CanBeRepresentedAs( signed char(), unsigned char() ) );
-    ASSERT( CanBeRepresentedAs( char(), signed char() ) );
+    TEST( CanBeRepresentedAs( char(), char() ) );
+    TEST( CanBeRepresentedAs( char(), unsigned char() ) );
+    TEST( CanBeRepresentedAs( unsigned char(), char() ) );
+    TEST( CanBeRepresentedAs( unsigned char(), unsigned char() ) );
+    TEST( CanBeRepresentedAs( signed char(), char() ) );
+    TEST( CanBeRepresentedAs( char(), signed char() ) );
+    TEST( CanBeRepresentedAs( signed char(), signed char() ) );
+    TEST( CanBeRepresentedAs( signed char(), unsigned char() ) );
+    TEST( CanBeRepresentedAs( char(), signed char() ) );
     */
 }
  

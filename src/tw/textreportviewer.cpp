@@ -143,7 +143,8 @@ int cTextReportViewer::Init( const cFCOReportHeader& h, cFCOReport& r )
 {
     mpHeader = &h;
     mpReport = &r;
-    mpOut = NULL; 
+    mpOut = NULL;
+    mpIn  = NULL;
     mpCurPD = NULL;
     mpCurNT = NULL;
     mfUpdate = false;
@@ -152,6 +153,7 @@ int cTextReportViewer::Init( const cFCOReportHeader& h, cFCOReport& r )
     mErrorNum = 1;
     mReportingLevel = FULL_REPORT;
     mfGotNumbers = false;
+    mCurrentChar[0] = '\0';
     mCurrentCharSize = 0;
     return 0;
 }
@@ -160,7 +162,7 @@ cTextReportViewer::~cTextReportViewer()
 {
     if( mfUpdate )
     {
-        for( GenreList::iterator i = mFCOsRemoveFromReport.begin(); i != mFCOsRemoveFromReport.end(); i++ )
+        for( GenreList::iterator i = mFCOsRemoveFromReport.begin(); i != mFCOsRemoveFromReport.end(); ++i )
         {
             ASSERT( i->second != 0 );
             i->second->clear();
@@ -434,8 +436,8 @@ void cTextReportViewer::PrintErrors()
         cFCOReportSpecIter rsi( genreIter );
         for( rsi.SeekBegin(); !rsi.Done(); rsi.Next() )
         {
-            cErrorQueueIter eqIter( *( rsi.GetErrorQueue() ) );
-            for( eqIter.SeekBegin(); !eqIter.Done(); eqIter.Next() )
+            cErrorQueueIter eqIter2( *( rsi.GetErrorQueue() ) );
+            for( eqIter2.SeekBegin(); !eqIter2.Done(); eqIter2.Next() )
             {                   
                 if( fFirstErrorInGenre )
                 {
@@ -443,7 +445,7 @@ void cTextReportViewer::PrintErrors()
                     fFirstErrorInGenre = false;
                 }
 
-                ReportError( eqIter );
+                ReportError( eqIter2 );
             }        
         }
 
@@ -694,9 +696,6 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
     // make sure we can read from this file
     cFileUtil::TestFileReadable( strFilename );
 
-#if IS_UNIX
-
-
     // editor is going to need terminal type, so tell msystem to include
     // it in environment when it makes its system call.
     le_set("TERM");
@@ -718,8 +717,6 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
         //ASSERT( false );
         throw eTextReportViewerEditorLaunch( edName );
     }
-
-#endif //if IS_WIN32
     
     return( fRanViewer );
 }
@@ -1054,7 +1051,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
             //
             // see if any FCOs to remove are in this set
             // 
-            for( iter = pFCOList->begin(); iter != pFCOList->end(); iter++ )
+            for( iter = pFCOList->begin(); iter != pFCOList->end(); ++iter )
             {
                 fcoIter = pAddedSet->Lookup( *iter );
                 if( fcoIter )
@@ -1074,7 +1071,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
             //
             // see if any FCOs to remove are in this set
             // 
-            for( iter = pFCOList->begin(); iter != pFCOList->end(); iter++ )
+            for( iter = pFCOList->begin(); iter != pFCOList->end(); ++iter )
             {
                 fcoIter = pRemovedSet->Lookup( *iter );
                 if( fcoIter )
@@ -1087,7 +1084,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
             }
 
             
-            for( iter = pFCOList->begin(); iter != pFCOList->end(); iter++ )
+            for( iter = pFCOList->begin(); iter != pFCOList->end(); ++iter )
             {
                 // search changed
                 // get changed set iterator
@@ -1113,7 +1110,7 @@ void cTextReportViewer::RemoveFCOsFromReport() //throw (eTextReportViewer)
     //
     int nFCOsToRemove = 0;
     cTextReportViewer::GenreList::const_iterator iter = mFCOsRemoveFromReport.begin();
-    for( ; iter != mFCOsRemoveFromReport.end(); iter++ )
+    for( ; iter != mFCOsRemoveFromReport.end(); ++iter )
         nFCOsToRemove += iter->second->size();
 
     if( nFCOsToRemove != nFCOsRemoved )
@@ -1164,8 +1161,6 @@ void cTextReportViewer::OutputReportHeader()
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString( cTW, tw::STR_HOST_IP ) << mpHeader->GetIPAddress() << endl;
     
-// only output host ID on UNIX systems
-#if IS_UNIX
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString( cTW, tw::STR_HOST_ID );
 
@@ -1173,8 +1168,6 @@ void cTextReportViewer::OutputReportHeader()
         (*mpOut) << mpHeader->GetHostID() << endl;
     else
         (*mpOut) << TSS_GetString( cTW, tw::STR_NONE ) << endl;
-#endif
-
     
     (*mpOut)    << setw(headerColumnWidth)
                 << TSS_GetString( cTW, tw::STR_POLICY_FILE_USED ) 

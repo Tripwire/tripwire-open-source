@@ -76,7 +76,7 @@ class tw_yy_scan : public yy_scan
 {
     enum { MAX_TOKEN_LENGTH = 1024 };
 public:
-    tw_yy_scan( std::istream& i ) : yy_scan( MAX_TOKEN_LENGTH ), mIn(i) {}; // need to increase token length over mks default
+    explicit tw_yy_scan( std::istream& i ) : yy_scan( MAX_TOKEN_LENGTH ), mIn(i) {}; // need to increase token length over mks default
 
     virtual int yygetc() { return mIn.get(); };
     
@@ -123,7 +123,7 @@ private:
 class cPolicyParser
 {
 public:
-    cPolicyParser( std::istream& in ); // input source 
+    explicit cPolicyParser( std::istream& in ); // input source
     
     void                    Execute( cGenreSpecListVector& policy, cErrorBucket* pError ); //throw(eError);
     void                    Check( cErrorBucket* pError ); //throw(eError);

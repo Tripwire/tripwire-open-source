@@ -38,8 +38,6 @@
 #include "core/archive.h"
 #include "fco/fconame.h"
 
-#if IS_UNIX
-
 #ifndef __TEST_H
 #include "twtest/test.h"
 #endif
@@ -70,8 +68,8 @@ void TestUnixFSServices()
             d.TraceDebug("name: %d entries\n", v.size());
 
             std::vector <TSTRING>::iterator p;
-            int n = 0;
-            for (p = v.begin(); p != v.end(); p++) {
+            size_t n = 0;
+            for (p = v.begin(); p != v.end(); ++p) {
                 d.TraceDetail("    %s\n", p->c_str());
                 n++;
             }
@@ -182,7 +180,7 @@ void TestUnixFSServices()
     }
 
 }
-#endif // IS_UNIX
+
 
 
 

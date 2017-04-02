@@ -44,7 +44,7 @@
 #include "core/errorbucketimpl.h"
 #include "core/usernotifystdout.h"
 #include "core/timebomb.h"
-#include <memory>       // for auto_ptr
+#include <memory>       // for auto_ptr / unique_ptr
 #include <iostream>
 #include <exception>
 
@@ -55,12 +55,8 @@
 #include "fco/fcogenre.h"
 #include "fco/genreswitcher.h"
 
-#if IS_UNIX
 #include "core/unixfsservices.h"
 #include <unistd.h>
-#else
-#error Who the hell am I?
-#endif
 
 static TSTRING util_GetWholeCmdLine( int argc, const TCHAR *argv[] );
 
@@ -137,7 +133,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         
 
         // first, get the right mode...
-        std::auto_ptr<iTWMode> pMode(cTWCmdLine::GetMode(argc, argv));
+        TW_UNIQUE_PTR<iTWMode> pMode(cTWCmdLine::GetMode(argc, argv));
         if(! pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)
@@ -171,13 +167,11 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 
         TSTRING commandLine = util_GetWholeCmdLine( argc, argv );
 
-        #if IS_UNIX
         // erase the command line
         // TODO: it might be a good idea to move this to cTWUtil
         int i;
         for (i = 1; i < argc; ++i)
             memset((char*)argv[i], 0, strlen(argv[i])*sizeof(TCHAR));
-        #endif
 
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWCmdLine::HELP))
@@ -243,7 +237,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         ret = 8;
     }
 
-    catch (std::bad_alloc e)
+    catch (std::bad_alloc& e)
     {
         // Note: We use fputs rather than TCERR as it will probably require the
         // least amount of memory to do its thing.  If we ran out of memory we
@@ -253,7 +247,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         ret = 8;
     }
 
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         TCERR << _T("*** Fatal exception: ");
         std::cerr << e.what() << std::endl;

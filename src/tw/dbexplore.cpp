@@ -179,7 +179,7 @@ static void SplitString( const TSTRING& str, TCHAR c, std::vector<TSTRING>& vStr
     vStrings.clear();
 
     TSTRING::const_iterator i, prev;
-    for( prev = i = str.begin(); i != str.end(); i++ )
+    for( prev = i = str.begin(); i != str.end(); ++i )
     {
         if( *i == c )
         {
@@ -284,7 +284,7 @@ void cDbExplore::Execute( cFCODatabaseFileIter& dbIter )
             GetNoun(noun);
             std::vector<TSTRING> vDirs;
             SplitString( noun, pIter->GetParentName().GetDelimiter(), vDirs );
-            for( std::vector<TSTRING>::iterator i = vDirs.begin(); i != vDirs.end(); i++ )
+            for( std::vector<TSTRING>::iterator i = vDirs.begin(); i != vDirs.end(); ++i )
             {
                 
                 if( i->compare( _T("..") ) == 0 )

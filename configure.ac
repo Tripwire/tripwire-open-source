@@ -2,34 +2,38 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT([tripwire], [2.4.3.4], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
+AC_INIT([tripwire], [2.4.3.5], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2017 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
-AC_REVISION([$Revision: 2.4.3.4 $])
-
-dnl #################################
-dnl Cleanup Cruft Leftover From Patch
-dnl #################################
-rm -f src/tripwire/syslog.h 2> /dev/null
-chmod 755 install-sh 2> /dev/null
+AC_REVISION([$Revision: 2.4.3.5 $])
 
 dnl ###############
 dnl Setup defaults
 dnl ###############
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -Wextra -Wno-unused-parameter -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 
 dnl #####################
 dnl Configuration options
 dnl #####################
+
+# This is primarily to support old compilers that don’t understand -Wextra
+AC_ARG_ENABLE(extrawarnings,  [  —-disable-extrawarnings do not compile with -Wextra warnings enabled])
+if test "x$enable_extrawarnings" != "xno"
+then
+   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
+   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
+fi
+
 AC_ARG_ENABLE(static, [  --enable-static         compile static binaries])
 if test "x$enable_static" = xyes
 then LDFLAGS="${LDFLAGS} -static"
 fi
+
 AC_ARG_ENABLE(debug,  [  --enable-debug          compile with debuging enabled])
 if test "x$enable_debug" = xyes
 then
@@ -42,7 +46,7 @@ dnl ###################
 dnl Checks for programs
 dnl ###################
 AC_PROG_CC([gcc clang suncc aCC xlC_r xlC cl.exe])
-AC_PROG_CXX([g++ clang++ sunCC aCC xlC_r xlC cl.exe])
+AC_PROG_CXX([g++ c++ clang++ sunCC aCC xlC_r xlC cl.exe])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S

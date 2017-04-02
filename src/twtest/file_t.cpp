@@ -39,41 +39,55 @@
 
 void TestFile()
 { 
+    try
+    {
+        TSTRING fileName = TEMP_DIR;
+        fileName += _T("/file_test.bin");
 
-    TSTRING fileName = TEMP_DIR;
-    fileName += _T("/file_test.bin");
+        //Create a temporary file for testing:
+        FILE* testStream;
+        testStream = _tfopen( fileName.c_str(), _T("w+b"));
+        TEST(testStream);
+        
+        TSTRING testString( _T("This is a test") );
+        int iTestStringLength = testString.length();
 
-    //Create a temporary file for testing:
-    FILE* testStream;
-    testStream = _tfopen( fileName.c_str(), _T("w+b"));
-    TSTRING testString( _T("This is a test") );
-    int iTestStringLength = testString.length();
+        //Write some data to the stream...
+        fwrite( testString.c_str(), sizeof(TCHAR), iTestStringLength, testStream );
+        fclose( testStream );
 
-    //Write some data to the stream...
-    fwrite( testString.c_str(), sizeof(TCHAR), iTestStringLength, testStream );
-    fclose( testStream );
+        //Open the file again, for reading only this time.
+        testStream = _tfopen( fileName.c_str(), _T("rb") );
+        TEST(testStream);
+        
+        cFile fTempFile;
+        //Try attaching one of our file objects to the stream.
+    //TODO: fTempFile.AttachRead( testStream );
 
-    //Open the file again, for reading only this time.
-    testStream = _tfopen( fileName.c_str(), _T("rb") );
+        //Try reading something from the file object
+        TCHAR buffer[40];
+        TCHAR buffer2[40];
 
-    cFile fTempFile;
-    //Try attaching one of our file objects to the stream.
-//TODO: fTempFile.AttachRead( testStream );
+        fTempFile.Read( buffer, sizeof(TCHAR) * iTestStringLength );
+        fTempFile.Close();
 
-    //Try reading something from the file object
-    TCHAR buffer[40];
-    TCHAR buffer2[40];
+        testStream = _tfopen( fileName.c_str(), _T("a+b") );
+        TEST(testStream);
+    //TODO: fTempFile.AttachReadWrite( testStream ); 
 
-    fTempFile.Read( buffer, sizeof(TCHAR) * iTestStringLength );
-    fTempFile.Close();
-
-    testStream = _tfopen( fileName.c_str(), _T("a+b") );
-//TODO: fTempFile.AttachReadWrite( testStream ); 
-
-    //Now try writing something to the stream.
-    fTempFile.Write( testString.c_str(), sizeof(TCHAR) * iTestStringLength );
-    fTempFile.Rewind();
-    fTempFile.Read( buffer2, sizeof(TCHAR) * iTestStringLength * 2 );
-
+        //Now try writing something to the stream.
+        fTempFile.Write( testString.c_str(), sizeof(TCHAR) * iTestStringLength );
+        fTempFile.Rewind();
+        fTempFile.Read( buffer2, sizeof(TCHAR) * iTestStringLength * 2 );
+    }
+    catch(const eError& e)
+    {
+        TCERR << std::endl << e.GetMsg() << std::endl;
+        TEST(false);
+    }
+    catch(...)
+    {
+        TEST(false);
+    }
 }
 

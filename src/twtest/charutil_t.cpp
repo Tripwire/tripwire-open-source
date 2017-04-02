@@ -37,69 +37,57 @@
 
 #include "core/stdcore.h"
 
-#ifdef TSS_TEST
-
-#include "test/utx.h"
-#include "charutil.h"
-#include "debug.h"
-#include "errorbucketimpl.h"
+#include "core/charutil.h"
+#include "core/debug.h"
+#include "core/errorbucketimpl.h"
+#include "twtest/test.h"
 
 
-///////////////////////////////////////////////////////////////////////////////
-// cCharEncoderTest
-///////////////////////////////////////////////////////////////////////////////
-class cCharEncoderTest
+void PrintChars( const TSTRING& str )
 {
-public:
-
-    void PrintChars( const TSTRING& str )
+    TSTRING::const_iterator cur = str.begin();
+    TSTRING::const_iterator end = str.end();
+    TSTRING::const_iterator first, last;
+    
+    while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
-        const TCHAR* cur = str.begin();
-        const TCHAR* end = str.end();
-        const TCHAR* first = NULL;
-        const TCHAR* last  = NULL;
+        TCOUT << _T("char length: ") << (int)(last - first) << std::endl;
 
-        while( cCharUtil::PopNextChar( cur, end, first, last ) )
+        TCOUT << _T("char: <");
+        for( TSTRING::const_iterator at = first; at != last; at++ )
         {
-            TCOUT << _T("char length: ") << (int)(last - first) << std::endl;
-
-            TCOUT << _T("char: <");
-            for( const TCHAR* at = first; at != last; at++ )
-            {
-                if( at != first )
-                    TCOUT << _T(",");
-                TCOUT << (int)*at;
-            }
-            TCOUT << _T(">") << std::endl;
+            if( at != first )
+                TCOUT << _T(",");
+            TCOUT << (int)*at;
         }
-        
-        TCOUT << _T("----------------------------") << std::endl;
+        TCOUT << _T(">") << std::endl;
     }
+    
+    TCOUT << _T("----------------------------") << std::endl;
+}
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Basic
-    ///////////////////////////////////////////////////////////////////////////    
-    void Basic( tss::TestContext& ctx )
+///////////////////////////////////////////////////////////////////////////
+// Basic
+///////////////////////////////////////////////////////////////////////////    
+void TestCharUtilBasic()
+{
+    try
     {
-        try
-        {
-            PrintChars( _T("foo") );
-            PrintChars( _T("fo\x2354") );
-        }
-        catch( eError& e )
-        {
-            cErrorReporter::PrintErrorMsg( e ); 
-            ASSERT(false);
-        }
+        PrintChars( _T("foo") );
+        PrintChars( _T("fo\x23 54") );
     }
-};
+    catch( eError& e )
+    {
+        cErrorReporter::PrintErrorMsg( e ); 
+        TEST(false);
+    }
+}
 
+
+/*
 TSS_BeginTestSuiteFrom( cCharEncoderTest )
 
     TSS_AddTestCase( Basic );
         
 TSS_EndTestSuite( cCharEncoderTest )
-
-#endif // TSS_TEST
-
-// eof: charutil_t.cpp
+*/

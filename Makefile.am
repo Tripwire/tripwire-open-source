@@ -6,4 +6,13 @@ install-data-hook:
 	export INSTALL_STRIP_FLAG
 	prefix="$(prefix)" sysconfdir="$(sysconfdir)" \
         path_to_vi="$(path_to_vi)" path_to_sendmail="$(path_to_sendmail)" \
-        ./installer/install.sh
+        $(top_srcdir)/installer/install.sh
+
+uninstall-hook:
+	rm -f ${prefix}/sbin/tripwire $(prefix)/sbin/twadmin $(prefix)/sbin/twprint $(prefix)/sbin/siggen
+	rm -Rf $(prefix)/doc
+
+check:
+	rm -Rf $(top_srcdir)/src/test-harness/twtest
+	cd $(top_srcdir)/src/test-harness && perl ./twtest.pl
+	$(top_srcdir)/bin/twtest all

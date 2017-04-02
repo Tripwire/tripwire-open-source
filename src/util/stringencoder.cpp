@@ -120,7 +120,7 @@ TSTRING& cStringEncoder::Encode( const TSTRING& in, TSTRING& out )
     //
     out.reserve( in.length() );
 
-    for( TSTRING::const_iterator i = in.begin(); i != in.end(); i++ )
+    for( TSTRING::const_iterator i = in.begin(); i != in.end(); ++i )
         ce.EncodeChar( i, out );
 
     return out;
@@ -143,7 +143,7 @@ TSTRING& cStringEncoder::Unencode( const TSTRING& in, TSTRING& out )
     out.reserve( in.length() );
 
     TSTRING::const_iterator end = in.end();
-    for( TSTRING::const_iterator i = in.begin(); i != end; i++ )
+    for( TSTRING::const_iterator i = in.begin(); i != end; ++i )
         out += ce.DecodeChar( i, end );
     
     return out;

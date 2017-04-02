@@ -143,18 +143,14 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
 
     iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_GENERATING_KEYS).c_str());
 
-#if IS_UNIX
     fflush(stdout);
-#endif
 
     tGK gk;
     gk.passphrase = (int8*)passphrase.data();
     gk.passphraseLen = passphrase.length() * sizeof(WCHAR16);
     gk.keyPath = keyPath;
 
-#if IS_UNIX
     GeneratePublicPrivateKeys(&gk, key_size);
-#endif
 
     if (gk.retValue != tGK::OK)
     {
@@ -162,6 +158,8 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
         {
         case tGK::FILE_WRITE_ERROR:
             TCERR << std::endl << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN_FILEWRITE) << gk.keyPath << std::endl;
+            break;
+
         default:
             TCERR << std::endl << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN) << gk.keyPath 
                   << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN2) << std::endl;

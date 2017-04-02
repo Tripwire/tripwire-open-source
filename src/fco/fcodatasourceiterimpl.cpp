@@ -52,7 +52,7 @@
 //=========================================================================
 
 cFCODataSourceIterImpl::cFCODataSourceIterImpl()
-    : mFlags(0)
+    : mpErrorBucket(0), mParentName(), mFlags(0)
 {
 }
 
@@ -75,7 +75,7 @@ cFCODataSourceIterImpl& cFCODataSourceIterImpl::operator=( const cFCODataSourceI
     //
     // we need to addref all of the fcos we just got...
     //
-    for( FCOList::const_iterator i = mPeers.begin(); i != mPeers.end(); i++ )
+    for( FCOList::const_iterator i = mPeers.begin(); i != mPeers.end(); ++i )
     {
         (*i)->AddRef();
     }
@@ -191,7 +191,7 @@ bool cFCODataSourceIterImpl::Done() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::Next()         
 {
-    mCurPos++;
+    ++mCurPos;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,8 @@ void cFCODataSourceIterImpl::SeekToFCO(const cFCOName& name, bool bCreatePeers) 
         GeneratePeers();
     }
 
-    SeekToPeerByName( (*mCurPos)->GetName().GetShortName() );
+    if(mCurPos != mPeers.end() && *mCurPos)
+        SeekToPeerByName( (*mCurPos)->GetName().GetShortName() );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -281,7 +282,7 @@ bool cFCODataSourceIterImpl::IsCaseSensitive() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCODataSourceIterImpl::ClearList()
 {
-    for( mCurPos = mPeers.begin(); mCurPos != mPeers.end(); mCurPos++ )
+    for( mCurPos = mPeers.begin(); mCurPos != mPeers.end(); ++mCurPos )
     {
         (*mCurPos)->Release();
     }
@@ -315,7 +316,7 @@ void cFCODataSourceIterImpl::GeneratePeers()
     //
     std::vector<TSTRING>::iterator i;
     cFCOName curName = mParentName;
-    for( i = vChildrenNames.begin(); i != vChildrenNames.end(); i++)
+    for( i = vChildrenNames.begin(); i != vChildrenNames.end(); ++i)
     {
         curName.Push( *i );
         
@@ -368,7 +369,7 @@ void cFCODataSourceIterImpl::TraceContents(int dl) const
     d.Trace( dl, "FCO Iterator; parent = %s\n", mParentName.AsString().c_str() );
     d.Trace( dl, "---- Peers ---- (current has a * by it)\n" );
     int cnt = 0;
-    for( FCOList::const_iterator iter = mPeers.begin(); iter != mPeers.end(); iter++, cnt++ )
+    for( FCOList::const_iterator iter = mPeers.begin(); iter != mPeers.end(); ++iter, ++cnt )
     {
         d.Trace( dl, "[%d]%c\t:%s\n", cnt, iter == mCurPos ? _T('*') : _T(' '), (*iter)->GetName().AsString().c_str() );
     }
@@ -439,7 +440,7 @@ bool cFCODataSourceIterImpl::CompareForUpperBound( const iFCO* pFCO, const TCHAR
 class cFCODataSourceIterImplCallCompare
 {
 public:
-    cFCODataSourceIterImplCallCompare( const cFCODataSourceIterImpl* pcls )
+    explicit cFCODataSourceIterImplCallCompare( const cFCODataSourceIterImpl* pcls )
         : pc( pcls ) {};
     
     bool operator()( const iFCO* a1, const TCHAR* a2 )

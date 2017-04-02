@@ -46,8 +46,6 @@
 
 #include <fstream>  // for the FileExists() stuff
 
-
-#if IS_UNIX
 #include <unistd.h>
 #include <fcntl.h>
 #if SUPPORTS_TERMIOS
@@ -56,7 +54,6 @@
 #endif
 //#include <signal.h>
 int _getch(void);
-#endif
 
 using namespace std;
 
@@ -282,7 +279,6 @@ int cSiggenCmdLine::Init(cCmdLineParser& parser)
             case HELP:
                 {
                 return 0;
-                break;
                 }
             case CRC32:
                 {
@@ -373,11 +369,6 @@ void PrintHeader( TSTRING filename)
 
 bool util_FileExists(const TSTRING& fileName)
 {
-#if IS_UNIX
-    // for unix we may be able to use the same logic as above, but 
-    // it is too close to 2.2.1 release to make that change w/o testing.
-    // I know the above works for windows.
     return _taccess(fileName.c_str(), F_OK) == 0;
-#endif
 }
 

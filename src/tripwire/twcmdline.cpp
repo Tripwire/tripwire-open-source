@@ -78,11 +78,8 @@
 #include "tasktimer.h"
 #endif
 
-#if IS_UNIX
 #include "fs/fsdatasourceiter.h"  // for cross file systems flag
 #include <unistd.h>           // for _exit()
-#endif
-
 
 //-----------------------------------------------------------------------------
 // #defines
@@ -277,15 +274,10 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     }    
   if(cf.Lookup(TSTRING(_T("RESETACCESSTIME")), str))
     {
-
-
-#if IS_UNIX
       // We do not support reset access time on Unix, so we issue a warning.
       // This used to be a fatal error, however this prevents 
       // cross platform config files.
       cTWUtil::PrintErrorMsg(eTWInvalidConfigFileKey(_T("RESETACCESSTIME"), eError::NON_FATAL));
-#endif
-
     }
   if(cf.Lookup(TSTRING(_T("LOOSEDIRECTORYCHECKING")), str))
     {
@@ -649,12 +641,9 @@ bool cTWModeDbInit::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    if (cTWUtil::VerifyCfgSiteKey( mstrConfigFile, mpData->mSiteKeyFile ) == false)
         cTWUtil::PrintErrorMsg(eTWCfgUnencrypted(_T(""), eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
 
-    #if IS_UNIX
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
-    #endif
-    
-   return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1021,13 +1010,10 @@ bool cTWModeIC::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    //
    if (cTWUtil::VerifyCfgSiteKey( mstrConfigFile, mpData->mSiteKeyFile ) == false)
         cTWUtil::PrintErrorMsg(eTWCfgUnencrypted(_T(""), eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
-      
-    #if IS_UNIX
+    
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
-    #endif
-    
-   return true;
+    return true;
 }
 
 
@@ -1137,18 +1123,18 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
          //
          // now, we will iterate over the list, performing an integrity check for each genre
          //
-         for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); genreIter++ )
+         for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); ++genreIter )
          {
             dbIter.SeekToGenre( genreIter->first );
             if( ! dbIter.Done() )
             {
                cGenreSwitcher::GetInstance()->SelectGenre( (cGenre::Genre)dbIter.GetGenre() );
-               std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+               TW_UNIQUE_PTR<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
                //
                // I have to turn this into a list of cFCONames
                //
                std::list<cFCOName> fcoNames;
-               for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); it++)
+               for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); ++it)
                {
                   // if this is not an absolute path, warn and continue...
                   //
@@ -1476,7 +1462,7 @@ public:
    cFCOReportHeader* mpReportHeader;
 
    // ctor can set up some default values
-   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbSecureMode(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
+   cTWModeDbUpdate_i() : cTWModeCommon(), mbInteractive(true), mbSecureMode(true), mbEncryptDb(true), /*mSiteProvided(false),*/ mpReport(0), mpDbFile(0), mpReportHeader(0) {}
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1586,12 +1572,9 @@ bool cTWModeDbUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
    if (cTWUtil::VerifyCfgSiteKey( mstrConfigFile, mpData->mSiteKeyFile ) == false)
         cTWUtil::PrintErrorMsg(eTWCfgUnencrypted(_T(""), eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
 
-    #if IS_UNIX
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
-    #endif
-    
-   return true;
+    return true;
 }
 
 void cTWModeDbUpdate::Init(const cTWModeIC_i* pICData, cFCODatabaseFile* dbFile, cFCOReportHeader* prh, cFCOReport* pReport, bool bEncryptDb)
@@ -1958,12 +1941,9 @@ bool cTWModePolUpdate::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine
    if (cTWUtil::VerifyCfgSiteKey( mstrConfigFile, mpData->mSiteKeyFile ) == false)
         cTWUtil::PrintErrorMsg(eTWCfgUnencrypted(_T(""), eError::NON_FATAL|eError::SUPRESS_THIRD_MSG));
     
-    #if IS_UNIX
     // Set the cross file systems flag appropriately.
     cFSDataSourceIter::SetFileSystemCrossing(mpData->mbCrossFileSystems);
-    #endif
-    
-   return true;
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

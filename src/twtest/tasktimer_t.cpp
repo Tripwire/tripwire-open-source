@@ -32,9 +32,8 @@
 // tasktimer_t -- test driver for cTaskTimer
 #include "core/stdcore.h"
 
-#if IS_UNIX
 void TestTaskTimer()
 {
 }
-#endif // IS_UNIX/WIN32
+
 

@@ -46,15 +46,6 @@
 #include "core/hashtable.h"
 #endif
 
-// uncomment this to allocate fconametblnodes from a pool.
-/*
-#ifndef __OBJECTPOOL_H
-#include "objectpool.h"
-#endif
-*/
-// end TODO 
-
-
 class cFCONameTbl_i;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -119,7 +110,7 @@ private:
 class cFCONameTbl
 {
 public:
-    cFCONameTbl(int defSize = HASH_VERY_LARGE);
+    explicit cFCONameTbl(int defSize = HASH_VERY_LARGE);
         // defSize is the initial hash table size
     ~cFCONameTbl();
 

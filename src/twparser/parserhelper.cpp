@@ -63,7 +63,6 @@ static int  util_ConvertOctal( const char* psz, int* const pnCharsRead );
 static bool util_IsOctal( const char ch );
 static int  util_GetEscapeValueOfChar( char ch );
 static int  util_GetRecurseDepth( const cParseNamedAttrList* pList ); //throw( eParserHelper )
-static void util_EatAllSpaces( TSTRING& str );
 static void util_LoseSurroundingWS( TSTRING& str );
 #ifdef _DEBUG
 static bool util_AsciiCharsActLikeTheyShould();
@@ -145,7 +144,7 @@ void cParserHelper::Finit( cGenreSpecListVector* pPolicy )
     int nRulesInPolicy = 0;
 
     GenreContainer::iterator i;
-    for( i = mAph.begin(); i != mAph.end(); i++ )
+    for( i = mAph.begin(); i != mAph.end(); ++i )
     {
         cGenreSpecListPair slp;
         cGenre::Genre g = i->first;
@@ -194,7 +193,7 @@ void cParserHelper::Finit( cGenreSpecListVector* pPolicy )
 void cParserHelper::CleanUp()
 {
     GenreContainer::iterator i;
-    for( i = mAph.begin(); i != mAph.end(); i++ )
+    for( i = mAph.begin(); i != mAph.end(); ++i )
         delete i->second;
     while( ! cPreprocessor::Empty() )
         cPreprocessor::PopState();    
@@ -391,7 +390,7 @@ bool cParserUtil::AnyOfTheseHostsExists( cParseStringList* pList )
     std::transform( strHostName.begin(), strHostName.end(), strHostName.begin(), _totlower );
     
     // if the host name matches any in the list, return true
-    for( std::list<TSTRING>::iterator iter = pList->begin(); iter != pList->end(); iter++ )
+    for( std::list<TSTRING>::iterator iter = pList->begin(); iter != pList->end(); ++iter )
     {
         // want to do case-insensitive compare
         std::transform( (*iter).begin(), (*iter).end(), (*iter).begin(), _totlower );
@@ -532,7 +531,7 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
 
     // foreach rule
     std::list<const cParseRule *>::iterator rule;
-    for (rule = pgpi->GetRules()->begin(); rule != pgpi->GetRules()->end(); rule++) 
+    for (rule = pgpi->GetRules()->begin(); rule != pgpi->GetRules()->end(); ++rule)
     {
         //
         // create the spec with its the last element of its start point as its name.
@@ -558,7 +557,7 @@ void cParserUtil::CreateFCOSpecs( cGenre::Genre g, cGenreParseInfo* pgpi, cFCOSp
             
             // set stop points
             cGenreParseInfo::StopListType::iterator stop;
-            for (stop = pgpi->GetStopList()->begin(); stop != pgpi->GetStopList()->end(); stop++) 
+            for (stop = pgpi->GetStopList()->begin(); stop != pgpi->GetStopList()->end(); ++stop)
             {
                 // add stop point if below start point
                 cFCOName::Relationship relate = startpoint.GetRelationship(*stop);
@@ -671,14 +670,14 @@ void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropV
 
     // clear out all spaces in the string    
     TSTRING strPropList = strPropListC;
-    util_EatAllSpaces( strPropList );
+    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(), std::ptr_fun<int, int>(std::isspace)), strPropList.end());
 
     // zero it out
     v.Clear();
 
     TSTRING::const_iterator iter;
     TSTRING::size_type i;  // index into string
-    for ( iter = strPropList.begin(), i = 0; iter != strPropList.end(); iter++, i++ ) 
+    for ( iter = strPropList.begin(), i = 0; iter != strPropList.end(); ++iter, ++i )
     {
         int propIndex = -1;                     // index into propvector
 
@@ -740,17 +739,6 @@ void cParserUtil::CreatePropVector( const TSTRING& strPropListC, class cFCOPropV
         else 
             v.RemoveItem( propIndex );
     }
-
-    /* for 1.5, allow no properties (just track file existence)
-    // if v is empty, error
-    cFCOPropVector emptyPropVector;
-    emptyPropVector.Clear();    
-    if( v == emptyPropVector )
-    {
-        d.TraceError("CreatePropVector failed!!\n");
-        throw eError( ERR_BAD_PROP_STRING, strPropV.c_str() );
-    }
-    */
 
     return;
 }
@@ -837,7 +825,7 @@ cParseNamedAttrList* cParserHelper::GetGlobalAttrList()
 void cParserHelper::IncrementScopeStatementCount()
 { 
     // must add count to ALL previous scopes.
-    for( ScopedAttrContainer::iterator i = mScopedAttrs.begin(); i != mScopedAttrs.end(); i++  )
+    for( ScopedAttrContainer::iterator i = mScopedAttrs.begin(); i != mScopedAttrs.end(); ++i  )
         (*i)->IncrementStatementCount();
 }
 
@@ -1077,18 +1065,6 @@ TSTRING::size_type util_FindNextDelim( const TSTRING& str, TSTRING::size_type i 
         min = minus;
 
     return min;
-}
-
-// deletes each space in the string
-void util_EatAllSpaces( TSTRING& str )
-{
-    for( TSTRING::iterator i = str.begin(); i != str.end(); i++ )
-    {
-        if( *i == _T(' ') )
-        {
-            str.erase( i );
-        }
-    }
 }
 
 void util_LoseSurroundingWS( TSTRING& str )

@@ -1,1 +1,1 @@
-/etc jj ;
+/etc -> $(IgnoreNone);

@@ -405,7 +405,7 @@ bool cHierDatabaseIter::Done()  const
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::Next()
 {
-    mIter++;
+    ++mIter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -552,10 +552,10 @@ void cHierDatabaseIter::CreateEntry( const TSTRING& name ) //throw (eArchive, eH
     {
         // altering the previous node...
         //
-        mIter--;
+        --mIter;
         mIter->mNext = newAddr;
         util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
-        mIter++;
+        ++mIter;
     }
 }
 
@@ -672,10 +672,10 @@ void cHierDatabaseIter::DeleteEntry() //throw (eArchive, eHierDatabase)
     {
         // altering the previous node...
         //
-        mIter--;
+        --mIter;
         mIter->mNext = (mIter+1)->mNext;
         util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
-        mIter++;
+        ++mIter;
     }
     //
     // now, delete the node from the file and from our array...
@@ -751,7 +751,7 @@ bool cHierDatabaseIter::CompareForUpperBound( const cHierEntry& he, const TCHAR*
 class cHierDatabaseIterCallCompare
 {
 public:
-    cHierDatabaseIterCallCompare( const cHierDatabaseIter* pcls )
+    explicit cHierDatabaseIterCallCompare( const cHierDatabaseIter* pcls )
         : pc( pcls ) {};
     
     bool operator()( const cHierEntry& a1, const TCHAR* a2 )

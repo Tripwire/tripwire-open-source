@@ -177,7 +177,7 @@ void cFCOName::SetNameInfo(iFCONameInfo* pNI)
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOName::operator = (const cFCOName& rhs)
+cFCOName& cFCOName::operator = (const cFCOName& rhs)
 {
     mpPathName->Release();
     // TODO -- I am sure this won't work (const-ness)
@@ -188,16 +188,19 @@ void cFCOName::operator = (const cFCOName& rhs)
 #ifdef _DEBUG
     mDebugStrName = AsString();
 #endif 
+    return *this;
 }
-void cFCOName::operator = (const TSTRING& rhs)
+
+cFCOName& cFCOName::operator = (const TSTRING& rhs)
 {
     *this = rhs.c_str();
 #ifdef _DEBUG
     mDebugStrName = AsString();
 #endif 
+    return *this;
 }
 
-void cFCOName::operator = (const TCHAR* rhs)
+cFCOName&  cFCOName::operator = (const TCHAR* rhs)
 {
     // if I have the only handle on this vector, I can reuse it
     // otherwise, I have to release it.
@@ -210,6 +213,7 @@ void cFCOName::operator = (const TCHAR* rhs)
 #ifdef _DEBUG
     mDebugStrName = AsString();
 #endif 
+    return *this;
 }
 
 void cFCOName::ParseString( const TCHAR* pszin )
@@ -284,7 +288,7 @@ TSTRING cFCOName::AsString() const
         TSTRING current = (*i)->GetString();
         // the loop is constructed in this odd fashion because I don't want a trailing mDelimiter
         str += current;
-        i++;
+        ++i;
 
         if(i != mpPathName->mNames.end() && current != "/")
             str += mDelimiter;
@@ -339,7 +343,7 @@ cFCOName::Relationship cFCOName::GetRelationship(const cFCOName& rhs) const
 
     for(myIter =  mpPathName->mNames.begin(),   rhsIter =  rhs.mpPathName->mNames.begin();
         (myIter != mpPathName->mNames.end() &&  rhsIter != rhs.mpPathName->mNames.end());
-        myIter++, rhsIter++)
+        ++myIter, ++rhsIter)
     {
         if(bCaseSensitive)
             bEqual = (*myIter == *rhsIter);
@@ -518,7 +522,7 @@ bool cFCOName::operator<(const cFCOName& rhs) const
 
     for(myIter =  mpPathName->mNames.begin(),   rhsIter =  rhs.mpPathName->mNames.begin();
         (myIter != mpPathName->mNames.end() &&  rhsIter != rhs.mpPathName->mNames.end());
-        myIter++, rhsIter++)
+        ++myIter, ++rhsIter)
     {
         if(bCaseSensitive)
         {
@@ -589,7 +593,7 @@ void cFCONameIter::SeekBegin()
 ///////////////////////////////////////////////////////////////////////////////
 void cFCONameIter::Next()
 {
-    mIter++;
+    ++mIter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -615,7 +619,7 @@ const TCHAR* cFCONameIter::GetName() const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCONameIter::Prev()
 {
-    mIter--;    
+    --mIter;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

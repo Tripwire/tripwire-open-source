@@ -36,13 +36,10 @@
 #include "core/error.h"
 #endif
 
-
-#if IS_UNIX 
-# if HAVE_SYS_SOCKET_H
-#  include <sys/socket.h>
-# endif
-# define SOCKET int
+#if HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
 #endif
+#define SOCKET int
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -250,8 +247,6 @@ private:
 };
 
 
-//#ifdef IS_UNIX
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // This class implements sending a message through a unix pipe to a program 
@@ -260,7 +255,7 @@ private:
 class cPipedMailMessage : public cMailMessage
 {
 public:
-    cPipedMailMessage(TSTRING strSendMailExePath);
+    explicit cPipedMailMessage(const TSTRING& strSendMailExePath);
     virtual ~cPipedMailMessage();
 
     virtual bool Send(); //throw(eMailMessageError)

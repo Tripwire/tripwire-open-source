@@ -64,7 +64,7 @@ class iParserGenreUtil;
 // INLINE FUNCTIONS
 //=========================================================================
 
-#define KILL_LIST(type, name) do { for( std::list<type*>::iterator iter = mList.begin(); iter != mList.end(); iter++ ) { delete *iter; } } while(0)
+#define KILL_LIST(type, name) do { for( std::list<type*>::iterator iter = mList.begin(); iter != mList.end(); ++iter ) { delete *iter; } } while(0)
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ public:
     //
     // ctors and dtor
     //
-    cParseRule( const cParseSpecMask& defSpecMask ) :mDefSpecMask( defSpecMask ), mpAttrList(0), mpSpecMaskList(0), mName(_T("")) {}
+    explicit cParseRule( const cParseSpecMask& defSpecMask ) :mDefSpecMask( defSpecMask ), mpAttrList(0), mpSpecMaskList(0), mName(_T("")) {}
     ~cParseRule();
 
     //

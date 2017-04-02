@@ -151,7 +151,7 @@ void cFSPropDisplayer::Merge( const iFCOPropDisplayer* const ppd )
     // merge mapping info    
     for( INT64_TO_STRING_MAP::const_iterator iterUID = pfspd->uidToUsername.begin();
          iterUID != pfspd->uidToUsername.end();
-         iterUID++
+         ++iterUID
        )
     {
         AddUsernameMapping( iterUID->first, iterUID->second );
@@ -159,7 +159,7 @@ void cFSPropDisplayer::Merge( const iFCOPropDisplayer* const ppd )
          
     for( INT64_TO_STRING_MAP::const_iterator iterGID = pfspd->gidToGroupname.begin();
          iterGID != pfspd->gidToGroupname.end();
-         iterGID++
+         ++iterGID
        )
     {
         AddGroupnameMapping( iterGID->first, iterGID->second );
@@ -401,7 +401,7 @@ void cFSPropDisplayer::Write( iSerializer* pSerializer ) const
     {
         // write UID mapping
         pSerializer->WriteInt32( uidToUsername.size() );
-        for( INT64_TO_STRING_MAP::const_iterator iterUid = uidToUsername.begin(); iterUid != uidToUsername.end(); iterUid++ )
+        for( INT64_TO_STRING_MAP::const_iterator iterUid = uidToUsername.begin(); iterUid != uidToUsername.end(); ++iterUid )
         {
             pSerializer->WriteInt64( iterUid->first );
             pSerializer->WriteString( iterUid->second );
@@ -409,7 +409,7 @@ void cFSPropDisplayer::Write( iSerializer* pSerializer ) const
     
         // write GID mapping
         pSerializer->WriteInt32( gidToGroupname.size() );
-        for( INT64_TO_STRING_MAP::const_iterator iterGid = gidToGroupname.begin(); iterGid != gidToGroupname.end(); iterGid++ )
+        for( INT64_TO_STRING_MAP::const_iterator iterGid = gidToGroupname.begin(); iterGid != gidToGroupname.end(); ++iterGid )
         {
             pSerializer->WriteInt64( iterGid->first );
             pSerializer->WriteString( iterGid->second );

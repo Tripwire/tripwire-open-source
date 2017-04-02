@@ -100,11 +100,13 @@ IMPLEMENT_SERREFCOUNT(cFCOSpecImpl, _T("cFCOSpecImpl"), 0, 1);
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecImpl::operator=(const cFCOSpecImpl& rhs)
+cFCOSpecImpl& cFCOSpecImpl::operator=(const cFCOSpecImpl& rhs)
 {
     mName               = rhs.mName;
     mPropVector         = rhs.mPropVector;
     mpHelper            = rhs.mpHelper ? rhs.mpHelper->Clone() : 0;
+    
+    return *this;
 }
 ///////////////////////////////////////////////////////////////////////////////
 // Clone -- make a copy of this spec

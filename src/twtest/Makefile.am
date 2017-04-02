@@ -55,7 +55,6 @@ growheap_t.cpp \
 hashtable_t.cpp \
 hierdatabase_t.cpp \
 keyfile_t.cpp \
-objectpool_t.cpp \
 platform_t.cpp \
 policyparser_t.cpp \
 refcountobj_t.cpp \

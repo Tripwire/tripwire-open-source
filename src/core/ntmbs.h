@@ -117,11 +117,12 @@
 TSS_EXCEPTION( eCharacter,         eError );
 TSS_EXCEPTION( eCharacterEncoding, eCharacter );
 
+
 namespace tss
 {
     /// Specific Routines (Add as needed)
 
-    ntmbs_t mbsdec( const_ntmbs_t, const_ntmbs_t );
+    //ntmbs_t mbsdec( const_ntmbs_t, const_ntmbs_t );
     ntmbs_t mbsinc( const_ntmbs_t );
 
     size_t mbsbytes( const_ntmbs_t, size_t );

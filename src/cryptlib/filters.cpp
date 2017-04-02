@@ -5,6 +5,12 @@
 #include "queue.h"
 #include <memory>
 
+#if __cplusplus >= 201103L
+# define TW_UNIQUE_PTR std::unique_ptr
+#else
+# define TW_UNIQUE_PTR std::auto_ptr
+#endif
+
 Filter::Filter(BufferedTransformation *outQ)
     : outQueue(outQ ? outQ : new ByteQueue) 
 {
@@ -17,7 +23,7 @@ Filter::Filter(const Filter &source)
 
 void Filter::Detach(BufferedTransformation *newOut)
 {
-    std::auto_ptr<BufferedTransformation> out(newOut ? newOut : new ByteQueue);
+    TW_UNIQUE_PTR<BufferedTransformation> out(newOut ? newOut : new ByteQueue);
     outQueue->Close();
     outQueue->TransferTo(*out);
     outQueue.reset(out.release());

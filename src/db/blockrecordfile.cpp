@@ -277,7 +277,7 @@ int cBlockRecordFile::FindRoomForData( int32 dataSize ) //throw (eArchive)
     //
     BlockArray::iterator it;
     int cnt = 0;
-    for( it = mvBlocks.begin(); it != mvBlocks.end(); it++, cnt++ )
+    for( it = mvBlocks.begin(); it != mvBlocks.end(); ++it, ++cnt )
     {
         util_InitBlockArray( *it );
         if( it->GetAvailableSpace() >= dataSize )
@@ -310,7 +310,7 @@ void cBlockRecordFile::TraceContents(int dl) const
 {
     // TODO -- this is probably not what I want to do, but it helps me right now...
     //
-    for( BlockArray::const_iterator i = mvBlocks.begin(); i != mvBlocks.end(); i++ )
+    for( BlockArray::const_iterator i = mvBlocks.begin(); i != mvBlocks.end(); ++i )
     {
         i->TraceContents( dl );
     }
@@ -330,7 +330,7 @@ void cBlockRecordFile::AssertValid() const
 ///////////////////////////////////////////////////////////////////////////////
 void cBlockRecordFile::AssertAllBlocksValid() 
 {
-    for( BlockArray::iterator i = mvBlocks.begin(); i != mvBlocks.end(); i++ )
+    for( BlockArray::iterator i = mvBlocks.begin(); i != mvBlocks.end(); ++i )
     {
         i->AssertValid();
     }

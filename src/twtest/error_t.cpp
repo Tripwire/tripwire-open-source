@@ -34,40 +34,50 @@
 
 #include "core/stdcore.h"
 #include "core/error.h"
+#include "core/errorgeneral.h"
+#include "core/errorutil.h"
 #include "twtest/test.h"
 #include <iostream>
 
 void TestError()
 {
-//#pragma message( __FILE__ "(1) : TODO - implement this test file")
-
-/*
+    bool threw = false;
     try
     {
         std::cout << "Before Exception" << std::endl;
         std::cout << "Line number before throw: " << __LINE__ << std::endl;
-        THROW_ERROR(53, _T("This is an error!"));
+        throw eErrorGeneral(_T("This is an error!"));
         std::cout << "After Exception" << std::endl;
     }
     catch(eError& e)
     {
-        TEST(e.GetErrorNum() == 53);
+        threw = true;
         TEST(_tcscmp(e.GetMsg().c_str(), _T("This is an error!")) == 0);
-        TCOUT << _T("Exception caught!\n\tErrorNum=") << e.GetErrorNum() << _T("\n\t") << e.GetMsg() << std::endl;
-    }
-
-    try 
-    {
-        THROW_INTERNAL("error_t.cpp");
-    }
-    catch(eInternal& e)
-    {
-        TEST(e.GetErrorNum() == eInternal::ERR_INTERNAL);
-        TCOUT << _T("Internal error caught!\n\tErrorNum=") << e.GetErrorNum() << _T("\n\t") << e.GetMsg() << std::endl;
+        TCOUT << _T("Exception caught!\n\nID=") << e.GetID() << _T("\n\t") << e.GetMsg() << std::endl;
     }
     catch(...)
     {
         TEST(false);
     }
-*/
+    
+    TEST(threw);
+    
+    
+    try 
+    {
+        threw = false;
+        throw eInternal("error_t.cpp");
+    }
+    catch(eInternal& e)
+    {
+        threw = true;
+        TEST(_tcscmp(e.GetMsg().c_str(), _T("error_t.cpp")) == 0);
+        TCOUT << _T("Internal error caught!\n\nID=") << e.GetID() << _T("\n\t") << e.GetMsg() << std::endl;
+    }
+    catch(...)
+    {
+        TEST(false);
+    }
+
+    TEST(threw);
 }

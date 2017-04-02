@@ -71,13 +71,11 @@
 
 #include "core/fsservices.h" // for the util_IsDir() stuff
 
-#if IS_UNIX
 #include <unistd.h>
 #include <fcntl.h>
 #if SUPPORTS_TERMIOS
 # include <termios.h>
 # include <sys/ioctl.h>
-#endif
 
 #include "core/tw_signal.h"
 int _getch(void);
@@ -857,7 +855,7 @@ void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBag
 // of the policy file text to disk.  
 // Will throw eError on failure.
 
-void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
+void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string& polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
     cSerializableNString nstring;
 
@@ -876,7 +874,7 @@ void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string polText, 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
-void cTWUtil::WritePolicyText(cArchive &archive, const std::string polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
+void cTWUtil::WritePolicyText(cArchive &archive, const std::string& polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
 {
     cSerializableNString nstring;
 
@@ -1117,8 +1115,6 @@ void cTWUtil::CreatePrivateKey(cPrivateKeyProxy& proxy, cKeyFile& keyFile, const
 // GetStringNoEcho -- Get a string from the user without echoing it
 ///////////////////////////////////////////////////////////////////////////////
 
-
-#if IS_UNIX
 static void (*old_SIGINT)(int);
 static void (*old_SIGQUIT)(int);
 
@@ -1216,7 +1212,6 @@ void cTWUtil::GetStringNoEcho(wc16_string& ret)
     NoEcho noEcho;
     GetString(ret);
 }
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // ParseObjectList
@@ -1233,7 +1228,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
 
     // iterate over all of the input...
     //
-    for( ObjList::const_iterator i = listIn.begin(); i != listIn.end(); i++ )
+    for( ObjList::const_iterator i = listIn.begin(); i != listIn.end(); ++i )
     {
         // first, try to interperate the current string as a genre name...
         // 17 Mar 99 mdb -- we now only do this if the string ends in a ':'
@@ -1252,7 +1247,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
             //
             if( g == cGenre::GENRE_INVALID )
             {
-                std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+                TW_UNIQUE_PTR<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
                 if( ! pParseUtil->IsAbsolutePath( *i ) )
                     throw eTWUnknownSectionName( *i );
             }
@@ -1266,7 +1261,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
             {
                 // seek to right list; create it if it is not there...
                 //
-                for( curIter = listOut.begin(); curIter != listOut.end(); curIter++ )
+                for( curIter = listOut.begin(); curIter != listOut.end(); ++curIter )
                 {
                     if( curIter->first == curGenre )
                         break;
@@ -1287,7 +1282,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
             // add this to the list; assert that it has not been added yet.
             //
             ObjList::iterator oi;
-            for( oi = curIter->second.begin(); oi != curIter->second.end(); oi++ )
+            for( oi = curIter->second.begin(); oi != curIter->second.end(); ++oi )
             {
                 if( *oi == *i )
                 {
@@ -1315,7 +1310,7 @@ void cTWUtil::ParseObjectList( cTWUtil::GenreObjList& listOut, const cTWUtil::Ob
 ///////////////////////////////////////////////////////////////////////////////
 cFCOName cTWUtil::ParseObjectName( const TSTRING& fcoName )
 {
-    std::auto_ptr<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
+    TW_UNIQUE_PTR<iParserGenreUtil> pParseUtil (iTWFactory::GetInstance()->CreateParserGenreUtil());
     cFCOName name( iTWFactory::GetInstance()->GetNameInfo() );
     //
     // make sure the fco name is a full path...

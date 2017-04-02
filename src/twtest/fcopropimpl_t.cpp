@@ -33,6 +33,7 @@
 #include "fco/stdfco.h"
 #include "fco/fcopropimpl.h"
 #include "core/debug.h"
+#include "twtest/test.h"
 
 void TestFCOPropImpl()
 {
@@ -51,22 +52,43 @@ void TestFCOPropImpl()
     pui64.SetValue(456);
     pui64b.SetValue(333);
     d.TraceDebug(_T("property int64 = (should be -456) %s\n"), pi64.AsString().c_str());
+    TEST(pi64.AsString() == "-456");
+    
     // test a few operators
     d.TraceDebug("-456 < 456 (uint cmp to int should fail)= %d\n", pi64.Compare(&pui64, iFCOProp::OP_LT));
+    TEST( iFCOProp::CMP_WRONG_PROP_TYPE == pi64.Compare(&pui64, iFCOProp::OP_LT) );
+    
     cFCOPropInt64 p2i64;
     p2i64.SetValue(4);
+    
     d.TraceDebug("-456 <  4 = %d\n", pi64.Compare(&p2i64, iFCOProp::OP_LT));
+    TEST( iFCOProp::CMP_TRUE == pi64.Compare(&p2i64, iFCOProp::OP_LT));
+    
     d.TraceDebug("4 == 456 = %d\n", p2i64.Compare(&pi64, iFCOProp::OP_EQ));
+    TEST( iFCOProp::CMP_FALSE == p2i64.Compare(&pi64, iFCOProp::OP_EQ));
+    
     d.TraceDebug("333ui64 == 456ui64 = %d\n", pui64.Compare(&pui64b, iFCOProp::OP_EQ));
+    TEST( iFCOProp::CMP_FALSE == p2i64.Compare(&pi64, iFCOProp::OP_EQ));
+    
     cFCOPropTSTRING pt1;
     cFCOPropTSTRING pt2;
     pt1.SetValue(TSTRING(_T("bar")));
     pt2.SetValue(TSTRING(_T("foo")));
+    
     d.TraceDebug(_T("property TSTRING = (should be \"bar\") %s\n"), pt1.AsString().c_str());
+    TEST(pt1.AsString() == "bar");
+    
     d.TraceDebug(_T("property TSTRING = (should be \"foo\") %s\n"), pt2.AsString().c_str());
+    TEST(pt2.AsString() == "foo");
+    
     d.TraceDebug("bar == foo = %d\n", pt1.Compare(&pt2, iFCOProp::OP_EQ));
+    TEST( iFCOProp::CMP_FALSE == pt1.Compare(&pt2, iFCOProp::OP_EQ));
+    
     d.TraceDebug("bar == bar = %d\n", pt1.Compare(&pt1, iFCOProp::OP_EQ));
+    TEST( iFCOProp::CMP_TRUE == pt1.Compare(&pt1, iFCOProp::OP_EQ));
+    
     d.TraceDebug("bar == 456 = %d\n", pt1.Compare(&pi64, iFCOProp::OP_EQ));
+    TEST( iFCOProp::CMP_WRONG_PROP_TYPE == pt1.Compare(&pi64, iFCOProp::OP_EQ));
 
     d.TraceDebug("Leaving...\n");
     return;

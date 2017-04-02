@@ -38,9 +38,7 @@
 
 static void util_SignalHandler( int sig );
 
-#if IS_UNIX
 static void tw_psignal( int sig, const TCHAR* s );
-#endif
 
 tw_sighandler_t tw_signal(int sig, tw_sighandler_t pFunc)
 {
@@ -69,14 +67,9 @@ void util_SignalHandler( int sig )
 {
     //If we're on unix, let's print out a nice error message telling
     //the user which signal we've recieved.
-#if IS_UNIX
     tw_psignal( sig, (TSS_GetString( cCore, core::STR_SIGNAL).c_str() ) );
-#endif
-
     exit( 8 );
 }
-
-#if IS_UNIX
 
 /* For the morbidly curious, here's a thread where a POSIX standards committee
    wrings its hands about how to define NSIG: http://austingroupbugs.net/view.php?id=741#c1834 */ 
@@ -126,5 +119,5 @@ void tw_psignal(int sig, const TCHAR *str)
 
     _ftprintf(stderr, _T("%s %s\n"), str, sig < NSIG ? siglist[sig] : siglist[0]);
 }
-#endif
+
 

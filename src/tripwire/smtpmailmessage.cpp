@@ -40,8 +40,6 @@
 #include "core/msystem.h"
 #include "core/file.h"
 
-#if IS_UNIX
-
 #include <time.h>
 
 //All the spleck that it takes to run sockets in Unix...
@@ -92,7 +90,7 @@ static int gethostname( char* name, int namelen )
     
     if ( strlen( myname.nodename ) < (unsigned int)namelen )
     {
-        strcpy( name, myname.nodename );
+        strncpy( name, myname.nodename, namelen );
         return 0;
     }
     else
@@ -106,24 +104,24 @@ static int gethostname( char* name, int namelen )
 #endif
 
 }
-#endif
-    // Unix does not require us to go though any silly DLL hoops, so we'll
-    // just #define the pointers to functions needed by Windows to be the 
-    // berkely functions.
-    #define mPfnSocket          socket
-    #define mPfnInetAddr        inet_addr
-    #define mPfnGethostname     gethostname
-    #define mPfnGethostbyname   gethostbyname
-    #define mPfnConnect         connect
-    #define mPfnCloseSocket     close
-    #define mPfnSend            send
-    #define mPfnRecv            recv
-    #define mPfnSelect          select
-    #define mPfnNtohl           ntohl
-    #define mPfnHtonl           htonl
-    #define mPfnNtohs           ntohs
-    #define mPfnHtons           htons
-#endif
+#endif //HAVE_GETHOSTNAME
+
+// Unix does not require us to go though any silly DLL hoops, so we'll
+// just #define the pointers to functions needed by Windows to be the 
+// berkely functions.
+#define mPfnSocket          socket
+#define mPfnInetAddr        inet_addr
+#define mPfnGethostname     gethostname
+#define mPfnGethostbyname   gethostbyname
+#define mPfnConnect         connect
+#define mPfnCloseSocket     close
+#define mPfnSend            send
+#define mPfnRecv            recv
+#define mPfnSelect          select
+#define mPfnNtohl           ntohl
+#define mPfnHtonl           htonl
+#define mPfnNtohs           ntohs
+#define mPfnHtons           htons
 
 //
 // TODO - maybe convert this SMTP code to non-blocking socket calls, or use
@@ -215,9 +213,8 @@ bool cSMTPMailMessage::OpenConnection()
     sockAddrIn.sin_port             = mPfnHtons(mPortNumber);
     uint32 iServerAddress = GetServerAddress();
 
-#if IS_UNIX
     sockAddrIn.sin_addr.s_addr = iServerAddress;
-#endif
+    
     if ( iServerAddress  == INADDR_NONE ) 
     {
         DecodeError();
@@ -494,14 +491,8 @@ bool cSMTPMailMessage::GetAcknowledgement()
     // need comment
     timeval tv;
 
-
-#if IS_UNIX
     FD_ZERO( &socketSet );
     FD_SET( mSocket, &socketSet );
-#else
-    socketSet.fd_count = 1;
-    socketSet.fd_array[0] = mSocket;
-#endif
 
     // set the timeout time to sixty seconds
     tv.tv_sec  = 60;
@@ -567,15 +558,9 @@ void cSMTPMailMessage::SendString( const std::string& str )
 void cSMTPMailMessage::DecodeError()
 {
 #if defined(_DEBUG)
-
-#if IS_UNIX
-
     //
     // TODO - Write what ever error reporting will be needed under unix.
     //
-
-#endif // IS_UNIX
-
 #endif // defined(_DEBUG)
 }
 

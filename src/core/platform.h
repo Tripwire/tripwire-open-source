@@ -144,7 +144,7 @@
     #define OS                  OS_OPENBSD
     #define IS_OPENBSD          1
 
-#elif defined(_OSX)
+#elif defined(__APPLE__)
     #define OS                  OS_DARWIN
     #define IS_DARWIN           1	
 
@@ -157,7 +157,7 @@
     #define IS_MIDNIGHTBSD      1
 
 
-#elif defined(_SOLARIS) || defined(__sun)
+#elif defined(__sun)
     #define OS					OS_SOLARIS
     #define IS_SOLARIS          1	
 	
@@ -165,11 +165,11 @@
     #define OS					OS_AIX
     #define IS_AIX              1	
 	
-#elif defined (_HPUX)
+#elif defined (__hpux)
     #define OS                  OS_HPUX
     #define IS_HPUX             1
 	
-#elif defined(_IRIX)
+#elif defined(__sgi)
     #define OS                  OS_IRIX
     #define IS_IRIX             1
 	

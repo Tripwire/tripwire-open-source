@@ -550,14 +550,14 @@ TSTRING cMD5Signature::AsStringHex() const
     TSTRING ret;
 
     TCHAR stringBuffer[128];
-    TCHAR sigStringOut[128];
+    TCHAR sigStringOut[129];
     sigStringOut[0] = '\0';
     uint8       *dbuf = (uint8 *)md5_digest;
 
     for(int i = 0; i < SIG_BYTE_SIZE; ++i)
     {
-        _stprintf(stringBuffer, _T("%02lx"), (unsigned long)dbuf[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%02lx"), (unsigned long)dbuf[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
 
@@ -673,14 +673,14 @@ TSTRING cSHASignature::AsStringHex() const
     TSTRING ret;
     
     TCHAR stringBuffer[128];
-    TCHAR sigStringOut[128];
+    TCHAR sigStringOut[129];
     sigStringOut[0] = '\0';
     uint8           *dbuf = (uint8 *)sha_digest;
     
     for (int i=0; i < SIG_UINT32_SIZE*(int)sizeof(uint32); ++i)
     {
-        _stprintf(stringBuffer, _T("%02x"), dbuf[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%02x"), dbuf[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
     
@@ -749,13 +749,13 @@ TSTRING cSHASignature::AsStringHex() const
     TSTRING ret;
     
     TCHAR stringBuffer[128];
-    TCHAR sigStringOut[128];
+    TCHAR sigStringOut[129];
     sigStringOut[0] = '\0';
     
     for (int i=0; i < SIG_UINT32_SIZE; ++i)
     {
-        _stprintf(stringBuffer, _T("%08x"), mSHAInfo.digest[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%08x"), mSHAInfo.digest[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
     
@@ -851,13 +851,13 @@ TSTRING cHAVALSignature::AsStringHex() const
     TSTRING ret;
 
     TCHAR stringBuffer[128];
-    TCHAR sigStringOut[128];
+    TCHAR sigStringOut[129];
     sigStringOut[0] = _T('\0');
 
     for (int i=0; i < SIG_BYTE_SIZE; ++i)
     {
-        _stprintf(stringBuffer, _T("%02x"), mSignature[i]);
-        _tcscat(sigStringOut, stringBuffer);
+        snprintf(stringBuffer, 128, _T("%02x"), mSignature[i]);
+        strncat(sigStringOut, stringBuffer, 128);
     }
     ret.append(sigStringOut);
 

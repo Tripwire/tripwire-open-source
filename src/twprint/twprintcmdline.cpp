@@ -498,9 +498,6 @@ bool cTWPrintReportMode::Init(const cConfigFile& cf, const cCmdLineParser& cmdLi
 ///////////////////////////////////////////////////////////////////////////////
 int cTWPrintReportMode::Execute(cErrorQueue* pQueue)
 {
-    cFCOReport          report;
-    cFCOReportHeader    reportHeader;
-
     try
     {
         ASSERT( ! mpData->mReportFile.empty() );
@@ -510,6 +507,7 @@ int cTWPrintReportMode::Execute(cErrorQueue* pQueue)
         cKeyFile                localKeyfile;
         const cElGamalSigPublicKey*    pKey;
         cFCOReport              report;
+        cFCOReportHeader        reportHeader;
 
         cTWUtil::OpenKeyFile( localKeyfile, mpData->mLocalKeyFile );
         pKey = localKeyfile.GetPublicKey();
@@ -721,7 +719,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
             // now, iterate through the list of objects...
             //
             cFCODatabaseFile::iterator dbIter( db );
-            for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); genreIter++ )
+            for( cTWUtil::GenreObjList::iterator genreIter = listOut.begin(); genreIter != listOut.end(); ++genreIter )
             {
                 dbIter.SeekToGenre( genreIter->first );
                 if( ! dbIter.Done() )
@@ -733,7 +731,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
                     //
                     // iterate over all the objects in this genre....
                     //
-                    for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); it++)
+                    for(cTWUtil::ObjList::iterator it = genreIter->second.begin(); it != genreIter->second.end(); ++it)
                     {
                         try
                         {

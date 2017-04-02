@@ -1,3 +1,11 @@
+2017-03-30 Brian Cox <bcox@tripwire.com>
+	* Bump version to 2.4.3.5
+	* Fix ‘install-strip’, ‘check’, ‘uninstall’, and ‘distcheck’ make targets.
+	* Fix GCC 7.0.x warnings; use std::unique_ptr instead of deprecated std::auto_ptr where available.
+	* Add ‘--disable-extrawarnings’ configure option, for old compilers that don’t support the ’-Wextra’ compile option.
+	* Clean up unit tests & enable disabled tests.
+	* Address more static analyzer warnings, including from CppCheck & Flawfinder
+
 2017-03-05 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.4
 	* Fix issue with printing level 2 reports, introduced by fixing a Clang static analyzer quibble in 2.4.3.3. Sigh.

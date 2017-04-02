@@ -35,6 +35,7 @@
 #include "core/debug.h"
 #include "fs/fsobject.h"
 #include "fs/fspropcalc.h"
+#include "fs/fsdatasourceiter.h"
 #include "twtest/test.h"
 
 #include <fstream>
@@ -42,7 +43,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // PrintProps -- prints out all the valid property names and values as pairs...
 ///////////////////////////////////////////////////////////////////////////////
-/*
+
 static void PrintProps(const iFCO* pFCO)
 {
     cDebug d("PrintProps");
@@ -57,13 +58,10 @@ static void PrintProps(const iFCO* pFCO)
         }
     }
 }
-*/
+
 
 void TestFCOCompare()
 {
-#pragma message( __FILE__ "(1) : TODO - implement this test file")
-#if 0
-
     const TCHAR* FILE_NAME = TEMP_DIR _T("/dog.txt");
     const char*  FILE_NAME_N = TEMP_DIR_N "/dog.txt";
 
@@ -84,8 +82,9 @@ void TestFCOCompare()
     fstr.close();
 
     // create the test FCO
-    cFSDataSource ds;
-    iFCO* pFCO = ds.CreateFCO(cFCOName(FILE_NAME), 0);
+    cFSDataSourceIter ds;
+    ds.SeekToFCO(cFCOName(FILE_NAME), false);
+    iFCO* pFCO = ds.CreateFCO();
     TEST(pFCO);
 
     // measure a couple of properties, some of which will change...
@@ -104,15 +103,14 @@ void TestFCOCompare()
 
     // first, try comparing it to itself...
     cFCOCompare                 comp;
-    cFCOCompare::CompareResult  result;
     comp.SetPropsToCmp(v);
-    comp.Compare(pFCO, pFCO, result);
-    d.TraceDebug("Compare to itself is (expect true) %s\n", result.mResult == cFCOCompare::EQUAL? "true" : "false");
-    TEST(result.mResult == cFCOCompare::EQUAL);
+    unsigned int result = comp.Compare(pFCO, pFCO);
+    d.TraceDebug("Compare to itself is (expect true) %s\n", result == cFCOCompare::EQUAL? "true" : "false");
+    TEST(result == cFCOCompare::EQUAL);
 
     // change the file...
     d.TraceDebug("Changing the file...\n");
-    fstr.open(FILE_NAME_N);
+    fstr.open(FILE_NAME);
     if(fstr.bad())
     {
         d.TraceError("Unable to reopen %s!\n", FILE_NAME_N);
@@ -122,36 +120,42 @@ void TestFCOCompare()
     fstr << "Meow! Meow! Meow! Meow!" << std::endl;
     fstr.close();
 
-    iFCO* pFCO2 = ds.CreateFCO(cFCOName(FILE_NAME), 0);
-    ASSERT(pFCO2);
+    //need a new data source iter, otherwise the existing FCO gets updated & you get a ref to it,
+    // and the resulting FCOs always match.
+    cFSDataSourceIter ds2;
+    ds2.SeekToFCO(cFCOName(FILE_NAME), false);
+    iFCO* pFCO2 = ds2.CreateFCO();
+    TEST(pFCO2);
     pFCO2->AcceptVisitor(&propCalc);
     d.TraceDebug("Second FCO's properties:\n");
     PrintProps(pFCO2);
 
-    comp.Compare(pFCO, pFCO2, result);
-    d.TraceDebug("Compare to new object is (expect false) %s\n", result.mResult == cFCOCompare::EQUAL? "true" : "false");
-    TEST(result.mResult == cFCOCompare::UNEQUAL);
+    result = comp.Compare(pFCO, pFCO2);
+    d.TraceDebug("Compare to new object is (expect false) %s\n", result == cFCOCompare::EQUAL? "true" : "false");
+    TEST(result == cFCOCompare::PROPS_UNEQUAL);
     d.TraceDebug("Properties that differ are:\n");
-    result.mPropVector.TraceContents();
+    //result.mPropVector.TraceContents();
 
+    cFSDataSourceIter ds3;
+    ds3.SeekToFCO(cFCOName(FILE_NAME), false);
     // try testing properties that weren't calculated...
     d.TraceDebug("Comparing FCOs with different properties calculated\n");
-    iFCO* pFCO3 = ds.CreateFCO(cFCOName(FILE_NAME), 0);
+    iFCO* pFCO3 = ds3.CreateFCO();
     v = propCalc.GetPropVector();
     v.AddItem(cFSPropSet::PROP_MD5);
     propCalc.SetPropVector(v);
     pFCO3->AcceptVisitor(&propCalc);
     // do the compare
     comp.SetPropsToCmp(v);
-    comp.Compare(pFCO2, pFCO3, result);
-    TEST(result.mResult == cFCOCompare::PROPS_NOT_ALL_VALID);
+    result = comp.Compare(pFCO2, pFCO3);
+    TEST(result == cFCOCompare::PROPS_NOT_ALL_VALID);
     d.TraceDebug("Properties not valid are (should be %d):\n", cFSPropSet::PROP_MD5);
-    result.mPropVector.TraceContents();
+    //result.mPropVector.TraceContents();
 
     // release the fcos
     pFCO3->Release();
     pFCO2->Release();
     pFCO->Release();
-#endif
+
     return;
 }

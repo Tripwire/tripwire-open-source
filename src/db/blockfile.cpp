@@ -140,7 +140,7 @@ void cBlockFile::Close()
 void cBlockFile::Flush()
 {
     ASSERT( mpArchive );
-    for( BlockVector::iterator i = mvPagedBlocks.begin(); i != mvPagedBlocks.end(); i++ )
+    for( BlockVector::iterator i = mvPagedBlocks.begin(); i != mvPagedBlocks.end(); ++i )
     {
         FlushBlock( &(*i) );
     }
@@ -171,7 +171,7 @@ cBlockFile::Block*  cBlockFile::GetBlock( int blockNum ) //throw (eArchive)
     mTimer++;
     if( mTimer == 0 )
     {
-        for( BlockVector::iterator i = mvPagedBlocks.begin(); i != mvPagedBlocks.end(); i++ )
+        for( BlockVector::iterator i = mvPagedBlocks.begin(); i != mvPagedBlocks.end(); ++i )
         {
             i->SetTimestamp( 0 );
         }
@@ -179,7 +179,7 @@ cBlockFile::Block*  cBlockFile::GetBlock( int blockNum ) //throw (eArchive)
     //
     // now, see if the desired block is in memory...
     //
-    for( BlockVector::iterator i = mvPagedBlocks.begin(); i != mvPagedBlocks.end(); i++ )
+    for( BlockVector::iterator i = mvPagedBlocks.begin(); i != mvPagedBlocks.end(); ++i )
     {
         if( i->GetBlockNum() == blockNum )
         {
@@ -201,9 +201,9 @@ cBlockFile::Block*  cBlockFile::GetBlock( int blockNum ) //throw (eArchive)
     uint32 earliestTime                 = mvPagedBlocks[0].GetTimestamp();
     BlockVector::iterator it            = mvPagedBlocks.begin();
     BlockVector::iterator earliestIter  = it;
-    it++;   // since we don't want to check the first one
+    ++it;   // since we don't want to check the first one
     ASSERT(it != mvPagedBlocks.end());
-    for( ; it != mvPagedBlocks.end(); it++ )
+    for( ; it != mvPagedBlocks.end(); ++it )
     {
         if( it->GetTimestamp() < earliestTime )
         {

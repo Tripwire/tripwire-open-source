@@ -68,7 +68,7 @@ public:
     };
 
     
-    cHierNode( Type type = TYPE_INVALID ) : mType( type ) {}
+    explicit cHierNode( Type type = TYPE_INVALID ) : mType( type ) {}
     virtual ~cHierNode() {}
 
     int32   mType;

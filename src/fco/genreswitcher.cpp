@@ -99,13 +99,11 @@ cGenre::Genre cGenreSwitcher::GetDefaultGenre()
 void cGenreSwitcher::RegisterGenre( const cGenreInfo* pGI, RegisterFlags flags /* = REGISTER_FLAGS_NONE */ )
 {
     cDebug d("cGenreSwitcher::RegisterGenre");
-    d.TraceDebug( _T("ID: %x, long name: %s, short name: %s\n"), pGI->m_ID, pGI->m_sLongName.c_str(), pGI->m_sShortName.c_str() );
 
-    //
-    // validate params
-    //
     ASSERT( NULL != pGI );
     ASSERT( pGI->IsValid() );
+
+    d.TraceDebug( _T("ID: %x, long name: %s, short name: %s\n"), pGI->m_ID, pGI->m_sLongName.c_str(), pGI->m_sShortName.c_str() );
 
     //
     // can only be one of each genre ID
@@ -145,12 +143,7 @@ bool cGenreSwitcher::IsGenreRegistered( cGenre::Genre g )
 
 bool cGenreSwitcher::IsGenreAppropriate( cGenre::Genre g )
 {
-#if IS_UNIX
-        const uint32 platformMask = cGenre::PLATFORM_MASK_UNIX; 
-    #else
-        #error who am I?
-    #endif
-
+    const uint32 platformMask = cGenre::PLATFORM_MASK_UNIX;
     return( ( platformMask & g ) != 0 );
 }
 
@@ -230,7 +223,7 @@ cGenre::Genre cGenreSwitcher::StringToGenre( const wchar_t* wsz )
 cGenreInfoVec::const_iterator cGenreInfoVec::find( cGenre::Genre g ) const
 {
     const_iterator i;
-    for( i = begin(); i != end(); i++ )
+    for( i = begin(); i != end(); ++i )
     {
         ASSERT( (*i)->m_ID != cGenre::GENRE_INVALID );
 
@@ -251,7 +244,7 @@ cGenreInfoVec::const_iterator cGenreInfoVec::find( const cGenreInfo* pGI ) const
 cGenreInfoVec::const_iterator cGenreInfoVec::find( const TSTRING& sGenre ) const
 {
     const_iterator i;
-    for( i = begin(); i != end(); i++ )
+    for( i = begin(); i != end(); ++i )
     {
         ASSERT( (*i)->m_ID != cGenre::GENRE_INVALID );
  

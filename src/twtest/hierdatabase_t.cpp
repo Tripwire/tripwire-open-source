@@ -35,7 +35,7 @@
 #include "test.h"
 #include "core/error.h"
 
-static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )
+/*static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )
 {
     if( ! bFirst )
     {
@@ -54,7 +54,7 @@ static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true 
     }
 
     d.TraceDebug( "-- Done Processing directory %s\n", iter.GetCwd().c_str() );
-}
+}*/
 
 static void GetNoun( TSTRING& noun )
 {
@@ -73,12 +73,15 @@ static void GetNoun( TSTRING& noun )
 ///////////////////////////////////////////////////////////////////////////////
 void TestHierDatabaseInteractive()
 {
+    TCERR << std::endl << "TestHierDatabaseInteractive needs to be redesigned (& renamed) to not require user interaction" << std::endl;
+    
+#if 0
     cDebug d( "TestHierDatabaseInteractive" );
     try
     {
         cHierDatabase db;
         //db.Open( _T("c:/tmp/tw.hdb"), 5, true);
-        db.Open( _T("c:/tmp/tw.db"), 5, false);
+        db.Open( _T("tw.db"), 5, false);
         cHierDatabase::iterator iter(&db);
 
         while( true )
@@ -346,5 +349,5 @@ void TestHierDatabaseInteractive()
         d.TraceError( "Exception caught: %d %s\n", e.GetID(), e.GetMsg().c_str() );
         TEST( false );
     }
-
+#endif
 }

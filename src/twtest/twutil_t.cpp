@@ -34,23 +34,18 @@
 
 #include "tw/stdtw.h"
 #include "tw/twutil.h"
+#include "util/fileutil.h"
 #include "twtest/test.h"
 #include <fstream>
 
-
-
-#if IS_UNIX
 //#include <statbuf.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#endif
 
 std::string WideToNarrow( const TSTRING& strWide );
 
 void TestTWUtil()
 {
-#pragma message( __FILE__ "(1) : TODO - implement this test file")
-#if 0
     // TODO: we should test more than the file exists stuff, but that
     // is all I need to do for right now.
     cDebug d("TestTWUtil");
@@ -61,7 +56,7 @@ void TestTWUtil()
     d.TraceAlways("Testing FileExists() and FileWritable()\n");
 
     // assuming the current dir is writable, this test should succeed
-    TEST(cTWUtil::FileWritable(_T("afilethatdoesnotexist.tmp")) == true);
+    TEST(cFileUtil::FileWritable(_T("afilethatdoesnotexist.tmp")) == true);
     
     TSTRING tmpDir = TEMP_DIR;
     tmpDir += _T("/fileexistdir");
@@ -69,49 +64,42 @@ void TestTWUtil()
     tmpFN += _T("/fileexiststest.tmp");
 
     // make a subdir in the TEMP_DIR
-    #if IS_UNIX
-    _tmkdir(tmpDir.c_str(), 0700);
-    #else
-    _tmkdir(tmpDir.c_str());
-    #endif
-
-    _tchmod(tmpDir.c_str(), 0700);
+    mkdir(tmpDir.c_str(), 0700);
+    chmod(tmpDir.c_str(), 0700);
 
     // make sure file is not there
-    _tchmod(tmpFN.c_str(), 0777);
-    _tunlink(tmpFN.c_str());
+    chmod(tmpFN.c_str(), 0777);
+    unlink(tmpFN.c_str());
 
     // make sure exists tests false, writable is true
     // and checking writable should not create the file
-    TEST(cTWUtil::FileExists(tmpFN) == false);
-    TEST(cTWUtil::FileWritable(tmpFN) == true)
-    TEST(cTWUtil::FileExists(tmpFN) == false);
+    TEST(cFileUtil::FileExists(tmpFN) == false);
+    TEST(cFileUtil::FileWritable(tmpFN) == true)
+    TEST(cFileUtil::FileExists(tmpFN) == false);
 
     // make the dir read only and make sure write tests false
-    #if IS_UNIX // windows fails this test, perhaps because I am an administrator?
-    _tchmod(tmpDir.c_str(), 0500);
-    TEST(cTWUtil::FileWritable(tmpFN) == false);
-    _tchmod(tmpDir.c_str(), 0700);
-    #endif
+    // windows fails this test, perhaps because I am an administrator?
+    chmod(tmpDir.c_str(), 0500);
+    TEST(cFileUtil::FileWritable(tmpFN) == false);
+    chmod(tmpDir.c_str(), 0700);
 
     // create the file
     {
-    std::ofstream ostr(WideToNarrow(tmpFN).c_str());
-    ostr << "Hey there.\n";
+        std::ofstream ostr(WideToNarrow(tmpFN).c_str());
+        ostr << "Hey there.\n";
     }
 
     // test a read only file
-    _tchmod(tmpFN.c_str(), 0400);
-    TEST(cTWUtil::FileWritable(tmpFN) == false);
+    chmod(tmpFN.c_str(), 0400);
+    TEST(cFileUtil::FileWritable(tmpFN) == false);
 
     // test a writable file
-    _tchmod(tmpFN.c_str(), 0666);
-    TEST(cTWUtil::FileWritable(tmpFN) == true);
+    chmod(tmpFN.c_str(), 0666);
+    TEST(cFileUtil::FileWritable(tmpFN) == true);
 
     // delete the test file and dir
-    _tunlink(tmpFN.c_str());
-    _tunlink(tmpDir.c_str());
-#endif
+    unlink(tmpFN.c_str());
+    unlink(tmpDir.c_str());
 }
 
 std::string WideToNarrow( const TSTRING& strWide )

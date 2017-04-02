@@ -53,10 +53,8 @@
 
 #include "twprint.h"    // package initialization
 
-#if IS_UNIX
 #include "core/unixfsservices.h"
 #include <unistd.h>
-#endif
 
 #include <memory>       // for auto_ptr
 #include <iostream>
@@ -130,7 +128,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         }
 
         // Next, set the mode... exit with error if now valid mode specified.
-        std::auto_ptr<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
+        TW_UNIQUE_PTR<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
         if(! pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)
@@ -155,13 +153,11 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
             goto exit;
         }
 
-        #if IS_UNIX
         // erase the command line
         // TODO: it might be a good idea to move this to cTWUtil
         int i;
         for (i = 1; i < argc; ++i)
             memset((char*)argv[i], 0, strlen(argv[i])*sizeof(char));
-        #endif
 
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWPrintCmdLine::HELP))
@@ -217,14 +213,14 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         ret = 1;
     }
 
-    catch (std::bad_alloc e)
+    catch (std::bad_alloc& e)
     {
         TCERR << _T("*** Fatal exception: Out of memory ");
         TCERR << _T("*** Exiting...\n");
         ret = 1;
     }
 
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         TCERR << _T("*** Fatal exception: ");
         std::cerr << e.what() << std::endl;

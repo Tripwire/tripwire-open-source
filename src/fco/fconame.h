@@ -58,7 +58,7 @@ class cFCOName : public iTypedSerializable
 public:
     typedef cFCONameIter iterator;
 
-    cFCOName(iFCONameInfo* iNI = NULL);
+    explicit cFCOName(iFCONameInfo* iNI = NULL);
     cFCOName(const cFCOName& rhs);
 
     explicit cFCOName(const TSTRING& rhs, iFCONameInfo* iNI = NULL); 
@@ -67,9 +67,9 @@ public:
         // do it unexpectedly
     virtual ~cFCOName();
 
-    void operator = (const cFCOName& rhs);
-    void operator = (const TSTRING& rhs);
-    void operator = (const TCHAR* rhs);
+    cFCOName& operator = (const cFCOName& rhs);
+    cFCOName& operator = (const TSTRING& rhs);
+    cFCOName& operator = (const TCHAR* rhs);
 
     bool operator < (const cFCOName& rhs) const;
         // defines an arbitrary order for cFCONames. This is so that names can 
@@ -165,7 +165,7 @@ class cFCONameIter_i;
 class cFCONameIter
 {
 public:
-    cFCONameIter(const cFCOName& name);
+    explicit cFCONameIter(const cFCOName& name);
     ~cFCONameIter();
 
     int             GetSize() const;    // returns the number of entries in the fco name

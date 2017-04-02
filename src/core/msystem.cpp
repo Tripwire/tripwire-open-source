@@ -66,8 +66,6 @@
 
 #include "stdcore.h"
 
-#if IS_UNIX
-
 /*
  * set, reset environment to be passed to mpopem
  */
@@ -209,6 +207,7 @@ char *getenv();             /* get variable from environment */
  * on some systems, this is a library function, so define STRDUP
  * if it is on yours
  */
+#if 0
 #ifdef STRDUP
 #   ifndef __STDC__
     char *strdup();
@@ -226,13 +225,14 @@ char *getenv();             /* get variable from environment */
         /*
          * allocate space for the string, and copy if successful
          */
-        if ((p = (char*)malloc((unsigned)((strlen(str)+1)*sizeof(char)))) 
+        size_t p_size = (strlen(str)+1)*sizeof(char);
+        if ((p = (char*)malloc((unsigned)(p_size)))
                                     != NULL)
-            (void) strcpy(p, str);
+            (void) strncpy(p, str, p_size);
         return(p);
     }
 #endif
-    
+#endif //0
     
 /*
  * allocate space for an array of pointers, OR
@@ -382,7 +382,7 @@ char *env;
     register int n;         /* where a previous definition is */
 
     /*
-     * seeif youneed to create the environment list
+     * see if you need to create the environment list
      */
     if (sz_envp == 0){
             if ((envp = c2alloc((const char**)envp, &sz_envp)) == NULL){
@@ -403,21 +403,26 @@ char *env;
      * just include it from the current environment
      * (if not defined there, don't define it here)
      */
-    if (strchr(env, '=') == NULL){
+    if (strchr(env, '=') == NULL) {
+
+        q = getenv(env);
+
         /* is it defined locally? */
-        if ((q = getenv(env)) == NULL){
+        if (NULL == q) {
             /* no -- don't define it here */
             return(SE_NONE);
         }
-        else if ((p = (char*)malloc((unsigned) (strlen(env)+strlen(q)+2)))
-                                      == NULL){
+
+        size_t p_size = strlen(env) + strlen(q) + 2;
+
+        if ((p = (char*)malloc((unsigned)(p_size))) == NULL) {
             ERMSG("ran out of memory");
             return(SE_NOMEM);
         }
-        else{
-            (void) strcpy(p, env);
-            (void) strcat(p, "=");
-            (void) strcat(p, q);
+        else {
+            (void) strncpy(p, env, p_size);
+            (void) strncat(p, "=", p_size);
+            (void) strncat(p, q, p_size);
         }
     }
     else if ((p = strdup(env)) == NULL){
@@ -1038,6 +1043,3 @@ int pid;
      */
     return(status);
 }
-
-#endif //#if IS_UNIX
-

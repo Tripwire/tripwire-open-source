@@ -47,17 +47,15 @@ using namespace std;
 
 void TestFileUtil()
 {
+    if(cFileUtil::FileExists("/etc/hosts"))
+    {
+        TSTRING source, dest;
 
-  TSTRING source, dest;
-
-  source = _T("/etc/hosts");
-  dest = _T("/tmp/dest");
-  bool blah = cFileUtil::Copy(source, dest);
-  (void)blah;
-
-
-//   TCOUT << _T("<") << wstr3 << _T(">") << std::endl;
-   
-
+        source = _T("/etc/hosts");
+        dest = _T("/tmp/dest");
+        bool blah = cFileUtil::Copy(source, dest);
+        (void)blah;
+        //   TCOUT << _T("<") << wstr3 << _T(">") << std::endl;
+    }
 }
 

@@ -49,10 +49,7 @@
 #include "twadmin.h"        // for package initialization
 
 #include <exception>
-
-#if IS_UNIX
 #include <unistd.h>
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // terminate and unexpected handlers
@@ -97,7 +94,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 
 
         // first, get the right mode...
-        std::auto_ptr<iTWAMode> pMode(cTWAdminCmdLine::GetMode(argc, argv));
+        TW_UNIQUE_PTR<iTWAMode> pMode(cTWAdminCmdLine::GetMode(argc, argv));
         if(! pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)
@@ -131,13 +128,11 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
             goto exit;
         }
         
-        #if IS_UNIX
         // erase the command line
         // TODO: it might be a good idea to move this to cTWUtil
         int i;
         for (i = 1; i < argc; ++i)
             memset((char*)argv[i], 0, strlen(argv[i])*sizeof(TCHAR));
-        #endif
 
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWAdminCmdLine::HELP))
@@ -203,14 +198,14 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         ret = 1;
     }
 
-    catch (std::bad_alloc e)
+    catch (std::bad_alloc& e)
     {
         TCERR << _T("*** Fatal exception: Out of memory ");
         TCERR << _T("*** Exiting...\n");
         ret = 1;
     }
 
-    catch (std::exception e)
+    catch (std::exception& e)
     {
         TCERR << _T("*** Fatal exception: ");
         std::cerr << e.what() << std::endl;

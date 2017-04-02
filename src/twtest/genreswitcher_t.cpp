@@ -36,23 +36,22 @@
 #include "fco/stdfco.h"
 #include "fco/genreswitcher.h"
 #include "twtest/test.h"
+#include "fs/fs.h"
 
 void TestGenre()
 {
-  TCERR << "TODO: genreswitcher_t.cpp test ifdef'd due to unhandled exception" << std::endl;
-
-#if 0
     cDebug d("TestGenre");
     d.TraceDebug("Entering...\n");
 
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(0x00020001)) == 0x00020001);
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(0x00010001)) == 0x00010001);
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(0x00010002)) == 0x00010002);
+    TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(cFS::GenreID())) == cFS::GenreID());
+    
+    //TODO: GenreToString() dies w/ GENRE_INVALID. Figure out if this should be changed.
+    //
+    //TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(cGenre::GENRE_INVALID)) == cGenre::GENRE_INVALID);
+    
 
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(_T("fs")) == 0x00020001);
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(_T("NT file system")) == 0x00010001);
+    TEST(cGenreSwitcher::GetInstance()->StringToGenre(_T("fs")) == cFS::GenreID());
     TEST(cGenreSwitcher::GetInstance()->StringToGenre(_T("none of the above")) == cGenre::GENRE_INVALID);
 
     d.TraceDebug("All tests passed.\n");
-#endif
 }

@@ -239,10 +239,12 @@ cFCOReportGenreIter::~cFCOReportGenreIter()
     delete mpData;
 }
 
-void cFCOReportGenreIter::operator=(const cFCOReportGenreIter& rhs)
+cFCOReportGenreIter& cFCOReportGenreIter::operator=(const cFCOReportGenreIter& rhs)
 {
     mpData->mpList = rhs.mpData->mpList;
     mpData->mIter = rhs.mpData->mIter;
+    
+    return *this;
 }
 
 // iteration methods
@@ -380,13 +382,15 @@ cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReportSpecIter& rhs)
     *this = rhs;
 }
 
-void cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
+cFCOReportSpecIter& cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
 {
     if (mpData == 0)
         mpData = new cFCOReportSpecIter_i();
 
     mpData->mpList  = rhs.mpData->mpList;
     mpData->mIter   = rhs.mpData->mIter;
+    
+    return *this;
 }
 
 int cFCOReportSpecIter::GetNumChanged() const
@@ -429,7 +433,7 @@ void cFCOReportSpecIter::SeekBegin() const
 void cFCOReportSpecIter::Next() const
 {
     ASSERT(mpData != 0);
-    mpData->mIter++;
+    ++(mpData->mIter);
 }
 
 bool cFCOReportSpecIter::Done() const
@@ -446,7 +450,7 @@ const iFCOSpec* cFCOReportSpecIter::GetSpec() const
 bool cFCOReportSpecIter::SeekToSpec(const iFCOSpec* pSpec)
 {
     if (mpData)
-        for(mpData->mIter = mpData->mpList->begin();  mpData->mIter != mpData->mpList->end(); mpData->mIter++)
+        for(mpData->mIter = mpData->mpList->begin();  mpData->mIter != mpData->mpList->end(); ++(mpData->mIter))
         {
             if(iFCOSpecUtil::FCOSpecEqual(*mpData->mIter->mpSpec, *pSpec))
                 return true;
@@ -525,10 +529,12 @@ cFCOReportChangeIter::~cFCOReportChangeIter()
     delete mpData;
 }
 
-void cFCOReportChangeIter::operator=(const cFCOReportChangeIter& rhs)
+cFCOReportChangeIter& cFCOReportChangeIter::operator=(const cFCOReportChangeIter& rhs)
 {
     mpData->mpList  = rhs.mpData->mpList;
     mpData->mIter   = rhs.mpData->mIter;
+    
+    return *this;
 }
 
 void cFCOReportChangeIter::SetSpecIter(const cFCOReportSpecIter& specIter)
@@ -557,7 +563,7 @@ void cFCOReportChangeIter::SeekBegin()  const
 void cFCOReportChangeIter::Next() const
 {
     ASSERT(mpData->mpList != 0);
-    mpData->mIter++;
+    ++(mpData->mIter);
 }
 
 bool cFCOReportChangeIter::Done() const
@@ -701,7 +707,7 @@ void cFCOReport::AddSpec(cGenre::Genre genre, const iFCOSpec* pSpec, const cFCOS
     if (pIter && pIter->mpData && pIter->mpData->mpList == &genreIter->mSpecList)
     {
         pIter->mpData->mIter = genreIter->mSpecList.end();
-        pIter->mpData->mIter--;
+        --(pIter->mpData->mIter);
         ASSERT(pIter->GetSpec() == node.mpSpec);
     }
 }

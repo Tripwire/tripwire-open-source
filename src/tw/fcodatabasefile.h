@@ -112,7 +112,7 @@ public:
     //-------------------------------------------------------------------------
     struct tEntry
     {
-        tEntry( cGenre::Genre genre );
+        explicit tEntry( cGenre::Genre genre );
             // the ctor will get the appropriate database construction parameters 
             // based on the genre number.
         ~tEntry( )
@@ -146,7 +146,7 @@ private:
 class cFCODatabaseFileIter
 {
 public:
-    cFCODatabaseFileIter( cFCODatabaseFile& dbFile );
+    explicit cFCODatabaseFileIter( cFCODatabaseFile& dbFile );
 
     void    SeekBegin();
     void    Next();

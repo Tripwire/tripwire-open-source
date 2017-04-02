@@ -33,15 +33,21 @@
 #include "fs/stdfs.h"
 #include "fs/fspropcalc.h"
 #include "core/debug.h"
+#include "core/archive.h"
+#include "core/fsservices.h"
 #include "fco/fcopropset.h"
 #include "fs/fspropset.h"
+#include "fs/fsdatasourceiter.h"
 #include "twtest/test.h"
 #include "fco/fco.h"
+
+#include <iostream>
+#include <fstream>
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintProps -- prints out all the valid property names and values as pairs...
 ///////////////////////////////////////////////////////////////////////////////
-/*
+
 static void PrintProps(const iFCO* pFCO)
 {
     cDebug d("PrintProps");
@@ -52,36 +58,40 @@ static void PrintProps(const iFCO* pFCO)
     {
         if(v.ContainsItem(i))
         {
-            d.TraceDebug("[%d] %s\t%s\n", i, pSet->GetPropName(i), pSet->GetPropAt(i)->AsString().c_str());
+            d.TraceDebug("[%d] %s\t%s\n", i, pSet->GetPropName(i).c_str(), pSet->GetPropAt(i)->AsString().c_str());
         }
     }
 }
-*/
-
 
 void TestFSPropCalc()
 {
-#pragma message( __FILE__ "(1) : TODO - implement this test file")
-#if 0
     cDebug d("TestFSPropCalc");
-    cFSDataSource ds;
-
-    iFSServices* pFSServices = iFSServices::GetInstance();
-    bool bCaseSensitive = pFSServices->IsCaseSensitive();
+    cFSDataSourceIter ds;
+    TSTRING foo_bin = TEMP_DIR;
+    foo_bin.append("/foo.bin");
+    
+    //iFSServices* pFSServices = iFSServices::GetInstance();
 
     // oh boy! I finally get to test property calculation!
     d.TraceDebug("Creating FCO c:\\temp\\foo.bin\n");
 
+    std::ofstream fstr(foo_bin.c_str());
+    if(fstr.bad())
+    {
+        d.TraceError("Unable to create test file %s!\n", foo_bin.c_str());
+        TEST(false);
+    }
+    fstr.close();
+    
     cFileArchive arch;
-    int ret;
-    ret = arch.OpenReadWrite(TEMP_DIR _T("/foo.bin"), true);
-    TEST(ret);
+    arch.OpenReadWrite(foo_bin.c_str(), true);
     arch.WriteBlob("\x1\x2\x3\x4\x5\x6\x7\x8\x9\x0", 10);
     arch.Close();
     
     // get the fco but none of its children...
-    iFCO* pFCO = ds.CreateFCO(cFCOName(TEMP_DIR _T("/foo.bin")), 0);
-    ASSERT(pFCO);
+    ds.SeekToFCO(cFCOName(foo_bin), false);
+    iFCO* pFCO = ds.CreateFCO();
+    TEST(pFCO);
 
     // create the calculator and set some properties to calculate...
     cFSPropCalc propCalc;
@@ -111,8 +121,7 @@ void TestFSPropCalc()
     
     // test only calculating unevaluated props...
     d.TraceDebug("invalidating PROP_MD5 in fco, and changing the file. \n\tAll should remain the same except md5.\n");
-    ret = arch.OpenReadWrite(TEMP_DIR _T("/foo.bin"), true);
-    TEST(ret);
+    arch.OpenReadWrite(foo_bin.c_str(), true);
     arch.WriteString(_T("Bark Bark Bark\n"));
     arch.Close();
 
@@ -126,6 +135,6 @@ void TestFSPropCalc()
 
     // release the fco
     pFCO->Release();
-#endif
+
     return;
 }

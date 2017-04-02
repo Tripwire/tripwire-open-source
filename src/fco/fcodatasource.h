@@ -46,6 +46,8 @@ public:
     enum {  CHILDREN_NONE   =  0,
             CHILDREN_ALL    = -1 };
 
+    virtual ~iFCODataSource() = 0;
+
     // NOTE -- in the act of creating fcos, there are certain properties that we can obtain "for free" just
     //      by the act of querying the system we are generating fcos for (for example, a stat() call is required
     //      to create file system fcos, which also gives us many of the fsfco's property values). Therefore,

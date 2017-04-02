@@ -45,10 +45,7 @@
 #define __FIXED_FILEBUF_H
 
 #include <fstream>
-
-#if IS_UNIX
 #define fixed_basic_ofstream std::basic_ofstream
-#endif // IS_WIN32/IS_UNIX
 
 #endif//__FIXED_FILEBUF_H
 

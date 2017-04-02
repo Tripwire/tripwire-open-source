@@ -130,7 +130,7 @@ bool cMailMessage::GetAttachmentsAsString( std::string& s )
     bool allOK = true;
     for(    std::vector<TSTRING>::const_iterator at = mvstrAttachments.begin();
             at != mvstrAttachments.end();
-            at++ )
+            ++at )
     {
         s += "\r\n";
 
@@ -231,10 +231,8 @@ bool cMailMessageUtil::ReadDate( TSTRING& strDateBuf )
 #if HAVE_STRFTIME
 
     TCHAR szDate[1024];
-    struct tm *tm = NULL;
-    
     time_t current_time = time(NULL);
-    tm = localtime ( &current_time );
+    struct tm* tm = localtime ( &current_time );
     
     const TCHAR* szFormat = _T("%a, %d %b %Y %H:%M:%S %z");
     
@@ -349,7 +347,7 @@ cQuotedPrintableEncoding::Encode( const std::string& sIn,
     std::string::size_type lineLen = 0;
     for( at =  sIn.begin();
          at != sIn.end();
-         at++, lineLen += _ENCODED_CHAR_LEN )
+         ++at, lineLen += _ENCODED_CHAR_LEN )
     {
         if( NeedsEncoding( *at ) )
         {
@@ -481,7 +479,7 @@ cMailMessageUtil::HasNonAsciiChars( const std::string& s )
 {
     for( std::string::const_iterator at = s.begin();
          at != s.end();
-         at ++ )
+         ++at )
     {
         if( (unsigned char)*at > (unsigned char)0x7F )
             return true;

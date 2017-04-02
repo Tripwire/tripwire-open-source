@@ -72,7 +72,7 @@ cFCODatabaseFile::cFCODatabaseFile()
 
 cFCODatabaseFile::~cFCODatabaseFile()
 {
-    for( DbList::iterator i = mDbList.begin(); i != mDbList.end(); i++ )
+    for( DbList::iterator i = mDbList.begin(); i != mDbList.end(); ++i )
     {
         delete *i;
     }
@@ -152,7 +152,7 @@ void cFCODatabaseFile::Write(iSerializer* pSerializer) const //throw( eFCODbFile
     //
     // TODO -- the database is not really const-correct; therefore I have the sick casts below...
     //
-    for( DbList::iterator i = const_cast<DbList*>(&mDbList)->begin(); i != const_cast<DbList*>(&mDbList)->end(); i++ )
+    for( DbList::iterator i = const_cast<DbList*>(&mDbList)->begin(); i != const_cast<DbList*>(&mDbList)->end(); ++i )
     {
         pSerializer->WriteInt32     ( (*i)->mGenre );
         pSerializer->WriteObject    ( &(*i)->mGenreHeader );
@@ -193,7 +193,7 @@ void cFCODatabaseFile::AddGenre( cGenre::Genre genreId, cFCODatabaseFileIter* pI
     //
     // first, lets make sure this genre doesn't exist...
     //
-    for( DbList::iterator i = mDbList.begin(); i != mDbList.end(); i++ )
+    for( DbList::iterator i = mDbList.begin(); i != mDbList.end(); ++i )
     {
         if( (*i)->mGenre == genreId )
         {
@@ -254,7 +254,7 @@ void cFCODatabaseFileIter::SeekBegin()
 
 void cFCODatabaseFileIter::Next()
 {
-    mIter++;
+    ++mIter;
 }
 
 bool cFCODatabaseFileIter::Done() const

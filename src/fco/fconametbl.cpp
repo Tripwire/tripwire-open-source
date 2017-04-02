@@ -39,8 +39,6 @@
 //#############################################################################
 // cFCONameTblNode
 //#############################################################################
-// uncomment this to allocate fconametblnodes from a pool.
-//cObjectPoolBase cFCONameTblNode::msAllocator(sizeof(cFCONameTblNode), 1000);
 
 //-----------------------------------------------------------------------------
 //-----------------------------------------------------------------------------
@@ -112,8 +110,9 @@ void cFCONameTblNode::SetString(const TSTRING& newStr)
         mpString = NULL;
     }
     
-    mpString = (TCHAR*)util_AllocMem( sizeof(TCHAR)*(newStr.length()+1) );
-    _tcscpy( mpString, newStr.c_str() );
+    size_t alloc_size = sizeof(TCHAR)*(newStr.length()+1);
+    mpString = (TCHAR*)util_AllocMem(alloc_size);
+    strncpy( mpString, newStr.c_str(), alloc_size );
 
     // NOTE -- the lower case pointer is now invalid.
 }
@@ -188,7 +187,7 @@ cFCONameTblNode* cFCONameTbl::CreateNode(const TSTRING& nodeName)
     // TODO:BAM -- does this have any meaning in mb?
     for(i = lowStr.begin(); i != lowStr.end(); ++i)
     {
-        *i = _totlower(*i);
+        *i = tolower(*i);
     }
     // see if this exists in the table (it could potentially look up itself!)
     if(mTable.Lookup(lowStr.c_str(), pLowerNode))

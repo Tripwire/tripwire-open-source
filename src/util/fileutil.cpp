@@ -47,12 +47,11 @@
 
 #include <fstream>  // for the FileExists() stuff
 
-#if IS_UNIX
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#endif
+
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -237,8 +236,6 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
 
 bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
 {
-#if IS_UNIX
-    
     enum { BUF_SIZE = 4096 };
     int8 buf[BUF_SIZE];
     int nBytesRead;
@@ -266,8 +263,6 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
 
     srcFile.Close();
     destFile.Close();
-
-#endif
     
     return true;
 }

@@ -60,15 +60,11 @@
 // A little macro that's useful for finding the number of characters in a TCHAR ARRAY
 #define countof( x )    ( sizeof( x ) / sizeof( x[0] ) )
 
-#if IS_UNIX
-
 
 #include <string.h>
 #include <string>
 #include <sstream>
 #include <iostream>
-
-
 
 #define TCHAR  char
 #define _tmain main
@@ -128,8 +124,6 @@ typedef std::ifstream                TIFSTREAM;
 #ifndef __cdecl
 #define __cdecl 
 #endif
-
-#endif // WIN32
 
 #endif // __TCHAR_H
 

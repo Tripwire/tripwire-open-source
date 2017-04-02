@@ -73,7 +73,6 @@ private:
 };
 
 
-#if IS_UNIX
 ///////////////////////////////////////////////////////////////////////////////
 // cUnixTimeFn -- Unix version, inserts proper function call and overloads
 //      operator()
@@ -98,7 +97,7 @@ private:
 typedef cTaskTimer<cUnixTimeFn, cUnixTimeFn::DataType> cUnixTaskTimer;
 typedef cUnixTaskTimer cGenericTaskTimer;
 
-#endif // IS_UNIX
+
 
 //-----------------------------------------------------------------------------
 // inline implementation

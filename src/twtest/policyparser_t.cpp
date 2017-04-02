@@ -44,6 +44,7 @@
 #include "fs/fspropset.h"
 #include "fco/fcospeclist.h"
 #include "twtest/test.h"
+#include "util/fileutil.h"
 #include <fstream>
 
 // helper class that checks output of each fcospec
@@ -52,44 +53,70 @@ public:
     static bool         VerifyNameAndStartPoint(iFCOSpec *pfsspec, TSTRING &name);
 };
 
-void TestPolicyParser()
+TSTRING get_test_file_dir()
 {
-    cDebug d("TestPolicyParser()");
+    if(cFileUtil::IsDir("../src/parser/testfiles"))
+        return "../src/parser/testfiles";
+    
+    if(cFileUtil::IsDir("src/parser/testfiles"))
+        return "src/parser/testfiles";
+    
+    return "";
+}
 
-    //
-    // file: pol.txt
-    //
+void test_policy_file(const std::string& polfile)
+{
     try
     {
         cDebug::AddOutTarget(cDebug::OUT_STDOUT);
-
+        
+        TSTRING pol_path = get_test_file_dir();
+        pol_path.append("/");
+        pol_path.append(polfile);
+        
         std::ifstream in;
-        in.open( "../twparser/testfiles/pol.txt" );
+        in.open(pol_path.c_str());
         if( ! in.good() )
             throw eParserHelper( _T("couldn't open test file") );
-
+        
         cPolicyParser parser( in );
-
+        
         cGenreSpecListVector policy;
         cErrorQueue errorQ;
         cErrorReporter errorR;
         cErrorTracer errorT;
-
+        
         // set up an error bucket that will spit things to stderr
         errorT.SetChild( &errorR );
         errorQ.SetChild( &errorT );
-
+        
         parser.Execute( policy, &errorQ );
 
-        return;
     }
     catch(eError& e)
     {
         TCERR << (int)e.GetID() << " : " << e.GetMsg().c_str() << std::endl;
         return;
     }
-
+    
+    TCERR << "Parsed policy test file " << polfile << std::endl;
     return;
+}
+
+
+
+void TestPolicyParser()
+{
+    cDebug d("TestPolicyParser()");
+
+    test_policy_file("pol.txt");
+//    test_policy_file("directives.txt");  //fails unless you substitute your hostname for 'your_host' in this file
+    
+// TODO: test currently segfaults if you create more than one policy parser in a process. (Not a real world scenario).
+    
+/*    test_policy_file("poleasy.txt");
+    test_policy_file("polhard.txt");
+    test_policy_file("polruleattr.txt"); */
 }
     
 

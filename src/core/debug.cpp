@@ -63,7 +63,7 @@ cDebug::cDebug(const char* label)
 
 cDebug::cDebug(const cDebug &rhs)
 {
-    strcpy(mLabel, rhs.mLabel);
+    strncpy(mLabel, rhs.mLabel, MAX_LABEL);
 }
 
 cDebug::~cDebug()
@@ -102,7 +102,7 @@ void cDebug::DoTrace(const char *format, va_list &args)
     char out[2048];
     size_t guard2 = 0xBABABABA;
 
-    vsprintf(out, format, args);
+    vsnprintf(out, 2048, format, args);
 
     ASSERT(guard1 == 0xBABABABA && guard2 == 0xBABABABA); // string was too long
     ASSERT(strlen(out) < 1024);
@@ -304,7 +304,7 @@ void cDebug::DebugOut( const char* lpOutputString, ... )
     // create the output buffer 
     va_list args;
     va_start(args, lpOutputString);
-    vsprintf(buf, lpOutputString, args);
+    vsnprintf(buf, 2048, lpOutputString, args);
     va_end(args);
     
 	#ifdef _DEBUG

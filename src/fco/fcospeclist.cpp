@@ -61,7 +61,7 @@ void cFCOSpecList::Clear()
 {
     std::list<PairType>::iterator itr;
 
-    for (itr = mAddedList.begin(); itr != mAddedList.end(); itr++)
+    for (itr = mAddedList.begin(); itr != mAddedList.end(); ++itr)
     {
         itr->first->Release();
         itr->second->Release();
@@ -227,7 +227,7 @@ void cFCOSpecListAddedIter::Remove()
 
     // the tricky part is finding the spec in the other list...
     std::list<cFCOSpecList::PairType>::iterator i;
-    for(i = mpSpecList->mCanonicalList.begin(); i != mpSpecList->mCanonicalList.end(); i++)
+    for(i = mpSpecList->mCanonicalList.begin(); i != mpSpecList->mCanonicalList.end(); ++i)
     {
         if(i->first == mIter->first)
             break;

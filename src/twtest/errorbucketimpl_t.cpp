@@ -37,11 +37,13 @@
 #include "core/debug.h"
 #include "core/archive.h"
 #include "core/errorgeneral.h"
+#include "core/errortable.h"
 
 // test option 7
 void TestErrorBucketImpl()
 {
-/*
+    cDebug d("TestErrorBucketImpl");
+    
     //This whole function is in sorry shape... TODO: Fix this DRA
   d.TraceDebug("Entering...\n");
 
@@ -54,13 +56,13 @@ void TestErrorBucketImpl()
 //These calls to PrintErrorMsg are broken.  The code is probably old. -DRA
 
     // Test error reporting
-    cErrorReporter::PrintErrorMsg(eError(_T("This should have a single line.")));
-    cErrorReporter::PrintErrorMsg(eError(_T("This should have a mulitiple lines since I have")
+    cErrorReporter::PrintErrorMsg(eErrorGeneral(_T("This should have a single line.")));
+    cErrorReporter::PrintErrorMsg(eErrorGeneral(_T("This should have a mulitiple lines since I have")
                                          _T(" put so much text here.  But it does have a lot")
                                          _T(" of spaces so cErrorReporter should have no")
                                          _T(" problem breaking it up.") 
                                          ));
-    cErrorReporter::PrintErrorMsg(eError(_T("This has many long words: ")
+    cErrorReporter::PrintErrorMsg(eErrorGeneral(_T("This has many long words: ")
                                          _T("40chars_________________________________")
                                          _T(" short words ") 
                                          _T("50chars___________________________________________")
@@ -69,7 +71,7 @@ void TestErrorBucketImpl()
                                          _T(" short words short words short words short words ") 
                                          _T("90chars___________________________________________________________________________________")
                                          ));
-    cErrorReporter::PrintErrorMsg(eError(_T("The error reporter should handle newlines.\n")
+    cErrorReporter::PrintErrorMsg(eErrorGeneral(_T("The error reporter should handle newlines.\n")
                                          _T("Newlines should break up the text appropriately.  Who knows when they will occur.  Can't have them getting in the way.\n")   
                                          _T("And one last line with a big char strings:  90chars___________________________________________________________________________________ 40chars_________________________________ 50chars___________________________________________")
                                          ));
@@ -109,13 +111,14 @@ void TestErrorBucketImpl()
         }
     }
 
-    TODO - test this stuff that's commented out
+    //TODO - test this stuff that's commented out
 
-    TCOUT << _T("Following string should be a cArchive::ERR_OPEN_FAILED error:\n"); 
-    TCOUT << cErrorTable::GetErrorString(cArchive::ERR_OPEN_FAILED) << std::endl;
+//    TCOUT << _T("Following string should be a cArchive::ERR_OPEN_FAILED error:\n");
+//    TCOUT << cErrorTable::GetErrorString(cArchive::ERR_OPEN_FAILED) << std::endl;
 
+/* This isn't going to work anymore, given that we don't have numeric errror constants
 // print out all error strings
-#if 1
+
     // Look up all errors. 
     // Note: our current error printing format limits us to 4 digit errors, so this should work for a while.
     int errornum;
@@ -134,9 +137,9 @@ void TestErrorBucketImpl()
             TCOUT << _T(": ") << errorString << std::endl;
         }
     }
-#endif
+*/
 
     d.TraceDebug("Leaving...\n");
-*/
+
 }
 

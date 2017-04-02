@@ -94,7 +94,7 @@ private:
 class cFCOSpecAttrEmailIter
 {
 public:
-    cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr);
+    explicit cFCOSpecAttrEmailIter(const cFCOSpecAttr& attr);
     ~cFCOSpecAttrEmailIter();
 
     void SeekBegin()    const;
@@ -171,7 +171,7 @@ inline bool cFCOSpecAttrEmailIter::IsEmpty() const
 }
 inline void cFCOSpecAttrEmailIter::Next() const
 {
-    mIter++;
+    ++mIter;
 }
 inline const TSTRING& cFCOSpecAttrEmailIter::EmailAddress() const
 {

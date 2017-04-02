@@ -14,34 +14,32 @@
 /simple		->		+ppp;
 
 # variable
-$(poo) = pinug;
-/simplevar	->	$(poo) ;
+FOO = pinug;
+/simplevar	->	$(FOO) ;
 
-$(turd) = /test6;
-$(turd) -> $(poo);
+BAR = /test6;
+$(BAR) -> $(FOO);
 
 # named attributes
-/namedattr		->		+pinug		(name /namedattr ) ;
+#/namedattr		->		+pinug		(name /namedattr ) ;
 
 # multiple attributes
-/namedattr2	->	 +pinug		(emailreport on, emailsendto genek, name /namedattr2, name4 val4, name5 val5 );
+#/namedattr2	->	 +pinug		(emailreport on, emailsendto genek, name /namedattr2, name4 val4, name5 val5 );
 
 # test line continuations
-/turd    \
+/bar    \
     ->\
     +p
     ;
-@@EnD
+#@@EnD
 
-/test		->		+p;
-"/te\x73t2"		->		+p-p						; 
-"/te\163t3"		->		+pinugs-am					;
-"c:\\te\163t3\\"		->		+pinugs-am					;
-"c:\\te\"as\163t3\\"		->		+pinugs-am					;
-"/te\163t3"		->		+pinugs-am					;
-"/te\163t3"		->		+pinugs-am					;
-/test4		->		+pinugs---am				;
-/test5		->		$(ReadOnly)s-+-am				;
+/test7		->		+p;
+"/te\x73t8"		->		+p-p						; 
+"/te\163t9"		->		+pinugs-am					;
+"/te\163t12"		->		+pinugs-am					;
+"/te\163t13"		->		+pinugs-am					;
+/test14		->		+pinugs---am				;
+/test15		->		$(ReadOnly)s-+-am				;
 
 # test weird file names
 /lost+found	->		+p		;	
@@ -51,50 +49,51 @@ $(turd) -> $(poo);
 			;
 
 # simple default policy
-/simple		->	+ppp;
+/simple2		->	+ppp;
 
 # variable
-$(poo) = pinug;
-/simplevar	->	$(poo) ;
-$(turd) = /test6;
-$(turd) -> $(poo);
+FOO = pinug;
+/simplevar2	->	$(FOO) ;
+BAR = /test16;
+$(BAR) -> $(FOO);
 
 # omit with space seperation
 ! /omit ;
 
 # omit with no space separation
- !/omit ;
+ !/omit2 ;
 
 # named attributes
-/namedattr	->	+pinug		(name1 value1) ;
+#/namedattr	->	+pinug		(name1 value1) ;
 
 # multiple attributes
-/namedattr2	->	+pinug		(emailreport on; emailsendto genek; name3 val3; name4 val4; name5 val5 ) ;
+#/namedattr2	->	+pinug		(emailreport on; emailsendto genek; name3 val3; name4 val4; name5 val5 ) ;
 
 # test line continuations
-/turd    \
+/bar2    \
     ->\
     +p
     ;
 
-@@END
+#@@END
 # the following isn't implemented yet
 #########################################3
 
 # attributes on specifers
-/conditions			{
-						xxx:		+pinug		(inside1 name1 ;) ;
-						yyy:		+pinug ;
-						zzz:		+pinug ;
-						default:	+pinug ;
-					};
+#/conditions2			{
+#						xxx:		+pinug		(inside1 name1 ;) ;
+#						yyy:		+pinug ;
+#						zzz:		+pinug ;
+#						default:	+pinug ;
+#					};
 
 
 
 # multiple specmasks
-/conditions			{
-						xxx:		+pinug ;
-						yyy:		+pinug ;
-						zzz:		+pinug ;
-						default:	+pinug ;
-					};
+#/conditions3			{
+#						xxx:		+pinug ;
+#						yyy:		+pinug ;
+#						zzz:		+pinug ;
+#						default:	+pinug ;
+#					};
+#

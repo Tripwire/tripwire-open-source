@@ -74,12 +74,7 @@ struct cFile_i;
 class  cFile
 {
 public:
-#if IS_UNIX
     typedef off_t File_t;
-#else //WIN32
-    typedef int64 File_t;
-
-#endif // IS_UNIX
 
     enum SeekFrom 
     {

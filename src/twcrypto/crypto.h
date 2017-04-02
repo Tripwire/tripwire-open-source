@@ -147,9 +147,9 @@ public:
         KEY2048 = 2048
     };
     
-    cRSA(KeySize keysize);
-    cRSA(const cRSAPublicKey& publicKey);     // read keysize from key
-    cRSA(const cRSAPrivateKey& privateKey);   // ditto
+    explicit cRSA(KeySize keysize);
+    explicit cRSA(const cRSAPublicKey& publicKey);     // read keysize from key
+    explicit cRSA(const cRSAPrivateKey& privateKey);   // ditto
     virtual ~cRSA();
 
     void SetEncrypting(const cRSAPublicKey* pKey);
@@ -183,7 +183,7 @@ class cRSAPrivateKey
     friend class cRSA;
     friend class cRSAPublicKey;
 public:
-    cRSAPrivateKey(void* pDataStream);
+    explicit cRSAPrivateKey(void* pDataStream);
     ~cRSAPrivateKey();
 
     int     GetWriteLen() const;
@@ -202,8 +202,8 @@ class cRSAPublicKey
 {
     friend class cRSA;
 public:
-    cRSAPublicKey(void* pDataStream);
-    cRSAPublicKey(const cRSAPrivateKey& privateKey);
+    explicit cRSAPublicKey(void* pDataStream);
+    explicit cRSAPublicKey(const cRSAPrivateKey& privateKey);
     ~cRSAPublicKey();
 
     int     GetWriteLen() const;
@@ -249,9 +249,9 @@ public:
         KEY2048 = 2048
     };
     
-    cElGamalSig(KeySize keysize);
-    cElGamalSig(const cElGamalSigPublicKey& publicKey);     // read keysize from key
-    cElGamalSig(const cElGamalSigPrivateKey& privateKey);   // ditto
+    explicit cElGamalSig(KeySize keysize);
+    explicit cElGamalSig(const cElGamalSigPublicKey& publicKey);     // read keysize from key
+    explicit cElGamalSig(const cElGamalSigPrivateKey& privateKey);   // ditto
     virtual ~cElGamalSig();
 
     void SetSigning(const cElGamalSigPrivateKey* pKey);
@@ -285,7 +285,7 @@ class cElGamalSigPrivateKey
     friend class cElGamalSig;
     friend class cElGamalSigPublicKey;
 public:
-    cElGamalSigPrivateKey(void* pDataStream);
+    explicit cElGamalSigPrivateKey(void* pDataStream);
     ~cElGamalSigPrivateKey();
 
     int     GetWriteLen() const;
@@ -304,8 +304,8 @@ class cElGamalSigPublicKey
 {
     friend class cElGamalSig;
 public:
-    cElGamalSigPublicKey(void* pDataStream);
-    cElGamalSigPublicKey(const cElGamalSigPrivateKey& privateKey);
+    explicit cElGamalSigPublicKey(void* pDataStream);
+    explicit cElGamalSigPublicKey(const cElGamalSigPrivateKey& privateKey);
     ~cElGamalSigPublicKey();
 
     int     GetWriteLen() const;
@@ -332,7 +332,7 @@ private:
 class cHashedKey128
 {
 public:
-    cHashedKey128(const TSTRING& data);
+    explicit cHashedKey128(const TSTRING& data);
     cHashedKey128(void* pData, int dataLen);
     ~cHashedKey128();
 
@@ -368,7 +368,7 @@ inline void cHashedKey128::Write(void* pDataStream)
 class cHashedKey192
 {
 public:
-    cHashedKey192(const TSTRING& data);
+    explicit cHashedKey192(const TSTRING& data);
     cHashedKey192(void* pData, int dataLen);
     ~cHashedKey192();
 

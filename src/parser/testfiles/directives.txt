@@ -2,16 +2,16 @@
 # parser will echo YES1 through YES9
 # there's a problem with the parser if it echoes NO
 
-@@ifhost turd
+@@ifhost foo
     @@error NO1
 @@else
-    @@echo +YES1;
+    @@print +YES1
 @@endif
 
-@@ifhost crap || your_host||poo
+@@ifhost bar || your_host||baz
 
 
-    @@ifhost turd
+    @@ifhost foo
     
         @@ifhost your_host
             @@error +NO2;
@@ -23,13 +23,13 @@
 
     @@else
     
-        @@ifhost turd
+        @@ifhost foo
             @@error +NO5;
         @@else
-            @@echo +YES2;
+            @@print +YES2;
         @@endif
 
-            @@echo +YES3;
+            @@print +YES3;
 
     @@endif
 
@@ -38,12 +38,12 @@
     @@ifhost your_host
     
         @@ifhost your_host
-            @@echo +YES4;
+            @@print +YES4;
         @@else
             @@error +NO6;
         @@endif
 
-            @@echo +YES5;
+            @@print +YES5;
 
     @@else
     
@@ -58,34 +58,34 @@
     @@endif
 
     @@ifhost your_host
-        @@echo +YES6;
+        @@print +YES6;
     @@else
         @@error +NO10;
     @@endif
 
-    @@ifhost turd
+    @@ifhost foo
         @@error +NO11;
     @@else
-        @@echo +YES7;
+        @@print +YES7;
     @@endif
 
     
-    @@ifhost your_host || poo
-        @@echo +YES8;
+    @@ifhost your_host || baz
+        @@print +YES8;
     @@endif    
 
-    @@ifhost poo || your_host
-        @@echo +YES9;
+    @@ifhost baz || your_host
+        @@print +YES9;
     @@endif
 
-    @@ifhost poo
+    @@ifhost baz
         @@error +NO12;
     @@endif
 
 @@else
 
 
-    @@ifhost turd
+    @@ifhost foo
     
         @@ifhost your_host
             @@error +NO13;
@@ -97,7 +97,7 @@
 
     @@else
     
-        @@ifhost turd
+        @@ifhost foo
             @@error +NO16;
         @@else
             @@error +NO17;
@@ -107,7 +107,7 @@
 
     @@endif
 
-    @@ifhost turd
+    @@ifhost foo
         @@error +NO19;
     @@else
         @@error +NO20;
@@ -120,16 +120,18 @@
     @@endif
 
 
-    @@ifhost turd
+    @@ifhost foo
         @@error +NO23;
     @@else
         @@error +NO24;
     @@endif
     
-    @@ifhost poo
+    @@ifhost baz
         @@error +NO25;
     @@endif
 
 @@endif
 
+#A token rule at the end to avoid 'no rules in policy file' errors 
+/asdf -> +a;
 

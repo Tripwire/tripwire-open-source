@@ -142,7 +142,7 @@ size_t DistanceToOne( size_t n )
         n = ( n >> 1 );
     }
 
-    ASSERT( n == 1 ); // n was not a power of 2!
+    TEST( n == 1 ); // n was not a power of 2!
 
     return dist;
 }
@@ -159,14 +159,14 @@ void ConvertAndCompareString( const std::string& s )
     wc16_string ws;
     ws.resize( s.length() );
     nWrote = iCodeConverter::GetInstance()->Convert( (ntdbs_t)ws.c_str(), ws.length(), s.c_str(), ws.length() );
-    ASSERT( nWrote != -1 );
+    TEST( nWrote != -1 );
     ws.resize( nWrote );
 
     // convert back to mbchar_t string
     std::string s2;
     s2.resize( ws.length() * MB_CUR_MAX );
     nWrote = iCodeConverter::GetInstance()->Convert( (ntmbs_t)s2.c_str(), s2.length(), ws.c_str(), ws.length() );
-    ASSERT( nWrote != -1 );
+    TEST( nWrote != -1 );
     s2.resize( nWrote );
 
     std::cout << "* Result    : ";
@@ -182,9 +182,10 @@ char NonZeroChar( char ch )
 }
 
 // mbchar_t to dbchar_t
+//TestMbToDb in codeconvert_t.cpp seems to hit an infinite loop or runs verrrry long; ifdef'd"
 void TestMbToDb()
 {
-  TCERR << "TODO: TestMbToDb in codeconvert_t.cpp seems to hit an infinite loop or runs verrrry long; ifdef'd" << std::endl;
+  TCERR << "\nTODO: TestMbToDb in codeconvert_t.cpp is flaky & needs to be fixed/replaced; currently disabled." << std::endl;
 #if 0
     std::string s;
     s.resize( 0x10000 * 2 ); // two bytes for each combination
@@ -194,10 +195,10 @@ void TestMbToDb()
         for( size_t j = 0; j < 0x10; j++ )
         {
             size_t first_byte = ( i & 0xFF00 ) >> 8;
-            ASSERT( first_byte <= 0xFF );
+            TEST( first_byte <= 0xFF );
 
             size_t second_byte = ( ( i & 0x00F0 ) >> 4 ) | j;
-            ASSERT( second_byte <= 0xFF );
+            TEST( second_byte <= 0xFF );
 
             s[ 2 * j ]          = NonZeroChar( (char)first_byte );
             s[ ( 2 * j ) + 1 ]  = NonZeroChar( (char)second_byte );
@@ -220,10 +221,10 @@ void TestMbToDb()
         for( size_t j = 0; j < CHARS_AT_A_TIME; j++ )
         {
             size_t first_byte = ( ( i & FIRST_BYTE_MASK ) >> DistanceToOne( CHARS_AT_A_TIME ) );
-            ASSERT( first_byte <= 0xFF );
+            TEST( first_byte <= 0xFF );
 
             size_t second_byte = ( ( i & ( SECOND_BYTE_MASK << DistanceToOne( CHARS_AT_A_TIME ) ) | j );
-            ASSERT( second_byte <= 0xFF );
+            TEST( second_byte <= 0xFF );
 
             s[ 2 * j ]          = NonZeroChar( (char)first_byte );
             s[ ( 2 * j ) + 1 ]  = NonZeroChar( (char)second_byte );

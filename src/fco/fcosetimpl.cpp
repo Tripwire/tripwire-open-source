@@ -80,7 +80,7 @@ cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs) : iFCOSet()
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
+cFCOSetImpl& cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
 {
     std::set<cFCONode>::const_iterator i;
     for(i = rhs.mFCOSet.begin(); i != rhs.mFCOSet.end(); ++i)
@@ -88,6 +88,8 @@ void cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
         i->mpFCO->AddRef();
         mFCOSet.insert(cFCONode(i->mpFCO));
     }
+    
+    return *this;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -202,7 +204,7 @@ void cFCOSetImpl::Write(iSerializer* pSerializer) const
     pSerializer->WriteInt32(mFCOSet.size());
 
     std::set<cFCONode>::const_iterator itr;
-    for( itr = mFCOSet.begin(); itr != mFCOSet.end(); itr++)
+    for( itr = mFCOSet.begin(); itr != mFCOSet.end(); ++itr)
     {
         pSerializer->WriteObjectDynCreate(itr->mpFCO);
     }
@@ -284,7 +286,7 @@ bool cFCOIterImpl::IsEmpty() const
 void cFCOIterImpl::Next() const
 {
     ASSERT(mpSet != 0);
-    mIter++;
+    ++mIter;
 }
 
 
