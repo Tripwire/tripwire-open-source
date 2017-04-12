@@ -39,9 +39,11 @@
 // INCLUDES
 //=========================================================================
 #include "fco/fcodatasourceiterimpl.h"
+#include "core/fileerror.h"
+#include "core/fsservices.h"
 
-TSS_EXCEPTION( eFSDataSourceIter,                   eError )
-TSS_EXCEPTION( eFSDataSourceIterReadDir,    eFSDataSourceIter )
+TSS_FILE_EXCEPTION( eFSDataSourceIter,           eFileError )
+TSS_FILE_EXCEPTION( eFSDataSourceIterReadDir,    eFSDataSourceIter )
 
 
 //=========================================================================
@@ -83,6 +85,9 @@ private:
 
     virtual iFCO* CreateObject(const cFCOName& name, bool bCreatingPeers );
     virtual bool InitializeTypeInfo(iFCO* pFCO) ;
+
+    void AddIterationError(const eError& e);
+    bool DoStat(const TSTRING& name, cFSStatArgs& statArgs);
 };
 
 #endif //__FSDATASOURCEITER_H
