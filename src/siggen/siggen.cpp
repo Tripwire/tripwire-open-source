@@ -67,5 +67,5 @@ cSiggen::cSiggen()
     TSS_Dependency( cTWCrypto );
 }
 
-// eof: siggen.cpp
+
 

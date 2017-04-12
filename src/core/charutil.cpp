@@ -150,4 +150,4 @@ bool cCharUtil::PopNextChar(    TSTRING::const_iterator& cur,
     return f;
 }
 
-// eof: charutil.cpp
+

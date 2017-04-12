@@ -38,4 +38,4 @@
 
 #include "stddb.h"
 
-// eof: stddb.cpp
+

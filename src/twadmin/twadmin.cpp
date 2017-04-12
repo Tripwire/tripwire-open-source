@@ -69,4 +69,4 @@ cTWAdmin::cTWAdmin()
     TSS_REGISTER_PKG_ERRORS ( twadmin );
 }
 
-// eof: twadmin.cpp
+

@@ -97,4 +97,4 @@ TSTRING cDisplayUtil::FormatMultiLineString( const TSTRING& str, int nOffset, in
     return( sstr.str() );
 }
 
-// eof: displayutil.cpp
+

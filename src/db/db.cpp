@@ -47,5 +47,4 @@ cDb::cDb()
 }
 
 
-// eof: db.cpp
 

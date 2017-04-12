@@ -53,4 +53,4 @@ TSS_BeginStringtable( cFCO )
 TSS_EndStringtable( cFCO )
 
 
-// eof: fcostrings.cpp
+

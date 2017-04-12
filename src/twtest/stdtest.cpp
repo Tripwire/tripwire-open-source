@@ -37,4 +37,4 @@
 //
 #include "stdtest.h"
 
-// eof: stdtest.cpp
+

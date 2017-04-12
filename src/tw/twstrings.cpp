@@ -249,5 +249,5 @@ TSS_BeginStringtable( cTW )
 TSS_EndStringtable( cTW )
 
 
-// eof: twstrings.cpp
+
 

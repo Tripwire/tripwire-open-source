@@ -66,5 +66,5 @@ cTW::cTW()
     TSS_REGISTER_PKG_ERRORS( tw )
 }
 
-// eof: tw.cpp
+
 

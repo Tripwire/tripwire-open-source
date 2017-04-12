@@ -63,4 +63,4 @@ cTWCrypto::cTWCrypto()
     TSS_REGISTER_PKG_ERRORS( twcrypto ) 
 }
 
-// eof: twcrypto.cpp
+

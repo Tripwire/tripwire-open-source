@@ -244,5 +244,5 @@ tss::mbscount( const_ntmbs_t psz )
     return nCount;
 }
 
-// eof: ntmbs.cpp
+
 

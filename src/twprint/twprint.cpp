@@ -69,4 +69,4 @@ cTWPrint::cTWPrint()
     TSS_REGISTER_PKG_ERRORS ( twprint );
 }
 
-// eof: twprint.cpp
+

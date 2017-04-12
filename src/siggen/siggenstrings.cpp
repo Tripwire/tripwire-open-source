@@ -75,5 +75,5 @@ TSS_BeginStringtable( cSiggen )
 
 TSS_EndStringtable( cSiggen )
 
-// eof: siggenstrings.cpp
+
 

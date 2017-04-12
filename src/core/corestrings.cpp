@@ -70,4 +70,4 @@ TSS_BeginStringtable( cCore )
 TSS_EndStringtable( cCore )
 
 
-// eof: corestrings.cpp
+

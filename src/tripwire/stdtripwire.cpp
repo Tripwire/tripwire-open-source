@@ -37,4 +37,4 @@
 //
 #include "stdtripwire.h"
 
-// eof: stdtripwire.cpp
+

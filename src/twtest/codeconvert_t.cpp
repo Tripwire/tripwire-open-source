@@ -340,5 +340,5 @@ bool LowASCIILooksLikeUCS2InWchart()
     return fOK;
 }
 
-// eof: codeconvert_t.cpp
+
 

@@ -96,5 +96,5 @@ void TestResources()
 }
 
 
-// eof: tss.resources_t.cpp
+
 

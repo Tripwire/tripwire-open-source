@@ -49,4 +49,4 @@ TSS_BeginStringtable( cUtil )
 TSS_EndStringtable( cUtil )
 
 
-// eof: utilstrings.cpp
+

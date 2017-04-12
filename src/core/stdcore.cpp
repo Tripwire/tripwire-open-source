@@ -37,4 +37,4 @@
 
 #include "stdcore.h"
 
-// eof: stdcore.cpp
+

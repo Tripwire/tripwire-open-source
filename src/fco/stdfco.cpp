@@ -37,4 +37,4 @@
 
 #include "stdfco.h"
 
-// eof: stdfco.cpp
+

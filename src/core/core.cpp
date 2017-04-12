@@ -61,4 +61,4 @@ cCore::cCore()
 }
 
 
-// eof: core.cpp
+

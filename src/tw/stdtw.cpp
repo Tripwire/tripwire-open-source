@@ -37,4 +37,4 @@
 //
 #include "stdtw.h"
 
-// eof: stdtw.cpp
+

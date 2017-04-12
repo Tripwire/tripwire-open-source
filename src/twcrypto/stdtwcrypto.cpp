@@ -38,4 +38,4 @@
 #include "stdtwcrypto.h"
 
 
-// eof: stdtwcrypto.cpp
+

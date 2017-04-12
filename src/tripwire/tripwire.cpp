@@ -69,5 +69,5 @@ cTripwire::cTripwire()
     TSS_REGISTER_PKG_ERRORS( tripwire )
 }
 
-// eof: tripwire.cpp
+
 

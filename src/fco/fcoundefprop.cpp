@@ -138,4 +138,4 @@ void cFCOUndefinedProp::Copy(const iFCOProp* rhs)
     ThrowAndAssert( INTERNAL_ERROR("fcoundefprop.cpp") );
 }
 
-// eof: fcoundefprop.cpp
+

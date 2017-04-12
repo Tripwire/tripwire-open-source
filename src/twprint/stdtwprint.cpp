@@ -37,4 +37,4 @@
 
 #include "stdtwprint.h"
 
-// eof: stdtwprint.cpp
+

@@ -37,4 +37,4 @@
 
 #include "stdtwparser.h"
 
-// eof: stdtwparser.cpp
+

@@ -37,4 +37,4 @@
 //
 #include "stdsiggen.h"
 
-// eof: stdsiggen.cpp
+

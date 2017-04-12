@@ -38,4 +38,4 @@
 #include "stdutil.h"
 
 
-// eof: stdutil.cpp
+
