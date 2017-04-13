@@ -3499,6 +3499,10 @@ then
 
 $as_echo "#define DEBUG 1" >>confdefs.h
 
+else
+
+$as_echo "#define NDEBUG 1" >>confdefs.h
+
 fi
 
 ac_ext=c

@@ -40,6 +40,8 @@ then
    CFLAGS="${CFLAGS} -g"
    CXXFLAGS="${CXXFLAGS} -g"
    AC_DEFINE(DEBUG, 1, [Compile with debug code])
+else
+   AC_DEFINE(NDEBUG, 1, [Compile without debug code])
 fi
 
 dnl ###################
