@@ -85,7 +85,7 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
     try {
         cKeyFile keyfile;
 
-#ifdef _DEBUG
+#ifdef DEBUG
         cDebug d("GeneratePublicPrivateKeys");
         d.TraceDebug("calling keyfile.GenerateKeys()\n");
 #endif
@@ -101,7 +101,7 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
             return;
         }
 
-#ifdef _DEBUG
+#ifdef DEBUG
         d.TraceDebug(_T("writing to keyfile %s\n"), pGK->keyPath);
 #endif
 
@@ -135,7 +135,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     passphrase.swapbytes();
 #endif
 
-#ifdef _DEBUG
+#ifdef DEBUG
     // test reading in the keys
     wc16_string passphrase_copy = passphrase.c_str();
     wc16_string passphrase_copy2 = passphrase.c_str();
@@ -169,7 +169,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
         return false;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUG
     // test reading in the keys
     cKeyFile keyfile;
 

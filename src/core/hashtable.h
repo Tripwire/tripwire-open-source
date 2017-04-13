@@ -172,7 +172,7 @@ public:
     int32 GetNumValues() const { return mValuesInTable; };
         // returns number of table entries filled
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void TraceDiagnostics() const;
         // traces hash table statistics 
 #endif
@@ -503,7 +503,7 @@ uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash( const KEY_TY
     return hindex;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 void cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::TraceDiagnostics() const
@@ -537,7 +537,7 @@ void cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::TraceDiagnostics() c
     d.TraceDebug("-- Slots with >1 item:                     %d (%lf %%)\n",numMultiSlot, ((double)numMultiSlot / (double)slotsFilled) * 100.0);
     d.TraceDebug("--------------------------------------------------\n");
 }
-#endif // _DEBUG
+#endif // DEBUG
 
 
 #endif //__HASHTABLE_H

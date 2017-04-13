@@ -82,7 +82,7 @@ public:
 
     virtual void TraceContents(int dl = -1) const;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     static void TraceStats() ;
         // this TRACEs statistics on FSObject usage that is pertinent to performance or mem leakage 
         // concerns.

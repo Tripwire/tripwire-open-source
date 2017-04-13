@@ -77,7 +77,7 @@ protected:
 private:
     mutable int mRefCount;
 
-#ifdef _DEBUG
+#ifdef DEBUG
 private:
     static int objectCounter;
     static int referenceCounter;

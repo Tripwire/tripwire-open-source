@@ -421,7 +421,7 @@ void cMemoryArchive::AllocateMemory(int len) // throw(eArchive)
     {
         // grow the buffer
         // only error if we are in debug mode
-#ifdef _DEBUG
+#ifdef DEBUG
         if (len > mMaxAllocatedLen)
             ThrowAndAssert(eArchiveOutOfMem());
 #endif

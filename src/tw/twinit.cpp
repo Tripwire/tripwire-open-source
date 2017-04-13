@@ -292,7 +292,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     tw_HandleSignal( SIGSEGV ); // Segmentation fault
     tw_HandleSignal( SIGQUIT ); // Quit signal - issued from terminal (CTRL-\)
     tw_HandleSignal( SIGILL );  // Illegal instruction - probably won't be an issue.
-#ifndef _DEBUG
+#ifndef DEBUG
     tw_HandleSignal( SIGTRAP ); // We don't want to mess up the debugger in debug builds...
 #endif
     tw_HandleSignal( SIGABRT ); // Supposedly we can only get this signal by calling abort()

@@ -64,14 +64,14 @@ cDbDataSourceIter::cDbDataSourceIter(cHierDatabase* pDb, int genreNum )
         genreNum   = cGenreSwitcher::GetInstance()->CurrentGenre();
     mFCOCreateFunc = cGenreSwitcher::GetInstance()->GetFactoryForGenre( (cGenre::Genre)genreNum )->GetCreateFunc();
 
-#ifdef _DEBUG
+#ifdef DEBUG
     //
     // make some assertions about the current genre's name info
     //
     iFCONameInfo* pNameInfo = cGenreSwitcher::GetInstance()->GetFactoryForGenre( (cGenre::Genre)genreNum )->GetNameInfo();
     ASSERT( pDb->IsCaseSensitive()   == pNameInfo->IsCaseSensitive()   );
     ASSERT( pDb->GetDelimitingChar() == pNameInfo->GetDelimitingChar() );
-#endif //#ifdef _DEBUG
+#endif //#ifdef DEBUG
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -398,7 +398,7 @@ void cKeyFile::ProtectKeys(int8* passphrase, int passphraseLen) // throw eKeyFil
         des.ProcessBlock(mpPrivateKeyMem + i, mpPrivateKeyMem + i);
     }
 
-#ifdef _DEBUG
+#ifdef DEBUG
     // try decoding it just to see if it worked
     if (GetPrivateKey(passphrase, passphraseLen) == 0)
     {

@@ -88,7 +88,7 @@ const TCHAR* argv5[] =
     _T("frog")
 };
 
-#ifdef _DEBUG
+#ifdef DEBUG
 static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
 {
     TSTRING str;
@@ -104,7 +104,7 @@ static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
 
 static void test_parse(cCmdLineParser& parser, const int argc, const TCHAR** argv, bool should_throw)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     cDebug d("test_parse");
     PrintCmdLine(argc, argv, d);
 #endif
@@ -122,7 +122,7 @@ static void test_parse(cCmdLineParser& parser, const int argc, const TCHAR** arg
     
     TEST(threw == should_throw);
     
-#ifdef _DEBUG
+#ifdef DEBUG
     parser.TraceContents();
 #endif
 }

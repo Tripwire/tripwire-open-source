@@ -241,7 +241,7 @@ Resource_Class::Get( ConstKeyRef id ) const
     
     if ( at == m_table.end() )
     {
-        #ifdef _DEBUG
+        #ifdef DEBUG
         std::cerr << "*** Error Resource_Class::Get() [" __FILE__ ":" << __LINE__ << "]: Resource not found\n";
         #endif
 

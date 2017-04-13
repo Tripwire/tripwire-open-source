@@ -238,7 +238,7 @@ void cConfigFile::WriteString( TSTRING& configText ) // throw( eFSServices )
 
 void cConfigFile::ReadString(const TSTRING configText) // throw( eConfigFile );
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     // NOTE:BAM -- debug only code !
     TCERR << _T("*** begin config text ***") << std::endl;
     TCERR << configText << std::endl;    
@@ -266,7 +266,7 @@ void cConfigFile::ReadString(const TSTRING configText) // throw( eConfigFile );
 
     CheckThatAllMandatoryKeyWordsExists();
 
-#ifdef _DEBUG
+#ifdef DEBUG
     // NOTE:BAM -- debug only code !
     TSTRING sTemp;
     WriteString( sTemp );

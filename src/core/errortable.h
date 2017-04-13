@@ -66,14 +66,14 @@ public:
     static cErrorTable* GetInstance();
 
 private:
-    #ifdef _DEBUG
+    #ifdef DEBUG
     static void AssertMsgValidity(const TCHAR* msg);
     #endif
 };
 
 inline void cErrorTable::Put( const eError& e, const TCHAR* msg )
 {
-    #ifdef _DEBUG
+    #ifdef DEBUG
     AssertMsgValidity(msg);
     #endif
 

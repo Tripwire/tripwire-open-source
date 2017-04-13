@@ -46,7 +46,7 @@
 #include "block.h"
 #endif
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #undef _BLOCKFILE_DEBUG // If we dont do this, test does not compile on unix
 #define _BLOCKFILE_DEBUG // If we dont do this, test does not compile on unix
 #endif

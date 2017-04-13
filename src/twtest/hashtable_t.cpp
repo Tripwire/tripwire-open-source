@@ -110,7 +110,7 @@ void HashTest1()
     }
 
     // get statistics
-#ifdef _DEBUG
+#ifdef DEBUG
     htable.TraceDiagnostics();
 #endif
 

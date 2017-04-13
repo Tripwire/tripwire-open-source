@@ -139,7 +139,7 @@ public:
         // given an argId, fill out the strings with the argument and alias strings. Returns false
         // if the argId cannot be found. This method is not very fast, so don't use it often.
 
-    #ifdef _DEBUG
+    #ifdef DEBUG
     void TraceContents(int dl = -1) ;
     #endif
 private:

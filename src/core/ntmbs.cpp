@@ -46,7 +46,7 @@
 // Module-wide Helpers
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#ifndef TSS_Raise   // Should add file and line info in _DEBUG mode!!!!
+#ifndef TSS_Raise   // Should add file and line info in DEBUG mode!!!!
     #define TSS_Raise( Xcpt, pkg, ids ) \
         throw Xcpt( TSS_GetString( pkg, ids ) )
 

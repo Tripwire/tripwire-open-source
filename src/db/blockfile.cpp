@@ -326,7 +326,7 @@ void cBlockFile::AssertValid() const
     //
     // make sure the archive length and block count match up
     //
-    #ifdef _DEBUG
+    #ifdef DEBUG
     if (mpArchive->Length() != (GetBlockSize() * GetNumBlocks()))
     {
         cDebug d("cBlockFile::AssertValid");

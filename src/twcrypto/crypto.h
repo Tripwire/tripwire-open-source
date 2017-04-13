@@ -209,7 +209,7 @@ public:
     int     GetWriteLen() const;
     void    Write(void* pDataStream) const;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void TraceContents();
 #endif
 
@@ -315,7 +315,7 @@ public:
         // This is used to make sure the key used to sign the config
         // file is the same as the key we are currently using.
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void TraceContents();
 #endif
 

@@ -170,7 +170,7 @@ std::string cPolicyParser::ConvertMultibyte( std::istream& in )
             throw eParserBadCharacter();
     }
 
-#ifdef _DEBUG
+#ifdef DEBUG
     TCERR << _T("*** begin policy text ***") << std::endl;
     std::cerr << ss.str() << std::endl;    
     TCERR << _T("*** end policy text ***") << std::endl << std::endl;
@@ -179,7 +179,7 @@ std::string cPolicyParser::ConvertMultibyte( std::istream& in )
     // convert it to single byte escaped
     std::string str = util_ConvertMB( ss.str() );
 
-#ifdef _DEBUG
+#ifdef DEBUG
     TCERR << _T("*** begin policy converted to ***") << std::endl;
     std::cerr << str << std::endl;    
     TCERR << _T("*** end policy converted to  ***") << std::endl << std::endl;

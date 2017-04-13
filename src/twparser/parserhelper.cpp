@@ -64,7 +64,7 @@ static bool util_IsOctal( const char ch );
 static int  util_GetEscapeValueOfChar( char ch );
 static int  util_GetRecurseDepth( const cParseNamedAttrList* pList ); //throw( eParserHelper )
 static void util_LoseSurroundingWS( TSTRING& str );
-#ifdef _DEBUG
+#ifdef DEBUG
 static bool util_AsciiCharsActLikeTheyShould();
 #endif
 
@@ -226,7 +226,7 @@ void cPreprocessor::PopState()
     ASSERT( ! mStateStack.empty() );
     mStateStack.pop();
 
-#ifdef _DEBUG    
+#ifdef DEBUG    
     if( !Empty() && TopState() == STATE_ACCEPT )
         d.TraceDebug(_T("State == STATE_ACCEPT\n"));
     else
@@ -502,7 +502,7 @@ void cParserUtil::InterpretEscapedString( const std::string& strEscapedString, T
         }
     }
 
-#ifdef _DEBUG
+#ifdef DEBUG
     std::string str;
 
     str = "before: <";
@@ -1085,7 +1085,7 @@ void util_LoseSurroundingWS( TSTRING& str )
 }
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
 bool util_AsciiCharsActLikeTheyShould()
 {
     // we need numbers whose character 

@@ -119,7 +119,7 @@ int cSerRefCountTable::Add(const iSerRefCountObj* pObj, int id)
 // creates a new cSerRefCountTable
 void cSerRefCountTableMap::AddSerializer(const cSerializer* pSerializer)
 {
-    #ifdef _DEBUG
+    #ifdef DEBUG
     // make sure we don't have this serialzier in here yet
     {
     std::map<const cSerializer*, cSerRefCountTable*>::iterator itr;

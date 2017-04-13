@@ -156,7 +156,7 @@ cFCONameTbl::cFCONameTbl(int defSize) :
 
 cFCONameTbl::~cFCONameTbl()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     cDebug d("cFCONameTbl::~cFCONameTbl()");
     d.TraceDebug("Tracing cFCONameTblNode hash table statistics:\n");
     mTable.TraceDiagnostics();

@@ -45,7 +45,7 @@
 IMPLEMENT_SERREFCOUNT(cFSObject, _T("FSObject"), 0, 1)
 
 // Debug stuff
-#ifdef _DEBUG
+#ifdef DEBUG
 static int gNumFSObjectCreate   = 0;
 static int gNumFSObjectDestroy  = 0;
 
@@ -75,7 +75,7 @@ public:
 cFSObject::cFSObject(const cFCOName& name) :
     mName(name)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     gNumFSObjectCreate++;
 #endif
 }
@@ -83,14 +83,14 @@ cFSObject::cFSObject(const cFCOName& name) :
 cFSObject::cFSObject() :
     mName(_T("undefined"))
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     gNumFSObjectCreate++;
 #endif
 }
 
 cFSObject::~cFSObject()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     gNumFSObjectDestroy++;
 #endif
 }

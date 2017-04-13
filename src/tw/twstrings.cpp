@@ -42,7 +42,7 @@
 
 #define UNICODE_STR _T("")
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #   define DEBUG_STR _T("d")
 #else
 #   define DEBUG_STR _T("")

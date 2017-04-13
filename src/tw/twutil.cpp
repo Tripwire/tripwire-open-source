@@ -1126,7 +1126,7 @@ static struct termios Otty;
 static void RestoreEcho(int sig)
 {
 #if SUPPORTS_TERMIOS
-#ifdef _DEBUG
+#ifdef DEBUG
     std::cout << "Caught signal, resetting echo."<< std::endl;
     sleep(2);
 #endif

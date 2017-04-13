@@ -158,7 +158,7 @@ iTWMode* cTWCmdLine::GetMode(int argc, const TCHAR *const * argv)
       else if  (_tcscmp(argv[1], _T("--test")) == 0)
          mode = MODE_TEST;
 
-#ifdef _DEBUG_DB
+#ifdef DEBUG
       if      (_tcscmp(argv[1], _T("--explore")) == 0)
          mode = MODE_EXPLORE;
       if      (_tcscmp(argv[1], _T("--verifydb")) == 0)
@@ -204,8 +204,8 @@ iTWMode* cTWCmdLine::GetMode(int argc, const TCHAR *const * argv)
         pRtn = new cTWModeVersion;
         break;
 
-//Explore and Debug modes are invisible unless _DEBUG_DB is defined.
-#ifdef _DEBUG_DB
+//Explore and Debug modes are invisible unless DEBUG is defined.
+#ifdef DEBUG
    case cTWCmdLine::MODE_EXPLORE:
       pRtn = new cTWModeExploreDb;
       break;
@@ -2441,7 +2441,7 @@ int cTWModeHelp::Execute(cErrorQueue* pQueue)
          TCOUT<< TSS_GetString( cTripwire, tripwire::STR_TRIPWIRE_HELP_UPDATE );
          TCOUT<< TSS_GetString( cTripwire, tripwire::STR_TRIPWIRE_HELP_UPDATE_POLICY );
          TCOUT<< TSS_GetString( cTripwire, tripwire::STR_TRIPWIRE_HELP_TEST );
-#ifdef _DEBUG_DB
+#ifdef DEBUG
          // TODO: Do we need help messages for these modes? DRA
 #endif
          //We're done, return
@@ -2539,7 +2539,7 @@ bool util_GetEditor( TSTRING& strEd )
 
 //Encase the explore and debug modes in this ifdef, since they are for internal
 //use only. 
-#ifdef _DEBUG_DB
+#ifdef DEBUG
 
 //#############################################################################
 // cTWModeExploreDb
@@ -2724,6 +2724,6 @@ int cTWModeDebugDb::Execute(cErrorQueue* pQueue)
 }
 
 
-#endif //_DEBUG_DB
+#endif //DEBUG
 
 

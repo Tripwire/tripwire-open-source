@@ -322,7 +322,7 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
 
     if (fseeko( mpData->mpCurrStream, offset, apiFrom ) != 0)
     {
-        #ifdef _DEBUG
+        #ifdef DEBUG
         cDebug d("cFile::Seek");
         d.TraceDebug("Seek failed!\n");
         #endif

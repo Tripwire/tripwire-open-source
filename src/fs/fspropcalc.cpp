@@ -399,7 +399,7 @@ void cFSPropCalc::VisitFSObject(cFSObject& obj)
         propsToCheck    ^= inBoth;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUG
     d.TraceDetail("----->Collision Action = %s\n", mCollAction == iFCOPropCalc::PROP_LEAVE ? "Leave" : "Replace");
     d.TraceDetail("----->Object's valid properties (a):\n");
     obj.GetPropSet()->GetValidVector().TraceContents(cDebug::D_DETAIL);

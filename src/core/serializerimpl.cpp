@@ -274,7 +274,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
             // unable to find the creation function...
             d.TraceError("Unable to find creation function for non-ref counted object %d\n", crc);
             TOSTRINGSTREAM str;
-            #ifdef _DEBUG
+            #ifdef DEBUG
             // Let's only report the actual crc in debug mode
             str << (int32)crc << std::ends;
             #endif

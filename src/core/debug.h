@@ -156,11 +156,11 @@ private:
 #endif
 };
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #define TRACE   cDebug::DebugOut
 #else
 #define TRACE   1 ? (void)0 : cDebug::DebugOut
-#endif // _DEBUG
+#endif // DEBUG
 
 //////////////////////////////////////////////////////////////////////////////////
 // inline implementation

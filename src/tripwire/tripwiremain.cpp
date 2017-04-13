@@ -64,7 +64,7 @@ static TSTRING util_GetWholeCmdLine( int argc, const TCHAR *argv[] );
 // global new() and delete() overrides -- this is done to do performance testing
 ///////////////////////////////////////////////////////////////////////////////
 /*
-#ifdef _DEBUG
+#ifdef DEBUG
 #if defined(HAVE_MALLOC_H)
 #include <malloc.h>
 #endif
@@ -269,7 +269,7 @@ exit:
 
     // print out the max memory usage...
 /*
-#ifdef _DEBUG
+#ifdef DEBUG
     TCOUT << _T("Maximum memory footprint = ") << gMaxAlloc << std::endl;
 #endif
 */

@@ -62,7 +62,7 @@ cFCODatabaseFile::tEntry::tEntry( cGenre::Genre genre )
 }
 
 cFCODatabaseFile::cFCODatabaseFile()
-#ifdef _DEBUG
+#ifdef DEBUG
 :   mFileName( _T("Unknown file name") )
 #else
 :   mFileName( _T("") )  // If we don't know the filename, lets just not have one in release mode.

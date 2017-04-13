@@ -324,7 +324,7 @@ void cIntegrityCheck::ProcessDir( cDbDataSourceIter dbIter, iFCODataSourceIter* 
         return;
     }
 
-#ifdef _DEBUG
+#ifdef DEBUG
     if( dbIter.Done() )
     {
         d.TraceDebug( "Processing directory %s\n", pIter->GetParentName().AsString().c_str() );

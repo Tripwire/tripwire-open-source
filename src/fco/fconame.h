@@ -153,7 +153,7 @@ protected:
     //
     typedef std::vector<cFCONameTblNode*> ListType;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     TSTRING             mDebugStrName; // so we can see this guy's value in the debug window
 #endif 
 };

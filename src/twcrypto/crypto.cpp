@@ -476,7 +476,7 @@ void cRSAPublicKey::Write(void* pDataStream) const
     WRITE_INTEGER(e);
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void cRSAPublicKey::TraceContents()
 {
     cDebug d("cRSAPublicKey::TraceContents");
@@ -687,7 +687,7 @@ void cRSA::GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic)
     retPublic->mpData->mpKey = pNewPublicKey;
     retPublic->mpData->mKeyLength = mpData->mKeyBits;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     int l;
     l = retPublic->mpData->mpKey->MaxPlainTextLength();
     ASSERT(l == GetBlockSizePlain());
@@ -954,7 +954,7 @@ bool cElGamalSigPublicKey::IsEqual(const cElGamalSigPublicKey& rhs) const
            ;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void cElGamalSigPublicKey::TraceContents()
 {
     cDebug d("cElGamalSigPublicKey::TraceContents");
@@ -1167,7 +1167,7 @@ void cElGamalSig::GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPu
     retPublic->mpData->mpKey = pNewPublicKey;
     retPublic->mpData->mKeyLength = (int16)mpData->mKeyBits;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     int l;
     l = retPublic->mpData->mpKey->SignatureLength();
     ASSERT(l + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
@@ -1250,7 +1250,7 @@ void RandomizeBytes(int8* destbuf, int len)
         for (mask = 0xb147688c; time(NULL) - start < 1; mask += 0x8984cc88)
             ;
 
-        #ifdef _DEBUG
+        #ifdef DEBUG
         time_t t = time(NULL);
         t ^= mask;
         

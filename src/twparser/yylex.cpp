@@ -1121,12 +1121,12 @@ yy_scan::yylex()
                         *mpstring = strW;
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
                         TSTRING strDisplay = *mpstring;                        
                         cDisplayEncoder e;
                         e.Encode( strDisplay );
                         d.TraceDetail("interpreted as --> <%s>\n", strDisplay.c_str());
-#endif // _DEBUG
+#endif // DEBUG
 
                         // attach to lval
                         yylval.mpString = mpstring;

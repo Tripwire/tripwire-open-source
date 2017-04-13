@@ -378,7 +378,7 @@ void cCmdLineParser::AddDependency(int argId1, int argId2, bool mutual )
 ///////////////////////////////////////////////////////////////////////////////
 // TraceContents
 ///////////////////////////////////////////////////////////////////////////////
-#ifdef _DEBUG
+#ifdef DEBUG
 void cCmdLineParser::TraceContents(int dl) 
 {
     cDebug d("cCmdLineParser::TraceContents");

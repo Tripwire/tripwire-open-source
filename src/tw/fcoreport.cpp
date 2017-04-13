@@ -722,7 +722,7 @@ void cFCOReport::AddChangedFCO(const cFCOReportSpecIter& iter, const iFCO* pOldF
 
     // make some assertions about the iterator
 
-    #ifdef _DEBUG
+    #ifdef DEBUG
     // make sure iter points to one of our spec lists
     cFCOReport_i::GenreSpecList::iterator genreIter;
     for (genreIter = mpData->mGenreList.begin(); ; ++genreIter)
