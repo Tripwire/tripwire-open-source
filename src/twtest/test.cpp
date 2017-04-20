@@ -154,12 +154,16 @@ void Usage()
 
 const int MAX_TEST_ID = 88;
 
+static int ran_count    = 0;
 static int failed_count = 0;
+static std::vector<std::string> error_strings;
 
 static void Test(int testID)
 {
     TCERR << std::endl << "=== Running test ID #" << testID << " ===" << std::endl;
     
+    bool ran = true;
+
     try {
     
         switch (testID)
@@ -194,7 +198,7 @@ static void Test(int testID)
 
         case 31: TestRefCountObj(); break;
         case 32: TestSerializerImpl(); break;
-        case 33: TestSerRefCountObj(); break;
+        //case 33:
         case 34: TestSignature(); break;
         case 35: TestTaskTimer(); break;
         //case 36: TestTripwire(); break;
@@ -242,25 +246,46 @@ static void Test(int testID)
         case 86: TestDisplayEncoderBasic(); break;
         case 87: TestCharUtilBasic(); break;
         case 88: TestConfigFile2(); break;
+        default: ran = false; break;
         }
-
     }
     catch (eError& error)
     {
         TCERR << "FAILED: " ;
         cTWUtil::PrintErrorMsg(error);
+
+        std::stringstream sstr;
+        sstr << "Test " << testID << ": " << error.GetMsg();
+        error_strings.push_back(sstr.str());
+
         failed_count++;
     }
     catch (std::exception& e) {
         TCERR << "FAILED: " << e.what() << std::endl;
+
+        std::stringstream sstr;
+        sstr << "Test " << testID << ": " << e.what();
+        error_strings.push_back(sstr.str());
+
         failed_count++;
     }
     catch (...) {
         TCERR << "FAILED: <unknown>" << std::endl;
+
+        std::stringstream sstr;
+        sstr << "Test " << testID << ": <unknown>";
+        error_strings.push_back(sstr.str());
+
         failed_count++;
     }
     
-    TCERR << std::endl << "=== test ID #" << testID << " completed ===" << std::endl;
+    if(ran)
+    {
+        ran_count++;
+        TCERR << std::endl << "=== test ID #" << testID << " completed ===" << std::endl;
+    }
+    else
+        TCERR << std::endl << "=== test ID #" << testID << " currently unused ===" << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -351,9 +376,15 @@ int _tmain(int argc, TCHAR** argv)
     // this test always fails because of the static cFCONameTbl
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
 
-    // force user to hit <CR>
+    std::cout << std::endl << "Ran " << ran_count << " unit tests with " << failed_count << " failures." << std::endl;
 
-    std::cout << std::endl << "Tests completed with " << failed_count << " failures." << std::endl;
+    std::vector<std::string>::iterator itr;
+    for (itr = error_strings.begin(); itr != error_strings.end(); ++itr)
+    {
+        std::cout << "\t" << *itr << std::endl;
+    }
+
+    std::cout << std::endl;
 
     return failed_count ? -1 : 0;
 }

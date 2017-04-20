@@ -45,11 +45,6 @@
 
 void TestFCOName()
 {
-#if 0
-    // the following only works w/case insensitive names
-    cGenreSwitcher::GetInstance()->SelectGenre( cGenre::NTFS );
-#endif
-
     // test the relationship operator...
     cFCOName above      (_T("/etc"));
     cFCOName extraDel   (_T("/etc/"));
@@ -103,28 +98,33 @@ void TestFCOName()
     cFCOName copyName(stringName);
     TEST(_tcscmp(copyName.AsString().c_str(), _T("/a/string/name")) == 0);
 
-    TCERR << "Multiple TODO tests in fconame_t.cpp" << std::endl;
-#if 0
-    cFCOName name(_T("new name"));
+    cFCOName name(_T("/new name"));
     nullName = name;
-    //TODO... TEST(_tcscmp(nullName.AsString().c_str(), _T("new name")) == 0);
-    
-    nullName = _T("newer name");
-    //TODO... TEST(_tcscmp(nullName.AsString().c_str(), _T("newer name")) == 0);
+    TEST(_tcscmp(nullName.AsString().c_str(), _T("/new name")) == 0);
+
+    nullName = _T("/newer name");
+    TEST(_tcscmp(nullName.AsString().c_str(), _T("/newer name")) == 0);
 
     cMemoryArchive memArc;
+
     {
         cSerializerImpl ser(memArc, cSerializerImpl::S_WRITE);
         ser.Init();
         ser.WriteObject(&charName);
-        stringName.SetDelimiter(_T('\\'));
+
+        //Note: backslash delimiters aren't supported (& don't work) in OST
+        //stringName.SetDelimiter(_T('\\'));
+
         ser.WriteObject(&stringName);
         ser.Finit();
     }
+
     memArc.Seek(0, cBidirArchive::BEGINNING);
+
     {
         cSerializerImpl ser(memArc, cSerializerImpl::S_READ);
         cFCOName name1, name2;
+
         ser.Init();
         ser.ReadObject(&name1);
         ser.ReadObject(&name2);
@@ -132,12 +132,11 @@ void TestFCOName()
 
         TEST(name1.IsEqual(charName));
         TEST(name2.IsEqual(stringName));
-        TEST(! name1.IsCaseSensitive()); 
-        TEST(! name2.IsCaseSensitive()); 
-        TEST(name2.GetDelimiter() == _T('\\')); 
-        TEST(name1.GetDelimiter() == _T('/')); 
+        TEST(name1.IsCaseSensitive());
+        TEST(name2.IsCaseSensitive());
+        TEST(name2.GetDelimiter() == _T('/'));
+        TEST(name1.GetDelimiter() == _T('/'));
     }
-#endif
 }
 
 

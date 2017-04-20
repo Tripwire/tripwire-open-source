@@ -74,9 +74,8 @@ void TestFCOPropVector()
     }
 
     //Test ability to add and remove
-        TCERR << "TODO: addRemove test in fcopropvector_t.cpp" << std::endl;
-    //  TEST(testout = addRemove (test1, test2, d));
-    //  d.TraceDetail("Add/Remove over all tests is %i \n", testout);
+    TEST(testout = addRemove (test1, test2, d));
+    d.TraceDetail("Add/Remove over all tests is %i \n", testout);
     
     // test clear.
     d.TraceDetail("Testing Clear()\n");
@@ -115,73 +114,23 @@ static bool init (cFCOPropVector &testV)
 } //end init
 
 
-#if 0 // TODO: rework this so it doesn't need user interaction
 static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
 {
     int var1 = 0 , var2 = 64, var3 = 2;
     bool local=true, out=true;
 
-    /*
-    bool loopvar = true;
-    int menu, var;
-    cFCOPropVector testV;
-    testV.SetSize(64);
-    while (loopvar)
-    {
-
-        d.TraceAlways("\nChoose an operation to test:\n");
-        d.TraceAlways("\t1)Add an item to vector.\n");
-        d.TraceAlways("\t2)Remove an item from vector. \n");
-        d.TraceAlways("\t3)Check vector for item. \n");
-        d.TraceAlways("\t4)Display vector information \n");
-        d.TraceAlways("\t5)Stop add/remove tests. \n");
-        d.TraceAlways("Your choice [1-5]: ");
-        cin>>menu;
-        d.TraceAlways("\n");
-
-        switch (menu)
-        {
-        case 1:
-            d.TraceAlways("Item to add: ");
-            cin>> var;
-            d.TraceAlways("%i \n", testV.AddItem(var));
-            break;
-        case 2:
-            d.TraceAlways("Item to remove: ");
-            cin>>var;
-            d.TraceAlways("%i \n", testV.RemoveItem(var));
-            break;
-        case 3:
-            d.TraceAlways("Item to check: ");
-            cin>>var;
-            if (testV.ContainsItem(var))
-                d.TraceAlways("\nItem present\n");
-            else
-                d.TraceAlways("\nItem not present\n");
-            break;
-        case 4:
-            testV.check(d);
-            break;
-        case 5:
-            loopvar = false;
-            break;
-        default:
-            d.TraceAlways("Not a valid menu option\n");
-            break;
-        }//end switch
-        out &= local;   //Keep track of results.
-    }//end while
-    */
-    
     test1.AddItem(var1);
     TEST(local &= test1.ContainsItem(var1));    //hopefully this is true!
     TEST(local &= !test1.ContainsItem(var3));
+
     test2.SetSize(var2);
     TEST(local &= (test2.GetSize() == ((var2/32)+1)*32));
     TEST(local &= (test1 != test2));
+
     test1.RemoveItem(var1);
     test2.SetSize(test1.GetSize());
     TEST(local &= (test1 == test2));
+
     test1.AddItem(var3);
     test2 |= test1;
     d.TraceDetail("\nmMask should be 4!\n");
@@ -193,7 +142,6 @@ static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
     out &= local;   //and-ing of results.
     return out;
 }//end addRemove
-#endif
 
 static bool objManip (cFCOPropVector &testV, cDebug& d)
 {
@@ -234,11 +182,13 @@ static bool objManip (cFCOPropVector &testV, cDebug& d)
     v3.AddItem(1);
     v3.AddItem(4);
     TEST((v1 ^ v2) == v3);
+
     // try with larger sizes...
     v2.SetSize(40);
     v2.Clear();
     v2.AddItem(3);
     TEST((v1 ^ v2) == v3);
+
     v2.AddItem(38);
     v1.SetSize(40);
     v1.Clear();

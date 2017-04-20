@@ -38,8 +38,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintPropVector -- function that prints the contents of a cFCOPropVector
-//      TODO: We might want to add this functionality to the property vector some
-//      day...
 ///////////////////////////////////////////////////////////////////////////////
 static void PrintPropVector(const cFCOPropVector& v, cDebug& d)
 {

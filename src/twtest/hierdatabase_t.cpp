@@ -71,7 +71,6 @@ static void RemoveDirectory(cHierDatabase::iterator& iter, const TSTRING& filena
     TCOUT << "Removing the child of " << filename << std::endl;
     if( iter.SeekTo( filename.c_str() ) )
     {
-        //TODO -- check that it has an empty child
         iter.DeleteChildArray();
         iter.DeleteEntry();
     }

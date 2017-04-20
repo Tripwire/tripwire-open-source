@@ -79,7 +79,6 @@ static void RemoveDirectory(cDbDataSourceIter& iter, const TSTRING& filename)
     TCOUT << "Removing the child of " << filename << std::endl;
     if( iter.SeekTo( filename.c_str() ) )
     {
-        //TODO -- check that it has an empty child
         iter.RemoveChildArray();
         iter.RemoveFCO();
     }

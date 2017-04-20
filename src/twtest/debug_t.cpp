@@ -70,14 +70,15 @@ void TestDebug()
     d.TraceDebug("You should see this in stdout and trace.\n");
     cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
     d.TraceDebug("You should see this in trace only.\n");
+
+
     // set up an output file...use the temp file in test.h
     std::string str = TEMP_DIR_N;
     str += "/debug.out";
-    bool bResult = false;
-        bResult = cDebug::SetOutputFile(str.c_str());
-        //TODO... TEST(bResult);
-        if( !bResult) 
-      TCERR << "SetOutputFile failed!" << std::endl;
+    
+#ifdef DEBUG
+    TEST(cDebug::SetOutputFile(str.c_str()));
+#endif
 
     d.TraceDebug("This should be in trace and the file %s.\n", str.c_str());
 

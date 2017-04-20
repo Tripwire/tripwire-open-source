@@ -68,15 +68,12 @@ void TestFcoSpecUtil()
     pSet1->Add(removedName);
     TEST(! iFCOSpecUtil::FCOSpecEqual(*pSpec1, *pSpec2));
 
-
-    // TODO -- implement a more appropriate less-than test
-/*  pSpec1->SetStartPoint(cFCOName(_T("Dog")));
-    pSpec2->AddStopPoint(cFCOName(_T("Howl")));
+    pSpec1->SetStartPoint(cFCOName(_T("Dog")));
+    pSet2->Add(cFCOName(_T("Dog/Howl")));
     TEST(! iFCOSpecUtil::FCOSpecEqual   (*pSpec1, *pSpec2));
     TEST(  iFCOSpecUtil::FCOSpecLessThan(*pSpec1, *pSpec2));
-    pSpec1->AddStopPoint(cFCOName(_T("Howm")));
+    pSet1->Add(cFCOName(_T("Dog/Howm")));
     TEST(  iFCOSpecUtil::FCOSpecLessThan(*pSpec2, *pSpec1));
-*/
 
     pSpec1->Release();
     pSpec2->Release();

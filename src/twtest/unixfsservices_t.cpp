@@ -135,13 +135,12 @@ void TestUnixFSServices()
         TEST( pFSServices->GetCurrentUserName(username) );
         d.TraceDetail("GetCurrentUserName returned: %s\n", username.c_str());
 
-        TCERR << "TODO: unixfsservices_t.cpp, Test GetIPAddress segfaults mysteriously." << std::endl;
         // Test GetIPAddress
-        /*d.TraceDetail("Testing GetIPAddress:\n");
-        uint32 *ipaddr;
-        TEST( pFSServices->GetIPAddress( *ipaddr ) );
+        d.TraceDetail("Testing GetIPAddress:\n");
+        uint32 ipaddr;
+        TEST( pFSServices->GetIPAddress( ipaddr ) );
         d.TraceDetail("GetIPAddress returned: %d\n", ipaddr);
-        */
+
         // test GetExecutableFilename
         d.TraceDetail("Testing GetExecutableFilename: \n");
         TSTRING filename = _T("sh");

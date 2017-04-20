@@ -165,7 +165,6 @@ void TestCmdLineParser()
     {
         TCERR << _T("Command line error: ");
         TCERR << e.GetMsg() << std::endl;
-        //TODO...
         TEST(false);
     }
 }
