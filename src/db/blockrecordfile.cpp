@@ -266,11 +266,14 @@ int cBlockRecordFile::FindRoomForData( int32 dataSize ) //throw (eArchive)
     // first, try the last added to block...
     //
     d.TraceDetail( "Looking for room for %d bytes; first trying mLastAddedTo (%d)\n", dataSize, mLastAddedTo );
-    util_InitBlockArray( mvBlocks[mLastAddedTo] );
-    if( mvBlocks[mLastAddedTo].GetAvailableSpace() >= dataSize )
+    if( mLastAddedTo >= 0 )
     {
-        d.TraceDetail( "---Found room in block %d\n", mLastAddedTo );
-        return mLastAddedTo;
+        util_InitBlockArray( mvBlocks[mLastAddedTo] );
+        if( mvBlocks[mLastAddedTo].GetAvailableSpace() >= dataSize )
+        {
+            d.TraceDetail( "---Found room in block %d\n", mLastAddedTo );
+            return mLastAddedTo;
+        }
     }
     //
     // ok, I guess we will have to iterate through all the blocks...

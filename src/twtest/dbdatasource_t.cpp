@@ -41,268 +41,174 @@
 #include "fco/fcoprop.h"
 #include "fco/fco.h"
 #include "twtest/test.h"
+#include "fs/fsobject.h"
 
-static void GetNoun( TSTRING& noun )
+static void AddFile(cDbDataSourceIter& iter, const TSTRING& filename, bool with_data=false)
 {
-    static TSTRING prevNoun;
-    TCIN >> noun;
-    if( noun.compare( _T("!$") ) == 0 )
+    if (iter.SeekTo(filename.c_str()))
+        TCOUT << "Object " << filename << " already exists!" << std::endl;
+
+    cFCOName fname(filename);
+
+    if (with_data)
     {
-        noun = prevNoun;
+        iFCO* pFCO = new cFSObject(fname);
+        iter.AddFCO(filename,pFCO);
     }
-    prevNoun = noun;
+    else
+    {
+        iter.AddFCO(filename,0);
+    }
+
+    TEST(iter.HasFCOData() == with_data);
 }
 
-//
-// TODO -- implement this with the prop displayer as well!
-//
-static void PrintFCO( const iFCO* pFCO )
+static void AddDirectory(cDbDataSourceIter& iter, const TSTRING& filename)
 {
-    TCOUT.setf(std::ios::left);
-    
-    TCOUT << "------- " << pFCO->GetName().AsString() << " -------" << std::endl;
-    //
-    // iterate over all of the properties
-    //
-    const iFCOPropSet* pPropSet = pFCO->GetPropSet();
-    cFCOPropVector v        = pPropSet->GetValidVector();
-    for( int i=0; i < pPropSet->GetNumProps(); i++ )
-    {   
-        if( v.ContainsItem( i ) )
+    if (iter.SeekTo(filename.c_str()))
+        TCOUT << "Object " << filename << " already exists!" << std::endl;
+
+    iter.AddFCO(filename, 0);
+    iter.AddChildArray();
+
+    TEST(iter.CanDescend());
+}
+
+static void RemoveDirectory(cDbDataSourceIter& iter, const TSTRING& filename)
+{
+    TCOUT << "Removing the child of " << filename << std::endl;
+    if( iter.SeekTo( filename.c_str() ) )
+    {
+        //TODO -- check that it has an empty child
+        iter.RemoveChildArray();
+        iter.RemoveFCO();
+    }
+    else
+    {
+        TCOUT << "Unable to find object " << filename << std::endl;
+    }
+}
+
+static void RemoveFile(cDbDataSourceIter& iter, const TSTRING& filename)
+{
+    TCOUT << "Removing object " << filename << std::endl;
+    cFCOName fname(filename);
+    iter.SeekToFCO(fname);
+
+    if( iter.CanDescend() )
+    {
+        TCOUT << "Can't delete object; it still has children." << std::endl;
+    }
+    else
+    {
+        iter.RemoveFCOData();
+        iter.RemoveFCO();
+    }
+}
+
+static void ChDir(cDbDataSourceIter& iter, const TSTRING& filename)
+{
+    if( filename.compare( _T("..") ) == 0 )
+    {
+        if( iter.AtRoot() )
+            TCOUT << "At root already" << std::endl;
+
+        TCOUT << "Ascending..." << std::endl;
+        iter.Ascend();
+    }
+    else
+    {
+        if( iter.SeekTo( filename.c_str() ) )
         {
-            TCOUT << "[";
-            TCOUT.width(2);
-            TCOUT << i << "]" ;
-            TCOUT.width(25);
-            TCOUT << pPropSet->GetPropName(i);
-            TCOUT.width(0);
-            TCOUT << pPropSet->GetPropAt( i )->AsString() << std::endl;
+            if( !iter.CanDescend())
+                TCOUT << filename << " has no children; can't descend." << std::endl;
+
+            TCOUT << "Descending into " << filename << std::endl;
+            iter.Descend();
+        }
+        else
+        {
+            TCOUT << "Unable to find object " << filename << std::endl;
         }
     }
-    TCOUT << "--------------------------------------------" << std::endl;
 }
 
-
-void TestDbDataSource()
+static void AssertData(cDbDataSourceIter& iter, const TSTRING& filename, bool should_have)
 {
-    TCERR << std::endl << "TestDbDataSource needs to be redesigned so it doesn't require user interaction" << std::endl;
-    
-#if 0
-    cDebug d("TestDbDataSource");
+    bool exists = iter.SeekTo( filename.c_str() );
+    TEST(exists == should_have);
+
+    if (exists)
+    {
+        bool has_data = iter.HasFCOData();
+        TEST(has_data == should_have);
+
+        if (has_data)
+        {
+            iFCO* pFCO = iter.CreateFCO();
+            TEST(pFCO);
+            TCOUT << "Roundtrip FCOName = " << pFCO->GetName().AsString() << std::endl;
+            TSTRING expected = filename + "/";
+            TEST(pFCO->GetName().AsString() == expected);
+        }
+    }
+}
+
+static void AssertExists(cDbDataSourceIter& iter, const TSTRING& filename, bool should_have)
+{
+    bool exists = iter.SeekTo( filename.c_str() );
+    TEST(exists == should_have);
+}
+
+static void AssertChildren(cDbDataSourceIter& iter, const TSTRING& filename, bool should_have)
+{
+    bool exists = iter.SeekTo( filename.c_str() );
+
+    if (exists)
+    {
+        bool has_children = iter.CanDescend();
+        TEST(has_children == should_have);
+    }
+}
+
+void TestDbDataSourceBasic()
+{
     cHierDatabase db;
+    db.Open( _T("test.db"), 5, true);
+    cDbDataSourceIter iter(&db);
 
-    const TSTRING dbName = _T("tw.db");
+    AddFile(iter, "file1", true);
+    AddFile(iter, "file2", false);
+    AddFile(iter, "file3", false);
 
+    AddDirectory(iter, "dir1");
+    AddDirectory(iter, "dir2");
+    AddDirectory(iter, "dir3");
 
+    AssertData(iter, "file1", true);
+
+    ChDir(iter, "dir1");
+    AddFile(iter, "dir1_file1");
+    ChDir(iter, "..");
+
+    RemoveFile(iter, "file1");
+    RemoveFile(iter, "file2");
+
+    AssertExists(iter, "file1", false);
+    AssertExists(iter, "file2", false);
+    AssertExists(iter, "file3", true);
+
+    RemoveDirectory(iter, "dir2");
+
+    AssertExists(iter, "dir1", true);
+    AssertExists(iter, "dir2", false);
+    AssertExists(iter, "dir3", true);
+
+    AssertChildren(iter, "dir1", true);
+    AssertChildren(iter, "dir3", true);
+    AssertChildren(iter, "file3", false);
     
-    try
-    {
-        // TODO -- get the case sensitiveness  and delimiting char out of the factory instead of iFSServices
-        //
-        TCOUT << _T("Opening database ") << dbName << std::endl;
-        db.Open( dbName, 5, false );
-        cDbDataSourceIter iter( &db );
-
-        ////////////////////////////
-        // the main event loop...
-        ////////////////////////////
-        while( true )
-        {
-            TSTRING verb, noun;
-            TCOUT << _T(">>");
-            TCIN >> verb;
-            //
-            // ok, now we switch on the command...
-            //
-            //-----------------------------------------------------------------
-            // quit
-            //-----------------------------------------------------------------
-            if( verb.compare( _T("quit") ) == 0 )
-            {
-                // the quit command...
-                break;
-            }
-            //-----------------------------------------------------------------
-            // print
-            //-----------------------------------------------------------------
-            if( verb.compare( _T("print") ) == 0 )
-            {
-                GetNoun(noun);
-                if( iter.SeekTo( noun.c_str() ) )
-                {
-                    if( iter.HasFCOData() )
-                    {
-                        iFCO* pFCO = iter.CreateFCO();
-                        PrintFCO( pFCO );
-                        pFCO->Release();
-                    }
-                    else
-                    {
-                        TCOUT << "Object has no data associated with it." << std::endl;
-                    }
-                }
-                else
-                {
-                    TCOUT << "Unable to find object " << noun << std::endl;
-                }
-            }
-            //-----------------------------------------------------------------
-            // mkdir
-            //-----------------------------------------------------------------
-            else if( verb.compare( _T("mkdir") ) == 0 )
-            {
-                GetNoun(noun);
-                TCOUT << "Making a child of " << noun << std::endl;
-                if( iter.SeekTo( noun.c_str() ) )
-                {
-                    iter.AddChildArray();
-                }
-                else
-                {
-                    TCOUT << "Unable to find object " << noun << std::endl;
-                }
-            }
-            //-----------------------------------------------------------------
-            // mk
-            //-----------------------------------------------------------------
-            else if( verb.compare( _T("mk") ) == 0 )
-            {
-                GetNoun(noun);
-                TCOUT << "Making object " << noun << std::endl;
-                if( iter.SeekTo( noun.c_str() ) )
-                {
-                    TCOUT << "Error: object already exists!" << std::endl;
-                }
-                else
-                {
-                    iter.AddFCO( noun, 0 ); // add a null fco for now
-                }
-            }
-            //-----------------------------------------------------------------
-            // rmdir
-            //-----------------------------------------------------------------
-            // TODO -- still needs to be implemented in the iterator class!
-            //
-            /*
-            else if( verb.compare( _T("rmdir") ) == 0 )
-            {
-                GetNoun(noun);
-                TCOUT << "Removing the child of " << noun << std::endl;
-                if( iter.SeekTo( noun.c_str() ) )
-                {
-                    //TODO -- check that it has an empty child
-                    iter.DeleteChildArray();
-                }
-                else
-                {
-                    TCOUT << "Unable to find object " << noun << std::endl;
-                }
-            }
-            */
-            //-----------------------------------------------------------------
-            // rm
-            //-----------------------------------------------------------------
-            else if( verb.compare( _T("rm") ) == 0 )
-            {
-                GetNoun(noun);
-                TCOUT << "Removing object " << noun << std::endl;
-                if( iter.SeekTo( noun.c_str() ) )
-                {
-                    if( iter.CanDescend() )
-                    {
-                        TCOUT << "Can't delete object; it still has children." << std::endl;
-                    }
-                    else
-                    {
-                        iter.RemoveFCO();
-                    }
-                }
-                else
-                {
-                    TCOUT << "Unable to find object " << noun << std::endl;
-                }
-            }
-            //-----------------------------------------------------------------
-            // pwd
-            //-----------------------------------------------------------------
-            else if( verb.compare( _T("pwd") ) == 0 )
-            {
-                TCOUT << iter.GetParentName().AsString() << std::endl;
-            }
-            //-----------------------------------------------------------------
-            // ls
-            //-----------------------------------------------------------------
-            else if( verb.compare( _T("ls") ) == 0 )
-            {
-                int cnt = 0;
-                for( iter.SeekBegin(); ! iter.Done(); iter.Next(), cnt++ )
-                {
-                    TCOUT << "[" << cnt ;
-                    if( iter.CanDescend() )
-                    {
-                        TCOUT << "]*\t" ;
-                    }
-                    else
-                    {
-                        TCOUT << "]\t" ;
-                    }
-                    TCOUT << iter.GetShortName() << std::endl;
-                }
-            }
-            //-----------------------------------------------------------------
-            // cd
-            //-----------------------------------------------------------------
-            else if( verb.compare( _T("cd") ) == 0 )
-            {
-                GetNoun(noun);
-                if( noun.compare( _T("..") ) == 0 )
-                {
-                    if( iter.AtRoot() )
-                    {
-                        TCOUT << "Can't ascend above root." << std::endl;
-                    }
-                    else
-                    {
-                        TCOUT << "Ascending..." << std::endl;
-                        iter.Ascend();
-                    }
-                }
-                else
-                {
-                    if( iter.SeekTo( noun.c_str() ) )
-                    {
-                        if( iter.CanDescend() )
-                        {
-                            TCOUT << "Descending into " << noun << std::endl;
-                            iter.Descend();
-                        }
-                        else
-                        {
-                            TCOUT << noun << " has no children; can't descend." << std::endl;
-                        }
-                    }
-                    else
-                    {
-                        TCOUT << "Unable to find object " << noun << std::endl;
-                    }
-                }
-            }
-
-            // make sure the file is still valid...
-            //
-#ifdef _BLOCKFILE_DEBUG
-            db.AssertAllBlocksValid() ;
-#endif
-        }
-
-        TCOUT << "Exiting..." << std::endl;
-
-
-    }
-    catch( eError& e )
-    {
-        d.TraceError("*** Caught error: %d %s\n", e.GetID(), e.GetMsg().c_str() );
-        TEST(false);
-    }
+#ifdef DEBUG
+    db.AssertAllBlocksValid();
 #endif
 }

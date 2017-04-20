@@ -250,6 +250,104 @@ void cDbExplore::Execute( cFCODatabaseFileIter& dbIter )
             }
         }
         //-----------------------------------------------------------------
+        // mkdir
+        //-----------------------------------------------------------------
+        else if( verb.compare( _T("mkdir") ) == 0 )
+        {
+            GetNoun(noun);
+            TCOUT << "Making a child of " << noun << std::endl;
+            if( pIter->SeekTo( noun.c_str() ) )
+            {
+                pIter->AddChildArray();
+            }
+            else
+            {
+                TCOUT << "Unable to find object " << noun << std::endl;
+            }
+        }
+        //-----------------------------------------------------------------
+        // mk
+        //-----------------------------------------------------------------
+        else if( verb.compare( _T("mk") ) == 0 )
+        {
+            GetNoun(noun);
+            TCOUT << "Making object " << noun << std::endl;
+            if( pIter->SeekTo( noun.c_str() ) )
+            {
+                TCOUT << "Error: object already exists!" << std::endl;
+            }
+            else
+            {
+                pIter->AddFCO( noun, 0 ); // add a null fco for now
+            }
+        }
+        //-----------------------------------------------------------------
+        // rmdir
+        //-----------------------------------------------------------------
+         else if( verb.compare( _T("rmdir") ) == 0 )
+         {
+             GetNoun(noun);
+             TCOUT << "Removing the child of " << noun << std::endl;
+             if( pIter->SeekTo( noun.c_str() ) )
+             {
+                 if( pIter->CanRemoveChildArray() )
+                 {
+                     pIter->RemoveChildArray();
+                 }
+                 else
+                 {
+                    TCOUT << "Can't delete object; it still has children." << std::endl;
+                 }
+             }
+             else
+             {
+             TCOUT << "Unable to find object " << noun << std::endl;
+             }
+         }
+        //-----------------------------------------------------------------
+        // rm
+        //-----------------------------------------------------------------
+        else if( verb.compare( _T("rm") ) == 0 )
+        {
+            GetNoun(noun);
+            TCOUT << "Removing object " << noun << std::endl;
+            if( pIter->SeekTo( noun.c_str() ) )
+            {
+                if( pIter->CanDescend() )
+                {
+                    TCOUT << "Can't delete object; it still has children." << std::endl;
+                }
+                else
+                {
+                    pIter->RemoveFCO();
+                }
+            }
+            else
+            {
+                TCOUT << "Unable to find object " << noun << std::endl;
+            }
+        }
+        else if( verb.compare( _T("rmdata") ) == 0 )
+        {
+            GetNoun(noun);
+            TCOUT << "Removing object data " << noun << std::endl;
+            if( pIter->SeekTo( noun.c_str() ) )
+            {
+                if( pIter->CanDescend() )
+                {
+                    TCOUT << "Can't delete object; it still has children." << std::endl;
+                }
+                else
+                {
+                    pIter->RemoveFCOData();
+                }
+            }
+            else
+            {
+                TCOUT << "Unable to find object " << noun << std::endl;
+            }
+        }
+        //-----------------------------------------------------------------
         // pwd
         //-----------------------------------------------------------------
         else if( verb.compare( _T("pwd") ) == 0 )
@@ -380,11 +478,11 @@ void cDbExplore::Execute( cFCODatabaseFileIter& dbIter )
 
         // make sure the file is still valid...
         //
-    /*
+
 #ifdef _BLOCKFILE_DEBUG
-        db.AssertAllBlocksValid() ;
+        dbIter.GetDb().AssertAllBlocksValid();
 #endif
-    */
+
     }
 
     delete pIter;

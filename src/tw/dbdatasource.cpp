@@ -263,20 +263,24 @@ void cDbDataSourceIter::SetFCOData( const iFCO* pFCO ) //throw (eError)
     {
         mDbIter.RemoveData();
     }
-    //
-    // write the fco's property set to a memory archive...
-    //
-    // TODO -- does this need to be static?
-    static cMemoryArchive arch;
-    arch.Seek           ( 0, cBidirArchive::BEGINNING );
-    cSerializerImpl ser (arch, cSerializerImpl::S_WRITE);
-    ser.Init();
-    ser.WriteObject     ( pFCO->GetPropSet() );
-    ser.Finit();
-    //
-    // write this to the archive...
-    //
-    mDbIter.SetData( arch.GetMemory(), arch.CurrentPos() );
+    
+    if( pFCO )
+    {
+        //
+        // write the fco's property set to a memory archive...
+        //
+        // TODO -- does this need to be static?
+        static cMemoryArchive arch;
+        arch.Seek           ( 0, cBidirArchive::BEGINNING );
+        cSerializerImpl ser (arch, cSerializerImpl::S_WRITE);
+        ser.Init();
+        ser.WriteObject     ( pFCO->GetPropSet() );
+        ser.Finit();
+        //
+        // write this to the archive...
+        //
+        mDbIter.SetData( arch.GetMemory(), arch.CurrentPos() );
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -112,9 +112,9 @@ void TestFSPropDisplayer();
 void TestGenre();
 void TestFSDataSourceIter();
 void TestGenerateDb();
-void TestHierDatabaseInteractive();
+void TestHierDatabaseBasic();
 void TestGenreSwitcher();
-void TestDbDataSource();
+void TestDbDataSourceBasic();
 void TestGenreSpecList();
 void TestIntegrityCheck();
 void TestFCODatabaseFile();
@@ -213,9 +213,9 @@ static void Test(int testID)
         case 52: TestGenre(); break;        
         case 53: TestFSDataSourceIter(); break;
         //case 54: TestGenerateDb(); break;
-        case 55: TestHierDatabaseInteractive(); break;
+        case 55: TestHierDatabaseBasic(); break;
         case 56: TestGenreSwitcher(); break;
-        case 57: TestDbDataSource(); break;
+        case 57: TestDbDataSourceBasic(); break;
         case 58: TestGenreSpecList(); break;
         //case 59: TestIntegrityCheck(); break;
                 
