@@ -149,6 +149,7 @@ sub run() {
   #
   if ($twpassed) {
       print "PASSED\n";
+      ++$twtools::twpassedtests;
   }
   else {
       ++$twtools::twfailedtests;

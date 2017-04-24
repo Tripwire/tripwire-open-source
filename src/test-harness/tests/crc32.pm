@@ -33,13 +33,12 @@ sub run() {
   twtools::logStatus("*** Beginning $description\n");
   printf("%-30s", "-- $description");
 
-
-  # lets see if the system 'cksum' agree's with siggen's md5 hash
+  # lets see if the system 'cksum' agree's with siggen's crc32 value
   #
   my ($crc32, undef) = split(/ /, `cksum $twtools::twrootdir/test`);
   my $siggen = `$twtools::twrootdir/bin/siggen -h -t -C $twtools::twrootdir/test`;
 
-  chomp $md5sum;
+  chomp $crc32;
   chomp $siggen;
 
   # cksum issues results in decimal, so get siggen's result in base10.
@@ -48,7 +47,7 @@ sub run() {
   twtools::logStatus(" cksum reports: $crc32\n");
   twtools::logStatus("siggen reports: $siggen\n");
 
-  $twpassed = $crc32 == $siggen;
+  $twpassed = ($crc32 eq $siggen);
 
   #########################################################
   #
@@ -56,6 +55,7 @@ sub run() {
   #
   if ($twpassed) {
       print "PASSED\n";
+      ++$twtools::twpassedtests;
   }
   else {
       ++$twtools::twfailedtests;

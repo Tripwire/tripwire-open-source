@@ -1,14 +1,14 @@
 
 use twtools;
 
-package md5sum;
+package sha1sum;
 
 ######################################################################
 # One time module initialization goes in here...
 #
 BEGIN {
 
-    $description = "md5 hash check";
+    $description = "sha1 hash check";
 }
 
 
@@ -34,30 +34,30 @@ sub run() {
   printf("%-30s", "-- $description");
 
 
-  # lets see if the system 'md5sum' agree's with siggen's md5 hash
+  # lets see if the system 'sha1sum' agree's with siggen's sha1 hash
   #
-  my ($md5sum, undef) = split(/ /, `md5sum $twtools::twrootdir/test`);
-  if ($mf5sum eq "") {
-      twtools::logStatus("md5sum not found, trying openssl instead\n");
-      (undef, $md5sum) = split(/=/, `openssl md5 $twtools::twrootdir/test`);
+  my ($sha1sum, undef) = split(/ /, `sha1sum $twtools::twrootdir/test`);
+  if ($sha1sum eq "") {
+      twtools::logStatus("sha1sum not found, trying openssl instead\n");
+      (undef, $sha1sum) = split(/=/, `openssl sha1 $twtools::twrootdir/test`);
   }
-  if ($md5sum eq "") {
+  if ($sha1sum eq "") {
       ++$twtools::twskippedtests;
       print "SKIPPED\n";
       return;
   }
 
-  my $siggen = `$twtools::twrootdir/bin/siggen -h -t -M $twtools::twrootdir/test`;
+  my $siggen = `$twtools::twrootdir/bin/siggen -h -t -S $twtools::twrootdir/test`;
 
-  chomp $md5sum;
+  chomp $sha1sum;
   chomp $siggen;
-  $md5sum =~ s/^\s+|\s+$//g;
+  $sha1sum =~ s/^\s+|\s+$//g;
   $siggen =~ s/^\s+|\s+$//g;
 
-  twtools::logStatus("md5sum reports: $md5sum\n");
+  twtools::logStatus("sha1sum reports: $sha1sum\n");
   twtools::logStatus("siggen reports: $siggen\n");
 
-  $twpassed = ($md5sum eq $siggen);
+  $twpassed = ($sha1sum eq $siggen);
 
   #########################################################
   #

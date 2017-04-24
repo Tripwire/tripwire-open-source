@@ -106,6 +106,7 @@ sub run() {
   # See if the tests all succeeded...
   #
   if ($twpassed) {
+      ++$twtools::twpassedtests;
       print "PASSED\n";
   }
   else {

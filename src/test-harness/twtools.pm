@@ -23,7 +23,10 @@ BEGIN {
 
     $twbinaries      = "../../../../bin";
 
+    $twtotaltests    = 0;
     $twfailedtests   = 0;
+    $twpassedtests   = 0;
+    $twskippedtests  = 0;
 
     # get's setup in twtest...
     #
@@ -192,7 +195,7 @@ sub InitializeDatabase {
     my ($twmsg) = @_;
 
     print "initializing database for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg`);
+    logStatus(`$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg 2>&1`);
 
 	return ($? == 0);
 }
@@ -208,7 +211,7 @@ sub UpdateDatabase {
     $params{'secure-mode'} = "low" if( ! defined($params{'secure-mode'}) );
     
     print "updating database for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{'secure-mode'} -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg -r $params{'report'}`);
+    logStatus(`$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{'secure-mode'} -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg -r $params{'report'} 2>&1`);
     
     return ($? == 0);
 }
