@@ -53,8 +53,8 @@ BEGIN {
         REPORTLEVEL                  => '3',
         MAILMETHOD                   => 'SENDMAIL',
         SYSLOGREPORTING              => 'false',
-        MAILPROGRAM                  => '/usr/lib/sendmail -oi -t'
-            
+        MAILPROGRAM                  => 'cat',
+        MAILFROMADDRESS              => 'taz@cat'
         );
 
 }
@@ -232,6 +232,19 @@ sub RunReport(%) {
 
    return @out;
 
+}
+
+
+######################################################################
+# Run an email test (configured with mailmethod=sendmail) & capture output
+#
+sub RunEmailTest {
+
+    my (@out) =  `$twrootdir/bin/tripwire --test -c $twrootdir/tw.cfg --email elvis\@mars`;
+
+    logStatus(@out);
+
+    return @out;
 }
 
 
