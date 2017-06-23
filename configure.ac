@@ -2,14 +2,14 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT([tripwire], [2.4.3.5], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
+AC_INIT([tripwire], [2.4.3.6], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2017 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
-AC_REVISION([$Revision: 2.4.3.5 $])
+AC_REVISION([$Revision: 2.4.3.6 $])
 
 dnl ###############
 dnl Setup defaults
