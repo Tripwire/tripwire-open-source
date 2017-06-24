@@ -17,7 +17,9 @@ BEGIN {
     $twsitekeyloc    = "key/site.key";
     $twlocalkeyloc   = "key/local.key";
     $twpolicyloc     = "policy/twpol.txt";
+    $twpolfileloc    = "policy/tw.pol";
     $twcfgloc        = "tw.cfg";
+
     $twsitepass      = "testing";
     $twlocalpass     = "testing";
 
@@ -35,7 +37,7 @@ BEGIN {
     %twcfgdirs = (
 
         ROOT                         => '',
-        POLFILE                      => 'policy/tw.pol',
+        POLFILE                      => $twpolfileloc,
         DBFILE                       => 'db/$(HOSTNAME).twd',
         REPORTFILE                   => 'report/$(HOSTNAME)-$(DATE).twr',
         SITEKEYFILE                  => $twsitekeyloc,
@@ -158,12 +160,26 @@ sub GenerateKeys {
 #
 sub SignConfigFile {
 
-    if (!-e "$twrootdir/tw.cfg") {
+    if (!-e "$twrootdir/$twcfgloc") {
         print "signing configuration file...\n" if $verbose;
-        logStatus(`$twrootdir/bin/twadmin -m F -Q $twsitepass -c $twrootdir/tw.cfg -S $twrootdir/$twsitekeyloc $twrootdir/twcfg.txt`);
+        logStatus(`$twrootdir/bin/twadmin -m F -Q $twsitepass -c $twrootdir/$twcfgloc -S $twrootdir/$twsitekeyloc $twrootdir/twcfg.txt`);
     }
 
 	return ($? == 0);
+}
+
+
+######################################################################
+# Write policy text to disk... Note the contents
+# of the policy file are passed in as '$twstr'.
+#
+sub WritePolicyFile {
+
+    my ($twstr) = @_;
+
+    open(FH, ">$twrootdir/$twpolicyloc") || warn $!;
+    print FH $twstr;
+    close(FH);
 }
 
 
@@ -175,13 +191,11 @@ sub GeneratePolicyFile {
 
     my ($twstr) = @_;
 
-    open(FH, ">$twrootdir/$twpolicyloc") || warn $!;
-    print FH $twstr;
-    close(FH);
+    WritePolicyFile($twstr);
 
     print "generating policy file...\n" if $verbose;
 
-    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/tw.cfg -Q $twsitepass -p $twrootdir/policy/tw.pol $twrootdir/policy/twpol.txt`);
+    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc`);
 
 	return ($? == 0);
 }
@@ -195,14 +209,14 @@ sub InitializeDatabase {
     my ($twmsg) = @_;
 
     print "initializing database for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`);
 
 	return ($? == 0);
 }
 
 
 ######################################################################
-# Run tripwire to initialize the database...
+# Run tripwire to update the database...
 #
 sub UpdateDatabase {
 
@@ -211,8 +225,22 @@ sub UpdateDatabase {
     $params{'secure-mode'} = "low" if( ! defined($params{'secure-mode'}) );
     
     print "updating database for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{'secure-mode'} -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg -r $params{'report'} 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{'secure-mode'} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc -r $params{'report'} 2>&1`);
     
+    return ($? == 0);
+}
+
+######################################################################
+# Run tripwire to update the policy...
+#
+sub UpdatePolicy {
+
+    my (%params) = %{$_[0]};
+    $params{'secure-mode'} = "low" if( ! defined($params{'secure-mode'}) );
+
+    print "updating policy for '$twmsg' test...\n" if $verbose;
+    logStatus(`$twrootdir/bin/tripwire -m p -P $twsitepass -Q $twlocalpass -Z $params{'secure-mode'} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $twrootdir/$twpolicyloc 2>&1`);
+
     return ($? == 0);
 }
 
@@ -226,7 +254,7 @@ sub RunReport(%) {
    my (%params) = %{$_[0]};
 	$params{report} = $reportloc if( ! defined($params{report}) );
 
-   my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/tw.cfg -t 0 -r $params{report}`;
+   my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t 0 -r $params{report}`;
 
    logStatus(@out);
 
@@ -240,7 +268,7 @@ sub RunReport(%) {
 #
 sub RunEmailTest {
 
-    my (@out) =  `$twrootdir/bin/tripwire --test -c $twrootdir/tw.cfg --email elvis\@mars`;
+    my (@out) =  `$twrootdir/bin/tripwire --test -c $twrootdir/$twcfgloc --email elvis\@mars`;
 
     logStatus(@out);
 
@@ -258,7 +286,7 @@ sub RunIntegrityCheck {
 	$params{report} = $reportloc if( ! defined($params{report}) );
 
     print("running integrity check for test '$twmsg'...\n") if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m c -r $params{report} -p $twrootdir/policy/tw.pol -c $twrootdir/tw.cfg 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m c -r $params{report} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`);
 
     return ($? & 8);
 }
