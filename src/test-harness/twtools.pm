@@ -170,6 +170,47 @@ sub SignConfigFile {
 
 
 ######################################################################
+# Examine encryption
+#
+sub ExamineEncryption {
+
+    my ($filename) = @_;
+
+    logStatus(`$twrootdir/bin/twadmin -m e -c $twrootdir/$twcfgloc $filename`);
+
+    return ($? == 0);
+}
+
+
+######################################################################
+# Add encryption
+#
+sub AddEncryption {
+
+    my ($filename) = @_;
+    logStatus "addding crypt to file...\n";
+    logStatus(`$twrootdir/bin/twadmin -m E -c $twrootdir/$twcfgloc -P $twlocalpass -Q $twsitepass $filename`);
+
+    return ($? == 0);
+}
+
+
+######################################################################
+# Remove encryption
+#
+
+sub RemoveEncryption {
+
+    my ($filename) = @_;
+
+    logStatus "removing crypto from file...\n";
+    logStatus(`$twrootdir/bin/twadmin -m R -c $twrootdir/$twcfgloc -P $twlocalpass -Q $twsitepass $filename`);
+
+    return ($? == 0);
+}
+
+
+######################################################################
 # Write policy text to disk... Note the contents
 # of the policy file are passed in as '$twstr'.
 #
@@ -197,7 +238,7 @@ sub GeneratePolicyFile {
 
     logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc`);
 
-	return ($? == 0);
+    return ($? == 0);
 }
 
 
@@ -211,7 +252,7 @@ sub InitializeDatabase {
     print "initializing database for '$twmsg' test...\n" if $verbose;
     logStatus(`$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`);
 
-	return ($? == 0);
+    return ($? == 0);
 }
 
 

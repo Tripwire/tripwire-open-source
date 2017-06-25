@@ -142,6 +142,7 @@ sub PrepareForTest
 # 
 sub RunBasicTest
 {
+        twtools::logStatus("*** Beginning dbupdate.basic test\n");
 	printf("%-30s", "-- dbupdate.basic test");
 
 	PrepareForTest();
@@ -191,6 +192,7 @@ sub RunBasicTest
 #
 sub RunSecureModeTest
 {
+        twtools::logStatus("*** Beginning dbupdate.secure-mode test\n");
 	printf("%-30s", "-- dbupdate.secure-mode test");
 
 	++$twtools::twskippedtests;

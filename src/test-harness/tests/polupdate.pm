@@ -165,6 +165,7 @@ sub PrepareForTest
 # 
 sub RunBasicTest
 {
+       twtools::logStatus("*** Beginning polupdate.basic test\n");
 	printf("%-30s", "-- polupdate.basic test");
 
 	PrepareForTest();
@@ -198,6 +199,7 @@ sub RunBasicTest
 # 
 sub RunSecureModeTest
 {
+       twtools::logStatus("*** Beginning polupdate.secure-mode test\n");
 	printf("%-30s", "-- polupdate.secure-mode test");
 
 	PrepareForTest();
