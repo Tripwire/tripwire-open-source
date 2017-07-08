@@ -45,6 +45,7 @@
 #include "core/usernotify.h"
 #include "core/cmdlineparser.h"
 #include "core/usernotify.h"
+#include "core/corestrings.h"
 #include "fco/fconame.h"
 #include "tw/configfile.h"
 #include "tw/twutil.h"
@@ -1553,15 +1554,19 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
             // Try different keys to see if they decrypt this file
             if (manip.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
             {
+                bool bFound = false;
+
                 // Output the keys that decrypt the file.
                 iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_KEYS_DECRYPT ).c_str());
                 iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTW, tw::STR_NEWLINE ).c_str());
-        
+
                 if (siteKey.KeysLoaded())
                 try
                 {
                     if (manip.TestDecryption(*siteKey.GetPublicKey(), false) != false)
                     {
+                        bFound = true;
+
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTWAdmin, twadmin::STR_SITEKEYFILE ).c_str());
 
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, cDisplayEncoder::EncodeInline( mSiteKeyFile ).c_str());
@@ -1575,6 +1580,8 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
                 {
                     if (manip.TestDecryption(*localKey.GetPublicKey(), false) != false)
                     {
+                        bFound = true;
+
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTWAdmin, twadmin::STR_LOCALKEYFILE ).c_str());
 
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, cDisplayEncoder::EncodeInline( mLocalKeyFile ).c_str());
@@ -1582,6 +1589,15 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
                     }
                 }
                 catch (eError&) {}
+
+                if (!bFound)
+                {
+                    bResult = false;
+                    iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, "\t");
+                    iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cCore, core::STR_UNKNOWN).c_str());
+                    iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTW, tw::STR_NEWLINE ).c_str());
+                }
+
             }
             TCOUT << std::endl;
         }
