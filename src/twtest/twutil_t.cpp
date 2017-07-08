@@ -80,7 +80,10 @@ void TestTWUtil()
     // make the dir read only and make sure write tests false
     // windows fails this test, perhaps because I am an administrator?
     chmod(tmpDir.c_str(), 0500);
-    TEST(cFileUtil::FileWritable(tmpFN) == false);
+    bool is_root = (0 == getuid());
+
+    TEST(cFileUtil::FileWritable(tmpFN) == is_root);
+
     chmod(tmpDir.c_str(), 0700);
 
     // create the file
@@ -91,7 +94,7 @@ void TestTWUtil()
 
     // test a read only file
     chmod(tmpFN.c_str(), 0400);
-    TEST(cFileUtil::FileWritable(tmpFN) == false);
+    TEST(cFileUtil::FileWritable(tmpFN) == is_root);
 
     // test a writable file
     chmod(tmpFN.c_str(), 0666);

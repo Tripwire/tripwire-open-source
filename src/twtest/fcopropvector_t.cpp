@@ -99,7 +99,7 @@ void TestFCOPropVector()
         d.TraceDetail("Object manipulation tests are not successful\n");
 
     return; 
-}//end TestPropVector
+}
 
 static bool init (cFCOPropVector &testV)
 {
@@ -111,7 +111,7 @@ static bool init (cFCOPropVector &testV)
             return false;
     } //end for
     return true;
-} //end init
+}
 
 
 static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
@@ -141,7 +141,7 @@ static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
 
     out &= local;   //and-ing of results.
     return out;
-}//end addRemove
+}
 
 static bool objManip (cFCOPropVector &testV, cDebug& d)
 {
@@ -201,4 +201,4 @@ static bool objManip (cFCOPropVector &testV, cDebug& d)
     TEST((v1 ^ v2) == v3);
 
     return out;
-}//end objManip
+}

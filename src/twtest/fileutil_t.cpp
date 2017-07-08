@@ -38,6 +38,8 @@
 #include "util/stdutil.h"
 #include "util/fileutil.h"
 #include "core/debug.h"
+#include "test.h"
+#include <unistd.h>
 
 using namespace std;
 
@@ -47,15 +49,27 @@ using namespace std;
 
 void TestFileUtil()
 {
-    if(cFileUtil::FileExists("/etc/hosts"))
-    {
-        TSTRING source, dest;
+    TSTRING source = TEMP_DIR;
+    source += _T("/copy_src");
 
-        source = _T("/etc/hosts");
-        dest = _T("/tmp/dest");
-        bool blah = cFileUtil::Copy(source, dest);
-        (void)blah;
-        //   TCOUT << _T("<") << wstr3 << _T(">") << std::endl;
-    }
+    //Create a temporary file for testing:
+    FILE* testStream;
+    testStream = _tfopen( source.c_str(), _T("w+b"));
+    TEST(testStream);
+
+    TSTRING testString( _T("This is a test") );
+    int iTestStringLength = testString.length();
+
+    //Write some data to the stream...
+    fwrite( testString.c_str(), sizeof(TCHAR), iTestStringLength, testStream );
+    fclose( testStream );
+
+    TSTRING dest = TEMP_DIR;
+    dest += "/copy_dest";
+
+    TEST(cFileUtil::Copy(source, dest));
+
+    unlink(dest.c_str());
+    unlink(source.c_str());
 }
 
