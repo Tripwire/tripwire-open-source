@@ -38,8 +38,8 @@
 #endif
 
 static bool init (cFCOPropVector &testV);
-static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d);
-static bool objManip (cFCOPropVector &testV, cDebug& d);
+static void addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d);
+static void objManip (cFCOPropVector &testV, cDebug& d);
 
 void TestFCOPropVector()
 {
@@ -74,7 +74,7 @@ void TestFCOPropVector()
     }
 
     //Test ability to add and remove
-    TEST(testout = addRemove (test1, test2, d));
+    addRemove (test1, test2, d);
     d.TraceDetail("Add/Remove over all tests is %i \n", testout);
     
     // test clear.
@@ -92,11 +92,7 @@ void TestFCOPropVector()
     d.TraceDetail("Clear Test Done.\n");
 
     //test operators
-    TEST(testout = objManip(test1, d));
-    if (testout)
-        d.TraceDetail("Object manipulation tests are successful\n");
-    else
-        d.TraceDetail("Object manipulation tests are not successful\n");
+    objManip(test1, d);
 
     return; 
 }
@@ -114,22 +110,21 @@ static bool init (cFCOPropVector &testV)
 }
 
 
-static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
+static void addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
 {
     int var1 = 0 , var2 = 64, var3 = 2;
-    bool local=true, out=true;
 
     test1.AddItem(var1);
-    TEST(local &= test1.ContainsItem(var1));    //hopefully this is true!
-    TEST(local &= !test1.ContainsItem(var3));
+    TEST(test1.ContainsItem(var1));    //hopefully this is true!
+    TEST(!test1.ContainsItem(var3));
 
     test2.SetSize(var2);
-    TEST(local &= (test2.GetSize() == ((var2/32)+1)*32));
-    TEST(local &= (test1 != test2));
+    TEST((test2.GetSize() == ((var2/32)+1)*32));
+    TEST((test1 != test2));
 
     test1.RemoveItem(var1);
     test2.SetSize(test1.GetSize());
-    TEST(local &= (test1 == test2));
+    TEST(test1 == test2);
 
     test1.AddItem(var3);
     test2 |= test1;
@@ -138,22 +133,19 @@ static bool addRemove (cFCOPropVector &test1, cFCOPropVector &test2, cDebug& d)
     test2.RemoveItem(var3);
     d.TraceDetail("\nmMask should be 0! \n");
     test2.check(d);
-
-    out &= local;   //and-ing of results.
-    return out;
 }
 
-static bool objManip (cFCOPropVector &testV, cDebug& d)
+static void objManip (cFCOPropVector &testV, cDebug& d)
 {
     cFCOPropVector test1, test2 = testV;
-    bool out = true;
 
     /*testV.check(d);
     test2.check(d);*/
 
-    TEST(out &= (testV == test2));  //test operator = , ==
+    // test operator = , ==
+    TEST(testV == test2)
     test2.AddItem(1);
-    TEST(out &= (testV != test2));  //test operator !=
+    TEST(testV != test2); // test operator !=
 
     /*testV.check(d);
     test2.check(d);*/
@@ -165,12 +157,12 @@ static bool objManip (cFCOPropVector &testV, cDebug& d)
 
     test1 = testV | test2;  //test operator |
     test1.check(d);
-    TEST(out&= (test1 == testV));
+    TEST(test1 == testV);
 
     test2.RemoveItem(1);
     testV = (test2 & test1);//test operator &
     testV.check(d);
-    TEST(out&= !(test1 == testV));
+    TEST( !(test1 == testV));
 
     // test operator ^
     cFCOPropVector v1, v2, v3;
@@ -181,13 +173,13 @@ static bool objManip (cFCOPropVector &testV, cDebug& d)
     // expected result
     v3.AddItem(1);
     v3.AddItem(4);
-    TEST((v1 ^ v2) == v3);
+    TEST((v1 ^ v2)  ==  v3);
 
     // try with larger sizes...
     v2.SetSize(40);
     v2.Clear();
     v2.AddItem(3);
-    TEST((v1 ^ v2) == v3);
+    TEST((v1 ^ v2) ==   v3);
 
     v2.AddItem(38);
     v1.SetSize(40);
@@ -198,7 +190,5 @@ static bool objManip (cFCOPropVector &testV, cDebug& d)
     v3.Clear();
     v3.AddItem(1);
     v3.AddItem(3);
-    TEST((v1 ^ v2) == v3);
-
-    return out;
+    TEST((v1 ^ v2)   == v3);
 }
