@@ -254,15 +254,12 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         TCERR << _T("*** Exiting...\n");
         ret = 8;
     }
-
-    /*
     catch (...)
     {
         TCERR << _T("*** Fatal exception occurred.\n");
         TCERR << _T("*** Exiting...\n");
         ret = 8;
     }
-    */
 
 exit:
 

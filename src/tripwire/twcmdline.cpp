@@ -709,9 +709,10 @@ int cTWModeDbInit::Execute(cErrorQueue* pQueue)
           // generate the database...
           // TODO -- turn pQueue into an error bucket
           cGenerateDb::Execute( dbIter.GetSpecList(), dbIter.GetDb(), dbIter.GetGenreHeader().GetPropDisplayer(), pQueue, gdbFlags );
+
         }
-        
-        cFCODatabaseUtil::CalculateHeader(  
+
+        cFCODatabaseUtil::CalculateHeader(
                                             dbFile.GetHeader(),
                                             mpData->mPolFile,
                                             mstrConfigFile,
@@ -1150,15 +1151,35 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                   }
                }
                // TODO -- emit "processing XXX"
+
                cIntegrityCheck ic( (cGenre::Genre)genreIter->first, dbIter.GetSpecList(), dbIter.GetDb(), report, pQueue );
-                    
+
+               //If any sort of exception escapes the IC, make sure it goes in the report.   
+               try
+               {
                     uint32 icFlags = 0;
                     icFlags |= ( mpData->mfLooseDirs ?          cIntegrityCheck::FLAG_LOOSE_DIR : 0 );
                     icFlags |= ( mpData->mbResetAccessTime ?    cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0 );
                     icFlags |= ( mpData->mbDirectIO ?           cIntegrityCheck::FLAG_DIRECT_IO : 0 );
-                
-               ic.ExecuteOnObjectList( fcoNames, icFlags );
-                    
+
+                   ic.ExecuteOnObjectList( fcoNames, icFlags );
+               }
+               catch( eError& e )
+               {
+                 if( pQueue )
+                     pQueue->AddError(e);
+               }
+               catch( std::exception& e )
+               {
+                 if (pQueue )
+                     pQueue->AddError(eIC(e.what()));
+               }
+               catch(...)
+               {
+                 if (pQueue )
+                     pQueue->AddError(eIC("Unknown"));
+
+               }
                // put all info into report
                cFCOReportGenreIter rgi( report );
                rgi.SeekToGenre( (cGenre::Genre) genreIter->first );              
@@ -1284,13 +1305,32 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
 #endif
                cIntegrityCheck ic( (cGenre::Genre)dbIter.GetGenre(), specList, dbIter.GetDb(), report, pQueue );
 
+               //If any sort of exception escapes the IC, make sure it goes in the report.
+               try
+               {
                     uint32 icFlags = 0;
                     icFlags |= ( mpData->mfLooseDirs ?          cIntegrityCheck::FLAG_LOOSE_DIR : 0 );
                     icFlags |= ( mpData->mbResetAccessTime ?    cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0 );
                     icFlags |= ( mpData->mbDirectIO ?           cIntegrityCheck::FLAG_DIRECT_IO : 0 );
-                
-               ic.Execute( icFlags );
-               
+
+                   ic.Execute( icFlags );
+               }
+               catch( eError& e )
+               {
+                   if( pQueue )
+                       pQueue->AddError(e);
+               }
+               catch( std::exception& e )
+               {
+                   if (pQueue )
+                       pQueue->AddError(eIC(e.what()));
+               }
+               catch(...)
+               {
+                   if (pQueue )
+                       pQueue->AddError(eIC("Unknown"));
+               }
+
                // put all display info into report
                cFCOReportGenreIter rgi( report );
                rgi.SeekToGenre( (cGenre::Genre) dbIter.GetGenre() );                    
