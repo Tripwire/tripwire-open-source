@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-
+use lib '.';
 use twtools;
 
 my @twtests       = ();
