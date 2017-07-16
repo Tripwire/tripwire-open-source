@@ -133,6 +133,23 @@ then
   AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
 fi
 
+dnl ##############################################  
+dnl check for various RNG/PRNG devices
+dnl ##############################################  
+
+if test -c "/dev/random"; then
+    AC_DEFINE(HAVE_DEV_RANDOM, [1], [Has /dev/random])
+fi
+
+if test -c "/dev/urandom"; then
+    AC_DEFINE(HAVE_DEV_URANDOM, [1], [Has /dev/urandom])
+fi
+
+if test -c "/dev/arandom"; then
+    AC_DEFINE(HAVE_DEV_ARANDOM, [1], [Has /dev/arandom])
+fi
+
+
 dnl ##############################################
 dnl Checks for various platform specific libraries
 dnl ##############################################

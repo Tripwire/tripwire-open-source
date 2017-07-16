@@ -39,6 +39,7 @@
 #include "core/errorgeneral.h"
 #include "time.h"
 #include "core/archive.h"
+#include "core/usernotify.h"
 
 #include "cryptlib/sha.h"
 #include "cryptlib/rng.h"
@@ -52,6 +53,11 @@
 #ifdef _RSA_ENCRYPTION
 #include "cryptlib/rsa.h"
 #endif
+
+#include <unistd.h>
+#include <fcntl.h>
+
+#define HAVE_DEVICE_RANDOM (HAVE_DEV_RANDOM || HAVE_DEV_URANDOM || HAVE_DEV_ARANDOM)
 
 const uint32 EL_GAMAL_SIG_PUBLIC_MAGIC_NUM = 0x7ae2c945;
 const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
@@ -1235,6 +1241,21 @@ cHashedKey192::~cHashedKey192()
     RandomizeBytes(mKey, KEYLEN);
 }
 
+
+static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
+{
+    int dev_random = open("/dev/random", O_RDONLY|O_NONBLOCK);
+    if (dev_random >= 0)
+    {
+        int bytes_read = read(dev_random, destbuf, len);
+        close(dev_random);
+        if (bytes_read == len)
+            return true;
+    }
+
+    return false;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // void RandomizeBytes(byte* destbuf, int len) -- Fill a buffer with random bytes
 
@@ -1242,6 +1263,30 @@ static bool gRandomizeBytesSeeded = false;
 
 void RandomizeBytes(int8* destbuf, int len)
 {
+#if HAVE_DEVICE_RANDOM
+
+#if HAVE_DEV_RANDOM
+    if (randomize_by_device("/dev/random", destbuf, len))
+        return;
+
+    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, "Could not read from /dev/random, falling back to /dev/urandom");
+#endif
+
+#if HAVE_DEV_URANDOM
+    if (randomize_by_device("/dev/urandom", destbuf, len))
+        return;
+#endif
+
+#if HAVE_DEV_ARANDOM
+    if (randomize_by_device("/dev/arandom", destbuf, len))
+        return;
+#endif
+
+    ThrowAndAssert(eInternal(_T("Failed to read from any RNG devices")));
+
+// TODO: OpenSSL or other impls that are better than the default one
+
+#else
     if (!gRandomizeBytesSeeded)
     {
         // generate a rancom number from processor timing.
@@ -1267,5 +1312,6 @@ void RandomizeBytes(int8* destbuf, int len)
     int i;
     for (i = 0; i < len; ++i)
         destbuf[i] = (byte)( (rand() * 256 / RAND_MAX) ^ 0xdc );  // 0xdc came from random.org
+#endif
 }
 

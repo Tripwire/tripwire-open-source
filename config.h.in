@@ -15,6 +15,15 @@
 /* Define to 1 if you have the <CommonCrypto/CommonDigest.h> header file. */
 #undef HAVE_COMMONCRYPTO_COMMONDIGEST_H
 
+/* Has /dev/arandom */
+#undef HAVE_DEV_ARANDOM
+
+/* Has /dev/random */
+#undef HAVE_DEV_RANDOM
+
+/* Has /dev/urandom */
+#undef HAVE_DEV_URANDOM
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
