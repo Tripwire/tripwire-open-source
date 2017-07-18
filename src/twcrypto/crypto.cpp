@@ -1244,16 +1244,18 @@ cHashedKey192::~cHashedKey192()
 /////////////////////////////////////////////////////////
 
 #if HAVE_DEVICE_RANDOM
-
 static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
 {
-    int rng_device = open(device_name, O_RDONLY|O_NONBLOCK);
+    static int rng_device = -1;
+
+    if (-1 == rng_device)
+        rng_device = open(device_name, O_RDONLY|O_NONBLOCK);
+
     if (rng_device >= 0)
     {
         int bytes_read = read(rng_device, destbuf, len);
-	close(rng_device);
         if (bytes_read == len)
-	    return true;
+            return true;
     }
 
     return false;
@@ -1267,27 +1269,11 @@ static bool gRandomizeBytesSeeded = false;
 
 void RandomizeBytes(int8* destbuf, int len)
 {
-#if HAVE_DEVICE_RANDOM
-
 #if HAVE_DEV_URANDOM
     if (randomize_by_device("/dev/urandom", destbuf, len))
         return;
-#endif
 
-#if HAVE_DEV_ARANDOM
-    if (randomize_by_device("/dev/arandom", destbuf, len))
-        return;
-#endif
-
-#if HAVE_DEV_RANDOM
-    if (randomize_by_device("/dev/random", destbuf, len))
-        return;
-#endif
-    
-    ThrowAndAssert(eInternal(_T("Failed to read from any RNG devices")));
-
-// TODO: OpenSSL or other impls that are better than the default one
-
+    ThrowAndAssert(eInternal(_T("Failed to read from RNG device")));
 #else
     if (!gRandomizeBytesSeeded)
     {
