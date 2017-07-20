@@ -57,8 +57,6 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-#define HAVE_DEVICE_RANDOM (HAVE_DEV_RANDOM || HAVE_DEV_URANDOM || HAVE_DEV_ARANDOM)
-
 const uint32 EL_GAMAL_SIG_PUBLIC_MAGIC_NUM = 0x7ae2c945;
 const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
 
@@ -1243,7 +1241,7 @@ cHashedKey192::~cHashedKey192()
 
 /////////////////////////////////////////////////////////
 
-#if HAVE_DEVICE_RANDOM
+#if HAVE_DEV_URANDOM
 static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
 {
     static int rng_device = -1;
