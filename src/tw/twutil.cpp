@@ -64,20 +64,17 @@
 #include "tw/twerrors.h"
 #include "core/ntmbs.h"
 #include "core/displayencoder.h"
+#include "core/tw_signal.h"
 
 #ifdef TW_PROFILE
 #include "core/tasktimer.h"
 #endif
-
-#include "core/fsservices.h" // for the util_IsDir() stuff
 
 #include <unistd.h>
 #include <fcntl.h>
 #if SUPPORTS_TERMIOS
 # include <termios.h>
 # include <sys/ioctl.h>
-
-#include "core/tw_signal.h"
 int _getch(void);
 #endif
 

@@ -52,28 +52,6 @@
 #include "corestrings.h"    // for: STR_ERR2_ARCH_CRYPTO_ERR
 
 //=============================================================================
-// Utility Functions
-//=============================================================================
-
-///////////////////////////////////////////////////////////////////////////////
-// util_IsDir -- returns true if a given file is a directory
-///////////////////////////////////////////////////////////////////////////////
-bool util_IsDir( const TSTRING& fileName )
-{
-    cFSStatArgs s;
-    try
-    {
-        iFSServices::GetInstance()->Stat( fileName, s );        
-    }
-    catch( eFSServices )
-    {
-        return false;
-    }
-    
-    return( s.mFileType == cFSStatArgs::TY_DIR );
-}
-
-//=============================================================================
 // eArchiveCrypto
 //=============================================================================
 TSTRING eArchiveCrypto::GetMsg( ) const

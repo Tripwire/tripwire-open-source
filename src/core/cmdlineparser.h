@@ -132,7 +132,7 @@ public:
         // the input was invalid in some way; the actual error can be determined by calling
         // GetErrorInfo() below.
 
-    void Clear();
+//    void Clear();
         // clear out all information that this class contains
 
     bool LookupArgInfo(int argId, TSTRING& arg, TSTRING& alias) const;
