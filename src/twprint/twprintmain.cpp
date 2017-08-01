@@ -42,7 +42,7 @@
 #include "core/cmdlineparser.h"
 #include "core/errorbucketimpl.h"
 #include "core/usernotifystdout.h"
-#include "core/timebomb.h"
+#include "core/epoch.h"
 
 #include "core/debug.h"
 
@@ -81,7 +81,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
     int ret = 0;
 
 
-    if (TimeBombExploded())
+    if (CheckEpoch())
         return 1;
 
     cTWInit twInit;

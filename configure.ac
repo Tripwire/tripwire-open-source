@@ -99,6 +99,7 @@ AC_C_BIGENDIAN
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
+AC_CHECK_SIZEOF(time_t)
 
 dnl All platforms we support use 2's complement, are byte aligned, etc...
 AC_DEFINE(USES_1S_COMPLEMENT, 0, [Uses one's complement])

@@ -43,7 +43,7 @@
 #include "tw/configfile.h"
 #include "core/errorbucketimpl.h"
 #include "core/usernotifystdout.h"
-#include "core/timebomb.h"
+#include "core/epoch.h"
 #include <memory>       // for auto_ptr / unique_ptr
 #include <iostream>
 #include <exception>
@@ -107,7 +107,7 @@ void tw_unexpected_handler()
 int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 {
 
-    if (TimeBombExploded())
+    if (CheckEpoch())
         return 8;
 
     int ret = 0;

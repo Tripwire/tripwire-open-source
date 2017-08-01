@@ -30,16 +30,38 @@
 // info@tripwire.org or www.tripwire.org.
 //
 ///////////////////////////////////////////////////////////////////////////////
-// timebomb.h
-
-#ifndef __TIMEBOMB_H
-#define __TIMEBOMB_H
+// epoch.h
+#include "stdcore.h"
+#include "epoch.h"
+#include <time.h>
+#include <iostream>
+#include "timeconvert.h"
+#include "corestrings.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-// TimeBombExploded() -- Call from main(). Prints out timebomb message and
-//      returns true if main() should exit.
-//
-bool TimeBombExploded();
+bool CheckEpoch()
+{
+#if SIZEOF_TIME_T == 4
 
+    struct tm time_struct;
+
+    // Many functions will fail as we approach the end of the epoch
+    // Rather than crashing, we will exit with a nice message
+    memset(&time_struct, 0, sizeof(time_struct));
+    time_struct.tm_mday = 1;
+    time_struct.tm_mon = 0;
+    time_struct.tm_year = 138;
+    int64 endoftime = cTimeUtil::DateToTime( &time_struct );
+
+    if (time(0) > endoftime)
+    {
+        TCERR << TSS_GetString(cCore, core::STR_ENDOFTIME) << std::endl;
+        return true;
+    }
+
+    return false;
+#else
+    return false;
 #endif
+}
 
