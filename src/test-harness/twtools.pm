@@ -211,6 +211,43 @@ sub RemoveEncryption {
 
 
 ######################################################################
+# Print polfile
+#
+
+sub PrintPolicy {
+
+    my (%params) = %{$_[0]};
+    logStatus "printing policy file...\n";
+
+    my (@out) = `$twrootdir/bin/twadmin -m p -c $twrootdir/$twcfgloc -p $twrootdir/$twpolfileloc -S $twrootdir/$twsitekeyloc $params{opts} 2>&1`;
+
+    my ($result) = ${^CHILD_ERROR_NATIVE};
+
+    logStatus(@out);
+
+    return $result;
+}
+
+######################################################################
+# Print polfile
+#
+
+sub PrintConfig {
+
+    my (%params) = %{$_[0]};
+
+    logStatus "printing config file...\n";
+    my (@out) =  `$twrootdir/bin/twadmin -m f -c $twrootdir/$twcfgloc $params{opts} 2>&1`;
+
+    my ($result) = ${^CHILD_ERROR_NATIVE};
+
+    logStatus(@out);
+
+    return $result;
+}
+
+
+######################################################################
 # Write policy text to disk... Note the contents
 # of the policy file are passed in as '$twstr'.
 #
@@ -287,20 +324,38 @@ sub UpdatePolicy {
 
 
 ######################################################################
+# Use twprint to get a report of specified level (default 0) and return
+# that.
+#
+sub RunReport {
+
+    my (%params) = %{$_[0]};
+
+    $params{report} = $reportloc if( ! defined($params{report}) );
+    $params{report-level} = 0 if( ! defined($params{report-level}) );
+    #$params{report-object-list} = "" if( ! defined($params{report-object-list}) );
+
+    my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t $params{report-level} -r $params{report} 2>&1`;
+    logStatus(@out);
+
+    return @out;
+
+}
+
+######################################################################
 # Use twprint to get a report level 0 report and return
 # that.
 #
-sub RunReport(%) {
+sub RunDbPrint {
 
-   my (%params) = %{$_[0]};
-	$params{report} = $reportloc if( ! defined($params{report}) );
+    my (%params) = %{$_[0]};
+    $params{db-object-list} = "" if( ! defined($params{db-object-list}) );
 
-   my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t 0 -r $params{report}`;
+    my (@out) =  `$twrootdir/bin/twprint -m d -c $twrootdir/$twcfgloc $params{db-object-list} 2>&1`;
 
-   logStatus(@out);
+    logStatus(@out);
 
-   return @out;
-
+    return @out;
 }
 
 
