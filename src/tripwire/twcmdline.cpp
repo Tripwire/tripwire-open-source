@@ -172,7 +172,7 @@ iTWMode* cTWCmdLine::GetMode(int argc, const TCHAR *const * argv)
       // unknown mode switch
       cDebug d("cTWCmdLine::GetMode");
       d.TraceError(_T("Error: Bad mode switch: %s\n"), pcMode);
-      TCERR << TSS_GetString( cTW, tw::STR_UNKOWN_MODE_SPECIFIED)
+      TCERR << TSS_GetString( cTW, tw::STR_UNKNOWN_MODE_SPECIFIED)
             << pcMode << std::endl
             << TSS_GetString( cTW, tw::STR_GET_HELP) << std::endl;
       return NULL;

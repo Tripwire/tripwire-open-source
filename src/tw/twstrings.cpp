@@ -111,7 +111,7 @@ TSS_BeginStringtable( cTW )
     TSS_StringEntry( tw::STR_NEWLINE,               _T("\n")),
     TSS_StringEntry( tw::STR_ERR_TWCFG_CANT_READ,   _T("Configuration file could not be read.")),
     TSS_StringEntry( tw::STR_ERR_NO_MODE,           _T("No mode specified.")),
-    TSS_StringEntry( tw::STR_UNKOWN_MODE_SPECIFIED, _T("Unknown mode specified: ")),
+    TSS_StringEntry( tw::STR_UNKNOWN_MODE_SPECIFIED, _T("Unknown mode specified: ")),
     TSS_StringEntry( tw::STR_ERR2_BAD_MODE_SWITCH,  _T("Unrecognized mode: ")),
 
     TSS_StringEntry( tw::STR_OPEN_POLICY_FILE,      _T("Opening policy file: ")),
