@@ -333,9 +333,9 @@ sub RunReport {
 
     $params{report} = $reportloc if( ! defined($params{report}) );
     $params{report-level} = 0 if( ! defined($params{report-level}) );
-    #$params{report-object-list} = "" if( ! defined($params{report-object-list}) );
 
     my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t $params{report-level} -r $params{report} 2>&1`;
+
     logStatus(@out);
 
     return @out;
@@ -380,9 +380,10 @@ sub RunIntegrityCheck {
 
     my (%params) = %{$_[0]};
 	$params{report} = $reportloc if( ! defined($params{report}) );
+	$params{trailing-opts} = "" if( ! defined($params{trailing-opts}) );
 
     print("running integrity check for test '$twmsg'...\n") if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m c -r $params{report} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m c -r $params{report} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $params{trailing-opts} 2>&1`);
 
     return ($? & 8);
 }
@@ -400,13 +401,10 @@ sub AnalyzeReport {
     #
     my (undef, $twstatus) = @_;
 
-#    print "*** $twstatus\n";
-
     # split the report summary line into it's fields
     #
     my (undef, undef, undef, $violations, $severity, $added, $removed, $changed) =
         split(/ /, $twstatus);
-
 
     # Split out the count for each type of
     # violation.
