@@ -202,7 +202,9 @@ void TestAlignment()
 
 void TestSizes()
 {
-    /*
+    cDebug d("TestSizes");
+    d.TraceError("Fix this!\n");
+/*
     TEST( CanBeRepresentedAs( char(), char() ) );
     TEST( CanBeRepresentedAs( char(), unsigned char() ) );
     TEST( CanBeRepresentedAs( unsigned char(), char() ) );
@@ -212,7 +214,7 @@ void TestSizes()
     TEST( CanBeRepresentedAs( signed char(), signed char() ) );
     TEST( CanBeRepresentedAs( signed char(), unsigned char() ) );
     TEST( CanBeRepresentedAs( char(), signed char() ) );
-    */
+ */
 }
  
 /////////////////////////////////////////////////////////

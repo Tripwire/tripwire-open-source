@@ -248,85 +248,77 @@ void TestQuoteAndBackSlash()
 ///////////////////////////////////////////////////////////////////////////    
 void TestDisplayEncoderBasic()
 {
-    try
-    { 
-        //=============================================================
-        // TEST UNPRINTABLE ENCODING/ROUNDTRIP
-        //=============================================================
+    //=============================================================
+    // TEST UNPRINTABLE ENCODING/ROUNDTRIP
+    //=============================================================
 
-        util_TestUnprintable( _T("normal string") );
+    util_TestUnprintable( _T("normal string") );
 
-        util_TestUnprintable( _T("return\n") );
-        util_TestUnprintable( _T("ret\rurn\n") );
-        util_TestUnprintable( _T("ret\rnurn\n") );
+    util_TestUnprintable( _T("return\n") );
+    util_TestUnprintable( _T("ret\rurn\n") );
+    util_TestUnprintable( _T("ret\rnurn\n") );
 
-        util_TestUnprintable( _T("bell\x08") );
-        util_TestUnprintable( _T("\x08 bell") );
-        util_TestUnprintable( _T("be\x08ll") );
+    util_TestUnprintable( _T("bell\x08") );
+    util_TestUnprintable( _T("\x08 bell") );
+    util_TestUnprintable( _T("be\x08ll") );
 
-        util_TestUnprintable( _T("\x1F\x1F\x1F") );
+    util_TestUnprintable( _T("\x1F\x1F\x1F") );
 
-        util_TestUnprintable( _T("big\xFF") );
-        util_TestUnprintable( _T("\xEE big") );
-        util_TestUnprintable( _T("\xEE\xEEtwo big") );
-        util_TestUnprintable( _T("small\x01") );
-        util_TestUnprintable( _T("\x01\x01two small") );
-        
-        //=============================================================
-        // TEST UNCONVERTABLE CHARS
-        //=============================================================
-        TSTRING strMessWithMe  = _T("Mess with me...");
-        for( size_t c = TSS_TCHAR_MIN; 
-             c < TSS_TCHAR_MAX;
-             c++ )
-        {
-            if( ( c != '\0' ) )
-            {
-                strMessWithMe += c;
-            }
-        }
-        util_TestUnprintable( strMessWithMe );
+    util_TestUnprintable( _T("big\xFF") );
+    util_TestUnprintable( _T("\xEE big") );
+    util_TestUnprintable( _T("\xEE\xEEtwo big") );
+    util_TestUnprintable( _T("small\x01") );
+    util_TestUnprintable( _T("\x01\x01two small") );
     
-        //=============================================================
-        // TEST \\ and \x ENCODING/ROUNDTRIP
-        //=============================================================
-
-        util_TestUnprintable( _T("\\Other \\\\slashes") );
-        util_TestUnprintable( _T("\\Other slashes\\\\") );
-        util_TestUnprintable( _T("O\\ther slashes\\\\") );
-        util_TestUnprintable( _T("\\\\\\") );
-    
-        util_TestUnprintable( _T("\\xTricky") );
-        util_TestUnprintable( _T("Tri\\xcky") );
-        util_TestUnprintable( _T("Tricky\\x") );
-        util_TestUnprintable( _T("\\Tricky\\\\x") );
-
-        
-        //=============================================================
-        // TEST UNCONVERTABLE, UNPRINTABLE, AND \\ and \" CHARS
-        //=============================================================
-        TSTRING strMessWithMe2  = _T("Mess with me...");
-        for( size_t ch = TSS_TCHAR_MIN; 
-             ch < TSS_TCHAR_MAX;
-             ch++ )
-        {
-            if( ( ch != '\0' ) )
-            {
-                strMessWithMe2 += ch;
-            }
-        }
-        
-        strMessWithMe2 += _T("\r\n\t\b\\\"\\\\\\\"\v\"");
-        util_TestUnprintable( strMessWithMe2 );
-
-        // TODO:BAM -- create multibyte tests (create a mb string at random, then test it.  
-        // make sure there are '\' and '"' in it )        
-    }
-    catch( eError& e )
+    //=============================================================
+    // TEST UNCONVERTABLE CHARS
+    //=============================================================
+    TSTRING strMessWithMe  = _T("Mess with me...");
+    for( size_t c = TSS_TCHAR_MIN; 
+         c < TSS_TCHAR_MAX;
+         c++ )
     {
-        cErrorReporter::PrintErrorMsg( e ); 
-        TEST(false);
+        if( ( c != '\0' ) )
+        {
+            strMessWithMe += c;
+        }
     }
+    util_TestUnprintable( strMessWithMe );
+
+    //=============================================================
+    // TEST \\ and \x ENCODING/ROUNDTRIP
+    //=============================================================
+
+    util_TestUnprintable( _T("\\Other \\\\slashes") );
+    util_TestUnprintable( _T("\\Other slashes\\\\") );
+    util_TestUnprintable( _T("O\\ther slashes\\\\") );
+    util_TestUnprintable( _T("\\\\\\") );
+
+    util_TestUnprintable( _T("\\xTricky") );
+    util_TestUnprintable( _T("Tri\\xcky") );
+    util_TestUnprintable( _T("Tricky\\x") );
+    util_TestUnprintable( _T("\\Tricky\\\\x") );
+
+    
+    //=============================================================
+    // TEST UNCONVERTABLE, UNPRINTABLE, AND \\ and \" CHARS
+    //=============================================================
+    TSTRING strMessWithMe2  = _T("Mess with me...");
+    for( size_t ch = TSS_TCHAR_MIN; 
+         ch < TSS_TCHAR_MAX;
+         ch++ )
+    {
+        if( ( ch != '\0' ) )
+        {
+            strMessWithMe2 += ch;
+        }
+    }
+    
+    strMessWithMe2 += _T("\r\n\t\b\\\"\\\\\\\"\v\"");
+    util_TestUnprintable( strMessWithMe2 );
+
+    // TODO:BAM -- create multibyte tests (create a mb string at random, then test it.  
+    // make sure there are '\' and '"' in it )
 }
 
 /*TSS_BeginTestSuiteFrom( cDisplayEncoderTest )

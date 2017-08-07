@@ -35,5 +35,6 @@
 
 void TestFSObject()
 {
-    return;
+    cDebug d("TestFSObject");
+    d.TraceError("Implement this!\n");
 }

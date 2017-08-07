@@ -133,39 +133,31 @@ void TestCmdLineParser()
 {
     enum ArgId { ID_M, ID_TP, ID_V, ID_UNNAMED };
 
-    try {
-        cCmdLineParser p;
-        p.AddArg(ID_M,          TSTRING(_T("m")),   TSTRING(_T("mode")),        cCmdLineParser::PARAM_ONE);
-        p.AddArg(ID_TP,         TSTRING(_T("tp")),  TSTRING(_T("twoparam")),    cCmdLineParser::PARAM_MANY);
-        p.AddArg(ID_V,          TSTRING(_T("v")),   TSTRING(_T("verbose")),     cCmdLineParser::PARAM_NONE);
-        p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_MANY);
+    cCmdLineParser p;
+    p.AddArg(ID_M,          TSTRING(_T("m")),   TSTRING(_T("mode")),        cCmdLineParser::PARAM_ONE);
+    p.AddArg(ID_TP,         TSTRING(_T("tp")),  TSTRING(_T("twoparam")),    cCmdLineParser::PARAM_MANY);
+    p.AddArg(ID_V,          TSTRING(_T("v")),   TSTRING(_T("verbose")),     cCmdLineParser::PARAM_NONE);
+    p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_MANY);
 
-        cDebug d("TestCmdLineParser");
+    cDebug d("TestCmdLineParser");
 
-        test_parse(p, argc1, argv1, false);
-        test_parse(p, argc2, argv2, true);
-        test_parse(p, argc3, argv3, true);
-        test_parse(p, argc4, argv4, false);
+    test_parse(p, argc1, argv1, false);
+    test_parse(p, argc2, argv2, true);
+    test_parse(p, argc3, argv3, true);
+    test_parse(p, argc4, argv4, false);
 
-        // command line arg mutual exclusion
-        d.TraceDebug("** Making -m and -v mutually exclusive, then running on first cmd line...\n");
-        p.AddMutEx(ID_M, ID_V);
-        test_parse(p, argc1, argv1, true);  // should fail
-        
-        // make the command line want one parameter
-        d.TraceDebug("** Changing cmd line to only want one last param...\n");
-        p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_ONE);
-        test_parse(p, argc4, argv4, true);
+    // command line arg mutual exclusion
+    d.TraceDebug("** Making -m and -v mutually exclusive, then running on first cmd line...\n");
+    p.AddMutEx(ID_M, ID_V);
+    test_parse(p, argc1, argv1, true);  // should fail
+    
+    // make the command line want one parameter
+    d.TraceDebug("** Changing cmd line to only want one last param...\n");
+    p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_ONE);
+    test_parse(p, argc4, argv4, true);
 
-        test_parse(p, argc5, argv5, false);
+    test_parse(p, argc5, argv5, false);
 
-        // TODO -- test a bunch more!!!
-    }
-    catch (eCmdLine &e)
-    {
-        TCERR << _T("Command line error: ");
-        TCERR << e.GetMsg() << std::endl;
-        TEST(false);
-    }
+    // TODO -- test a bunch more!!!
 }
 

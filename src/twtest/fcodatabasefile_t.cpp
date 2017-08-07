@@ -35,5 +35,6 @@
 
 void TestFCODatabaseFile()
 {
-    //TODO - actually test something here
+    cDebug d("TestFCODatabaseFile");
+    d.TraceError("Implement this!\n");
 }

@@ -34,6 +34,8 @@
 
 void TestTaskTimer()
 {
+    cDebug d("TestTaskTimer");
+    d.TraceError("Implement this!\n");
 }
 
 

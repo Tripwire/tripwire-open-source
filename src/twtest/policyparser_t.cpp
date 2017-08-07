@@ -66,39 +66,30 @@ TSTRING get_test_file_dir()
 
 void test_policy_file(const std::string& polfile)
 {
-    try
-    {
-        cDebug::AddOutTarget(cDebug::OUT_STDOUT);
-        
-        TSTRING pol_path = get_test_file_dir();
-        pol_path.append("/");
-        pol_path.append(polfile);
-        
-        std::ifstream in;
-        in.open(pol_path.c_str());
-        if( ! in.good() )
-            throw eParserHelper( _T("couldn't open test file") );
-        
-        cPolicyParser parser( in );
-        
-        cGenreSpecListVector policy;
-        cErrorQueue errorQ;
-        cErrorReporter errorR;
-        cErrorTracer errorT;
-        
-        // set up an error bucket that will spit things to stderr
-        errorT.SetChild( &errorR );
-        errorQ.SetChild( &errorT );
-        
-        parser.Execute( policy, &errorQ );
-
-    }
-    catch(eError& e)
-    {
-        TCERR << (int)e.GetID() << " : " << e.GetMsg().c_str() << std::endl;
-        return;
-    }
+    cDebug::AddOutTarget(cDebug::OUT_STDOUT);
     
+    TSTRING pol_path = get_test_file_dir();
+    pol_path.append("/");
+    pol_path.append(polfile);
+    
+    std::ifstream in;
+    in.open(pol_path.c_str());
+    if( ! in.good() )
+        throw eParserHelper( _T("couldn't open test file") );
+    
+    cPolicyParser parser( in );
+    
+    cGenreSpecListVector policy;
+    cErrorQueue errorQ;
+    cErrorReporter errorR;
+    cErrorTracer errorT;
+    
+    // set up an error bucket that will spit things to stderr
+    errorT.SetChild( &errorR );
+    errorQ.SetChild( &errorT );
+    
+    parser.Execute( policy, &errorQ );
+
     TCERR << "Parsed policy test file " << polfile << std::endl;
     return;
 }

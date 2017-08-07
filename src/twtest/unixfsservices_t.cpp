@@ -50,134 +50,124 @@ void TestUnixFSServices()
     cDebug d("TestUnixFSServices");
     //  d.RemoveOutTarget(cDebug::OUT_STDOUT);
 
-    try
+
+    iFSServices* pFSServices = iFSServices::GetInstance();
+
+    // working primarily with the temp dir.
+    cFCOName name(_T("/tmp"));  
+
+    // Check to make sure /tmp is a dir
+    //TEST(pFSServices->GetFileType(name) == cFSStatArgs::TY_DIR);
+
+    // get directory contents (test readdir)
+    std::vector <TSTRING> v;
+    pFSServices->ReadDir(name.AsString(), v);
+
     {
-        iFSServices* pFSServices = iFSServices::GetInstance();
+        d.TraceDebug("name: %d entries\n", v.size());
 
-        // working primarily with the temp dir.
-        cFCOName name(_T("/tmp"));  // dies here
-
-        // Check to make sure /tmp is a dir
-        //TEST(pFSServices->GetFileType(name) == cFSStatArgs::TY_DIR);
-        
-        // get directory contents (test readdir)
-        std::vector <TSTRING> v;
-        pFSServices->ReadDir(name.AsString(), v);
-
-        {
-            d.TraceDebug("name: %d entries\n", v.size());
-
-            std::vector <TSTRING>::iterator p;
-            size_t n = 0;
-            for (p = v.begin(); p != v.end(); ++p) {
-                d.TraceDetail("    %s\n", p->c_str());
-                n++;
-            }
-
-            TEST(n == v.size());
+        std::vector <TSTRING>::iterator p;
+        size_t n = 0;
+        for (p = v.begin(); p != v.end(); ++p) {
+            d.TraceDetail("    %s\n", p->c_str());
+            n++;
         }
 
-        //Test the Stat method
-        cFSStatArgs stat;
-
-        //TO DO: use archive to create this file
-        TSTRING testfile = "/tmp/tmp.tmp";
-        cFileArchive filearch;
-        filearch.OpenReadWrite(testfile.c_str());
-        filearch.Seek(0, cBidirArchive::BEGINNING);
-        filearch.WriteString(_T("This is a test"));
-        filearch.Close();
-        
-        pFSServices->Stat(testfile, stat);
-        
-        //print out the information returned by Stat
-        d.TraceDetail("Information returned by Stat: \n");
-        d.TraceDetail("Group ID : %-5d \n", stat.gid);
-        //d.TraceDetail("Last access time: %d \n", stat.atime);
-        d.TraceDetail("Last inode change: %d \n", stat.ctime);
-        d.TraceDetail("Last modified: %d \n", stat.mtime);
-        d.TraceDetail("Major/minor device nums: %d \n", stat.dev);
-        d.TraceDetail("Inode # of file : %d \n", stat.ino);
-        d.TraceDetail("Mode bits: %d \n", stat.mode);
-        d.TraceDetail("Num links: %d \n", stat.nlink);
-        d.TraceDetail("Major/minor dev if special: %d \n", stat.rdev);
-        d.TraceDetail("File size: %d \n", stat.size);
-        d.TraceDetail("User ID: %d \n", stat.uid);
-
-        //Test GetCurrentDir:
-        TSTRING currpath;
-        pFSServices->GetCurrentDir(currpath);
-        d.TraceDetail("GetCurrentDir returned %s\n", currpath.c_str());
-        //TEST(currpath == _T("~"));
-            //they should both be ~!!
-
-        //Test MakeTempFilename
-        TSTRING _template(_T("twtempXXXXXX"));
-        pFSServices->MakeTempFilename(_template);
-        d.TraceDetail("Testing MakeTempFilename: \n");
-        d.TraceDetail("%s \n", _template.c_str() );
-
-        // Test GetMachineName
-        d.TraceDetail("Testing GetMachineName:\n");
-        TSTRING uname;
-        pFSServices->GetMachineName(uname);
-        d.TraceDetail("GetMachineName returned: %s\n", uname.c_str());
-        
-        // Test GetHostID
-        d.TraceDetail("Testing GetHostID:\n");
-        TSTRING hostid;
-        pFSServices->GetHostID(hostid);
-        d.TraceDetail("GetHostID returned: %s\n", hostid.c_str());
-
-        // Test GetCurrentUserName
-        d.TraceDetail("Testing GetCurrentUserName:\n");
-        TSTRING username;
-        TEST( pFSServices->GetCurrentUserName(username) );
-        d.TraceDetail("GetCurrentUserName returned: %s\n", username.c_str());
-
-        // Test GetIPAddress
-        d.TraceDetail("Testing GetIPAddress:\n");
-        uint32 ipaddr;
-        TEST( pFSServices->GetIPAddress( ipaddr ) );
-        d.TraceDetail("GetIPAddress returned: %d\n", ipaddr);
-
-        // test GetExecutableFilename
-        d.TraceDetail("Testing GetExecutableFilename: \n");
-        TSTRING filename = _T("sh");
-        TSTRING fullpath = _T("/bin/");
-        TEST(pFSServices->GetExecutableFilename(fullpath, filename));
-        filename = _T("/bin/sh");
-        TEST(pFSServices->GetExecutableFilename(fullpath, filename));
-
-        // test Rename
-        d.TraceDetail("Testing Rename:\n");
-        TSTRING newtestfile = _T("/tmp/new.tmp");
-        TEST( pFSServices->Rename( testfile, newtestfile ) );
-
-        // test GetOwnerForFile
-        d.TraceDetail("Testing GetOwnerForFile:\n");
-        TSTRING ownername;
-        TEST( pFSServices->GetOwnerForFile( newtestfile, ownername ) );
-        d.TraceDetail("GetOwnerForFile returned owner %s.\n", ownername.c_str());
-
-        // test GetGroupForFile
-        d.TraceDetail("Testing GetGroupForFile:\n");
-        TSTRING groupname;
-        TEST( pFSServices->GetGroupForFile( newtestfile, groupname ) );
-        d.TraceDetail("GetGroupForFile returned group %s.\n", groupname.c_str());
-
-        // test FileDelete
-        d.TraceDetail("Testing FileDelete:\n");
-        TEST( pFSServices->FileDelete( newtestfile ) );
-
-
-
-    }//end try block
-    catch (eError& e)
-    {
-      d.TraceError("Exception caught: %s\n", e.GetMsg().c_str());
+        TEST(n == v.size());
     }
 
+    //Test the Stat method
+    cFSStatArgs stat;
+
+    //TO DO: use archive to create this file
+    TSTRING testfile = "/tmp/tmp.tmp";
+    cFileArchive filearch;
+    filearch.OpenReadWrite(testfile.c_str());
+    filearch.Seek(0, cBidirArchive::BEGINNING);
+    filearch.WriteString(_T("This is a test"));
+    filearch.Close();
+
+    pFSServices->Stat(testfile, stat);
+
+    //print out the information returned by Stat
+    d.TraceDetail("Information returned by Stat: \n");
+    d.TraceDetail("Group ID : %-5d \n", stat.gid);
+    //d.TraceDetail("Last access time: %d \n", stat.atime);
+    d.TraceDetail("Last inode change: %d \n", stat.ctime);
+    d.TraceDetail("Last modified: %d \n", stat.mtime);
+    d.TraceDetail("Major/minor device nums: %d \n", stat.dev);
+    d.TraceDetail("Inode # of file : %d \n", stat.ino);
+    d.TraceDetail("Mode bits: %d \n", stat.mode);
+    d.TraceDetail("Num links: %d \n", stat.nlink);
+    d.TraceDetail("Major/minor dev if special: %d \n", stat.rdev);
+    d.TraceDetail("File size: %d \n", stat.size);
+    d.TraceDetail("User ID: %d \n", stat.uid);
+
+    //Test GetCurrentDir:
+    TSTRING currpath;
+    pFSServices->GetCurrentDir(currpath);
+    d.TraceDetail("GetCurrentDir returned %s\n", currpath.c_str());
+    //TEST(currpath == _T("~"));
+        //they should both be ~!!
+
+    //Test MakeTempFilename
+    TSTRING _template(_T("twtempXXXXXX"));
+    pFSServices->MakeTempFilename(_template);
+    d.TraceDetail("Testing MakeTempFilename: \n");
+    d.TraceDetail("%s \n", _template.c_str() );
+
+    // Test GetMachineName
+    d.TraceDetail("Testing GetMachineName:\n");
+    TSTRING uname;
+    pFSServices->GetMachineName(uname);
+    d.TraceDetail("GetMachineName returned: %s\n", uname.c_str());
+
+    // Test GetHostID
+    d.TraceDetail("Testing GetHostID:\n");
+    TSTRING hostid;
+    pFSServices->GetHostID(hostid);
+    d.TraceDetail("GetHostID returned: %s\n", hostid.c_str());
+
+    // Test GetCurrentUserName
+    d.TraceDetail("Testing GetCurrentUserName:\n");
+    TSTRING username;
+    TEST( pFSServices->GetCurrentUserName(username) );
+    d.TraceDetail("GetCurrentUserName returned: %s\n", username.c_str());
+
+    // Test GetIPAddress
+    d.TraceDetail("Testing GetIPAddress:\n");
+    uint32 ipaddr;
+    TEST( pFSServices->GetIPAddress( ipaddr ) );
+    d.TraceDetail("GetIPAddress returned: %d\n", ipaddr);
+
+    // test GetExecutableFilename
+    d.TraceDetail("Testing GetExecutableFilename: \n");
+    TSTRING filename = _T("sh");
+    TSTRING fullpath = _T("/bin/");
+    TEST(pFSServices->GetExecutableFilename(fullpath, filename));
+    filename = _T("/bin/sh");
+    TEST(pFSServices->GetExecutableFilename(fullpath, filename));
+
+    // test Rename
+    d.TraceDetail("Testing Rename:\n");
+    TSTRING newtestfile = _T("/tmp/new.tmp");
+    TEST( pFSServices->Rename( testfile, newtestfile ) );
+
+    // test GetOwnerForFile
+    d.TraceDetail("Testing GetOwnerForFile:\n");
+    TSTRING ownername;
+    TEST( pFSServices->GetOwnerForFile( newtestfile, ownername ) );
+    d.TraceDetail("GetOwnerForFile returned owner %s.\n", ownername.c_str());
+
+    // test GetGroupForFile
+    d.TraceDetail("Testing GetGroupForFile:\n");
+    TSTRING groupname;
+    TEST( pFSServices->GetGroupForFile( newtestfile, groupname ) );
+    d.TraceDetail("GetGroupForFile returned group %s.\n", groupname.c_str());
+
+    // test FileDelete
+    d.TraceDetail("Testing FileDelete:\n");
+    TEST( pFSServices->FileDelete( newtestfile ) );
 }
 
 

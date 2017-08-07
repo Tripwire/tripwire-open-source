@@ -99,20 +99,13 @@ void TestFSDataSourceIter()
 {
     cFSDataSourceIter   iter;
     cDebug              d("TestFSDataSourceIter");
-    try
-    {
-        // go to my temp directory and iterate over everything!
-        iter.SeekToFCO( cFCOName(_T("/tmp")) );
-        //
-        // print out everything below the iterator
-        //
-        PrintIter( iter, d );
-    }
-    catch( eError& e )
-    {
-            d.TraceError( "*** Caught exception %d %s\n", e.GetID(), e.GetMsg().c_str() );
-        TEST( false );
-    }
+
+    // go to my temp directory and iterate over everything!
+    iter.SeekToFCO( cFCOName(_T("/tmp")) );
+    //
+    // print out everything below the iterator
+    //
+    PrintIter( iter, d );
 }
 
 

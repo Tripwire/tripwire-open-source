@@ -71,16 +71,8 @@ void PrintChars( const TSTRING& str )
 ///////////////////////////////////////////////////////////////////////////    
 void TestCharUtilBasic()
 {
-    try
-    {
-        PrintChars( _T("foo") );
-        PrintChars( _T("fo\x23 54") );
-    }
-    catch( eError& e )
-    {
-        cErrorReporter::PrintErrorMsg( e ); 
-        TEST(false);
-    }
+    PrintChars( _T("foo") );
+    PrintChars( _T("fo\x23 54") );
 }
 
 

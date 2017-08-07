@@ -70,8 +70,10 @@ void TestFCOSetImpl();
 void TestFCOSpec();
 void TestFCOPropVector();
 void TestFileHeader();
+void TestFile();
 void TestFSPropSet();
 void TestFCOSpecImpl();
+void TestFSObject();
 void TestFSPropCalc();
 void TestFCOPropImpl();
 void TestFCOCompare();
@@ -96,6 +98,7 @@ void TestHashTable();
 void TestTextReportViewer();
 void TestFCONameTbl();
 void TestConfigFile();
+void TestResources();
 
 void TestPolicyParser();
 
@@ -140,6 +143,7 @@ void TestQuoteAndBackSlash();
 void TestDisplayEncoderBasic();
 void TestCharUtilBasic();
 void TestConfigFile2();
+void TestUserNotifyStdout();
 
 /// This is easier than all the (cpp) files and declarations
 #include "stringutil_t.h"
@@ -176,6 +180,7 @@ static void Test(int testID)
         case 6: TestError(); break;
         case 7: TestErrorBucketImpl(); break;
         case 8: TestFCOCompare(); break;
+        case 9: TestUserNotifyStdout(); break;
                 
         case 12: TestFCOName(); break;
         case 13: TestFCONameTbl(); break;
@@ -184,21 +189,21 @@ static void Test(int testID)
         case 16: TestFCOReport(); break;
                 
         case 18: TestFCOSetImpl(); break;
-
+        case 19: TestFCOSpec(); break;
         case 20: TestFCOSpecAttr(); break;
         case 21: TestFCOSpecHelper(); break;
         case 22: TestFCOSpecList(); break;
         case 23: TestFcoSpecUtil(); break;
         case 24: TestFileHeader(); break;
-
+        case 25: TestFile(); break;
         case 26: TestFSPropSet(); break;
         case 27: TestFSPropCalc(); break;
         case 28: TestFCOSpecImpl(); break;
-        case 29: TestHashTable(); break;
-
+        case 29: TestFSObject(); break;
+        case 30: TestSerializer(); break;
         case 31: TestRefCountObj(); break;
         case 32: TestSerializerImpl(); break;
-        //case 33:
+        case 33: TestResources(); break;
         case 34: TestSignature(); break;
         case 35: TestTaskTimer(); break;
         //case 36: TestTripwire(); break;
@@ -208,7 +213,8 @@ static void Test(int testID)
         case 41: TestFCODatabaseFile(); break;
         case 42: TestHashTable(); break;
         case 43: TestTCHAR(); break;
-        case 44: TestUnixFSServices(); break;
+        case 44: TestTypes(); break;
+        case 45: TestUnixFSServices(); break;
         case 46: TestConfigFile(); break;
         case 47: TestPolicyParser(); break;
         case 48: TestKeyFile(); break;
