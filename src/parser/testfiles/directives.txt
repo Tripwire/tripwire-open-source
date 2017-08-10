@@ -1,4 +1,4 @@
-# replace your_host with the name of your host.
+# Exercises the ifhost conditional, assuming your host answers to 'localhost'.
 # parser will echo YES1 through YES9
 # there's a problem with the parser if it echoes NO
 
@@ -8,12 +8,12 @@
     @@print +YES1
 @@endif
 
-@@ifhost bar || your_host||baz
+@@ifhost bar || localhost||baz
 
 
     @@ifhost foo
     
-        @@ifhost your_host
+        @@ifhost localhost
             @@error +NO2;
         @@else
             @@error +NO3;
@@ -35,9 +35,9 @@
 
 
 
-    @@ifhost your_host
+    @@ifhost localhost
     
-        @@ifhost your_host
+        @@ifhost localhost
             @@print +YES4;
         @@else
             @@error +NO6;
@@ -47,7 +47,7 @@
 
     @@else
     
-        @@ifhost your_host
+        @@ifhost localhost
             @@error +NO7;
         @@else
             @@error +NO8;
@@ -57,7 +57,7 @@
 
     @@endif
 
-    @@ifhost your_host
+    @@ifhost localhost
         @@print +YES6;
     @@else
         @@error +NO10;
@@ -70,11 +70,11 @@
     @@endif
 
     
-    @@ifhost your_host || baz
+    @@ifhost localhost || baz
         @@print +YES8;
     @@endif    
 
-    @@ifhost baz || your_host
+    @@ifhost baz || localhost
         @@print +YES9;
     @@endif
 
@@ -87,7 +87,7 @@
 
     @@ifhost foo
     
-        @@ifhost your_host
+        @@ifhost localhost
             @@error +NO13;
         @@else
             @@error +NO14;
@@ -113,7 +113,7 @@
         @@error +NO20;
     @@endif
 
-    @@ifhost your_host
+    @@ifhost localhost
         @@error +NO21;
     @@else
         @@error +NO22;

@@ -280,6 +280,24 @@ sub GeneratePolicyFile {
 
 
 ######################################################################
+# Generate and sign the policy file... Note the contents
+# of the policy file are passed in as '$twstr'.
+#
+sub CreatePolicy {
+
+    my (%params) = %{$_[0]};
+
+    $params{policy-text} = "$twrootdir/$twpolicyloc" if( ! defined($params{policy-text}) );
+
+    print "generating policy file...\n" if $verbose;
+
+    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text}`);
+
+    return ($? == 0);
+}
+
+
+######################################################################
 # Run tripwire to initialize the database...
 #
 sub InitializeDatabase {
