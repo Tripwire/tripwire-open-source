@@ -11,6 +11,7 @@ BEGIN
 {
     $description = "policy creation test";
     $testpolicydir = "$twtools::twrootdir/../../parser/testfiles";
+    $badpolicydir = "$twtools::twrootdir/../../parser/testfiles.bad";
 }
 
 ######################################################################
@@ -54,6 +55,35 @@ POLICY_END
 }
 
 
+sub test_policy_dir
+{
+    my ($policydir, $expected) = @_;
+    my $twpassed = 1;
+
+    opendir my $dir, $policydir or return 0;
+    my @files = readdir $dir;
+    closedir $dir;
+
+    foreach my $current_file (@files) {
+
+        if ($current_file eq "." || $current_file eq ".." ) {
+            next;
+        }
+
+        twtools::logStatus "Trying policy text $policydir/$current_file\n";
+
+        twtools::CreatePolicy({policy-text => "$policydir/$current_file"});
+        if ( $? != $expected ) {
+            twtools::logStatus ("create-polfile with $policydir/$current_file failed, error = $?\n");
+            $twpassed = 0;
+        }
+    }
+
+    return $twpassed;
+}
+
+
+
 ######################################################################
 #
 # Run the test.
@@ -83,38 +113,15 @@ sub run
         $twpassed = 0;
     }
 
-    # Test with existing test case files in the src/policy/testfiles directory.
-    #
-    twtools::CreatePolicy({policy-text => "$testpolicydir/directives.txt"});
+    test_policy_dir( "$testpolicydir", 0 );
     if ( $? != 0 ) {
-        twtools::logStatus("create-polfile with directives.txt failed, error = $?\n");
         $twpassed = 0;
     }
 
-    twtools::CreatePolicy({policy-text => "$testpolicydir/pol.txt"});
+    test_policy_dir( "$badpolicydir", 1 );
     if ( $? != 0 ) {
-        twtools::logStatus("create-polfile with pol.txt failed, error = $?\n");
         $twpassed = 0;
     }
-
-    twtools::CreatePolicy({policy-text => "$testpolicydir/poleasy.txt"});
-    if ( $? != 0 ) {
-        twtools::logStatus("create-polfile with poleasy.txt failed, error = $?\n");
-        $twpassed = 0;
-    }
-
-    twtools::CreatePolicy({policy-text => "$testpolicydir/polhard.txt"});
-    if ( $? != 0 ) {
-        twtools::logStatus("create-polfile with polhard.txt failed, error = $?\n");
-        $twpassed = 0;
-    }
-
-    twtools::CreatePolicy({policy-text => "$testpolicydir/polruleattr.txt"});
-    if ( $? != 0 ) {
-        twtools::logStatus("create-polfile with polruleattr.txt failed, error = $?\n");
-        $twpassed = 0;
-    }
-
 
     #########################################################
     #
