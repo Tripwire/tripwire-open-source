@@ -1,0 +1,4 @@
+(emailto="foo@bar
+{
+/foo -> $(IgnoreNone);
+}

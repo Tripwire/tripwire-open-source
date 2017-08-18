@@ -1,0 +1,4 @@
+(asdf=fjfj)
+{
+/foo -> $(IgnoreNone);
+}

@@ -142,7 +142,7 @@ sub PrepareForTest
 # 
 sub RunBasicTest
 {
-        twtools::logStatus("*** Beginning dbupdate.basic test\n");
+    twtools::logStatus("*** Beginning dbupdate.basic test\n");
 	printf("%-30s", "-- dbupdate.basic test");
 
 	PrepareForTest();

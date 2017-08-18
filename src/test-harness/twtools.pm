@@ -273,7 +273,7 @@ sub GeneratePolicyFile {
 
     print "generating policy file...\n" if $verbose;
 
-    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc`);
+    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc 2>&1`);
 
     return ($? == 0);
 }
@@ -291,7 +291,7 @@ sub CreatePolicy {
 
     print "generating policy file...\n" if $verbose;
 
-    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text}`);
+    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text} 2>&1`);
 
     return ($? == 0);
 }

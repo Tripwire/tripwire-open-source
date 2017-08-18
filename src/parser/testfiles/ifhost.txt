@@ -1,0 +1,6 @@
+@@ifhost localhost
+  @@print Hello World
+  /foo -> $(IgnoreNone);
+@@else
+  @@error Failed
+@@endif
