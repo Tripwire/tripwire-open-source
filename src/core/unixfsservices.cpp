@@ -497,43 +497,6 @@ void cUnixFSServices::SetResolveNames(bool resolve)
     mResolveNames=resolve;
 }
     
-bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const 
-{
-    bool fSuccess = true;
-    
-    struct stat statbuf;
-    int ret = lstat(tstrFilename.c_str(), &statbuf);    
-    if(ret < 0)
-    {
-        fSuccess = false;
-    }
-    else
-    {
-        fSuccess = GetUserName(statbuf.st_uid, tstrUser);
-    }
-
-    return( fSuccess );
-}
-
-
-bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const 
-{    
-    bool fSuccess = true;
-    struct stat statbuf;
-
-    int ret = lstat(tstrFilename.c_str(), &statbuf);    
-    if(ret < 0)
-    {
-        fSuccess = false;
-    }
-    else
-    {
-        fSuccess = GetGroupName(statbuf.st_gid, tstrGroup);
-    }   
-
-    return( fSuccess );
-}
-
     
 bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
 {

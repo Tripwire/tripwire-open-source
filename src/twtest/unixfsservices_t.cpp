@@ -153,18 +153,6 @@ void TestUnixFSServices()
     TSTRING newtestfile = _T("/tmp/new.tmp");
     TEST( pFSServices->Rename( testfile, newtestfile ) );
 
-    // test GetOwnerForFile
-    d.TraceDetail("Testing GetOwnerForFile:\n");
-    TSTRING ownername;
-    TEST( pFSServices->GetOwnerForFile( newtestfile, ownername ) );
-    d.TraceDetail("GetOwnerForFile returned owner %s.\n", ownername.c_str());
-
-    // test GetGroupForFile
-    d.TraceDetail("Testing GetGroupForFile:\n");
-    TSTRING groupname;
-    TEST( pFSServices->GetGroupForFile( newtestfile, groupname ) );
-    d.TraceDetail("GetGroupForFile returned group %s.\n", groupname.c_str());
-
     // test FileDelete
     d.TraceDetail("Testing FileDelete:\n");
     TEST( pFSServices->FileDelete( newtestfile ) );

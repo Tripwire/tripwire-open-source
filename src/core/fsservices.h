@@ -290,8 +290,6 @@ class iFSServices
   virtual bool    Rename( const TSTRING& strOldName, const TSTRING& strNewName, bool fOverWrite = true ) const = 0;
   // rename a file
     
-  virtual bool        GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const = 0;
-  virtual bool        GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const = 0;
   virtual bool        GetUserName( uid_t user_id, TSTRING& tstrUser ) const = 0;
   virtual bool        GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const = 0;
 
