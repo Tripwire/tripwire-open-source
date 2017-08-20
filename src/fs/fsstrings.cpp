@@ -73,8 +73,9 @@ TSS_BeginStringtable( cFS )
     TSS_StringEntry( fs::STR_PROP_SHA,                  _T("SHA") ),
     TSS_StringEntry( fs::STR_PROP_HAVAL,                _T("HAVAL") ),
     TSS_StringEntry( fs::STR_PROP_ACL,                  _T("ACL Placeholder -- Not Implemented") ),
-    
-    // TODO: get actual strings
+
+/*  Leaving these here in case we ever implement long property names
+
     TSS_StringEntry( fs::STR_PARSER_PROP_DEV,           _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_RDEV,          _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_INODE,         _T("unimplemented") ),
@@ -94,7 +95,7 @@ TSS_BeginStringtable( cFS )
     TSS_StringEntry( fs::STR_PARSER_PROP_MD5,           _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_SHA,           _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_HAVAL,         _T("unimplemented") ),
-
+*/
     TSS_StringEntry( fs::STR_PARSER_READONLY,           _T("ReadOnly")),
     TSS_StringEntry( fs::STR_PARSER_DYNAMIC,            _T("Dynamic")),
     TSS_StringEntry( fs::STR_PARSER_GROWING,            _T("Growing")),
