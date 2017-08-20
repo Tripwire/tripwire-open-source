@@ -332,61 +332,6 @@ bool cTWUtil::IsObjectEncrypted( const TCHAR* objFileName, const cFileHeaderID& 
     return( fEncrypted );
 }
 
-bool cTWUtil::IsObjectEncrypted( cArchive &arch, const cFileHeaderID& fhid, const TSTRING& errorMsg )
-{
-    bool fEncrypted = false;
-    cDebug d("IsObjectEncrypted");
-    d.TraceDebug(_T("Reading from archive\n"));
-    
-    try
-    {
-        cFileHeader fileHeader;
-        cSerializerImpl fhSer(arch, cSerializerImpl::S_READ, TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str());
-        fileHeader.Read(&fhSer);
-
-        // check for a mismatched header
-        if (fileHeader.GetID() != fhid)
-            ThrowAndAssert(eSerializerInputStreamFmt(_T(""), TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str(), eSerializer::TY_FILE));
-
-        // switch on the type of encoding...
-        if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-        {
-            fEncrypted = true;
-        }
-        else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-        {
-            fEncrypted = false;
-        }
-        else
-            // unknown encoding...
-            ThrowAndAssert(eSerializerInputStreamFmt(_T(""), TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME).c_str(), eSerializer::TY_FILE));
-    }
-    catch(eArchive& e)
-    {
-        // Note: Output to TCERR is O.K. here, it is documented that this is what this function does
-        TSTRING msg = e.GetMsg();
-        if( ! msg.empty() )
-            msg += _T("\n");
-        msg += errorMsg;
-
-        cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
-        ThrowAndAssert(ePoly());
-    }
-    catch(eSerializer& e)
-    {
-        // Note: Output to TCERR is O.K. here, it is documented that this is what this function does
-        TSTRING msg = e.GetMsg();
-        if( ! msg.empty() )
-            msg += _T("\n");
-        msg += errorMsg;
-
-        cTWUtil::PrintErrorMsg(ePoly(e.GetID(), msg, e.GetFlags() ));
-        ThrowAndAssert(ePoly());
-    }
-
-    return( fEncrypted );
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // WriteDatabase
@@ -452,20 +397,6 @@ void cTWUtil::WriteReport(const TCHAR* filename, const cFCOReportHeader& reportH
 }
 
 
-void cTWUtil::WriteReport(cArchive &archive, const cFCOReportHeader& reportHeader, const cFCOReport& r, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
-{
-    cFileHeader fileHeader;
-    fileHeader.SetID(cFCOReport::GetFileHeaderID());
-
-    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
-
-    WriteObjectToArchive(archive, filename.c_str(), &reportHeader, r, fileHeader, bEncrypt, pPrivateKey);
-
-    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-                                        TSS_GetString( cTW, tw::STR_WRITE_REPORT_FILE).c_str(), 
-                                        cDisplayEncoder::EncodeInline( filename ).c_str() );
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // ReadReport
 ///////////////////////////////////////////////////////////////////////////////
@@ -478,16 +409,6 @@ void cTWUtil::ReadReport(const TCHAR* reportFileName, cFCOReportHeader& reportHe
     ReadObject(reportFileName, &reportHeader, r, cFCOReport::GetFileHeaderID(), pPublicKey, bEncrypted);
 }
 
-void cTWUtil::ReadReport(cArchive &archive, cFCOReportHeader& reportHeader, cFCOReport& r, const cElGamalSigPublicKey* pPublicKey, bool silent, bool& bEncrypted)
-{
-    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
-
-    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-                                        TSS_GetString( cTW, tw::STR_OPEN_REPORT_FILE).c_str(), 
-                                        cDisplayEncoder::EncodeInline( filename ).c_str());
-    
-    ReadObjectFromArchive(archive, filename.c_str(), &reportHeader, r, cFCOReport::GetFileHeaderID(), pPublicKey, bEncrypted);
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // UpdatePolicyFile
@@ -596,38 +517,6 @@ void cTWUtil::WriteConfigText(const TCHAR* filename, const TSTRING configText, b
     iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
                                         TSS_GetString( cTW, tw::STR_WRITE_CONFIG_FILE).c_str(), 
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
-}
-
-void cTWUtil::WriteConfigText(cArchive &archive, const TSTRING configText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
-{
-    cSerializableNString nstring;
-
-    nstring.mString = CONFIG_FILE_MAGIC_8BYTE;
-
-    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
-
-    std::string ns;
-    cStringUtil::Convert( ns, configText );
-    nstring.mString += ns;
-
-    cFileHeader fileHeader;
-    fileHeader.SetID(cConfigFile::GetFileHeaderID());
-    
-    fileHeader.SetVersion(CURRENT_FIXED_VERSION);
-
-    if (bEncrypt)
-    {
-        ASSERT(pPrivateKey != 0);
-        cElGamalSigPublicKey publicKey(*pPrivateKey);
-        fileHeader.GetBaggage().MapArchive(0, publicKey.GetWriteLen());
-        publicKey.Write(fileHeader.GetBaggage().GetMap());
-    }
-
-    WriteObjectToArchive(archive, filename.c_str(), NULL, nstring, fileHeader, bEncrypt, pPrivateKey);
-
-    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-                                        TSS_GetString( cTW, tw::STR_WRITE_CONFIG_FILE).c_str(), 
-                                        cDisplayEncoder::EncodeInline( filename ).c_str());
 }
 
 
@@ -742,111 +631,6 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
 }  
 
 
-void cTWUtil::ReadConfigText(cArchive &arch, TSTRING& configText, cArchive* pBaggage)
-{
-// TODO -- neat up this function; try to use LoadObject() above...
-
-    cSerializableNString nstring;
-
-    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
-
-    // This was coppied from ReadObject().  We need to use the baggage of the
-    // file header to obtain the public key, thus the special casing.
-    cDebug d("ReadConfigText");
-    d.TraceDebug(_T("Reading %s from file %s\n"), nstring.GetType().AsString(), filename.c_str());
-    
-    iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, _T("%s%s\n"),
-                                        TSS_GetString( cTW, tw::STR_OPEN_CONFIG_FILE).c_str(), 
-                                        cDisplayEncoder::EncodeInline( filename ).c_str());
-
-
-    cFileHeader fileHeader;
-
-    try
-    {
-        cSerializerImpl fhSer(arch, cSerializerImpl::S_READ);
-        fileHeader.Read(&fhSer);
-    }
-    catch (eError&)
-    {
-        throw eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE);
-    }
-
-#if 0   // XXX: This is broken, how can you convert a class to an int??? -PH
-    d.TraceDebug("Found a file header of type %d.\n", fileHeader.GetEncoding());
-#endif
-
-    // check for a mismatched header
-    if (fileHeader.GetID() != cConfigFile::GetFileHeaderID())
-        throw eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE);
-
-    // check the version
-    if (fileHeader.GetVersion() != CURRENT_FIXED_VERSION)
-        throw eSerializerVersionMismatch(_T(""), filename.c_str(), eSerializer::TY_FILE);
-
-    // switch on the type of encoding...
-    if(fileHeader.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
-    {
-        d.TraceDebug("Config file is compressed, public key len %d.\n", fileHeader.GetBaggage().Length());
-
-        // tell the user the db is encrypted
-        iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_FILE_ENCRYPTED).c_str());
-        iUserNotify::GetInstance()->Notify( iUserNotify::V_VERBOSE, TSS_GetString(cTW, tw::STR_NEWLINE).c_str());
-
-        ASSERT(fileHeader.GetBaggage().Length() > 0);
-        if (fileHeader.GetBaggage().Length() <= 0)
-            ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE));
-
-        fileHeader.GetBaggage().MapArchive(0, fileHeader.GetBaggage().Length());
-
-        cElGamalSigPublicKey publicKey(fileHeader.GetBaggage().GetMap());
-
-        cElGamalSigArchive cryptoArchive;
-        cryptoArchive.SetRead(&arch, &publicKey);
-
-        cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);            
-        ser.Init();
-        ser.ReadObject(&nstring);
-        ser.Finit();
-
-        // copy the baggage into the archive, if it was passed in
-        // Note: We rely in VerifySiteKey that we only fill out pBaggage if
-        // the config file is encrypted.
-        //
-        if( pBaggage )
-        {
-            fileHeader.GetBaggage().Seek( 0, cBidirArchive::BEGINNING );
-            pBaggage->Copy( &fileHeader.GetBaggage(), fileHeader.GetBaggage().Length() );
-        }
-    }
-    else if(fileHeader.GetEncoding() == cFileHeader::COMPRESSED)
-    {
-        d.TraceDebug("Config file is not compressed.\n");
-
-        //not encrypted db...
-        cNullCryptoArchive cryptoArchive;
-        cryptoArchive.Start(&arch);
-
-        cSerializerImpl ser(cryptoArchive, cSerializerImpl::S_READ);            
-        ser.Init();
-        ser.ReadObject(&nstring);
-        ser.Finit();
-    }
-    else
-        // unknown encoding...
-        throw eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE);
-
-    // check 8 byte header
-    if (nstring.mString.compare(0, 8*sizeof(byte), CONFIG_FILE_MAGIC_8BYTE) != 0)
-        ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE));
-
-    // remove 8 byte header
-    nstring.mString.assign(nstring.mString.substr(8));
-
-    cStringUtil::Convert( configText, nstring.mString );
-}
-  
-
 ///////////////////////////////////////////////////////////////////////////////
 // Given a filename and the text of a policy file, write an encrypted version
 // of the policy file text to disk.  
@@ -871,26 +655,6 @@ void cTWUtil::WritePolicyText(const TCHAR* filename, const std::string& polText,
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 }
 
-void cTWUtil::WritePolicyText(cArchive &archive, const std::string& polText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey)
-{
-    cSerializableNString nstring;
-
-    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
-
-    // add a 8 byte header we can use to verify decryption
-    nstring.mString = POLICY_FILE_MAGIC_8BYTE;
-
-    nstring.mString += polText;
-
-    cFileHeader fileHeader;
-    fileHeader.SetID(cPolicyFile::GetFileHeaderID());
-
-    WriteObjectToArchive(archive, filename.c_str(), NULL, nstring, fileHeader, bEncrypt, pPrivateKey);
-
-    iUserNotify::GetInstance()->Notify( iUserNotify::V_NORMAL, _T("%s%s\n"),
-                                        TSS_GetString( cTW, tw::STR_WRITE_POLICY_FILE).c_str(), 
-                                        cDisplayEncoder::EncodeInline( filename ).c_str());
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // ReadPolicyText
@@ -917,24 +681,6 @@ void cTWUtil::ReadPolicyText(const TCHAR* filename, std::string& polText, const 
     polText = nstring.mString;
 }
 
-void cTWUtil::ReadPolicyText(cArchive &archive, std::string& polText, const cElGamalSigPublicKey* pPublicKey)
-{
-    cSerializableNString nstring;
-
-    TSTRING filename = TSS_GetString( cTW, tw::STR_MEMORY_MAPPED_FILENAME);
-
-    bool bEncrypted;
-    ReadObjectFromArchive(archive, filename.c_str(), NULL, nstring, cPolicyFile::GetFileHeaderID(), pPublicKey, bEncrypted);
-
-    // check 8 byte header
-    if (nstring.mString.compare(0, 8*sizeof(byte), POLICY_FILE_MAGIC_8BYTE) != 0)
-        ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename.c_str(), eSerializer::TY_FILE));
-
-    // remove 8 byte header
-    nstring.mString.assign(nstring.mString.substr(8));
-
-    polText = nstring.mString;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // OpenKeyFile
