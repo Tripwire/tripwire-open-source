@@ -275,6 +275,7 @@ static uint8 padding[128] = {        /* constants for padding */
   }                                                \
 }
 
+#if 0 //unused in OST
 
 /* hash a string */
 void haval_string (char *string, uint8 fingerprint[FPTLEN >> 3])
@@ -330,6 +331,7 @@ void haval_stdin ()
     putchar(fingerprint[i]);
   }
 }
+#endif
 
 /* initialization */
 void haval_start (haval_state *state)
