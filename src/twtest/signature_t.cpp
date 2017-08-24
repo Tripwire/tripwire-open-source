@@ -87,8 +87,7 @@ void TestSignature()
     //sha      : Oia1aljHD793tfj7M55tND+3OG/
     //haval    : BL6bFSo0EP5zf8lGSueeed
 
-    TSTRING sigFileName = TEMP_DIR;
-    sigFileName += TSTRING( _T("/signature_test.bin") );
+    TSTRING sigFileName = TwTestPath("signature_test.bin");
 
     cFileArchive fileArc;
     fileArc.OpenReadWrite(sigFileName.c_str());

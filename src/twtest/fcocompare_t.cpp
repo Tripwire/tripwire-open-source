@@ -62,18 +62,17 @@ static void PrintProps(const iFCO* pFCO)
 
 void TestFCOCompare()
 {
-    const TCHAR* FILE_NAME = TEMP_DIR _T("/dog.txt");
-    const char*  FILE_NAME_N = TEMP_DIR_N "/dog.txt";
+    std::string filename = TwTestPath("dog.txt");
 
     cDebug d("TestFCOCompare");
     d.TraceDebug("Entering...\n");
 
     // first, create an fco to compare with...
     
-    TOFSTREAM fstr(FILE_NAME_N);
+    TOFSTREAM fstr(filename);
     if(fstr.bad())
     {
-        d.TraceError("Unable to create test file %s!\n", FILE_NAME);
+        d.TraceError("Unable to create test file %s!\n", filename.c_str());
         TEST(false);
         return;
     }
@@ -83,7 +82,7 @@ void TestFCOCompare()
 
     // create the test FCO
     cFSDataSourceIter ds;
-    ds.SeekToFCO(cFCOName(FILE_NAME), false);
+    ds.SeekToFCO(cFCOName(filename), false);
     iFCO* pFCO = ds.CreateFCO();
     TEST(pFCO);
 
@@ -110,10 +109,10 @@ void TestFCOCompare()
 
     // change the file...
     d.TraceDebug("Changing the file...\n");
-    fstr.open(FILE_NAME);
+    fstr.open(filename);
     if(fstr.bad())
     {
-        d.TraceError("Unable to reopen %s!\n", FILE_NAME_N);
+        d.TraceError("Unable to reopen %s!\n", filename.c_str());
         TEST(false);
         return;
     }
@@ -123,7 +122,7 @@ void TestFCOCompare()
     //need a new data source iter, otherwise the existing FCO gets updated & you get a ref to it,
     // and the resulting FCOs always match.
     cFSDataSourceIter ds2;
-    ds2.SeekToFCO(cFCOName(FILE_NAME), false);
+    ds2.SeekToFCO(cFCOName(filename), false);
     iFCO* pFCO2 = ds2.CreateFCO();
     TEST(pFCO2);
     pFCO2->AcceptVisitor(&propCalc);
@@ -137,7 +136,7 @@ void TestFCOCompare()
     //result.mPropVector.TraceContents();
 
     cFSDataSourceIter ds3;
-    ds3.SeekToFCO(cFCOName(FILE_NAME), false);
+    ds3.SeekToFCO(cFCOName(filename), false);
     // try testing properties that weren't calculated...
     d.TraceDebug("Comparing FCOs with different properties calculated\n");
     iFCO* pFCO3 = ds3.CreateFCO();

@@ -73,9 +73,9 @@ void TestFCOSpecImpl()
     cFSDataSourceIter dataSrc;
 
     // test AllChildStopPoint fcos...
-    d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TEMP_DIR);
-    cFCOSpecImpl* pSpec2 = new cFCOSpecImpl(TEMP_DIR, &dataSrc, new cFCOSpecNoChildren);
-    pSpec2->SetStartPoint(cFCOName(TEMP_DIR));
+    d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TwTestDir().c_str());
+    cFCOSpecImpl* pSpec2 = new cFCOSpecImpl(TwTestDir(), &dataSrc, new cFCOSpecNoChildren);
+    pSpec2->SetStartPoint(cFCOName(TwTestDir()));
     dataSrc.SeekToFCO(pSpec2->GetStartPoint(), false);
     iFCO* pFCO = dataSrc.CreateFCO();
     TEST(pFCO);

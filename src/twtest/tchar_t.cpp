@@ -39,6 +39,8 @@
 #include "core/debug.h"
 #endif
 
+#include "test.h"
+
 TSTRING test_wost(int, const TSTRING&);
 void test_wist(const TSTRING&, cDebug& d);
 
@@ -87,8 +89,8 @@ void TestTCHAR()
 //Testing file streams
 
     //explict constructors of 'TIFSTREAM' and "TOFSTREAM' take char*
-    const char* inputfile = "fun";
-    const char* outputfile = "mo'fun";
+    std::string inputfile = TwTestPath("fun");
+    std::string outputfile = TwTestPath("mo'fun");
 
     //Set up the input file.
     TOFSTREAM out;

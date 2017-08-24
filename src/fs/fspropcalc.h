@@ -53,6 +53,12 @@
 #include "core/archive.h"
 #include "fspropset.h"
 
+#ifdef PATH_MAX
+# define TW_PATH_SIZE PATH_MAX
+#else
+# define TW_PATH_SIZE 1024
+#endif
+
 TSS_FILE_EXCEPTION( eFSPropCalc,                eFileError )
 //TSS_EXCEPTION( eFSPropCalcResetAccessTime,    eFSPropCalc ) // this was never used
 
@@ -79,7 +85,9 @@ public:
 
     virtual int                     GetCalcFlags() const;
     virtual void                    SetCalcFlags( int i );
-    
+
+    static bool GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t size = TW_PATH_SIZE);
+
 private:
     cFSPropCalc( const cFSPropCalc& );
     void operator =( const cFSPropCalc& );

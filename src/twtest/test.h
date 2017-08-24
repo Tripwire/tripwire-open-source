@@ -75,9 +75,9 @@ TSS_EndPackage( cTest )
                     } 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Platform dependancies
-#define TEMP_DIR   _T("/tmp")
-#define TEMP_DIR_N "/tmp"
+
+std::string TwTestDir();
+std::string TwTestPath(const std::string& child);
 
 #endif // __TEST_H
 

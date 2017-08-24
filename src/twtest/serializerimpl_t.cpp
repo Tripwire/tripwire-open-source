@@ -119,7 +119,7 @@ void TestSerializerImpl()
     // writing
     {
         cFileArchive file;
-        file.OpenReadWrite(TEMP_DIR _T("/tmp.bin"));
+        file.OpenReadWrite(TwTestPath("tmp.bin").c_str());
         cSerializerImpl serializer(file, cSerializerImpl::S_WRITE);
 
         serializer.Init();
@@ -127,16 +127,16 @@ void TestSerializerImpl()
         cSerializerTestObject testobj;
         testobj.Write(&serializer);
 
-        db.TraceAlways("    Writeing object 1...\n");
+        db.TraceAlways("    Writing object 1...\n");
         serializer.WriteObject(&testobj);
 
-        db.TraceAlways("    Writeing object 2...\n");
+        db.TraceAlways("    Writing object 2...\n");
         serializer.WriteObject(&testobj);
 
-        db.TraceAlways("    Writeing object 3...\n");
+        db.TraceAlways("    Writing object 3...\n");
         serializer.WriteObject(&testobj);
 
-        db.TraceAlways("    Writeing object 4...\n");
+        db.TraceAlways("    Writing object 4...\n");
         serializer.WriteObject(&testobj);
         
         serializer.Finit();
@@ -145,7 +145,7 @@ void TestSerializerImpl()
     // reading
     {
         cFileArchive file;
-        file.OpenRead(TEMP_DIR _T("/tmp.bin"));
+        file.OpenRead(TwTestPath("tmp.bin").c_str());
         cSerializerImpl serializer(file, cSerializerImpl::S_READ);
 
         serializer.Init();

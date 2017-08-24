@@ -54,9 +54,9 @@ void TestUnixFSServices()
     iFSServices* pFSServices = iFSServices::GetInstance();
 
     // working primarily with the temp dir.
-    cFCOName name(_T("/tmp"));  
+    cFCOName name(TwTestDir());
 
-    // Check to make sure /tmp is a dir
+    // Check to make sure test dir is a dir
     //TEST(pFSServices->GetFileType(name) == cFSStatArgs::TY_DIR);
 
     // get directory contents (test readdir)
@@ -80,7 +80,7 @@ void TestUnixFSServices()
     cFSStatArgs stat;
 
     //TO DO: use archive to create this file
-    TSTRING testfile = "/tmp/tmp.tmp";
+    TSTRING testfile = TwTestPath("tmp.tmp");
     cFileArchive filearch;
     filearch.OpenReadWrite(testfile.c_str());
     filearch.Seek(0, cBidirArchive::BEGINNING);
@@ -150,7 +150,7 @@ void TestUnixFSServices()
 
     // test Rename
     d.TraceDetail("Testing Rename:\n");
-    TSTRING newtestfile = _T("/tmp/new.tmp");
+    TSTRING newtestfile = TwTestPath("new.tmp");
     TEST( pFSServices->Rename( testfile, newtestfile ) );
 
     // test FileDelete

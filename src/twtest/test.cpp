@@ -42,8 +42,6 @@
 #include "twparser/twparser.h"
 #include "tw/tw.h"
 #include "fco/fco.h"
-
-
 #include "fs/fs.h"
 #include "util/util.h"
 
@@ -51,6 +49,7 @@
 #include "core/debug.h"
 #include "core/error.h"
 #include "core/twlocale.h"
+#include "core/fsservices.h"
 #include "test.h"
 #include "core/errorbucketimpl.h"
 #include "tw/twinit.h"
@@ -62,6 +61,8 @@
 #include "db/blockrecordarray.h"
 #include "db/hierdatabase.h"
 
+#include <unistd.h>
+#include <sys/stat.h>
 
 // the test routines
 void TestFCOName();
@@ -99,7 +100,7 @@ void TestTextReportViewer();
 void TestFCONameTbl();
 void TestConfigFile();
 void TestResources();
-
+void TestGetSymLinkStr();
 void TestPolicyParser();
 
 void TestFCOSpecHelper();
@@ -187,7 +188,7 @@ static void Test(int testID)
         case 14: TestFCOPropVector(); break;
         case 15: TestFCOPropImpl(); break;
         case 16: TestFCOReport(); break;
-                
+        case 17: TestGetSymLinkStr(); break;
         case 18: TestFCOSetImpl(); break;
         case 19: TestFCOSpec(); break;
         case 20: TestFCOSpecAttr(); break;
@@ -292,6 +293,31 @@ static void Test(int testID)
     }
     else
         TCERR << std::endl << "=== test ID #" << testID << " currently unused ===" << std::endl;
+}
+
+std::string TwTestDir()
+{
+    static std::string dir;
+
+    if(dir.empty())
+    {
+        iFSServices::GetInstance()->GetCurrentDir(dir);
+        dir.append("/TWTestData");
+        TCERR << "Using test directory: " << dir << std::endl;
+        mkdir(dir.c_str(), 0777);
+    }
+
+    return dir;
+}
+
+std::string TwTestPath(const std::string& child)
+{
+    std::stringstream sstr;
+    sstr << TwTestDir();
+    if (child[0] != '/')
+        sstr << '/';
+    sstr << child;
+    return sstr.str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

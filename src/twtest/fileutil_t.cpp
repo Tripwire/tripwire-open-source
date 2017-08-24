@@ -49,8 +49,7 @@ using namespace std;
 
 void TestFileUtil()
 {
-    TSTRING source = TEMP_DIR;
-    source += _T("/copy_src");
+    TSTRING source = TwTestPath("copy_src");
 
     //Create a temporary file for testing:
     FILE* testStream;
@@ -64,8 +63,7 @@ void TestFileUtil()
     fwrite( testString.c_str(), sizeof(TCHAR), iTestStringLength, testStream );
     fclose( testStream );
 
-    TSTRING dest = TEMP_DIR;
-    dest += "/copy_dest";
+    TSTRING dest = TwTestPath("copy_dest");
 
     TEST(cFileUtil::Copy(source, dest));
 
