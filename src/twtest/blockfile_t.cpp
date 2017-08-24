@@ -41,11 +41,11 @@ void TestBlockFile()
 {
     cDebug d( "TestBlockFile" );
 
-    static const TCHAR fileName[] = _T("test.bf");
+    std::string fileName = TwTestPath("test.bf");
     // truncate the file I am going to use...
     //
     cFileArchive a;
-    a.OpenReadWrite( fileName );
+    a.OpenReadWrite( fileName.c_str() );
     a.Close();
     //
     // open up the block file...

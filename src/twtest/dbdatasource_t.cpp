@@ -173,7 +173,8 @@ static void AssertChildren(cDbDataSourceIter& iter, const TSTRING& filename, boo
 void TestDbDataSourceBasic()
 {
     cHierDatabase db;
-    db.Open( _T("test.db"), 5, true);
+    std::string dbpath = TwTestPath("test.db");
+    db.Open( dbpath, 5, true);
     cDbDataSourceIter iter(&db);
 
     AddFile(iter, "file1", true);

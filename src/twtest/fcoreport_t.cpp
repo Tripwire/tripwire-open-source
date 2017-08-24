@@ -130,8 +130,9 @@ void TestFCOReport()
         d.TraceDebug("Before serializing report:\n");
         TraceReport(report, d);
         {
+            std::string filepath = TwTestPath("tmp.twr");
             cFileArchive outFile;
-            outFile.OpenReadWrite(_T("tmp.twr"));
+            outFile.OpenReadWrite(filepath.c_str());
             cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
 
             outSer.Init();
@@ -141,7 +142,7 @@ void TestFCOReport()
             outFile.Close();
 
             cFileArchive inFile;
-            inFile.OpenRead(_T("tmp.twr"));
+            inFile.OpenRead(filepath.c_str());
             cSerializerImpl inSer(inFile, cSerializerImpl::S_READ);
 
             cFCOReport inReport;
