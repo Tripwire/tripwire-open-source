@@ -311,7 +311,7 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 
     // make sure we have a trailing slash -- thanks Jarno...
     //
-    if (temp_directory.back() != '/')
+    if (*temp_directory.rbegin() != '/')
     {
         temp_directory.push_back('/');
     }
