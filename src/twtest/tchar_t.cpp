@@ -94,16 +94,16 @@ void TestTCHAR()
 
     //Set up the input file.
     TOFSTREAM out;
-    out.open(inputfile, std::ios_base::out);
+    out.open(inputfile.c_str(), std::ios_base::out);
     out<<"Unicode is fun\n";
     out.close();
 
     TIFSTREAM from;
-    from.open(inputfile, std::ios_base::in);
+    from.open(inputfile.c_str(), std::ios_base::in);
     if(!from)
         d.TraceDetail("error opening input file\n");
 
-    TOFSTREAM to(outputfile, std::ios_base::trunc);
+    TOFSTREAM to(outputfile.c_str(), std::ios_base::trunc);
     if(!to)
         d.TraceDetail("error opening output file\n");
 

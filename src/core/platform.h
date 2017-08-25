@@ -80,6 +80,7 @@
 #define OS_MINT         0x0507
 #define OS_AROS         0x0508
 #define OS_RTEMS        0x0509   
+#define OS_RISCOS       0x050A
 
 #define COMP_UNKNOWN        0
 #define COMP_GCC            0x0001
@@ -209,14 +210,15 @@
 #elif defined(__AROS__)
     #define OS                  OS_AROS
     #define IS_AROS             1 
-		
+	
 #elif defined(__rtems__)
     #define OS                  OS_RTEMS
     #define IS_RTEMS            1
 
-#else
-//  OK for OS not to resolve, it's being phased out.
-//    #error Unknown OS
+#elif defined(__riscos__)
+    #define OS                  OS_RISCOS
+    #define IS_RISCOS           1
+
 #endif
 	
 	
@@ -300,7 +302,7 @@
 #define SUPPORTS_ST_BLOCKS          (!IS_DOS_DJGPP)
 #define SUPPORTS_POSIX_SIGNALS      (!IS_DOS_DJGPP)
 #define SUPPORTS_NETWORKING         (!IS_SORTIX && !IS_DOS_DJGPP)
-#define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS)
+#define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS && !IS_RISCOS)
 #define NEEDS_SWAB_IMPL             (IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
 #define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP)

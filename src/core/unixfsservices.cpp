@@ -368,7 +368,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
 #ifdef S_IFDOOR
     else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
-#ifdef S_IFPORT
+#ifdef S_ISPORT
     else if(S_ISPORT(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_PORT;
 #endif
     
@@ -599,7 +599,7 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
             szPerm[0] = _T('D');
             break;
 #endif
-#ifdef S_IFPORT
+#ifdef S_ISPORT
         case S_IFPORT:
             szPerm[0] = _T('P');
             break;

@@ -69,7 +69,7 @@ void TestFCOCompare()
 
     // first, create an fco to compare with...
     
-    TOFSTREAM fstr(filename);
+    TOFSTREAM fstr(filename.c_str());
     if(fstr.bad())
     {
         d.TraceError("Unable to create test file %s!\n", filename.c_str());
@@ -109,7 +109,7 @@ void TestFCOCompare()
 
     // change the file...
     d.TraceDebug("Changing the file...\n");
-    fstr.open(filename);
+    fstr.open(filename.c_str());
     if(fstr.bad())
     {
         d.TraceError("Unable to reopen %s!\n", filename.c_str());
