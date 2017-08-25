@@ -927,6 +927,7 @@ case YYr26: {   /* rule :  fco_name TWP_RARROW spec_masks */
                     // add to our lists
                     cParserHelper::GetGenreInfo()->AddStopPoint( fcoName );
                     cParserHelper::GetGenreInfo()->AddRule( pnode );
+                    delete pGU;
                 }
 
                 delete yypvt[-2].mpStringList;
@@ -959,6 +960,7 @@ case YYr27: {   /* rule :  TWP_BANG fco_name */
                     
                     // add to stop list
                     cParserHelper::GetGenreInfo()->AddStopPoint( fcoName );         
+                    delete pGU;
                 }
 
                 delete yypvt[0].mpStringList;
@@ -978,6 +980,7 @@ case YYr28: {   /* spec_masks :  prop_vector opt_spec_attributes */
                     yypvt[0].mpAttrList->MergeNoOverwrite( cParserHelper::GetGlobalAttrList() );
 
                     yyval.mpNode = pNode;
+                    delete pGU;
                 }
 
                 delete yypvt[-1].mpString;

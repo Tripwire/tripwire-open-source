@@ -254,10 +254,14 @@ inline void cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::SeekNextV
 {
     if(mpCurNode)
         mpCurNode = mpCurNode->next;
-    //mCurIndex++;
-    while((! mpCurNode) && (mCurIndex < mHashTable.mTableSize))
+
+    // if we're out of range, bail out w/o incrementing index
+    if(mCurIndex >= mHashTable.mTableSize)
+        return;
+
+    while((! mpCurNode) && (++mCurIndex < mHashTable.mTableSize))
     {
-        mpCurNode = mHashTable.mTable[++mCurIndex];
+        mpCurNode = mHashTable.mTable[mCurIndex];
     }
 }
 

@@ -141,6 +141,8 @@ void cGenreParseInfo::InitPredefinedVariables()
     {
         mLocalPredefVarTable.Insert( sVarName, sValue );
     }
+
+    delete pGU;
 }
 
 
