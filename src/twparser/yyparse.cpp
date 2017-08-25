@@ -419,12 +419,12 @@ yy_parse::yy_parse(int sz)
 yy_parse::~yy_parse()
 {
     if (mustfree) {
-        delete stateStack;
-        delete valueStack;
+        delete [] stateStack;
+        delete [] valueStack;
     }
     stateStack = (short *) 0;
 #if YYDEBUG
-    delete typeStack;
+    delete [] typeStack;
 #endif
 }
 

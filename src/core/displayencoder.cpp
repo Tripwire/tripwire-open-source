@@ -653,6 +653,9 @@ cEncoder::cEncoder( int e, int f )
 
 cEncoder::~cEncoder() 
 {
+    sack_type::iterator itr;
+    for( itr = m_encodings.begin(); itr != m_encodings.end(); ++itr)
+        delete *itr;
 }
 
 bool cEncoder::RoundTrip() const

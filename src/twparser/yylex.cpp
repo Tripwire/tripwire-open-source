@@ -614,10 +614,10 @@ yy_scan::~yy_scan()
 {
     if (mustfree) {
         mustfree = 0;
-        delete(yytext);
-        delete(state);
+        delete [] yytext;
+        delete [] state;
 #ifdef YY_PRESERVE
-        delete(save);
+        delete [] save;
 #endif
     }
 }

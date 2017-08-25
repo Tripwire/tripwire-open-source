@@ -316,6 +316,7 @@ cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::~cHashTable()
             }
         }
     }
+    delete [] mTable;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
