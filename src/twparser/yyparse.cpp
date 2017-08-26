@@ -428,7 +428,7 @@ yy_parse::~yy_parse()
 #endif
 }
 
-#ifdef YACC_WINDOWS
+#if 0 //YACC_WINDOWS
 
 // The initial portion of the yacc parser.
 // In an windows environment, it will load the desired
@@ -533,7 +533,7 @@ yy_parse::yyparse(yy_scan* ps)
 #endif /* YACC_WINDOWS */
 
 {
-#ifdef YACC_WINDOWS
+#if 0 //YACC_WINDOWS
     short far *yyp; // needed as res tables locked in far memory
     short far *yyq;
 #else
@@ -594,7 +594,7 @@ yyEncore:
 #endif
     }
 #endif
-#ifdef YACC_WINDOWS
+#if 0 //YACC_WINDOWS
     if (yystate >= Sizeof_yypact)   /* simple state */
 #else /* YACC_WINDOWS */
     if (yystate >= (int)sizeof yypact/(int)sizeof yypact[0])    /* simple state */
@@ -640,7 +640,7 @@ yyEncore:
          *  Fell through - take default action
          */
 
-#ifdef YACC_WINDOWS
+#if 0 //YACC_WINDOWS
         if (yystate >= Sizeof_yydef)    /* simple state */
 #else /* YACC_WINDOWS */
         if (yystate >= (int)sizeof yydef /(int)sizeof yydef[0])
@@ -1265,7 +1265,7 @@ yyError:
                     , yytp--
 #endif
         ) {
-#ifdef YACC_WINDOWS
+#if 0 //YACC_WINDOWS
             if (*yyps >= Sizeof_yypact)     /* simple state */
 #else /* YACC_WINDOWS */
             if (*yyps >= (int)sizeof yypact/(int)sizeof yypact[0])
