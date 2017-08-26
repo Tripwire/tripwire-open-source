@@ -43,6 +43,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
+#include <fcntl.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintProps -- prints out all the valid property names and values as pairs...
@@ -67,8 +69,7 @@ void TestFSPropCalc()
 {
     cDebug d("TestFSPropCalc");
     cFSDataSourceIter ds;
-    TSTRING foo_bin = TEMP_DIR;
-    foo_bin.append("/foo.bin");
+    TSTRING foo_bin = TwTestPath("foo.bin");
     
     //iFSServices* pFSServices = iFSServices::GetInstance();
 
@@ -138,3 +139,20 @@ void TestFSPropCalc()
 
     return;
 }
+
+void TestGetSymLinkStr()
+{
+    std::string file = TwTestPath("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
+    std::string link = TwTestPath("linky");
+
+    int fd = creat(file.c_str(), 0777);
+    close(fd);
+
+    symlink(file.c_str(), link.c_str());
+
+    cMemoryArchive arch(1024*1024);
+    TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
+    TEST(arch.Length() == (int64)file.size());
+}
+
+

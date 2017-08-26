@@ -54,9 +54,9 @@ void TestUnixFSServices()
     iFSServices* pFSServices = iFSServices::GetInstance();
 
     // working primarily with the temp dir.
-    cFCOName name(_T("/tmp"));  
+    cFCOName name(TwTestDir());
 
-    // Check to make sure /tmp is a dir
+    // Check to make sure test dir is a dir
     //TEST(pFSServices->GetFileType(name) == cFSStatArgs::TY_DIR);
 
     // get directory contents (test readdir)
@@ -80,7 +80,7 @@ void TestUnixFSServices()
     cFSStatArgs stat;
 
     //TO DO: use archive to create this file
-    TSTRING testfile = "/tmp/tmp.tmp";
+    TSTRING testfile = TwTestPath("tmp.tmp");
     cFileArchive filearch;
     filearch.OpenReadWrite(testfile.c_str());
     filearch.Seek(0, cBidirArchive::BEGINNING);
@@ -150,20 +150,8 @@ void TestUnixFSServices()
 
     // test Rename
     d.TraceDetail("Testing Rename:\n");
-    TSTRING newtestfile = _T("/tmp/new.tmp");
+    TSTRING newtestfile = TwTestPath("new.tmp");
     TEST( pFSServices->Rename( testfile, newtestfile ) );
-
-    // test GetOwnerForFile
-    d.TraceDetail("Testing GetOwnerForFile:\n");
-    TSTRING ownername;
-    TEST( pFSServices->GetOwnerForFile( newtestfile, ownername ) );
-    d.TraceDetail("GetOwnerForFile returned owner %s.\n", ownername.c_str());
-
-    // test GetGroupForFile
-    d.TraceDetail("Testing GetGroupForFile:\n");
-    TSTRING groupname;
-    TEST( pFSServices->GetGroupForFile( newtestfile, groupname ) );
-    d.TraceDetail("GetGroupForFile returned group %s.\n", groupname.c_str());
 
     // test FileDelete
     d.TraceDetail("Testing FileDelete:\n");

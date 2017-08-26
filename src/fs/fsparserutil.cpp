@@ -84,6 +84,11 @@ bool cFSParserUtil::MapStringToProperty( const TSTRING& str, int& propIndex ) co
         }
     }
     else
+        fMappedChar = false;
+
+/* Leaving this here in case we ever want to implement long property names
+ 
+    else
     {
         if( 0 == str.compare( TSS_GetString( cFS, fs::STR_PARSER_PROP_MODE ) ) )
             propIndex = cFSPropSet::PROP_MODE;
@@ -122,6 +127,7 @@ bool cFSParserUtil::MapStringToProperty( const TSTRING& str, int& propIndex ) co
         else
             fMappedChar = false;
     }
+*/
 
     return( fMappedChar );
 }

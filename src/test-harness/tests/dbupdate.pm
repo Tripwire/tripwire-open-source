@@ -143,48 +143,52 @@ sub PrepareForTest
 sub RunBasicTest
 {
     twtools::logStatus("*** Beginning dbupdate.basic test\n");
-	printf("%-30s", "-- dbupdate.basic test");
+    printf("%-30s", "-- dbupdate.basic test");
 
-	PrepareForTest();
+    PrepareForTest();
 
-	# make some violations...
-	#
-	MoveFile  ( "meow.txt", "cat.txt" );
-	CreateFile( "dog/bark.txt", "bark bark bark" );
-	
-	# run the integrity check...
-	#
-	twtools::RunIntegrityCheck();
+    # make some violations...
+    #
+    MoveFile  ( "meow.txt", "cat.txt" );
+    CreateFile( "dog/bark.txt", "bark bark bark" );
 
-	# Make sure we got 4 violations: 2 mod, 1 add, 1 rm.
-	#
-        my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    # run the integrity check...
+    #
+    twtools::RunIntegrityCheck();
 
-	if( ($n != 4) || ($a != 1) || ($r != 1) || ($c != 2) )
-	{
-	    twtools::logStatus("FAILED -- initial integrity check had unexpected results\n");
-	    return 0;
-	}
+    # Make sure we got 4 violations: 2 mod, 1 add, 1 rm.
+    #
+    my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
 
-	# do the database update...
-	#
-	twtools::UpdateDatabase();
+    if( ($n != 4) || ($a != 1) || ($r != 1) || ($c != 2) )
+    {
+        twtools::logStatus("FAILED -- initial integrity check had unexpected results\n");
+        return 0;
+    }
 
-	# do another IC and make sure there are no violations
-	#
-	twtools::RunIntegrityCheck();
+    # do the database update...
+    #
+    if (0 != twtools::UpdateDatabase())
+    {
+        twtools::logStatus("FAILED -- db update did not succeed\n");
+        return 0;
+    }
 
-	($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
-	
-	if( $n != 0 )
-	{
-	    twtools::logStatus("FAILED -- violations after update\n");
-	    return 0;
-	}
-	
-	++$twtools::twpassedtests;
-	print "PASSED\n";
-	return 1;
+    # do another IC and make sure there are no violations
+    #
+    twtools::RunIntegrityCheck();
+
+    ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+
+    if( $n != 0 )
+    {
+        twtools::logStatus("FAILED -- violations after update\n");
+        return 0;
+    }
+
+    ++$twtools::twpassedtests;
+    print "PASSED\n";
+    return 1;
 }
 
 ######################################################################
@@ -192,81 +196,87 @@ sub RunBasicTest
 #
 sub RunSecureModeTest
 {
-        twtools::logStatus("*** Beginning dbupdate.secure-mode test\n");
-	printf("%-30s", "-- dbupdate.secure-mode test");
+    twtools::logStatus("*** Beginning dbupdate.secure-mode test\n");
+    printf("%-30s", "-- dbupdate.secure-mode test");
 
-	++$twtools::twskippedtests;
-	print "SKIPPED - this test needs further investigation\n";
-	return 1;
+    PrepareForTest();
 
-	PrepareForTest();
+    # make a violation and generate a report
+    #
+    CreateFile( "dog/bark.txt", "bark bark bark" );
+    twtools::RunIntegrityCheck( { report => $report1 } );
 
-	# make a violation and generate a report
-	#
-	CreateFile( "dog/bark.txt", "bark bark bark" );
-	twtools::RunIntegrityCheck( { report => $report1 } );
+    # change the same file in a slightly different way and generate
+    # another report
+    #
+    CreateFile( "dog/bark.txt", "bark bark bark woof" );
+    twtools::RunIntegrityCheck( { report => $report2 } );
 
-	# change the same file in a slightly different way and generate
-	# another report
-	#
-	CreateFile( "dog/bark.txt", "bark bark bark woof" );
-	twtools::RunIntegrityCheck( { report => $report2 } );
+    # Remove a file and generate a third report
+    #
+    RemoveFile( "dog/bark.txt" );
+    twtools::RunIntegrityCheck( { report => $report3 } );
 
-	# Remove a file and generate a third report
-	#
-	RemoveFile( "dog/bark.txt" );
-	twtools::RunIntegrityCheck( { report => $report3 } );
-	
-	# Add a file and generate the fourth report
-	#
-	CreateFile( "dog/cow.txt", "moo moo" );
-	twtools::RunIntegrityCheck( { report => $report4 } );
-	
-	# Update the database with report 1.
-	#
-	twtools::UpdateDatabase( { report => $report1 } );
+    # Add a file and generate the fourth report
+    #
+    CreateFile( "dog/cow.txt", "moo moo" );
+    twtools::RunIntegrityCheck( { report => $report4 } );
 
-	# Try to update the database with report 2 ... this should fail
-	# in secure-mode == high because the "old" values don't match.
-	#
-	if( twtools::UpdateDatabase(
-		{ report => $report2, secure-mode => "high" } ) )
-	{
-	    twtools::logStatus("FAILED ... Secure-mode high didn't catch a bad update\n");
-	    return 0;
-	}
+    # Update the database with report 1.
+    #
+    twtools::UpdateDatabase( { report => $report1 } );
 
-	# do a high severity update with report3 -- this should 
-	# succeed 
-	#
-	if( ! twtools::UpdateDatabase(
-		{ report => $report3, secure-mode => "high" } ) )
-	{
-	    twtools::logStatus("FAILED ... Update with report 3 failed\n");
-	    return 0;
-	}
-	
-	# Try 2 again ... now we are trying to update an object that
-	# doesn't exist in the database at all. This should
-	# succeed in low but fail in high.
-	#
-	if( twtools::UpdateDatabase(
-		{ report => $report2, secure-mode => "high" } ) )
-	{
-	    twtools::logStatus("FAILED ... Update with report 2 after 3 succeeded in high mode\n");
-	    return 0;
-	}
+    # Try to update the database with report 1 again ... this should fail
+    # in secure-mode == high because the db can't accept same changes again.
+    #
+    if( 0 == twtools::UpdateDatabase(
+    { report => $report1, secure-mode => "high" } ) )
+    {
+        twtools::logStatus("FAILED ... Secure-mode high didn't catch a bad update\n");
+        return 0;
+    }
 
-	if( ! twtools::UpdateDatabase(
-		{ report => $report2, secure-mode => "low" } ) )
-	{
-	    twtools::logStatus("FAILED ... Update with report 2 after 3 failed in low mode\n");
-	    return 0;
-	}
+    # Try to update the database with report 2 ... this should fail
+    # in secure-mode == high because the "old" values don't match.
+    #
+    if( 0 == twtools::UpdateDatabase(
+        { report => $report2, secure-mode => "high" } ) )
+    {
+        twtools::logStatus("FAILED ... Secure-mode high didn't catch a bad update\n");
+        return 0;
+    }
 
-	++$twtools::twpassedtests;
-	print "PASSED\n";
-	return 1;
+    # do a high severity update with report3 -- this should 
+    # succeed 
+    #
+    if(  0 != twtools::UpdateDatabase(
+        { report => $report3, secure-mode => "high" } ) )
+    {
+        twtools::logStatus("FAILED ... Update with report 3 failed\n");
+        return 0;
+    }
+
+    # Try 2 again ... now we are trying to update an object that
+    # doesn't exist in the database at all. This should
+    # succeed in low but fail in high.
+    #
+    if( 0 == twtools::UpdateDatabase(
+        { report => $report2, secure-mode => "high" } ) )
+    {
+        twtools::logStatus("FAILED ... Update with report 2 after 3 succeeded in high mode\n");
+        return 0;
+    }
+
+    if( 0 != twtools::UpdateDatabase(
+        { report => $report2, secure-mode => "low" } ) )
+    {
+        twtools::logStatus("FAILED ... Update with report 2 after 3 failed in low mode\n");
+        return 0;
+    }
+
+    ++$twtools::twpassedtests;
+    print "PASSED\n";
+    return 1;
 }
 
 

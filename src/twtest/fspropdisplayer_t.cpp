@@ -127,6 +127,8 @@ void cTestFSPropDisplayer::Test()
         d.TraceDebug("\n");
     }
 
+    delete pPD;
+    delete pPDNew;
 
     return;
 }

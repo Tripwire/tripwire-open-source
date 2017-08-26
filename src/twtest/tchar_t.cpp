@@ -39,6 +39,8 @@
 #include "core/debug.h"
 #endif
 
+#include "test.h"
+
 TSTRING test_wost(int, const TSTRING&);
 void test_wist(const TSTRING&, cDebug& d);
 
@@ -87,21 +89,21 @@ void TestTCHAR()
 //Testing file streams
 
     //explict constructors of 'TIFSTREAM' and "TOFSTREAM' take char*
-    const char* inputfile = "fun";
-    const char* outputfile = "mo'fun";
+    std::string inputfile = TwTestPath("fun");
+    std::string outputfile = TwTestPath("mo'fun");
 
     //Set up the input file.
     TOFSTREAM out;
-    out.open(inputfile, std::ios_base::out);
+    out.open(inputfile.c_str(), std::ios_base::out);
     out<<"Unicode is fun\n";
     out.close();
 
     TIFSTREAM from;
-    from.open(inputfile, std::ios_base::in);
+    from.open(inputfile.c_str(), std::ios_base::in);
     if(!from)
         d.TraceDetail("error opening input file\n");
 
-    TOFSTREAM to(outputfile, std::ios_base::trunc);
+    TOFSTREAM to(outputfile.c_str(), std::ios_base::trunc);
     if(!to)
         d.TraceDetail("error opening output file\n");
 

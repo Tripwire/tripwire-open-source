@@ -380,7 +380,7 @@ void TestTextReportViewer()
 
             d.TraceDebug("Read in serialized report:\n");
             //TraceReport(inReport, d);
-            trv.PrintTextReport(TSTRING( TEMP_DIR _T( "/test2.txt" ) ) );
+            trv.PrintTextReport(TSTRING( TwTestPath("test2.txt" ) ) );
 
             //TODO: this does not work any more
             //trv.LaunchEditorOnFile( TSTRING( TEMP_DIR _T("/test2.txt") ), _T("") );

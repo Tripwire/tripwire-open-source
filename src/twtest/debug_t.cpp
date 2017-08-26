@@ -73,8 +73,7 @@ void TestDebug()
 
 
     // set up an output file...use the temp file in test.h
-    std::string str = TEMP_DIR_N;
-    str += "/debug.out";
+    std::string str = TwTestPath("debug.out");
     
 #ifdef DEBUG
     TEST(cDebug::SetOutputFile(str.c_str()));

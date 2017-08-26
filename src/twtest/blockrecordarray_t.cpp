@@ -41,7 +41,7 @@ void TestBlockRecordArray()
 {
     cDebug d( "TestBlockRecordArray" );
 
-    static const TCHAR fileName[] = _T("test.bf");
+    std::string fileName = TwTestPath("test2.bf");
 
     cBlockFile bf;
     bf.Open( fileName, 2, true );   // opened up with two pages

@@ -128,9 +128,6 @@ void TestConfigFile2(void)
     //Define some test values for <name, value> pairs to be
     //stored in a test config. module. I'm going to use the
     //values specified in the install doc. -DA
-    TSTRING currpath;
-    pFSServices->GetCurrentDir(currpath);
-    const TSTRING testTWROOT = currpath;
 
     //TODO maybe also test read failure when mandatory config values aren't set
     
@@ -145,7 +142,7 @@ void TestConfigFile2(void)
     write_cfgmod.Insert( _T("LOCALKEYFILE"), "local.key");
 
     //Filename for writing/reading some value pairs:
-    const TSTRING testfile = testTWROOT + _T("/tripwire.cfg");
+    const TSTRING testfile = TwTestPath("tripwire.cfg");
 
     //Store these values on disk.
     TSTRING configText;

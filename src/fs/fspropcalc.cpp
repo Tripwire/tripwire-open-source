@@ -85,21 +85,33 @@ static bool NeedsStat(const cFCOPropVector& v)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-static bool GetSymLinkStr(const TSTRING& strName, cArchive& arch)
+bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t size)
 {
-    char buf[1024]; // TODO: is this big enough?
+    std::vector<char> data(size+1);
+    char* buf = &data[0];
+
 #if defined(O_PATH) 
     int fd = open(strName.c_str(), (O_PATH | O_NOFOLLOW | O_NOATIME));
-    int rtn = readlinkat(fd, 0, buf, 1024);
+    int rtn = readlinkat(fd, 0, buf, size);
     close(fd);
 #else
-    int rtn = readlink( strName.c_str(), buf, 1024 );
+    int rtn = readlink( strName.c_str(), buf, size );
 #endif
 
     if(rtn == -1)
         return false;
 
-    // the return value is the number of characters written. 
+    //Sadly if buf isn't big enough readlink 'succeeds' by truncating the string, so the only
+    // clue your buffer might be too small is if you maxed it out.  So we try again, within reason.
+    if((size_t)rtn == size)
+    {
+        if(size < 128*TW_PATH_SIZE)
+            return GetSymLinkStr(strName, arch, size*2);
+
+        return false;
+    }
+
+    // the return value is the number of characters written.
     arch.WriteBlob(buf, rtn);   
 
     return true;

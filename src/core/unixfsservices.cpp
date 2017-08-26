@@ -368,7 +368,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
 #ifdef S_IFDOOR
     else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
-#ifdef S_IFPORT
+#ifdef S_ISPORT
     else if(S_ISPORT(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_PORT;
 #endif
     
@@ -497,43 +497,6 @@ void cUnixFSServices::SetResolveNames(bool resolve)
     mResolveNames=resolve;
 }
     
-bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const 
-{
-    bool fSuccess = true;
-    
-    struct stat statbuf;
-    int ret = lstat(tstrFilename.c_str(), &statbuf);    
-    if(ret < 0)
-    {
-        fSuccess = false;
-    }
-    else
-    {
-        fSuccess = GetUserName(statbuf.st_uid, tstrUser);
-    }
-
-    return( fSuccess );
-}
-
-
-bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const 
-{    
-    bool fSuccess = true;
-    struct stat statbuf;
-
-    int ret = lstat(tstrFilename.c_str(), &statbuf);    
-    if(ret < 0)
-    {
-        fSuccess = false;
-    }
-    else
-    {
-        fSuccess = GetGroupName(statbuf.st_gid, tstrGroup);
-    }   
-
-    return( fSuccess );
-}
-
     
 bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
 {
@@ -636,7 +599,7 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
             szPerm[0] = _T('D');
             break;
 #endif
-#ifdef S_IFPORT
+#ifdef S_ISPORT
         case S_IFPORT:
             szPerm[0] = _T('P');
             break;

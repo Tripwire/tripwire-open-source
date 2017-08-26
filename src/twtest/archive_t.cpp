@@ -104,8 +104,8 @@ void TestArchive()
 
 
     // cLockedTemporaryFileArchive
-    TSTRING lockedFileName = TEMP_DIR;
-    lockedFileName += _T("/inaccessable_file.bin");
+    TSTRING lockedFileName = TwTestPath("inaccessable_file.bin");
+//    lockedFileName += _T("/inaccessable_file.bin");
 
     cLockedTemporaryFileArchive lockedArch;
 
@@ -130,8 +130,8 @@ void TestArchive()
     lockedArch.Close();
 
     // cFileArchive 
-    TSTRING fileName = TEMP_DIR;
-    fileName += _T("/archive_test.bin");
+    TSTRING fileName = TwTestPath("archive_test.bin");
+    //fileName += _T("/archive_test.bin");
 
     cFileArchive filearch;
     filearch.OpenReadWrite(fileName.c_str());

@@ -77,7 +77,8 @@ TSS_BeginStringIds( fs )
     STR_PROP_SHA,
     STR_PROP_HAVAL,
     STR_PROP_ACL,
-    
+
+/* Leaving these here in case we ever implement long property names
     STR_PARSER_PROP_DEV,
     STR_PARSER_PROP_RDEV,
     STR_PARSER_PROP_INODE,
@@ -97,7 +98,7 @@ TSS_BeginStringIds( fs )
     STR_PARSER_PROP_MD5,
     STR_PARSER_PROP_SHA,
     STR_PARSER_PROP_HAVAL,
-    
+*/    
     STR_PARSER_READONLY,
     STR_PARSER_DYNAMIC,
     STR_PARSER_GROWING,

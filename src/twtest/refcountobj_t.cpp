@@ -66,7 +66,7 @@ cRefCountTestObj::~cRefCountTestObj()
         mChildren.pop_front();
     }
 
-    delete mpSomeMem;
+    delete [] mpSomeMem;
 }
 
 void cRefCountTestObj::AddChild(cRefCountTestObj* pChild)

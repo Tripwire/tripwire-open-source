@@ -117,10 +117,12 @@ typedef struct {
 
 #define P_(s) s
 //Old prototyping stuff... I will ignore it for now.
-
+#if 0 //unused in OST
 void haval_string P_((char *, uint8 *)); /* hash a string */
 int  haval_file P_((char *, uint8 *));   /* hash a file */
 void haval_stdin P_((void));                     /* filter -- hash input from stdin */
+#endif
+
 void haval_start P_((haval_state *));            /* initialization */
 void haval_hash P_((haval_state* state, uint8* str, int str_len));
 void haval_end P_((haval_state *, uint8 *)); /* finalization */

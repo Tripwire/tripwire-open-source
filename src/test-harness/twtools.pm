@@ -273,9 +273,13 @@ sub GeneratePolicyFile {
 
     print "generating policy file...\n" if $verbose;
 
-    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc 2>&1`);
+    my (@out) = `$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc 2>&1`;
 
-    return ($? == 0);
+    my ($result) = ${^CHILD_ERROR_NATIVE};
+
+    logStatus(@out);
+
+    return $result;
 }
 
 
@@ -291,9 +295,13 @@ sub CreatePolicy {
 
     print "generating policy file...\n" if $verbose;
 
-    logStatus(`$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text} 2>&1`);
+    my (@out) = `$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text} 2>&1`;
 
-    return ($? == 0);
+    my ($result) = ${^CHILD_ERROR_NATIVE};
+
+    logStatus(@out);
+
+    return $result;
 }
 
 
@@ -305,9 +313,13 @@ sub InitializeDatabase {
     my ($twmsg) = @_;
 
     print "initializing database for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`);
+    my (@out) = `$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`;
 
-    return ($? == 0);
+    my ($result) = ${^CHILD_ERROR_NATIVE};
+
+    logStatus(@out);
+
+    return $result;
 }
 
 
@@ -317,13 +329,17 @@ sub InitializeDatabase {
 sub UpdateDatabase {
 
     my (%params) = %{$_[0]};
-    $params{'report'}      = $reportloc if( ! defined($params{'report'}) );
-    $params{'secure-mode'} = "low" if( ! defined($params{'secure-mode'}) );
+    $params{report}      = $reportloc if( ! defined($params{report}) );
+    $params{secure-mode} = "low" if( ! defined($params{secure-mode}) );
     
     print "updating database for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{'secure-mode'} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc -r $params{'report'} 2>&1`);
-    
-    return ($? == 0);
+    my (@out) = `$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{secure-mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc -r $params{report} 2>&1`;
+
+    my ($result) = ${^CHILD_ERROR_NATIVE};
+
+    logStatus(@out);
+
+    return $result;
 }
 
 ######################################################################
@@ -332,10 +348,10 @@ sub UpdateDatabase {
 sub UpdatePolicy {
 
     my (%params) = %{$_[0]};
-    $params{'secure-mode'} = "low" if( ! defined($params{'secure-mode'}) );
+    $params{secure-mode} = "low" if( ! defined($params{secure-mode}) );
 
     print "updating policy for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m p -P $twsitepass -Q $twlocalpass -Z $params{'secure-mode'} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $twrootdir/$twpolicyloc 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m p -P $twsitepass -Q $twlocalpass -Z $params{secure-mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $twrootdir/$twpolicyloc 2>&1`);
 
     return ($? == 0);
 }

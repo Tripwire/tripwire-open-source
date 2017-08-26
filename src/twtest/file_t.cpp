@@ -39,8 +39,7 @@
 
 void TestFile()
 {
-    TSTRING fileName = TEMP_DIR;
-    fileName += _T("/file_test.bin");
+    TSTRING fileName = TwTestPath("file_test.bin");
 
     //Create a temporary file for testing:
     FILE* testStream;
