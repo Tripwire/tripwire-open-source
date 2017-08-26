@@ -478,7 +478,7 @@ static int yy_base[] = {
 };
 
 
-#line 152 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
+// #line 152 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 
 // MKS LEX prototype scanner code
 // Copyright 1991 by Mortice Kern Systems Inc.
@@ -505,7 +505,7 @@ const int MIN_NUM_STATES = 20;
 #define REJECT      goto yy_reject
 #define yymore()    goto yy_more
 
-#line 10 "tokens.l"
+// #line 10 "tokens.l"
 
 #include "stdtwparser.h"
 
@@ -563,7 +563,7 @@ std::string FormatSyntaxError( char ch, const char* pszAdditionalMsg = NULL )
 // saves typing
 #define TRACE_RETURN(x) lextrace(_T(#x)); return x
 
-#line 178 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
+// #line 178 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 
 
 // Constructor for yy_scan. Set up tables
@@ -762,7 +762,7 @@ yy_scan::yylex()
     int yyoldi, yyoleng;    /* base i, yyleng before look-ahead */
     int yyeof;      /* 1 if eof has already been read */
 
-#line 375 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
+// #line 375 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 
 
 #ifdef YYEXIT
@@ -876,43 +876,43 @@ yy_scan::yylex()
     YY_USER();
     switch (yy_la_act[yyfmin] & 0777) {
     case 0:
-#line 109 "tokens.l"
+// #line 109 "tokens.l"
     {
                     BEGIN( globals );
                 }
     break;
     case 1:
-#line 114 "tokens.l"
+// #line 114 "tokens.l"
     {
                     BEGIN(INITIAL);
                     return TWP_SECTION;
                 }
     break;
     case 2:
-#line 119 "tokens.l"
+// #line 119 "tokens.l"
     { TRACE_RETURN(TWP_ECHO); }
     break;
     case 3:
-#line 122 "tokens.l"
+// #line 122 "tokens.l"
     { 
                     lextrace(_T("eating spaces..."));            /* eat spaces */ 
                 }
     break;
     case 4:
-#line 125 "tokens.l"
+// #line 125 "tokens.l"
     {   
                     cParserHelper::IncrementLineNumber();
                     lextrace(_T("eating line continuation...")); /* eat line continuations */ 
                 }
     break;
     case 5:
-#line 129 "tokens.l"
+// #line 129 "tokens.l"
     {
                     lextrace(_T("eating comment..."));
                 }
     break;
     case 6:
-#line 138 "tokens.l"
+// #line 138 "tokens.l"
     { 
                         // we must make copy of string, otherwise another lexeme will clobber it
                         cDebug d("\t\t\t\tlexer::string");
@@ -931,7 +931,7 @@ yy_scan::yylex()
                     }
     break;
     case 7:
-#line 155 "tokens.l"
+// #line 155 "tokens.l"
     {
                         // we must make copy of string, otherwise another lexeme will clobber it
                         cDebug d("\t\t\t\tlexer::qstring");
@@ -960,19 +960,19 @@ yy_scan::yylex()
                     }
     break;
     case 8:
-#line 182 "tokens.l"
+// #line 182 "tokens.l"
     { TRACE_RETURN(TWP_SEMICOLON);      }
     break;
     case 9:
-#line 183 "tokens.l"
+// #line 183 "tokens.l"
     { TRACE_RETURN(TWP_EQUALS);         }
     break;
     case 10:
-#line 185 "tokens.l"
+// #line 185 "tokens.l"
     { cParserHelper::IncrementLineNumber(); }
     break;
     case 11:
-#line 186 "tokens.l"
+// #line 186 "tokens.l"
     {
                             std::string strError;
                             strError = FormatSyntaxError( yytext[0], "The global section only accepts statements of the form:\n variable = value;\n" );
@@ -981,102 +981,102 @@ yy_scan::yylex()
                         } /* catches anything that cannot be deemed a variable definition and exits. */
     break;
     case 12:
-#line 196 "tokens.l"
+// #line 196 "tokens.l"
     { 
                         lextrace(_T("eating spaces...")); /* eat spaces */ 
                     }
     break;
     case 13:
-#line 200 "tokens.l"
+// #line 200 "tokens.l"
     {   
                         cParserHelper::IncrementLineNumber();
                         lextrace(_T("eating line continuation...")); /* eat line continuations */ 
                     }
     break;
     case 14:
-#line 205 "tokens.l"
+// #line 205 "tokens.l"
     { 
                         lextrace(_T("eating comment..."));
                     }
     break;
     case 15:
-#line 209 "tokens.l"
+// #line 209 "tokens.l"
     { TRACE_RETURN(TWP_LBRACE);         }
     break;
     case 16:
-#line 210 "tokens.l"
+// #line 210 "tokens.l"
     { TRACE_RETURN(TWP_RBRACE);         }
     break;
     case 17:
-#line 213 "tokens.l"
+// #line 213 "tokens.l"
     { TRACE_RETURN(TWP_BANG);           }
     break;
     case 18:
-#line 215 "tokens.l"
+// #line 215 "tokens.l"
     { TRACE_RETURN(TWP_RARROW);         }
     break;
     case 19:
-#line 216 "tokens.l"
+// #line 216 "tokens.l"
     { TRACE_RETURN(TWP_EQUALS);         }
     break;
     case 20:
-#line 218 "tokens.l"
+// #line 218 "tokens.l"
     { TRACE_RETURN(TWP_SEMICOLON);      }
     break;
     case 21:
-#line 219 "tokens.l"
+// #line 219 "tokens.l"
     { TRACE_RETURN(TWP_LPAREN);         }
     break;
     case 22:
-#line 220 "tokens.l"
+// #line 220 "tokens.l"
     { TRACE_RETURN(TWP_RPAREN);         }
     break;
     case 23:
-#line 221 "tokens.l"
+// #line 221 "tokens.l"
     { TRACE_RETURN(TWP_COMMA);          }
     break;
     case 24:
-#line 222 "tokens.l"
+// #line 222 "tokens.l"
     { TRACE_RETURN(TWP_PIPE); }
     break;
     case 25:
-#line 226 "tokens.l"
+// #line 226 "tokens.l"
     { TRACE_RETURN(TWP_DOLLAR);         }
     break;
     case 26:
-#line 227 "tokens.l"
+// #line 227 "tokens.l"
     { TRACE_RETURN(TWP_OROR); }
     break;
     case 27:
-#line 230 "tokens.l"
+// #line 230 "tokens.l"
     { TRACE_RETURN(TWP_SECTION); }
     break;
     case 28:
-#line 231 "tokens.l"
+// #line 231 "tokens.l"
     { TRACE_RETURN(TWP_IFHOST); }
     break;
     case 29:
-#line 232 "tokens.l"
+// #line 232 "tokens.l"
     { TRACE_RETURN(TWP_ELSE); }
     break;
     case 30:
-#line 233 "tokens.l"
+// #line 233 "tokens.l"
     { TRACE_RETURN(TWP_ENDIF); }
     break;
     case 31:
-#line 234 "tokens.l"
+// #line 234 "tokens.l"
     { TRACE_RETURN(TWP_ERROR); }
     break;
     case 32:
-#line 235 "tokens.l"
+// #line 235 "tokens.l"
     { TRACE_RETURN(TWP_ECHO); }
     break;
     case 33:
-#line 236 "tokens.l"
+// #line 236 "tokens.l"
     { lextrace( _T( "@@end" ) ); return 0; } /* logical end of file */
     break;
     case 34:
-#line 239 "tokens.l"
+// #line 239 "tokens.l"
     { 
                         // we must make copy of string, otherwise another lexeme will clobber it
                         cDebug d("\t\t\t\tlexer::string");
@@ -1095,7 +1095,7 @@ yy_scan::yylex()
                     }
     break;
     case 35:
-#line 256 "tokens.l"
+// #line 256 "tokens.l"
     {
                         // we must make copy of string, otherwise another lexeme will clobber it
                         cDebug d("\t\t\t\tlexer::qstring");
@@ -1134,11 +1134,11 @@ yy_scan::yylex()
                     }
     break;
     case 36:
-#line 309 "tokens.l"
+// #line 309 "tokens.l"
     { cParserHelper::IncrementLineNumber(); }
     break;
     case 37:
-#line 310 "tokens.l"
+// #line 310 "tokens.l"
     {
                         std::string strError;
                         strError = FormatSyntaxError( yytext[0] );
@@ -1147,7 +1147,7 @@ yy_scan::yylex()
                     } /* catches anything else that's not in here and quits */
     break;
 
-#line 487 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
+// #line 487 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 
     }
     YY_SCANNER();
@@ -1231,7 +1231,7 @@ yy_scan::unput(int c)
     return c;
 }
 
-#line 321 "tokens.l"
+// #line 321 "tokens.l"
 
 
 

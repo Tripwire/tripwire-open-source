@@ -30,7 +30,7 @@
 // info@tripwire.org or www.tripwire.org.
 //
 /* ..\. -LC -o ..\twparser\yyparse.cpp -P ..\..\mkslexyacc\etc\yyparse.cpp -D yyparse.h policy.y */
-#line 74 "policy.y"
+// #line 74 "policy.y"
 
 
 #include "stdtwparser.h"
@@ -349,7 +349,7 @@ int yy_parse::yynrule = 55;
 
 
 
-#line 2 "..\\..\\mkslexyacc\\etc\\yyparse.cpp"
+// #line 2 "..\\..\\mkslexyacc\\etc\\yyparse.cpp"
 // C++ YACC parser code
 // Copyright 1991 by Mortice Kern Systems Inc.  All rights reserved.
 //
@@ -689,22 +689,22 @@ yyEncore:
     switch (yyi) {      /* perform semantic action */
         
 case YYr6: {    /* statement :  variable_assignment TWP_SEMICOLON */
-#line 194 "policy.y"
+// #line 194 "policy.y"
  cParserHelper::IncrementScopeStatementCount(); 
 } break;
 
 case YYr7: {    /* statement :  global_variable_assignment TWP_SEMICOLON */
-#line 195 "policy.y"
+// #line 195 "policy.y"
  cParserHelper::IncrementScopeStatementCount(); 
 } break;
 
 case YYr8: {    /* statement :  rule TWP_SEMICOLON */
-#line 196 "policy.y"
+// #line 196 "policy.y"
  cParserHelper::IncrementScopeStatementCount(); 
 } break;
 
 case YYr12: {   /* scoped_block :  TWP_LPAREN attribute_list_with_opt_trailing_comma TWP_RPAREN TWP_LBRACE */
-#line 204 "policy.y"
+// #line 204 "policy.y"
 
                 cDebug d("Parse::scope");
 
@@ -721,7 +721,7 @@ case YYr12: {   /* scoped_block :  TWP_LPAREN attribute_list_with_opt_trailing_c
 } break;
 
 case YYr13: {   /* scoped_block :  TWP_LPAREN attribute_list_with_opt_trailing_comma TWP_RPAREN TWP_LBRACE $12 opt_statement_list TWP_RBRACE */
-#line 218 "policy.y"
+// #line 218 "policy.y"
  
                 if( 0 == cParserHelper::GetScopeStatementCount() && iUserNotify::GetInstance()->GetVerboseLevel() == iUserNotify::V_VERBOSE )
                 {
@@ -737,7 +737,7 @@ case YYr13: {   /* scoped_block :  TWP_LPAREN attribute_list_with_opt_trailing_c
 } break;
 
 case YYr14: {   /* directive_block :  TWP_IFHOST host_name_list */
-#line 234 "policy.y"
+// #line 234 "policy.y"
 
                 cDebug d("Parse::#ifhost");
 
@@ -763,7 +763,7 @@ case YYr14: {   /* directive_block :  TWP_IFHOST host_name_list */
 } break;
 
 case YYr15: {   /* directive_block :  TWP_IFHOST host_name_list $14 opt_statement_list opt_else_host TWP_ENDIF */
-#line 257 "policy.y"
+// #line 257 "policy.y"
  
                 cDebug d("Parse::#endif");
                 cPreprocessor::PopState();
@@ -773,7 +773,7 @@ case YYr15: {   /* directive_block :  TWP_IFHOST host_name_list $14 opt_statemen
 } break;
 
 case YYr16: {   /* directive_block :  TWP_SECTION string */
-#line 264 "policy.y"
+// #line 264 "policy.y"
  
                 cDebug d("Parse::#section");
 
@@ -787,7 +787,7 @@ case YYr16: {   /* directive_block :  TWP_SECTION string */
 } break;
 
 case YYr17: {   /* directive_block :  TWP_ERROR string */
-#line 275 "policy.y"
+// #line 275 "policy.y"
 
                 if( cPreprocessor::GetState() == cPreprocessor::STATE_ACCEPT && !cParserHelper::ParseOnly() )
                 {
@@ -801,7 +801,7 @@ case YYr17: {   /* directive_block :  TWP_ERROR string */
 } break;
 
 case YYr18: {   /* directive_block :  TWP_ECHO string */
-#line 286 "policy.y"
+// #line 286 "policy.y"
 
                 if( cPreprocessor::GetState() == cPreprocessor::STATE_ACCEPT && !cParserHelper::ParseOnly() )
                 {
@@ -814,7 +814,7 @@ case YYr18: {   /* directive_block :  TWP_ECHO string */
 } break;
 
 case YYr19: {   /* host_name_list :  host_name_list TWP_OROR host_name */
-#line 299 "policy.y"
+// #line 299 "policy.y"
 
                 yyval.mpStringList = yypvt[-2].mpStringList;
                 yyval.mpStringList->push_back( *yypvt[0].mpString );
@@ -822,7 +822,7 @@ case YYr19: {   /* host_name_list :  host_name_list TWP_OROR host_name */
 } break;
 
 case YYr20: {   /* host_name_list :  host_name */
-#line 304 "policy.y"
+// #line 304 "policy.y"
 
                 yyval.mpStringList = new cParseStringList;              
                 yyval.mpStringList->push_back( *yypvt[0].mpString );
@@ -830,7 +830,7 @@ case YYr20: {   /* host_name_list :  host_name */
 } break;
 
 case YYr21: {   /* opt_else_host :  TWP_ELSE */
-#line 312 "policy.y"
+// #line 312 "policy.y"
  
                 cDebug d("Parse::#else");
 
@@ -848,7 +848,7 @@ case YYr21: {   /* opt_else_host :  TWP_ELSE */
 } break;
 
 case YYr24: {   /* variable_assignment :  variable_name TWP_EQUALS multi_string */
-#line 332 "policy.y"
+// #line 332 "policy.y"
 
                 cDebug d("Parse::variable_assignment");
 
@@ -869,7 +869,7 @@ case YYr24: {   /* variable_assignment :  variable_name TWP_EQUALS multi_string 
 } break;
 
 case YYr25: {   /* global_variable_assignment :  global_string TWP_EQUALS global_multi_string */
-#line 353 "policy.y"
+// #line 353 "policy.y"
 
                 cDebug d("Parse::global variable_assignment");
 
@@ -890,7 +890,7 @@ case YYr25: {   /* global_variable_assignment :  global_string TWP_EQUALS global
 } break;
 
 case YYr26: {   /* rule :  fco_name TWP_RARROW spec_masks */
-#line 374 "policy.y"
+// #line 374 "policy.y"
 
                 cDebug d("Parse::rule(fco_name TWP_RARROW spec_masks)");
                 if( cPreprocessor::GetState() == cPreprocessor::STATE_IGNORE )
@@ -935,7 +935,7 @@ case YYr26: {   /* rule :  fco_name TWP_RARROW spec_masks */
 } break;
 
 case YYr27: {   /* rule :  TWP_BANG fco_name */
-#line 416 "policy.y"
+// #line 416 "policy.y"
 
                 cDebug d("Parse::rule(!fconame)");
 
@@ -966,7 +966,7 @@ case YYr27: {   /* rule :  TWP_BANG fco_name */
 } break;
 
 case YYr28: {   /* spec_masks :  prop_vector opt_spec_attributes */
-#line 447 "policy.y"
+// #line 447 "policy.y"
 
                 if( cPreprocessor::GetState() == cPreprocessor::STATE_ACCEPT )
                 {
@@ -987,28 +987,28 @@ case YYr28: {   /* spec_masks :  prop_vector opt_spec_attributes */
 } break;
 
 case YYr29: {   /* opt_spec_attributes :  TWP_LPAREN attribute_list_with_opt_trailing_comma TWP_RPAREN */
-#line 485 "policy.y"
+// #line 485 "policy.y"
 
                 yyval.mpAttrList = yypvt[-1].mpAttrList;
             
 } break;
 
 case YYr30: {   /* opt_spec_attributes :  */
-#line 489 "policy.y"
+// #line 489 "policy.y"
  
                 yyval.mpAttrList = new cParseNamedAttrList;
             
 } break;
 
 case YYr31: {   /* attribute_list_with_opt_trailing_comma :  attribute_list opt_comma */
-#line 515 "policy.y"
+// #line 515 "policy.y"
 
                 yyval.mpAttrList = yypvt[-1].mpAttrList;
             
 } break;
 
 case YYr32: {   /* attribute_list :  attribute_list TWP_COMMA attribute */
-#line 522 "policy.y"
+// #line 522 "policy.y"
 
                 cDebug d("Parse::attribute_list");
                 ASSERT( yypvt[-2].mpAttrList && yypvt[0].mpAttr );
@@ -1024,7 +1024,7 @@ case YYr32: {   /* attribute_list :  attribute_list TWP_COMMA attribute */
 } break;
 
 case YYr33: {   /* attribute_list :  attribute */
-#line 535 "policy.y"
+// #line 535 "policy.y"
 
                 cDebug d("Parse::attribute_list");
 
@@ -1038,7 +1038,7 @@ case YYr33: {   /* attribute_list :  attribute */
 } break;
 
 case YYr34: {   /* attribute :  attribute_name TWP_EQUALS attribute_value */
-#line 548 "policy.y"
+// #line 548 "policy.y"
 
                 cDebug d("Parse::attribute");
 
@@ -1055,7 +1055,7 @@ case YYr34: {   /* attribute :  attribute_name TWP_EQUALS attribute_value */
 } break;
 
 case YYr37: {   /* variable :  TWP_DOLLAR TWP_LPAREN variable_name TWP_RPAREN */
-#line 618 "policy.y"
+// #line 618 "policy.y"
 
                 cDebug d( "    parser::variable" );
                 
@@ -1082,7 +1082,7 @@ case YYr37: {   /* variable :  TWP_DOLLAR TWP_LPAREN variable_name TWP_RPAREN */
 } break;
 
 case YYr38: {   /* prop_vector :  multi_string */
-#line 662 "policy.y"
+// #line 662 "policy.y"
 
                 yyval.mpString = new cParseString;
                 *yyval.mpString = ConcatenateStrings( yypvt[0].mpStringList );
@@ -1091,7 +1091,7 @@ case YYr38: {   /* prop_vector :  multi_string */
 } break;
 
 case YYr39: {   /* attribute_name :  string */
-#line 671 "policy.y"
+// #line 671 "policy.y"
              
                 cDebug d("    parser::string(attribute_name)");
                 yyval.mpString = yypvt[0].mpString;
@@ -1099,7 +1099,7 @@ case YYr39: {   /* attribute_name :  string */
 } break;
 
 case YYr40: {   /* attribute_value :  multi_string */
-#line 679 "policy.y"
+// #line 679 "policy.y"
                          
                 yyval.mpString = new cParseString;
                 cDebug d("    parser::multi_string(attribute_value)");
@@ -1109,7 +1109,7 @@ case YYr40: {   /* attribute_value :  multi_string */
 } break;
 
 case YYr41: {   /* fco_name :  multi_string */
-#line 689 "policy.y"
+// #line 689 "policy.y"
  
                 cDebug d("    parser::multi_string(fco_name)");
                 yyval.mpStringList = yypvt[0].mpStringList;
@@ -1117,7 +1117,7 @@ case YYr41: {   /* fco_name :  multi_string */
 } break;
 
 case YYr42: {   /* fco_name :  multi_string TWP_PIPE multi_string */
-#line 695 "policy.y"
+// #line 695 "policy.y"
 
 
                 yypvt[-2].mpStringList->push_back( _T("|") );
@@ -1129,7 +1129,7 @@ case YYr42: {   /* fco_name :  multi_string TWP_PIPE multi_string */
 } break;
 
 case YYr43: {   /* host_name :  string */
-#line 710 "policy.y"
+// #line 710 "policy.y"
         
                         
                 cDebug d("    parser::multi_string(host_name)");
@@ -1138,7 +1138,7 @@ case YYr43: {   /* host_name :  string */
 } break;
 
 case YYr44: {   /* variable_name :  TWP_STRING */
-#line 719 "policy.y"
+// #line 719 "policy.y"
              
                 cDebug d("    parser::string(variable_name)");
                 yyval.mpString = yypvt[0].mpString;
@@ -1146,7 +1146,7 @@ case YYr44: {   /* variable_name :  TWP_STRING */
 } break;
 
 case YYr45: {   /* multi_string :  multi_string string */
-#line 728 "policy.y"
+// #line 728 "policy.y"
 
                 yyval.mpStringList->push_back( *yypvt[0].mpString );
                 delete yypvt[0].mpString;
@@ -1154,7 +1154,7 @@ case YYr45: {   /* multi_string :  multi_string string */
 } break;
 
 case YYr46: {   /* multi_string :  string */
-#line 733 "policy.y"
+// #line 733 "policy.y"
 
                 yyval.mpStringList = new cParseStringList;
                 yyval.mpStringList->push_back( *yypvt[0].mpString );
@@ -1163,7 +1163,7 @@ case YYr46: {   /* multi_string :  string */
 } break;
 
 case YYr47: {   /* global_multi_string :  global_multi_string global_string */
-#line 742 "policy.y"
+// #line 742 "policy.y"
 
                 yyval.mpStringList->push_back( *yypvt[0].mpString );
                 delete yypvt[0].mpString;
@@ -1171,7 +1171,7 @@ case YYr47: {   /* global_multi_string :  global_multi_string global_string */
 } break;
 
 case YYr48: {   /* global_multi_string :  global_string */
-#line 747 "policy.y"
+// #line 747 "policy.y"
 
                 yyval.mpStringList = new cParseStringList;
                 yyval.mpStringList->push_back( *yypvt[0].mpString );
@@ -1180,7 +1180,7 @@ case YYr48: {   /* global_multi_string :  global_string */
 } break;
 
 case YYr49: {   /* string :  TWP_STRING */
-#line 757 "policy.y"
+// #line 757 "policy.y"
              
                 cDebug d("    parser::string(normal)");
                 d.TraceNever("--(STRING)--> got string (%s)\n", yypvt[0].mpString);
@@ -1189,7 +1189,7 @@ case YYr49: {   /* string :  TWP_STRING */
 } break;
 
 case YYr50: {   /* string :  variable */
-#line 763 "policy.y"
+// #line 763 "policy.y"
              
                 cDebug d("    parser::string(normal)");
                 d.TraceNever("--(STRING)--> got string (%s)\n", yypvt[0].mpString);
@@ -1198,14 +1198,14 @@ case YYr50: {   /* string :  variable */
 } break;
 
 case YYr51: {   /* global_string :  TWP_GLOBAL_STRING */
-#line 772 "policy.y"
+// #line 772 "policy.y"
 
                 cDebug d("    parser::string(normal)");
                 d.TraceNever("--(STRING)--> got string (%s)\n", yypvt[0].mpString);
                 yyval.mpString = yypvt[0].mpString;
             
 } break;
-#line 343 "..\\..\\mkslexyacc\\etc\\yyparse.cpp"
+// #line 343 "..\\..\\mkslexyacc\\etc\\yyparse.cpp"
     case YYrACCEPT:
         YYACCEPT;
     case YYrERROR:
