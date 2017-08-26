@@ -116,7 +116,10 @@ cCryptoArchive::~cCryptoArchive()
 {
     ASSERT(mAction == MA_UNSTARTED || mAction == MA_UNKNOWN || mAction == MA_FINISHED || mAction == MA_READING);
         // check we did not leave a buffer unwritten
-    
+
+    Finish();
+
+    // Finish() normally zeroes these out, but hey.
     delete mpDeflator;
     delete mpInflator;
 }
