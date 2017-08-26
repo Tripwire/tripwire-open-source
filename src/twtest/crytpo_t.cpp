@@ -407,6 +407,8 @@ void TestCrypto()
 
     delete pPublic;
     delete pPrivate;
+    delete pPublic2;
+    delete pPrivate2;
     }
 }
 
