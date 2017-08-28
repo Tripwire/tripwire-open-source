@@ -54,7 +54,7 @@ BEGIN {
         EMAILREPORTLEVEL             => '3',
         REPORTLEVEL                  => '3',
         MAILMETHOD                   => 'SENDMAIL',
-        SYSLOGREPORTING              => 'false',
+        SYSLOGREPORTING              => 'true',
         MAILPROGRAM                  => 'cat',
         MAILFROMADDRESS              => 'taz@cat'
         );
