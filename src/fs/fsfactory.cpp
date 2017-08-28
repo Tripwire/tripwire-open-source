@@ -76,7 +76,12 @@ iFCOSpec* cFSFactory::CreateSpec(const TSTRING& name, iFCOSpecHelper* pHelper) c
 
 iFCOPropDisplayer* cFSFactory::CreatePropDisplayer() const
 {
-    return new cFSPropDisplayer();
+    static iFCOPropDisplayer* gPropDisplayer = 0;
+
+    if (!gPropDisplayer)
+        gPropDisplayer = new cFSPropDisplayer();
+
+    return gPropDisplayer;
 }
 
 iSerRefCountObj::CreateFunc cFSFactory::GetCreateFunc() const
