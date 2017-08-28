@@ -75,6 +75,16 @@ cGenreParseInfo::cGenreParseInfo()
     InitPredefinedVariables();
 }
 
+cGenreParseInfo::~cGenreParseInfo()
+{
+    RuleListType::iterator itr;
+    for( itr = mRuleList.begin(); itr != mRuleList.end(); ++itr )
+    {
+        delete *itr;
+    }
+
+}
+
  
 ///////////////////////////////////////////////////////////////////////////////
 // AddStopPoint
