@@ -44,6 +44,22 @@ else
    AC_DEFINE(NDEBUG, 1, [Compile without debug code])
 fi
 
+AC_ARG_ENABLE(coverage, [  --enable-coverage       enable code coverage])
+if test "x$enable_coverage" = xyes
+then
+   CFLAGS="${CFLAGS} --coverage"
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+AC_ARG_ENABLE(profiling, [  --enable-profiling      enable profiling])
+if test "x$enable_profiling" = xyes
+then
+   CFLAGS="${CFLAGS} -pg"
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
+fi
+
 dnl ###################
 dnl Checks for programs
 dnl ###################

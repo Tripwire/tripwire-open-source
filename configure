@@ -750,6 +750,8 @@ enable_silent_rules
 enable_extrawarnings
 enable_static
 enable_debug
+enable_coverage
+enable_profiling
 enable_dependency_tracking
 enable_commoncrypto
 enable_iconv
@@ -1395,6 +1397,8 @@ Optional Features:
   —-disable-extrawarnings do not compile with -Wextra warnings enabled
   --enable-static         compile static binaries
   --enable-debug          compile with debuging enabled
+  --enable-coverage       enable code coverage
+  --enable-profiling      enable profiling
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -3495,6 +3499,30 @@ else
 
 $as_echo "#define NDEBUG 1" >>confdefs.h
 
+fi
+
+# Check whether --enable-coverage was given.
+if test "${enable_coverage+set}" = set; then :
+  enableval=$enable_coverage;
+fi
+
+if test "x$enable_coverage" = xyes
+then
+   CFLAGS="${CFLAGS} --coverage"
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+# Check whether --enable-profiling was given.
+if test "${enable_profiling+set}" = set; then :
+  enableval=$enable_profiling;
+fi
+
+if test "x$enable_profiling" = xyes
+then
+   CFLAGS="${CFLAGS} -pg"
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
 fi
 
 ac_ext=c
