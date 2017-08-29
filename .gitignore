@@ -21,6 +21,9 @@ src/test-harness/twtest
 **/*.dll
 **/*.exe
 **/*~
+**/*#
 **/*.bak
 **/.DS_Store
+**/*.gcno
+**/*.gcda
 releases/
