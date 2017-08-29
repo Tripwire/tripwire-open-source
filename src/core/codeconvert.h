@@ -93,6 +93,8 @@ class iCodeConverter
     public:
 
         static iCodeConverter*  GetInstance();      // Singleton
+        static void Finit();
+
 
 
         /// Subclass Responsibilities

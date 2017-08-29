@@ -111,6 +111,12 @@ iCodeConverter* iCodeConverter::GetInstance()
     return m_pInst;
 }
 
+void iCodeConverter::Finit()
+{
+    delete m_pInst;
+    m_pInst = 0;
+}
+
 iCodeConverter* iCodeConverter::CreateConverter()
 {
     cDebug d("iCodeConverter::CreateConverter()");
