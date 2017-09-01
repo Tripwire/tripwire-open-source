@@ -6214,6 +6214,52 @@ done
 
 fi
 
+for ac_header in door.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "door.h" "ac_cv_header_door_h" "$ac_includes_default"
+if test "x$ac_cv_header_door_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DOOR_H 1
+_ACEOF
+ for ac_func in door_create
+do :
+  ac_fn_c_check_func "$LINENO" "door_create" "ac_cv_func_door_create"
+if test "x$ac_cv_func_door_create" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DOOR_CREATE 1
+_ACEOF
+
+fi
+done
+
+fi
+
+done
+
+
+for ac_header in port.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "port.h" "ac_cv_header_port_h" "$ac_includes_default"
+if test "x$ac_cv_header_port_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_PORT_H 1
+_ACEOF
+ for ac_func in port_create
+do :
+  ac_fn_c_check_func "$LINENO" "port_create" "ac_cv_func_port_create"
+if test "x$ac_cv_func_port_create" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_PORT_CREATE 1
+_ACEOF
+
+fi
+done
+
+fi
+
+done
+
+
 
 if test -c "/dev/random"; then
 

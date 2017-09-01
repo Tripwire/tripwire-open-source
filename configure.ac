@@ -150,6 +150,12 @@ then
   AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
 fi
 
+dnl check for door support (Solaris)
+AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
+
+dnl check for event port support (Solaris)
+AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+
 dnl ##############################################  
 dnl check for various RNG/PRNG devices
 dnl ##############################################  
