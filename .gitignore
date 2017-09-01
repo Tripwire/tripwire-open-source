@@ -3,7 +3,6 @@ config.h
 config.h.in~
 config.log
 config.status
-compile
 autom4te.cache/
 bin/
 lib/
