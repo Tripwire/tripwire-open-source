@@ -35,12 +35,12 @@ sub PolicyFileString
     #
     (rulename="RuleA", severity=30, emailto="elvis@mars")
     {
-        $root -> \$(ReadOnly)+S; #read only plus SHA-1
+        $root -> \$(ReadOnly) +S -ab; #read only plus SHA-1 minus atime & blocks
     }
 
     (rulename="RuleB", severity=200, emailto="elvis@mars")
     {
-        $root2 -> \$(ReadOnly)+S; #read only plus SHA-1
+        $root2 -> \$(ReadOnly) +S -ab; #read only plus SHA-1 minus atime & blocks
     }
 
 POLICY_END
