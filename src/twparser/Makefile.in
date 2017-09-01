@@ -328,6 +328,7 @@ libtwparser_a_HEADERS = \
    stdtwparser.h twparser.h twparsererrors.h twparserstrings.h \
    yylex.h yyparse.h
 
+CLEANFILES = *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:
@@ -514,6 +515,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

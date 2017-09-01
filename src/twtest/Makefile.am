@@ -81,7 +81,13 @@ wchar16_t.cpp
 twtest_HEADERS = stdtest.h stringutil_t.h test.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
-CLEANFILES = ../../bin/twtest
+
+clean-local: clean-local-check
+.PHONY: clean-local-check
+clean-local-check:
+	-rm -rf ../../bin/TWTestData
+	-rm -f ../../bin/twtest 
+	-rm -f *.gcno *.gcda
 
 all: $(sbin_PROGRAMS)
 	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin

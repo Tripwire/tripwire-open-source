@@ -420,7 +420,6 @@ usernotifystdout_t.cpp \
 wchar16_t.cpp
 
 twtest_HEADERS = stdtest.h stringutil_t.h test.h
-CLEANFILES = ../../bin/twtest
 all: all-am
 
 .SUFFIXES:
@@ -645,7 +644,6 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
-	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
@@ -656,7 +654,7 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-sbinPROGRAMS mostlyclean-am
+clean-am: clean-generic clean-local clean-sbinPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -f Makefile
@@ -724,21 +722,28 @@ uninstall-am: uninstall-sbinPROGRAMS uninstall-twtestHEADERS
 .MAKE: install-am install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am check check-am clean clean-generic \
-	clean-sbinPROGRAMS cscopelist-am ctags ctags-am distclean \
-	distclean-compile distclean-generic distclean-tags distdir dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-data install-data-am install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-sbinPROGRAMS \
-	install-strip install-twtestHEADERS installcheck \
-	installcheck-am installdirs maintainer-clean \
+	clean-local clean-sbinPROGRAMS cscopelist-am ctags ctags-am \
+	distclean distclean-compile distclean-generic distclean-tags \
+	distdir dvi dvi-am html html-am info info-am install \
+	install-am install-data install-data-am install-dvi \
+	install-dvi-am install-exec install-exec-am install-html \
+	install-html-am install-info install-info-am install-man \
+	install-pdf install-pdf-am install-ps install-ps-am \
+	install-sbinPROGRAMS install-strip install-twtestHEADERS \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
 	mostlyclean-generic pdf pdf-am ps ps-am tags tags-am uninstall \
 	uninstall-am uninstall-sbinPROGRAMS uninstall-twtestHEADERS
 
 .PRECIOUS: Makefile
 
+
+clean-local: clean-local-check
+.PHONY: clean-local-check
+clean-local-check:
+	-rm -rf ../../bin/TWTestData
+	-rm -f ../../bin/twtest 
+	-rm -f *.gcno *.gcda
 
 all: $(sbin_PROGRAMS)
 	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin

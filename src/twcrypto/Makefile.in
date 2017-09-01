@@ -325,6 +325,7 @@ libtwcrypto_a_HEADERS = \
    bytequeue.h crypto.h cryptoarchive.h keyfile.h \
    stdtwcrypto.h twcrypto.h twcryptoerrors.h
 
+CLEANFILES = *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:
@@ -511,6 +512,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

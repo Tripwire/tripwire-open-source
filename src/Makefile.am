@@ -8,3 +8,7 @@ install:
 uninstall:
 	true
 
+clean-local: clean-local-check
+.PHONY: clean-local-check
+clean-local-check:
+	-rm -rf test-harness/twtest

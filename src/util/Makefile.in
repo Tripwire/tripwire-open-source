@@ -323,6 +323,7 @@ libutil_a_SOURCES = \
 libutil_a_HEADERS = fileutil.h miscutil.h stdutil.h \
    stringencoder.h util.h utilerrors.h utilstrings.h
 
+CLEANFILES = *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:
@@ -509,6 +510,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

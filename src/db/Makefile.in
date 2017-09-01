@@ -324,6 +324,7 @@ libdb_a_HEADERS = \
    block.h blockfile.h blockrecordarray.h blockrecordfile.h \
    db.h dberrors.h hierdatabase.h hierdbnode.h hierdbpath.h stddb.h
 
+CLEANFILES = *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:
@@ -510,6 +511,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
