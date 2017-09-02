@@ -515,7 +515,7 @@ const int MIN_NUM_STATES = 20;
 //#endif
 
 #include <stdio.h>
-#ifdef HAVE_MALLOC_H
+#if HAVE_MALLOC_H && !IS_AROS
 #include <malloc.h>
 #endif
 #include <stdlib.h>

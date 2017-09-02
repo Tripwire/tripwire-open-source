@@ -78,7 +78,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <time.h>
-#if defined(HAVE_MALLOC_H)
+#if HAVE_MALLOC_H && !IS_AROS
 #include <malloc.h>
 #endif
 #include <string.h>
