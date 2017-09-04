@@ -114,6 +114,9 @@ public:
     virtual bool GetLazy() const;
     virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
+
+    bool operator==(const cFSPropDisplayer& rhs) const; // for testing
+
 private:        
     void AddMapping( const iFCOProp* const pProp, const TSTRING& tstrValue, const int propTypeEnum );
         // pass in a property value and its string representation.  for instance: ( FS::PROP_UID --> username )

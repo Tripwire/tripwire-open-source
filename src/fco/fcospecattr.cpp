@@ -92,4 +92,10 @@ void cFCOSpecAttr::TraceContents(int dl) const
     }
 }
 
+bool cFCOSpecAttr::operator==(const cFCOSpecAttr& rhs) const
+{
+    return (   (mEmailAddrs == rhs.mEmailAddrs)
+            && (mName == rhs.mName)
+            && (mSeverity == rhs.mSeverity));
+}
 

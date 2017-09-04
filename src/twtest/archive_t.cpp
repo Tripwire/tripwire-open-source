@@ -42,7 +42,7 @@
 
 TSS_EXCEPTION(eTestArchiveError, eError);
 
-void TestArchive()
+void TestMemoryArchive()
 {
     // cMemoryArchive 
     cMemoryArchive memarch;
@@ -52,7 +52,7 @@ void TestArchive()
     memarch.WriteInt32(3);
     memarch.WriteInt32(4);
 
-    TSTRING s = _T("Weenus");
+    TSTRING s = _T("Iridogorgia");
     memarch.WriteString(s);
 
     memarch.WriteInt64(1234567L);
@@ -74,7 +74,7 @@ void TestArchive()
 
     TSTRING s2;
     memarch.ReadString(s2);
-    TEST(s2.compare(_T("Weenus")) == 0);
+    TEST(s2.compare(_T("Iridogorgia")) == 0);
 
     memarch.ReadInt64(l);
     TEST(l == 1234567L);
@@ -101,37 +101,61 @@ void TestArchive()
     TEST(memarch.GetMappedOffset() == 4 * sizeof(int32) + sizeof(int32) + 6);
     TEST(memarch.GetMappedLength() == sizeof(int64));
 //    TEST(tw_ntohll(*(int64*)memarch.GetMap()) == 1234567L);
+}
 
+void TestLockedTemporaryArchive()
+{
+    TSTRING s = _T("Metallogorgia");
 
+    bool threw = false;
     // cLockedTemporaryFileArchive
     TSTRING lockedFileName = TwTestPath("inaccessable_file.bin");
-//    lockedFileName += _T("/inaccessable_file.bin");
 
     cLockedTemporaryFileArchive lockedArch;
 
-    // try to create an archive using a temp file
-    lockedArch.OpenReadWrite();
-    lockedArch.Close();
+    try
+    {
+        // try to create an archive using a temp file
+        lockedArch.OpenReadWrite();
+        lockedArch.Close();
+    }
+    catch (...)
+    {
+        threw = true;
+    }
 
-    // this should open and lock the file -- shouldn't be able to access it
-    lockedArch.OpenReadWrite(lockedFileName.c_str());
-    lockedArch.Seek(0, cBidirArchive::BEGINNING);
+    try
+    {
+        // this should open and lock the file -- shouldn't be able to access it
+        lockedArch.OpenReadWrite(lockedFileName.c_str());
+        lockedArch.Seek(0, cBidirArchive::BEGINNING);
 
-    // shouldn't be able to see these changes
-    lockedArch.WriteInt32(1);
-    lockedArch.WriteInt32(2);
-    lockedArch.WriteInt32(3);
-    lockedArch.WriteInt32(4);
-    lockedArch.WriteString(s);
-    lockedArch.WriteInt64(1234567L);
-    lockedArch.WriteInt16(42);
+        // shouldn't be able to see these changes
+        lockedArch.WriteInt32(1);
+        lockedArch.WriteInt32(2);
+        lockedArch.WriteInt32(3);
+        lockedArch.WriteInt32(4);
+        lockedArch.WriteString(s);
+        lockedArch.WriteInt64(1234567L);
+        lockedArch.WriteInt16(42);
 
-    // this should delete the file
-    lockedArch.Close();
+        // this should delete the file
+        lockedArch.Close();
+    }
+    catch (...)
+    {
+        threw = true;
+    }
 
-    // cFileArchive 
+    TEST(!threw);
+}
+
+void TestFileArchive()
+{
+    bool threw = false;
+    TSTRING s = _T("Acanthogorgia");
+    // cFileArchive
     TSTRING fileName = TwTestPath("archive_test.bin");
-    //fileName += _T("/archive_test.bin");
 
     cFileArchive filearch;
     filearch.OpenReadWrite(fileName.c_str());
@@ -163,7 +187,7 @@ void TestArchive()
 
     TSTRING s3;
     filearch.ReadString(s3);
-    TEST(s3.compare(_T("Weenus")) == 0);
+    TEST(s3.compare(_T("Acanthogorgia")) == 0);
     filearch.ReadInt64(k);
     TEST(k == 1234567L);
 
@@ -181,12 +205,16 @@ void TestArchive()
     }
     catch (eError& e)
     {
-        TEST(false);
+        threw=true;
         (void)e;
     }
+
+    TEST(!threw);
 }
 
 void RegisterSuite_Archive()
 {
-    RegisterTest("Archive", "Basic", TestArchive);
+    RegisterTest("Archive", "MemoryArchive", TestMemoryArchive);
+    RegisterTest("Archive", "LockedTemporaryArchive)", TestLockedTemporaryArchive);
+    RegisterTest("Archive", "FileArchive",   TestFileArchive);
 }

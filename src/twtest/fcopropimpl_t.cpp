@@ -35,9 +35,9 @@
 #include "core/debug.h"
 #include "twtest/test.h"
 
-void TestFCOPropImpl()
+void TestNumeric()
 {
-    cDebug d("TestFCOPropImpl");
+    cDebug d("TestNumeric");
     d.TraceDebug("Entering...\n");
 
     // print the enum key:
@@ -69,12 +69,18 @@ void TestFCOPropImpl()
     
     d.TraceDebug("333ui64 == 456ui64 = %d\n", pui64.Compare(&pui64b, iFCOProp::OP_EQ));
     TEST( iFCOProp::CMP_FALSE == p2i64.Compare(&pi64, iFCOProp::OP_EQ));
-    
+}
+
+void TestStrings()
+{
+    cDebug d("TestStrings");
     cFCOPropTSTRING pt1;
     cFCOPropTSTRING pt2;
     pt1.SetValue(TSTRING(_T("bar")));
     pt2.SetValue(TSTRING(_T("foo")));
-    
+    cFCOPropInt64 pi64;
+    pi64.SetValue(8675309);
+
     d.TraceDebug(_T("property TSTRING = (should be \"bar\") %s\n"), pt1.AsString().c_str());
     TEST(pt1.AsString() == "bar");
     
@@ -96,5 +102,6 @@ void TestFCOPropImpl()
 
 void RegisterSuite_FCOPropImpl()
 {
-    RegisterTest("FCOPropImpl", "Basic", TestFCOPropImpl);
+    RegisterTest("FCOPropImpl", "Numeric", TestNumeric);
+    RegisterTest("FCOPropImpl", "Strings", TestStrings);
 }

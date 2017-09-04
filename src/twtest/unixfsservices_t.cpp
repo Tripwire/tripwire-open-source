@@ -44,12 +44,24 @@
 
 using namespace std;
 
-//Tests the functions that are currently implemented in win32fsservices.
-void TestUnixFSServices()
-{
-    cDebug d("TestUnixFSServices");
-    //  d.RemoveOutTarget(cDebug::OUT_STDOUT);
 
+std::string makeTestFile(const std::string &filename)
+{
+    TSTRING testfile = TwTestPath(filename);
+    cFileArchive filearch;
+    filearch.OpenReadWrite(testfile.c_str());
+    filearch.Seek(0, cBidirArchive::BEGINNING);
+    filearch.WriteString(_T("This is a test"));
+    filearch.Close();
+
+    return testfile;
+}
+
+//Tests the functions that are currently implemented in win32fsservices.
+void TestReadDir()
+{
+    cDebug d("TestReadDir");
+    //  d.RemoveOutTarget(cDebug::OUT_STDOUT);
 
     iFSServices* pFSServices = iFSServices::GetInstance();
 
@@ -75,20 +87,20 @@ void TestUnixFSServices()
 
         TEST(n == v.size());
     }
+}
 
+void TestStat()
+{
     //Test the Stat method
     cFSStatArgs stat;
 
-    //TO DO: use archive to create this file
-    TSTRING testfile = TwTestPath("tmp.tmp");
-    cFileArchive filearch;
-    filearch.OpenReadWrite(testfile.c_str());
-    filearch.Seek(0, cBidirArchive::BEGINNING);
-    filearch.WriteString(_T("This is a test"));
-    filearch.Close();
+    std::string testfile = makeTestFile("stat.tmp");
 
-    pFSServices->Stat(testfile, stat);
+    iFSServices::GetInstance()->Stat(testfile, stat);
 
+    TEST("Stat() did not throw");
+/*
+    cDebug d("TestStat");
     //print out the information returned by Stat
     d.TraceDetail("Information returned by Stat: \n");
     d.TraceDetail("Group ID : %-5d \n", stat.gid);
@@ -102,65 +114,95 @@ void TestUnixFSServices()
     d.TraceDetail("Major/minor dev if special: %d \n", stat.rdev);
     d.TraceDetail("File size: %d \n", stat.size);
     d.TraceDetail("User ID: %d \n", stat.uid);
+*/
+}
 
-    //Test GetCurrentDir:
+void TestGetCurrentDir()
+{
     TSTRING currpath;
-    pFSServices->GetCurrentDir(currpath);
-    d.TraceDetail("GetCurrentDir returned %s\n", currpath.c_str());
+    iFSServices::GetInstance()->GetCurrentDir(currpath);
+
+    TEST("GetCurrentDir() did not throw");
+
+    //d.TraceDetail("GetCurrentDir returned %s\n", currpath.c_str());
     //TEST(currpath == _T("~"));
         //they should both be ~!!
+}
 
-    //Test MakeTempFilename
+void TestMakeTempFilename()
+{
     TSTRING _template(_T("twtempXXXXXX"));
-    pFSServices->MakeTempFilename(_template);
-    d.TraceDetail("Testing MakeTempFilename: \n");
-    d.TraceDetail("%s \n", _template.c_str() );
+    iFSServices::GetInstance()->MakeTempFilename(_template);
 
-    // Test GetMachineName
-    d.TraceDetail("Testing GetMachineName:\n");
+    TEST("MakeTempFilename() did not throw");
+}
+
+void TestGetMachineName()
+{
     TSTRING uname;
-    pFSServices->GetMachineName(uname);
-    d.TraceDetail("GetMachineName returned: %s\n", uname.c_str());
+    iFSServices::GetInstance()->GetMachineName(uname);
 
-    // Test GetHostID
-    d.TraceDetail("Testing GetHostID:\n");
+    TEST("GetMachineName() did not throw");
+}
+
+void TestGetHostID()
+{
     TSTRING hostid;
-    pFSServices->GetHostID(hostid);
-    d.TraceDetail("GetHostID returned: %s\n", hostid.c_str());
+    iFSServices::GetInstance()->GetHostID(hostid);
 
-    // Test GetCurrentUserName
-    d.TraceDetail("Testing GetCurrentUserName:\n");
+    TEST("GetHostID() did not throw:");
+}
+
+void TestGetCurrentUserName()
+{
     TSTRING username;
-    TEST( pFSServices->GetCurrentUserName(username) );
-    d.TraceDetail("GetCurrentUserName returned: %s\n", username.c_str());
+    TEST( iFSServices::GetInstance()->GetCurrentUserName(username) );
+}
 
-    // Test GetIPAddress
-    d.TraceDetail("Testing GetIPAddress:\n");
+void TestGetIPAddress()
+{
     uint32 ipaddr;
-    TEST( pFSServices->GetIPAddress( ipaddr ) );
-    d.TraceDetail("GetIPAddress returned: %d\n", ipaddr);
+    TEST( iFSServices::GetInstance()->GetIPAddress( ipaddr ) );
+}
 
-    // test GetExecutableFilename
-    d.TraceDetail("Testing GetExecutableFilename: \n");
+void TestGetExecutableFilename()
+{
     TSTRING filename = _T("sh");
     TSTRING fullpath = _T("/bin/");
-    TEST(pFSServices->GetExecutableFilename(fullpath, filename));
+    TEST( iFSServices::GetInstance()->GetExecutableFilename(fullpath, filename));
+
     filename = _T("/bin/sh");
-    TEST(pFSServices->GetExecutableFilename(fullpath, filename));
+    TEST( iFSServices::GetInstance()->GetExecutableFilename(fullpath, filename));
+}
 
-    // test Rename
-    d.TraceDetail("Testing Rename:\n");
-    TSTRING newtestfile = TwTestPath("new.tmp");
-    TEST( pFSServices->Rename( testfile, newtestfile ) );
+void TestRename()
+{
+    std::string testfile = makeTestFile("rename_from");
 
-    // test FileDelete
-    d.TraceDetail("Testing FileDelete:\n");
-    TEST( pFSServices->FileDelete( newtestfile ) );
+    TSTRING newtestfile = TwTestPath("rename_to");
+    TEST( iFSServices::GetInstance()->Rename( testfile, newtestfile ) );
+}
+
+void TestFileDelete()
+{
+    std::string to_rm = makeTestFile("to_rm");
+
+    TEST( iFSServices::GetInstance()->FileDelete( to_rm ) );
 }
 
 void RegisterSuite_UnixFSServices()
 {
-    RegisterTest("UnixFSServices", "Basic", TestUnixFSServices);
+    RegisterTest("UnixFSServices", "ReadDir", TestReadDir);
+    RegisterTest("UnixFSServices", "Stat", TestStat);
+    RegisterTest("UnixFSServices", "GetCurrentDir", TestGetCurrentDir);
+    RegisterTest("UnixFSServices", "MakeTempFilename", TestMakeTempFilename);
+    RegisterTest("UnixFSServices", "GetMachineName", TestGetMachineName);
+    RegisterTest("UnixFSServices", "GetHostID", TestGetHostID);
+    RegisterTest("UnixFSServices", "GetCurrentUserName", TestGetCurrentUserName);
+    RegisterTest("UnixFSServices", "GetIPAddress", TestGetIPAddress);
+    RegisterTest("UnixFSServices", "GetExecutableFilename", TestGetExecutableFilename);
+    RegisterTest("UnixFSServices", "Rename", TestRename);
+    RegisterTest("UnixFSServices", "FileDelete", TestFileDelete);
 }
 
 
