@@ -19,7 +19,7 @@ cmdlineparser_t.cpp \
 codeconvert_t.cpp \
 configfile_t.cpp \
 cryptoarchive_t.cpp \
-crytpo_t.cpp \
+crypto_t.cpp \
 dbdatasource_t.cpp \
 debug_t.cpp \
 displayencoder_t.cpp \

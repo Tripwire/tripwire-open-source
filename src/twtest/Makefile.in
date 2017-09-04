@@ -109,7 +109,7 @@ am_twtest_OBJECTS = archive_t.$(OBJEXT) blockfile_t.$(OBJEXT) \
 	blockrecordarray_t.$(OBJEXT) charutil_t.$(OBJEXT) \
 	cmdlineparser_t.$(OBJEXT) codeconvert_t.$(OBJEXT) \
 	configfile_t.$(OBJEXT) cryptoarchive_t.$(OBJEXT) \
-	crytpo_t.$(OBJEXT) dbdatasource_t.$(OBJEXT) debug_t.$(OBJEXT) \
+	crypto_t.$(OBJEXT) dbdatasource_t.$(OBJEXT) debug_t.$(OBJEXT) \
 	displayencoder_t.$(OBJEXT) error_t.$(OBJEXT) \
 	errorbucketimpl_t.$(OBJEXT) fcocompare_t.$(OBJEXT) \
 	fcodatabasefile_t.$(OBJEXT) fconame_t.$(OBJEXT) \
@@ -360,7 +360,7 @@ cmdlineparser_t.cpp \
 codeconvert_t.cpp \
 configfile_t.cpp \
 cryptoarchive_t.cpp \
-crytpo_t.cpp \
+crypto_t.cpp \
 dbdatasource_t.cpp \
 debug_t.cpp \
 displayencoder_t.cpp \
