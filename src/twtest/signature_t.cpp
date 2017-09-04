@@ -422,6 +422,88 @@ void TestArchiveSigGen()
     fileArc.Close();
 }
 
+void assertMD5(const std::string& source, const std::string& expectedHex)
+{
+    // Signature usage example (?)
+    cMD5Signature     md5Sig;
+
+    md5Sig.Init();
+    md5Sig.Update( (const byte*)source.c_str(), source.length() );
+    md5Sig.Finit();
+
+    TEST( md5Sig.AsStringHex() == expectedHex);
+}
+
+void assertSHA1(const std::string& source, const std::string& expectedHex)
+{
+    // Signature usage example (?)
+    cSHASignature     shaSig;
+
+    shaSig.Init();
+    shaSig.Update( (const byte*)source.c_str(), source.length() );
+    shaSig.Finit();
+
+    TCERR << "Source = [" << source << "]" << std::endl;
+    TCERR << "Expected = " << expectedHex << std::endl;
+    TCERR << "Observed = " << shaSig.AsStringHex() << std::endl;
+
+    TEST( shaSig.AsStringHex() == expectedHex);
+}
+
+
+void TestRFC1321()
+{
+    // All MD5 test cases from RFC 1321, appendix A.5
+    // https://www.ietf.org/rfc/rfc1321.txt
+
+    assertMD5("", "d41d8cd98f00b204e9800998ecf8427e");
+    assertMD5("a", "0cc175b9c0f1b6a831c399e269772661");
+    assertMD5("abc", "900150983cd24fb0d6963f7d28e17f72");
+    assertMD5("message digest", "f96b697d7cb7938d525a2f31aaf161d0");
+    assertMD5("abcdefghijklmnopqrstuvwxyz", "c3fcd3d76192e4007dfb496cca67e13b");
+    assertMD5(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+        "d174ab98d277d9f5a5611c2c9f419d9f");
+    assertMD5(
+        "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
+        "57edf4a22be3c955ac49da2e2107b67a");
+}
+
+void TestRFC3174()
+{
+    // SHA1 test cases from RFC 3174, section 7.3
+    // https://www.ietf.org/rfc/rfc3174.txt
+    // plus BSD libmd test cases
+    // https://opensource.apple.com/source/libmd/libmd-3/Makefile
+    //
+    // TODO: Compare against NIST test vectors for extra pedanticity
+    // http://csrc.nist.gov/groups/STM/cavp/secure-hashing.html
+
+    assertSHA1("abc", "a9993e364706816aba3e25717850c26c9cd0d89d");
+    assertSHA1(
+       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+       "84983e441c3bd26ebaae4aa1f95129e5e54670f1");
+
+    assertSHA1("a", "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8");
+    assertSHA1(
+       "0123456701234567012345670123456701234567012345670123456701234567",
+       "e0c094e867ef46c350ef54a7f59dd60bed92ae83");
+
+    assertSHA1("", "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+    assertSHA1("abc", "a9993e364706816aba3e25717850c26c9cd0d89d");
+    assertSHA1("message digest", "c12252ceda8be8994d5fa0290a47231c1d16aae3");
+    assertSHA1(
+        "abcdefghijklmnopqrstuvwxyz",
+        "32d10c7b8cf96570ca04ce37f2a19d84240d3a89");
+    assertSHA1(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+        "761c457bf73b14d27e9e9265c46f4b4dda11f940");
+    assertSHA1(
+        "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
+        "50abf5706a150990a08b2c5ea40fa0e585554732");
+}
+
+
 void RegisterSuite_Signature()
 {
     RegisterTest("Signature", "Basic", TestSignatureBasic);
@@ -431,4 +513,6 @@ void RegisterSuite_Signature()
     RegisterTest("Signature", "SHA1", TestSHA1);
     RegisterTest("Signature", "HAVAL", TestHAVAL);
     RegisterTest("Signature", "ArchiveSigGen", TestArchiveSigGen);
+    RegisterTest("Signature", "RFC1321", TestRFC1321);
+    RegisterTest("Signature", "RFC3174", TestRFC3174);
 }
