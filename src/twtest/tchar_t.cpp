@@ -46,13 +46,15 @@ void test_wist(const TSTRING&, cDebug& d);
 
 void TestTCHAR()
 {
+    TCERR << "TODO: Right now this test mostly verifies that STL string & file classes work, which is not overly useful." << std::endl;
+
     cDebug d("TestTCHAR()");
 
     d.TraceDetail("Entering...\n");
 
     //Testing TCOUT:
     TCOUT<< _T("Simple test of TSTRING (and TCOUT) :\n\n");
-    TCERR<< _T("This should show up on cerr");
+    TCERR<< _T("This should show up on cerr") << std::endl;
 
     TSTRING pString;
     pString = _T("Hi Mom!");
@@ -82,7 +84,7 @@ void TestTCHAR()
         //A true statement!
 
     d.TraceDetail("Testing TISTRINGSTREAM with TSTRING:\n");
-    TSTRING send = _T("These should appear on seperate lines");
+    TSTRING send = _T("These should appear on separate lines");
     test_wist(send, d);
         //Did they?
 
@@ -100,19 +102,18 @@ void TestTCHAR()
 
     TIFSTREAM from;
     from.open(inputfile.c_str(), std::ios_base::in);
-    if(!from)
-        d.TraceDetail("error opening input file\n");
+    TEST(from);
+
 
     TOFSTREAM to(outputfile.c_str(), std::ios_base::trunc);
-    if(!to)
-        d.TraceDetail("error opening output file\n");
+    TEST(to);
 
     //Copy contents of input file to output file.
     TCHAR ch;
     while(from.get(ch))
         to.put(ch);
-    if(!from.eof() || !to)
-        d.TraceDetail("something has gone terribly wrong...\n");
+
+    TEST(from.eof() && to);
 
     return;
 }

@@ -89,6 +89,7 @@ void test_policy_file(const std::string& polfile)
     errorQ.SetChild( &errorT );
     
     parser.Execute( policy, &errorQ );
+    TEST("No exceptions thrown in cPolicyParser::Execute");
 
     TCERR << "Parsed policy test file " << polfile << std::endl;
     return;

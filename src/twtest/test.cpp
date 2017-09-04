@@ -159,10 +159,14 @@ void skip(const std::string& reason)
     throw skip_exception(reason);
 }
 
+void fail(const std::string& reason)
+{
+    throw std::runtime_error(reason);
+}
+
 void CountMacro()
 {
     macro_count++;
-    TCERR << "*** Incrementing macro count, value is now" << macro_count << std::endl;;
 }
 
 /////////////////////////

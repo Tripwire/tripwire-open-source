@@ -90,6 +90,7 @@ typedef std::map< std::string, SuiteMap > TestMap;
 void RegisterTest(const std::string& suite, const std::string testName, TestPtr testPtr );
 
 void skip(const std::string& reason);
+void fail(const std::string& reason);
 
 
 #endif // __TEST_H

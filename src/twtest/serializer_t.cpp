@@ -71,6 +71,9 @@ cSerTestObject::cSerTestObject()
 void TestSerializer()
 {
     cSerTestObject test_obj;
+
+    TEST( std::string(test_obj.GetType().AsString()) == std::string("cSerTestObject") );
+    TEST( test_obj.Version() == 1);
 }
 
 void RegisterSuite_Serializer()

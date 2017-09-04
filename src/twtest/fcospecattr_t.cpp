@@ -85,6 +85,8 @@ void TestFCOSpecAttr()
     // trace contents...
     TraceSpecAttr(pNew, d);
 
+    TEST( *pAttr == *pNew );
+
     pNew->Release();
     pAttr->Release();
 }
