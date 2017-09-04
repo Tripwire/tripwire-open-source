@@ -158,3 +158,8 @@ void TestFCOCompare()
 
     return;
 }
+
+void RegisterSuite_FCOCompare()
+{
+    RegisterTest("FCOCompare", "Basic", TestFCOCompare);
+}

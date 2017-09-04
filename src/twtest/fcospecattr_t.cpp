@@ -88,3 +88,8 @@ void TestFCOSpecAttr()
     pNew->Release();
     pAttr->Release();
 }
+
+void RegisterSuite_FCOSpecAttr()
+{
+    RegisterTest("FCOSpecAttr", "Basic", TestFCOSpecAttr);
+}

@@ -144,3 +144,7 @@ void TestSerRefCountObj()
     return;
 }
 
+void RegisterSuite_SerRefCountObj()
+{
+    RegisterTest("SerRefCountObj", "Basic", TestSerRefCountObj);
+}

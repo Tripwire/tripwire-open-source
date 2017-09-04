@@ -32,9 +32,16 @@
 // fcodatabasefile.cpp
 #include "tw/stdtw.h"
 #include "tw/fcodatabasefile.h"
+#include "test.h"
 
 void TestFCODatabaseFile()
 {
     cDebug d("TestFCODatabaseFile");
     d.TraceError("Implement this!\n");
+    skip("TestFCODatabaseFile not implemented");
+}
+
+void RegisterSuite_FCODatabaseFile()
+{
+    RegisterTest("FCODatabaseFile", "Basic", TestFCODatabaseFile);
 }

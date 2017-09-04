@@ -133,3 +133,7 @@ void cTestFSPropDisplayer::Test()
     return;
 }
 
+void RegisterSuite_FSPropDisplayer()
+{
+    RegisterTest("FSPropDisplayer", "Basic", TestFSPropDisplayer);
+}

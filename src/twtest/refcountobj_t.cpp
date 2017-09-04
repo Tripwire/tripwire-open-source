@@ -33,6 +33,7 @@
 #include "core/stdcore.h"
 #include "core/refcountobj.h"
 #include "core/debug.h"
+#include "test.h"
 
 class cRefCountTestObj : public cRefCountObj
 {
@@ -166,3 +167,7 @@ void TestRefCountObj()
     return;
 }
 
+void RegisterSuite_RefCountObj()
+{
+    RegisterTest("RefCountObj", "Basic", TestRefCountObj);
+}

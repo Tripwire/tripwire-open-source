@@ -92,3 +92,8 @@ void TestFSPropSet()
 
     return;
 }
+
+void RegisterSuite_FSPropSet()
+{
+    RegisterTest("FSPropSet", "Basic", TestFSPropSet);
+}

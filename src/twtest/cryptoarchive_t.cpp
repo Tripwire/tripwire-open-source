@@ -299,4 +299,7 @@ void TestCryptoArchive()
 #endif
 }
 
-
+void RegisterSuite_CryptoArchive()
+{
+    RegisterTest("CryptoArchive", "Basic", TestCryptoArchive);
+}

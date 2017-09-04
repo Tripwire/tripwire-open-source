@@ -115,3 +115,7 @@ void TestUnprintable( const TCHAR* pchName, const TCHAR* pchGenre )
     TEST( fcoNameNew == fcoName );
 }
 
+void RegisterSuite_FCONameTranslator()
+{
+    RegisterTest("FCONameTranslator", "Basic", TestFCONameTranslator);
+}

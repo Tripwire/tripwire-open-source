@@ -192,3 +192,8 @@ static void objManip (cFCOPropVector &testV, cDebug& d)
     v3.AddItem(3);
     TEST((v1 ^ v2)   == v3);
 }
+
+void RegisterSuite_FCOPropVector()
+{
+    RegisterTest("FCOPropVector", "Basic", TestFCOPropVector);
+}

@@ -108,4 +108,9 @@ void TestFSDataSourceIter()
     PrintIter( iter, d );
 }
 
+void RegisterSuite_FSDataSourceIter()
+{
+    RegisterTest("FSDataSourceIter", "Basic", TestFSDataSourceIter);
+}
+
 

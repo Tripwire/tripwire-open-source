@@ -41,4 +41,10 @@ void TestUserNotifyStdout()
 {
     cDebug d("TestUserNotifyStdout");
     d.TraceError("Implement this!\n");
+    skip("TestUserNotifyStdout unimplemented");
+}
+
+void RegisterSuite_UserNotifyStdout()
+{
+    RegisterTest("UserNotifyStdout", "Basic", TestUserNotifyStdout);
 }

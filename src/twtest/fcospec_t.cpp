@@ -51,3 +51,8 @@ void TestFCOSpec()
     cout << "End\tTestFCOSpec" << endl;
     return;
 }
+
+void RegisterSuite_FCOSpec()
+{
+    RegisterTest("FCOSpec", "Basic", TestFCOSpec);
+}

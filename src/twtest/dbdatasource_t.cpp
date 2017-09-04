@@ -212,3 +212,8 @@ void TestDbDataSourceBasic()
     db.AssertAllBlocksValid();
 #endif
 }
+
+void RegisterSuite_DbDataSource()
+{
+    RegisterTest("DbDataSource", "Basic", TestDbDataSourceBasic);
+}

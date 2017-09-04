@@ -81,3 +81,8 @@ void TestError()
 
     TEST(threw);
 }
+
+void RegisterSuite_Error()
+{
+    RegisterTest("Error", "Basic", TestError);
+}

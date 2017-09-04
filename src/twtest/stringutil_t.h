@@ -172,3 +172,8 @@ void TestStringUtil()
 
 
 #endif//__STRINGUTIL_T_H
+
+void RegisterSuite_StringUtil()
+{
+    RegisterTest("StringUtil", "Basic", TestStringUtil);
+}

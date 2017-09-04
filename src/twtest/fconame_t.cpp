@@ -139,4 +139,7 @@ void TestFCOName()
     }
 }
 
-
+void RegisterSuite_FCOName()
+{
+    RegisterTest("FCOName", "Basic", TestFCOName);
+}

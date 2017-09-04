@@ -178,3 +178,7 @@ void TestSerializerImpl()
     return;
 }
 
+void RegisterSuite_SerializerImpl()
+{
+    RegisterTest("SerializerImpl", "Basic", TestSerializerImpl);
+}

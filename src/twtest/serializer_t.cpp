@@ -38,6 +38,7 @@
 #include "core/stdcore.h"
 #include "core/serializer.h"
 #include "core/serializable.h"
+#include "test.h"
 
 // The reading and writing functionality of the serializer is tested in 
 // serializerimpl_t.cpp, so there's very little to be done here.
@@ -70,4 +71,9 @@ cSerTestObject::cSerTestObject()
 void TestSerializer()
 {
     cSerTestObject test_obj;
+}
+
+void RegisterSuite_Serializer()
+{
+    RegisterTest("Serializer", "Basic", TestSerializer);
 }

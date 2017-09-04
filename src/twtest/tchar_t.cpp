@@ -133,3 +133,8 @@ void test_wist(const TSTRING& input, cDebug& d)
         d.TraceDetail("%s \n", parse.c_str() );
 }
 
+void RegisterSuite_TCHAR()
+{
+    RegisterTest("TCHAR", "Basic", TestTCHAR);
+}
+

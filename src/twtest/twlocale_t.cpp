@@ -40,6 +40,7 @@
 #include "core/stdcore.h"
 #include "core/debug.h"
 #include "core/twlocale.h"
+#include "test.h"
 
 void TestAtoi();
 void TestItoa();
@@ -56,6 +57,8 @@ void TestHex();
 
 void TestTWLocale()
 {
+    skip("TWLocale tests are ifdef'd out, need to revisit them");
+    
 #ifdef DOESNTWORK
     TestHex();
     TestAtoi();
@@ -224,4 +227,9 @@ void TestHex()
     TEST( str == _T("FFFFFFFF") || str == _T("ffffffff") );
 }
 #endif//DOESNTWORK
+
+void RegisterSuite_TWLocale()
+{
+    RegisterTest("TWLocale", "Basic", TestTWLocale);
+}
 

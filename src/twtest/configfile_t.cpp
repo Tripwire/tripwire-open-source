@@ -177,3 +177,9 @@ void TestConfigFile2(void)
     d.TraceDetail("Tests Passed!\n");
 //#endif // NOT_BRIANS_TEST
 }
+
+void RegisterSuite_ConfigFile()
+{
+    RegisterTest("ConfigFile", "Basic 1", TestConfigFile);
+    RegisterTest("ConfigFile", "Basic 2", TestConfigFile2);
+}

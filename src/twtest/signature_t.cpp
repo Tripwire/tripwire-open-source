@@ -361,3 +361,7 @@ void TestSignature()
     return;
 }
 
+void RegisterSuite_Signature()
+{
+    RegisterTest("Signature", "Basic", TestSignature);
+}

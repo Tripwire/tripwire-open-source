@@ -204,6 +204,7 @@ void TestSizes()
 {
     cDebug d("TestSizes");
     d.TraceError("Fix this!\n");
+    skip("TODO: TestSizes needs work");
 /*
     TEST( CanBeRepresentedAs( char(), char() ) );
     TEST( CanBeRepresentedAs( char(), unsigned char() ) );
@@ -233,4 +234,10 @@ bool CanBeRepresentedAs( E e, T t )
     fReturn &= ( std::numeric_limits< E >::max() <= std::numeric_limits< T >::max() );
 
     return fReturn;
+}
+
+void RegisterSuite_Platform()
+{
+    RegisterTest("Platform", "Alignment", TestAlignment);
+    RegisterTest("Platform", "Sizes", TestSizes);
 }

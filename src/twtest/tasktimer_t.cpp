@@ -31,11 +31,17 @@
 //
 // tasktimer_t -- test driver for cTaskTimer
 #include "core/stdcore.h"
+#include "test.h"
 
 void TestTaskTimer()
 {
     cDebug d("TestTaskTimer");
     d.TraceError("Implement this!\n");
+    skip("TestTaskTimer unimplemented");
 }
 
+void RegisterSuite_TaskTimer()
+{
+    RegisterTest("TaskTimer", "Basic", TestTaskTimer);
+}
 

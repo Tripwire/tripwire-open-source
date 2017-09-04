@@ -90,4 +90,7 @@ void TestDebug()
     d.TraceDebug("Exiting...\n");
 }
 
-
+void RegisterSuite_Debug()
+{
+    RegisterTest("Debug", "Basic", TestDebug);
+}

@@ -155,3 +155,7 @@ void TestFCOSetImpl()
 
 }
 
+void RegisterSuite_FCOSetImpl()
+{
+    RegisterTest("FCOSetImpl", "Basic", TestFCOSetImpl);
+}

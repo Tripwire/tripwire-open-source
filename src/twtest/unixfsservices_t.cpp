@@ -158,7 +158,10 @@ void TestUnixFSServices()
     TEST( pFSServices->FileDelete( newtestfile ) );
 }
 
-
+void RegisterSuite_UnixFSServices()
+{
+    RegisterTest("UnixFSServices", "Basic", TestUnixFSServices);
+}
 
 
 

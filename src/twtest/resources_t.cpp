@@ -95,6 +95,9 @@ void TestResources()
 
 }
 
-
+void RegisterSuite_Resources()
+{
+    RegisterTest("Resources", "Basic", TestResources);
+}
 
 

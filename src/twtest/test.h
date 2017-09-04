@@ -66,9 +66,13 @@ public:
 
 TSS_EndPackage( cTest )
 
+void CountMacro();
+
 ///////////////////////////////////////////////////////////////////////////////
-// TEST() -- Works like ASSERT() but it also breaks during release mode
-#define TEST(exp)   if (!(exp)) \
+// TEST() -- throw a std::runtime error if test condition is false.
+//
+#define TEST(exp)   CountMacro(); \
+                    if (!(exp)) \
                     { \
                         std::cerr<<"TEST(" << #exp << ") failure, file " << __FILE__ << " line " << __LINE__ << std::endl; \
                         throw std::runtime_error(#exp); \
@@ -78,6 +82,15 @@ TSS_EndPackage( cTest )
 
 std::string TwTestDir();
 std::string TwTestPath(const std::string& child);
+
+typedef void (*TestPtr)();
+typedef std::map< std::string, TestPtr >  SuiteMap;
+typedef std::map< std::string, SuiteMap > TestMap;
+
+void RegisterTest(const std::string& suite, const std::string testName, TestPtr testPtr );
+
+void skip(const std::string& reason);
+
 
 #endif // __TEST_H
 

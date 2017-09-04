@@ -321,17 +321,16 @@ void TestDisplayEncoderBasic()
     // make sure there are '\' and '"' in it )
 }
 
-/*TSS_BeginTestSuiteFrom( cDisplayEncoderTest )
-
-    TSS_AddTestCase( Basic );
-    TSS_AddTestCase( TestHexToChar );
-    TSS_AddTestCase( TestCharToHex );
-    TSS_AddTestCase( TestStringToHex );
-    TSS_AddTestCase( TestHexToString );
-    TSS_AddTestCase( TestUnconvertable ); 
-    TSS_AddTestCase( TestUnprintable ); 
-    TSS_AddTestCase( TestQuoteAndBackSlash ); 
-        
-TSS_EndTestSuite( cDisplayEncoderTest )*/
+void RegisterSuite_DisplayEncoder()
+{
+    RegisterTest("DisplayEncoder", "Basic", TestDisplayEncoderBasic);
+    RegisterTest("DisplayEncoder", "CharToHex", TestCharToHex);
+    RegisterTest("DisplayEncoder", "HexToChar", TestHexToChar);
+    RegisterTest("DisplayEncoder", "StringToHex", TestStringToHex);
+    RegisterTest("DisplayEncoder", "HexToString", TestHexToString);
+    //RegisterTest("DisplayEncoder", "Unconvertable", TestUnconvertable);
+    //RegisterTest("DisplayEncoder", "Unprintable", TestUnprintable);
+    RegisterTest("DisplayEncoder", "QuoteAndBackSlash", TestQuoteAndBackSlash);
+}
 
 

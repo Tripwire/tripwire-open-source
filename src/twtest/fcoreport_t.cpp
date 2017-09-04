@@ -171,3 +171,7 @@ void TestFCOReport()
     d.TraceDebug("Leaving...\n");
 }
 
+void RegisterSuite_FCOReport()
+{
+    RegisterTest("FCOReport", "Basic", TestFCOReport);
+}

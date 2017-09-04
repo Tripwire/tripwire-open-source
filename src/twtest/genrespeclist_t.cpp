@@ -91,3 +91,12 @@ void TestGenreSpecList()
     d.TraceDebug("All tests passed.\n");
 }
 
+
+void RegisterSuite_GenreSpecList()
+{
+    RegisterTest("GenreSpecList", "Basic", TestGenreSpecList);
+}
+
+
+
+

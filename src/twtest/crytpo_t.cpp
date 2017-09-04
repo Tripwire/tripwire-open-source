@@ -416,3 +416,8 @@ void TestCrypto()
     }
 }
 
+void RegisterSuite_Crypto()
+{
+    RegisterTest("Crypto", "Basic", TestCrypto);
+}
+

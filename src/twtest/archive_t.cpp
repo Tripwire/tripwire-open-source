@@ -186,3 +186,7 @@ void TestArchive()
     }
 }
 
+void RegisterSuite_Archive()
+{
+    RegisterTest("Archive", "Basic", TestArchive);
+}

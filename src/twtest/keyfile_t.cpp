@@ -134,3 +134,7 @@ void TestKeyFile()
     return;
 }
 
+void RegisterSuite_KeyFile()
+{
+    RegisterTest("KeyFile", "Basic", TestKeyFile);
+}

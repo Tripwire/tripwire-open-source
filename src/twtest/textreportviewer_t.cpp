@@ -127,7 +127,7 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
 
 void TestTextReportViewer()
 {
-    TCERR << std::endl << "TestTextReportViewer needs to be cleaned up & fixed, currently disabled" << std::endl;
+    skip("TestTextReportViewer needs to be cleaned up & fixed, currently disabled");
     
 #if 0
     cFCOReport  report;
@@ -476,3 +476,7 @@ void MakeDir( const TCHAR* const lpszDirName )
 
 //#endif //FIXED_TRV_TEST_SUITE
 
+void RegisterSuite_TextReportViewer()
+{
+    RegisterTest("TextReportViewer", "Basic", TestTextReportViewer);
+}

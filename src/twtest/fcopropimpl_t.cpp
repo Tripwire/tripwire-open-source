@@ -94,3 +94,7 @@ void TestFCOPropImpl()
     return;
 }
 
+void RegisterSuite_FCOPropImpl()
+{
+    RegisterTest("FCOPropImpl", "Basic", TestFCOPropImpl);
+}

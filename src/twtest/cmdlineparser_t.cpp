@@ -161,3 +161,10 @@ void TestCmdLineParser()
     // TODO -- test a bunch more!!!
 }
 
+void RegisterSuite_CmdLineParser()
+{
+    RegisterTest("CmdLineParser", "Basic", TestCmdLineParser);
+}
+
+
+

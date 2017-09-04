@@ -50,3 +50,8 @@ void TestTypes()
     TEST(sizeof(float32)    == 4);
     TEST(sizeof(float64)    == 8);
 }
+
+void RegisterSuite_Types()
+{
+    RegisterTest("Types", "Basic", TestTypes);
+}

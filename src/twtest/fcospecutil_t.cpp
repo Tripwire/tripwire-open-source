@@ -80,3 +80,8 @@ void TestFcoSpecUtil()
 
     d.TraceDebug("Leaving..\n");
 }
+
+void RegisterSuite_FcoSpecUtil()
+{
+    RegisterTest("FcoSpecUtil", "Basic", TestFcoSpecUtil);
+}

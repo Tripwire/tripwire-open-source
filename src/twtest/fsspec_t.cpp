@@ -102,3 +102,7 @@ void TestFCOSpecImpl()
     pSpec->Release();
 }
 
+void RegisterSuite_FCOSpecImpl()
+{
+    RegisterTest("FCOSpecImpl", "Basic", TestFCOSpecImpl);
+}

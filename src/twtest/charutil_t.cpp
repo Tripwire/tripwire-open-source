@@ -75,11 +75,7 @@ void TestCharUtilBasic()
     PrintChars( _T("fo\x23 54") );
 }
 
-
-/*
-TSS_BeginTestSuiteFrom( cCharEncoderTest )
-
-    TSS_AddTestCase( Basic );
-        
-TSS_EndTestSuite( cCharEncoderTest )
-*/
+void RegisterSuite_CharUtil()
+{
+    RegisterTest("CharUtil", "Basic", TestCharUtilBasic);
+}

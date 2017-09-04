@@ -71,3 +71,7 @@ void TestFileUtil()
     unlink(source.c_str());
 }
 
+void RegisterSuite_FileUtil()
+{
+    RegisterTest("FileUtil", "Basic", TestFileUtil);
+}

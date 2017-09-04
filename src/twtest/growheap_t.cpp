@@ -97,3 +97,7 @@ void TestGrowHeap()
     TEST( gh.TotalMemUsage() == 0 );
 }
     
+void RegisterSuite_GrowHeap()
+{
+    RegisterTest("GrowHeap", "Basic", TestGrowHeap);
+}
