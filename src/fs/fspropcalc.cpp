@@ -99,7 +99,15 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
 #endif
 
     if(rtn == -1)
+    {
+        // Some OSes (like HP-UX) return ERANGE if buffer is too small.
+        // This is nonstandard but better than the usual truncate-and-say-you-succeeded
+        //
+        if(ERANGE == errno)
+	    return GetSymLinkStr(strName, arch, size*2);
+
         return false;
+    }
 
     //Sadly if buf isn't big enough readlink 'succeeds' by truncating the string, so the only
     // clue your buffer might be too small is if you maxed it out.  So we try again, within reason.

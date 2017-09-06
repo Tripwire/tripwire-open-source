@@ -34,8 +34,10 @@ sub run() {
     printf("%-30s", "-- $description");
 
     # lets see if the system 'cksum' agree's with siggen's crc32 value
+    # Doing split with ' ' instead of / / because some flavors of cksum
+    # like to separate fields with tabs, as seen on Solaris 10.
     #
-    my ($crc32, undef) = split(/ /, `cksum $twtools::twrootdir/test`);
+    my ($crc32, undef) = split(' ', `cksum $twtools::twrootdir/test`);
 
     if ($crc32 eq "") {
         ++$twtools::twskippedtests;
