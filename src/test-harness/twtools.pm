@@ -54,7 +54,7 @@ BEGIN {
         EMAILREPORTLEVEL             => '3',
         REPORTLEVEL                  => '3',
         MAILMETHOD                   => 'SENDMAIL',
-        SYSLOGREPORTING              => 'false',
+        SYSLOGREPORTING              => 'true',
         MAILPROGRAM                  => 'cat',
         MAILFROMADDRESS              => 'taz@cat'
         );
@@ -221,7 +221,7 @@ sub PrintPolicy {
 
     my (@out) = `$twrootdir/bin/twadmin -m p -c $twrootdir/$twcfgloc -p $twrootdir/$twpolfileloc -S $twrootdir/$twsitekeyloc $params{opts} 2>&1`;
 
-    my ($result) = ${^CHILD_ERROR_NATIVE};
+    my ($result) = $?;
 
     logStatus(@out);
 
@@ -239,7 +239,7 @@ sub PrintConfig {
     logStatus "printing config file...\n";
     my (@out) =  `$twrootdir/bin/twadmin -m f -c $twrootdir/$twcfgloc $params{opts} 2>&1`;
 
-    my ($result) = ${^CHILD_ERROR_NATIVE};
+    my ($result) = $?;
 
     logStatus(@out);
 
@@ -275,7 +275,7 @@ sub GeneratePolicyFile {
 
     my (@out) = `$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $twrootdir/$twpolicyloc 2>&1`;
 
-    my ($result) = ${^CHILD_ERROR_NATIVE};
+    my ($result) = $?;
 
     logStatus(@out);
 
@@ -297,7 +297,7 @@ sub CreatePolicy {
 
     my (@out) = `$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text} 2>&1`;
 
-    my ($result) = ${^CHILD_ERROR_NATIVE};
+    my ($result) = $?;
 
     logStatus(@out);
 
@@ -315,7 +315,7 @@ sub InitializeDatabase {
     print "initializing database for '$twmsg' test...\n" if $verbose;
     my (@out) = `$twrootdir/bin/tripwire -m i -P $twsitepass -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc 2>&1`;
 
-    my ($result) = ${^CHILD_ERROR_NATIVE};
+    my ($result) = $?;
 
     logStatus(@out);
 
@@ -335,7 +335,7 @@ sub UpdateDatabase {
     print "updating database for '$twmsg' test...\n" if $verbose;
     my (@out) = `$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{secure-mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc -r $params{report} 2>&1`;
 
-    my ($result) = ${^CHILD_ERROR_NATIVE};
+    my ($result) = $?;
 
     logStatus(@out);
 

@@ -61,3 +61,8 @@ void TestFCONameTbl()
     pNode4->Release();
     pNode5->Release();
 }
+
+void RegisterSuite_FCONameTbl()
+{
+    RegisterTest("FCONameTbl", "Basic", TestFCONameTbl);
+}

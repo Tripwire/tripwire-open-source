@@ -35,6 +35,7 @@ libcore_a_LIBADD = @CORE_CRYPT_O@
 libcore_a_DEPENDENCIES = @CORE_CRYPT_O@
  
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
+CLEANFILES = *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libcore_a_OBJECTS) $(libcore_a_LIBADD)

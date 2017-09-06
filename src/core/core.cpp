@@ -60,5 +60,8 @@ cCore::cCore()
     iCodeConverter::GetInstance();
 }
 
-
+cCore::~cCore()
+{
+    iCodeConverter::Finit();
+}
 

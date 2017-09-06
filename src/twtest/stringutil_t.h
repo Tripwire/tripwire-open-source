@@ -167,8 +167,15 @@ void TestStringUtil()
     TEST(tStr.length() == 9);
 
     db.TraceAlways("Done...\n");
+#else
+    skip("Implement this for non-DBS, i.e. most everywhere.");
 #endif // USING_NTDBS_STUFF
 }
 
 
 #endif//__STRINGUTIL_T_H
+
+void RegisterSuite_StringUtil()
+{
+    RegisterTest("StringUtil", "Basic", TestStringUtil);
+}

@@ -509,4 +509,9 @@ bool cFSPropDisplayer::AddGroupnameMapping( const int64& i64gid, const TSTRING& 
     return( ret.second = false ); // returns true if key didn't exist before
 }
 
-
+bool cFSPropDisplayer::operator==(const cFSPropDisplayer& rhs) const
+{
+    return (mpvPropsWeDisplay == rhs.mpvPropsWeDisplay
+            &&  uidToUsername == rhs.uidToUsername
+            && gidToGroupname == rhs.gidToGroupname);
+}

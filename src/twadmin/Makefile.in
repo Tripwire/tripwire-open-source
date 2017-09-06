@@ -319,7 +319,7 @@ twadmin_HEADERS = \
   keygeneration.h resource.h stdtwadmin.h twadmin.h \
   twadmincl.h twadminerrors.h twadminstrings.h
 
-CLEANFILES = ../../bin/twadmin
+CLEANFILES = ../../bin/twadmin *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:

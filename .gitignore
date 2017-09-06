@@ -3,7 +3,6 @@ config.h
 config.h.in~
 config.log
 config.status
-compile
 autom4te.cache/
 bin/
 lib/
@@ -21,6 +20,9 @@ src/test-harness/twtest
 **/*.dll
 **/*.exe
 **/*~
+**/*#
 **/*.bak
 **/.DS_Store
+**/*.gcno
+**/*.gcda
 releases/

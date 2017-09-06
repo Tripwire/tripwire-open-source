@@ -32,9 +32,16 @@
 // fsobject_t -- the file system object test driver
 #include "fs/stdfs.h"
 #include "fs/fsobject.h"
+#include "test.h"
 
 void TestFSObject()
 {
     cDebug d("TestFSObject");
     d.TraceError("Implement this!\n");
+    skip("TestFSObject not implemented");
+}
+
+void RegisterSuite_FSObject()
+{
+    RegisterTest("FSObject", "Basic", TestFSObject);
 }

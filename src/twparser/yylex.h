@@ -38,7 +38,7 @@
 #endif
 #define YYNEWLINE 10
 
-#line 1 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
+//#line 1 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 // MKS LEX prototype scanner header
 // Copyright 1991 by Mortice Kern Systems Inc.
 // All rights reserved.

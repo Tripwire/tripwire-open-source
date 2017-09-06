@@ -750,6 +750,9 @@ enable_silent_rules
 enable_extrawarnings
 enable_static
 enable_debug
+enable_coverage
+enable_profiling
+enable_urandom
 enable_dependency_tracking
 enable_commoncrypto
 enable_iconv
@@ -1395,6 +1398,9 @@ Optional Features:
   —-disable-extrawarnings do not compile with -Wextra warnings enabled
   --enable-static         compile static binaries
   --enable-debug          compile with debuging enabled
+  --enable-coverage       enable code coverage
+  --enable-profiling      enable profiling
+  --enable-urandom        use /dev/urandom
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -3494,6 +3500,42 @@ $as_echo "#define DEBUG 1" >>confdefs.h
 else
 
 $as_echo "#define NDEBUG 1" >>confdefs.h
+
+fi
+
+# Check whether --enable-coverage was given.
+if test "${enable_coverage+set}" = set; then :
+  enableval=$enable_coverage;
+fi
+
+if test "x$enable_coverage" = xyes
+then
+   CFLAGS="${CFLAGS} --coverage"
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+# Check whether --enable-profiling was given.
+if test "${enable_profiling+set}" = set; then :
+  enableval=$enable_profiling;
+fi
+
+if test "x$enable_profiling" = xyes
+then
+   CFLAGS="${CFLAGS} -pg"
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
+fi
+
+# Check whether --enable-urandom was given.
+if test "${enable_urandom+set}" = set; then :
+  enableval=$enable_urandom;
+fi
+
+if test "x$enable_urandom" = xyes
+then
+
+$as_echo "#define ENABLE_DEV_URANDOM 1" >>confdefs.h
 
 fi
 
@@ -6185,6 +6227,52 @@ fi
 done
 
 fi
+
+for ac_header in door.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "door.h" "ac_cv_header_door_h" "$ac_includes_default"
+if test "x$ac_cv_header_door_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DOOR_H 1
+_ACEOF
+ for ac_func in door_create
+do :
+  ac_fn_c_check_func "$LINENO" "door_create" "ac_cv_func_door_create"
+if test "x$ac_cv_func_door_create" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_DOOR_CREATE 1
+_ACEOF
+
+fi
+done
+
+fi
+
+done
+
+
+for ac_header in port.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "port.h" "ac_cv_header_port_h" "$ac_includes_default"
+if test "x$ac_cv_header_port_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_PORT_H 1
+_ACEOF
+ for ac_func in port_create
+do :
+  ac_fn_c_check_func "$LINENO" "port_create" "ac_cv_func_port_create"
+if test "x$ac_cv_func_port_create" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_PORT_CREATE 1
+_ACEOF
+
+fi
+done
+
+fi
+
+done
+
 
 
 if test -c "/dev/random"; then

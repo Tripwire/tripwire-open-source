@@ -13,6 +13,7 @@ libtwcrypto_a_HEADERS = \
    stdtwcrypto.h twcrypto.h twcryptoerrors.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
+CLEANFILES = *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libtwcrypto_a_OBJECTS)

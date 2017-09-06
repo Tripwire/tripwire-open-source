@@ -155,4 +155,8 @@ void TestGetSymLinkStr()
     TEST(arch.Length() == (int64)file.size());
 }
 
-
+void RegisterSuite_FSPropCalc()
+{
+    RegisterTest("FSPropCalc", "Basic", TestFSPropCalc);
+    RegisterTest("FSPropCalc", "GetSymLinkStr", TestGetSymLinkStr);
+}

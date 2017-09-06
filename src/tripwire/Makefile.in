@@ -326,7 +326,7 @@ tripwire_HEADERS = \
   stdtripwire.h syslog_trip.h tripwire.h tripwireerrors.h tripwiremsg.h \
   tripwirestrings.h tripwireutil.h twcmdline.h twcmdlineutil.h updatedb.h
 
-CLEANFILES = ../../bin/tripwire ../../lib/libtripwire.a
+CLEANFILES = ../../bin/tripwire ../../lib/libtripwire.a *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:

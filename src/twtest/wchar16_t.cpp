@@ -124,3 +124,8 @@ void TestWchar16()
 
     db.TraceAlways("Done...\n");
 }
+
+void RegisterSuite_Wchar16()
+{
+    RegisterTest("Wchar16", "Basic", TestWchar16);
+}

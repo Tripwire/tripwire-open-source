@@ -108,3 +108,8 @@ std::string WideToNarrow( const TSTRING& strWide )
     return strWide; 
 }
 
+void RegisterSuite_TWUtil()
+{
+    RegisterTest("TWUtil", "Basic", TestTWUtil);
+}
+

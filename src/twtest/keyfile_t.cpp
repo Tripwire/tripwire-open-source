@@ -107,8 +107,9 @@ void TestKeyFile()
 
         elGamal.SetVerifying(keyfile2.GetPublicKey());
         elGamal.ProcessBlock(ciphertext, recovered_text);
-        
+
         TEST(memcmp(recovered_text, plaintext, elGamal.GetBlockSizePlain()) == 0);
+        delete [] pMem;
     }
 
     // save to and read from disk
@@ -133,3 +134,7 @@ void TestKeyFile()
     return;
 }
 
+void RegisterSuite_KeyFile()
+{
+    RegisterTest("KeyFile", "Basic", TestKeyFile);
+}

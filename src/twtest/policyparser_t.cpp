@@ -89,6 +89,7 @@ void test_policy_file(const std::string& polfile)
     errorQ.SetChild( &errorT );
     
     parser.Execute( policy, &errorQ );
+    TEST("No exceptions thrown in cPolicyParser::Execute");
 
     TCERR << "Parsed policy test file " << polfile << std::endl;
     return;
@@ -101,6 +102,9 @@ void TestPolicyParser()
     cDebug d("TestPolicyParser()");
 
     test_policy_file("pol.txt");
+
+    TCERR << "TestPolicyParser: Parser needs work to be able to test more than one policy" << std::endl;
+    
 //    test_policy_file("directives.txt");  //fails unless you substitute your hostname for 'your_host' in this file
     
 // TODO: test currently segfaults if you create more than one policy parser in a process. (Not a real world scenario).
@@ -110,4 +114,7 @@ void TestPolicyParser()
     test_policy_file("polruleattr.txt"); */
 }
     
-
+void RegisterSuite_PolicyParser()
+{
+    RegisterTest("PolicyParser", "Basic", TestPolicyParser);
+}

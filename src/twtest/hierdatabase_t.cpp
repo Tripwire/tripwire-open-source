@@ -206,3 +206,8 @@ void TestHierDatabaseBasic()
 #endif
 }
 
+void RegisterSuite_HierDatabase()
+{
+    RegisterTest("HierDatabase", "Basic", TestHierDatabaseBasic);
+}
+

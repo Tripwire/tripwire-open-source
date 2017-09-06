@@ -54,6 +54,7 @@ TSS_BeginPackage( cCore )
     public:
 
         cCore();
+        ~cCore();
 
 TSS_EndPackage( cCore )
 

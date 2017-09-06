@@ -109,3 +109,9 @@ void TestBlockFile()
 
     bf.Close(); 
 }
+
+void RegisterSuite_BlockFile()
+{
+    RegisterTest("BlockFile", "Basic", TestBlockFile);
+}
+

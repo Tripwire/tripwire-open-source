@@ -44,6 +44,28 @@ else
    AC_DEFINE(NDEBUG, 1, [Compile without debug code])
 fi
 
+AC_ARG_ENABLE(coverage, [  --enable-coverage       enable code coverage])
+if test "x$enable_coverage" = xyes
+then
+   CFLAGS="${CFLAGS} --coverage"
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+AC_ARG_ENABLE(profiling, [  --enable-profiling      enable profiling])
+if test "x$enable_profiling" = xyes
+then
+   CFLAGS="${CFLAGS} -pg"
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
+fi
+
+AC_ARG_ENABLE(urandom,  [  --enable-urandom        use /dev/urandom])
+if test "x$enable_urandom" = xyes
+then
+   AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
+fi
+
 dnl ###################
 dnl Checks for programs
 dnl ###################
@@ -133,6 +155,12 @@ if test "x${enable_commoncrypto}" != "xno"
 then
   AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
 fi
+
+dnl check for door support (Solaris)
+AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
+
+dnl check for event port support (Solaris)
+AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
 
 dnl ##############################################  
 dnl check for various RNG/PRNG devices

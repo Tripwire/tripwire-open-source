@@ -358,6 +358,7 @@ libcore_a_HEADERS = archive.h charutil.h cmdlineparser.h codeconvert.h       \
 
 libcore_a_LIBADD = @CORE_CRYPT_O@
 libcore_a_DEPENDENCIES = @CORE_CRYPT_O@
+CLEANFILES = *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:
@@ -544,6 +545,7 @@ install-strip:
 mostlyclean-generic:
 
 clean-generic:
+	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
 
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)

@@ -125,3 +125,7 @@ void TestBlockRecordArray()
     #endif
 }
 
+void RegisterSuite_BlockRecordArray()
+{
+    RegisterTest("BlockRecordArray", "Basic", TestBlockRecordArray);
+}

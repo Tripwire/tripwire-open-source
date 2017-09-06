@@ -17,7 +17,7 @@ twadmin_HEADERS = \
   twadmincl.h twadminerrors.h twadminstrings.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
-CLEANFILES = ../../bin/twadmin
+CLEANFILES = ../../bin/twadmin *.gcno *.gcda
 
 all: $(sbin_PROGRAMS)
 	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin

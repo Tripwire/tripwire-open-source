@@ -6,6 +6,9 @@
 /* Compile with debug code */
 #undef DEBUG
 
+/* Enable use of /dev/urandom */
+#undef ENABLE_DEV_URANDOM
+
 /* this is the prefix for STL exception functions */
 #undef EXCEPTION_NAMESPACE
 
@@ -23,6 +26,12 @@
 
 /* Has /dev/urandom */
 #undef HAVE_DEV_URANDOM
+
+/* Define to 1 if you have the `door_create' function. */
+#undef HAVE_DOOR_CREATE
+
+/* Define to 1 if you have the <door.h> header file. */
+#undef HAVE_DOOR_H
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
@@ -62,6 +71,12 @@
 
 /* Define to 1 if you have the <openssl/sha.h> header file. */
 #undef HAVE_OPENSSL_SHA_H
+
+/* Define to 1 if you have the `port_create' function. */
+#undef HAVE_PORT_CREATE
+
+/* Define to 1 if you have the <port.h> header file. */
+#undef HAVE_PORT_H
 
 /* Define to 1 if you have the `posix_fadvise' function. */
 #undef HAVE_POSIX_FADVISE

@@ -365,10 +365,12 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
 #ifdef S_ISSOCK
     else if(S_ISSOCK(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_SOCK;
 #endif
-#ifdef S_IFDOOR
+
+#if HAVE_DOOR_CREATE
     else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
-#ifdef S_ISPORT
+
+#if HAVE_PORT_CREATE
     else if(S_ISPORT(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_PORT;
 #endif
     
@@ -594,12 +596,14 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
         case S_IFLNK:
             szPerm[0] = _T('l');
             break;
-#ifdef S_IFDOOR
+
+#if HAVE_DOOR_CREATE  // Solaris doors
         case S_IFDOOR:
             szPerm[0] = _T('D');
             break;
 #endif
-#ifdef S_ISPORT
+
+#if HAVE_PORT_CREATE  // Solaris event ports
         case S_IFPORT:
             szPerm[0] = _T('P');
             break;

@@ -43,15 +43,6 @@
 
 using namespace std;
 
-void HashTest1();
-void HashTest2();
-
-void TestHashTable(void)
-{
-    HashTest1();
-    HashTest2();
-}
-
 void HashTest1()
 {
     //Test the Hash table with Key = TSTRING 
@@ -217,4 +208,10 @@ void HashTest2()
     }
 
     d.TraceDebug("PASSED!\n");
+}
+
+void RegisterSuite_HashTable()
+{
+    RegisterTest("HashTable", "Basic 1", HashTest1);
+    RegisterTest("HashTable", "Basic 2", HashTest2);
 }

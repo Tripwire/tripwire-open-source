@@ -143,3 +143,7 @@ void TestErrorBucketImpl()
 
 }
 
+void RegisterSuite_ErrorBucketImpl()
+{
+    RegisterTest("ErrorBucketImpl", "Basic", TestErrorBucketImpl);
+}

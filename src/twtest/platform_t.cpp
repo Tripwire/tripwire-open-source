@@ -91,7 +91,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
 // to have any need for that behavior, which begs the question of why
 // this test exists in the first place.
 //  -bcox
-#if (!IS_HPUX)
+#if (!IS_HPUX && !IS_SOLARIS) //Turns out Solaris SPARC is unhappy with this test too, btw
     TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
     // access a double in the byte array to see if it is aligned.  if it isn't and the CPU
@@ -119,10 +119,14 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     TCOUT << _T("Writing...") << std::endl;
     *pb = I; // access memory for write
     TCOUT << _T("Write succeeded.") << std::endl;
-#endif
+
     
     TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
           << _T("=========================================\n");
+
+    TEST("Aligned"); // The actual test is not bus erroring up above; this just tells the framework we tested something.
+
+#endif
 }
 
 
@@ -173,6 +177,7 @@ void TestAlignment()
     *pi = *pi; // misaligned access (read and write)
     
     TCOUT << _T("Misaligned access OK.") << std::endl;
+    TEST("Misaligned ok"); //again, the test is not exploding up above
 
     // - - - - - - - - - - - - - - - - - - - - - -  
     // make sure our BYTE_ALIGN value is correct --
@@ -198,12 +203,14 @@ void TestAlignment()
     
     TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;    
     TCOUT << _T("=========================================\n");
+    TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up.
 }
 
 void TestSizes()
 {
     cDebug d("TestSizes");
     d.TraceError("Fix this!\n");
+    skip("TODO: TestSizes needs work");
 /*
     TEST( CanBeRepresentedAs( char(), char() ) );
     TEST( CanBeRepresentedAs( char(), unsigned char() ) );
@@ -233,4 +240,10 @@ bool CanBeRepresentedAs( E e, T t )
     fReturn &= ( std::numeric_limits< E >::max() <= std::numeric_limits< T >::max() );
 
     return fReturn;
+}
+
+void RegisterSuite_Platform()
+{
+    RegisterTest("Platform", "Alignment", TestAlignment);
+    RegisterTest("Platform", "Sizes", TestSizes);
 }

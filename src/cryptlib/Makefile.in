@@ -333,7 +333,7 @@ libcryptlib_a_HEADERS = \
   queue.h rng.h sha.h smartptr.h words.h zbits.h zdeflate.h zinflate.h \
   ztrees.h
 
-CLEANFILES = ../../lib/libcryptlib.a
+CLEANFILES = ../../lib/libcryptlib.a *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:

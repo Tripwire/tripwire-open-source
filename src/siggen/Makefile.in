@@ -318,7 +318,7 @@ siggen_SOURCES = \
 siggen_HEADERS = \
   siggen.h siggencmdline.h siggenstrings.h stdsiggen.h
 
-CLEANFILES = ../../bin/siggen
+CLEANFILES = ../../bin/siggen *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:

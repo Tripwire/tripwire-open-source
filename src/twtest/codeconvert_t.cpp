@@ -185,7 +185,8 @@ char NonZeroChar( char ch )
 //TestMbToDb in codeconvert_t.cpp seems to hit an infinite loop or runs verrrry long; ifdef'd"
 void TestMbToDb()
 {
-  TCERR << "\nTODO: TestMbToDb in codeconvert_t.cpp is flaky & needs to be fixed/replaced; currently disabled." << std::endl;
+    skip("This test is flaky & needs to be fixed/replaced; currently disabled.");
+    
 #if 0
     std::string s;
     s.resize( 0x10000 * 2 ); // two bytes for each combination
@@ -240,7 +241,8 @@ void TestMbToDb()
 // dbchar_t to mbchar_t
 void TestDbToMb()
 {
-  TCERR << "\nTODO: TestDbToMb in codeconvert_t.cpp fails, most likely due to not speaking UTF-16. Should fix this." << std::endl;
+  skip("This test fails, most likely due to not speaking UTF-16. Should fix this.");
+    
 #if 0
     wc16_string ws;
     wc16_string::size_type n;
@@ -344,4 +346,8 @@ bool LowASCIILooksLikeUCS2InWchart()
 }
 #endif
 
-
+void RegisterSuite_CodeConvert()
+{
+    RegisterTest("CodeConvert", "MbToDb", TestMbToDb);
+    RegisterTest("CodeConvert", "DbToMb", TestDbToMb);
+}

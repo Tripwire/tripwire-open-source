@@ -164,3 +164,7 @@ void TestFCOSpecList()
     return;
 }
 
+void RegisterSuite_FCOSpecList()
+{
+    RegisterTest("FCOSpecList", "Basic", TestFCOSpecList);
+}

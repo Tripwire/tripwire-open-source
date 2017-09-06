@@ -76,6 +76,8 @@ public:
 
     void TraceContents(int dl = -1) const;
 
+    bool operator==(const cFCOSpecAttr& rhs) const;
+
     DECLARE_SERREFCOUNT()
 private:
     cFCOSpecAttr    (const cFCOSpecAttr& rhs);  // not impl

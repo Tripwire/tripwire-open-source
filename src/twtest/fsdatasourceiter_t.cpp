@@ -62,13 +62,12 @@ static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true 
 
 static void PrintIter( cFSDataSourceIter iter, cDebug& d )
 {
-    //
-    //debug stuff
-    //
-    
+    int count = 0;
+
     if( ! iter.CanDescend() )
     {
         d.TraceError( "Iterator cannot descend; returning!\n");
+        TEST(!"Unexpected !CanDescend at beginning of test");
         return;
     }
     iter.Descend();
@@ -76,6 +75,7 @@ static void PrintIter( cFSDataSourceIter iter, cDebug& d )
 
     for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
     {
+        count++;
         iFCO* pFCO = iter.CreateFCO();
         if( pFCO )
         {
@@ -85,6 +85,7 @@ static void PrintIter( cFSDataSourceIter iter, cDebug& d )
         else
         {
             d.TraceError( "*** Create of FCO failed!\n");
+            fail("CreateFCO() failure");
         }
         if( iter.CanDescend() )
         {
@@ -92,20 +93,32 @@ static void PrintIter( cFSDataSourceIter iter, cDebug& d )
             PrintIter(iter, d);
         }
     }
+
+    TEST(count > 0);
 }
 
 
 void TestFSDataSourceIter()
 {
+    skip("Fix this test");
+
     cFSDataSourceIter   iter;
     cDebug              d("TestFSDataSourceIter");
 
+    cFCOName base(TwTestDir());
+
     // go to my temp directory and iterate over everything!
-    iter.SeekToFCO( cFCOName(_T("/tmp")) );
+    iter.SeekToFCO( cFCOName(TwTestDir()) );
+
     //
     // print out everything below the iterator
     //
     PrintIter( iter, d );
+}
+
+void RegisterSuite_FSDataSourceIter()
+{
+    RegisterTest("FSDataSourceIter", "Basic", TestFSDataSourceIter);
 }
 
 

@@ -133,7 +133,7 @@ typedef struct yyTypedRules_tag {   /* Typed rule table */
 } yyTypedRules;
 #endif
 
-#ifdef YACC_WINDOWS
+#if 0 // YACC_WINDOWS
 
 // include all windows prototypes, macros, constants, etc.
 
@@ -155,7 +155,7 @@ extern HANDLE hInst;
 class yy_parse {
 protected:
 
-#ifdef YACC_WINDOWS
+#if 0 // YACC_WINDOWS
 
     // protected member function for actual scanning 
 

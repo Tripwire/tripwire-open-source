@@ -129,3 +129,8 @@ void TestFCOSpecHelper()
     delete pHelp1;
     delete pHelp2;
 }
+
+void RegisterSuite_FCOSpecHelper()
+{
+    RegisterTest("FCOSpecHelper", "Basic", TestFCOSpecHelper);
+}

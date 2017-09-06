@@ -58,3 +58,7 @@ void TestFile()
     TEST(testStream);
 }
 
+void RegisterSuite_File()
+{
+    RegisterTest("File", "Basic", TestFile);
+}

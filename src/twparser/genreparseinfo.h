@@ -80,6 +80,7 @@ class cGenreParseInfo
 { 
 public:
     cGenreParseInfo();
+    ~cGenreParseInfo();
 
     void            AddStopPoint( const cFCOName& name );
         // adds the specified path as a stop point -- for now, we just queue it up,

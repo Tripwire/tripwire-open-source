@@ -93,3 +93,7 @@ void OutputString( TSTRING& str )
     TEST( str == qe.Unencode(qe.Encode(str)) );
 }
 
+void RegisterSuite_StringEncoder()
+{
+    RegisterTest("StringEncoder", "Basic", TestStringEncoder);
+}

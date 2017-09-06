@@ -126,3 +126,8 @@ void TestFileHeader()
     TEST(memcmp(buf, "abc123", 6) == 0);
     }
 }
+
+void RegisterSuite_FileHeader()
+{
+    RegisterTest("FileHeader", "Basic", TestFileHeader);
+}

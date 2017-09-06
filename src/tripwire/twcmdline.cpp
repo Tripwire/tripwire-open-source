@@ -254,52 +254,66 @@ static void InitCmdLineCommon(cCmdLineParser& parser)
 ///////////////////////////////////////////////////////////////////////////////
 static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 {
-  TSTRING str;
-  if(cf.Lookup(TSTRING(_T("POLFILE")), str))
-    pModeInfo->mPolFile = str;
-  if(cf.Lookup(TSTRING(_T("DBFILE")), str))
-    pModeInfo->mDbFile = str;
-  if(cf.Lookup(TSTRING(_T("SITEKEYFILE")), str))
-    pModeInfo->mSiteKeyFile = str;
-  if(cf.Lookup(TSTRING(_T("LOCALKEYFILE")), str))
-    pModeInfo->mLocalKeyFile = str;
-  if(cf.Lookup(TSTRING(_T("REPORTFILE")), str))
-    pModeInfo->mReportFile = str;
-  if(cf.Lookup(TSTRING(_T("EDITOR")), str))
-    pModeInfo->mEditor = str;
-  if(cf.Lookup(TSTRING(_T("LATEPROMPTING")), str))
+    TSTRING str;
+    if(cf.Lookup(TSTRING(_T("POLFILE")), str))
     {
-      if (_tcsicmp(str.c_str(), _T("true")) == 0)
-        pModeInfo->mbLatePassphrase = true;  
-    }    
-  if(cf.Lookup(TSTRING(_T("RESETACCESSTIME")), str))
-    {
-      // We do not support reset access time on Unix, so we issue a warning.
-      // This used to be a fatal error, however this prevents 
-      // cross platform config files.
-      cTWUtil::PrintErrorMsg(eTWInvalidConfigFileKey(_T("RESETACCESSTIME"), eError::NON_FATAL));
+        pModeInfo->mPolFile = str;
     }
-  if(cf.Lookup(TSTRING(_T("LOOSEDIRECTORYCHECKING")), str))
+    if(cf.Lookup(TSTRING(_T("DBFILE")), str))
     {
-      if (_tcsicmp(str.c_str(), _T("true")) == 0)
-        pModeInfo->mfLooseDirs = true; 
+        pModeInfo->mDbFile = str;
+    }
+    if(cf.Lookup(TSTRING(_T("SITEKEYFILE")), str))
+    {
+        pModeInfo->mSiteKeyFile = str;
+    }
+    if(cf.Lookup(TSTRING(_T("LOCALKEYFILE")), str))
+    {
+        pModeInfo->mLocalKeyFile = str;
+    }
+    if(cf.Lookup(TSTRING(_T("REPORTFILE")), str))
+    {
+        pModeInfo->mReportFile = str;
+    }
+    if(cf.Lookup(TSTRING(_T("EDITOR")), str))
+    {
+        pModeInfo->mEditor = str;
+    }
+    if(cf.Lookup(TSTRING(_T("LATEPROMPTING")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            pModeInfo->mbLatePassphrase = true;
     }    
+    if(cf.Lookup(TSTRING(_T("RESETACCESSTIME")), str))
+    {
+        // We do not support reset access time on Unix, so we issue a warning.
+        // This used to be a fatal error, however this prevents 
+        // cross platform config files.
+        cTWUtil::PrintErrorMsg(eTWInvalidConfigFileKey(_T("RESETACCESSTIME"), eError::NON_FATAL));
+    }
+    if(cf.Lookup(TSTRING(_T("LOOSEDIRECTORYCHECKING")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            pModeInfo->mfLooseDirs = true;
+    }
 
-  TSTRING temp_directory;
-  cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
+    TSTRING temp_directory;
+    cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
 
-    if (temp_directory.length() == 0) {
+    if (temp_directory.empty())
+    {
 #if IS_AROS
-      temp_directory = "T:";
+        temp_directory = "T:";
 #else
-      temp_directory = "/tmp/";
+        temp_directory = "/tmp/";
 #endif
     }
 
     // make sure we have a trailing slash -- thanks Jarno...
     //
-    if (temp_directory[_tcslen(str.c_str())-1] != '/') {
-      temp_directory += '/';
+    if (*temp_directory.rbegin() != '/')
+    {
+        temp_directory.push_back('/');
     }
     // make sure it exists...
     //
@@ -308,41 +322,43 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
     temp_directory = cDevicePath::AsNative(temp_directory);
 #endif
 
-    if (access(temp_directory.c_str(), F_OK) != 0) {
-      TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
-      TSTRING tmpStr = _T("Directory: ");
-      tmpStr += (temp_directory + _T("\n"));
-      tmpStr += errStr;
-      throw eTWInvalidTempDirectory(tmpStr);
-    }
-    else {
-      iFSServices::GetInstance()->SetTempDirName(temp_directory);
-    }
-
-
-  if (cf.Lookup(TSTRING(_T("GLOBALEMAIL")), str)) {
-
-    if (str.length() != 0) 
-      pModeInfo->mGlobalEmail = str;
-  }
-
-  //
-  // Set the report-viewing level if one has been specified, use
-  // default level otherwise.
-  //
-  if(cf.Lookup(TSTRING(_T("EMAILREPORTLEVEL")), str))
+    if (access(temp_directory.c_str(), F_OK) != 0)
     {
-      if (_tcsicmp(str.c_str(), _T("0")) == 0)
-        pModeInfo->mEmailReportLevel = cTextReportViewer::SINGLE_LINE;
-      else if (_tcsicmp(str.c_str(), _T("1")) == 0)
-        pModeInfo->mEmailReportLevel = cTextReportViewer::PARSEABLE;
-      else if (_tcsicmp(str.c_str(), _T("2")) == 0)
-        pModeInfo->mEmailReportLevel = cTextReportViewer::SUMMARY_ONLY;
-      else if (_tcsicmp(str.c_str(), _T("3")) == 0)
-        pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
-      else if (_tcsicmp(str.c_str(), _T("4")) == 0)
-        pModeInfo->mEmailReportLevel = cTextReportViewer::FULL_REPORT;
-      else
+        TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
+        TSTRING tmpStr = _T("Directory: ");
+        tmpStr += (temp_directory + _T("\n"));
+        tmpStr += errStr;
+        throw eTWInvalidTempDirectory(tmpStr);
+    }
+    else
+    {
+        iFSServices::GetInstance()->SetTempDirName(temp_directory);
+    }
+
+
+    if (cf.Lookup(TSTRING(_T("GLOBALEMAIL")), str))
+    {
+        if (str.length() != 0)
+            pModeInfo->mGlobalEmail = str;
+    }
+
+    //
+    // Set the report-viewing level if one has been specified, use
+    // default level otherwise.
+    //
+    if(cf.Lookup(TSTRING(_T("EMAILREPORTLEVEL")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("0")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::SINGLE_LINE;
+        else if (_tcsicmp(str.c_str(), _T("1")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::PARSEABLE;
+        else if (_tcsicmp(str.c_str(), _T("2")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::SUMMARY_ONLY;
+        else if (_tcsicmp(str.c_str(), _T("3")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
+        else if (_tcsicmp(str.c_str(), _T("4")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::FULL_REPORT;
+        else
         {
           // They specified an illegal level, error.
           TSTRING errStr = _T("Invalid Level: ");
@@ -350,24 +366,25 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
           throw eTWInvalidReportLevelCfg( errStr );
         }
     }
-  else
-    // no level was specified in the configuration file, use default.
-    pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
-
-
-  // Decide what mail method should be used to email reports
-  if(cf.Lookup(TSTRING(_T("MAILMETHOD")), str))
+    else
     {
-      if (_tcsicmp(str.c_str(), _T("SENDMAIL")) == 0)
-        pModeInfo->mMailMethod = cMailMessage::MAIL_BY_PIPE;
-      else if( _tcsicmp( str.c_str(), _T("SMTP") ) == 0 )
-        pModeInfo->mMailMethod = cMailMessage::MAIL_BY_SMTP;
-      else                
-        pModeInfo->mMailMethod = cMailMessage::INVALID_METHOD;
+        // no level was specified in the configuration file, use default.
+        pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
     }
-  else
+
+    // Decide what mail method should be used to email reports
+    if(cf.Lookup(TSTRING(_T("MAILMETHOD")), str))
     {
-      pModeInfo->mMailMethod = cMailMessage::NO_METHOD;
+        if (_tcsicmp(str.c_str(), _T("SENDMAIL")) == 0)
+            pModeInfo->mMailMethod = cMailMessage::MAIL_BY_PIPE;
+        else if( _tcsicmp( str.c_str(), _T("SMTP") ) == 0 )
+            pModeInfo->mMailMethod = cMailMessage::MAIL_BY_SMTP;
+        else                
+            pModeInfo->mMailMethod = cMailMessage::INVALID_METHOD;
+    }
+    else
+    {
+        pModeInfo->mMailMethod = cMailMessage::NO_METHOD;
     }
 
 #if !SUPPORTS_NETWORKING
@@ -375,60 +392,76 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
         throw eMailSMTPNotSupported();
 #endif
     
-  // Get the SMTP server
-  if(cf.Lookup(TSTRING(_T("SMTPHOST")), str))
-    pModeInfo->mSmtpHost = str;
-  else
-    pModeInfo->mSmtpHost = _T("127.0.0.1"); // this is the default
-
-  // Get the SMTP port number
-  if(cf.Lookup(TSTRING(_T("SMTPPORT")), str))
+    // Get the SMTP server
+    if(cf.Lookup(TSTRING(_T("SMTPHOST")), str))
     {
-      int i = _ttoi( str.c_str() );
-      if( i < 0 || i > SHRT_MAX )
+        pModeInfo->mSmtpHost = str;
+    }
+    else
+    {
+        pModeInfo->mSmtpHost = _T("127.0.0.1"); // this is the default
+    }
+
+    // Get the SMTP port number
+    if(cf.Lookup(TSTRING(_T("SMTPPORT")), str))
+    {
+        int i = _ttoi( str.c_str() );
+        if( i < 0 || i > SHRT_MAX )
         throw eTWInvalidPortNumber( str );
-      pModeInfo->mSmtpPort = static_cast<unsigned short>( i );
+        pModeInfo->mSmtpPort = static_cast<unsigned short>( i );
     }
-  else
-    pModeInfo->mSmtpPort = 25; // this is the default
-
-  // Get the mail program to use if we're piping our email
-  if(cf.Lookup(TSTRING(_T("MAILPROGRAM")), str))
-    pModeInfo->mMailProgram = str;
-  else
-    pModeInfo->mMailProgram.erase(); // MAILPROGRAM is not required to be specified
-
-  // Get the mail program to use if we're piping our email
-  if(cf.Lookup(TSTRING(_T("MAILNOVIOLATIONS")), str))
+    else
     {
-      if (_tcsicmp(str.c_str(), _T("true")) == 0)
-        pModeInfo->mMailNoViolations = true;
-      else
-        pModeInfo->mMailNoViolations = false;
+        pModeInfo->mSmtpPort = 25; // this is the default
     }
-  else
-    pModeInfo->mMailNoViolations = true; // MAILPROGRAM is not required to be specified
 
-  if(cf.Lookup(TSTRING(_T("MAILFROMADDRESS")), str))
-    pModeInfo->mMailFrom = str;
+    // Get the mail program to use if we're piping our email
+    if(cf.Lookup(TSTRING(_T("MAILPROGRAM")), str))
+    {
+        pModeInfo->mMailProgram = str;
+    }
+    else
+    {
+        pModeInfo->mMailProgram.erase(); // MAILPROGRAM is not required to be specified
+    }
+
+    // Get the mail program to use if we're piping our email
+    if(cf.Lookup(TSTRING(_T("MAILNOVIOLATIONS")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            pModeInfo->mMailNoViolations = true;
+        else
+            pModeInfo->mMailNoViolations = false;
+    }
+    else
+    {
+        pModeInfo->mMailNoViolations = true; // MAILPROGRAM is not required to be specified
+    }
+
+    if(cf.Lookup(TSTRING(_T("MAILFROMADDRESS")), str))
+    {
+        pModeInfo->mMailFrom = str;
+    }
 
   // SYSLOG reporting
-  if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
+    if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
     {
 #if SUPPORTS_SYSLOG
-      if (_tcsicmp(str.c_str(), _T("true")) == 0)
-        pModeInfo->mbLogToSyslog = true;
-      else
-        pModeInfo->mbLogToSyslog = false;
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            pModeInfo->mbLogToSyslog = true;
+        else
+            pModeInfo->mbLogToSyslog = false;
 #else
         throw eTWSyslogNotSupported();
 #endif
     }
-  else
-    pModeInfo->mbLogToSyslog = false;
- 
+    else
+    {
+        pModeInfo->mbLogToSyslog = false;
+    }
+
   // Crossing file systems
-  if(cf.Lookup(TSTRING(_T("CROSSFILESYSTEMS")), str))
+    if(cf.Lookup(TSTRING(_T("CROSSFILESYSTEMS")), str))
     {
       if (_tcsicmp(str.c_str(), _T("true")) == 0)
         pModeInfo->mbCrossFileSystems = true;
@@ -457,20 +490,20 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
             iFSServices::GetInstance()->SetResolveNames(false);
     }
     
-  // 
-  // turn all of the file names into full paths (they're relative to the exe dir)
-  // 
-  TSTRING fullPath;
-  if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mPolFile, cSystemInfo::GetExeDir() ))
-    pModeInfo->mPolFile = fullPath;
-  if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mDbFile, cSystemInfo::GetExeDir() ))
-    pModeInfo->mDbFile = fullPath;
-  if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mSiteKeyFile, cSystemInfo::GetExeDir() ))
-    pModeInfo->mSiteKeyFile = fullPath;
-  if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mLocalKeyFile, cSystemInfo::GetExeDir() ))
-    pModeInfo->mLocalKeyFile = fullPath;
-  if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mReportFile, cSystemInfo::GetExeDir() ))
-    pModeInfo->mReportFile = fullPath;
+    //
+    // turn all of the file names into full paths (they're relative to the exe dir)
+    // 
+    TSTRING fullPath;
+    if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mPolFile, cSystemInfo::GetExeDir() ))
+        pModeInfo->mPolFile = fullPath;
+    if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mDbFile, cSystemInfo::GetExeDir() ))
+        pModeInfo->mDbFile = fullPath;
+    if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mSiteKeyFile, cSystemInfo::GetExeDir() ))
+        pModeInfo->mSiteKeyFile = fullPath;
+    if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mLocalKeyFile, cSystemInfo::GetExeDir() ))
+        pModeInfo->mLocalKeyFile = fullPath;
+    if(iFSServices::GetInstance()->FullPath( fullPath, pModeInfo->mReportFile, cSystemInfo::GetExeDir() ))
+        pModeInfo->mReportFile = fullPath;
 }
 
 ///////////////////////////////////////////////////////////////////////////////

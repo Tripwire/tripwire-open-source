@@ -33,25 +33,36 @@
 // genreswitcher_t.h
 //
 
+#include <typeinfo>
+
 #include "fco/stdfco.h"
 #include "fco/genreswitcher.h"
 #include "twtest/test.h"
 #include "fs/fs.h"
 
-void TestGenre()
+#include "fs/fsfactory.h"
+
+void TestGenreSwitcher()
 {
-    cDebug d("TestGenre");
+    cDebug d("TestGenreSwitcher");
     d.TraceDebug("Entering...\n");
 
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(cFS::GenreID())) == cFS::GenreID());
-    
-    //TODO: GenreToString() dies w/ GENRE_INVALID. Figure out if this should be changed.
-    //
-    //TEST(cGenreSwitcher::GetInstance()->StringToGenre(cGenreSwitcher::GetInstance()->GenreToString(cGenre::GENRE_INVALID)) == cGenre::GENRE_INVALID);
-    
+    cGenreSwitcher* genreSwitcher = cGenreSwitcher::GetInstance();
 
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(_T("fs")) == cFS::GenreID());
-    TEST(cGenreSwitcher::GetInstance()->StringToGenre(_T("none of the above")) == cGenre::GENRE_INVALID);
+    TEST(genreSwitcher->CurrentGenre() == cFS::GenreID());
+
+    // can't switch to invalid genre
+    //genreSwitcher->SelectGenre(cGenre::GENRE_INVALID);
+    //TEST(genreSwitcher->CurrentGenre() == cGenre::GENRE_INVALID);
+
+    genreSwitcher->SelectGenre(cFS::GenreID());
+    TEST(genreSwitcher->CurrentGenre() == cFS::GenreID());
+    TEST(typeid(*iTWFactory::GetInstance()) == typeid(cFSFactory));
 
     d.TraceDebug("All tests passed.\n");
+}
+
+void RegisterSuite_GenreSwitcher()
+{
+    RegisterTest("GenreSwitcher", "Basic", TestGenreSwitcher);
 }

@@ -28,7 +28,7 @@ fi
 ## The usage message.
 ##-------------------------------------------------------
 
-USAGE="install.sh [<configfile>] [-n] [-f] [-s <sitepassphrase>] [-l <localpassphrase>]"
+USAGE="install.sh [<configfile>] [-n] [-f] [-s <sitepassphrase>] [-l <localpassphrase>] [-d <installdir>]"
 
 ##-------------------------------------------------------
 ## Figure out how to do an echo without newline.
@@ -104,8 +104,10 @@ fi
 ## Miscellaneous configuration parameters.
 ##-------------------------------------------------------
 
-# prefix
-prefix="${prefix:=/usr}"
+# set a few location variables if caller didn't pass them to us
+prefix="${prefix:=/usr/local}"
+sysconfdir="${sysconfdir:=/usr/local/etc}"
+path_to_vi="${path_to_vi:=/usr/bin/vi}"
 
 # License File name
 TWLICENSEFILE="COPYING"
@@ -178,6 +180,13 @@ while [ "x$1" != "x" ] ; do
 		exit 1 ;;
 	    *) TW_LOCAL_PASS="$2"; shift ;;
 	    esac ;;
+        -d) case "$2" in
+            "" | -*)
+                echo "Error: missing install dir with -d option." 1>&2
+                echo "$USAGE"
+                exit 1 ;;
+            *) prefix="$2"; sysconfdir="$2/bin"; shift ;;
+            esac ;;
 	-*) echo "Error: unknown argument $1" 1>&2
 	    echo "$USAGE"
 	    exit 1 ;;

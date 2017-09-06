@@ -319,7 +319,7 @@ twprint_HEADERS = \
   resource.h stdtwprint.h twprint.h twprintcmdline.h \
   twprinterrors.h twprintstrings.h
 
-CLEANFILES = ../../bin/twprint
+CLEANFILES = ../../bin/twprint *.gcno *.gcda
 all: all-am
 
 .SUFFIXES:
