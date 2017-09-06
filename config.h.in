@@ -6,6 +6,9 @@
 /* Compile with debug code */
 #undef DEBUG
 
+/* Enable use of /dev/urandom */
+#undef ENABLE_DEV_URANDOM
+
 /* this is the prefix for STL exception functions */
 #undef EXCEPTION_NAMESPACE
 

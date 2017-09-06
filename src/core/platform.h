@@ -320,6 +320,8 @@
 // which uses this syntax for UNC paths.  So we'll allow leading double slashes there, but
 // continue removing them on all other platforms
 
+#define USE_DEV_URANDOM (HAVE_DEV_URANDOM && ENABLE_DEV_URANDOM)
+
 //=============================================================================
 // Miscellaneous
 //

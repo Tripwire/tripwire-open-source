@@ -91,7 +91,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
 // to have any need for that behavior, which begs the question of why
 // this test exists in the first place.
 //  -bcox
-#if (!IS_HPUX)
+#if (!IS_HPUX && !IS_SOLARIS) //Turns out Solaris SPARC is unhappy with this test too, btw
     TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
     // access a double in the byte array to see if it is aligned.  if it isn't and the CPU

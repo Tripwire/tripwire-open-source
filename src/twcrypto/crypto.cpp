@@ -1241,7 +1241,7 @@ cHashedKey192::~cHashedKey192()
 
 /////////////////////////////////////////////////////////
 
-#if HAVE_DEV_URANDOM
+#if USE_DEV_URANDOM
 static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
 {
     static int rng_device = -1;
@@ -1267,7 +1267,7 @@ static bool gRandomizeBytesSeeded = false;
 
 void RandomizeBytes(int8* destbuf, int len)
 {
-#if HAVE_DEV_URANDOM
+#if USE_DEV_URANDOM
     if (randomize_by_device("/dev/urandom", destbuf, len))
         return;
 

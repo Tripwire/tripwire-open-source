@@ -752,6 +752,7 @@ enable_static
 enable_debug
 enable_coverage
 enable_profiling
+enable_urandom
 enable_dependency_tracking
 enable_commoncrypto
 enable_iconv
@@ -1399,6 +1400,7 @@ Optional Features:
   --enable-debug          compile with debuging enabled
   --enable-coverage       enable code coverage
   --enable-profiling      enable profiling
+  --enable-urandom        use /dev/urandom
   --enable-dependency-tracking
                           do not reject slow dependency extractors
   --disable-dependency-tracking
@@ -3523,6 +3525,18 @@ then
    CFLAGS="${CFLAGS} -pg"
    CXXFLAGS="${CXXFLAGS} -pg"
    LDFLAGS="${LDFLAGS} -pg"
+fi
+
+# Check whether --enable-urandom was given.
+if test "${enable_urandom+set}" = set; then :
+  enableval=$enable_urandom;
+fi
+
+if test "x$enable_urandom" = xyes
+then
+
+$as_echo "#define ENABLE_DEV_URANDOM 1" >>confdefs.h
+
 fi
 
 ac_ext=c

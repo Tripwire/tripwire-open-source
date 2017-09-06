@@ -60,6 +60,12 @@ then
    LDFLAGS="${LDFLAGS} -pg"
 fi
 
+AC_ARG_ENABLE(urandom,  [  --enable-urandom        use /dev/urandom])
+if test "x$enable_urandom" = xyes
+then
+   AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
+fi
+
 dnl ###################
 dnl Checks for programs
 dnl ###################
