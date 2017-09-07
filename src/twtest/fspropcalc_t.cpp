@@ -146,9 +146,10 @@ void TestGetSymLinkStr()
     std::string link = TwTestPath("linky");
 
     int fd = creat(file.c_str(), 0777);
+    TEST(fd >= 0);
     close(fd);
 
-    symlink(file.c_str(), link.c_str());
+    TEST(0 == symlink(file.c_str(), link.c_str()));
 
     cMemoryArchive arch(1024*1024);
     TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
