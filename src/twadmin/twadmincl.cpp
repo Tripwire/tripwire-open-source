@@ -34,8 +34,6 @@
 //
 
 #include "stdtwadmin.h"
-#include <unistd.h>
-
 #include "twadmincl.h"
 #include "twadminstrings.h"
 #include "keygeneration.h"
@@ -63,8 +61,10 @@
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
 
+#include <unistd.h>
+
 //Provide a swab() impl. from glibc, for platforms that don't have one
-#if NEEDS_SWAB_IMPL
+#if !HAVE_SWAB || NEEDS_SWAB_IMPL
 void swab (const void *bfrom, void *bto, ssize_t n)
 {
   const char *from = (const char *) bfrom;

@@ -5569,7 +5569,20 @@ fi
 
 done
 
-for ac_header in unistd.h syslog.h langinfo.h sys/statfs.h sys/select.h
+for ac_header in unistd.h sys/unistd.h
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+for ac_header in syslog.h langinfo.h sys/statfs.h sys/select.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_c_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -6179,6 +6192,17 @@ if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
 #define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
 _ACEOF
  break
+fi
+done
+
+for ac_func in swab
+do :
+  ac_fn_c_check_func "$LINENO" "swab" "ac_cv_func_swab"
+if test "x$ac_cv_func_swab" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SWAB 1
+_ACEOF
+
 fi
 done
 

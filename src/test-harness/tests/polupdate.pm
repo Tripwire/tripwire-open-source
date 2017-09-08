@@ -56,31 +56,31 @@ POLICY_END
 ######################################################################
 # CreateFile -- create a file with the specified contents
 #   
-# input:  path     -- path to the file; relative to $root
+# input:  path     -- *absolute* path to the file
 #         contents -- string to put in the file
 #
 sub CreateFile
 {
 	my ($path, $contents) = @_;
 	
-	system( "echo $contents > $root/$path" );
+	system( "echo $contents > $path" );
 
-	$? && die "Create file failed for $root/$path\n";
+	$? && die "Create file failed for $path\n";
 }
 
 ######################################################################
-# RemoveFile -- removes the named file
+# RemoveFile -- removes the named file by absolute path
 #   
 sub RemoveFile
 {
 	my ($path) = @_;
 	
-	if( -e "$root/$path" )
+	if( -e $path )
 	{
-		system( "rm -f $root/$path" );
+		system( "rm -f $path" );
 	}
 	
-	$? && die "Remove file failed for $root/$path\n";
+	$? && die "Remove file failed for $path\n";
 }
 
 

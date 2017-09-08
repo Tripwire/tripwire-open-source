@@ -99,7 +99,8 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #endif
 ]])
 AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
-AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h sys/select.h)
+AC_CHECK_HEADERS(unistd.h sys/unistd.h)
+AC_CHECK_HEADERS(syslog.h langinfo.h sys/statfs.h sys/select.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
 AC_CHECK_HEADERS(sys/utsname.h memory.h)
@@ -143,6 +144,7 @@ dnl Checks for standard functions
 dnl #############################
 AC_CHECK_FUNCS(strftime gethostname gethostid)
 AC_CHECK_FUNCS(mkstemp mktemp, break)
+AC_CHECK_FUNCS(swab)
 
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
