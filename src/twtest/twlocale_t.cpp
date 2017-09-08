@@ -89,6 +89,7 @@ void TestAtoi()
 
 void TestItoa()
 {
+#if !IS_CYGWIN
     //
     // can't do ASSERT( str == _T("123456") )
     // because locale may turn it into "123,465" or whatever
@@ -120,6 +121,9 @@ void TestItoa()
     std::locale::global( std::locale("") );
     cTWLocale::FormatNumber( n, str );
     TEST( str == "123,456" );
+#else
+    skip("Test disabled because Cygwin doesn't like the 'C' locale for some reason");
+#endif
 }
 
 /* We don't do atoi stuff in cTWLocale anymore, so no roundtrip
