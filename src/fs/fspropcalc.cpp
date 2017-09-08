@@ -43,7 +43,7 @@
 #include "fsobject.h"
 
 #include <unistd.h>
-
+#include <errno.h>
 
 cFSPropCalc::cFSPropCalc() :
     mCollAction(iFCOPropCalc::PROP_LEAVE), mCalcFlags(0), mpErrorBucket(0)
