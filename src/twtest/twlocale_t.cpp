@@ -55,21 +55,7 @@ void TestHex();
         TEST( false ); \
     } catch( error& ) {}
 
-void TestTWLocale()
-{
-    skip("TWLocale tests are ifdef'd out, need to revisit them");
-    
-#ifdef DOESNTWORK
-    TestHex();
-    TestAtoi();
-    TestItoa();    
-    TestFlags();
-    TestRoundtrip();
-#endif//NOTDONE
-}
-
-#ifdef DOESNTWORK
-
+/* We don't do atoi stuff in cTWLocale anymore
 void TestAtoi()
 {
     //
@@ -81,24 +67,25 @@ void TestAtoi()
     //
     // Try formatting with our default locale
     //
-    cTWLocale::InitGlobalLocale();
-    n = cTWLocale::FormatNumber( str );
+    TWLocale::InitGlobalLocale();
+    n = cTWLocale::FormatNumberClassic( str );
     TEST( n == 123456 );
 
     //    
     // Try formatting with "" locale
     //
     std::locale::global( std::locale("") );
-    n = cTWLocale::FormatNumber( str );
+    n = cTWLocale::FormatNumberClassic( str );
     TEST( n == 123456 );
     
     //    
     // Try formatting with "C" locale
     //
     std::locale::global( std::locale("") );
-    n = cTWLocale::FormatNumber( str );
+    n = cTWLocale::FormatNumberClassic( str );
     TEST( n == 123456 );
 }
+*/
 
 void TestItoa()
 {
@@ -118,23 +105,24 @@ void TestItoa()
     //
     cTWLocale::InitGlobalLocale();
     cTWLocale::FormatNumber( n, str );
-    TCOUT << str << std::endl;
+    TEST( str == "123456" );
 
     //    
     // Try formatting with "" locale
     //
     std::locale::global( std::locale("") );
     cTWLocale::FormatNumber( n, str );
-    TCOUT << str << std::endl;
+    TEST( str == "123,456" );
     
     //    
     // Try formatting with "C" locale
     //
     std::locale::global( std::locale("") );
     cTWLocale::FormatNumber( n, str );
-    TCOUT << str << std::endl;
+    TEST( str == "123,456" );
 }
 
+/* We don't do atoi stuff in cTWLocale anymore, so no roundtrip
 void TestRoundtrip()
 {
     //
@@ -147,10 +135,10 @@ void TestRoundtrip()
     // 
     TSTRING strIn  = _T("123456");
     TSTRING strOut;
-    strOut = cTWLocale::FormatNumber( cTWLocale::FormatNumber( strIn ), strOut );
+    strOut = cTWLocale::FormatNumber( cTWLocale::FormatNumberClassic( strIn ), strOut );
     // don't know if string will be the same due to possible changes in formatting from locale
     // ASSERT( strOut == strIn ); <---- can't do this ^^^
-    TEST( 123456 == cTWLocale::FormatNumber( strOut ) );
+    TEST( 123456 == cTWLocale::FormatNumberClassic( strOut ) );
 
     
     //
@@ -158,13 +146,15 @@ void TestRoundtrip()
     // 
     int32 nIn  = 654321;
     int32 nOut;
-    nOut = cTWLocale::FormatNumber( cTWLocale::FormatNumber( nIn, strIn ) );
+    nOut = cTWLocale::FormatNumberClassic( cTWLocale::FormatNumber( nIn, strIn ) );
     TEST( nOut == nIn );
 }
-
+*/
 
 void TestFlags()
 {
+    skip("Modernize & re-enable this");
+#if 0
     //
     // init
     //
@@ -207,29 +197,35 @@ void TestFlags()
     // try bad oct
     //
     ASSERT_THAT_IT_THROWS( cTWLocale::FormatNumber( _T("99"), std::ios_base::oct ), eError );
+#endif
 }
 
+
+/*
+void doTestHex(const uint32 value, const std::string& expected, const std::string& expected2 = "")
+{
+    TSTRING str = cTWLocale::FormatNumberAsHex( value );
+    TCERR << "STR = " << str << " | Expected = " << expected << " | Expected2 = " << expected2 << std::endl;
+    TEST( str == expected || (!expected2.empty() && str == expected2) );
+}
 
 void TestHex()
 {
     TSTRING str;
 
-    str = cTWLocale::FormatNumberAsHex( 0x1234 );
-    TEST( str == _T("1234") );
-    
-    str = cTWLocale::FormatNumberAsHex( 16 );
-    TEST( str == _T("10") );
-
-    str = cTWLocale::FormatNumberAsHex( 0x12344321 );
-    TEST( str == _T("12344321") );
-    
-    str = cTWLocale::FormatNumberAsHex( 0xFFFFFFFF );
-    TEST( str == _T("FFFFFFFF") || str == _T("ffffffff") );
+    doTestHex( 0x1234, _T("1234") );
+    doTestHex( 16, _T("10") );
+    doTestHex( 0x12344321, _T("12344321") );
+    doTestHex( 0xFFFFFFFF, _T("FFFFFFFF"),  _T("ffffffff"));
 }
-#endif//DOESNTWORK
+*/
 
 void RegisterSuite_TWLocale()
 {
-    RegisterTest("TWLocale", "Basic", TestTWLocale);
+//    RegisterTest("TWLocale", "Hex", TestHex);
+//    RegisterTest("TWLocale", "Atoi", TestAtoi);
+    RegisterTest("TWLocale", "Itoa", TestItoa);
+    RegisterTest("TWLocale", "Flags", TestFlags);
+//    RegisterTest("TWLocale", "Roundtrip", TestRoundtrip);
 }
 

@@ -149,6 +149,7 @@ void TestGetSymLinkStr()
     TEST(fd >= 0);
     close(fd);
 
+    unlink(link.c_str()); 
     TEST(0 == symlink(file.c_str(), link.c_str()));
 
     cMemoryArchive arch(1024*1024);

@@ -79,12 +79,13 @@ public:
     static TSTRING& FormatNumber( uint64 ui, TSTRING& strBuf );
     static TSTRING& FormatNumber( double  d, TSTRING& strBuf );
         // returns the locale-specific representation of the given cardinal number
-    
+/*
     static TSTRING  FormatNumberClassic( int32 i );
     static int32    FormatNumberClassic( const TSTRING& s );
         // returns the C-locale representation of the given cardinal number
-    
-    static TSTRING  FormatNumberAsHex( int32 x );
+*/
+//      disabled this since nobody's using it
+//    static TSTRING  FormatNumberAsHex( int32 x );
         // locale-independant
 
     static TSTRING& FormatTime( int64 t, TSTRING& strBuf );

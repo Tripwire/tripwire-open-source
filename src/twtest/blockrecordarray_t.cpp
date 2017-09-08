@@ -37,6 +37,7 @@
 #include "core/debug.h"
 #include "core/error.h"
 
+//TODO: This test needs more comprehensive validity checks
 void TestBlockRecordArray()
 {
     cDebug d( "TestBlockRecordArray" );
@@ -57,6 +58,12 @@ void TestBlockRecordArray()
     // 
     cBlockRecordArray ra1( &bf, 0 );    ra1.InitNewBlock();
     cBlockRecordArray ra2( &bf, 1 );    ra2.InitNewBlock();
+
+    TEST(ra1.IsClassValid());
+    TEST(ra2.IsClassValid());
+
+    TEST(ra1.Initialized());
+
     //
     // now, start adding and removing things from the arrays...
     //
@@ -65,9 +72,13 @@ void TestBlockRecordArray()
     static const char data3[] = "Here is d a t a 3!";
     static const char data4[] = "Three cheers for data 4!";
     ra1.AddItem( (int8*)data1, sizeof(data1), 1 );
+//    TEST(ra1.IsItemValid(1));
     ra1.AddItem( (int8*)data2, sizeof(data2), 2 );
+//    TEST(ra1.IsItemValid(2));
     ra1.AddItem( (int8*)data3, sizeof(data3), 3 );
+//    TEST(ra1.IsItemValid(3));
     ra1.AddItem( (int8*)data4, sizeof(data4), 4 );
+//    TEST(ra1.IsItemValid(4));
     #ifdef _BLOCKFILE_DEBUG
     ra1.TraceContents();
     #endif
@@ -77,6 +88,7 @@ void TestBlockRecordArray()
 
     // delete item 2...
     ra1.DeleteItem( 1 );
+    TEST(!ra1.IsItemValid(1));
     #ifdef _BLOCKFILE_DEBUG
     ra1.TraceContents();
     #endif
@@ -84,6 +96,7 @@ void TestBlockRecordArray()
     // add a new item...
     static const char data5[] = "fffiiivvveee!";
     ra1.AddItem( (int8*)data5, sizeof(data5), 5 );
+//    TEST(ra1.IsItemValid(5));
     #ifdef _BLOCKFILE_DEBUG
     ra1.TraceContents();
     #endif
@@ -91,10 +104,12 @@ void TestBlockRecordArray()
     // delete the second to last and last items to see if we clean up properly...
     // note that there are four things here at this point.
     ra1.DeleteItem( 2 );
+    TEST(!ra1.IsItemValid(2));
     #ifdef _BLOCKFILE_DEBUG
     ra1.TraceContents();
     #endif
     ra1.DeleteItem( 3 );
+    TEST(!ra1.IsItemValid(3));
     #ifdef _BLOCKFILE_DEBUG
     ra1.TraceContents();
     #endif
@@ -114,6 +129,8 @@ void TestBlockRecordArray()
     ra1.TraceContents();
     #endif
 
+    TEST(ra1.IsClassValid());
+
     // Now, we will close the file, reopen it and see if we can read it ok.
     //
     bf.Close();
@@ -123,6 +140,9 @@ void TestBlockRecordArray()
     #ifdef _BLOCKFILE_DEBUG
     ra3.TraceContents();
     #endif
+
+    TEST(ra3.Initialized());
+    TEST(ra3.IsClassValid());
 }
 
 void RegisterSuite_BlockRecordArray()

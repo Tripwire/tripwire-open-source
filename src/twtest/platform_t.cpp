@@ -69,16 +69,6 @@ class AlignMe
 };
 
 /////////////////////////////////////////////////////////
-// MAIN TEST FUNCTION
-/////////////////////////////////////////////////////////
-
-void TestPlatform()
-{
-    TestAlignment();
-    TestSizes();
-}
-
-/////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL CLASSES IMPLEMENTATIONS
 /////////////////////////////////////////////////////////
 
@@ -206,22 +196,25 @@ void TestAlignment()
     TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up.
 }
 
+// Not sure this is a super valuable test, since it just verifies that builtin integer types
+// work the way we think they do.
 void TestSizes()
 {
     cDebug d("TestSizes");
     d.TraceError("Fix this!\n");
-    skip("TODO: TestSizes needs work");
-/*
-    TEST( CanBeRepresentedAs( char(), char() ) );
-    TEST( CanBeRepresentedAs( char(), unsigned char() ) );
-    TEST( CanBeRepresentedAs( unsigned char(), char() ) );
-    TEST( CanBeRepresentedAs( unsigned char(), unsigned char() ) );
-    TEST( CanBeRepresentedAs( signed char(), char() ) );
-    TEST( CanBeRepresentedAs( char(), signed char() ) );
-    TEST( CanBeRepresentedAs( signed char(), signed char() ) );
-    TEST( CanBeRepresentedAs( signed char(), unsigned char() ) );
-    TEST( CanBeRepresentedAs( char(), signed char() ) );
- */
+
+    TEST( CanBeRepresentedAs( int8(), int8() ) );
+    TEST( ! CanBeRepresentedAs( int8(), uint8() ) );
+    TEST( ! CanBeRepresentedAs( uint8(), int8() ) );
+    TEST( CanBeRepresentedAs( uint8(), uint8() ) );
+
+    TEST( CanBeRepresentedAs( int8(),  int16() ) );
+    TEST( CanBeRepresentedAs( int16(), int32() ) );
+    TEST( CanBeRepresentedAs( int32(), int64() ) );
+
+    TEST( CanBeRepresentedAs( uint8(),  uint16() ) );
+    TEST( CanBeRepresentedAs( uint16(), uint32() ) );
+    TEST( CanBeRepresentedAs( uint32(), uint64() ) );
 }
  
 /////////////////////////////////////////////////////////
