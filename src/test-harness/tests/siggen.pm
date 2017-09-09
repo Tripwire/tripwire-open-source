@@ -31,7 +31,7 @@ sub run() {
     printf("%-30s", "-- $description");
 
 
-    twtools::logStatus(`ps -ef > $twtools::twrootdir/hashme.txt`);
+    twtools::logStatus(`ps > $twtools::twrootdir/hashme.txt`);
     if ( $? != 0 ) {
         twtools::logStatus("test file creation failed\n");
         $twpassed = 0;
