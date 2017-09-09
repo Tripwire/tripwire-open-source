@@ -89,41 +89,44 @@ void TestAtoi()
 
 void TestItoa()
 {
-#if !IS_CYGWIN
-    //
-    // can't do ASSERT( str == _T("123456") )
-    // because locale may turn it into "123,465" or whatever
-    //
+    try
+    {
+        //
+        // can't do ASSERT( str == _T("123456") )
+        // because locale may turn it into "123,465" or whatever
+        //
 
-    //
-    // setup
-    //
-    int32 n = 123456;
-    TSTRING str;
+        //
+        // setup
+        //
+        int32 n = 123456;
+        TSTRING str;
 
-    //
-    // Try formatting with our default locale
-    //
-    cTWLocale::InitGlobalLocale();
-    cTWLocale::FormatNumber( n, str );
-    TEST( str == "123456" );
+        //
+        // Try formatting with our default locale
+        //
+        cTWLocale::InitGlobalLocale();
+        cTWLocale::FormatNumber( n, str );
+        TEST( str == "123456" );
 
-    //    
-    // Try formatting with "" locale
-    //
-    std::locale::global( std::locale("") );
-    cTWLocale::FormatNumber( n, str );
-    TEST( str == "123,456" );
+        //    
+        // Try formatting with "" locale
+        //
+        std::locale::global( std::locale("") );
+        cTWLocale::FormatNumber( n, str );
+        TEST( str == "123,456" );
     
-    //    
-    // Try formatting with "C" locale
-    //
-    std::locale::global( std::locale("") );
-    cTWLocale::FormatNumber( n, str );
-    TEST( str == "123,456" );
-#else
-    skip("Test disabled because Cygwin doesn't like the 'C' locale for some reason");
-#endif
+        //    
+        // Try formatting with "C" locale
+        //
+        std::locale::global( std::locale("") );
+        cTWLocale::FormatNumber( n, str );
+        TEST( str == "123,456" );
+    }
+    catch(const std::runtime_error& e)
+    {
+        skip("Skipping test due to configuration issue w/ 'C' locale");	
+    }
 }
 
 /* We don't do atoi stuff in cTWLocale anymore, so no roundtrip
