@@ -92,7 +92,7 @@ sub run() {
     twtools::logStatus("*** Beginning $description\n");
     printf("%-30s", "-- $description");
 
-    if ($^O eq "skyos" || $^O eq "haiku") {
+    if ($^O eq "skyos" || $^O eq "haiku" || $^O eq "syllable") {
         ++$twtools::twskippedtests;
         print "SKIPPED; OS doesn't support hardlinks.\n";
         return;
