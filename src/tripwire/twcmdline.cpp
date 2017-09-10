@@ -446,14 +446,19 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
   // SYSLOG reporting
     if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
     {
-#if SUPPORTS_SYSLOG
         if (_tcsicmp(str.c_str(), _T("true")) == 0)
+        {
+#if SUPPORTS_SYSLOG
             pModeInfo->mbLogToSyslog = true;
+#else
+            eTWSyslogNotSupported e;
+            e.SetFatality(false);
+            cErrorReporter::PrintErrorMsg(e);
+            pModeInfo->mbLogToSyslog = false;
+#endif
+        }
         else
             pModeInfo->mbLogToSyslog = false;
-#else
-        throw eTWSyslogNotSupported();
-#endif
     }
     else
     {

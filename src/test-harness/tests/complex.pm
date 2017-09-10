@@ -119,8 +119,8 @@ EOT
 #
 sub initialize() {
     
-  my $twstr = getPolicyFileString();
-  twtools::GeneratePolicyFile($twstr);
+    my $twstr = getPolicyFileString();
+    twtools::GeneratePolicyFile($twstr);
 
 }
 
@@ -131,30 +131,36 @@ sub initialize() {
 #
 sub run() {
 
-  my $twpassed = 1;
+    twtools::logStatus("*** Beginning $description\n");
+    printf("%-30s", "-- $description");
 
-  twtools::logStatus("*** Beginning $description\n");
-  printf("%-30s", "-- $description");
+    if ($^O eq "skyos") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; TODO: SkyOS has fewer expected changes here; refactor so we can test for correct values\n";
+        return;
+    }
 
-  #########################################################
-  #
-  # Run the tests describe above in the %TESTS structure.
-  #
-  $twpassed = twtools::RunIntegrityTests(%TESTS);
+    my $twpassed = 1;
+
+    #########################################################
+    #
+    # Run the tests describe above in the %TESTS structure.
+    #
+    $twpassed = twtools::RunIntegrityTests(%TESTS);
 
 
-  #########################################################
-  #
-  # See if the tests all succeeded...
-  #
-  if ($twpassed) {
+    #########################################################
+    #
+    # See if the tests all succeeded...
+    #
+    if ($twpassed) {
       print "PASSED\n";
       ++$twtools::twpassedtests;
-  }
-  else {
+    }
+    else {
       ++$twtools::twfailedtests;
       print "*FAILED*\n";
-  }
+    }
 }
 
 

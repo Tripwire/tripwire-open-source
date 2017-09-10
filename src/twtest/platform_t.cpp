@@ -82,7 +82,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
 // this test exists in the first place.
 //  -bcox
 #if (!IS_HPUX && !IS_SOLARIS) //Turns out Solaris SPARC is unhappy with this test too, btw
-    TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
+    //TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
     // access a double in the byte array to see if it is aligned.  if it isn't and the CPU
     // can't handle it, you'll get a bus error
@@ -90,11 +90,11 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     // this should choke if the CPU can't 
     // handle misaligned memory access
     int32* pi = (int32*)&a[ALIGN_SIZE];
-    TCOUT << _T("Testing alignment of an int32...") << std::endl;
-    TCOUT << _T("Reading...") << std::endl;
+    //TCOUT << _T("Testing alignment of an int32...") << std::endl;
+    //TCOUT << _T("Reading...") << std::endl;
     int32 i = *pi; // access memory for read
-    TCOUT << _T("Read succeeded.") << std::endl;
-    TCOUT << _T("Writing...") << std::endl;
+    //TCOUT << _T("Read succeeded.") << std::endl;
+    //TCOUT << _T("Writing...") << std::endl;
     *pi = i; // access memory for write
     TCOUT << _T("Write succeeded.") << std::endl;
 
@@ -102,17 +102,17 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     // this should choke if the CPU can't 
     // handle misaligned memory access
     int64* pb = (int64*)&a[ALIGN_SIZE];
-    TCOUT << _T("Testing alignment of an int64...") << std::endl;
-    TCOUT << _T("Reading...") << std::endl;
+    //TCOUT << _T("Testing alignment of an int64...") << std::endl;
+    //TCOUT << _T("Reading...") << std::endl;
     int64 I = *pb; // access memory for read
-    TCOUT << _T("Read succeeded") << std::endl;
-    TCOUT << _T("Writing...") << std::endl;
+    //TCOUT << _T("Read succeeded") << std::endl;
+    //TCOUT << _T("Writing...") << std::endl;
     *pb = I; // access memory for write
-    TCOUT << _T("Write succeeded.") << std::endl;
+    //TCOUT << _T("Write succeeded.") << std::endl;
 
     
-    TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
-          << _T("=========================================\n");
+    /*TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
+          << _T("=========================================\n"); */
 
     TEST("Aligned"); // The actual test is not bus erroring up above; this just tells the framework we tested something.
 
@@ -131,8 +131,8 @@ void TestAlignment()
     // The last AlignMe to be successfully constructed 
     // - - - - - - - - - - - - - - - - - - - - - -  
 
-    TCOUT << _T("Testing for byte alignment\n")
-          << _T("=========================================\n");
+//    TCOUT << _T("Testing for byte alignment\n")
+//          << _T("=========================================\n");
 
     AlignMe<128> a128;
     AlignMe<64> a64;
@@ -156,10 +156,10 @@ void TestAlignment()
     a[0] = 0xAB;
 
     
-    TCOUT << _T("=========================================\n") 
+/*    TCOUT << _T("=========================================\n")
           << _T("About to test memory access off by 1 byte\n") 
           << _T("If you do not see a confirmation after this line, the test choked") 
-          << std::endl;
+          << std::endl; */
 
     // this should choke if the CPU can't 
     // handle misaligned memory access        
@@ -180,20 +180,20 @@ void TestAlignment()
     // this should be fine
     b[0] = 0xAB;
 
-    TCOUT << _T("=========================================\n") 
+/*    TCOUT << _T("=========================================\n")
           << _T("About to test memory access off by ") << BYTE_ALIGN 
           << _T(" ") << ( BYTE_ALIGN == 1 ? _T("byte") : _T("bytes") ) << std::endl
           << _T("If you do not see a confirmation after this line, the test choked") 
           << std::endl;
-
+*/
     // this should choke if the CPU can't 
     // handle misaligned memory access        
     pi = (int32*)&b[BYTE_ALIGN];
     *pi = *pi; // aligned (hopefully) access (read and write)
     
-    TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;    
+/*    TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;
     TCOUT << _T("=========================================\n");
-    TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up.
+    TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up. */
 }
 
 // Not sure this is a super valuable test, since it just verifies that builtin integer types

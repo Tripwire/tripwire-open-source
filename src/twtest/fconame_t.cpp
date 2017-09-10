@@ -43,7 +43,7 @@
 #include "core/archive.h"
 #include "fco/genreswitcher.h"
 
-void TestFCOName()
+void TestFCOName1()
 {
     // test the relationship operator...
     cFCOName above      (_T("/etc"));
@@ -82,7 +82,10 @@ void TestFCOName()
     TEST(_tcscmp(cat.Pop(),_T("cat")) == 0);
     TEST(dog.AsString().compare(cat.AsString()) == 0);
     TEST(dog.GetRelationship(cat) == cFCOName::REL_EQUAL);
+}
 
+void TestFCOName2()
+{
     cFCOName nullName;
     TEST(*nullName.AsString().c_str() == 0);
 
@@ -141,5 +144,6 @@ void TestFCOName()
 
 void RegisterSuite_FCOName()
 {
-    RegisterTest("FCOName", "Basic", TestFCOName);
+    RegisterTest("FCOName", "Basic1", TestFCOName1);
+    RegisterTest("FCOName", "Basic2", TestFCOName2);
 }

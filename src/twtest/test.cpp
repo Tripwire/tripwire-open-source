@@ -479,6 +479,7 @@ int _tmain(int argc, TCHAR** argv)
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
 
     std::cout << std::endl << "Ran " << ran_count << " unit tests with " << failed_count << " failures, " << skipped_count << " skipped." << std::endl;
+    std::cout << "(total test assertions: " << macro_count << ")" << std::endl;
 
     if (failed_count)
     {

@@ -37,10 +37,13 @@ sub run() {
         $twpassed = 0;
     }
 
-    twtools::logStatus(`mkfifo $twtools::twrootdir/donthashme.fifo`);
-    if ( $? != 0 ) {
-        twtools::logStatus("test fifo creation failed\n");
-        $twpassed = 0;
+    # SkyOS doesn't have FIFOs, so this won't work
+    if ( $^O ne "skyos") {
+        twtools::logStatus(`mkfifo $twtools::twrootdir/donthashme.fifo`);
+        if ( $? != 0 ) {
+            twtools::logStatus("test fifo creation failed\n");
+            $twpassed = 0;
+        }
     }
 
     twtools::logStatus(`$twtools::twrootdir/bin/siggen`);

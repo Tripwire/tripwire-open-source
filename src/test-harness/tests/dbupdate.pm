@@ -159,9 +159,11 @@ sub RunBasicTest
     # Make sure we got 4 violations: 2 mod, 1 add, 1 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = ($^O ne "skyos") ? 4 : 3;
+    my $c_expected = ($^O ne "skyos") ? 2 : 1;
 
-    if( ($n != 4) || ($a != 1) || ($r != 1) || ($c != 2) )
-    {
+    if( ($n != $n_expected) || ($a != 1) || ($r != 1) || ($c != $c_expected) ) {
+
         twtools::logStatus("FAILED -- initial integrity check had unexpected results\n");
         return 0;
     }

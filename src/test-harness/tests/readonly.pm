@@ -71,8 +71,8 @@ EOT
 
 sub initialize() {
     
-  my $twstr = getPolicyFileString();
-  twtools::GeneratePolicyFile($twstr);
+    my $twstr = getPolicyFileString();
+    twtools::GeneratePolicyFile($twstr);
 
 }
 
@@ -83,32 +83,37 @@ sub initialize() {
 #
 sub run() {
 
-  my $twpassed = 1;
+    twtools::logStatus("\n\n*** Beginning $description\n");
+    printf("%-30s", "-- $description");
 
-  twtools::logStatus("\n\n*** Beginning $description\n");
+    if ($^O eq "skyos") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; SkyOS doesn't support readonly files.\n";
+        return;
+    }
 
-  printf("%-30s", "-- $description");
+    my $twpassed = 1;
 
-  #########################################################
-  #
-  # Run the tests describe above in the %TESTS structure.
-  #
-  $twpassed = twtools::RunIntegrityTests(%TESTS);
+    #########################################################
+    #
+    # Run the tests describe above in the %TESTS structure.
+    #
+    $twpassed = twtools::RunIntegrityTests(%TESTS);
 
 
-  #########################################################
-  #
-  # See if the tests all succeeded...
-  #
-  if ($twpassed) {
+    #########################################################
+    #
+    # See if the tests all succeeded...
+    #
+    if ($twpassed) {
       ++$twtools::twpassedtests;
       print "PASSED\n";
       return 0;
-  }
-  else {
+    }
+    else {
       print "*FAILED*\n";
       ++$twtools::twfailedtests;
-  }
+    }
 }
 
 

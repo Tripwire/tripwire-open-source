@@ -197,6 +197,6 @@ void TestConfigFile2(void)
 
 void RegisterSuite_ConfigFile()
 {
-    RegisterTest("ConfigFile", "Basic 1", TestConfigFile);
-    RegisterTest("ConfigFile", "Basic 2", TestConfigFile2);
+    RegisterTest("ConfigFile", "Basic1", TestConfigFile);
+    RegisterTest("ConfigFile", "Basic2", TestConfigFile2);
 }

@@ -77,8 +77,8 @@ EOT
 #
 sub initialize() {
     
-  my $twstr = getPolicyFileString();
-  twtools::GeneratePolicyFile($twstr);
+    my $twstr = getPolicyFileString();
+    twtools::GeneratePolicyFile($twstr);
 
 }
 
@@ -89,30 +89,36 @@ sub initialize() {
 #
 sub run() {
 
-  my $twpassed = 1;
+    twtools::logStatus("*** Beginning $description\n");
+    printf("%-30s", "-- $description");
 
-  twtools::logStatus("*** Beginning $description\n");
-  printf("%-30s", "-- $description");
+    if ($^O eq "skyos" || $^O eq "haiku") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; OS doesn't support hardlinks.\n";
+        return;
+    }
 
-  #########################################################
-  #
-  # Run the tests describe above in the %TESTS structure.
-  #
-  $twpassed = twtools::RunIntegrityTests(%TESTS);
+    my $twpassed = 1;
+
+    #########################################################
+    #
+    # Run the tests describe above in the %TESTS structure.
+    #
+    $twpassed = twtools::RunIntegrityTests(%TESTS);
 
 
-  #########################################################
-  #
-  # See if the tests all succeeded...
-  #
-  if ($twpassed) {
+    #########################################################
+    #
+    # See if the tests all succeeded...
+    #
+    if ($twpassed) {
       ++$twtools::twpassedtests;
       print "PASSED\n";
-  }
-  else {
+    }
+    else {
       ++$twtools::twfailedtests;
       print "*FAILED*\n";
-  }
+    }
 }
 
 

@@ -44,16 +44,16 @@ void TestError()
     bool threw = false;
     try
     {
-        std::cout << "Before Exception" << std::endl;
-        std::cout << "Line number before throw: " << __LINE__ << std::endl;
+ //       std::cout << "Before Exception" << std::endl;
+ //       std::cout << "Line number before throw: " << __LINE__ << std::endl;
         throw eErrorGeneral(_T("This is an error!"));
-        std::cout << "After Exception" << std::endl;
+ //       std::cout << "After Exception" << std::endl;
     }
     catch(eError& e)
     {
         threw = true;
         TEST(_tcscmp(e.GetMsg().c_str(), _T("This is an error!")) == 0);
-        TCOUT << _T("Exception caught!\n\nID=") << e.GetID() << _T("\n\t") << e.GetMsg() << std::endl;
+ //       TCOUT << _T("Exception caught!\n\nID=") << e.GetID() << _T("\n\t") << e.GetMsg() << std::endl;
     }
     catch(...)
     {
@@ -72,7 +72,7 @@ void TestError()
     {
         threw = true;
         TEST(_tcscmp(e.GetMsg().c_str(), _T("error_t.cpp")) == 0);
-        TCOUT << _T("Internal error caught!\n\nID=") << e.GetID() << _T("\n\t") << e.GetMsg() << std::endl;
+//        TCOUT << _T("Internal error caught!\n\nID=") << e.GetID() << _T("\n\t") << e.GetMsg() << std::endl;
     }
     catch(...)
     {

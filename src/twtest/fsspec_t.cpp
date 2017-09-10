@@ -78,6 +78,7 @@ void TestFCOSpecImpl1()
     pSpec->SetStartPoint(cFCOName(TwTestDir()));
 
     dataSrc.SeekToFCO(pSpec->GetStartPoint(), false);
+    TEST(!dataSrc.Done());    
     iFCO* pFCO = dataSrc.CreateFCO();
     TEST(pFCO);
     //PrintFCOTree(pFCO, d, 0);
@@ -101,6 +102,7 @@ void TestFCOSpecImpl2()
     pSet->Add(cFCOName(_T("/etc/pclient")));
 
     dataSrc.SeekToFCO(pSpec->GetStartPoint(), false);
+    TEST(!dataSrc.Done());
     iFCO* pFCO = dataSrc.CreateFCO();
     TEST(pFCO);
     //PrintFCOTree(pFCO, d, 0);

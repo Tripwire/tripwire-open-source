@@ -189,7 +189,7 @@ sub AddEncryption {
 
     my ($filename) = @_;
     logStatus "addding crypt to file...\n";
-    logStatus(`$twrootdir/bin/twadmin -m E -c $twrootdir/$twcfgloc -P $twlocalpass -Q $twsitepass $filename`);
+    logStatus(`$twrootdir/bin/twadmin -m E -c $twrootdir/$twcfgloc -P $twlocalpass -Q $twsitepass $filename 2>&1`);
 
     return ($? == 0);
 }
@@ -204,7 +204,7 @@ sub RemoveEncryption {
     my ($filename) = @_;
 
     logStatus "removing crypto from file...\n";
-    logStatus(`$twrootdir/bin/twadmin -m R -c $twrootdir/$twcfgloc -P $twlocalpass -Q $twsitepass $filename`);
+    logStatus(`$twrootdir/bin/twadmin -m R -c $twrootdir/$twcfgloc -P $twlocalpass -Q $twsitepass $filename 2>&1`);
 
     return ($? == 0);
 }

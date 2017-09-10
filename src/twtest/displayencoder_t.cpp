@@ -71,7 +71,7 @@ static void util_TestUnprintable( const TSTRING& strCUnprintable )
     TSTRING strEncoded = strCUnprintable;
 
     e.Encode( strEncoded );
-    TCOUT << strEncoded << std::endl;
+//    TCOUT << strEncoded << std::endl;
     TSTRING strOut = strEncoded;
     e.Decode( strOut );
 
@@ -246,7 +246,7 @@ void TestQuoteAndBackSlash()
 ///////////////////////////////////////////////////////////////////////////
 // Basic
 ///////////////////////////////////////////////////////////////////////////    
-void TestDisplayEncoderBasic()
+void TestDisplayEncoderBasic1()
 {
     //=============================================================
     // TEST UNPRINTABLE ENCODING/ROUNDTRIP
@@ -269,7 +269,10 @@ void TestDisplayEncoderBasic()
     util_TestUnprintable( _T("\xEE\xEEtwo big") );
     util_TestUnprintable( _T("small\x01") );
     util_TestUnprintable( _T("\x01\x01two small") );
-    
+}
+
+void TestDisplayEncoderBasic2()
+{
     //=============================================================
     // TEST UNCONVERTABLE CHARS
     //=============================================================
@@ -284,7 +287,10 @@ void TestDisplayEncoderBasic()
         }
     }
     util_TestUnprintable( strMessWithMe );
+}
 
+void TestDisplayEncoderBasic3()
+{
     //=============================================================
     // TEST \\ and \x ENCODING/ROUNDTRIP
     //=============================================================
@@ -298,8 +304,10 @@ void TestDisplayEncoderBasic()
     util_TestUnprintable( _T("Tri\\xcky") );
     util_TestUnprintable( _T("Tricky\\x") );
     util_TestUnprintable( _T("\\Tricky\\\\x") );
+}
 
-    
+void TestDisplayEncoderBasic4()
+{
     //=============================================================
     // TEST UNCONVERTABLE, UNPRINTABLE, AND \\ and \" CHARS
     //=============================================================
@@ -323,7 +331,10 @@ void TestDisplayEncoderBasic()
 
 void RegisterSuite_DisplayEncoder()
 {
-    RegisterTest("DisplayEncoder", "Basic", TestDisplayEncoderBasic);
+    RegisterTest("DisplayEncoder", "Basic1", TestDisplayEncoderBasic1);
+    RegisterTest("DisplayEncoder", "Basic2", TestDisplayEncoderBasic2);
+    RegisterTest("DisplayEncoder", "Basic3", TestDisplayEncoderBasic3);
+    RegisterTest("DisplayEncoder", "Basic4", TestDisplayEncoderBasic4);
     RegisterTest("DisplayEncoder", "CharToHex", TestCharToHex);
     RegisterTest("DisplayEncoder", "HexToChar", TestHexToChar);
     RegisterTest("DisplayEncoder", "StringToHex", TestStringToHex);

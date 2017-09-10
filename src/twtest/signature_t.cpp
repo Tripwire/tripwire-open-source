@@ -443,10 +443,6 @@ void assertSHA1(const std::string& source, const std::string& expectedHex)
     shaSig.Update( (const byte*)source.c_str(), source.length() );
     shaSig.Finit();
 
-    TCERR << "Source = [" << source << "]" << std::endl;
-    TCERR << "Expected = " << expectedHex << std::endl;
-    TCERR << "Observed = " << shaSig.AsStringHex() << std::endl;
-
     TEST( shaSig.AsStringHex() == expectedHex);
 }
 

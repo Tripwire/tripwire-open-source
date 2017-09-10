@@ -161,6 +161,7 @@ sub PrepareForTest
 sub run
 {
     my $twpassed = 1;
+    my $dir_mods = ($^O eq "skyos") ? 0 : 1;
 
     twtools::logStatus("*** Beginning integrity check test\n");
     printf("%-30s", "-- $description");
@@ -181,8 +182,10 @@ sub run
 	# Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
 	#
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 6 : 4;
+    my $c_expected = $dir_mods ? 3 : 1;
 
-	if( ($n != 6) || ($a != 1) || ($r != 2) || ($c != 3) )
+	if( ($n != $n_expected) || ($a != 1) || ($r != 2) || ($c != $c_expected) )
 	{
 	    twtools::logStatus("Full IC failed: $n $a $r $c\n");
 	    $twpassed = 0;
@@ -213,8 +216,10 @@ sub run
 	# Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 6 : 4;
+    my $c_expected = $dir_mods ? 3 : 1;
 
-	if( ($n != 6) || ($a != 1) || ($r != 2) || ($c != 3) )
+    if( ($n != $n_expected) || ($a != 1) || ($r != 2) || ($c != $c_expected) )
     {
         twtools::logStatus("IC with FS section failed: $n $a $r $c\n");
         $twpassed = 0;
@@ -229,8 +234,10 @@ sub run
     # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 6 : 4;
+    my $c_expected = $dir_mods ? 3 : 1;
 
-    if( ($n != 6) || ($a != 1) || ($r != 2) || ($c != 3) )
+    if( ($n != $n_expected) || ($a != 1) || ($r != 2) || ($c != $c_expected) )
     {
         twtools::logStatus("IC with FS section failed: $n $a $r $c\n");
         $twpassed = 0;
@@ -245,8 +252,10 @@ sub run
     # Make sure we got 4 violations this time: 2 mod, 1 add, 1 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 4 : 3;
+    my $c_expected = $dir_mods ? 2 : 1;
 
-    if( ($n != 4) || ($a != 1) || ($r != 1) || ($c != 2) )
+    if( ($n != $n_expected) || ($a != 1) || ($r != 1) || ($c != $c_expected) )
     {
         twtools::logStatus("IC of Rule A failed: $n $a $r $c\n");
         $twpassed = 0;
@@ -261,8 +270,10 @@ sub run
     # Make sure we got 2 violations this time: 1 mod, 0 add, 1 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 2 : 1;
+    my $c_expected = $dir_mods ? 1 : 0;
 
-    if( ($n != 2) || ($a != 0) || ($r != 1) || ($c != 1) )
+    if( ($n != $n_expected) || ($a != 0) || ($r != 1) || ($c != $c_expected) )
     {
         twtools::logStatus("IC of severity 200+ failed: $n $a $r $c\n");
         $twpassed = 0;
@@ -277,8 +288,10 @@ sub run
     # Make sure we got 2 violations this time: 1 mod, 0 add, 1 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 2 : 1;
+    my $c_expected = $dir_mods ? 1 : 0;
 
-    if( ($n != 2) || ($a != 0) || ($r != 1) || ($c != 1) )
+    if( ($n != $n_expected) || ($a != 0) || ($r != 1) || ($c != $c_expected) )
     {
         twtools::logStatus("IC of severity 'high' failed: $n $a $r $c\n");
         $twpassed = 0;
@@ -314,8 +327,10 @@ sub run
     # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 6 : 4;
+    my $c_expected = $dir_mods ? 3 : 1;
 
-    if( ($n != 6) || ($a != 1) || ($r != 2) || ($c != 3) )
+    if( ($n != $n_expected) || ($a != 1) || ($r != 2) || ($c != $c_expected) )
     {
         twtools::logStatus("Full IC failed: $n $a $r $c\n");
         $twpassed = 0;
@@ -328,11 +343,13 @@ sub run
     RemoveFile("$reportloc");
     twtools::RunIntegrityCheck({trailing-opts => "-I -V cat -P $twtools::twlocalpass"});
 
-    # Make sure we got 1 violation this time: 1 mod, 0 add, 0 rm.
+    # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
+    my $n_expected = $dir_mods ? 6 : 4;
+    my $c_expected = $dir_mods ? 3 : 1;
 
-	if( ($n != 6) || ($a != 1) || ($r != 2) || ($c != 3) )
+    if( ($n != $n_expected) || ($a != 1) || ($r != 2) || ($c != $c_expected) )
     {
         twtools::logStatus("Interactive IC failed: $n $a $r $c\n");
         $twpassed = 0;
