@@ -137,7 +137,7 @@ processCommandLine();
 prepareListOfTests() if scalar(@twtests) == 0;  # only if none were on the cmdline
 
 print "\n";
-print "initializing for tests...\n\n";
+print "initializing for tests on $^O…\n\n";
 
 print "logging to $ENV{'PWD'}/$twtools::twrootdir/status.log\n\n";
 
