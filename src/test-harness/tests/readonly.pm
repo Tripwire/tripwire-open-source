@@ -90,7 +90,12 @@ sub run() {
         ++$twtools::twskippedtests;
         print "SKIPPED; SkyOS doesn't support readonly files.\n";
         return;
+    } elseif ($^O eq "gnu") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; TODO: Hurd has fewer expected changes here; refactor so we can test for correct values\n";
+        return;
     }
+
 
     my $twpassed = 1;
 
