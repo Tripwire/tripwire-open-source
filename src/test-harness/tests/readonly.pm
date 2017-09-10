@@ -55,9 +55,9 @@ sub getPolicyFileString {
 
    return <<EOT;
 
-$twtools::twcwd/$twtools::twrootdir/$TESTS{"0-permsChange"}{file} -> \$(ReadOnly);
-$twtools::twcwd/$twtools::twrootdir/$TESTS{"1-accessed"}{file}    -> \$(ReadOnly);
-$twtools::twcwd/$twtools::twrootdir/$TESTS{"2-removed"}{file}     -> \$(ReadOnly);
+$twtools::twcwd/$twtools::twrootdir/$TESTS{"0-permsChange"}{file} -> \$(ReadOnly) -a;
+$twtools::twcwd/$twtools::twrootdir/$TESTS{"1-accessed"}{file}    -> \$(ReadOnly) -a;
+$twtools::twcwd/$twtools::twrootdir/$TESTS{"2-removed"}{file}     -> \$(ReadOnly) -a;
 
 EOT
 
