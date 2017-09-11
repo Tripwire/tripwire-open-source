@@ -158,7 +158,7 @@ sub RunBasicTest
 
     # Make sure we got 4 violations: 2 mod, 1 add, 1 rm.
     #
-    my $dir_mods = (($^O ne "skyos") && ($^O ne "dragonfly")) ? 0 : 1;
+    my $dir_mods = (($^O eq "skyos") || ($^O eq "dragonfly")) ? 0 : 1;
     my ($n, $a, $r, $c) = twtools::AnalyzeReport( twtools::RunReport() );
     my $n_expected = $dir_mods ? 4 : 3;
     my $c_expected = $dir_mods ? 2 : 1;
