@@ -160,11 +160,17 @@ sub PrepareForTest
 #
 sub run
 {
+    twtools::logStatus("*** Beginning $description\n");
+    printf("%-30s", "-- $description");
+
+    if ($^O eq "dragonfly") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; TODO: DragonflyBSD has fewer expected changes here; refactor so we can test for correct values\n";
+        return;
+    }
+
     my $twpassed = 1;
     my $dir_mods = ($^O eq "skyos") ? 0 : 1;
-
-    twtools::logStatus("*** Beginning integrity check test\n");
-    printf("%-30s", "-- $description");
 
 	PrepareForTest();
 
