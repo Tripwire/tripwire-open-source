@@ -829,6 +829,10 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
         d.TraceDebug("FullPath is now %s\n", strFullPath.c_str());
     }
 
+#if IS_AROS
+    strFullPath = cDevicePath::AsNative(strFullPath);
+#endif
+
     d.TraceDebug("Done, returning %s\n", strFullPath.c_str());
     return true;
 }
