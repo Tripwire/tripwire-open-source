@@ -118,8 +118,6 @@ void TestDosIsAbsolute()
 
 void testDosBackupName(const std::string& in, const std::string& expected)
 {
-    TCERR << "In: " << in << " | Expected: " << expected << " | Observed: " << cDosPath::BackupName(in) << std::endl;
-
     TEST( expected == cDosPath::BackupName(in) );
 }
 
@@ -136,13 +134,12 @@ void TestDosBackupName()
 
 void testArosAsPosix(const std::string& in, const std::string& expected)
 {
-    TCERR << "In: " << in << " | Expected: " << expected << " | Observed: " << cArosPath::AsPosix(in) << std::endl ;
     TEST( expected == cArosPath::AsPosix(in) );
 }
 
 void TestArosAsPosix()
 {
-//    testArosAsPosix("DH0:", "/DH0/");
+    testArosAsPosix("DH0:", "/DH0/");
     testArosAsPosix("DH0:Foo", "/DH0/Foo");
     testArosAsPosix("DH0:Foo/Bar", "/DH0/Foo/Bar");
 
@@ -194,10 +191,8 @@ void RegisterSuite_File()
     RegisterTest("File", "DosAsNative", TestDosAsNative);
     RegisterTest("File", "DosIsAbsolute", TestDosIsAbsolute);
     RegisterTest("File", "DosBackupName", TestDosBackupName);
-// TODO: Finish these
-/*
+
     RegisterTest("File", "ArosAsPosix", TestArosAsPosix);
     RegisterTest("File", "ArosAsNative", TestArosAsNative);
     RegisterTest("File", "ArosIsAbsolute", TestArosIsAbsolute);
-*/
 }

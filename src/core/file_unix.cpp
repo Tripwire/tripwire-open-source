@@ -527,7 +527,7 @@ bool cArosPath::IsAbsolutePath(const TSTRING& in)
     if (in[0] == '/')
         return true;
 
-    if (in.find(":/") != std::string::npos)
+    if (in.find(":") != std::string::npos)
         return true;
 
     return false;
@@ -554,12 +554,13 @@ TSTRING cArosPath::AsNative( const TSTRING& in )
         return in;
     }
 
-    int x = 1;
-    for ( x; in[x] == '/' && x<in.length(); x++);
-    
-    TSTRING out = in.substr(x); 
+    std::string::size_type drive = in.find_first_not_of("/");
+    TSTRING out = (drive != std::string::npos) ? in.substr(drive) : in;
     TSTRING::size_type t = out.find_first_of('/');
-    out[t] = ':';
+    if(t != std::string::npos)
+        out[t] = ':';
+    else
+        out.append(":");
 
     return out;
 }
