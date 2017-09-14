@@ -212,6 +212,10 @@ bool cFSParserUtil::EnumPredefinedVariables( int index, TSTRING& sName, TSTRING&
 
 bool cFSParserUtil::IsAbsolutePath( const TSTRING& strPath ) const
 {
-    // IF there's a first character AND it is ( '/' OR '\\' ), THEN it's absolute
-    return( strPath.size() > 0 && ( _T('/') == strPath[0] || _T('\\') == strPath[0] ) );
+#if USES_DEVICE_PATH
+    return cDevicePath::IsAbsolutePath(strPath);
+#else
+    // IF there's a first character AND it's a '/', it's absolute.
+    return( strPath.size() > 0 && ( _T('/') == strPath[0] ) );
+#endif
 }

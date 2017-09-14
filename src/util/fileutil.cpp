@@ -208,7 +208,12 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
         throw eFileWrite(filename, iFSServices::GetInstance()->GetErrString() );
     }
 
+#if IS_DOS_DJGPP
+    TSTRING backup_filename = cDosPath::BackupName( cDosPath::AsNative(filename) );
+#else
     TSTRING backup_filename = filename;
+#endif
+
     backup_filename += iFSServices::GetInstance()->GetStandardBackupExtension();
 
     // remove the backup file if it exists.  We ingore the return value from

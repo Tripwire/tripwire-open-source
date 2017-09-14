@@ -45,7 +45,9 @@
 #include "fco/fcospeclist.h"
 #include "twtest/test.h"
 #include "util/fileutil.h"
+
 #include <fstream>
+#include <unistd.h>
 
 // helper class that checks output of each fcospec
 class cPolicyParserTester {
@@ -71,7 +73,10 @@ void test_policy_file(const std::string& polfile)
     TSTRING pol_path = get_test_file_dir();
     pol_path.append("/");
     pol_path.append(polfile);
-    
+
+    if(-1 == access(pol_path.c_str(), F_OK))
+        skip("policy parser test file not found/accessible");
+
     std::ifstream in;
     in.open(pol_path.c_str());
     if( ! in.good() )

@@ -138,13 +138,27 @@ public:
 };
 
 
-#if USES_DEVICE_PATH
-class cDevicePath
+class cDosPath
 {
 public:
     static TSTRING AsPosix(const TSTRING& in);
     static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+    static TSTRING BackupName(const TSTRING& in);
 };
+
+class cArosPath
+{
+public:
+    static TSTRING AsPosix(const TSTRING& in);
+    static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+};
+
+#if IS_DOS_DJGPP
+#define cDevicePath cDosPath
+#elif IS_AROS
+#define cDevicePath cArosPath
 #endif
 
 

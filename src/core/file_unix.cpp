@@ -449,31 +449,46 @@ void cFile::Truncate( File_t offset ) // throw(eFile)
 }
 
 
-#if USES_DEVICE_PATH
-// For paths of type DH0:/dir/file
-TSTRING cDevicePath::AsPosix( const TSTRING& in )
+/////////////////////////////////////////////////////////////////////////
+// Platform path conversion methods
+/////////////////////////////////////////////////////////////////////////
+
+bool cDosPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+
+    if (in[0] == '/')
+        return true;
+
+    if (in.length() >= 2 && in[1] == ':')
+        return true;
+
+    return false;
+}
+
+// For paths of type C:\DOS
+TSTRING cDosPath::AsPosix( const TSTRING& in )
 {
     if (in[0] == '/')
+    {
         return in;
+    }
 
-#if IS_DOS_DJGPP
-    TSTRING out = "/dev/" + in;
+    TSTRING out = (cDosPath::IsAbsolutePath(in)) ? ("/dev/" + in) : in;
     std::replace(out.begin(), out.end(), '\\', '/');
-#else
-    TSTRING out = '/' + in;
-#endif
-    
-    std::replace(out.begin(), out.end(), ':', '/');
+    out.erase( std::remove(out.begin(), out.end(), ':'), out.end());
 
     return out;
 }
 
-TSTRING cDevicePath::AsNative( const TSTRING& in )
+TSTRING cDosPath::AsNative( const TSTRING& in )
 {
     if (in[0] != '/')
+    {
         return in;
+    }
 
-#if IS_DOS_DJGPP
     if (in.find("/dev") != 0 || in.length() < 6)
         return in;
     
@@ -482,18 +497,70 @@ TSTRING cDevicePath::AsNative( const TSTRING& in )
     
     if (in.length() >= 8)
         out.append(in.substr(7));
-    
+
+    std::replace(out.begin(), out.end(), '/', '\\');
+
     return out;
+}
+
+TSTRING cDosPath::BackupName( const TSTRING& in )
+{
+    TSTRING out = in;
+    std::string::size_type pos = out.find_last_of("\\");
+    if( std::string::npos == pos)
+        return in;
+
+    TSTRING path = in.substr(0, pos);
+    TSTRING name = in.substr(pos,9);
+    std::replace(name.begin(), name.end(), '.', '_');
+    path.append(name);
+
+    return path;
+}
+
     
-#elif IS_AROS
+bool cArosPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+    
+    if (in[0] == '/')
+        return true;
+
+    if (in.find(":/") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+// For paths of type DH0:dir/file
+TSTRING cArosPath::AsPosix( const TSTRING& in )
+{
+    if (in[0] == '/')
+    {
+        return in;
+    }
+
+    TSTRING out = IsAbsolutePath(in) ? '/' + in : in;
+    std::replace(out.begin(), out.end(), ':', '/');
+
+    return out;
+}
+
+TSTRING cArosPath::AsNative( const TSTRING& in )
+{
+    if (in[0] != '/')
+    {
+        return in;
+    }
+
     int x = 1;
     for ( x; in[x] == '/' && x<in.length(); x++);
-
+    
     TSTRING out = in.substr(x); 
     TSTRING::size_type t = out.find_first_of('/');
     out[t] = ':';
 
     return out;
-#endif
-} 
-#endif
+}
+

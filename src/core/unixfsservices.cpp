@@ -730,12 +730,18 @@ bool cUnixFSServices::GetExecutableFilename( TSTRING& strFullPath, const TSTRING
 ///////////////////////////////////////////////////////////////////////////////
 bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC, const TSTRING& pathRelFromC ) const
 {
+    cDebug d("cUnixFSServices::FullPath");
+    d.TraceDebug("strRelPathC = %s, pathRelFromC = %s\n", strRelPathC.c_str(), pathRelFromC.c_str());
+
     // don't do anything with an empty path
     if( strRelPathC.empty() )
         return false;
 
+#if USES_DEVICE_PATH
+    TSTRING strRelPath = cDevicePath::AsPosix(strRelPathC); // make non-const temp var
+#else
     TSTRING strRelPath = strRelPathC; // make non-const temp var
-
+#endif
     //
     // get base name (where strRelPath will be relative to), which will either be;
     //  1. the root directory if strRelPath is an absolute path
@@ -748,6 +754,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
         if( IsRoot( strRelPath ) ) // if it's root, don't monkey with it, just return it.
         {
             strFullPath = strRelPath;
+            d.TraceDebug("Is root; returning %s\n", strFullPath.c_str());
             return true;
         }
         else
@@ -766,18 +773,30 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
             try
             {
                 GetCurrentDir( strFullPath );
+#if USES_DEVICE_PATH
+                strFullPath = cDevicePath::AsPosix(strFullPath);
+#endif
                 util_TrailingSep( strFullPath, false );
             }
             catch( eFSServices& )
             {
                 return false;
             }
+
+            d.TraceDebug("Creating prefix relative to CWD: %s\n", strFullPath.c_str());
         }
         else // we're relative to a given dir
         {
+
+#if USES_DEVICE_PATH
+            strFullPath = cDevicePath::AsPosix(pathRelFromC);
+#else
             strFullPath = pathRelFromC;
+#endif
             util_RemoveDuplicateSeps( strFullPath );
             util_TrailingSep( strFullPath, false );
+
+            d.TraceDebug("Creating prefix from supplied path: %s\n", strFullPath.c_str());
         }
     }
 
@@ -790,6 +809,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
     int index = 0;
     while( util_GetNextPathElement( strRelPath, strElem, index++ ) )
     {
+        d.TraceDebug("Path element = %s\n", strElem.c_str());
         if( 0 == strElem.compare( _T(".") ) )
         {
             // ignore it
@@ -805,8 +825,11 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
             strFullPath += TW_SLASH;
             strFullPath += strElem;
         }
+
+        d.TraceDebug("FullPath is now %s\n", strFullPath.c_str());
     }
 
+    d.TraceDebug("Done, returning %s\n", strFullPath.c_str());
     return true;
 }
 

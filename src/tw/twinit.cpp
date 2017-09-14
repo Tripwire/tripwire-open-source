@@ -157,6 +157,9 @@ static bool SetExeDir( const TSTRING& strArgv0 )
     TSTRING strFullPath;
     if( iFSServices::GetInstance()->GetExecutableFilename( strFullPath, strArgv0 ) && !strFullPath.empty() )
     {
+#if USES_DEVICE_PATH
+        strFullPath = cDevicePath::AsPosix(strFullPath);
+#endif
         cSystemInfo::SetExePath(strFullPath);
 
         TSTRING::size_type s = strFullPath.find_last_of( _T('/') ); 

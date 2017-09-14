@@ -249,6 +249,172 @@ static void InitCmdLineCommon(cCmdLineParser& parser)
 
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+// Set up temp directory
+///////////////////////////////////////////////////////////////////////////////
+static void util_InitTempDirectory(const cConfigFile& cf)
+{
+    TSTRING temp_directory;
+    cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
+
+    if (temp_directory.empty())
+    {
+#if IS_AROS
+        temp_directory = "T:";
+#elif IS_DOS_DJGPP
+        temp_directory = "/dev/c/temp/";
+#else
+        temp_directory = "/tmp/";
+#endif
+    }
+
+    // make sure we have a trailing slash -- thanks Jarno...
+    //
+    if (*temp_directory.rbegin() != '/')
+    {
+        temp_directory.push_back('/');
+    }
+
+    // make sure it exists...
+    //
+
+#if IS_AROS
+    temp_directory = cDevicePath::AsNative(temp_directory);
+#elif IS_DOS_DJGPP
+    temp_directory = cDevicePath::AsPosix(temp_directory);
+#endif
+
+    if (access(temp_directory.c_str(), F_OK) != 0)
+    {
+        TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
+        TSTRING tmpStr = _T("Directory: ");
+        tmpStr += (temp_directory + _T("\n"));
+        tmpStr += errStr;
+        throw eTWInvalidTempDirectory(tmpStr);
+    }
+    else
+    {
+        iFSServices::GetInstance()->SetTempDirName(temp_directory);
+    }
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Set up various email reporting options
+///////////////////////////////////////////////////////////////////////////////
+static void util_InitEmailOptions(cTWModeCommon* pModeInfo, const cConfigFile& cf)
+{
+    TSTRING str;    
+    if (cf.Lookup(TSTRING(_T("GLOBALEMAIL")), str))
+    {
+        if (str.length() != 0)
+            pModeInfo->mGlobalEmail = str;
+    }
+
+    //
+    // Set the report-viewing level if one has been specified, use
+    // default level otherwise.
+    //
+    if(cf.Lookup(TSTRING(_T("EMAILREPORTLEVEL")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("0")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::SINGLE_LINE;
+        else if (_tcsicmp(str.c_str(), _T("1")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::PARSEABLE;
+        else if (_tcsicmp(str.c_str(), _T("2")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::SUMMARY_ONLY;
+        else if (_tcsicmp(str.c_str(), _T("3")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
+        else if (_tcsicmp(str.c_str(), _T("4")) == 0)
+            pModeInfo->mEmailReportLevel = cTextReportViewer::FULL_REPORT;
+        else
+        {
+            // They specified an illegal level, error.
+            TSTRING errStr = _T("Invalid Level: ");
+            errStr += str;
+            throw eTWInvalidReportLevelCfg( errStr );
+        }
+    }
+    else
+    {
+        // no level was specified in the configuration file, use default.
+        pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
+    }
+
+    // Decide what mail method should be used to email reports
+    if(cf.Lookup(TSTRING(_T("MAILMETHOD")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("SENDMAIL")) == 0)
+            pModeInfo->mMailMethod = cMailMessage::MAIL_BY_PIPE;
+        else if( _tcsicmp( str.c_str(), _T("SMTP") ) == 0 )
+            pModeInfo->mMailMethod = cMailMessage::MAIL_BY_SMTP;
+        else
+            pModeInfo->mMailMethod = cMailMessage::INVALID_METHOD;
+    }
+    else
+    {
+        pModeInfo->mMailMethod = cMailMessage::NO_METHOD;
+    }
+
+#if !SUPPORTS_NETWORKING
+    if (pModeInfo->mMailMethod == cMailMessage::MAIL_BY_SMTP)
+        throw eMailSMTPNotSupported();
+#endif
+
+    // Get the SMTP server
+    if(cf.Lookup(TSTRING(_T("SMTPHOST")), str))
+    {
+        pModeInfo->mSmtpHost = str;
+    }
+    else
+    {
+        pModeInfo->mSmtpHost = _T("127.0.0.1"); // this is the default
+    }
+
+    // Get the SMTP port number
+    if(cf.Lookup(TSTRING(_T("SMTPPORT")), str))
+    {
+        int i = _ttoi( str.c_str() );
+        if( i < 0 || i > SHRT_MAX )
+            throw eTWInvalidPortNumber( str );
+        pModeInfo->mSmtpPort = static_cast<unsigned short>( i );
+    }
+    else
+    {
+        pModeInfo->mSmtpPort = 25; // this is the default
+    }
+
+    // Get the mail program to use if we're piping our email
+    if(cf.Lookup(TSTRING(_T("MAILPROGRAM")), str))
+    {
+        pModeInfo->mMailProgram = str;
+    }
+    else
+    {
+        pModeInfo->mMailProgram.erase(); // MAILPROGRAM is not required to be specified
+    }
+
+    // Get the mail program to use if we're piping our email
+    if(cf.Lookup(TSTRING(_T("MAILNOVIOLATIONS")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("true")) == 0)
+            pModeInfo->mMailNoViolations = true;
+        else
+            pModeInfo->mMailNoViolations = false;
+    }
+    else
+    {
+        pModeInfo->mMailNoViolations = true; // MAILPROGRAM is not required to be specified
+    }
+
+    if(cf.Lookup(TSTRING(_T("MAILFROMADDRESS")), str))
+    {
+        pModeInfo->mMailFrom = str;
+    }
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 // FillOutConfigInfo -- fills out all the common info with config file information
 ///////////////////////////////////////////////////////////////////////////////
@@ -297,151 +463,9 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
             pModeInfo->mfLooseDirs = true;
     }
 
-    TSTRING temp_directory;
-    cf.Lookup(TSTRING(_T("TEMPDIRECTORY")), temp_directory);
+    util_InitTempDirectory(cf);
 
-    if (temp_directory.empty())
-    {
-#if IS_AROS
-        temp_directory = "T:";
-#else
-        temp_directory = "/tmp/";
-#endif
-    }
-
-    // make sure we have a trailing slash -- thanks Jarno...
-    //
-    if (*temp_directory.rbegin() != '/')
-    {
-        temp_directory.push_back('/');
-    }
-    // make sure it exists...
-    //
-
-#if USES_DEVICE_PATH
-    temp_directory = cDevicePath::AsNative(temp_directory);
-#endif
-
-    if (access(temp_directory.c_str(), F_OK) != 0)
-    {
-        TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
-        TSTRING tmpStr = _T("Directory: ");
-        tmpStr += (temp_directory + _T("\n"));
-        tmpStr += errStr;
-        throw eTWInvalidTempDirectory(tmpStr);
-    }
-    else
-    {
-        iFSServices::GetInstance()->SetTempDirName(temp_directory);
-    }
-
-
-    if (cf.Lookup(TSTRING(_T("GLOBALEMAIL")), str))
-    {
-        if (str.length() != 0)
-            pModeInfo->mGlobalEmail = str;
-    }
-
-    //
-    // Set the report-viewing level if one has been specified, use
-    // default level otherwise.
-    //
-    if(cf.Lookup(TSTRING(_T("EMAILREPORTLEVEL")), str))
-    {
-        if (_tcsicmp(str.c_str(), _T("0")) == 0)
-            pModeInfo->mEmailReportLevel = cTextReportViewer::SINGLE_LINE;
-        else if (_tcsicmp(str.c_str(), _T("1")) == 0)
-            pModeInfo->mEmailReportLevel = cTextReportViewer::PARSEABLE;
-        else if (_tcsicmp(str.c_str(), _T("2")) == 0)
-            pModeInfo->mEmailReportLevel = cTextReportViewer::SUMMARY_ONLY;
-        else if (_tcsicmp(str.c_str(), _T("3")) == 0)
-            pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
-        else if (_tcsicmp(str.c_str(), _T("4")) == 0)
-            pModeInfo->mEmailReportLevel = cTextReportViewer::FULL_REPORT;
-        else
-        {
-          // They specified an illegal level, error.
-          TSTRING errStr = _T("Invalid Level: ");
-          errStr += str;
-          throw eTWInvalidReportLevelCfg( errStr );
-        }
-    }
-    else
-    {
-        // no level was specified in the configuration file, use default.
-        pModeInfo->mEmailReportLevel = cTextReportViewer::CONCISE_REPORT;
-    }
-
-    // Decide what mail method should be used to email reports
-    if(cf.Lookup(TSTRING(_T("MAILMETHOD")), str))
-    {
-        if (_tcsicmp(str.c_str(), _T("SENDMAIL")) == 0)
-            pModeInfo->mMailMethod = cMailMessage::MAIL_BY_PIPE;
-        else if( _tcsicmp( str.c_str(), _T("SMTP") ) == 0 )
-            pModeInfo->mMailMethod = cMailMessage::MAIL_BY_SMTP;
-        else                
-            pModeInfo->mMailMethod = cMailMessage::INVALID_METHOD;
-    }
-    else
-    {
-        pModeInfo->mMailMethod = cMailMessage::NO_METHOD;
-    }
-
-#if !SUPPORTS_NETWORKING
-    if (pModeInfo->mMailMethod == cMailMessage::MAIL_BY_SMTP)
-        throw eMailSMTPNotSupported();
-#endif
-    
-    // Get the SMTP server
-    if(cf.Lookup(TSTRING(_T("SMTPHOST")), str))
-    {
-        pModeInfo->mSmtpHost = str;
-    }
-    else
-    {
-        pModeInfo->mSmtpHost = _T("127.0.0.1"); // this is the default
-    }
-
-    // Get the SMTP port number
-    if(cf.Lookup(TSTRING(_T("SMTPPORT")), str))
-    {
-        int i = _ttoi( str.c_str() );
-        if( i < 0 || i > SHRT_MAX )
-        throw eTWInvalidPortNumber( str );
-        pModeInfo->mSmtpPort = static_cast<unsigned short>( i );
-    }
-    else
-    {
-        pModeInfo->mSmtpPort = 25; // this is the default
-    }
-
-    // Get the mail program to use if we're piping our email
-    if(cf.Lookup(TSTRING(_T("MAILPROGRAM")), str))
-    {
-        pModeInfo->mMailProgram = str;
-    }
-    else
-    {
-        pModeInfo->mMailProgram.erase(); // MAILPROGRAM is not required to be specified
-    }
-
-    // Get the mail program to use if we're piping our email
-    if(cf.Lookup(TSTRING(_T("MAILNOVIOLATIONS")), str))
-    {
-        if (_tcsicmp(str.c_str(), _T("true")) == 0)
-            pModeInfo->mMailNoViolations = true;
-        else
-            pModeInfo->mMailNoViolations = false;
-    }
-    else
-    {
-        pModeInfo->mMailNoViolations = true; // MAILPROGRAM is not required to be specified
-    }
-
-    if(cf.Lookup(TSTRING(_T("MAILFROMADDRESS")), str))
-    {
-        pModeInfo->mMailFrom = str;
-    }
+    util_InitEmailOptions(pModeInfo, cf);
 
   // SYSLOG reporting
     if(cf.Lookup(TSTRING(_T("SYSLOGREPORTING")), str))
