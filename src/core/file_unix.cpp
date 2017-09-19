@@ -62,6 +62,10 @@
 #include "core/fsservices.h"
 #include "core/errorutil.h"
 
+#if IS_RISCOS
+#include <unixlib/local.h>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 // cFile_i : Insulated implementation for cFile objects.
 ///////////////////////////////////////////////////////////////////////////
@@ -89,7 +93,7 @@ cFile_i::~cFile_i()
         fclose( mpCurrStream );
     mpCurrStream = NULL;
 
-#if IS_AROS
+#if IS_AROS || IS_RISCOS
     if( mFlags & cFile::OPEN_LOCKED_TEMP )
     {
         // unlink this file 
@@ -205,7 +209,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     }
     mpData->m_fd = fh;
 
-#if !IS_AROS
+#if !IS_AROS && !IS_RISCOS
     if( flags & OPEN_LOCKED_TEMP )
     {
         // unlink this file 
@@ -563,5 +567,67 @@ TSTRING cArosPath::AsNative( const TSTRING& in )
         out.append(":");
 
     return out;
+}
+
+
+bool cRiscosPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+    
+    if (in[0] == '/')
+        return true;
+
+    if (in.find("$") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+// For paths of type SDFS::Volume.$.dir.file
+TSTRING cRiscosPath::AsPosix( const TSTRING& in )
+{
+#if IS_RISCOS
+    if (in[0] == '/')
+    {
+        return in;
+    }
+
+    TSTRING out;
+    char* unixified = __unixify(in.c_str(), 0,0,0,0);
+    if(unixified) 
+    {
+        out.assign(unixified);
+        free(unixified);
+        return out;
+    }
+    return in;
+
+#else
+    return in;
+#endif
+}
+
+TSTRING cRiscosPath::AsNative( const TSTRING& in )
+{
+#if IS_RISCOS
+    if (in[0] != '/')
+    {
+        return in;
+    }
+
+    TSTRING out;
+    int buf_size = in.length() + 100; // examples pad by 100
+    std::vector<char> buf(buf_size);
+    __riscosify(in.c_str(), 0,0, &buf[0], buf_size, 0);
+    if(buf[0])
+    {
+        out.assign(&buf[0]);
+        return out;
+    }
+    return in;
+#else
+    return in;
+#endif
 }
 

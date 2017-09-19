@@ -155,10 +155,20 @@ public:
     static bool IsAbsolutePath(const TSTRING& in);
 };
 
+class cRiscosPath
+{
+public:
+    static TSTRING AsPosix(const TSTRING& in);
+    static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+};
+
 #if IS_DOS_DJGPP
 #define cDevicePath cDosPath
 #elif IS_AROS
 #define cDevicePath cArosPath
+#elif IS_RISCOS
+#define cDevicePath cRiscosPath
 #endif
 
 

@@ -264,22 +264,26 @@ static void util_InitTempDirectory(const cConfigFile& cf)
         temp_directory = "T:";
 #elif IS_DOS_DJGPP
         temp_directory = "/dev/c/temp/";
+#elif IS_RISCOS
+        temp_directory = "/!BOOT/Resources/!Scrap/ScrapDirs/ScrapDir";
 #else
         temp_directory = "/tmp/";
 #endif
     }
 
+#if !IS_RISCOS
     // make sure we have a trailing slash -- thanks Jarno...
     //
     if (*temp_directory.rbegin() != '/')
     {
         temp_directory.push_back('/');
     }
+#endif
 
     // make sure it exists...
     //
 
-#if IS_AROS
+#if IS_AROS || IS_RISCOS
     temp_directory = cDevicePath::AsNative(temp_directory);
 #elif IS_DOS_DJGPP
     temp_directory = cDevicePath::AsPosix(temp_directory);
@@ -295,6 +299,13 @@ static void util_InitTempDirectory(const cConfigFile& cf)
     }
     else
     {
+#if IS_RISCOS
+        if (*temp_directory.rbegin() != '.')
+        {
+            temp_directory.push_back('.');
+        }
+#endif
+
         iFSServices::GetInstance()->SetTempDirName(temp_directory);
     }
 }
