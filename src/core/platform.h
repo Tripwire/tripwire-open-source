@@ -64,6 +64,7 @@
 #define OS_DARWIN       0x0304
 #define OS_DRAGONFLYBSD 0x0305
 #define OS_MIDNIGHTBSD  0x0306
+#define OS_MIRBSD       0x0307
 
 #define OS_SOLARIS      0x0400
 #define OS_AIX          0x0401
@@ -140,6 +141,11 @@
 #elif defined(__NetBSD__)
     #define OS                  OS_NETBSD
     #define IS_NETBSD           1
+
+    // Must check for __MirBSD__ symbol first since its gcc also defines __OpenBSD__
+#elif defined(__MirBSD__)
+    #define OS                  OS_MIRBSD
+    #define IS_MIRBSD           1
 
 #elif defined(__OpenBSD__)
     #define OS                  OS_OPENBSD
