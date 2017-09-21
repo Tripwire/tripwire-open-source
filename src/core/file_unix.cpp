@@ -83,28 +83,28 @@ struct cFile_i
 
 //Ctor
 cFile_i::cFile_i() :
-    mpCurrStream(NULL)
+    m_fd(-1), mpCurrStream(NULL), mFlags(0)
 {}
 
 //Dtor
 cFile_i::~cFile_i()
 {
     if (mpCurrStream != NULL)
+    {
         fclose( mpCurrStream );
-    mpCurrStream = NULL;
+        mpCurrStream = NULL;
 
 #if IS_AROS || IS_RISCOS
-    if( mFlags & cFile::OPEN_LOCKED_TEMP )
-    {
-        // unlink this file 
-        if( 0 != unlink(mFileName.c_str()))
+        if( mFlags & cFile::OPEN_LOCKED_TEMP )
         {
-            throw( eFileOpen( mFileName, iFSServices::GetInstance()->GetErrString() ) );
+            // unlink this file 
+            if( 0 != unlink(mFileName.c_str()))
+            {
+                throw( eFileOpen( mFileName, iFSServices::GetInstance()->GetErrString() ) );
+            }
         }
-    }
 #endif
-
-    mFileName.empty();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////

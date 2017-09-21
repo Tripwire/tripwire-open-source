@@ -90,7 +90,7 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
     std::vector<char> data(size+1);
     char* buf = &data[0];
 
-#if defined(O_PATH) 
+#if defined(O_PATH) // A Linuxism that lets us read symlinks w/o bumping the access time.
     int fd = open(strName.c_str(), (O_PATH | O_NOFOLLOW | O_NOATIME));
     int rtn = readlinkat(fd, 0, buf, size);
     close(fd);
@@ -98,13 +98,13 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
     int rtn = readlink( strName.c_str(), buf, size );
 #endif
 
-    if(rtn == -1)
+    if(rtn < 0)
     {
         // Some OSes (like HP-UX) return ERANGE if buffer is too small.
         // This is nonstandard but better than the usual truncate-and-say-you-succeeded
         //
         if(ERANGE == errno)
-	    return GetSymLinkStr(strName, arch, size*2);
+            return GetSymLinkStr(strName, arch, size*2);
 
         return false;
     }
