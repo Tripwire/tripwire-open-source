@@ -42,6 +42,8 @@
 #include "twtest/test.h"
 #endif
 
+#include <unistd.h>
+
 using namespace std;
 
 
@@ -177,6 +179,9 @@ void TestGetIPAddress()
 
 void TestGetExecutableFilename()
 {
+    if( -1 == access("/bin/sh", F_OK))
+        skip("/bin/sh not found/accessible");
+
     TSTRING filename = _T("sh");
     TSTRING fullpath = _T("/bin/");
     TEST( iFSServices::GetInstance()->GetExecutableFilename(fullpath, filename));

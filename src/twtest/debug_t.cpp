@@ -88,6 +88,11 @@ void TestDebug()
     if(oldOutTarget & cDebug::OUT_FILE)     cDebug::AddOutTarget(cDebug::OUT_FILE);     else cDebug::RemoveOutTarget(cDebug::OUT_FILE);
 
     d.TraceDebug("Exiting...\n");
+
+#ifndef DEBUG
+    TEST("Should always succeed in release builds & cDebug should do nothing");
+#endif
+
 }
 
 void RegisterSuite_Debug()

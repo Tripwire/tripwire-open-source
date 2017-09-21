@@ -41,6 +41,7 @@
 #include "fco/fcospechelper.h"
 #include "core/fsservices.h"
 
+#include <unistd.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintFCOTree -- recursively prints an fco's name and all of it's children's
@@ -91,6 +92,9 @@ void TestFCOSpecImpl2()
 {
     cDebug d("TestFCOSpecImpl2");
     d.TraceDebug("Entering...\n");
+
+    if( -1 == access("/etc", F_OK))
+        skip("/etc not found/accessible");
 
     cFSDataSourceIter dataSrc;
 

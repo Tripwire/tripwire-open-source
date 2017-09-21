@@ -311,7 +311,7 @@
 #define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS && !IS_RISCOS)
 #define NEEDS_SWAB_IMPL             (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
-#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP)
+#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP || IS_RISCOS)
 #define ICONV_CONST_SOURCE          (IS_MINIX)
 #define SUPPORTS_DIRECT_IO          (IS_LINUX) 
 // Linux is the only platform where direct i/o hashing has been tested & works properly so far.

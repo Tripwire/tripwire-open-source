@@ -123,9 +123,9 @@ sub run() {
     twtools::logStatus("*** Beginning $description\n");
     printf("%-30s", "-- $description");
 
-    if ($^O eq "skyos") {
+    if (($^O eq "skyos") || ($^O eq "dragonfly")) {
         ++$twtools::twskippedtests;
-        print "SKIPPED; TODO: SkyOS has fewer expected changes here; refactor so we can test for correct values\n";
+        print "SKIPPED; TODO: OS has fewer expected changes here; refactor so we can test for correct values\n";
         return;
     }
 

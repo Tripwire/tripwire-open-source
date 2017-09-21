@@ -58,7 +58,141 @@ void TestFile()
     TEST(testStream);
 }
 
+//////////////////
+
+void testDosAsPosix(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cDosPath::AsPosix(in) );
+}
+
+void TestDosAsPosix()
+{
+    testDosAsPosix("c:\\foo", "/dev/c/foo");
+    testDosAsPosix("c:\\foo\\bar\\baz.txt", "/dev/c/foo/bar/baz.txt");
+    testDosAsPosix("c:/foo/bar/baz.txt", "/dev/c/foo/bar/baz.txt");
+
+    testDosAsPosix("c:\\", "/dev/c/");
+    testDosAsPosix("c:", "/dev/c");
+
+    testDosAsPosix("foo.txt", "foo.txt");
+    testDosAsPosix("bar\\foo.txt", "bar/foo.txt");
+    testDosAsPosix("bar/foo.txt", "bar/foo.txt");
+
+    testDosAsPosix("/foo/bar/baz.txt", "/foo/bar/baz.txt");
+}
+
+
+void testDosAsNative(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cDosPath::AsNative(in) );
+}
+
+void TestDosAsNative()
+{
+    testDosAsNative("/dev/c/foo", "c:\\foo");
+    testDosAsNative("/dev/c/", "c:\\");
+    testDosAsNative("/dev/c", "c:\\");
+
+    testDosAsNative("/foo/bar/baz", "/foo/bar/baz");
+}
+
+
+void testDosIsAbsolute(const std::string& in, bool expected)
+{
+    TEST( expected == cDosPath::IsAbsolutePath(in) );
+}
+
+void TestDosIsAbsolute()
+{
+    testDosIsAbsolute("C:\\", true);
+    testDosIsAbsolute("C:", true);
+    testDosIsAbsolute("C:\\foo", true);
+    testDosIsAbsolute("C:\\foo\\bar\\baz.txt", true);
+
+    testDosIsAbsolute("/foo", true);
+
+    testDosIsAbsolute("foo.txt", false);
+    testDosIsAbsolute("bar\\foo.txt", false);
+    testDosIsAbsolute("bar/foo.txt", false);
+}
+
+void testDosBackupName(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cDosPath::BackupName(in) );
+}
+
+void TestDosBackupName()
+{
+    testDosBackupName("C:\\12345678.123", "C:\\12345678");
+    testDosBackupName("C:\\12345678", "C:\\12345678");
+    testDosBackupName("C:\\1.123", "C:\\1_123");
+    testDosBackupName("C:\\1", "C:\\1");
+
+    testDosBackupName("C:\\FOO\\12345678.123", "C:\\FOO\\12345678");
+    testDosBackupName("C:\\FOO.BAR\\1234.123", "C:\\FOO.BAR\\1234_123");    
+}
+
+void testArosAsPosix(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cArosPath::AsPosix(in) );
+}
+
+void TestArosAsPosix()
+{
+    testArosAsPosix("DH0:", "/DH0/");
+    testArosAsPosix("DH0:Foo", "/DH0/Foo");
+    testArosAsPosix("DH0:Foo/Bar", "/DH0/Foo/Bar");
+
+    testArosAsPosix("/DH0/Foo/Bar", "/DH0/Foo/Bar");
+
+    testArosAsPosix("Foo", "Foo");
+    testArosAsPosix("Foo/Bar", "Foo/Bar");
+}
+
+void testArosAsNative(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cArosPath::AsNative(in) );
+}
+
+void TestArosAsNative()
+{
+    testArosAsNative("/DH0", "DH0:");
+    testArosAsNative("/DH0/Foo", "DH0:Foo" );
+    testArosAsNative("/DH0/Foo/Bar", "DH0:Foo/Bar" );
+
+    testArosAsNative("DH0:Foo/Bar", "DH0:Foo/Bar");
+
+    testArosAsNative("Foo", "Foo");
+    testArosAsNative("Foo/Bar", "Foo/Bar");
+}
+
+void testArosIsAbsolute(const std::string& in, bool expected)
+{
+    TEST( expected == cArosPath::IsAbsolutePath(in) );
+}
+
+void TestArosIsAbsolute()
+{
+    testArosIsAbsolute("DH0:", true);
+    testArosIsAbsolute("DH0:Foo", true);
+    testArosIsAbsolute("DH0:Foo/bar", true);
+
+    testArosIsAbsolute("/DH0/Foo/bar", true);
+
+    testArosIsAbsolute("Foo/bar", false);
+    testArosIsAbsolute("Foo", false);
+}
+
+
 void RegisterSuite_File()
 {
     RegisterTest("File", "Basic", TestFile);
+    RegisterTest("File", "DosAsPosix", TestDosAsPosix);
+    RegisterTest("File", "DosAsNative", TestDosAsNative);
+    RegisterTest("File", "DosIsAbsolute", TestDosIsAbsolute);
+    RegisterTest("File", "DosBackupName", TestDosBackupName);
+
+    RegisterTest("File", "ArosAsPosix", TestArosAsPosix);
+    RegisterTest("File", "ArosAsNative", TestArosAsNative);
+    RegisterTest("File", "ArosIsAbsolute", TestArosIsAbsolute);
 }
