@@ -39,6 +39,8 @@
 #include "twtest/test.h"
 #include "core/error.h"
 
+#include <sys/utsname.h>
+
 using namespace std;
 
 /////////////////////////////////////////////////////////
@@ -200,9 +202,6 @@ void TestAlignment()
 // work the way we think they do.
 void TestSizes()
 {
-    cDebug d("TestSizes");
-    d.TraceError("Fix this!\n");
-
     TEST( CanBeRepresentedAs( int8(), int8() ) );
     TEST( ! CanBeRepresentedAs( int8(), uint8() ) );
     TEST( ! CanBeRepresentedAs( uint8(), int8() ) );
@@ -216,7 +215,7 @@ void TestSizes()
     TEST( CanBeRepresentedAs( uint16(), uint32() ) );
     TEST( CanBeRepresentedAs( uint32(), uint64() ) );
 }
- 
+
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL FUNCTION IMPEMENTATIONS
 /////////////////////////////////////////////////////////   
@@ -235,8 +234,79 @@ bool CanBeRepresentedAs( E e, T t )
     return fReturn;
 }
 
+
+////////////////////////////
+
+#if IS_LINUX
+const TSTRING expected_os("Linux");
+#elif IS_DARWIN
+const TSTRING expected_os("Darwin");
+#elif IS_CYGWIN
+const TSTRING expected_os("Cygwin");
+#elif IS_DOS_DJGPP
+const TSTRING expected_os("DJGPP");
+#elif IS_ANDROID
+const TSTRING expected_os("Android");
+#elif IS_DRAGONFLYBSD
+const TSTRING expected_os("DragonFly");
+#elif IS_MIDNIGHTBSD
+const TSTRING expected_os("MidnightBSD");
+#elif IS_FREEBSD
+const TSTRING expected_os("FreeBSD");
+#elif IS_NETBSD
+const TSTRING expected_os("NetBSD");
+#elif IS_MIRBSD
+const TSTRING expected_os("MirBSD");
+#elif IS_BITRIG
+const TSTRING expected_os("Bitrig");
+#elif IS_OPENBSD
+const TSTRING expected_os("OpenBSD");
+#elif IS_SOLARIS
+const TSTRING expected_os("SunOS");
+#elif IS_AIX
+const TSTRING expected_os("AIX");
+#elif IS_HPUX
+const TSTRING expected_os("HP-UX");
+#elif IS_IRIX
+const TSTRING expected_os("IRIX");
+#elif IS_OSF1
+const TSTRING expected_os("Tru64");
+#elif IS_MINIX
+const TSTRING expected_os("Minix");
+#elif IS_HURD
+const TSTRING expected_os("GNU");
+#elif IS_HAIKU
+const TSTRING expected_os("Haiku");
+#elif IS_SYLLABLE
+const TSTRING expected_os("Syllable");
+#elif IS_SKYOS
+const TSTRING expected_os("SkyOS");
+#elif IS_SORTIX
+const TSTRING expected_os("Sortix");
+#elif IS_MINT
+const TSTRING expected_os("MiNT");
+#elif IS_AROS
+const TSTRING expected_os("AROS");
+#elif IS_RTEMS
+const TSTRING expected_os("RTEMS");
+#elif IS_RISCOS
+const TSTRING expected_os("RISC OS");
+#else
+const TSTRING expected_os("?!?!?");
+#endif
+
+void TestPlatformDetection()
+{
+    struct utsname os_info;
+    TEST( uname(&os_info) == 0);
+
+    TSTRING observed_os(os_info.sysname);
+    TEST( observed_os == expected_os );
+}
+
 void RegisterSuite_Platform()
 {
     RegisterTest("Platform", "Alignment", TestAlignment);
     RegisterTest("Platform", "Sizes", TestSizes);
+    RegisterTest("Platform", "PlatformDetection", TestPlatformDetection);
 }
