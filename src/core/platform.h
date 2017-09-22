@@ -65,6 +65,7 @@
 #define OS_DRAGONFLYBSD 0x0305
 #define OS_MIDNIGHTBSD  0x0306
 #define OS_MIRBSD       0x0307
+#define OS_BITRIG       0x0308
 
 #define OS_SOLARIS      0x0400
 #define OS_AIX          0x0401
@@ -132,8 +133,18 @@
 #elif defined(__linux__)
 	#define OS                  OS_LINUX
 	#define IS_LINUX 			1
-	
-	
+
+    
+// A herd of BSDs.  Have to detect MidnightBSD before FreeBSD, and MirOS & Bitrig before OpenBSD
+// because they also define symbols for their ancestor BSDs.
+#elif defined(__DragonFly__)
+    #define OS                  OS_DRAGONFLYBSD
+    #define IS_DRAGONFLYBSD     1
+
+#elif defined(__MidnightBSD__)
+    #define OS                  OS_MIDNIGHTBSD
+    #define IS_MIDNIGHTBSD      1
+
 #elif defined(__FreeBSD__)
     #define OS                  OS_FREEBSD
     #define IS_FREEBSD          1	
@@ -142,10 +153,13 @@
     #define OS                  OS_NETBSD
     #define IS_NETBSD           1
 
-    // Must check for __MirBSD__ symbol first since its gcc also defines __OpenBSD__
 #elif defined(__MirBSD__)
     #define OS                  OS_MIRBSD
     #define IS_MIRBSD           1
+
+#elif defined(__Bitrig__)
+    #define OS                  OS_BITRIG
+    #define IS_BITRIG           1
 
 #elif defined(__OpenBSD__)
     #define OS                  OS_OPENBSD
@@ -154,14 +168,6 @@
 #elif defined(__APPLE__)
     #define OS                  OS_DARWIN
     #define IS_DARWIN           1	
-
-#elif defined(__DragonFly__)
-    #define OS                  OS_DRAGONFLYBSD
-    #define IS_DRAGONFLYBSD     1
-
-#elif defined(__MidnightBSD__)
-    #define OS                  OS_MIDNIGHTBSD
-    #define IS_MIDNIGHTBSD      1
 
 
 #elif defined(__sun)
