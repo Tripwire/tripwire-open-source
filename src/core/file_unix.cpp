@@ -522,7 +522,7 @@ TSTRING cDosPath::BackupName( const TSTRING& in )
     return path;
 }
 
-    
+/////////////////////////////////////////////////////////////////////////
 bool cArosPath::IsAbsolutePath(const TSTRING& in)
 {
     if (in.empty())
@@ -569,7 +569,7 @@ TSTRING cArosPath::AsNative( const TSTRING& in )
     return out;
 }
 
-
+/////////////////////////////////////////////////////////////////////////
 bool cRiscosPath::IsAbsolutePath(const TSTRING& in)
 {
     if (in.empty())
@@ -631,3 +631,51 @@ TSTRING cRiscosPath::AsNative( const TSTRING& in )
 #endif
 }
 
+
+/////////////////////////////////////////////////////////////////////////
+bool cRedoxPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+    
+    if (in[0] == '/')
+        return true;
+
+    if (in.find(":") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+// For paths of type file:/dir/file
+TSTRING cRedoxPath::AsPosix( const TSTRING& in )
+{
+    if (in[0] == '/')
+    {
+        return in;
+    }
+
+    TSTRING out = IsAbsolutePath(in) ? '/' + in : in;
+    std::string::size_type colon = out.find_first_of(":");
+    if( colon != std::string::npos )
+        out.erase(colon, 1);
+    return out;
+}
+
+TSTRING cRedoxPath::AsNative( const TSTRING& in )
+{
+    if (in[0] != '/')
+    {
+        return in;
+    }
+
+    std::string::size_type drive = in.find_first_not_of("/");
+    TSTRING out = (drive != std::string::npos) ? in.substr(drive) : in;
+    TSTRING::size_type slash = out.find_first_of('/');
+    if(slash != std::string::npos)
+        out.insert(slash, ":");
+    else
+        out.append(":/");
+
+    return out;
+}

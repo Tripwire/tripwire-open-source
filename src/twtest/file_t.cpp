@@ -58,7 +58,7 @@ void TestFile()
     TEST(testStream);
 }
 
-//////////////////
+////////////////////////////////////////////////////////////////////////
 
 void testDosAsPosix(const std::string& in, const std::string& expected)
 {
@@ -132,6 +132,8 @@ void TestDosBackupName()
     testDosBackupName("C:\\FOO.BAR\\1234.123", "C:\\FOO.BAR\\1234_123");    
 }
 
+
+////////////////////////////////////////////////////////////////////////
 void testArosAsPosix(const std::string& in, const std::string& expected)
 {
     TEST( expected == cArosPath::AsPosix(in) );
@@ -184,6 +186,59 @@ void TestArosIsAbsolute()
 }
 
 
+////////////////////////////////////////////////////////////////////////
+void testRedoxAsPosix(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cRedoxPath::AsPosix(in) );
+}
+
+void TestRedoxAsPosix()
+{
+    testRedoxAsPosix("file:/", "/file/");
+    testRedoxAsPosix("file:/Foo", "/file/Foo");
+    testRedoxAsPosix("file:/Foo/Bar", "/file/Foo/Bar");
+
+    testRedoxAsPosix("/file/Foo/Bar", "/file/Foo/Bar");
+
+    testRedoxAsPosix("Foo", "Foo");
+    testRedoxAsPosix("Foo/Bar", "Foo/Bar");
+}
+
+void testRedoxAsNative(const std::string& in, const std::string& expected)
+{
+    TEST( expected == cRedoxPath::AsNative(in) );
+}
+
+void TestRedoxAsNative()
+{
+    testRedoxAsNative("/file", "file:/");
+    testRedoxAsNative("/file/Foo", "file:/Foo" );
+    testRedoxAsNative("/file/Foo/Bar", "file:/Foo/Bar" );
+
+    testRedoxAsNative("file:/Foo/Bar", "file:/Foo/Bar");
+
+    testRedoxAsNative("Foo", "Foo");
+    testRedoxAsNative("Foo/Bar", "Foo/Bar");
+}
+
+void testRedoxIsAbsolute(const std::string& in, bool expected)
+{
+    TEST( expected == cRedoxPath::IsAbsolutePath(in) );
+}
+
+void TestRedoxIsAbsolute()
+{
+    testRedoxIsAbsolute("file:", true);
+    testRedoxIsAbsolute("file:/Foo", true);
+    testRedoxIsAbsolute("file:/Foo/bar", true);
+
+    testRedoxIsAbsolute("/file/Foo/bar", true);
+
+    testRedoxIsAbsolute("Foo/bar", false);
+    testRedoxIsAbsolute("Foo", false);
+}
+
+
 void RegisterSuite_File()
 {
     RegisterTest("File", "Basic", TestFile);
@@ -195,4 +250,8 @@ void RegisterSuite_File()
     RegisterTest("File", "ArosAsPosix", TestArosAsPosix);
     RegisterTest("File", "ArosAsNative", TestArosAsNative);
     RegisterTest("File", "ArosIsAbsolute", TestArosIsAbsolute);
+
+    RegisterTest("File", "RedoxAsPosix", TestRedoxAsPosix);
+    RegisterTest("File", "RedoxAsNative", TestRedoxAsNative);
+    RegisterTest("File", "RedoxIsAbsolute", TestRedoxIsAbsolute);
 }

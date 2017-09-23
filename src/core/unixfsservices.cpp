@@ -326,6 +326,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
     if( ret < 0 )
         throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
 
+#if HAVE_STRUCT_STAT_ST_RDEV
     // new stuff 7/17/99 - BAM
     // if the file is not a device set rdev to zero by hand (most OSs will
     // do this for us, but some don't)
@@ -335,6 +336,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
         // actual type of the object -- could be a struct (requiring '= {0}' )
         util_ZeroMemory( statbuf.st_rdev );                                             
     }
+#endif
 
     //copy information returned by lstat call into the structure passed in
     stat.gid        = statbuf.st_gid;
@@ -342,14 +344,21 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
     stat.ctime      = statbuf.st_ctime;
     stat.mtime      = statbuf.st_mtime;
     stat.dev        = statbuf.st_dev;
+
+#if HAVE_STRUCT_STAT_ST_RDEV
     stat.rdev       = statbuf.st_rdev;
+#else
+    stat.rdev       = 0;
+#endif
+
     stat.ino        = statbuf.st_ino;
     stat.mode       = statbuf.st_mode;
     stat.nlink      = statbuf.st_nlink;
     stat.size       = statbuf.st_size;
     stat.uid        = statbuf.st_uid;
     stat.blksize    = statbuf.st_blksize;
-#if SUPPORTS_ST_BLOCKS
+    
+#if HAVE_STRUCT_STAT_ST_BLOCKS
     stat.blocks     = statbuf.st_blocks;
 #else
     stat.blocks     = 0;

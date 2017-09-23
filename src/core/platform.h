@@ -83,6 +83,7 @@
 #define OS_AROS         0x0508
 #define OS_RTEMS        0x0509   
 #define OS_RISCOS       0x050A
+#define OS_REDOX        0x050B
 
 #define COMP_UNKNOWN        0
 #define COMP_GCC            0x0001
@@ -231,6 +232,10 @@
     #define OS                  OS_RISCOS
     #define IS_RISCOS           1
 
+#elif defined(__redox__)
+    #define OS                  OS_REDOX
+    #define IS_REDOX            1
+
 #endif
 	
 	
@@ -311,18 +316,17 @@
 #define SUPPORTS_MEMBER_TEMPLATES               ( ! IS_SUNPRO )
 #define SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST    ( ! IS_SUNPRO )
 
-#define SUPPORTS_ST_BLOCKS          (!IS_DOS_DJGPP)
 #define SUPPORTS_POSIX_SIGNALS      (!IS_DOS_DJGPP)
-#define SUPPORTS_NETWORKING         (!IS_SORTIX && !IS_DOS_DJGPP)
+#define SUPPORTS_NETWORKING         (!IS_SORTIX && !IS_DOS_DJGPP && !IS_REDOX)
 #define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS && !IS_RISCOS)
 #define NEEDS_SWAB_IMPL             (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
-#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP || IS_RISCOS)
+#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP || IS_RISCOS || IS_REDOX)
 #define ICONV_CONST_SOURCE          (IS_MINIX)
 #define SUPPORTS_DIRECT_IO          (IS_LINUX) 
 // Linux is the only platform where direct i/o hashing has been tested & works properly so far.
 
-#define SUPPORTS_TERMIOS            (!IS_RTEMS)
+#define SUPPORTS_TERMIOS            (!IS_RTEMS && !IS_REDOX)
 // RTEMS errors are probably just a buildsys issue & this will change or go away.
 
 #define SUPPORTS_DOUBLE_SLASH_PATH  (IS_CYGWIN)

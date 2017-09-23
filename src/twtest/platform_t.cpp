@@ -39,7 +39,9 @@
 #include "twtest/test.h"
 #include "core/error.h"
 
+#if HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h>
+#endif
 
 using namespace std;
 
@@ -291,17 +293,21 @@ const TSTRING expected_os("AROS");
 const TSTRING expected_os("RTEMS");
 #elif IS_RISCOS
 const TSTRING expected_os("RISC OS");
+#elif IS_RISCOS
+const TSTRING expected_os("Redox");
 #else
 const TSTRING expected_os("?!?!?");
 #endif
 
 void TestPlatformDetection()
 {
+#if HAVE_SYS_UTSNAME_H
     struct utsname os_info;
     TEST( uname(&os_info) == 0);
 
     TSTRING observed_os(os_info.sysname);
     TEST( observed_os == expected_os );
+#endif
 }
 
 void RegisterSuite_Platform()

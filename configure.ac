@@ -139,6 +139,9 @@ AC_DEFINE(IS_UNIX, 1, [Is a unix type platform])
 dnl whether or not to generate debuging code?
 AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
+dnl look for struct stat members that aren't always there
+AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks])
+
 dnl #############################
 dnl Checks for standard functions
 dnl #############################
