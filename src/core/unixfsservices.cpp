@@ -77,6 +77,10 @@
 
 #include <pwd.h>
 
+#if IS_REDOX
+#define restrict __restrict__
+#endif
+
 #if HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 # include <netdb.h>
@@ -538,7 +542,8 @@ bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
 bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
 {
     bool fSuccess = true;
-    
+
+#if !IS_REDOX    
     if( mResolveNames )
     {
         struct group* pg = getgrgid( group_id );
@@ -552,10 +557,13 @@ bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
     }
     else
     {
+#endif
         std::stringstream sstr;
         sstr << group_id;
         tstrGroup = sstr.str();
+#if !IS_REDOX
     }
+#endif
     
     return( fSuccess );
 }

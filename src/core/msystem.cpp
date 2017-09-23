@@ -94,6 +94,13 @@
 #include <assert.h>
 #include "msystem.h"
 
+#if IS_REDOX
+#define setuid(x) sleep(0) 
+#define setgid(x) sleep(0)
+#endif
+ 
+
+
 /*
  * signal type
  */

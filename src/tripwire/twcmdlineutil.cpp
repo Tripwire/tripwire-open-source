@@ -536,15 +536,16 @@ static bool EmailReportTo(const TSTRING &toAddress, const cFCOReportHeader& head
   // allocate the right kind of emailer object based on what came out of the config file.
   switch (modeCommon->mMailMethod) 
     {
-    default:
-      ASSERT(false);
-      return false;
+#if SUPPORTS_NETWORKING
     case cMailMessage::MAIL_BY_SMTP:
       reportMail = TW_UNIQUE_PTR<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
       break;
+#endif
     case cMailMessage::MAIL_BY_PIPE:
       reportMail = TW_UNIQUE_PTR<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
+    default:
+      return false;
     }
 
   TSTRING strTempFilename;
@@ -690,15 +691,16 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING &mAddress, const cTWMode
    // allocate the right kind of emailer object based on what came out of the config file.
    switch (modeCommon->mMailMethod) 
    {
-   default:
-      ASSERT(false);
-      return false;
+#if SUPPORTS_NETWORKING
    case cMailMessage::MAIL_BY_SMTP:
       reportMail = TW_UNIQUE_PTR<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
       break;
+#endif
    case cMailMessage::MAIL_BY_PIPE:
       reportMail = TW_UNIQUE_PTR<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
       break;
+   default:
+      return false;
    }
 
 

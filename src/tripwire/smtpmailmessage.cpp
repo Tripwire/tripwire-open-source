@@ -42,6 +42,8 @@
 
 #include <time.h>
 
+#if SUPPORTS_NETWORKING
+
 //All the spleck that it takes to run sockets in Unix...
 #include <stdio.h>
 #if HAVE_SYS_SOCKET_H
@@ -563,4 +565,6 @@ void cSMTPMailMessage::DecodeError()
     //
 #endif // defined(_DEBUG)
 }
+
+#endif // SUPPORTS_NETWORKING
 

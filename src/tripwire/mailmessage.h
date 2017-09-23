@@ -36,7 +36,11 @@
 #include "core/error.h"
 #endif
 
-#if HAVE_SYS_SOCKET_H
+#if IS_REDOX
+#define restrict __restrict__
+#endif
+
+#if SUPPORTS_NETWORKING && HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
 #endif
 #define SOCKET int
@@ -207,7 +211,7 @@ public:
 };
 
 
-
+#if SUPPORTS_NETWORKING
 ///////////////////////////////////////////////////////////////////////////////
 //
 // This class implements sending a message via SMTP
@@ -245,7 +249,7 @@ private:
     TSTRING mstrServerName;
     unsigned short mPortNumber;
 };
-
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
