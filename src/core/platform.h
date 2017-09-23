@@ -328,6 +328,9 @@
 
 #define SUPPORTS_TERMIOS            (!IS_RTEMS && !IS_REDOX)
 // RTEMS errors are probably just a buildsys issue & this will change or go away.
+// Redox will probably implement this in the future.
+
+#define CAN_UNLINK_WHILE_OPEN       (!IS_AROS && !IS_RISCOS && !IS_REDOX)
 
 #define SUPPORTS_DOUBLE_SLASH_PATH  (IS_CYGWIN)
 // POSIX standard says paths beginning with 2 slashes are "implementation defined"

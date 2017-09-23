@@ -94,7 +94,7 @@ cFile_i::~cFile_i()
         fclose( mpCurrStream );
         mpCurrStream = NULL;
 
-#if IS_AROS || IS_RISCOS
+#if !CAN_UNLINK_WHILE_OPEN // so unlink after close instead
         if( mFlags & cFile::OPEN_LOCKED_TEMP )
         {
             // unlink this file 
@@ -209,7 +209,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     }
     mpData->m_fd = fh;
 
-#if !IS_AROS && !IS_RISCOS
+#if CAN_UNLINK_WHILE_OPEN
     if( flags & OPEN_LOCKED_TEMP )
     {
         // unlink this file 
