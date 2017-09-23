@@ -266,6 +266,8 @@ static void util_InitTempDirectory(const cConfigFile& cf)
         temp_directory = "/dev/c/temp/";
 #elif IS_RISCOS
         temp_directory = "/!BOOT/Resources/!Scrap/ScrapDirs/ScrapDir";
+#elif IS_REDOX
+        temp_directory = "/file/tmp/";
 #else
         temp_directory = "/tmp/";
 #endif
