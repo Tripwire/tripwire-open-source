@@ -338,6 +338,9 @@ case $target in
 		;;
 	*-*-netbsd*)
 		;;
+	*-*-libertybsd*)
+		CXXFLAGS="${CXXFLAGS} -DTW_LibertyBSD"
+		;;
 	i[[0-9]]86-pc-linux*)
 		;;
 	sparc-*-linux*)

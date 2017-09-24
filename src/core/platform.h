@@ -66,6 +66,7 @@
 #define OS_MIDNIGHTBSD  0x0306
 #define OS_MIRBSD       0x0307
 #define OS_BITRIG       0x0308
+#define OS_LIBERTYBSD   0x0309
 
 #define OS_SOLARIS      0x0400
 #define OS_AIX          0x0401
@@ -161,6 +162,10 @@
 #elif defined(__Bitrig__)
     #define OS                  OS_BITRIG
     #define IS_BITRIG           1
+
+#elif defined(TW_LibertyBSD)
+    #define OS                  OS_LIBERTYBSD
+    #define IS_LIBERTYBSD       1
 
 #elif defined(__OpenBSD__)
     #define OS                  OS_OPENBSD

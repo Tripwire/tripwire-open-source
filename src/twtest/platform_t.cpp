@@ -261,6 +261,8 @@ const TSTRING expected_os("NetBSD");
 const TSTRING expected_os("MirBSD");
 #elif IS_BITRIG
 const TSTRING expected_os("Bitrig");
+#elif IS_LIBERTYBSD
+const TSTRING expected_os("LibertyBSD");
 #elif IS_OPENBSD
 const TSTRING expected_os("OpenBSD");
 #elif IS_SOLARIS
