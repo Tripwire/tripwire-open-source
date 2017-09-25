@@ -246,7 +246,7 @@ const TSTRING expected_os("Darwin");
 #elif IS_CYGWIN
 const TSTRING expected_os("Cygwin");
 #elif IS_DOS_DJGPP
-const TSTRING expected_os("DJGPP");
+const TSTRING expected_os("FreeDOS"); // This will likely fail for other DOS flavors
 #elif IS_ANDROID
 const TSTRING expected_os("Android");
 #elif IS_DRAGONFLYBSD
@@ -308,6 +308,10 @@ void TestPlatformDetection()
     TEST( uname(&os_info) == 0);
 
     TSTRING observed_os(os_info.sysname);
+
+    if ( observed_os != expected_os )
+        TCERR << "Expected OS: " << expected_os << " | Observed OS: " << observed_os << std::endl;
+
     TEST( observed_os == expected_os );
 #endif
 }

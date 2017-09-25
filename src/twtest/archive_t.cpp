@@ -38,6 +38,7 @@
 #include "core/archive.h"
 #include "twtest/test.h"
 #include "core/error.h"
+#include "tw/twutil.h"
 #include <stdio.h>
 
 TSS_EXCEPTION(eTestArchiveError, eError);
@@ -119,6 +120,12 @@ void TestLockedTemporaryArchive()
         lockedArch.OpenReadWrite();
         lockedArch.Close();
     }
+    catch (eError& e)
+    {
+        threw=true;
+        TCERR << "Error opening locked temp archive" << std::endl;
+        cTWUtil::PrintErrorMsg(e);
+    }
     catch (...)
     {
         threw = true;
@@ -141,6 +148,12 @@ void TestLockedTemporaryArchive()
 
         // this should delete the file
         lockedArch.Close();
+    }
+    catch (eError& e)
+    {
+        threw=true;
+        TCERR << "Error writing locked temp archive" << std::endl;        
+        cTWUtil::PrintErrorMsg(e);
     }
     catch (...)
     {
@@ -215,6 +228,6 @@ void TestFileArchive()
 void RegisterSuite_Archive()
 {
     RegisterTest("Archive", "MemoryArchive", TestMemoryArchive);
-    RegisterTest("Archive", "LockedTemporaryArchive)", TestLockedTemporaryArchive);
+    RegisterTest("Archive", "LockedTemporaryArchive", TestLockedTemporaryArchive);
     RegisterTest("Archive", "FileArchive",   TestFileArchive);
 }

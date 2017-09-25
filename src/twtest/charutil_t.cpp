@@ -42,6 +42,21 @@
 #include "core/errorbucketimpl.h"
 #include "twtest/test.h"
 
+#include <algorithm>
+
+bool localeIsUtf8()
+{
+    std::string locale(setlocale(LC_CTYPE, 0));
+    std::transform(locale.begin(), locale.end(), locale.begin(), ::tolower);
+
+    if(locale.find("utf-8") != std::string::npos)
+        return true;
+
+    if(locale.find("utf8") != std::string::npos)
+        return true;
+
+    return false;
+}
 
 void CheckChars( const TSTRING& str, int length_expected = 1)
 {
@@ -52,6 +67,8 @@ void CheckChars( const TSTRING& str, int length_expected = 1)
     while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
         int length = (int)(last - first);
+        if (length != length_expected )
+            TCERR << "CheckChars on '" << str << "' : expected = " << length_expected << " | observed = " << length << std::endl;
         TEST(length == length_expected);
     }
 }
@@ -63,7 +80,11 @@ void TestCharUtilBasic()
 {
     CheckChars( "foo" );
     CheckChars( "fo\x23 54" );
-    CheckChars( "\U0001F408", 4 );  //Cat emoji. Assumes UTF-8
+
+    if(localeIsUtf8())
+        CheckChars( "\U0001F408", 4 );  //Cat emoji, if UTF-8
+    else
+        CheckChars( "\U0001F408", 1 );  // just a bag of bytes otherwise
 }
 
 void RegisterSuite_CharUtil()

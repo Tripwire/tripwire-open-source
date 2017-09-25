@@ -53,7 +53,7 @@ void TestTaskTimer()
     }
 
     TEST(!timer.IsRunning());
-    TEST(5 >= timer.GetTotalTime());
+    TEST(5 <= timer.GetTotalTime());
     TEST(5 == timer.GetNumTimesStarted());
 }
 
