@@ -751,7 +751,7 @@ int cTWModeDbInit::Execute(cErrorQueue* pQueue)
       cTWCmdLineUtil::ParsePolicyFile(genreSpecList, mpData->mPolFile, mpData->mSiteKeyFile, pQueue);
 
         #ifdef TW_PROFILE
-      cWin32TaskTimer timer("cTripwire::GenerateDatabase");
+      cTaskTimer timer("cTripwire::GenerateDatabase");
       timer.Start();
         #endif
 
@@ -1375,7 +1375,7 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                iUserNotify::GetInstance()->Notify(1, TSS_GetString( cTripwire, tripwire::STR_INTEGRITY_CHECK).c_str());
 
 #ifdef TW_PROFILE
-               cWin32TaskTimer timer("cTripwire::IntegrityCheck");
+               cTaskTimer timer("cTripwire::IntegrityCheck");
                timer.Start();
 #endif
                cIntegrityCheck ic( (cGenre::Genre)dbIter.GetGenre(), specList, dbIter.GetDb(), report, pQueue );

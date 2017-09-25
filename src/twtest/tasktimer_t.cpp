@@ -32,12 +32,29 @@
 // tasktimer_t -- test driver for cTaskTimer
 #include "core/stdcore.h"
 #include "test.h"
+#include "core/tasktimer.h"
+#include <unistd.h>
 
 void TestTaskTimer()
 {
-    cDebug d("TestTaskTimer");
-    d.TraceError("Implement this!\n");
-    skip("TestTaskTimer unimplemented");
+    cTaskTimer timer("unit testing");
+
+    TEST(!timer.IsRunning());
+    TEST(0 == timer.GetTotalTime());
+    TEST(0 == timer.GetNumTimesStarted());
+
+    for( int counter=0; counter<5; counter++)
+    {
+        timer.Start();
+        TEST(timer.IsRunning());
+        sleep(1);
+        timer.Stop();
+        TEST(!timer.IsRunning());
+    }
+
+    TEST(!timer.IsRunning());
+    TEST(5 >= timer.GetTotalTime());
+    TEST(5 == timer.GetNumTimesStarted());
 }
 
 void RegisterSuite_TaskTimer()

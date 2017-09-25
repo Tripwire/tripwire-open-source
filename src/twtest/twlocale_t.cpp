@@ -55,38 +55,6 @@ void TestHex();
         TEST( false ); \
     } catch( error& ) {}
 
-/* We don't do atoi stuff in cTWLocale anymore
-void TestAtoi()
-{
-    //
-    // setup
-    //
-    int32 n;
-    TSTRING str = _T("123456");
-
-    //
-    // Try formatting with our default locale
-    //
-    TWLocale::InitGlobalLocale();
-    n = cTWLocale::FormatNumberClassic( str );
-    TEST( n == 123456 );
-
-    //    
-    // Try formatting with "" locale
-    //
-    std::locale::global( std::locale("") );
-    n = cTWLocale::FormatNumberClassic( str );
-    TEST( n == 123456 );
-    
-    //    
-    // Try formatting with "C" locale
-    //
-    std::locale::global( std::locale("") );
-    n = cTWLocale::FormatNumberClassic( str );
-    TEST( n == 123456 );
-}
-*/
-
 void TestItoa()
 {
     try
@@ -129,110 +97,8 @@ void TestItoa()
     }
 }
 
-/* We don't do atoi stuff in cTWLocale anymore, so no roundtrip
-void TestRoundtrip()
-{
-    //
-    // init
-    //
-    cTWLocale::InitGlobalLocale();
-
-    //
-    // atoitoa
-    // 
-    TSTRING strIn  = _T("123456");
-    TSTRING strOut;
-    strOut = cTWLocale::FormatNumber( cTWLocale::FormatNumberClassic( strIn ), strOut );
-    // don't know if string will be the same due to possible changes in formatting from locale
-    // ASSERT( strOut == strIn ); <---- can't do this ^^^
-    TEST( 123456 == cTWLocale::FormatNumberClassic( strOut ) );
-
-    
-    //
-    // itoatoi
-    // 
-    int32 nIn  = 654321;
-    int32 nOut;
-    nOut = cTWLocale::FormatNumberClassic( cTWLocale::FormatNumber( nIn, strIn ) );
-    TEST( nOut == nIn );
-}
-*/
-
-void TestFlags()
-{
-    skip("Modernize & re-enable this");
-#if 0
-    //
-    // init
-    //
-    cTWLocale::InitGlobalLocale();
-
-    // 
-    // hex
-    // 
-    TSTRING str = _T("FF");
-    int n = cTWLocale::FormatNumber( str, std::ios_base::hex );
-    TEST( n == 0xFF );
-
-    // 
-    // bad number for dec
-    //
-    ASSERT_THAT_IT_THROWS( cTWLocale::FormatNumberAsHex( str ), eError );
-    
-    // 
-    // oct
-    // 
-    TSTRING strOct = _T("0712");
-    n = cTWLocale::FormatNumber( strOct, std::ios_base::oct );
-    TEST( n == 0712 );
-    
-    // 
-    // oct again
-    // 
-    strOct = _T("00712");
-    n = cTWLocale::FormatNumber( strOct, std::ios_base::oct );
-    TEST( n == 0712 );
-    
-    // 
-    // oct again again
-    // 
-    strOct = _T("712");
-    n = cTWLocale::FormatNumber( strOct, std::ios_base::oct );
-    TEST( n == 0712 );
-
-    // 
-    // try bad oct
-    //
-    ASSERT_THAT_IT_THROWS( cTWLocale::FormatNumber( _T("99"), std::ios_base::oct ), eError );
-#endif
-}
-
-
-/*
-void doTestHex(const uint32 value, const std::string& expected, const std::string& expected2 = "")
-{
-    TSTRING str = cTWLocale::FormatNumberAsHex( value );
-    TCERR << "STR = " << str << " | Expected = " << expected << " | Expected2 = " << expected2 << std::endl;
-    TEST( str == expected || (!expected2.empty() && str == expected2) );
-}
-
-void TestHex()
-{
-    TSTRING str;
-
-    doTestHex( 0x1234, _T("1234") );
-    doTestHex( 16, _T("10") );
-    doTestHex( 0x12344321, _T("12344321") );
-    doTestHex( 0xFFFFFFFF, _T("FFFFFFFF"),  _T("ffffffff"));
-}
-*/
-
 void RegisterSuite_TWLocale()
 {
-//    RegisterTest("TWLocale", "Hex", TestHex);
-//    RegisterTest("TWLocale", "Atoi", TestAtoi);
     RegisterTest("TWLocale", "Itoa", TestItoa);
-    RegisterTest("TWLocale", "Flags", TestFlags);
-//    RegisterTest("TWLocale", "Roundtrip", TestRoundtrip);
 }
 

@@ -36,84 +36,89 @@
 #include "core/debug.h"
 #include "twtest/test.h"
 #include "fco/fco.h"
+#include "fco/twfactory.h"
+#include "core/errorbucketimpl.h"
 
-/*
-static void PrintDb( cHierDatabase::iterator iter, cDebug d, bool bFirst = true )
+namespace
 {
-    if( ! bFirst )
-    {
-        iter.Descend();
-    }
-    d.TraceDebug( "-- Processing directory %s\n", iter.GetCwd().c_str() );
+int num_processed = 0;
 
-    for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
-    {
-        d.TraceDebug( "Processing entry %s\n", iter.GetName().c_str() );
-        if( iter.CanDescend() )
-        {
-            d.TraceDebug( ">>Descending...\n" );
-            PrintDb(iter, d, false);
-        }
-    }
-
-    d.TraceDebug( "-- Done Processing directory %s\n", iter.GetCwd().c_str() );
-}
-*/
-
-static void PrintIter( cFSDataSourceIter iter, cDebug& d )
+void util_ProcessDir( iFCODataSourceIter* pIter )
 {
-    int count = 0;
-
-    if( ! iter.CanDescend() )
-    {
-        d.TraceError( "Iterator cannot descend; returning!\n");
-        TEST(!"Unexpected !CanDescend at beginning of test");
+    TEST( ! pIter->Done() );
+    TEST( pIter->CanDescend() );
+    if( ! pIter->CanDescend() )
         return;
-    }
-    iter.Descend();
-    iter.TraceContents();
 
-    for( iter.SeekBegin(); ! iter.Done(); iter.Next() )
+    pIter->Descend();
+
+    for( pIter->SeekBegin(); ! pIter->Done(); pIter->Next() )
     {
-        count++;
-        iFCO* pFCO = iter.CreateFCO();
+        iFCO* pFCO = pIter->CreateFCO();
         if( pFCO )
         {
-            pFCO->TraceContents();
+            num_processed++;
             pFCO->Release();
+
+            if( pIter->CanDescend() )
+            {
+                TW_UNIQUE_PTR<iFCODataSourceIter> pCopy( pIter->CreateCopy() );
+                util_ProcessDir( pCopy.get() );
+            }
         }
         else
         {
-            d.TraceError( "*** Create of FCO failed!\n");
-            fail("CreateFCO() failure");
+            fail("CreateFCO failure");
         }
-        if( iter.CanDescend() )
+    }
+}
+
+void util_ProcessDir( const cFCOName& name )
+{
+    //Create a cFSDataSourceIter the same way we do in DB gen / IC
+    TW_UNIQUE_PTR<iFCODataSourceIter>   pDSIter(iTWFactory::GetInstance()->CreateDataSourceIter());
+
+    cErrorQueue errorQueue;
+    pDSIter->SetErrorBucket(&errorQueue);
+
+    pDSIter->SeekToFCO  ( name, false ); // false means don't generate my peers...
+    if( ! pDSIter->Done() )
+    {
+        iFCO* pFCO = pDSIter->CreateFCO();
+        if( pFCO )
         {
-            d.TraceDebug( ">>Descending...\n" );
-            PrintIter(iter, d);
+            num_processed++;
+            pFCO->Release();
+
+            if( pDSIter->CanDescend() )
+            {
+                TW_UNIQUE_PTR<iFCODataSourceIter> pCopy( pDSIter->CreateCopy() );
+                util_ProcessDir( pCopy.get() );
+            }
+        }
+        else
+        {
+            fail("CreateFCO failure");
         }
     }
 
-    TEST(count > 0);
+    TEST( 0 == errorQueue.GetNumErrors());
+    TEST( 0 < num_processed );
 }
 
 
+} // namespace
+
+
+//////////////////////////////////////
+
 void TestFSDataSourceIter()
 {
-    skip("Fix this test");
-
-    cFSDataSourceIter   iter;
     cDebug              d("TestFSDataSourceIter");
 
+
     cFCOName base(TwTestDir());
-
-    // go to my temp directory and iterate over everything!
-    iter.SeekToFCO( cFCOName(TwTestDir()) );
-
-    //
-    // print out everything below the iterator
-    //
-    PrintIter( iter, d );
+    util_ProcessDir(base);
 }
 
 void RegisterSuite_FSDataSourceIter()

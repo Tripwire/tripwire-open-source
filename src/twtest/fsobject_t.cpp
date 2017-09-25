@@ -32,13 +32,34 @@
 // fsobject_t -- the file system object test driver
 #include "fs/stdfs.h"
 #include "fs/fsobject.h"
+#include "fs/fspropcalc.h"
 #include "test.h"
+#include <fstream>
 
 void TestFSObject()
 {
     cDebug d("TestFSObject");
-    d.TraceError("Implement this!\n");
-    skip("TestFSObject not implemented");
+
+    cFCOName path( TwTestPath("fsobject") );
+    std::ofstream fstr(path.AsString().c_str());
+    if(fstr.bad())
+    {
+        d.TraceError("Unable to create test file %s!\n", path.AsString().c_str());
+        TEST(false);
+    }
+    fstr.close();
+
+    cFSObject obj(path);
+
+    cFSPropCalc propCalc;
+    cFCOPropVector v(obj.GetPropSet()->GetValidVector().GetSize());
+    for( int x=0; x < cFSPropSet::PROP_NUMITEMS; x++)
+        v.AddItem(x);
+    propCalc.SetPropVector(v);
+
+    obj.AcceptVisitor(&propCalc);
+
+    TEST(obj.GetPropSet()->GetNumProps() == cFSPropSet::PROP_NUMITEMS);
 }
 
 void RegisterSuite_FSObject()

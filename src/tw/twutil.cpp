@@ -345,7 +345,7 @@ void cTWUtil::WriteDatabase(const TCHAR* filename, cFCODatabaseFile& db, bool bE
     //fileHeader.SetVersion(1);
 
 #ifdef TW_PROFILE
-    cWin32TaskTimer timer(_T("Write Database"));
+    cTaskTimer timer(_T("Write Database"));
     timer.Start();
 #endif
     
@@ -370,7 +370,7 @@ void cTWUtil::ReadDatabase(const TCHAR* filename, cFCODatabaseFile& db, const cE
                                         cDisplayEncoder::EncodeInline( filename ).c_str() );
 
 #ifdef TW_PROFILE
-    cWin32TaskTimer timer("cTWUtil::ReadDatabase");
+    cTaskTimer timer("cTWUtil::ReadDatabase");
     timer.Start();
 #endif
 

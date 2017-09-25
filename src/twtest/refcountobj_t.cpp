@@ -158,9 +158,13 @@ void TestRefCountObj()
         }
     }
 
-    //These fields only exist in debug builds, so we can't use TEST() here.
-    ASSERT(cRefCountObj::objectCounter == 0);
-    ASSERT(cRefCountObj::referenceCounter == 0);
+#ifdef DEBUG
+    //These fields only exist in debug builds
+    TEST(cRefCountObj::objectCounter == 0);
+    TEST(cRefCountObj::referenceCounter == 0);
+#else
+    TEST("This test can only make useful assertions in debug builds");
+#endif
 
     db.TraceAlways("Done...\n");
     

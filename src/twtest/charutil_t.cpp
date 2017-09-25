@@ -43,7 +43,7 @@
 #include "twtest/test.h"
 
 
-void PrintChars( const TSTRING& str )
+void CheckChars( const TSTRING& str, int length_expected = 1)
 {
     TSTRING::const_iterator cur = str.begin();
     TSTRING::const_iterator end = str.end();
@@ -51,19 +51,9 @@ void PrintChars( const TSTRING& str )
     
     while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
-        TCOUT << _T("char length: ") << (int)(last - first) << std::endl;
-
-        TCOUT << _T("char: <");
-        for( TSTRING::const_iterator at = first; at != last; at++ )
-        {
-            if( at != first )
-                TCOUT << _T(",");
-            TCOUT << (int)*at;
-        }
-        TCOUT << _T(">") << std::endl;
+        int length = (int)(last - first);
+        TEST(length == length_expected);
     }
-    
-    TCOUT << _T("----------------------------") << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -71,8 +61,9 @@ void PrintChars( const TSTRING& str )
 ///////////////////////////////////////////////////////////////////////////    
 void TestCharUtilBasic()
 {
-    PrintChars( _T("foo") );
-    PrintChars( _T("fo\x23 54") );
+    CheckChars( "foo" );
+    CheckChars( "fo\x23 54" );
+    CheckChars( "\U0001F408", 4 );  //Cat emoji. Assumes UTF-8
 }
 
 void RegisterSuite_CharUtil()
