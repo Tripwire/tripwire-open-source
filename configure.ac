@@ -171,18 +171,29 @@ dnl ##############################################
 dnl check for various RNG/PRNG devices
 dnl ##############################################  
 
-if test -c "/dev/random"; then
+UNAME=`uname`
+
+dnl ############################################## 
+dnl AROS pops up a "Please insert disk" dialog for /dev
+dnl if script looks for devices (which don't exist)
+dnl so don't even try looking.
+dnl ############################################## 
+
+if [[ $UNAME != "AROS" ]]; then
+
+  if test -c "/dev/random"; then
     AC_DEFINE(HAVE_DEV_RANDOM, [1], [Has /dev/random])
-fi
+  fi
 
-if test -c "/dev/urandom"; then
+  if test -c "/dev/urandom"; then
     AC_DEFINE(HAVE_DEV_URANDOM, [1], [Has /dev/urandom])
-fi
+  fi
 
-if test -c "/dev/arandom"; then
+  if test -c "/dev/arandom"; then
     AC_DEFINE(HAVE_DEV_ARANDOM, [1], [Has /dev/arandom])
-fi
+  fi
 
+fi
 
 dnl ##############################################
 dnl Checks for various platform specific libraries
