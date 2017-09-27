@@ -75,7 +75,11 @@ void TestTWUtil()
     TEST(cFileUtil::FileWritable(tmpFN) == true)
     TEST(cFileUtil::FileExists(tmpFN) == false);
 
+#if IS_AROS
+    bool is_root = (65534 == getuid()); //AROS doesn't really have users, & posixy fns use this pseudo value.
+#else
     bool is_root = (0 == getuid());
+#endif
 
     // make the dir read only and make sure write tests false
     // windows fails this test, perhaps because I am an administrator?
