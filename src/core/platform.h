@@ -85,6 +85,7 @@
 #define OS_RTEMS        0x0509   
 #define OS_RISCOS       0x050A
 #define OS_REDOX        0x050B
+#define OS_QNX          0x050C
 
 #define COMP_UNKNOWN        0
 #define COMP_GCC            0x0001
@@ -240,6 +241,10 @@
 #elif defined(__redox__)
     #define OS                  OS_REDOX
     #define IS_REDOX            1
+
+#elif defined(__QNX__)
+    #define OS                  OS_QNX
+    #define IS_QNX              1
 
 #endif
 	

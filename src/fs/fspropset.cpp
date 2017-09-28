@@ -60,7 +60,8 @@ TSTRING cFCOPropFileType::AsString() const
         fs::STR_FT_FIFO,
         fs::STR_FT_SOCK,
         fs::STR_FT_DOOR,
-        fs::STR_FT_PORT
+        fs::STR_FT_PORT,
+        fs::STR_FT_NAMED
     };
 
     int32 fileType = GetValue();

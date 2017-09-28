@@ -133,7 +133,8 @@ struct cFSStatArgs {
       TY_FIFO,
       TY_SOCK,
       TY_DOOR,
-      TY_PORT
+      TY_PORT,
+      TY_NAMED
    };
 
    // attr is fs dependent?

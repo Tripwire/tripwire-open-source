@@ -297,6 +297,8 @@ const TSTRING expected_os("RTEMS");
 const TSTRING expected_os("RISC OS");
 #elif IS_RISCOS
 const TSTRING expected_os("Redox");
+#elif IS_QNX
+const TSTRING expected_os("QNX");
 #else
 const TSTRING expected_os("?!?!?");
 #endif

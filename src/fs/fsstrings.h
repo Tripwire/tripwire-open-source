@@ -55,6 +55,7 @@ TSS_BeginStringIds( fs )
     STR_FT_SOCK,
     STR_FT_DOOR,
     STR_FT_PORT,
+    STR_FT_NAMED,
 
     // property names
     STR_PROP_DEV,

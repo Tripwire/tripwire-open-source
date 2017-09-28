@@ -386,7 +386,11 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
 #if HAVE_PORT_CREATE
     else if(S_ISPORT(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_PORT;
 #endif
-    
+
+#ifdef S_ISNAM
+    else if(S_ISNAM(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_NAMED;
+#endif
+
     else stat.mFileType = cFSStatArgs::TY_INVALID;
 }
 
@@ -623,6 +627,12 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
 #if HAVE_PORT_CREATE  // Solaris event ports
         case S_IFPORT:
             szPerm[0] = _T('P');
+            break;
+#endif
+
+#ifdef S_IFNAM
+        case S_IFNAM:
+            szPerm[0] = _T('n');
             break;
 #endif
         break;

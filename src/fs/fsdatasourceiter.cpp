@@ -271,6 +271,9 @@ bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
     case cFSStatArgs::TY_PORT:
         propSet.SetFileType(cFSPropSet::FT_PORT);
         break;
+    case cFSStatArgs::TY_NAMED:
+        propSet.SetFileType(cFSPropSet::FT_NAMED);
+        break;
     default:
         // set it to invalid
         propSet.SetFileType(cFSPropSet::FT_INVALID);

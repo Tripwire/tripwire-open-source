@@ -111,6 +111,7 @@ public:
         FT_SOCK,
         FT_DOOR,
         FT_PORT,
+        FT_NAMED,
         FT_NUMITEMS
     };
 
