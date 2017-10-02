@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -43,7 +43,7 @@
 #include "tw/configfile.h"
 #include "core/errorbucketimpl.h"
 #include "core/usernotifystdout.h"
-#include "core/timebomb.h"
+#include "core/epoch.h"
 #include <memory>       // for auto_ptr / unique_ptr
 #include <iostream>
 #include <exception>
@@ -64,7 +64,7 @@ static TSTRING util_GetWholeCmdLine( int argc, const TCHAR *argv[] );
 // global new() and delete() overrides -- this is done to do performance testing
 ///////////////////////////////////////////////////////////////////////////////
 /*
-#ifdef _DEBUG
+#ifdef DEBUG
 #if defined(HAVE_MALLOC_H)
 #include <malloc.h>
 #endif
@@ -107,7 +107,7 @@ void tw_unexpected_handler()
 int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
 {
 
-    if (TimeBombExploded())
+    if (CheckEpoch())
         return 8;
 
     int ret = 0;
@@ -254,22 +254,19 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
         TCERR << _T("*** Exiting...\n");
         ret = 8;
     }
-
-    /*
     catch (...)
     {
         TCERR << _T("*** Fatal exception occurred.\n");
         TCERR << _T("*** Exiting...\n");
         ret = 8;
     }
-    */
 
 exit:
 
 
     // print out the max memory usage...
 /*
-#ifdef _DEBUG
+#ifdef DEBUG
     TCOUT << _T("Maximum memory footprint = ") << gMaxAlloc << std::endl;
 #endif
 */

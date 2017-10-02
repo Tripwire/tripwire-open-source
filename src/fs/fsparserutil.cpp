@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -84,6 +84,11 @@ bool cFSParserUtil::MapStringToProperty( const TSTRING& str, int& propIndex ) co
         }
     }
     else
+        fMappedChar = false;
+
+/* Leaving this here in case we ever want to implement long property names
+ 
+    else
     {
         if( 0 == str.compare( TSS_GetString( cFS, fs::STR_PARSER_PROP_MODE ) ) )
             propIndex = cFSPropSet::PROP_MODE;
@@ -122,6 +127,7 @@ bool cFSParserUtil::MapStringToProperty( const TSTRING& str, int& propIndex ) co
         else
             fMappedChar = false;
     }
+*/
 
     return( fMappedChar );
 }
@@ -206,6 +212,10 @@ bool cFSParserUtil::EnumPredefinedVariables( int index, TSTRING& sName, TSTRING&
 
 bool cFSParserUtil::IsAbsolutePath( const TSTRING& strPath ) const
 {
-    // IF there's a first character AND it is ( '/' OR '\\' ), THEN it's absolute
-    return( strPath.size() > 0 && ( _T('/') == strPath[0] || _T('\\') == strPath[0] ) );
+#if USES_DEVICE_PATH
+    return cDevicePath::IsAbsolutePath(strPath);
+#else
+    // IF there's a first character AND it's a '/', it's absolute.
+    return( strPath.size() > 0 && ( _T('/') == strPath[0] ) );
+#endif
 }

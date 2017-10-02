@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -38,7 +38,7 @@
 #endif
 #define YYNEWLINE 10
 
-#line 1 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
+//#line 1 "..\\..\\mkslexyacc\\etc\\yylex.cpp"
 // MKS LEX prototype scanner header
 // Copyright 1991 by Mortice Kern Systems Inc.
 // All rights reserved.

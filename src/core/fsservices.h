@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -133,7 +133,8 @@ struct cFSStatArgs {
       TY_FIFO,
       TY_SOCK,
       TY_DOOR,
-      TY_PORT
+      TY_PORT,
+      TY_NAMED
    };
 
    // attr is fs dependent?
@@ -290,8 +291,6 @@ class iFSServices
   virtual bool    Rename( const TSTRING& strOldName, const TSTRING& strNewName, bool fOverWrite = true ) const = 0;
   // rename a file
     
-  virtual bool        GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const = 0;
-  virtual bool        GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const = 0;
   virtual bool        GetUserName( uid_t user_id, TSTRING& tstrUser ) const = 0;
   virtual bool        GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const = 0;
 

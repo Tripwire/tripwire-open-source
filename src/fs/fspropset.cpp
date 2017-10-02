@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -60,7 +60,8 @@ TSTRING cFCOPropFileType::AsString() const
         fs::STR_FT_FIFO,
         fs::STR_FT_SOCK,
         fs::STR_FT_DOOR,
-        fs::STR_FT_PORT
+        fs::STR_FT_PORT,
+        fs::STR_FT_NAMED
     };
 
     int32 fileType = GetValue();

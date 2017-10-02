@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -32,8 +32,37 @@
 // fsobject_t -- the file system object test driver
 #include "fs/stdfs.h"
 #include "fs/fsobject.h"
+#include "fs/fspropcalc.h"
+#include "test.h"
+#include <fstream>
 
 void TestFSObject()
 {
-    return;
+    cDebug d("TestFSObject");
+
+    cFCOName path( TwTestPath("fsobject") );
+    std::ofstream fstr(path.AsString().c_str());
+    if(fstr.bad())
+    {
+        d.TraceError("Unable to create test file %s!\n", path.AsString().c_str());
+        TEST(false);
+    }
+    fstr.close();
+
+    cFSObject obj(path);
+
+    cFSPropCalc propCalc;
+    cFCOPropVector v(obj.GetPropSet()->GetValidVector().GetSize());
+    for( int x=0; x < cFSPropSet::PROP_NUMITEMS; x++)
+        v.AddItem(x);
+    propCalc.SetPropVector(v);
+
+    obj.AcceptVisitor(&propCalc);
+
+    TEST(obj.GetPropSet()->GetNumProps() == cFSPropSet::PROP_NUMITEMS);
+}
+
+void RegisterSuite_FSObject()
+{
+    RegisterTest("FSObject", "Basic", TestFSObject);
 }

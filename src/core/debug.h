@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -156,11 +156,11 @@ private:
 #endif
 };
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #define TRACE   cDebug::DebugOut
 #else
 #define TRACE   1 ? (void)0 : cDebug::DebugOut
-#endif // _DEBUG
+#endif // DEBUG
 
 //////////////////////////////////////////////////////////////////////////////////
 // inline implementation

@@ -2,14 +2,14 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT([tripwire], [2.4.3.5], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
+AC_INIT([tripwire], [2.4.3.6], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2017 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
-AC_REVISION([$Revision: 2.4.3.5 $])
+AC_REVISION([$Revision: 2.4.3.6 $])
 
 dnl ###############
 dnl Setup defaults
@@ -40,6 +40,30 @@ then
    CFLAGS="${CFLAGS} -g"
    CXXFLAGS="${CXXFLAGS} -g"
    AC_DEFINE(DEBUG, 1, [Compile with debug code])
+else
+   AC_DEFINE(NDEBUG, 1, [Compile without debug code])
+fi
+
+AC_ARG_ENABLE(coverage, [  --enable-coverage       enable code coverage])
+if test "x$enable_coverage" = xyes
+then
+   CFLAGS="${CFLAGS} --coverage"
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+AC_ARG_ENABLE(profiling, [  --enable-profiling      enable profiling])
+if test "x$enable_profiling" = xyes
+then
+   CFLAGS="${CFLAGS} -pg"
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
+fi
+
+AC_ARG_ENABLE(urandom,  [  --enable-urandom        use /dev/urandom])
+if test "x$enable_urandom" = xyes
+then
+   AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
 fi
 
 dnl ###################
@@ -75,7 +99,8 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #endif
 ]])
 AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
-AC_CHECK_HEADERS(unistd.h syslog.h langinfo.h sys/statfs.h sys/select.h)
+AC_CHECK_HEADERS(unistd.h sys/unistd.h)
+AC_CHECK_HEADERS(syslog.h langinfo.h sys/statfs.h sys/select.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
 AC_CHECK_HEADERS(sys/utsname.h memory.h)
@@ -97,6 +122,7 @@ AC_C_BIGENDIAN
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
+AC_CHECK_SIZEOF(time_t)
 
 dnl All platforms we support use 2's complement, are byte aligned, etc...
 AC_DEFINE(USES_1S_COMPLEMENT, 0, [Uses one's complement])
@@ -113,11 +139,15 @@ AC_DEFINE(IS_UNIX, 1, [Is a unix type platform])
 dnl whether or not to generate debuging code?
 AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
+dnl look for struct stat members that aren't always there
+AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks])
+
 dnl #############################
 dnl Checks for standard functions
 dnl #############################
 AC_CHECK_FUNCS(strftime gethostname gethostid)
 AC_CHECK_FUNCS(mkstemp mktemp, break)
+AC_CHECK_FUNCS(swab)
 
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
@@ -129,6 +159,40 @@ AC_ARG_ENABLE(commoncrypto,
 if test "x${enable_commoncrypto}" != "xno"
 then
   AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+fi
+
+dnl check for door support (Solaris)
+AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
+
+dnl check for event port support (Solaris)
+AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+
+dnl ##############################################  
+dnl check for various RNG/PRNG devices
+dnl ##############################################  
+
+UNAME=`uname`
+
+dnl ############################################## 
+dnl AROS pops up a "Please insert disk" dialog for /dev
+dnl if script looks for devices (which don't exist)
+dnl so don't even try looking.
+dnl ############################################## 
+
+if [[ $UNAME != "AROS" ]]; then
+
+  if test -c "/dev/random"; then
+    AC_DEFINE(HAVE_DEV_RANDOM, [1], [Has /dev/random])
+  fi
+
+  if test -c "/dev/urandom"; then
+    AC_DEFINE(HAVE_DEV_URANDOM, [1], [Has /dev/urandom])
+  fi
+
+  if test -c "/dev/arandom"; then
+    AC_DEFINE(HAVE_DEV_ARANDOM, [1], [Has /dev/arandom])
+  fi
+
 fi
 
 dnl ##############################################
@@ -284,6 +348,9 @@ case $target in
 	i386-*-openbsd*)
 		;;
 	*-*-netbsd*)
+		;;
+	*-*-libertybsd*)
+		CXXFLAGS="${CXXFLAGS} -DTW_LibertyBSD"
 		;;
 	i[[0-9]]86-pc-linux*)
 		;;

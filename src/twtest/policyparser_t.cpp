@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -45,7 +45,9 @@
 #include "fco/fcospeclist.h"
 #include "twtest/test.h"
 #include "util/fileutil.h"
+
 #include <fstream>
+#include <unistd.h>
 
 // helper class that checks output of each fcospec
 class cPolicyParserTester {
@@ -66,39 +68,34 @@ TSTRING get_test_file_dir()
 
 void test_policy_file(const std::string& polfile)
 {
-    try
-    {
-        cDebug::AddOutTarget(cDebug::OUT_STDOUT);
-        
-        TSTRING pol_path = get_test_file_dir();
-        pol_path.append("/");
-        pol_path.append(polfile);
-        
-        std::ifstream in;
-        in.open(pol_path.c_str());
-        if( ! in.good() )
-            throw eParserHelper( _T("couldn't open test file") );
-        
-        cPolicyParser parser( in );
-        
-        cGenreSpecListVector policy;
-        cErrorQueue errorQ;
-        cErrorReporter errorR;
-        cErrorTracer errorT;
-        
-        // set up an error bucket that will spit things to stderr
-        errorT.SetChild( &errorR );
-        errorQ.SetChild( &errorT );
-        
-        parser.Execute( policy, &errorQ );
-
-    }
-    catch(eError& e)
-    {
-        TCERR << (int)e.GetID() << " : " << e.GetMsg().c_str() << std::endl;
-        return;
-    }
+    cDebug::AddOutTarget(cDebug::OUT_STDOUT);
     
+    TSTRING pol_path = get_test_file_dir();
+    pol_path.append("/");
+    pol_path.append(polfile);
+
+    if(-1 == access(pol_path.c_str(), F_OK))
+        skip("policy parser test file not found/accessible");
+
+    std::ifstream in;
+    in.open(pol_path.c_str());
+    if( ! in.good() )
+        throw eParserHelper( _T("couldn't open test file") );
+    
+    cPolicyParser parser( in );
+    
+    cGenreSpecListVector policy;
+    cErrorQueue errorQ;
+    cErrorReporter errorR;
+    cErrorTracer errorT;
+    
+    // set up an error bucket that will spit things to stderr
+    errorT.SetChild( &errorR );
+    errorQ.SetChild( &errorT );
+    
+    parser.Execute( policy, &errorQ );
+    TEST("No exceptions thrown in cPolicyParser::Execute");
+
     TCERR << "Parsed policy test file " << polfile << std::endl;
     return;
 }
@@ -110,6 +107,9 @@ void TestPolicyParser()
     cDebug d("TestPolicyParser()");
 
     test_policy_file("pol.txt");
+
+    TCERR << "TestPolicyParser: Parser needs work to be able to test more than one policy" << std::endl;
+    
 //    test_policy_file("directives.txt");  //fails unless you substitute your hostname for 'your_host' in this file
     
 // TODO: test currently segfaults if you create more than one policy parser in a process. (Not a real world scenario).
@@ -119,4 +119,7 @@ void TestPolicyParser()
     test_policy_file("polruleattr.txt"); */
 }
     
-
+void RegisterSuite_PolicyParser()
+{
+    RegisterTest("PolicyParser", "Basic", TestPolicyParser);
+}

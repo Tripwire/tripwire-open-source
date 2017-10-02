@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -48,17 +48,17 @@ void TestGrowHeap()
     cGrowHeap gh( initSize, growBy, _T("growheap_t.cpp") );
     
     // report initial state
-    TCOUT << _T("Initial size: ") << initSize << endl;
+/*    TCOUT << _T("Initial size: ") << initSize << endl;
     TCOUT << _T("Growby: ") << growBy << endl;
     TCOUT << _T("Initial Growheap memory usage: ") << gh.TotalMemUsage() << endl << endl;
-
+*/
     const int growFactor = 5; // how much to enlarge requests each time
                               // make it odd so we can see if the growheap
                               // rounds to the alignment size
     for( size_t size = 1; size < growBy; size *= growFactor )
     {
         // allocate memory
-        TCOUT << _T("Allocing by ") << size << endl;
+        //TCOUT << _T("Allocing by ") << size << endl;
         void* p = gh.Malloc( size );        
         TEST( p != NULL );        
         
@@ -66,12 +66,12 @@ void TestGrowHeap()
         if( size > sizeof(int) )
         {
             // read from memory
-            TCOUT << _T("Reading an int from memory...") << endl;
+            //TCOUT << _T("Reading an int from memory...") << endl;
             int* pi = static_cast< int* >( p );
             int i = *pi;
 
             // write to memory
-            TCOUT << _T("Writing an int to memory...") << endl;
+            //TCOUT << _T("Writing an int to memory...") << endl;
             *pi = i;
         }
         
@@ -79,21 +79,27 @@ void TestGrowHeap()
         if( size > sizeof(double) )
         {
             // read from memory
-            TCOUT << _T("Reading a double from memory...") << endl;
+            //TCOUT << _T("Reading a double from memory...") << endl;
             double* pd = static_cast< double* >( p );
             double d = *pd;
 
             // write to memory
-            TCOUT << _T("Writing a double to memory...") << endl;
+            //TCOUT << _T("Writing a double to memory...") << endl;
             *pd = d;
         }
 
         // report total usage
-        TCOUT << _T("Growheap memory usage: ") << gh.TotalMemUsage() << endl << endl;
+        //TCOUT << _T("Growheap memory usage: ") << gh.TotalMemUsage() << endl << endl;
     }
 
+    TEST( gh.TotalMemUsage() > 0);
+    
     // free memory
     gh.Clear();
     TEST( gh.TotalMemUsage() == 0 );
 }
     
+void RegisterSuite_GrowHeap()
+{
+    RegisterTest("GrowHeap", "Basic", TestGrowHeap);
+}

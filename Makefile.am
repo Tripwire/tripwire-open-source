@@ -14,5 +14,12 @@ uninstall-hook:
 
 check:
 	rm -Rf $(top_srcdir)/src/test-harness/twtest
+	rm -Rf $(top_srcdir)/bin/TWTestData
 	cd $(top_srcdir)/src/test-harness && perl ./twtest.pl
-	$(top_srcdir)/bin/twtest all
+	cd $(top_srcdir)/bin && ./twtest all
+
+test: check
+
+.PHONY: targets
+targets:
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$' | xargs

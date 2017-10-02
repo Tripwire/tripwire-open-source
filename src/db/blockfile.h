@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -46,7 +46,7 @@
 #include "block.h"
 #endif
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #undef _BLOCKFILE_DEBUG // If we dont do this, test does not compile on unix
 #define _BLOCKFILE_DEBUG // If we dont do this, test does not compile on unix
 #endif

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -41,7 +41,7 @@
 #include "fcospechelper.h"
 #include "core/errorutil.h"
 
-#ifdef _DEBUG
+#ifdef DEBUG
 int gFCOSpecImplCreated = 0;
 int gFCOSpecImplDestroyed = 0;
 #endif
@@ -53,7 +53,7 @@ cFCOSpecImpl::cFCOSpecImpl(const TSTRING& name, void* pSrc, iFCOSpecHelper* pHel
     mName(name),
     mpHelper(pHelper)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     ++gFCOSpecImplCreated;
     cDebug d("cFCOSpecImpl::cFCOSpecImpl()");
     d.TraceDetail("Allocated cFCOSpecImpl(%p) creat=%d dest=%d\n", this, gFCOSpecImplCreated, gFCOSpecImplDestroyed);
@@ -65,7 +65,7 @@ cFCOSpecImpl::cFCOSpecImpl() :
     mName(_T("Unnamed_FCOSpecImpl")),
     mpHelper(0)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     ++gFCOSpecImplCreated;
     cDebug d("cFCOSpecImpl::cFCOSpecImpl()");
     d.TraceDetail("Allocated cFCOSpecImpl(%p) creat=%d dest=%d\n", this, gFCOSpecImplCreated, gFCOSpecImplDestroyed);
@@ -77,7 +77,7 @@ cFCOSpecImpl::cFCOSpecImpl(const cFCOSpecImpl& rhs) :
     mpHelper(0)
 {
     *this = rhs;
-#ifdef _DEBUG
+#ifdef DEBUG
     ++gFCOSpecImplCreated;
     cDebug d("cFCOSpecImpl::cFCOSpecImpl()");
     d.TraceDetail("Allocated cFCOSpecImpl(%p) creat=%d dest=%d\n", this, gFCOSpecImplCreated, gFCOSpecImplDestroyed);
@@ -86,7 +86,7 @@ cFCOSpecImpl::cFCOSpecImpl(const cFCOSpecImpl& rhs) :
 
 cFCOSpecImpl::~cFCOSpecImpl()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     ++gFCOSpecImplDestroyed;
     cDebug d("cFCOSpecImpl::cFCOSpecImpl()");
     d.TraceDetail("Deleted cFCOSpecImpl(%p) creat=%d dest=%d\n", this, gFCOSpecImplCreated, gFCOSpecImplDestroyed);

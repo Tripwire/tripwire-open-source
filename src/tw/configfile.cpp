@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -238,7 +238,7 @@ void cConfigFile::WriteString( TSTRING& configText ) // throw( eFSServices )
 
 void cConfigFile::ReadString(const TSTRING configText) // throw( eConfigFile );
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     // NOTE:BAM -- debug only code !
     TCERR << _T("*** begin config text ***") << std::endl;
     TCERR << configText << std::endl;    
@@ -266,7 +266,7 @@ void cConfigFile::ReadString(const TSTRING configText) // throw( eConfigFile );
 
     CheckThatAllMandatoryKeyWordsExists();
 
-#ifdef _DEBUG
+#ifdef DEBUG
     // NOTE:BAM -- debug only code !
     TSTRING sTemp;
     WriteString( sTemp );

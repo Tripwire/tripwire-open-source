@@ -55,9 +55,9 @@ sub getPolicyFileString {
 
    return <<EOT;
 
-$twtools::twcwd/$twtools::twrootdir/$TESTS{"0-permsChange"}{file} -> \$(ReadOnly);
-$twtools::twcwd/$twtools::twrootdir/$TESTS{"1-accessed"}{file}    -> \$(ReadOnly);
-$twtools::twcwd/$twtools::twrootdir/$TESTS{"2-removed"}{file}     -> \$(ReadOnly);
+$twtools::twcwd/$twtools::twrootdir/$TESTS{"0-permsChange"}{file} -> \$(ReadOnly) -a;
+$twtools::twcwd/$twtools::twrootdir/$TESTS{"1-accessed"}{file}    -> \$(ReadOnly) -a;
+$twtools::twcwd/$twtools::twrootdir/$TESTS{"2-removed"}{file}     -> \$(ReadOnly) -a;
 
 EOT
 
@@ -71,8 +71,8 @@ EOT
 
 sub initialize() {
     
-  my $twstr = getPolicyFileString();
-  twtools::GeneratePolicyFile($twstr);
+    my $twstr = getPolicyFileString();
+    twtools::GeneratePolicyFile($twstr);
 
 }
 
@@ -83,31 +83,42 @@ sub initialize() {
 #
 sub run() {
 
-  my $twpassed = 1;
+    twtools::logStatus("\n\n*** Beginning $description\n");
+    printf("%-30s", "-- $description");
 
-  twtools::logStatus("\n\n*** Beginning $description\n");
+    if ($^O eq "skyos") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; SkyOS doesn't support readonly files.\n";
+        return;
+    } elsif ($^O eq "gnu") {
+        ++$twtools::twskippedtests;
+        print "SKIPPED; TODO: Hurd has fewer expected changes here; refactor so we can test for correct values\n";
+        return;
+    }
 
-  printf("%-30s", "-- $description");
 
-  #########################################################
-  #
-  # Run the tests describe above in the %TESTS structure.
-  #
-  $twpassed = twtools::RunIntegrityTests(%TESTS);
+    my $twpassed = 1;
+
+    #########################################################
+    #
+    # Run the tests describe above in the %TESTS structure.
+    #
+    $twpassed = twtools::RunIntegrityTests(%TESTS);
 
 
-  #########################################################
-  #
-  # See if the tests all succeeded...
-  #
-  if ($twpassed) {
+    #########################################################
+    #
+    # See if the tests all succeeded...
+    #
+    if ($twpassed) {
+      ++$twtools::twpassedtests;
       print "PASSED\n";
       return 0;
-  }
-  else {
+    }
+    else {
       print "*FAILED*\n";
       ++$twtools::twfailedtests;
-  }
+    }
 }
 
 

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -41,13 +41,14 @@ using namespace std;
 
 void TestFCOSpec()
 {
-    cout << "Begin\tTestFCOSpec" << endl;
     // all it seems I can test here is that the default mask works
     const iFCOSpecMask* pDefMask = iFCOSpecMask::GetDefaultMask();
-    TEST(pDefMask->GetName().compare(TSTRING(_T("Default"))) == 0);
+    TEST(pDefMask->GetName().compare( TSTRING(_T("Default")) ) == 0);
     iFCO* pf1 = (iFCO*)0xbad, *pf2 = (iFCO*)0xcab;
     TEST( pDefMask->Accept(pf1) && pDefMask->Accept(pf2) );
+}
 
-    cout << "End\tTestFCOSpec" << endl;
-    return;
+void RegisterSuite_FCOSpec()
+{
+    RegisterTest("FCOSpec", "Basic", TestFCOSpec);
 }

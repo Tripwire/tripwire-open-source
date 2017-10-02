@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -172,7 +172,7 @@ public:
     int32 GetNumValues() const { return mValuesInTable; };
         // returns number of table entries filled
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void TraceDiagnostics() const;
         // traces hash table statistics 
 #endif
@@ -254,10 +254,14 @@ inline void cHashTableIter<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::SeekNextV
 {
     if(mpCurNode)
         mpCurNode = mpCurNode->next;
-    //mCurIndex++;
-    while((! mpCurNode) && (mCurIndex < mHashTable.mTableSize))
+
+    // if we're out of range, bail out w/o incrementing index
+    if(mCurIndex >= mHashTable.mTableSize)
+        return;
+
+    while((! mpCurNode) && (++mCurIndex < mHashTable.mTableSize))
     {
-        mpCurNode = mHashTable.mTable[++mCurIndex];
+        mpCurNode = mHashTable.mTable[mCurIndex];
     }
 }
 
@@ -316,6 +320,7 @@ cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::~cHashTable()
             }
         }
     }
+    delete [] mTable;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -503,7 +508,7 @@ uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash( const KEY_TY
     return hindex;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 
 template <class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
 void cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::TraceDiagnostics() const
@@ -537,7 +542,7 @@ void cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::TraceDiagnostics() c
     d.TraceDebug("-- Slots with >1 item:                     %d (%lf %%)\n",numMultiSlot, ((double)numMultiSlot / (double)slotsFilled) * 100.0);
     d.TraceDebug("--------------------------------------------------\n");
 }
-#endif // _DEBUG
+#endif // DEBUG
 
 
 #endif //__HASHTABLE_H

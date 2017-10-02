@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
-
+use lib '.';
 use twtools;
 
 my @twtests       = ();
@@ -94,6 +94,8 @@ sub runTests {
 
     for $module (@twtests) {
 
+	++$twtools::twtotaltests;
+
         # use the module
         #
         eval qq{use tests::$module};
@@ -135,8 +137,9 @@ processCommandLine();
 prepareListOfTests() if scalar(@twtests) == 0;  # only if none were on the cmdline
 
 print "\n";
-print "initializing for tests...\n\n";
+print "initializing for tests on $^O...\n\n";
 
+print "logging to $ENV{'PWD'}/$twtools::twrootdir/status.log\n\n";
 
 # all tests can assume a base configuration, i.e. default tw.cfg, site and local keys
 #
@@ -151,7 +154,13 @@ print "=============\n\n";
 #
 runTests();
 
-print "\n\n$twtools::twfailedtests test(s) failed...\n\n";
+# Any test that didn't report a status gets counted as skipped.
+$twtools::twskippedtests += ($twtools::twtotaltests - ($twtools::twpassedtests + $twtools::twfailedtests + $twtools::twskippedtests));
+
+print "\n\n$twtools::twtotaltests test(s) run\n";
+print "$twtools::twpassedtests test(s) passed\n";
+print "$twtools::twfailedtests test(s) failed\n";
+print "$twtools::twskippedtests test(s) skipped\n\n";
 
 exit($twtools::twfailedtests);
 

@@ -20,6 +20,7 @@ libtw_a_HEADERS = \
    tw.h twerrors.h twinit.h twstrings.h twutil.h
 
 DEFS = @DEFS@ -DCONFIG_DIR=\"$(sysconfdir)\"
+CLEANFILES = *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libtw_a_OBJECTS)

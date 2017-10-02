@@ -1,6 +1,6 @@
 
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -62,6 +62,10 @@
 #include "core/fsservices.h"
 #include "core/errorutil.h"
 
+#if IS_RISCOS
+#include <unixlib/local.h>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 // cFile_i : Insulated implementation for cFile objects.
 ///////////////////////////////////////////////////////////////////////////
@@ -79,28 +83,28 @@ struct cFile_i
 
 //Ctor
 cFile_i::cFile_i() :
-    mpCurrStream(NULL)
+    m_fd(-1), mpCurrStream(NULL), mFlags(0)
 {}
 
 //Dtor
 cFile_i::~cFile_i()
 {
     if (mpCurrStream != NULL)
-        fclose( mpCurrStream );
-    mpCurrStream = NULL;
-
-#if IS_AROS
-    if( mFlags & cFile::OPEN_LOCKED_TEMP )
     {
-        // unlink this file 
-        if( 0 != unlink(mFileName.c_str()))
-        {
-            throw( eFileOpen( mFileName, iFSServices::GetInstance()->GetErrString() ) );
-        }
-    }
-#endif
+        fclose( mpCurrStream );
+        mpCurrStream = NULL;
 
-    mFileName.empty();
+#if !CAN_UNLINK_WHILE_OPEN // so unlink after close instead
+        if( mFlags & cFile::OPEN_LOCKED_TEMP )
+        {
+            // unlink this file 
+            if( 0 != unlink(mFileName.c_str()))
+            {
+                throw( eFileOpen( mFileName, iFSServices::GetInstance()->GetErrString() ) );
+            }
+        }
+#endif
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -205,7 +209,7 @@ void cFile::Open( const TSTRING& sFileNameC, uint32 flags )
     }
     mpData->m_fd = fh;
 
-#if !IS_AROS
+#if CAN_UNLINK_WHILE_OPEN
     if( flags & OPEN_LOCKED_TEMP )
     {
         // unlink this file 
@@ -322,7 +326,7 @@ cFile::File_t cFile::Seek( File_t offset, SeekFrom From) const //throw(eFile)
 
     if (fseeko( mpData->mpCurrStream, offset, apiFrom ) != 0)
     {
-        #ifdef _DEBUG
+        #ifdef DEBUG
         cDebug d("cFile::Seek");
         d.TraceDebug("Seek failed!\n");
         #endif
@@ -449,31 +453,46 @@ void cFile::Truncate( File_t offset ) // throw(eFile)
 }
 
 
-#if USES_DEVICE_PATH
-// For paths of type DH0:/dir/file
-TSTRING cDevicePath::AsPosix( const TSTRING& in )
+/////////////////////////////////////////////////////////////////////////
+// Platform path conversion methods
+/////////////////////////////////////////////////////////////////////////
+
+bool cDosPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+
+    if (in[0] == '/')
+        return true;
+
+    if (in.length() >= 2 && in[1] == ':')
+        return true;
+
+    return false;
+}
+
+// For paths of type C:\DOS
+TSTRING cDosPath::AsPosix( const TSTRING& in )
 {
     if (in[0] == '/')
+    {
         return in;
+    }
 
-#if IS_DOS_DJGPP
-    TSTRING out = "/dev/" + in;
+    TSTRING out = (cDosPath::IsAbsolutePath(in)) ? ("/dev/" + in) : in;
     std::replace(out.begin(), out.end(), '\\', '/');
-#else
-    TSTRING out = '/' + in;
-#endif
-    
-    std::replace(out.begin(), out.end(), ':', '/');
+    out.erase( std::remove(out.begin(), out.end(), ':'), out.end());
 
     return out;
 }
 
-TSTRING cDevicePath::AsNative( const TSTRING& in )
+TSTRING cDosPath::AsNative( const TSTRING& in )
 {
     if (in[0] != '/')
+    {
         return in;
+    }
 
-#if IS_DOS_DJGPP
     if (in.find("/dev") != 0 || in.length() < 6)
         return in;
     
@@ -482,18 +501,181 @@ TSTRING cDevicePath::AsNative( const TSTRING& in )
     
     if (in.length() >= 8)
         out.append(in.substr(7));
-    
-    return out;
-    
-#elif IS_AROS
-    int x = 1;
-    for ( x; in[x] == '/' && x<in.length(); x++);
 
-    TSTRING out = in.substr(x); 
+    std::replace(out.begin(), out.end(), '/', '\\');
+
+    return out;
+}
+
+TSTRING cDosPath::BackupName( const TSTRING& in )
+{
+    TSTRING out = in;
+    std::string::size_type pos = out.find_last_of("\\");
+    if( std::string::npos == pos)
+        return in;
+
+    TSTRING path = in.substr(0, pos);
+    TSTRING name = in.substr(pos,9);
+    std::replace(name.begin(), name.end(), '.', '_');
+    path.append(name);
+
+    return path;
+}
+
+/////////////////////////////////////////////////////////////////////////
+bool cArosPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+    
+    if (in[0] == '/')
+        return true;
+
+    if (in.find(":") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+// For paths of type DH0:dir/file
+TSTRING cArosPath::AsPosix( const TSTRING& in )
+{
+    if (in[0] == '/')
+    {
+        return in;
+    }
+
+    TSTRING out = IsAbsolutePath(in) ? '/' + in : in;
+    std::replace(out.begin(), out.end(), ':', '/');
+
+    return out;
+}
+
+TSTRING cArosPath::AsNative( const TSTRING& in )
+{
+    if (in[0] != '/')
+    {
+        return in;
+    }
+
+    std::string::size_type drive = in.find_first_not_of("/");
+    TSTRING out = (drive != std::string::npos) ? in.substr(drive) : in;
     TSTRING::size_type t = out.find_first_of('/');
-    out[t] = ':';
+    if(t != std::string::npos)
+        out[t] = ':';
+    else
+        out.append(":");
 
     return out;
+}
+
+/////////////////////////////////////////////////////////////////////////
+bool cRiscosPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+    
+    if (in[0] == '/')
+        return true;
+
+    if (in.find("$") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+// For paths of type SDFS::Volume.$.dir.file
+TSTRING cRiscosPath::AsPosix( const TSTRING& in )
+{
+#if IS_RISCOS
+    if (in[0] == '/')
+    {
+        return in;
+    }
+
+    TSTRING out;
+    char* unixified = __unixify(in.c_str(), 0,0,0,0);
+    if(unixified) 
+    {
+        out.assign(unixified);
+        free(unixified);
+        return out;
+    }
+    return in;
+
+#else
+    return in;
 #endif
-} 
+}
+
+TSTRING cRiscosPath::AsNative( const TSTRING& in )
+{
+#if IS_RISCOS
+    if (in[0] != '/')
+    {
+        return in;
+    }
+
+    TSTRING out;
+    int buf_size = in.length() + 100; // examples pad by 100
+    std::vector<char> buf(buf_size);
+    __riscosify(in.c_str(), 0,0, &buf[0], buf_size, 0);
+    if(buf[0])
+    {
+        out.assign(&buf[0]);
+        return out;
+    }
+    return in;
+#else
+    return in;
 #endif
+}
+
+
+/////////////////////////////////////////////////////////////////////////
+bool cRedoxPath::IsAbsolutePath(const TSTRING& in)
+{
+    if (in.empty())
+        return false;
+    
+    if (in[0] == '/')
+        return true;
+
+    if (in.find(":") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+// For paths of type file:/dir/file
+TSTRING cRedoxPath::AsPosix( const TSTRING& in )
+{
+    if (in[0] == '/')
+    {
+        return in;
+    }
+
+    TSTRING out = IsAbsolutePath(in) ? '/' + in : in;
+    std::string::size_type colon = out.find_first_of(":");
+    if( colon != std::string::npos )
+        out.erase(colon, 1);
+    return out;
+}
+
+TSTRING cRedoxPath::AsNative( const TSTRING& in )
+{
+    if (in[0] != '/')
+    {
+        return in;
+    }
+
+    std::string::size_type drive = in.find_first_not_of("/");
+    TSTRING out = (drive != std::string::npos) ? in.substr(drive) : in;
+    TSTRING::size_type slash = out.find_first_of('/');
+    if(slash != std::string::npos)
+        out.insert(slash, ":");
+    else
+        out.append(":/");
+
+    return out;
+}

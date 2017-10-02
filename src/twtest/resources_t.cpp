@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -84,17 +84,18 @@ TSS_ImplementPackage( cTestResources )
 void TestResources()
 {
     TSS_Package( cTestResources ).Count( 20 );
-
-    TCOUT << _T("Package::Count(") << TSS_Package( cTestResources ).Count() << _T(")\n" ) << std::endl;
     
-    TCOUT << TSS_GetString( cTestResources, test::IDS_TEST1 ) << std::endl;
-    TCOUT << TSS_GetString( cTestResources, test::IDS_TEST2 ) << std::endl;
-    TCOUT << TSS_GetString( cTestResources, test::IDS_TEST3 ) << std::endl;
-    TCOUT << TSS_GetString( cTestResources, test::IDS_INVALID ) << std::endl;
-
-
+    TEST( TSS_Package( cTestResources ).Count() == 20) ;
+    TEST( TSS_GetString( cTestResources, test::IDS_TEST1 ) == _T("Test String 1") );
+    TEST( TSS_GetString( cTestResources, test::IDS_TEST2 ) == _T("Test String 2") );
+    TEST( TSS_GetString( cTestResources, test::IDS_TEST3 ) == _T("Test String 3") );
+    TEST( TSS_GetString( cTestResources, test::IDS_INVALID ) == _T("") );
+    TEST( TSS_GetString( cTestResources, 42 ) == _T("") );
 }
 
+void RegisterSuite_Resources()
+{
+    RegisterTest("Resources", "Basic", TestResources);
+}
 
-// eof: tss.resources_t.cpp
 

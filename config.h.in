@@ -6,6 +6,9 @@
 /* Compile with debug code */
 #undef DEBUG
 
+/* Enable use of /dev/urandom */
+#undef ENABLE_DEV_URANDOM
+
 /* this is the prefix for STL exception functions */
 #undef EXCEPTION_NAMESPACE
 
@@ -14,6 +17,21 @@
 
 /* Define to 1 if you have the <CommonCrypto/CommonDigest.h> header file. */
 #undef HAVE_COMMONCRYPTO_COMMONDIGEST_H
+
+/* Has /dev/arandom */
+#undef HAVE_DEV_ARANDOM
+
+/* Has /dev/random */
+#undef HAVE_DEV_RANDOM
+
+/* Has /dev/urandom */
+#undef HAVE_DEV_URANDOM
+
+/* Define to 1 if you have the `door_create' function. */
+#undef HAVE_DOOR_CREATE
+
+/* Define to 1 if you have the <door.h> header file. */
+#undef HAVE_DOOR_H
 
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
@@ -54,6 +72,12 @@
 /* Define to 1 if you have the <openssl/sha.h> header file. */
 #undef HAVE_OPENSSL_SHA_H
 
+/* Define to 1 if you have the `port_create' function. */
+#undef HAVE_PORT_CREATE
+
+/* Define to 1 if you have the <port.h> header file. */
+#undef HAVE_PORT_H
+
 /* Define to 1 if you have the `posix_fadvise' function. */
 #undef HAVE_POSIX_FADVISE
 
@@ -77,6 +101,15 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if `st_blocks' is a member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_BLOCKS
+
+/* Define to 1 if `st_rdev' is a member of `struct stat'. */
+#undef HAVE_STRUCT_STAT_ST_RDEV
+
+/* Define to 1 if you have the `swab' function. */
+#undef HAVE_SWAB
 
 /* Define to 1 if you have the <syslog.h> header file. */
 #undef HAVE_SYSLOG_H
@@ -110,6 +143,9 @@
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/unistd.h> header file. */
+#undef HAVE_SYS_UNISTD_H
 
 /* Define to 1 if you have the <sys/ustat.h> header file. */
 #undef HAVE_SYS_USTAT_H
@@ -164,6 +200,9 @@
 
 /* The size of `long long', as computed by sizeof. */
 #undef SIZEOF_LONG_LONG
+
+/* The size of `time_t', as computed by sizeof. */
+#undef SIZEOF_TIME_T
 
 /* Don't use gethostbyname() on Solaris */
 #undef SOLARIS_NO_GETHOSTBYNAME

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -33,6 +33,7 @@
 #include "core/stdcore.h"
 #include "core/refcountobj.h"
 #include "core/debug.h"
+#include "test.h"
 
 class cRefCountTestObj : public cRefCountObj
 {
@@ -66,7 +67,7 @@ cRefCountTestObj::~cRefCountTestObj()
         mChildren.pop_front();
     }
 
-    delete mpSomeMem;
+    delete [] mpSomeMem;
 }
 
 void cRefCountTestObj::AddChild(cRefCountTestObj* pChild)
@@ -157,12 +158,20 @@ void TestRefCountObj()
         }
     }
 
-    //These fields only exist in debug builds, so we can't use TEST() here.
-    ASSERT(cRefCountObj::objectCounter == 0);
-    ASSERT(cRefCountObj::referenceCounter == 0);
+#ifdef DEBUG
+    //These fields only exist in debug builds
+    TEST(cRefCountObj::objectCounter == 0);
+    TEST(cRefCountObj::referenceCounter == 0);
+#else
+    TEST("This test can only make useful assertions in debug builds");
+#endif
 
     db.TraceAlways("Done...\n");
     
     return;
 }
 
+void RegisterSuite_RefCountObj()
+{
+    RegisterTest("RefCountObj", "Basic", TestRefCountObj);
+}

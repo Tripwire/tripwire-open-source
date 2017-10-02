@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -112,7 +112,7 @@ inline void cFCOSetWS::SetSpec(const iFCOSpec* pSpec)
 inline void cFCOSetWS::Insert(iFCO* pFCO)
 {
     // here is the only real work this class does!
-#ifdef _DEBUG
+#ifdef DEBUG
     // TODO -- note that this doesn't do any checking if the spec is NULL. I
     // am not sure if this is the right thing to do or not.
     if(mpSpec)
@@ -127,7 +127,7 @@ inline void cFCOSetWS::Insert(iFCO* pFCO)
             mpSpec->TraceContents(cDebug::D_ERROR);
         }
     }
-#endif // _DEBUG
+#endif // DEBUG
 
     cFCOSetImpl::Insert(pFCO);
 }

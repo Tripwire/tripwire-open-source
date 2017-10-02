@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -42,15 +42,6 @@
 //#include "dummy.h"
 
 using namespace std;
-
-void HashTest1();
-void HashTest2();
-
-void TestHashTable(void)
-{
-    HashTest1();
-    HashTest2();
-}
 
 void HashTest1()
 {
@@ -110,7 +101,7 @@ void HashTest1()
     }
 
     // get statistics
-#ifdef _DEBUG
+#ifdef DEBUG
     htable.TraceDiagnostics();
 #endif
 
@@ -217,4 +208,10 @@ void HashTest2()
     }
 
     d.TraceDebug("PASSED!\n");
+}
+
+void RegisterSuite_HashTable()
+{
+    RegisterTest("HashTable", "Basic 1", HashTest1);
+    RegisterTest("HashTable", "Basic 2", HashTest2);
 }

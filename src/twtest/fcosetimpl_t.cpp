@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -75,9 +75,11 @@ void TestFCOSetImpl()
     pFCO3->Release();
 
     // let's iterate over the fcos
-    cIterProxy<iFCOIter> pit(set.GetIter());
+    iFCOIter* pIter = set.GetIter();
+    cIterProxy<iFCOIter> pit(pIter);
     pit->SeekBegin();
     PrintIter(pit, d);
+
 
     // lookup a specific fco
     cIterProxy<iFCOIter> pit2(set.Lookup(cFCOName(_T("fco2"))));
@@ -113,9 +115,13 @@ void TestFCOSetImpl()
     // test operator=
     cFCOSetImpl set2;
     set2 = set;
-    pit = set2.GetIter();
+
+    pIter->DestroyIter();
+    pIter = set2.GetIter();
+    pit = pIter;
     d.TraceDebug("Made a new set and set it equal to the first with operator=; printing out...\n");
     PrintIter(pit, d);
+
 
     // test IsEmpty
     set.Clear();
@@ -142,9 +148,14 @@ void TestFCOSetImpl()
     pit = set3.GetIter();
     PrintIter(pit, d);
 
+    pIter->DestroyIter();
 
     d.TraceDebug("Leaving...\n");
     return;
 
 }
 
+void RegisterSuite_FCOSetImpl()
+{
+    RegisterTest("FCOSetImpl", "Basic", TestFCOSetImpl);
+}

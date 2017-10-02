@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -153,7 +153,7 @@ protected:
     //
     typedef std::vector<cFCONameTblNode*> ListType;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     TSTRING             mDebugStrName; // so we can see this guy's value in the debug window
 #endif 
 };

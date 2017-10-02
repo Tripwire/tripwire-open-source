@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -86,10 +86,14 @@ void OutputString( TSTRING& str )
 {
     cQuoteEncoder qe;
 
-    TCOUT << _T("Plain string:   <") << str << _T(">") << endl;
+/*    TCOUT << _T("Plain string:   <") << str << _T(">") << endl;
     TCOUT << _T("Encoded string: <") << qe.Encode( str ) << _T(">") << endl;
-    TCOUT << _T("Decoded string: <") << qe.Unencode( str ) << _T(">") << endl << endl ;
+    TCOUT << _T("Decoded string: <") << qe.Unencode( str ) << _T(">") << endl << endl ; */
     
     TEST( str == qe.Unencode(qe.Encode(str)) );
 }
 
+void RegisterSuite_StringEncoder()
+{
+    RegisterTest("StringEncoder", "Basic", TestStringEncoder);
+}

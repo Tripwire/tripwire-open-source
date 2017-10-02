@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -143,3 +143,7 @@ void TestErrorBucketImpl()
 
 }
 
+void RegisterSuite_ErrorBucketImpl()
+{
+    RegisterTest("ErrorBucketImpl", "Basic", TestErrorBucketImpl);
+}

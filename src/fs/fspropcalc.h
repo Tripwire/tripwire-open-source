@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -47,7 +47,19 @@
 #include "fco/fcopropvector.h"
 #endif
 
-TSS_EXCEPTION( eFSPropCalc,                 eError )
+#include "fco/signature.h"
+#include "core/fileerror.h"
+#include "core/fsservices.h"
+#include "core/archive.h"
+#include "fspropset.h"
+
+#ifdef PATH_MAX
+# define TW_PATH_SIZE PATH_MAX
+#else
+# define TW_PATH_SIZE 1024
+#endif
+
+TSS_FILE_EXCEPTION( eFSPropCalc,                eFileError )
 //TSS_EXCEPTION( eFSPropCalcResetAccessTime,    eFSPropCalc ) // this was never used
 
 class cFSPropCalc : public iFCOPropCalc, public iFSVisitor
@@ -73,10 +85,20 @@ public:
 
     virtual int                     GetCalcFlags() const;
     virtual void                    SetCalcFlags( int i );
-    
+
+    static bool GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t size = TW_PATH_SIZE);
+
 private:
     cFSPropCalc( const cFSPropCalc& );
     void operator =( const cFSPropCalc& );
+
+    void AddPropCalcError(const eError& e);
+
+    bool DoStat(const TSTRING& name, cFSStatArgs& statArgs);
+    bool DoOpen(const TSTRING& name, cFileArchive& arch);
+    bool DoHash( const TSTRING& name, cBidirArchive* pTheArch, cArchiveSigGen& asg, cFileArchive& arch );
+    void HandleStatProperties( const cFCOPropVector& propsToCheck, const cFSStatArgs& ss, cFSPropSet& propSet);
+    void HandleHashes( const cFCOPropVector& propsToCheck, const TSTRING& strName, cFSPropSet& propSet);
 
     cFCOPropVector                  mPropVector;
     iFCOPropCalc::CollisionAction   mCollAction;

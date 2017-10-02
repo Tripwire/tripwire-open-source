@@ -20,7 +20,7 @@ tripwire_HEADERS = \
   tripwirestrings.h tripwireutil.h twcmdline.h twcmdlineutil.h updatedb.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
-CLEANFILES = ../../bin/tripwire ../../lib/libtripwire.a
+CLEANFILES = ../../bin/tripwire ../../lib/libtripwire.a *.gcno *.gcda
 
 all: $(sbin_PROGRAMS)
 	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin

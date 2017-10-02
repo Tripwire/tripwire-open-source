@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -128,4 +128,9 @@ void TestFCOSpecHelper()
     delete pSet4;
     delete pHelp1;
     delete pHelp2;
+}
+
+void RegisterSuite_FCOSpecHelper()
+{
+    RegisterTest("FCOSpecHelper", "Basic", TestFCOSpecHelper);
 }

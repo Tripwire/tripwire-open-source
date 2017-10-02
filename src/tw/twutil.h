@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -106,16 +106,16 @@ public:
         // if an error occurs, this will print the error message to stderr and throw eError.
 
     static void WriteReport (const TCHAR* filename, const cFCOReportHeader& reportHeader, const cFCOReport& r, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);    // throw eError
-    static void WriteReport (cArchive &archive,     const cFCOReportHeader& reportHeader, const cFCOReport& r, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);    // throw eError
+
     static void ReadReport  (const TCHAR* reportFileName, cFCOReportHeader& reportHeader, cFCOReport& r, const cElGamalSigPublicKey* pPublicKey, bool silent, bool& bEncrypted);    // throw eError
-    static void ReadReport  (cArchive &archive,           cFCOReportHeader& reportHeader, cFCOReport& r, const cElGamalSigPublicKey* pPublicKey, bool silent, bool& bEncrypted);    // throw eError
+
         // same as Read/WriteDatabase above, except it operates on reports
         // if an error occurs, this will print the error message to stderr and throw eError.
 
     static void WriteConfigText(const TCHAR* filename, const TSTRING configText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey); // throw (eArchive())
-    static void WriteConfigText(cArchive &archive,     const TSTRING configText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey); // throw (eArchive())
+
     static void ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchive* pBaggage = 0);
-    static void ReadConfigText(cArchive &archive,     TSTRING& configText, cArchive* pBaggage = 0);
+
         // read and write config file text to and from disk.
         // if pBaggage is non-NULL, the contents of the baggage( ie -- the public key ) is copied to the archive.
         // eArchive is thrown if filename can not be opened
@@ -123,9 +123,9 @@ public:
         // eConfigFile is thrown if config file does not parse correctly during reading
 
     static void WritePolicyText(const TCHAR* filename, const std::string& policyText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);
-    static void WritePolicyText(cArchive &archive,     const std::string& policyText, bool bEncrypt, const cElGamalSigPrivateKey* pPrivateKey);
+
     static void ReadPolicyText(const TCHAR* filename, std::string& policyText, const cElGamalSigPublicKey* pPublicKey);
-    static void ReadPolicyText(cArchive &archive,     std::string& policyText, const cElGamalSigPublicKey* pPublicKey);
+
         // read and write policy file to and from disk
         // eError() will be thrown on error
 

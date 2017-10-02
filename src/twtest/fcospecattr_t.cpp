@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -55,48 +55,43 @@ static void TraceSpecAttr(const cFCOSpecAttr* pAttr, cDebug d)
 void TestFCOSpecAttr()
 {
     cDebug d("TestFCOSpecAttr");
-    
-    try
-    {
-        d.TraceDebug("Entering\n");
-        cFCOSpecAttr* pAttr = new cFCOSpecAttr;
 
-        pAttr->SetName      (_T("My Name"));        d.TraceDebug("Setting Name     = My Name\n");
-        pAttr->SetSeverity  (53);                   d.TraceDebug("Setting Severity = 53\n");
-        pAttr->AddEmail     (_T("dog@bark.com"));   d.TraceDebug("Adding email     = dog@bark.com\n");
-        pAttr->AddEmail     (_T("cow@moo.com"));    d.TraceDebug("Adding email     = cow@moo.com\n");
-        pAttr->AddEmail     (_T("cat@meow.com"));   d.TraceDebug("Adding email     = cat@meow.com\n");
+    d.TraceDebug("Entering\n");
+    cFCOSpecAttr* pAttr = new cFCOSpecAttr;
 
-        // trace contents...
-        TraceSpecAttr(pAttr, d);
+    pAttr->SetName      (_T("My Name"));        d.TraceDebug("Setting Name     = My Name\n");
+    pAttr->SetSeverity  (53);                   d.TraceDebug("Setting Severity = 53\n");
+    pAttr->AddEmail     (_T("dog@bark.com"));   d.TraceDebug("Adding email     = dog@bark.com\n");
+    pAttr->AddEmail     (_T("cow@moo.com"));    d.TraceDebug("Adding email     = cow@moo.com\n");
+    pAttr->AddEmail     (_T("cat@meow.com"));   d.TraceDebug("Adding email     = cat@meow.com\n");
 
-        // test serialization...
-        d.TraceDebug("Testing Serialization; next output should be the same as the previous\n");
-        cMemoryArchive a;
-        cSerializerImpl s(a, cSerializerImpl::S_WRITE);
-        s.Init();
-        pAttr->Write(&s);
-        s.Finit();
-        a.Seek(0, cBidirArchive::BEGINNING);
-        cFCOSpecAttr* pNew = new cFCOSpecAttr;
-        cSerializerImpl s2(a, cSerializerImpl::S_READ);
-        s2.Init();
-        pNew->Read(&s2);
-        s2.Finit();
+    // trace contents...
+    TraceSpecAttr(pAttr, d);
 
-        // trace contents...
-        TraceSpecAttr(pNew, d);
+    // test serialization...
+    d.TraceDebug("Testing Serialization; next output should be the same as the previous\n");
+    cMemoryArchive a;
+    cSerializerImpl s(a, cSerializerImpl::S_WRITE);
+    s.Init();
+    pAttr->Write(&s);
+    s.Finit();
+    a.Seek(0, cBidirArchive::BEGINNING);
+    cFCOSpecAttr* pNew = new cFCOSpecAttr;
+    cSerializerImpl s2(a, cSerializerImpl::S_READ);
+    s2.Init();
+    pNew->Read(&s2);
+    s2.Finit();
 
-        pNew->Release();
-        pAttr->Release();
-    }
-    catch(const eError& e)
-    {
-        TCERR << std::endl << e.GetMsg() << std::endl;
-        TEST(false);
-    }
-    catch(...)
-    {
-        TEST(false);
-    }
+    // trace contents...
+    TraceSpecAttr(pNew, d);
+
+    TEST( *pAttr == *pNew );
+
+    pNew->Release();
+    pAttr->Release();
+}
+
+void RegisterSuite_FCOSpecAttr()
+{
+    RegisterTest("FCOSpecAttr", "Basic", TestFCOSpecAttr);
 }

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -42,8 +42,23 @@
 #include "core/errorbucketimpl.h"
 #include "twtest/test.h"
 
+#include <algorithm>
 
-void PrintChars( const TSTRING& str )
+bool localeIsUtf8()
+{
+    std::string locale(setlocale(LC_CTYPE, 0));
+    std::transform(locale.begin(), locale.end(), locale.begin(), ::tolower);
+
+    if(locale.find("utf-8") != std::string::npos)
+        return true;
+
+    if(locale.find("utf8") != std::string::npos)
+        return true;
+
+    return false;
+}
+
+void CheckChars( const TSTRING& str, int length_expected = 1)
 {
     TSTRING::const_iterator cur = str.begin();
     TSTRING::const_iterator end = str.end();
@@ -51,19 +66,11 @@ void PrintChars( const TSTRING& str )
     
     while( cCharUtil::PopNextChar( cur, end, first, last ) )
     {
-        TCOUT << _T("char length: ") << (int)(last - first) << std::endl;
-
-        TCOUT << _T("char: <");
-        for( TSTRING::const_iterator at = first; at != last; at++ )
-        {
-            if( at != first )
-                TCOUT << _T(",");
-            TCOUT << (int)*at;
-        }
-        TCOUT << _T(">") << std::endl;
+        int length = (int)(last - first);
+        if (length != length_expected )
+            TCERR << "CheckChars on '" << str << "' : expected = " << length_expected << " | observed = " << length << std::endl;
+        TEST(length == length_expected);
     }
-    
-    TCOUT << _T("----------------------------") << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -71,23 +78,16 @@ void PrintChars( const TSTRING& str )
 ///////////////////////////////////////////////////////////////////////////    
 void TestCharUtilBasic()
 {
-    try
-    {
-        PrintChars( _T("foo") );
-        PrintChars( _T("fo\x23 54") );
-    }
-    catch( eError& e )
-    {
-        cErrorReporter::PrintErrorMsg( e ); 
-        TEST(false);
-    }
+    CheckChars( "foo" );
+    CheckChars( "fo\x23 54" );
+
+    if(localeIsUtf8())
+        CheckChars( "\U0001F408", 4 );  //Cat emoji, if UTF-8
+    else
+        CheckChars( "\U0001F408", 1 );  // just a bag of bytes otherwise
 }
 
-
-/*
-TSS_BeginTestSuiteFrom( cCharEncoderTest )
-
-    TSS_AddTestCase( Basic );
-        
-TSS_EndTestSuite( cCharEncoderTest )
-*/
+void RegisterSuite_CharUtil()
+{
+    RegisterTest("CharUtil", "Basic", TestCharUtilBasic);
+}

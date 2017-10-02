@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -30,16 +30,16 @@
 // info@tripwire.org or www.tripwire.org.
 //
 ///////////////////////////////////////////////////////////////////////////////
-// timebomb.h
+// epoch.h
 
-#ifndef __TIMEBOMB_H
-#define __TIMEBOMB_H
+#ifndef __EPOCH_H
+#define __EPOCH_H
 
 ///////////////////////////////////////////////////////////////////////////////
-// TimeBombExploded() -- Call from main(). Prints out timebomb message and
+// CheckEpoch() -- Call from main(). Prints out timebomb message and
 //      returns true if main() should exit.
 //
-bool TimeBombExploded();
+bool CheckEpoch();
 
 #endif
 

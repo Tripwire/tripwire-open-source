@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -2006,7 +2006,7 @@ void cTextReportViewer::GetChar()
     // sequence was not a valid mb character
     // (searched MB_CUR_MAX chars and didn't find a complete mb character)
     d.TraceDebug( _T("Invalid mb char found!\n") );
-#ifdef _DEBUG
+#ifdef DEBUG
         for( int j = 0; j < MB_CUR_MAX; j++ )
             d.TraceDebug( _T("%u\n"), (size_t)(unsigned char)mCurrentChar[j] );
 #endif

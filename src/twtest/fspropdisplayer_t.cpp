@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -83,11 +83,11 @@ void cTestFSPropDisplayer::Test()
 
     pPDNew->Merge( pPD );
 
-    /*
+
     ////////////////////////
     // write pd
     cFileArchive outFile;
-    outFile.OpenReadWrite(_T("c:\\tmp\\tmp.pd"));
+    outFile.OpenReadWrite( TwTestPath("tmp.pd").c_str() );
     cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
 
     outSer.Init();
@@ -101,16 +101,17 @@ void cTestFSPropDisplayer::Test()
     ////////////////////////
     // read pd
     cFileArchive inFile;
-    inFile.OpenRead(_T("c:\\tmp\\tmp.pd"));
+    inFile.OpenRead( TwTestPath("tmp.pd").c_str() );
     cSerializerImpl inSer(inFile, cSerializerImpl::S_READ);
     
-    cFSPropDisplayer* pPDNew = new cFSPropDisplayer();
+    cFSPropDisplayer* pPDRead = new cFSPropDisplayer();
     inSer.Init();
     
-    pPDNew->Read( &inSer );
+    pPDRead->Read( &inSer );
     inSer.Finit();
-    */
-    
+
+    TEST( *pPD == *pPDRead );
+
     TSTRING strRet;
     for( i = 0; i < 26; i++ )
     {
@@ -127,7 +128,14 @@ void cTestFSPropDisplayer::Test()
         d.TraceDebug("\n");
     }
 
+    delete pPD;
+    delete pPDNew;
+    delete pPDRead;
 
     return;
 }
 
+void RegisterSuite_FSPropDisplayer()
+{
+    RegisterTest("FSPropDisplayer", "Basic", TestFSPropDisplayer);
+}

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -42,7 +42,6 @@
 #include "fsdatasourceiter.h"
 #include "fco/fcodatasourceiter.h"
 #include "fsobject.h"
-#include "core/fsservices.h"
 #include "core/errorbucket.h"
 #include "core/corestrings.h"
 #include "core/usernotify.h"
@@ -99,6 +98,12 @@ static bool gCrossFileSystems = false;
     gCrossFileSystems = crossFS;
 }
 
+void cFSDataSourceIter::AddIterationError(const eError& e)
+{
+    if(mpErrorBucket)
+        mpErrorBucket->AddError(e);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // CreateCopy
 ///////////////////////////////////////////////////////////////////////////////
@@ -151,15 +156,42 @@ void cFSDataSourceIter::GetChildrenNames( const TSTRING& strParentName, std::vec
     }
     catch( eError& e )
     {
-        cDebug d("cFSDataSourceIter::GeneratePeers");
-        d.TraceError("**** ReadDir failed for %s\n", strParentName.c_str() );
-
-        if( mpErrorBucket )
-        {
-            eFSDataSourceIterReadDir eReadDir(e.GetMsg(), eError::NON_FATAL);
-            mpErrorBucket->AddError( eReadDir );
-        }
+        AddIterationError( eFSDataSourceIterReadDir( strParentName, e.GetMsg(), eError::NON_FATAL) );
     }
+    catch( std::exception& e )
+    {
+        AddIterationError( eFSDataSourceIterReadDir( strParentName, e.what(), eError::NON_FATAL) );
+    }
+    catch(...)
+    {
+        AddIterationError( eFSDataSourceIterReadDir( strParentName, "unknown", eError::NON_FATAL) );
+    }
+}
+
+bool cFSDataSourceIter::DoStat( const TSTRING& name, cFSStatArgs& statArgs )
+{
+    try
+    {
+        iFSServices::GetInstance()->Stat( name, statArgs);
+    }
+    catch(eError& e)
+    {
+        e.SetFatality(false);
+        AddIterationError(e);
+        return false;
+    }
+    catch(std::exception& e)
+    {
+        AddIterationError( eFSDataSourceIter( name, e.what(), eError::NON_FATAL) );
+        return false;
+    }
+    catch(...)
+    {
+        AddIterationError( eFSDataSourceIter( name, "unknown", eError::NON_FATAL) );
+        return false;
+    }
+
+    return true;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -173,30 +205,15 @@ bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
     if( pObj->GetFSPropSet().GetValidVector().ContainsItem( cFSPropSet::PROP_FILETYPE) )
         return true;
 
-    //
     // assume invalid by default...
     //
     cFSPropSet& propSet = pObj->GetFSPropSet();
     propSet.SetFileType(cFSPropSet::FT_INVALID);
 
     cFSStatArgs statArgs;
-    try
-    {
-        iFSServices::GetInstance()->Stat( pTrans->ToStringAPI( pObj->GetName() ), statArgs);
-    }
-    catch(eError& e)
-    {
-        cDebug d("CreateObject");
-        d.TraceError( "*** Stat of %s failed!!!\n", pObj->GetName().AsString().c_str() );
-        if( mpErrorBucket )
-        {
-            e.SetFatality( false );
-            mpErrorBucket->AddError( e );
-        }
+    if( !DoStat( pObj->GetName().AsString(), statArgs ))
         return false;
-    }
     
-    //
     // don't create the object if it is on a different file system...
     //
     if( gCrossFileSystems == false && (mDev != 0) && (statArgs.dev != mDev) )
@@ -253,6 +270,9 @@ bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
         break;
     case cFSStatArgs::TY_PORT:
         propSet.SetFileType(cFSPropSet::FT_PORT);
+        break;
+    case cFSStatArgs::TY_NAMED:
+        propSet.SetFileType(cFSPropSet::FT_NAMED);
         break;
     default:
         // set it to invalid

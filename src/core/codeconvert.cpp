@@ -1,6 +1,6 @@
 
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -109,6 +109,12 @@ iCodeConverter* iCodeConverter::GetInstance()
 
     ASSERT( m_pInst );
     return m_pInst;
+}
+
+void iCodeConverter::Finit()
+{
+    delete m_pInst;
+    m_pInst = 0;
 }
 
 iCodeConverter* iCodeConverter::CreateConverter()
@@ -496,7 +502,7 @@ namespace /*Unique*/
         d.TraceDebug( "Converted to: %s\n", util_output_bytes(   (void*)pConvertedTo,   nTo ).c_str() );
 
         char        aBuffer[ MB_LEN_MAX ];
-#ifdef _DEBUG
+#ifdef DEBUG
         for( size_t foo = 0; foo < sizeof( aBuffer ); foo++ )
             aBuffer[ foo ] = 0xCD;
 #endif 
@@ -651,7 +657,7 @@ namespace /*Unique*/
     {
         cDebug d( "tss_Converter< BufferT, SourceT >()" );
 
-#ifdef _DEBUG
+#ifdef DEBUG
         for( size_t s = nBufferItems; s; s-- )
             pBuffer[s] = 0xCD;
         d.TraceDebug( "sizeof buffer: %d, sizeof source: %d\n", sizeof( BufferT ), sizeof( SourceT ) );

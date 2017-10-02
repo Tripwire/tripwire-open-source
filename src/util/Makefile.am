@@ -12,6 +12,7 @@ libutil_a_HEADERS = fileutil.h miscutil.h stdutil.h \
    stringencoder.h util.h utilerrors.h utilstrings.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
+CLEANFILES = *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libutil_a_OBJECTS)

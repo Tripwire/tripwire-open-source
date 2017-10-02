@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -34,8 +34,6 @@
 //
 
 #include "stdtwadmin.h"
-#include <unistd.h>
-
 #include "twadmincl.h"
 #include "twadminstrings.h"
 #include "keygeneration.h"
@@ -45,6 +43,7 @@
 #include "core/usernotify.h"
 #include "core/cmdlineparser.h"
 #include "core/usernotify.h"
+#include "core/corestrings.h"
 #include "fco/fconame.h"
 #include "tw/configfile.h"
 #include "tw/twutil.h"
@@ -62,8 +61,10 @@
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
 
+#include <unistd.h>
+
 //Provide a swab() impl. from glibc, for platforms that don't have one
-#if NEEDS_SWAB_IMPL
+#if !HAVE_SWAB || NEEDS_SWAB_IMPL
 void swab (const void *bfrom, void *bto, ssize_t n)
 {
   const char *from = (const char *) bfrom;
@@ -1553,15 +1554,19 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
             // Try different keys to see if they decrypt this file
             if (manip.GetEncoding() == cFileHeader::ASYM_ENCRYPTION)
             {
+                bool bFound = false;
+
                 // Output the keys that decrypt the file.
                 iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_KEYS_DECRYPT ).c_str());
                 iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTW, tw::STR_NEWLINE ).c_str());
-        
+
                 if (siteKey.KeysLoaded())
                 try
                 {
                     if (manip.TestDecryption(*siteKey.GetPublicKey(), false) != false)
                     {
+                        bFound = true;
+
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTWAdmin, twadmin::STR_SITEKEYFILE ).c_str());
 
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, cDisplayEncoder::EncodeInline( mSiteKeyFile ).c_str());
@@ -1575,6 +1580,8 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
                 {
                     if (manip.TestDecryption(*localKey.GetPublicKey(), false) != false)
                     {
+                        bFound = true;
+
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTWAdmin, twadmin::STR_LOCALKEYFILE ).c_str());
 
                         iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, cDisplayEncoder::EncodeInline( mLocalKeyFile ).c_str());
@@ -1582,6 +1589,15 @@ int cTWAModeExamine::Execute(cErrorQueue* pQueue)
                     }
                 }
                 catch (eError&) {}
+
+                if (!bFound)
+                {
+                    bResult = false;
+                    iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, "\t");
+                    iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cCore, core::STR_UNKNOWN).c_str());
+                    iUserNotify::GetInstance()->Notify(iUserNotify::V_SILENT, TSS_GetString(cTW, tw::STR_NEWLINE ).c_str());
+                }
+
             }
             TCOUT << std::endl;
         }

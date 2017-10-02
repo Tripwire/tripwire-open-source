@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -209,7 +209,7 @@ public:
     int     GetWriteLen() const;
     void    Write(void* pDataStream) const;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void TraceContents();
 #endif
 
@@ -315,7 +315,7 @@ public:
         // This is used to make sure the key used to sign the config
         // file is the same as the key we are currently using.
 
-#ifdef _DEBUG
+#ifdef DEBUG
     void TraceContents();
 #endif
 

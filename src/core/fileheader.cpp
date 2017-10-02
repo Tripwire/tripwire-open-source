@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -111,7 +111,7 @@ void cFileHeaderID::Write(iSerializer* pSerializer) const // throw (eSerializer,
 cFileHeader::cFileHeader()
 :   mVersion(0)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     mEncoding = LAST_ENCODING; // set to invalid value so we can assert on write
 #else
     mEncoding = NO_ENCODING;
@@ -213,7 +213,7 @@ void cFileHeader::Read(iSerializer* pSerializer, int32 /*version*/) // throw (eS
 
 void cFileHeader::Write(iSerializer* pSerializer) const // throw (eSerializer, eArchive)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     // check that we set some values
     cFileHeaderID id;
     ASSERT(mID != id);

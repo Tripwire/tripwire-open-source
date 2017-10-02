@@ -17,7 +17,7 @@ twprint_HEADERS = \
   twprinterrors.h twprintstrings.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
-CLEANFILES = ../../bin/twprint
+CLEANFILES = ../../bin/twprint *.gcno *.gcda
 
 all: $(sbin_PROGRAMS)
 	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin

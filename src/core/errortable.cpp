@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -35,7 +35,7 @@
 #include "stdcore.h"
 #include "errortable.h"
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #include "package.h"
 #include "corestrings.h"
 #endif
@@ -52,7 +52,7 @@ cErrorTable* cErrorTable::GetInstance()
 ///////////////////////////////////////////////////////////////////////////////
 // AssertMsgValidity
 ///////////////////////////////////////////////////////////////////////////////
-#ifdef _DEBUG
+#ifdef DEBUG
 void cErrorTable::AssertMsgValidity(const TCHAR* msg)
 {
     // Check to see that the first part of this error message is not too long.

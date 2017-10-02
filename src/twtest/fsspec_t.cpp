@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -41,6 +41,7 @@
 #include "fco/fcospechelper.h"
 #include "core/fsservices.h"
 
+#include <unistd.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintFCOTree -- recursively prints an fco's name and all of it's children's
@@ -65,22 +66,37 @@ static void PrintFCOTree(const iFCO* pFCO, cDebug d, int depth)
 }
 */
 
-void TestFCOSpecImpl()
+void TestFCOSpecImpl1()
 {
-    cDebug d("TestFCOSpecImpl");
+    cDebug d("TestFCOSpecImpl1");
     d.TraceDebug("Entering...\n");
 
     cFSDataSourceIter dataSrc;
 
     // test AllChildStopPoint fcos...
-    d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TEMP_DIR);
-    cFCOSpecImpl* pSpec2 = new cFCOSpecImpl(TEMP_DIR, &dataSrc, new cFCOSpecNoChildren);
-    pSpec2->SetStartPoint(cFCOName(TEMP_DIR));
-    dataSrc.SeekToFCO(pSpec2->GetStartPoint(), false);
+    d.TraceDebug("Now testing a spec whose start point is the only thing it maps to (%s)\n", TwTestDir().c_str());
+    cFCOSpecImpl* pSpec = new cFCOSpecImpl(TwTestDir(), &dataSrc, new cFCOSpecNoChildren);
+    pSpec->SetStartPoint(cFCOName(TwTestDir()));
+
+    dataSrc.SeekToFCO(pSpec->GetStartPoint(), false);
+    TEST(!dataSrc.Done());    
     iFCO* pFCO = dataSrc.CreateFCO();
     TEST(pFCO);
     //PrintFCOTree(pFCO, d, 0);
     pFCO->Release();
+
+    pSpec->Release();
+}
+
+void TestFCOSpecImpl2()
+{
+    cDebug d("TestFCOSpecImpl2");
+    d.TraceDebug("Entering...\n");
+
+    if( -1 == access("/etc", F_OK))
+        skip("/etc not found/accessible");
+
+    cFSDataSourceIter dataSrc;
 
     // create an FSSpec and set up some start and stop points...
     cFCOSpecStopPointSet* pSet = new cFCOSpecStopPointSet;
@@ -89,16 +105,21 @@ void TestFCOSpecImpl()
     pSet->Add(cFCOName(_T("/etc/open gl")));
     pSet->Add(cFCOName(_T("/etc/pclient")));
 
-    // create all the fcos...
-    cFSDataSourceIter dataSrc2;
-    dataSrc2.SeekToFCO(pSpec->GetStartPoint(), false);
-    iFCO* pFCO2 = dataSrc2.CreateFCO();
-    TEST(pFCO2);
+    dataSrc.SeekToFCO(pSpec->GetStartPoint(), false);
+    TEST(!dataSrc.Done());
+    iFCO* pFCO = dataSrc.CreateFCO();
+    TEST(pFCO);
     //PrintFCOTree(pFCO, d, 0);
-    pFCO2->Release();
+
+    pFCO->Release();
 
     // TODO -- test Clone(), copy ctor, operator=
 
     pSpec->Release();
 }
 
+void RegisterSuite_FCOSpecImpl()
+{
+    RegisterTest("FCOSpecImpl", "Basic1", TestFCOSpecImpl1);
+    RegisterTest("FCOSpecImpl", "Basic2", TestFCOSpecImpl2);
+}

@@ -1,0 +1,292 @@
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+#                      Policy file for Bitrig 1.x                            # #
+#                    (adapted from OpenBSD policy)                           # #
+#                                                                            ##
+##############################################################################
+
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+# Global Variable Definitions                                                # #
+#                                                                            # #
+# These are defined at install time by the installation script.  You may     # #
+# manually edit these if you are using this file directly and not from the   # #
+# installation script itself.                                                # #
+#                                                                            ##
+##############################################################################
+
+@@section GLOBAL
+TWROOT=;
+TWBIN=;
+TWPOL=;
+TWDB=;
+TWSKEY=;
+TWLKEY=;
+TWREPORT=;
+HOSTNAME=;
+
+  ##############################################################################
+ #  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+Device        = +pugsdr-intlbamcCMSH ;
+Dynamic       = +pinugtd-srlbamcCMSH ;
+Growing       = +pinugtdl-srbamcCMSH ;
+IgnoreAll     = -pinugtsdrlbamcCMSH ;
+IgnoreNone    = +pinugtsdrbamcCMSH-l ;
+ReadOnly      = +pinugtsdbmCM-rlacSH ;
+Temporary     = +pugt ;
+
+@@section FS 
+
+  ########################################
+ #                                      ##
+######################################## #
+#                                      # #
+#  Tripwire Binaries and Data Files    # #
+#                                      ##
+########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries",
+)
+{
+  $(TWBIN)/siggen                      -> $(ReadOnly) ;
+  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
+  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
+  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files",
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(Dynamic) -i ;
+  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
+  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
+  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+
+  # In this configuration /usr/local is a symbolic link to /home/local.
+  # We want to ignore the following directories since they are already
+  # scanned using the real directory or mount point.  Otherwise we see
+  # duplicates in the reports.
+
+  !/home/local ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Boot and Configuration Files             # #
+#                                              ##
+################################################
+(
+  rulename = "OS Boot and Configuration Files",
+)
+{
+  /boot                         -> $(ReadOnly) ;
+  /bsd                          -> $(ReadOnly) ;
+  /etc                          -> $(IgnoreNone) -SHa ;
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Mount Points                                   # #
+#                                                 ##
+###################################################
+(
+  rulename = "Mount Points",
+)
+{
+  /                             -> $(ReadOnly) ;
+  /cdrom                        -> $(Dynamic) ;
+  /floppy                       -> $(Dynamic) ;
+  /home                         -> $(ReadOnly) ;  # Modify as needed
+  /mnt                          -> $(Dynamic) ;
+  /usr                          -> $(ReadOnly) ;
+  /var                          -> $(ReadOnly) ;
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Misc Top-Level Directories                     # #
+#                                                 ##
+###################################################
+(
+  rulename = "Misc Top-Level Directories",
+)
+{
+  /altroot                      -> $(Dynamic) ;
+  /stand                        -> $(Dynamic) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#   System Devices                             # #
+#                                              ##
+################################################
+(
+  rulename = "System Devices",
+)
+{
+  /dev                          -> $(Device) ;
+  /dev/fd                       -> $(Device) ;
+  /var/cron/tabs/.sock          -> $(Device) ; 
+  /var/empty/dev/log            -> $(Device) ; 
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Binaries and Libraries                   # #   
+#                                              ##
+################################################
+(
+  rulename = "OS Binaries and Libraries",
+)
+{
+  /bin                          -> $(ReadOnly) ;
+  /sbin                         -> $(ReadOnly) ;
+  /usr/bin                      -> $(ReadOnly) ;
+  /usr/lib                      -> $(ReadOnly) ;
+  /usr/libexec                  -> $(ReadOnly) ;
+  /usr/sbin                     -> $(ReadOnly) ;
+  /usr/X11R6/bin                -> $(ReadOnly) ;
+  /usr/X11R6/lib                -> $(ReadOnly) ;
+}
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Usr Local Files                             # #   
+#                                              ##
+################################################
+#OK(
+  #OKrulename = "Usr Local Files",
+#OK)
+#OK{
+  #OK/usr/local                    -> $(ReadOnly) ;
+  #OK/usr/local/bin                -> $(ReadOnly) ;
+  #OK/usr/local/doc                -> $(ReadOnly) ;
+  #OK/usr/local/etc                -> $(ReadOnly) ;
+  #OK/usr/local/include            -> $(ReadOnly) ;
+  #OK/usr/local/info               -> $(ReadOnly) ;
+  #OK/usr/local/lib                -> $(ReadOnly) ;
+  #OK/usr/local/libdata            -> $(ReadOnly) ;
+  #OK/usr/local/libexec            -> $(ReadOnly) ;
+  #OK/usr/local/man                -> $(ReadOnly) ;
+  #OK/usr/local/sbin               -> $(ReadOnly) ;
+  #OK/usr/local/share              -> $(ReadOnly) ;
+  #OK/usr/local/src                -> $(ReadOnly) ;
+#OK}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Root Directory and Files                    # #
+#                                              ##
+################################################
+(
+  rulename = "Root Directory and Files",
+)
+{
+  /root                          -> $(IgnoreNone) -SHa ;
+  /root/.cshrc                   -> $(Dynamic) ;
+  /root/.profile                 -> $(Dynamic) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Temporary Directories                       # #
+#                                              ##
+################################################
+(
+  rulename = "Temporary Directories",
+)
+{
+  /tmp                          -> $(Temporary) ;
+  /var/tmp                      -> $(Temporary) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System and Boot Changes                     # #
+#                                              ##
+################################################
+(
+  rulename = "System and Boot Changes",
+)
+{
+  /var/backups                    -> $(Dynamic) -i ;
+  /var/db/host.random             -> $(ReadOnly) -mCM ;
+  /var/cron                       -> $(Growing) -i ;
+  /var/log                        -> $(Growing) -i ;
+  /var/run                        -> $(Dynamic) -i ;
+  /var/mail                       -> $(Growing) ;
+  /var/msgs/bounds                -> $(ReadOnly) -smbCM ;
+  /var/spool/clientmqueue         -> $(Temporary) ;
+  /var/spool/mqueue               -> $(Temporary) ;
+}
+
+#
+# $Id: twpol-OpenBSD.txt,v 1.2 2004/05/14 21:56:21 pherman Exp $
+#

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -46,104 +46,59 @@
 #endif
 
 #include <string>
+#include <ctime>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // cTaskTimer -- 
 ///////////////////////////////////////////////////////////////////////////////
-template<class TIME_FN, class TIME_TYPE>
 class cTaskTimer
 {
+
+
 public:
     cTaskTimer(const TSTRING& name) : mName(name), mTotalTime(0), mStartTime(0), mNumStarts(0) {}
-    ~cTaskTimer();
 
-    void                Start();
-    void                Stop();
+    inline ~cTaskTimer()
+    {
+        // stop the timer if it is currently running
+        if(IsRunning())
+            Stop();
+
+        // trace out the time contents...
+        cDebug d("cTaskTimer");
+        d.TraceDebug("----- Time to execute %s: %d (started %d times)\n", mName.c_str(), mTotalTime, mNumStarts);
+    }
+
+    inline void Start()
+    {
+        ASSERT(! IsRunning());
+        time_t dummy;
+        mStartTime = time(&dummy);
+        mNumStarts++;
+    }
+
+    void  Stop()
+    {
+        ASSERT(IsRunning());
+        time_t dummy;
+        mTotalTime += ( time(&dummy) - mStartTime );
+        mStartTime = 0;
+    }
+
     bool                IsRunning()             { return (mStartTime != 0); }
-    void                Reset()                 { mNumStarts = mStartTime = mTotalTime = 0 }
-    int32               GetTotalTime() const;
-    int32               GetNumTimesStarted() const; // returns the number of times start() was called
-    const std::string&  GetName() const;
+    void                Reset()                 { mNumStarts = mStartTime = mTotalTime = 0; }
+    uint32              GetTotalTime() const    { return mTotalTime; }
+    uint32              GetNumTimesStarted() const  { return mNumStarts; }
+    const std::string&  GetName() const         { return mName; }
 
 private:
     TSTRING         mName;
-    int32           mTotalTime;
-    TIME_TYPE       mStartTime;
-    int32           mNumStarts;
+    uint32          mTotalTime;
+    uint32          mStartTime;
+    uint32          mNumStarts;
+
 };
-
-
-///////////////////////////////////////////////////////////////////////////////
-// cUnixTimeFn -- Unix version, inserts proper function call and overloads
-//      operator()
-///////////////////////////////////////////////////////////////////////////////
-#include <ctime>
-class cUnixTimeFn
-{
-public:
-    typedef uint32 DataType;
-
-    uint32 operator()()
-    {
-        return time( &dummy_var );
-    }
-private:
-    time_t dummy_var;
-};
-
-///////////////////////////////////////////////////////////////////////////////
-// cUnixTaskTimer -- the Unix typedef...
-///////////////////////////////////////////////////////////////////////////////
-typedef cTaskTimer<cUnixTimeFn, cUnixTimeFn::DataType> cUnixTaskTimer;
-typedef cUnixTaskTimer cGenericTaskTimer;
-
-
-
-//-----------------------------------------------------------------------------
-// inline implementation
-//-----------------------------------------------------------------------------
-
-template<class TIME_FN, class TIME_TYPE>
-inline void cTaskTimer<TIME_FN, TIME_TYPE>::Start()
-{
-    ASSERT(! IsRunning());  
-    TIME_FN GetTime;
-    mStartTime = GetTime();
-    mNumStarts++;
-}
-
-template<class TIME_FN, class TIME_TYPE>
-inline void cTaskTimer<TIME_FN, TIME_TYPE>::Stop()
-{
-    ASSERT(IsRunning());    
-    TIME_FN GetTime;
-    mTotalTime += ( GetTime() - mStartTime );
-    mStartTime = 0;
-}
-
-template<class TIME_FN, class TIME_TYPE>
-inline int32 cTaskTimer<TIME_FN, TIME_TYPE>::GetTotalTime() const
-{
-    return mTotalTime;
-}
-
-template<class TIME_FN, class TIME_TYPE>
-inline const std::string& cTaskTimer<TIME_FN, TIME_TYPE>::GetName() const
-{
-    return mName
-}
-
-template<class TIME_FN, class TIME_TYPE>
-inline cTaskTimer<TIME_FN, TIME_TYPE>::~cTaskTimer()
-{
-    // stop the timer if it is currently running
-    if(IsRunning())
-        Stop();
-
-    // trace out the time contents...
-    cDebug d("cTaskTimer");
-    d.TraceDebug("----- Time to execute %s: %d (started %d times)\n", mName.c_str(), mTotalTime, mNumStarts);
-}
 
 
 #endif

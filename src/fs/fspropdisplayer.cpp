@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -509,4 +509,9 @@ bool cFSPropDisplayer::AddGroupnameMapping( const int64& i64gid, const TSTRING& 
     return( ret.second = false ); // returns true if key didn't exist before
 }
 
-
+bool cFSPropDisplayer::operator==(const cFSPropDisplayer& rhs) const
+{
+    return (mpvPropsWeDisplay == rhs.mpvPropsWeDisplay
+            &&  uidToUsername == rhs.uidToUsername
+            && gidToGroupname == rhs.gidToGroupname);
+}

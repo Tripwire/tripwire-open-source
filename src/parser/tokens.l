@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -311,12 +311,12 @@ END             {WS}*{DIRECTIVE}{WS}*end
 						*mpstring = strW;
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
                         TSTRING strDisplay = *mpstring;                        
                         cDisplayEncoder e;
                         e.Encode( strDisplay );
 						d.TraceDetail("interpreted as --> <%s>\n", strDisplay.c_str());
-#endif // _DEBUG
+#endif // DEBUG
 
 						// attach to lval
 						yylval.mpString = mpstring;

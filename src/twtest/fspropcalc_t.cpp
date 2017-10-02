@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -43,6 +43,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
+#include <fcntl.h>
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintProps -- prints out all the valid property names and values as pairs...
@@ -67,8 +69,7 @@ void TestFSPropCalc()
 {
     cDebug d("TestFSPropCalc");
     cFSDataSourceIter ds;
-    TSTRING foo_bin = TEMP_DIR;
-    foo_bin.append("/foo.bin");
+    TSTRING foo_bin = TwTestPath("foo.bin");
     
     //iFSServices* pFSServices = iFSServices::GetInstance();
 
@@ -137,4 +138,27 @@ void TestFSPropCalc()
     pFCO->Release();
 
     return;
+}
+
+void TestGetSymLinkStr()
+{
+    std::string file = TwTestPath("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
+    std::string link = TwTestPath("linky");
+
+    int fd = creat(file.c_str(), 0777);
+    TEST(fd >= 0);
+    close(fd);
+
+    unlink(link.c_str()); 
+    TEST(0 == symlink(file.c_str(), link.c_str()));
+
+    cMemoryArchive arch(1024*1024);
+    TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
+    TEST(arch.Length() == (int64)file.size());
+}
+
+void RegisterSuite_FSPropCalc()
+{
+    RegisterTest("FSPropCalc", "Basic", TestFSPropCalc);
+    RegisterTest("FSPropCalc", "GetSymLinkStr", TestGetSymLinkStr);
 }

@@ -1,3 +1,18 @@
+2017-10-01 Brian Cox <bcox@tripwire.com>
+	* Update version to 2.4.3.6
+	* Fix & expand tests in Perl acceptance test framework
+	* Fix & expand twtest unit tests, & rework unit test mini-framework so they’re referenced by name, not some numeric ID, and list tests as “skipped" if they don’t make any test assertions.
+	* Add configure options to enable coverage, profiling, & use /dev/urandom as RNG (all off by default)
+	* Add a ‘list’ make target to list all make targets
+	* Remove dead code & add test coverage per gcov+lcov results
+	* Fix various memory issues pointed out by valgrind
+	* In examine-encryption mode, better reporting (& nonzero exit) if we can't find a keyfile for the examined file.
+	* More exception handling around individual objects & init/IC as a whole, since there have been occasional reports of uncaught exceptions during init or check, and so far haven’t been able to repro or figure out what circumstances it occurs under. (e.g. Github issue #25)
+	* Tweak install.sh so it can be run directly, not just thru 'make install' if you want. (Github issue #26)
+	* Improve native (non-Posixy) path handling on platforms that need it (DOS, AROS, RISC OS, Redox)
+	* New platforms:  MirOS BSD, Bitrig, LibertyBSD, RISC OS, Redox
+	* Add default policies for HP-UX & various BSDs
+
 2017-03-30 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.5
 	* Fix ‘install-strip’, ‘check’, ‘uninstall’, and ‘distcheck’ make targets.
@@ -35,7 +50,8 @@
 	* AROS: Correctly hide passphrases & delete temp files.
 	* Remove dead code & unused files.
 	* Optional RESOLVE_IDS_TO_NAMES option to disable uid/gid to name resolution, if needed.
-	* New --key-size option to twadmin --generate-keys, to generate 1024 (default) or 2048 bit El Gamal keys.  
+	* New --key-size option to twadmin --generate-keys, to generate 1024 (default) or 2048 bit El Gamal keys. 
+	
 2016-04-20 Brian Cox <bcox@tripwire.com>
 	* Bump version to 2.4.3.1
 	* Revive old 'twtest' unit test suite (such as it is); move _t.cpp files into twtest dir.

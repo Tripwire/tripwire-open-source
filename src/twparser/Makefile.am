@@ -15,6 +15,7 @@ libtwparser_a_HEADERS = \
    yylex.h yyparse.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
+CLEANFILES = *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libtwparser_a_OBJECTS)

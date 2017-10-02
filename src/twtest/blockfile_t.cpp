@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -41,80 +41,77 @@ void TestBlockFile()
 {
     cDebug d( "TestBlockFile" );
 
-    try
-    {
-        static const TCHAR fileName[] = _T("test.bf");
-        // truncate the file I am going to use...
-        //
-        cFileArchive a;
-        a.OpenReadWrite( fileName );
-        a.Close();
-        //
-        // open up the block file...
-        //
-        cBlockFile bf;
-        bf.Open( fileName, 2 ); // opened up with two pages
-        #ifdef _BLOCKFILE_DEBUG
-        bf.TraceContents();
-        #endif
+    std::string fileName = TwTestPath("test.bf");
+    // truncate the file I am going to use...
+    //
+    cFileArchive a;
+    a.OpenReadWrite( fileName.c_str() );
+    a.Close();
+    //
+    // open up the block file...
+    //
+    cBlockFile bf;
+    bf.Open( fileName, 2 ); // opened up with two pages
+    #ifdef _BLOCKFILE_DEBUG
+    bf.TraceContents();
+    #endif
 
-        // get a block and write something to it...
-        //
-        cBlockFile::Block*  pB = bf.GetBlock( 0 );
-        TEST( pB );
-        static const TCHAR str1[] = _T("Block 1");
-        memcpy( pB->GetData(), str1, sizeof(str1) );
-        pB->SetDirty();
-        #ifdef _BLOCKFILE_DEBUG
-        bf.TraceContents();
-        #endif
+    // get a block and write something to it...
+    //
+    cBlockFile::Block*  pB = bf.GetBlock( 0 );
+    TEST( pB );
+    static const TCHAR str1[] = _T("Block 1");
+    memcpy( pB->GetData(), str1, sizeof(str1) );
+    pB->SetDirty();
+    #ifdef _BLOCKFILE_DEBUG
+    bf.TraceContents();
+    #endif
 
-        // get another block...     
-        //
-        pB = bf.CreateBlock();
-        TEST( pB );
-        static const TCHAR str2[] = _T("Block 2");
-        memcpy( pB->GetData(), str2, sizeof(str2) );
-        pB->SetDirty();
-        #ifdef _BLOCKFILE_DEBUG
-        bf.TraceContents();
-        #endif
+    // get another block...     
+    //
+    pB = bf.CreateBlock();
+    TEST( pB );
+    static const TCHAR str2[] = _T("Block 2");
+    memcpy( pB->GetData(), str2, sizeof(str2) );
+    pB->SetDirty();
+    #ifdef _BLOCKFILE_DEBUG
+    bf.TraceContents();
+    #endif
 
-        // get the first block we wrote...
-        //
-        pB = bf.GetBlock( 0 );
-        TEST( pB );
-        *pB->GetData() = _T('F');
-        #ifdef _BLOCKFILE_DEBUG
-        bf.TraceContents();
-        #endif
+    // get the first block we wrote...
+    //
+    pB = bf.GetBlock( 0 );
+    TEST( pB );
+    *pB->GetData() = _T('F');
+    #ifdef _BLOCKFILE_DEBUG
+    bf.TraceContents();
+    #endif
 
-        //
-        // create a third block -- someone will have to be paged out in order for this to happen
-        //
-        pB = bf.CreateBlock();
-        TEST( pB );
-        static const TCHAR str3[] = _T("Block 3");
-        memcpy( pB->GetData(), str3, sizeof(str3) );
-        pB->SetDirty();
-        #ifdef _BLOCKFILE_DEBUG
-        bf.TraceContents();
-        #endif
-        
-        //
-        // test the guard bytes...
-        /*
-        memcpy( pB->GetData() + (cBlockFile::BLOCK_SIZE - 4),   str3, sizeof(str3) );
-        memcpy( pB->GetData() - 1,                              str3, sizeof(str3) );
-        pB->AssertValid();
-        */
+    //
+    // create a third block -- someone will have to be paged out in order for this to happen
+    //
+    pB = bf.CreateBlock();
+    TEST( pB );
+    static const TCHAR str3[] = _T("Block 3");
+    memcpy( pB->GetData(), str3, sizeof(str3) );
+    pB->SetDirty();
+    #ifdef _BLOCKFILE_DEBUG
+    bf.TraceContents();
+    #endif
+    
+    //
+    // test the guard bytes...
+    /*
+    memcpy( pB->GetData() + (cBlockFile::BLOCK_SIZE - 4),   str3, sizeof(str3) );
+    memcpy( pB->GetData() - 1,                              str3, sizeof(str3) );
+    pB->AssertValid();
+    */
 
-        bf.Close(); 
-    }
-    catch( eError& e )
-    {
-        TCERR << "Exception: " << e.GetMsg() << std::endl;
-        d.TraceError( _T("Exception caught: %d %s\n"), e.GetID(), e.GetMsg().c_str() );
-        TEST( false );
-    }
+    bf.Close(); 
 }
+
+void RegisterSuite_BlockFile()
+{
+    RegisterTest("BlockFile", "Basic", TestBlockFile);
+}
+

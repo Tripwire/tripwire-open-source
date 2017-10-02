@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -47,90 +47,105 @@
 
 using namespace std;
 
+static void assertParse(const std::string& configLineIn, bool expectValid)
+{
+    static const std::string sMandatory = \
+        "\nPOLFILE=foo" \
+        "\nDBFILE=foo" \
+        "\nREPORTFILE=foo" \
+        "\nSITEKEYFILE=foo" \
+        "\nLOCALKEYFILE=foo";
+
+    bool threw = false;
+    cConfigFile cfg;
+
+    std::string configLine = configLineIn + sMandatory;
+
+    try
+    {
+        cfg.ReadString( configLine );
+    }
+    catch( eConfigFileMissReqKey& e)
+    {
+        TCERR << "Got a missing key exception, which should not happen" << std::endl;
+        TEST(false);
+    }
+    catch( eConfigFile& e )
+    {
+        e.SetFatality(false);
+        cTWUtil::PrintErrorMsg( e );
+
+        threw = true;
+    }
+
+#ifdef _DEBUG
+    TCERR << "LINE [" << configLineIn << "]" << std::endl << "Expected = " << expectValid << std::endl << "Threw = " << threw << std::endl;
+#endif
+
+    TEST(expectValid != threw);
+}
+
+
 void TestConfigFile(void)
 {
-    TSTRING asConfigFileText[] = 
-    { 
-        _T("BRIAN=foo"),                // 0 fine
-        _T("BRIAN=foo\nBILL=bar"),      // 1 fine
-        _T("BRIAN=foo\r\nBILL=bar"),    // 2 fine
-        _T("BRIAN=foo\n\n\rBILL=bar\n"),// 3 fine
-        _T("    WS=foo    \n\n\r     BILL=bar\n"), // 4 fine
-        _T("    WS   =   foo    \n\n\r     BILL  =  bar   \n"), // 5 fine
-        _T("FOO=foo\nBAR=$(FOO)"),      // 6 fine
-        _T("FOO=foo\nBAR=$(FO)"),       // 7 undefined var
-        _T("FOO=foo\nBAR=$(FOO"),       // 8 no r paren
-        _T("FOO=foo\nBAR=$(FOO   "),    // 9 no r paren
-        _T("BAR=$(FOO\n"),              // 10 no r paren
-        _T(" VAR    =foo    \nWS     = $(VAR)\n"),  // 11 fine
-        _T(""),  // 12 fine
-        _T("\n"),  // 13 fine
-        _T("\r"),  // 14 fine
-        _T("\r\n"),  // 15 fine
-        _T("B=POO\nA"),  // 16 no equals
-        _T(" B=POO \n   A   \r"),  // 17 no equals
-        _T("B=POO\nB=CRAP"),  // 18 redefined var
-        _T("DATE=CRAP"),  // 19 redefine predefine var
-        _T("B=POO\nDATE=CRAP"),  // 20 redefine predefine var
-        _T("A=1\nB=$(A)\nC=$(B)"),  // 21 fine -- checking var sub
-        _T("A=$(DATE)"),  // 22 fine -- checking predef var sub
-        _T("A=1\nB=$(A)\nC=$(DATE)"),  // 23 fine -- checking predef var sub
-        _T("A=1\n=$(A)\nC=$(DATE)"),  // 24 no key
-        _T("A=$(DATE)-B"),  // 25 fine -- check that the '-' shows up
-        _T("A=$(DATE)-$(DATE)"),  // 26 fine -- check that the '-' shows up
-    };
+    // should succeed
+    assertParse( _T("BRIAN=foo"), true );               // 0 fine
+    assertParse( _T("BRIAN=foo\nBILL=bar"), true );       // 1 fine
+    assertParse( _T("BRIAN=foo\r\nBILL=bar"), true );     // 2 fine
+    assertParse( _T("BRIAN=foo\n\n\rBILL=bar\n"), true ); // 3 fine
+    assertParse( _T("    WS=foo    \n\n\r     BILL=bar\n"), true );  // 4 fine
+    assertParse( _T("    WS   =   foo    \n\n\r     BILL  =  bar   \n"), true );  // 5 fine
+    assertParse( _T("FOO=foo\nBAR=$(FOO)"), true );       // 6 fine
 
-    /*
-    TSTRING sMandatory = \
-        _T("\nPOLFILE=foo") \
-        _T("\nDBFILE=foo") \
-        _T("\nREPORTFILE=foo") \
-        _T("\nSITEKEYFILE=foo") \
-        _T("\nLOCALKEYFILE=foo");
-    */
+    // should fail
+    assertParse( _T("FOO=foo\nBAR=$(FO)"), false );        // 7 undefined var
+    assertParse( _T("FOO=foo\nBAR=$(FOO"), false );        // 8 no r paren
+    assertParse( _T("FOO=foo\nBAR=$(FOO   "), false );     // 9 no r paren
+    assertParse( _T("BAR=$(FOO\n"), false );               // 10 no r paren
 
+    // should succeed
+    assertParse( _T(" VAR    =foo    \nWS     = $(VAR)\n"), true );   // 11 fine
+    assertParse( _T(""), true );   // 12 fine
+    assertParse( _T("\n"), true );   // 13 fine
+    assertParse( _T("\r"), true );   // 14 fine
+    assertParse( _T("\r\n"), true );   // 15 fine
 
-    for( TSTRING* at = &asConfigFileText[0];
-         at != &asConfigFileText[countof(asConfigFileText)];
-         at++ )
-    {
-        cConfigFile cfg;
-        //*at += sMandatory;
+    // should fail
+    assertParse( _T("B=POO\nA"), false );   // 16 no equals
+    assertParse( _T(" B=POO \n   A   \r"), false );   // 17 no equals
 
-        TCERR << _T("*** line:") << std::endl;
-        TCERR << *at << std::endl;
-        TCERR << _T("*** eol:") << std::endl;
-        try
-        {
-            cfg.ReadString( *at );
-        }
-        catch( eConfigFileMissReqKey& )
-        {
-            // ignore....
-        }
-        catch( eConfigFile& e )
-        {
-            int offset = ( at - asConfigFileText );
-            int itemSize = sizeof( asConfigFileText[0] );
-            int num = offset / itemSize;
-            TCERR << num << std::endl;
-            cTWUtil::PrintErrorMsg( e );
-        }
-    }
+/*  This next test asserts that you can't change a variable once you've defined it.
+    However there's no actual code in cConfigFile to check for this, and 
+    OST appears to work fine if you redefine a config variable, so I'm not going
+    to change the current behavior.  Leaving this test in w/ a note for reference.
+
+    assertParse( _T("B=POO\nB=CRAP"), false );   // 18 redefined var
+*/
+    assertParse( _T("DATE=CRAP"), false );   // 19 redefine predefine var
+    assertParse( _T("B=POO\nDATE=CRAP"), false );   // 20 redefine predefine var
+    // should succeed
+    assertParse( _T("A=1\nB=$(A)\nC=$(B)"), true );   // 21 fine -- checking var sub
+    assertParse( _T("A=$(DATE)"), true );   // 22 fine -- checking predef var sub
+    assertParse( _T("A=1\nB=$(A)\nC=$(DATE)"), true );   // 23 fine -- checking predef var sub
+
+    // should fail
+    assertParse( _T("A=1\n=$(A)\nC=$(DATE)"), false );   // 24 no key
+
+    // should succeed
+    assertParse( _T("A=$(DATE)-B"), true );   // 25 fine -- check that the '-' shows up
+    assertParse( _T("A=$(DATE)-$(DATE)"), true );   // 26 fine -- check that the '-' shows up
+
 }
 
 void TestConfigFile2(void)
 {
     cDebug d("Testconfigfile");
     d.TraceDetail("Entering...\n");
-    iFSServices* pFSServices = iFSServices::GetInstance();
+    //iFSServices* pFSServices = iFSServices::GetInstance();
 
     //Define some test values for <name, value> pairs to be
     //stored in a test config. module. I'm going to use the
     //values specified in the install doc. -DA
-    TSTRING currpath;
-    pFSServices->GetCurrentDir(currpath);
-    const TSTRING testTWROOT = currpath;
 
     //TODO maybe also test read failure when mandatory config values aren't set
     
@@ -145,7 +160,7 @@ void TestConfigFile2(void)
     write_cfgmod.Insert( _T("LOCALKEYFILE"), "local.key");
 
     //Filename for writing/reading some value pairs:
-    const TSTRING testfile = testTWROOT + _T("/tripwire.cfg");
+    const TSTRING testfile = TwTestPath("tripwire.cfg");
 
     //Store these values on disk.
     TSTRING configText;
@@ -178,5 +193,10 @@ void TestConfigFile2(void)
     TEST( lookup2 == "test.twd" );
 
     d.TraceDetail("Tests Passed!\n");
-//#endif // NOT_BRIANS_TEST
+}
+
+void RegisterSuite_ConfigFile()
+{
+    RegisterTest("ConfigFile", "Basic1", TestConfigFile);
+    RegisterTest("ConfigFile", "Basic2", TestConfigFile2);
 }

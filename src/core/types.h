@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -36,35 +36,49 @@
 
 #include "platform.h"
 
+#if HAVE_STDINT_H
+#include <stdint.h>
+#endif
+
+
+
 //-----------------------------------------------------------------------------
 // standard TSS types
 //-----------------------------------------------------------------------------
 
-typedef unsigned char           byte    ; // platform-independent
+typedef unsigned char       byte    ; // platform-independent
 
 typedef signed char         int8    ;
 typedef short               int16   ;
 typedef float               float32 ;
 typedef double              float64 ;
-typedef unsigned char           uint8   ;
-typedef unsigned short          uint16  ;
+typedef unsigned char       uint8   ;
+typedef unsigned short      uint16  ;
 
-#if SIZEOF_INT == 4
-typedef int             int32   ;
-typedef unsigned int            uint32  ;
+#if HAVE_STDINT_H
+typedef int32_t             int32   ;
+typedef uint32_t            uint32  ;
+
+#elif SIZEOF_INT == 4
+typedef int                 int32   ;
+typedef unsigned int        uint32  ;
+
 #elif SIZEOF_LONG == 4
-typedef long                    int32   ;
-typedef unsigned long           uint32  ;
+typedef long                int32   ;
+typedef unsigned long       uint32  ;
 #else
 # error "I don't seem to have a 32-bit integer type on this system."
 #endif
 
-#if SIZEOF_LONG == 8
+#if HAVE_STDINT_H
+typedef int64_t             int64   ;
+typedef uint64_t            uint64  ;
+#elif SIZEOF_LONG == 8
 typedef long                int64   ;
-typedef unsigned long           uint64  ;
+typedef unsigned long       uint64  ;
 #elif SIZEOF_LONG_LONG == 8
 typedef long long           int64   ;
-typedef unsigned long long      uint64  ;
+typedef unsigned long long  uint64  ;
 #else
 # error "I don't seem to have a 64-bit integer type on this system."
 #endif

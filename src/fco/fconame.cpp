@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -97,7 +97,7 @@ cFCOName::cFCOName(iFCONameInfo* pNI) :
 {
     SetNameInfo(pNI);
     mpPathName = new cFCOName_i;
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(iFCONameInfo*)");
     d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
@@ -111,7 +111,7 @@ cFCOName::cFCOName(const cFCOName& rhs) :
     mbCaseSensitive(rhs.mbCaseSensitive)
 {
     mpPathName->AddRef();
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(cFCOName&)");
     d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
@@ -125,7 +125,7 @@ cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) :
     mpPathName = new cFCOName_i;
     ParseString(rhs.c_str());
     
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(cFCOName&,iFCONameInfo*)");
     d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
@@ -139,7 +139,7 @@ cFCOName::cFCOName(const TCHAR* rhs, iFCONameInfo* pNI) :
     mpPathName = new cFCOName_i;
     ParseString(rhs);
     
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(cFCOName&,iFCONameInfo*)");
     d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
@@ -148,7 +148,7 @@ cFCOName::cFCOName(const TCHAR* rhs, iFCONameInfo* pNI) :
 
 cFCOName::~cFCOName()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     cDebug d("cFCOName::~cFCOName()");
     d.TraceNever(_T("destructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
 #endif 
@@ -168,7 +168,7 @@ void cFCOName::SetNameInfo(iFCONameInfo* pNI)
         mbCaseSensitive = iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive();
         mDelimiter = iTWFactory::GetInstance()->GetNameInfo()->GetDelimitingChar();
     }
-#ifdef _DEBUG
+#ifdef DEBUG
     if( mpPathName != NULL ) // this could be called from the constructor before this is initialized.
         mDebugStrName = AsString();
 #endif 
@@ -185,7 +185,7 @@ cFCOName& cFCOName::operator = (const cFCOName& rhs)
     mpPathName->AddRef();
     mDelimiter      = rhs.mDelimiter;
     mbCaseSensitive = rhs.mbCaseSensitive;
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
     return *this;
@@ -194,7 +194,7 @@ cFCOName& cFCOName::operator = (const cFCOName& rhs)
 cFCOName& cFCOName::operator = (const TSTRING& rhs)
 {
     *this = rhs.c_str();
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
     return *this;
@@ -210,7 +210,7 @@ cFCOName&  cFCOName::operator = (const TCHAR* rhs)
         mpPathName = new cFCOName_i;
     }
     ParseString(rhs);
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
     return *this;
@@ -320,7 +320,7 @@ void cFCOName::Clear()
     {
         Pop();
     }
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
 }
@@ -392,7 +392,7 @@ void cFCOName::Read(iSerializer* pSerializer, int32 version)
         mbCaseSensitive = true;
 
     ParseString(str.c_str());
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
 }
@@ -443,7 +443,7 @@ void cFCOName::Push(const TSTRING& str)
 
     cFCONameTblNode* pNode = cFCOName_i::msNameTbl.CreateNode(str);
     mpPathName->mNames.push_back(pNode);
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
 }
@@ -465,7 +465,7 @@ const TCHAR*    cFCOName::Pop()
     ASSERT(pNode->GetRefCount() > 1);
     const TCHAR* ret = pNode->GetString();
     pNode->Release();
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
     return ret;
@@ -489,7 +489,7 @@ const TCHAR*    cFCOName::PopFront()
     ASSERT(pNode->GetRefCount() > 1);
     const TCHAR* ret = pNode->GetString();
     pNode->Release();
-#ifdef _DEBUG
+#ifdef DEBUG
     mDebugStrName = AsString();
 #endif 
     return ret;

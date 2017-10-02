@@ -16,7 +16,7 @@ siggen_HEADERS = \
   siggen.h siggencmdline.h siggenstrings.h stdsiggen.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
-CLEANFILES = ../../bin/siggen
+CLEANFILES = ../../bin/siggen *.gcno *.gcda
 
 all: $(sbin_PROGRAMS)
 	@test -d ../../bin && $(LN) -f $(sbin_PROGRAMS) ../../bin

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -38,8 +38,6 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintPropVector -- function that prints the contents of a cFCOPropVector
-//      TODO: We might want to add this functionality to the property vector some
-//      day...
 ///////////////////////////////////////////////////////////////////////////////
 static void PrintPropVector(const cFCOPropVector& v, cDebug& d)
 {
@@ -93,4 +91,9 @@ void TestFSPropSet()
     TEST(propSet.GetValidVector() == emptyVector);
 
     return;
+}
+
+void RegisterSuite_FSPropSet()
+{
+    RegisterTest("FSPropSet", "Basic", TestFSPropSet);
 }

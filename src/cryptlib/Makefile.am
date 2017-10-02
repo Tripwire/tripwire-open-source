@@ -20,7 +20,7 @@ libcryptlib_a_HEADERS = \
   ztrees.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
-CLEANFILES = ../../lib/libcryptlib.a
+CLEANFILES = ../../lib/libcryptlib.a *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(LN) -f $(noinst_LIBRARIES) ../../lib/libcryptlib.a

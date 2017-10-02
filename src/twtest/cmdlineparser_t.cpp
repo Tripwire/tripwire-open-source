@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -88,7 +88,7 @@ const TCHAR* argv5[] =
     _T("frog")
 };
 
-#ifdef _DEBUG
+#ifdef DEBUG
 static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
 {
     TSTRING str;
@@ -104,7 +104,7 @@ static void PrintCmdLine(int argc, const TCHAR** argv, cDebug d)
 
 static void test_parse(cCmdLineParser& parser, const int argc, const TCHAR** argv, bool should_throw)
 {
-#ifdef _DEBUG
+#ifdef DEBUG
     cDebug d("test_parse");
     PrintCmdLine(argc, argv, d);
 #endif
@@ -122,7 +122,7 @@ static void test_parse(cCmdLineParser& parser, const int argc, const TCHAR** arg
     
     TEST(threw == should_throw);
     
-#ifdef _DEBUG
+#ifdef DEBUG
     parser.TraceContents();
 #endif
 }
@@ -133,40 +133,38 @@ void TestCmdLineParser()
 {
     enum ArgId { ID_M, ID_TP, ID_V, ID_UNNAMED };
 
-    try {
-        cCmdLineParser p;
-        p.AddArg(ID_M,          TSTRING(_T("m")),   TSTRING(_T("mode")),        cCmdLineParser::PARAM_ONE);
-        p.AddArg(ID_TP,         TSTRING(_T("tp")),  TSTRING(_T("twoparam")),    cCmdLineParser::PARAM_MANY);
-        p.AddArg(ID_V,          TSTRING(_T("v")),   TSTRING(_T("verbose")),     cCmdLineParser::PARAM_NONE);
-        p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_MANY);
+    cCmdLineParser p;
+    p.AddArg(ID_M,          TSTRING(_T("m")),   TSTRING(_T("mode")),        cCmdLineParser::PARAM_ONE);
+    p.AddArg(ID_TP,         TSTRING(_T("tp")),  TSTRING(_T("twoparam")),    cCmdLineParser::PARAM_MANY);
+    p.AddArg(ID_V,          TSTRING(_T("v")),   TSTRING(_T("verbose")),     cCmdLineParser::PARAM_NONE);
+    p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_MANY);
 
-        cDebug d("TestCmdLineParser");
+    cDebug d("TestCmdLineParser");
 
-        test_parse(p, argc1, argv1, false);
-        test_parse(p, argc2, argv2, true);
-        test_parse(p, argc3, argv3, true);
-        test_parse(p, argc4, argv4, false);
+    test_parse(p, argc1, argv1, false);
+    test_parse(p, argc2, argv2, true);
+    test_parse(p, argc3, argv3, true);
+    test_parse(p, argc4, argv4, false);
 
-        // command line arg mutual exclusion
-        d.TraceDebug("** Making -m and -v mutually exclusive, then running on first cmd line...\n");
-        p.AddMutEx(ID_M, ID_V);
-        test_parse(p, argc1, argv1, true);  // should fail
-        
-        // make the command line want one parameter
-        d.TraceDebug("** Changing cmd line to only want one last param...\n");
-        p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_ONE);
-        test_parse(p, argc4, argv4, true);
+    // command line arg mutual exclusion
+    d.TraceDebug("** Making -m and -v mutually exclusive, then running on first cmd line...\n");
+    p.AddMutEx(ID_M, ID_V);
+    test_parse(p, argc1, argv1, true);  // should fail
+    
+    // make the command line want one parameter
+    d.TraceDebug("** Changing cmd line to only want one last param...\n");
+    p.AddArg(ID_UNNAMED,    TSTRING(_T("")),    TSTRING(_T("")),            cCmdLineParser::PARAM_ONE);
+    test_parse(p, argc4, argv4, true);
 
-        test_parse(p, argc5, argv5, false);
+    test_parse(p, argc5, argv5, false);
 
-        // TODO -- test a bunch more!!!
-    }
-    catch (eCmdLine &e)
-    {
-        TCERR << _T("Command line error: ");
-        TCERR << e.GetMsg() << std::endl;
-        //TODO...
-        TEST(false);
-    }
+    // TODO -- test a bunch more!!!
 }
+
+void RegisterSuite_CmdLineParser()
+{
+    RegisterTest("CmdLineParser", "Basic", TestCmdLineParser);
+}
+
+
 

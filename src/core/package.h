@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -142,17 +142,17 @@
         Messages m_messages                     // Decare a Stringtable
 
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #define TSS_BeginStringtable( pkg ) \
     void pkg::LoadStrings() \
     {   cDebug d( #pkg "::LoadStrings()" ); \
         d.TraceDebug("Loading strings for " #pkg " package.\n"); \
         Messages::Pair astr[] = {               // Define a Stringtable
-#else // _DEBUG
+#else // DEBUG
 #define TSS_BeginStringtable( pkg ) \
     void pkg::LoadStrings() \
     {   Messages::Pair astr[] = {               // Define a Stringtable
-#endif // _DEBUG
+#endif // DEBUG
 
 #define TSS_EndStringtable( pkg ) \
     }; m_messages.Put( \

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -70,7 +70,7 @@ void TestCryptoArchive()
         d.TraceDetail("Encrypting using symmetric key\n");
 
         cFileArchive outFile;
-        outFile.OpenReadWrite(TEMP_DIR _T("/crypted.bin"));
+        outFile.OpenReadWrite(TwTestPath("crypted.bin"));
 
         idea.SetKey(iCipher::ENCRYPT, ideaKey);
         cCryptoArchive outCrypt;
@@ -90,7 +90,7 @@ void TestCryptoArchive()
         d.TraceDetail("Decrypting using symmetric key\n");
 
         cFileArchive inFile;
-        inFile.OpenRead(TEMP_DIR _T("/crypted.bin"));
+        inFile.OpenRead(TwTestPath("crypted.bin"));
 
         idea.SetKey(iCipher::DECRYPT, ideaKey);
         cCryptoArchive inCrypt;
@@ -129,7 +129,7 @@ void TestCryptoArchive()
         d.TraceDetail("Signing using asymmetric key\n");
 
         cFileArchive outFile;
-        outFile.OpenReadWrite(TEMP_DIR _T("/rsacrypted.bin"));
+        outFile.OpenReadWrite(TwTestPath("rsacrypted.bin").c_str());
 
         cElGamalSigArchive outCrypt;
         outCrypt.SetWrite(&outFile, privateKey);
@@ -149,7 +149,7 @@ void TestCryptoArchive()
         d.TraceDetail("Verifying using asymmetric key\n");
 
         cFileArchive inFile;
-        inFile.OpenRead(TEMP_DIR _T("/rsacrypted.bin"));
+        inFile.OpenRead(TwTestPath("rsacrypted.bin").c_str());
 
         cElGamalSigArchive inCrypt;
         inCrypt.SetRead(&inFile, publicKey);
@@ -206,7 +206,7 @@ void TestCryptoArchive()
         d.TraceDetail("Encrypting using asymmetric key\n");
 
         cFileArchive outFile;
-        outFile.OpenReadWrite(TEMP_DIR _T("/rsacrypted.bin"));
+        outFile.OpenReadWrite(TwTestPath("rsacrypted.bin").c_str());
 
         cRSAArchive outCrypt;
         outCrypt.SetWrite(&outFile, publicKey);
@@ -226,7 +226,7 @@ void TestCryptoArchive()
         d.TraceDetail("Decrypting using asymmetric key\n");
 
         cFileArchive inFile;
-        inFile.OpenRead(TEMP_DIR _T("/rsacrypted.bin"));
+        inFile.OpenRead(TwTestPath("rsacrypted.bin").c_str());
 
         cRSAArchive inCrypt;
         inCrypt.SetRead(&inFile, privateKey);
@@ -252,7 +252,7 @@ void TestCryptoArchive()
         d.TraceDetail("Signing using asymmetric key\n");
 
         cFileArchive outFile;
-        outFile.OpenReadWrite(TEMP_DIR _T("/rsacrypted.bin"));
+        outFile.OpenReadWrite(TwTestPath("rsacrypted.bin").c_str());
 
         cRSAArchive outCrypt;
         outCrypt.SetWrite(&outFile, privateKey);
@@ -272,7 +272,7 @@ void TestCryptoArchive()
         d.TraceDetail("Verifying using asymmetric key\n");
 
         cFileArchive inFile;
-        inFile.OpenRead(TEMP_DIR _T("/rsacrypted.bin"));
+        inFile.OpenRead(TwTestPath("rsacrypted.bin").c_str());
 
         cRSAArchive inCrypt;
         inCrypt.SetRead(&inFile, publicKey);
@@ -299,4 +299,7 @@ void TestCryptoArchive()
 #endif
 }
 
-
+void RegisterSuite_CryptoArchive()
+{
+    RegisterTest("CryptoArchive", "Basic", TestCryptoArchive);
+}

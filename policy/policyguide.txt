@@ -191,7 +191,7 @@ $(DIR1) -> $(param1);                   # It is also possible to do a
 
 #=============================================================================
 #
-# Copyright 2000 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
+# Copyright 2000-2017 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
 # Inc. All rights reserved.
 #
 # Linux is a registered trademark of Linus Torvalds.

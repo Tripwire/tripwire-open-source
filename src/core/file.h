@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -138,13 +138,47 @@ public:
 };
 
 
-#if USES_DEVICE_PATH
-class cDevicePath
+class cDosPath
 {
 public:
     static TSTRING AsPosix(const TSTRING& in);
     static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+    static TSTRING BackupName(const TSTRING& in);
 };
+
+class cArosPath
+{
+public:
+    static TSTRING AsPosix(const TSTRING& in);
+    static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+};
+
+class cRiscosPath
+{
+public:
+    static TSTRING AsPosix(const TSTRING& in);
+    static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+};
+
+class cRedoxPath
+{
+public:
+    static TSTRING AsPosix(const TSTRING& in);
+    static TSTRING AsNative(const TSTRING& in);
+    static bool IsAbsolutePath(const TSTRING& in);
+};
+
+#if IS_DOS_DJGPP
+#define cDevicePath cDosPath
+#elif IS_AROS
+#define cDevicePath cArosPath
+#elif IS_RISCOS
+#define cDevicePath cRiscosPath
+#elif IS_REDOX
+#define cDevicePath cRedoxPath
 #endif
 
 

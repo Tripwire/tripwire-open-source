@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -114,6 +114,9 @@ public:
     virtual bool GetLazy() const;
     virtual void Read (iSerializer* pSerializer, int32 version = 0);    // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
+
+    bool operator==(const cFSPropDisplayer& rhs) const; // for testing
+
 private:        
     void AddMapping( const iFCOProp* const pProp, const TSTRING& tstrValue, const int propTypeEnum );
         // pass in a property value and its string representation.  for instance: ( FS::PROP_UID --> username )

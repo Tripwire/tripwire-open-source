@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -49,4 +49,9 @@ void TestTypes()
     TEST(sizeof(uint64)     == 8);
     TEST(sizeof(float32)    == 4);
     TEST(sizeof(float64)    == 8);
+}
+
+void RegisterSuite_Types()
+{
+    RegisterTest("Types", "Basic", TestTypes);
 }

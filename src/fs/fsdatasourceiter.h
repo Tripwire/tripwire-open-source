@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -39,9 +39,11 @@
 // INCLUDES
 //=========================================================================
 #include "fco/fcodatasourceiterimpl.h"
+#include "core/fileerror.h"
+#include "core/fsservices.h"
 
-TSS_EXCEPTION( eFSDataSourceIter,                   eError )
-TSS_EXCEPTION( eFSDataSourceIterReadDir,    eFSDataSourceIter )
+TSS_FILE_EXCEPTION( eFSDataSourceIter,           eFileError )
+TSS_FILE_EXCEPTION( eFSDataSourceIterReadDir,    eFSDataSourceIter )
 
 
 //=========================================================================
@@ -83,6 +85,9 @@ private:
 
     virtual iFCO* CreateObject(const cFCOName& name, bool bCreatingPeers );
     virtual bool InitializeTypeInfo(iFCO* pFCO) ;
+
+    void AddIterationError(const eError& e);
+    bool DoStat(const TSTRING& name, cFSStatArgs& statArgs);
 };
 
 #endif //__FSDATASOURCEITER_H

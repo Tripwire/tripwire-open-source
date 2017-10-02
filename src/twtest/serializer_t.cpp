@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -38,6 +38,7 @@
 #include "core/stdcore.h"
 #include "core/serializer.h"
 #include "core/serializable.h"
+#include "test.h"
 
 // The reading and writing functionality of the serializer is tested in 
 // serializerimpl_t.cpp, so there's very little to be done here.
@@ -70,4 +71,12 @@ cSerTestObject::cSerTestObject()
 void TestSerializer()
 {
     cSerTestObject test_obj;
+
+    TEST( std::string(test_obj.GetType().AsString()) == std::string("cSerTestObject") );
+    TEST( test_obj.Version() == 1);
+}
+
+void RegisterSuite_Serializer()
+{
+    RegisterTest("Serializer", "Basic", TestSerializer);
 }

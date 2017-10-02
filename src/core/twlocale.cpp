@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -104,6 +104,7 @@ void cTWLocale::InitGlobalLocale()
 
 }
 
+/*
 TSTRING cTWLocale::FormatNumberAsHex( int32 i )
 {
     //
@@ -125,6 +126,7 @@ TSTRING cTWLocale::FormatNumberAsHex( int32 i )
     //
     return( sstr.str() );
 }
+*/
 
 template< class numT, class CharT >
 class cFormatNumberUtil
@@ -190,6 +192,7 @@ public:
     }
 };
 
+/*
 TSTRING cTWLocale::FormatNumberClassic( int32 i )
 {
     TSTRING s;
@@ -200,7 +203,7 @@ int32 cTWLocale::FormatNumberClassic( const TSTRING& s )
 {
     return cFormatNumberUtil< long, TCHAR >::Format( s, true );
 }
-
+*/
 
 TSTRING& cTWLocale::FormatNumber( uint64 ui, TSTRING& strBuf )
 {

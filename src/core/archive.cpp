@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -50,28 +50,6 @@
 #include "stringutil.h"
 
 #include "corestrings.h"    // for: STR_ERR2_ARCH_CRYPTO_ERR
-
-//=============================================================================
-// Utility Functions
-//=============================================================================
-
-///////////////////////////////////////////////////////////////////////////////
-// util_IsDir -- returns true if a given file is a directory
-///////////////////////////////////////////////////////////////////////////////
-bool util_IsDir( const TSTRING& fileName )
-{
-    cFSStatArgs s;
-    try
-    {
-        iFSServices::GetInstance()->Stat( fileName, s );        
-    }
-    catch( eFSServices )
-    {
-        return false;
-    }
-    
-    return( s.mFileType == cFSStatArgs::TY_DIR );
-}
 
 //=============================================================================
 // eArchiveCrypto
@@ -421,7 +399,7 @@ void cMemoryArchive::AllocateMemory(int len) // throw(eArchive)
     {
         // grow the buffer
         // only error if we are in debug mode
-#ifdef _DEBUG
+#ifdef DEBUG
         if (len > mMaxAllocatedLen)
             ThrowAndAssert(eArchiveOutOfMem());
 #endif

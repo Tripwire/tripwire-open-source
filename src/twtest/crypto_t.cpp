@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -44,9 +44,13 @@ void TestCrypto()
 
     const int BUFSIZE = 9000;
 
-    char source[BUFSIZE];
-    char crypt[COUNT + BUFSIZE];  // needs to be able to hold even number of blocks
-    char dest[COUNT];
+    std::vector<char> source_buf(BUFSIZE);
+    std::vector<char> crypt_buf(COUNT + BUFSIZE);  // needs to be able to hold even number of blocks
+    std::vector<char> dest_buf(COUNT);
+
+    char* source = &source_buf[0];
+    char* crypt = &crypt_buf[0];
+    char* dest = &dest_buf[0];
 
     memcpy(source, "I love the smell of the sheep.", 31);
 
@@ -407,6 +411,13 @@ void TestCrypto()
 
     delete pPublic;
     delete pPrivate;
+    delete pPublic2;
+    delete pPrivate2;
     }
+}
+
+void RegisterSuite_Crypto()
+{
+    RegisterTest("Crypto", "Basic", TestCrypto);
 }
 

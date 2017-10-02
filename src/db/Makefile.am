@@ -13,6 +13,7 @@ libdb_a_HEADERS = \
    db.h dberrors.h hierdatabase.h hierdbnode.h hierdbpath.h stddb.h
 
 DEFS = @DEFS@		# This gets rid of the -I. so AM_CPPFLAGS must be more explicit
+CLEANFILES = *.gcno *.gcda
 
 all: $(noinst_LIBRARIES)
 	$(AR) ru ../../lib/libtripwire.a $(libdb_a_OBJECTS)

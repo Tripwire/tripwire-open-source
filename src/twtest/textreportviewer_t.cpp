@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -127,7 +127,7 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
 
 void TestTextReportViewer()
 {
-    TCERR << std::endl << "TestTextReportViewer needs to be cleaned up & fixed, currently disabled" << std::endl;
+    skip("TestTextReportViewer needs to be cleaned up & fixed, currently disabled");
     
 #if 0
     cFCOReport  report;
@@ -380,7 +380,7 @@ void TestTextReportViewer()
 
             d.TraceDebug("Read in serialized report:\n");
             //TraceReport(inReport, d);
-            trv.PrintTextReport(TSTRING( TEMP_DIR _T( "/test2.txt" ) ) );
+            trv.PrintTextReport(TSTRING( TwTestPath("test2.txt" ) ) );
 
             //TODO: this does not work any more
             //trv.LaunchEditorOnFile( TSTRING( TEMP_DIR _T("/test2.txt") ), _T("") );
@@ -476,3 +476,7 @@ void MakeDir( const TCHAR* const lpszDirName )
 
 //#endif //FIXED_TRV_TEST_SUITE
 
+void RegisterSuite_TextReportViewer()
+{
+    RegisterTest("TextReportViewer", "Basic", TestTextReportViewer);
+}

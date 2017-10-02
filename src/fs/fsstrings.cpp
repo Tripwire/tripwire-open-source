@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -51,6 +51,7 @@ TSS_BeginStringtable( cFS )
     TSS_StringEntry( fs::STR_FT_SOCK,                   _T("Socket") ),
     TSS_StringEntry( fs::STR_FT_DOOR,                   _T("Door") ),
     TSS_StringEntry( fs::STR_FT_PORT,                   _T("Event Port") ),
+    TSS_StringEntry( fs::STR_FT_NAMED,                  _T("Named Special File") ),
 
     // property names
     TSS_StringEntry( fs::STR_PROP_DEV,                  _T("Device Number") ),
@@ -73,8 +74,9 @@ TSS_BeginStringtable( cFS )
     TSS_StringEntry( fs::STR_PROP_SHA,                  _T("SHA") ),
     TSS_StringEntry( fs::STR_PROP_HAVAL,                _T("HAVAL") ),
     TSS_StringEntry( fs::STR_PROP_ACL,                  _T("ACL Placeholder -- Not Implemented") ),
-    
-    // TODO: get actual strings
+
+/*  Leaving these here in case we ever implement long property names
+
     TSS_StringEntry( fs::STR_PARSER_PROP_DEV,           _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_RDEV,          _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_INODE,         _T("unimplemented") ),
@@ -94,7 +96,7 @@ TSS_BeginStringtable( cFS )
     TSS_StringEntry( fs::STR_PARSER_PROP_MD5,           _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_SHA,           _T("unimplemented") ),
     TSS_StringEntry( fs::STR_PARSER_PROP_HAVAL,         _T("unimplemented") ),
-
+*/
     TSS_StringEntry( fs::STR_PARSER_READONLY,           _T("ReadOnly")),
     TSS_StringEntry( fs::STR_PARSER_DYNAMIC,            _T("Dynamic")),
     TSS_StringEntry( fs::STR_PARSER_GROWING,            _T("Growing")),

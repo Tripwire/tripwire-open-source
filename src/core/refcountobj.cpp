@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -41,7 +41,7 @@
 
 #include "errorutil.h"
 
-#ifdef _DEBUG
+#ifdef DEBUG
 int cRefCountObj::objectCounter = 0;
 int cRefCountObj::referenceCounter = 0;
 
@@ -68,7 +68,7 @@ struct cRefCountObj_Debug
     }
 } gRefCountObj_Debug;
 
-#endif // _DEBUG
+#endif // DEBUG
 
 cRefCountObj::cRefCountObj()
 {
@@ -76,7 +76,7 @@ cRefCountObj::cRefCountObj()
 
 //std::cout << "Allocated RefObj(" << std::hex << (int)this << ")\n";
 
-#ifdef _DEBUG
+#ifdef DEBUG
     ++objectCounter;
     ++referenceCounter;
 
@@ -95,7 +95,7 @@ cRefCountObj::~cRefCountObj()
 
 //std::cout << "Deleted RefObj(" << std::hex << (int)this << ")\n";
 
-#ifdef _DEBUG
+#ifdef DEBUG
     --objectCounter;
     cDebug d("cRefCountObj::~cRefCountObj");
     d.TraceNever("Object Destroyed[%p] %s Objects Left = %d\n", this, typeid(*this).name(), objectCounter);
@@ -128,7 +128,7 @@ void cRefCountObj::AddRef() const
 
     ++mRefCount;
 
-    #ifdef _DEBUG
+    #ifdef DEBUG
     ++referenceCounter;
     #endif
 }
@@ -140,7 +140,7 @@ void cRefCountObj::Release() const
         Delete();
     }
 
-    #ifdef _DEBUG
+    #ifdef DEBUG
     --referenceCounter;
     #endif
 }

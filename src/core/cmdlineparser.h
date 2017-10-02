@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -132,14 +132,14 @@ public:
         // the input was invalid in some way; the actual error can be determined by calling
         // GetErrorInfo() below.
 
-    void Clear();
+//    void Clear();
         // clear out all information that this class contains
 
     bool LookupArgInfo(int argId, TSTRING& arg, TSTRING& alias) const;
         // given an argId, fill out the strings with the argument and alias strings. Returns false
         // if the argId cannot be found. This method is not very fast, so don't use it often.
 
-    #ifdef _DEBUG
+    #ifdef DEBUG
     void TraceContents(int dl = -1) ;
     #endif
 private:

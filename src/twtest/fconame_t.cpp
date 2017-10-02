@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -43,13 +43,8 @@
 #include "core/archive.h"
 #include "fco/genreswitcher.h"
 
-void TestFCOName()
+void TestFCOName1()
 {
-#if 0
-    // the following only works w/case insensitive names
-    cGenreSwitcher::GetInstance()->SelectGenre( cGenre::NTFS );
-#endif
-
     // test the relationship operator...
     cFCOName above      (_T("/etc"));
     cFCOName extraDel   (_T("/etc/"));
@@ -87,7 +82,10 @@ void TestFCOName()
     TEST(_tcscmp(cat.Pop(),_T("cat")) == 0);
     TEST(dog.AsString().compare(cat.AsString()) == 0);
     TEST(dog.GetRelationship(cat) == cFCOName::REL_EQUAL);
+}
 
+void TestFCOName2()
+{
     cFCOName nullName;
     TEST(*nullName.AsString().c_str() == 0);
 
@@ -103,28 +101,33 @@ void TestFCOName()
     cFCOName copyName(stringName);
     TEST(_tcscmp(copyName.AsString().c_str(), _T("/a/string/name")) == 0);
 
-    TCERR << "Multiple TODO tests in fconame_t.cpp" << std::endl;
-#if 0
-    cFCOName name(_T("new name"));
+    cFCOName name(_T("/new name"));
     nullName = name;
-    //TODO... TEST(_tcscmp(nullName.AsString().c_str(), _T("new name")) == 0);
-    
-    nullName = _T("newer name");
-    //TODO... TEST(_tcscmp(nullName.AsString().c_str(), _T("newer name")) == 0);
+    TEST(_tcscmp(nullName.AsString().c_str(), _T("/new name")) == 0);
+
+    nullName = _T("/newer name");
+    TEST(_tcscmp(nullName.AsString().c_str(), _T("/newer name")) == 0);
 
     cMemoryArchive memArc;
+
     {
         cSerializerImpl ser(memArc, cSerializerImpl::S_WRITE);
         ser.Init();
         ser.WriteObject(&charName);
-        stringName.SetDelimiter(_T('\\'));
+
+        //Note: backslash delimiters aren't supported (& don't work) in OST
+        //stringName.SetDelimiter(_T('\\'));
+
         ser.WriteObject(&stringName);
         ser.Finit();
     }
+
     memArc.Seek(0, cBidirArchive::BEGINNING);
+
     {
         cSerializerImpl ser(memArc, cSerializerImpl::S_READ);
         cFCOName name1, name2;
+
         ser.Init();
         ser.ReadObject(&name1);
         ser.ReadObject(&name2);
@@ -132,12 +135,15 @@ void TestFCOName()
 
         TEST(name1.IsEqual(charName));
         TEST(name2.IsEqual(stringName));
-        TEST(! name1.IsCaseSensitive()); 
-        TEST(! name2.IsCaseSensitive()); 
-        TEST(name2.GetDelimiter() == _T('\\')); 
-        TEST(name1.GetDelimiter() == _T('/')); 
+        TEST(name1.IsCaseSensitive());
+        TEST(name2.IsCaseSensitive());
+        TEST(name2.GetDelimiter() == _T('/'));
+        TEST(name1.GetDelimiter() == _T('/'));
     }
-#endif
 }
 
-
+void RegisterSuite_FCOName()
+{
+    RegisterTest("FCOName", "Basic1", TestFCOName1);
+    RegisterTest("FCOName", "Basic2", TestFCOName2);
+}

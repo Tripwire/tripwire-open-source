@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -76,6 +76,10 @@
 #endif
 
 #include <pwd.h>
+
+#if IS_REDOX
+#define restrict __restrict__
+#endif
 
 #if HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
@@ -326,6 +330,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
     if( ret < 0 )
         throw eFSServicesGeneric( strName, iFSServices::GetInstance()->GetErrString() );
 
+#if HAVE_STRUCT_STAT_ST_RDEV
     // new stuff 7/17/99 - BAM
     // if the file is not a device set rdev to zero by hand (most OSs will
     // do this for us, but some don't)
@@ -335,6 +340,7 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
         // actual type of the object -- could be a struct (requiring '= {0}' )
         util_ZeroMemory( statbuf.st_rdev );                                             
     }
+#endif
 
     //copy information returned by lstat call into the structure passed in
     stat.gid        = statbuf.st_gid;
@@ -342,14 +348,21 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
     stat.ctime      = statbuf.st_ctime;
     stat.mtime      = statbuf.st_mtime;
     stat.dev        = statbuf.st_dev;
+
+#if HAVE_STRUCT_STAT_ST_RDEV
     stat.rdev       = statbuf.st_rdev;
+#else
+    stat.rdev       = 0;
+#endif
+
     stat.ino        = statbuf.st_ino;
     stat.mode       = statbuf.st_mode;
     stat.nlink      = statbuf.st_nlink;
     stat.size       = statbuf.st_size;
     stat.uid        = statbuf.st_uid;
     stat.blksize    = statbuf.st_blksize;
-#if SUPPORTS_ST_BLOCKS
+    
+#if HAVE_STRUCT_STAT_ST_BLOCKS
     stat.blocks     = statbuf.st_blocks;
 #else
     stat.blocks     = 0;
@@ -365,13 +378,19 @@ void cUnixFSServices::Stat( const TSTRING& strNameC, cFSStatArgs& stat) const
 #ifdef S_ISSOCK
     else if(S_ISSOCK(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_SOCK;
 #endif
-#ifdef S_IFDOOR
+
+#if HAVE_DOOR_CREATE
     else if(S_ISDOOR(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_DOOR;
 #endif
-#ifdef S_IFPORT
+
+#if HAVE_PORT_CREATE
     else if(S_ISPORT(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_PORT;
 #endif
-    
+
+#ifdef S_ISNAM
+    else if(S_ISNAM(statbuf.st_mode))  stat.mFileType = cFSStatArgs::TY_NAMED;
+#endif
+
     else stat.mFileType = cFSStatArgs::TY_INVALID;
 }
 
@@ -497,43 +516,6 @@ void cUnixFSServices::SetResolveNames(bool resolve)
     mResolveNames=resolve;
 }
     
-bool cUnixFSServices::GetOwnerForFile( const TSTRING& tstrFilename, TSTRING& tstrUser ) const 
-{
-    bool fSuccess = true;
-    
-    struct stat statbuf;
-    int ret = lstat(tstrFilename.c_str(), &statbuf);    
-    if(ret < 0)
-    {
-        fSuccess = false;
-    }
-    else
-    {
-        fSuccess = GetUserName(statbuf.st_uid, tstrUser);
-    }
-
-    return( fSuccess );
-}
-
-
-bool cUnixFSServices::GetGroupForFile( const TSTRING& tstrFilename, TSTRING& tstrGroup ) const 
-{    
-    bool fSuccess = true;
-    struct stat statbuf;
-
-    int ret = lstat(tstrFilename.c_str(), &statbuf);    
-    if(ret < 0)
-    {
-        fSuccess = false;
-    }
-    else
-    {
-        fSuccess = GetGroupName(statbuf.st_gid, tstrGroup);
-    }   
-
-    return( fSuccess );
-}
-
     
 bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
 {
@@ -564,7 +546,8 @@ bool cUnixFSServices::GetUserName( uid_t user_id, TSTRING& tstrUser ) const
 bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
 {
     bool fSuccess = true;
-    
+
+#if !IS_REDOX    
     if( mResolveNames )
     {
         struct group* pg = getgrgid( group_id );
@@ -578,10 +561,13 @@ bool cUnixFSServices::GetGroupName( gid_t group_id, TSTRING& tstrGroup ) const
     }
     else
     {
+#endif
         std::stringstream sstr;
         sstr << group_id;
         tstrGroup = sstr.str();
+#if !IS_REDOX
     }
+#endif
     
     return( fSuccess );
 }
@@ -631,14 +617,22 @@ void cUnixFSServices::ConvertModeToString( uint64 perm, TSTRING& tstrPerm ) cons
         case S_IFLNK:
             szPerm[0] = _T('l');
             break;
-#ifdef S_IFDOOR
+
+#if HAVE_DOOR_CREATE  // Solaris doors
         case S_IFDOOR:
             szPerm[0] = _T('D');
             break;
 #endif
-#ifdef S_IFPORT
+
+#if HAVE_PORT_CREATE  // Solaris event ports
         case S_IFPORT:
             szPerm[0] = _T('P');
+            break;
+#endif
+
+#ifdef S_IFNAM
+        case S_IFNAM:
+            szPerm[0] = _T('n');
             break;
 #endif
         break;
@@ -763,12 +757,18 @@ bool cUnixFSServices::GetExecutableFilename( TSTRING& strFullPath, const TSTRING
 ///////////////////////////////////////////////////////////////////////////////
 bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC, const TSTRING& pathRelFromC ) const
 {
+    cDebug d("cUnixFSServices::FullPath");
+    d.TraceDebug("strRelPathC = %s, pathRelFromC = %s\n", strRelPathC.c_str(), pathRelFromC.c_str());
+
     // don't do anything with an empty path
     if( strRelPathC.empty() )
         return false;
 
+#if USES_DEVICE_PATH
+    TSTRING strRelPath = cDevicePath::AsPosix(strRelPathC); // make non-const temp var
+#else
     TSTRING strRelPath = strRelPathC; // make non-const temp var
-
+#endif
     //
     // get base name (where strRelPath will be relative to), which will either be;
     //  1. the root directory if strRelPath is an absolute path
@@ -781,6 +781,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
         if( IsRoot( strRelPath ) ) // if it's root, don't monkey with it, just return it.
         {
             strFullPath = strRelPath;
+            d.TraceDebug("Is root; returning %s\n", strFullPath.c_str());
             return true;
         }
         else
@@ -799,18 +800,30 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
             try
             {
                 GetCurrentDir( strFullPath );
+#if USES_DEVICE_PATH
+                strFullPath = cDevicePath::AsPosix(strFullPath);
+#endif
                 util_TrailingSep( strFullPath, false );
             }
             catch( eFSServices& )
             {
                 return false;
             }
+
+            d.TraceDebug("Creating prefix relative to CWD: %s\n", strFullPath.c_str());
         }
         else // we're relative to a given dir
         {
+
+#if USES_DEVICE_PATH
+            strFullPath = cDevicePath::AsPosix(pathRelFromC);
+#else
             strFullPath = pathRelFromC;
+#endif
             util_RemoveDuplicateSeps( strFullPath );
             util_TrailingSep( strFullPath, false );
+
+            d.TraceDebug("Creating prefix from supplied path: %s\n", strFullPath.c_str());
         }
     }
 
@@ -823,6 +836,7 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
     int index = 0;
     while( util_GetNextPathElement( strRelPath, strElem, index++ ) )
     {
+        d.TraceDebug("Path element = %s\n", strElem.c_str());
         if( 0 == strElem.compare( _T(".") ) )
         {
             // ignore it
@@ -838,8 +852,15 @@ bool cUnixFSServices::FullPath( TSTRING& strFullPath, const TSTRING& strRelPathC
             strFullPath += TW_SLASH;
             strFullPath += strElem;
         }
+
+        d.TraceDebug("FullPath is now %s\n", strFullPath.c_str());
     }
 
+#if IS_AROS || IS_REDOX
+    strFullPath = cDevicePath::AsNative(strFullPath);
+#endif
+
+    d.TraceDebug("Done, returning %s\n", strFullPath.c_str());
     return true;
 }
 

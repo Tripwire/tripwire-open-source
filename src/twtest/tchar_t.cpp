@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -39,18 +39,22 @@
 #include "core/debug.h"
 #endif
 
+#include "test.h"
+
 TSTRING test_wost(int, const TSTRING&);
 void test_wist(const TSTRING&, cDebug& d);
 
 void TestTCHAR()
 {
+    TCERR << "TODO: Right now this test mostly verifies that STL string & file classes work, which is not overly useful." << std::endl;
+
     cDebug d("TestTCHAR()");
 
     d.TraceDetail("Entering...\n");
 
     //Testing TCOUT:
     TCOUT<< _T("Simple test of TSTRING (and TCOUT) :\n\n");
-    TCERR<< _T("This should show up on cerr");
+    TCERR<< _T("This should show up on cerr") << std::endl;
 
     TSTRING pString;
     pString = _T("Hi Mom!");
@@ -80,37 +84,36 @@ void TestTCHAR()
         //A true statement!
 
     d.TraceDetail("Testing TISTRINGSTREAM with TSTRING:\n");
-    TSTRING send = _T("These should appear on seperate lines");
+    TSTRING send = _T("These should appear on separate lines");
     test_wist(send, d);
         //Did they?
 
 //Testing file streams
 
     //explict constructors of 'TIFSTREAM' and "TOFSTREAM' take char*
-    const char* inputfile = "fun";
-    const char* outputfile = "mo'fun";
+    std::string inputfile = TwTestPath("fun");
+    std::string outputfile = TwTestPath("mo'fun");
 
     //Set up the input file.
     TOFSTREAM out;
-    out.open(inputfile, std::ios_base::out);
+    out.open(inputfile.c_str(), std::ios_base::out);
     out<<"Unicode is fun\n";
     out.close();
 
     TIFSTREAM from;
-    from.open(inputfile, std::ios_base::in);
-    if(!from)
-        d.TraceDetail("error opening input file\n");
+    from.open(inputfile.c_str(), std::ios_base::in);
+    TEST(from);
 
-    TOFSTREAM to(outputfile, std::ios_base::trunc);
-    if(!to)
-        d.TraceDetail("error opening output file\n");
+
+    TOFSTREAM to(outputfile.c_str(), std::ios_base::trunc);
+    TEST(to);
 
     //Copy contents of input file to output file.
     TCHAR ch;
     while(from.get(ch))
         to.put(ch);
-    if(!from.eof() || !to)
-        d.TraceDetail("something has gone terribly wrong...\n");
+
+    TEST(from.eof() && to);
 
     return;
 }
@@ -129,5 +132,10 @@ void test_wist(const TSTRING& input, cDebug& d)
     TSTRING parse;
     while(wist>>parse)
         d.TraceDetail("%s \n", parse.c_str() );
+}
+
+void RegisterSuite_TCHAR()
+{
+    RegisterTest("TCHAR", "Basic", TestTCHAR);
 }
 

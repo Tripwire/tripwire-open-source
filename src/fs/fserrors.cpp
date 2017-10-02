@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -43,7 +43,7 @@
 
 TSS_BEGIN_ERROR_REGISTRATION( fs )
 
-TSS_REGISTER_ERROR( eFSPropCalc(),                  _T("NTFS property calculation error.") )
+TSS_REGISTER_ERROR( eFSPropCalc(),                  _T("Property calculation error.") )
 //TSS_REGISTER_ERROR( eFSPropCalcResetAccessTime(), _T("Could not reset access time for file.") )
 TSS_REGISTER_ERROR( eFSDataSourceIter(),            _T("Data source iterator error.") )
 TSS_REGISTER_ERROR( eFSDataSourceIterReadDir(),     _T("Could not access directory contents.") )

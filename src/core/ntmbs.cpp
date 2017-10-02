@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -46,7 +46,7 @@
 // Module-wide Helpers
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#ifndef TSS_Raise   // Should add file and line info in _DEBUG mode!!!!
+#ifndef TSS_Raise   // Should add file and line info in DEBUG mode!!!!
     #define TSS_Raise( Xcpt, pkg, ids ) \
         throw Xcpt( TSS_GetString( pkg, ids ) )
 
@@ -244,5 +244,5 @@ tss::mbscount( const_ntmbs_t psz )
     return nCount;
 }
 
-// eof: ntmbs.cpp
+
 

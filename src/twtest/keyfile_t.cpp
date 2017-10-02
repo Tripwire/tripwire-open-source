@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -107,18 +107,19 @@ void TestKeyFile()
 
         elGamal.SetVerifying(keyfile2.GetPublicKey());
         elGamal.ProcessBlock(ciphertext, recovered_text);
-        
+
         TEST(memcmp(recovered_text, plaintext, elGamal.GetBlockSizePlain()) == 0);
+        delete [] pMem;
     }
 
     // save to and read from disk
     d.TraceDebug("Read/Write to file...\n");
     {
-        keyfile.WriteFile(TEMP_DIR _T("/keyfile.key"));
+        keyfile.WriteFile(TwTestPath("keyfile.key").c_str());
 
         cKeyFile keyfile2;
         TEST(!keyfile2.KeysLoaded());
-        keyfile2.ReadFile(TEMP_DIR _T("/keyfile.key"));
+        keyfile2.ReadFile(TwTestPath("keyfile.key").c_str());
         TEST(keyfile2.KeysLoaded());
 
         cElGamalSig elGamal(*keyfile2.GetPublicKey());
@@ -133,3 +134,7 @@ void TestKeyFile()
     return;
 }
 
+void RegisterSuite_KeyFile()
+{
+    RegisterTest("KeyFile", "Basic", TestKeyFile);
+}

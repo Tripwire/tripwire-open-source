@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -94,92 +94,84 @@ void TestFCOReport()
 {
     cDebug d("TestFCOReport");
 
-    try
+    cFCOSpecImpl*   pSpec           = new cFCOSpecImpl(_T("/etc"), NULL, new cFCOSpecStopPointSet);
+    cFCOSpecAttr*   pAttr           = new cFCOSpecAttr;
+    cFSObject*      addedFCO        = new cFSObject(cFCOName(_T("/etc/added_file")));
+    cFSObject*      removedFCO      = new cFSObject(cFCOName(_T("/etc/removed_file")));
+    cFSObject*      changedFCO      = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFSObject*      oldChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFSObject*      newChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFCOPropVector changedPropVector;
+
+    //Calculate the time taken to generate the test report:
+    time_t* dummy_arg = NULL;
+    time_t  time_finish;
+    //time_t    time_begin = time(dummy_arg);
+
     {
-        cFCOSpecImpl*   pSpec           = new cFCOSpecImpl(_T("/etc"), NULL, new cFCOSpecStopPointSet);
-        cFCOSpecAttr*   pAttr           = new cFCOSpecAttr;
-        cFSObject*      addedFCO        = new cFSObject(cFCOName(_T("/etc/added_file")));
-        cFSObject*      removedFCO      = new cFSObject(cFCOName(_T("/etc/removed_file")));
-        cFSObject*      changedFCO      = new cFSObject(cFCOName(_T("/etc/changed_file")));
-        cFSObject*      oldChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
-        cFSObject*      newChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
-        cFCOPropVector changedPropVector;
+        cFCOReport  report;
 
-        //Calculate the time taken to generate the test report:
-        time_t* dummy_arg = NULL;
-        time_t  time_finish;
-        //time_t    time_begin = time(dummy_arg);
+        changedPropVector.AddItem(cFSPropSet::PROP_SIZE);
+        pSpec->SetStartPoint(cFCOName(_T("/etc")));
+        pAttr->SetName(_T("/etc"));
+        pAttr->SetSeverity(53);
 
+        report.AddSpec(cFS::GenreID(), pSpec, pAttr);
+        cFCOReportSpecIter it(report, cFS::GenreID());
+        it.GetAddedSet()->Insert(addedFCO);
+        it.GetRemovedSet()->Insert(removedFCO);
+        report.AddChangedFCO(it, oldChangedFCO, newChangedFCO, changedPropVector);
+
+        //Store the time taken to generate the test report:
+        time_finish = time(dummy_arg);
+        //report.SetCreationTime( (int64)difftime(time_finish, time_begin));
+        //d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
+
+        d.TraceDebug("Before serializing report:\n");
+        TraceReport(report, d);
         {
-            cFCOReport  report;
+            std::string filepath = TwTestPath("tmp.twr");
+            cFileArchive outFile;
+            outFile.OpenReadWrite(filepath.c_str());
+            cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
 
-            changedPropVector.AddItem(cFSPropSet::PROP_SIZE);
-            pSpec->SetStartPoint(cFCOName(_T("/etc")));
-            pAttr->SetName(_T("/etc"));
-            pAttr->SetSeverity(53);
+            outSer.Init();
+            outSer.WriteObject(&report);
+            outSer.Finit();
 
-            report.AddSpec(cFS::GenreID(), pSpec, pAttr);
-            cFCOReportSpecIter it(report, cFS::GenreID());
-            it.GetAddedSet()->Insert(addedFCO);
-            it.GetRemovedSet()->Insert(removedFCO);
-            report.AddChangedFCO(it, oldChangedFCO, newChangedFCO, changedPropVector);
+            outFile.Close();
 
-            //Store the time taken to generate the test report:
-            time_finish = time(dummy_arg);
-            //report.SetCreationTime( (int64)difftime(time_finish, time_begin));
-            //d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
+            cFileArchive inFile;
+            inFile.OpenRead(filepath.c_str());
+            cSerializerImpl inSer(inFile, cSerializerImpl::S_READ);
 
-            d.TraceDebug("Before serializing report:\n");
-            TraceReport(report, d);
-            {
-                cFileArchive outFile;
-                outFile.OpenReadWrite(_T("tmp.twr"));
-                cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);
+            cFCOReport inReport;
 
-                outSer.Init();
-                outSer.WriteObject(&report);
-                outSer.Finit();
+            inSer.Init();
+            inSer.ReadObject(&inReport);
+            inSer.Finit();
 
-                outFile.Close();
-
-                cFileArchive inFile;
-                inFile.OpenRead(_T("tmp.twr"));
-                cSerializerImpl inSer(inFile, cSerializerImpl::S_READ);
-
-                cFCOReport inReport;
-
-                inSer.Init();
-                inSer.ReadObject(&inReport);
-                inSer.Finit();
-
-                d.TraceDebug("Read in serialized report:\n");
-                TraceReport(inReport, d);
-            }
+            d.TraceDebug("Read in serialized report:\n");
+            TraceReport(inReport, d);
         }
-
-        // TODO -- test cFCOReportSpecIter::Remove()
-        // TODO -- test cFCOReportChangeIter::Remove()
-        d.TraceDebug("*** We still need to test Remove() for the two iterator classes!\n");
-
-        pSpec->Release();
-        pAttr->Release();
-        addedFCO->Release();
-        removedFCO->Release();
-        changedFCO->Release();
-        oldChangedFCO->Release();
-        newChangedFCO->Release();
-
     }
-    catch(const eError& e)
-    {
-        TCERR << std::endl << e.GetMsg() << std::endl;
-        TEST(false);
-    }
-    catch(...)
-    {
-        TEST(false);
-    }
-        
+
+    // TODO -- test cFCOReportSpecIter::Remove()
+    // TODO -- test cFCOReportChangeIter::Remove()
+    d.TraceDebug("*** We still need to test Remove() for the two iterator classes!\n");
+
+    pSpec->Release();
+    pAttr->Release();
+    addedFCO->Release();
+    removedFCO->Release();
+    changedFCO->Release();
+    oldChangedFCO->Release();
+    newChangedFCO->Release();
+
     d.TraceDebug("Leaving...\n");
 }
 
+void RegisterSuite_FCOReport()
+{
+    RegisterTest("FCOReport", "Basic", TestFCOReport);
+}

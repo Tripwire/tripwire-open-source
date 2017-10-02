@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -42,10 +42,7 @@
 #define __STRINGUTIL_T_H
 
 #include "core/ntmbs.h"
-
-#if USING_NTDBS_STUFF
 #include "core/ntdbs.h"
-#endif // USING_NTDBS_STUFF
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // Char traits for WCHAR16 (aka dbchar_t) and NTMBCS (mctype_t)
@@ -54,7 +51,6 @@
 inline
 void TestStringUtil()
 {
-#if USING_NTDBS_STUFF
     cDebug db("Test std::char_traits<dbchar_t>");
 
     db.TraceAlways("Entering...\n");
@@ -63,12 +59,10 @@ void TestStringUtil()
     tss::dbstring b;
     std::string   c;        // Control String
 
-//#if !IS_UNIX // need to get the L"" stuff working
-
     static char     NTMBS1[] = { 65, 66, 67, 68, 0 };
     static dbchar_t NTDBS1[] = { 65, 66, 67, 68, 0 };
     static dbchar_t NTDBS2[] = { 40, 66, 67, 68, 0 };
-    static dbchar_t NTDBS0[] = { 65, 66, 67, 68, 0, 0 };
+//    static dbchar_t NTDBS0[] = { 65, 66, 67, 68, 0, 0 };
 
     c.assign( NTMBS1 );
     a.assign( NTDBS1 );
@@ -126,7 +120,6 @@ void TestStringUtil()
     tss::dbstring x( NTDBS1 );
     tss::dbstring ref = x;
 
-    TEST( x.c_str() == ref.c_str() );
     TEST( x == ref );
     TEST( std::equal( x.begin(), x.end(), ref.begin() ) );
     TEST( x.size() == ref.size() );
@@ -167,8 +160,12 @@ void TestStringUtil()
     TEST(tStr.length() == 9);
 
     db.TraceAlways("Done...\n");
-#endif // USING_NTDBS_STUFF
 }
 
 
 #endif//__STRINGUTIL_T_H
+
+void RegisterSuite_StringUtil()
+{
+    RegisterTest("StringUtil", "Basic", TestStringUtil);
+}

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -366,10 +366,10 @@ bool cFCOPropVector::isExtended(void) const
             return false;
         else
         {
-            int sum = 0;
-            for (int i=(*mpBuf).size(); i >= 2; i--)
+            uint32 sum = 0;
+            for (uint32 i=(*mpBuf).size()-1; i >= 2; i--)
                 sum += ((*mpBuf)[i]);
-            return (sum == 0);
+            return (sum != 0);
         }
     }
 }

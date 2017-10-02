@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -70,14 +70,14 @@ void TestDebug()
     d.TraceDebug("You should see this in stdout and trace.\n");
     cDebug::RemoveOutTarget(cDebug::OUT_STDOUT);
     d.TraceDebug("You should see this in trace only.\n");
+
+
     // set up an output file...use the temp file in test.h
-    std::string str = TEMP_DIR_N;
-    str += "/debug.out";
-    bool bResult = false;
-        bResult = cDebug::SetOutputFile(str.c_str());
-        //TODO... TEST(bResult);
-        if( !bResult) 
-      TCERR << "SetOutputFile failed!" << std::endl;
+    std::string str = TwTestPath("debug.out");
+    
+#ifdef DEBUG
+    TEST(cDebug::SetOutputFile(str.c_str()));
+#endif
 
     d.TraceDebug("This should be in trace and the file %s.\n", str.c_str());
 
@@ -88,6 +88,14 @@ void TestDebug()
     if(oldOutTarget & cDebug::OUT_FILE)     cDebug::AddOutTarget(cDebug::OUT_FILE);     else cDebug::RemoveOutTarget(cDebug::OUT_FILE);
 
     d.TraceDebug("Exiting...\n");
+
+#ifndef DEBUG
+    TEST("Should always succeed in release builds & cDebug should do nothing");
+#endif
+
 }
 
-
+void RegisterSuite_Debug()
+{
+    RegisterTest("Debug", "Basic", TestDebug);
+}

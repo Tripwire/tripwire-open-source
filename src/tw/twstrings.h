@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -58,7 +58,7 @@ TSS_BeginStringIds( tw )
     STR_NEWLINE,
     STR_ERR_TWCFG_CANT_READ,
     STR_ERR_NO_MODE,
-    STR_UNKOWN_MODE_SPECIFIED,
+    STR_UNKNOWN_MODE_SPECIFIED,
     STR_ERR2_BAD_MODE_SWITCH,
     STR_PARSING_POLICY,    
     STR_ERR_REPORT_READ,

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -42,7 +42,7 @@
 #include "tw/twutil.h"
 #include "tw/twstrings.h"
 #include "twadminstrings.h"
-#include "core/timebomb.h"
+#include "core/epoch.h"
 #include "core/errorbucketimpl.h"
 #include "core/archive.h"
 
@@ -73,7 +73,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ], const TCHAR* envp[ ] )
     
     int ret = 0;
 
-    if (TimeBombExploded())
+    if (CheckEpoch())
         return 1;
 
     cTWInit twInit;

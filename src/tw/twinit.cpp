@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -157,6 +157,9 @@ static bool SetExeDir( const TSTRING& strArgv0 )
     TSTRING strFullPath;
     if( iFSServices::GetInstance()->GetExecutableFilename( strFullPath, strArgv0 ) && !strFullPath.empty() )
     {
+#if USES_DEVICE_PATH
+        strFullPath = cDevicePath::AsPosix(strFullPath);
+#endif
         cSystemInfo::SetExePath(strFullPath);
 
         TSTRING::size_type s = strFullPath.find_last_of( _T('/') ); 
@@ -292,7 +295,7 @@ void cTWInit::Init( const TSTRING& strArgv0 )
     tw_HandleSignal( SIGSEGV ); // Segmentation fault
     tw_HandleSignal( SIGQUIT ); // Quit signal - issued from terminal (CTRL-\)
     tw_HandleSignal( SIGILL );  // Illegal instruction - probably won't be an issue.
-#ifndef _DEBUG
+#ifndef DEBUG
     tw_HandleSignal( SIGTRAP ); // We don't want to mess up the debugger in debug builds...
 #endif
     tw_HandleSignal( SIGABRT ); // Supposedly we can only get this signal by calling abort()

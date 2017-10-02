@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -114,6 +114,7 @@ namespace cStringUtil
   wc16_string  TstrToWstr( const TSTRING& tstr );
   // convert a TSTRING to a wc16_string
 
+
   template <class IterT> 
     void splitstring(IterT& iter, 
                      const TSTRING& str, 
@@ -146,7 +147,7 @@ namespace cStringUtil
 
 }//cStringUtil::
 
-
+/*
 //-----------------------------------------------------------------------------
 // push_back_string
 //
@@ -199,7 +200,7 @@ namespace std
             }
     };
 }
-
+*/
 
 #endif//__STRINGUTIL_H
 

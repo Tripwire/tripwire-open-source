@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -133,7 +133,7 @@ typedef struct yyTypedRules_tag {   /* Typed rule table */
 } yyTypedRules;
 #endif
 
-#ifdef YACC_WINDOWS
+#if 0 // YACC_WINDOWS
 
 // include all windows prototypes, macros, constants, etc.
 
@@ -155,7 +155,7 @@ extern HANDLE hInst;
 class yy_parse {
 protected:
 
-#ifdef YACC_WINDOWS
+#if 0 // YACC_WINDOWS
 
     // protected member function for actual scanning 
 

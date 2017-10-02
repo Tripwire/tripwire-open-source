@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -43,11 +43,38 @@
 
 using namespace std;
 
-void TestSignature()
+std::string getTestFile()
+{
+    // Create a file for which we know the signatures
+    //
+    //% siggen ~/signature_test.bin
+    //crc      : AAAAAAAAAAy
+    //md5      : B/Y8ttBnlyw/NPCUu353ao
+    //crc32    : B1kP9v
+    //sha      : Oia1aljHD793tfj7M55tND+3OG/
+    //haval    : BL6bFSo0EP5zf8lGSueeed
+
+    static TSTRING sigFileName;
+
+    if (sigFileName.empty())
+    {
+        sigFileName = TwTestPath("signature_test.bin");
+
+        cFileArchive fileArc;
+        fileArc.OpenReadWrite(sigFileName.c_str());
+        fileArc.WriteBlob("\x1\x2\x3\x4\x5\x6\x7\x8\x9\x0", 10);
+        fileArc.Close();
+    }
+
+    return sigFileName;
+}
+
+
+void TestSignatureBasic()
 {
     // Signature usage example (?)
     cCRC32Signature     crcSig;
-    cDebug              d("TestSignature");
+    cDebug              d("TestSignature1");
 
     byte abData[ 64 ];
     int i;
@@ -58,7 +85,6 @@ void TestSignature()
     crcSig.Update( &abData[0], 32 );
     crcSig.Update( &abData[32], 32 );
     crcSig.Finit();
-    TCOUT << _T("new way: ") << crcSig.AsString() << endl;
 
     cMemoryArchive arch;
     arch.WriteBlob( &abData[0], 32 );
@@ -69,33 +95,19 @@ void TestSignature()
     asg.AddSig( &crc );
     asg.CalculateSignatures( arch );
 
-    TCOUT << _T("old way: ") << crc.AsString() << endl;
-
+    TEST( crc.AsStringHex() == crcSig.AsStringHex());
+}
 
     // Note: The following causes an ASSERT() in iSignature::Compare(), as it should, but
     // we don't want asserts to occur in a working test suite!
 //    TEST(nullSig.Compare(&checksumSig, iFCOProp::OP_EQ) == iFCOProp::CMP_WRONG_PROP_TYPE);
 
 
-    
-    // Create a file for which we know the signatures
-    //
-    //% siggen ~/signature_test.bin 
-    //crc      : AAAAAAAAAAy
-    //md5      : B/Y8ttBnlyw/NPCUu353ao
-    //crc32    : B1kP9v
-    //sha      : Oia1aljHD793tfj7M55tND+3OG/
-    //haval    : BL6bFSo0EP5zf8lGSueeed
-
-    TSTRING sigFileName = TEMP_DIR;
-    sigFileName += TSTRING( _T("/signature_test.bin") );
-
+void TestChecksum()
+{
+    TSTRING sigFileName = getTestFile();
     cFileArchive fileArc;
-    fileArc.OpenReadWrite(sigFileName.c_str());
-    fileArc.WriteBlob("\x1\x2\x3\x4\x5\x6\x7\x8\x9\x0", 10);
-    fileArc.Close();
-
-
+    cDebug              d("TestChecksum");
     // test begins here
 
     // general signature & archive variables
@@ -146,8 +158,19 @@ void TestSignature()
         check2.Read(&readSer);
         TEST(check1.Compare(&check2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
     }
+}
 
-    
+void TestCRC32()
+{
+    TSTRING sigFileName = getTestFile();
+    cFileArchive fileArc;
+    cDebug              d("TestCRC32");
+
+    // general signature & archive variables
+    byte abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
+    int cbRead;
+
     // test CRC32
     cCRC32Signature crc1, crc2;
     d.TraceDetail("Testing CRC32.\n");
@@ -191,7 +214,18 @@ void TestSignature()
         crc2.Read(&readSer);
         TEST(crc1.Compare(&crc2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
     }
+}
 
+void TestMD5()
+{
+    TSTRING sigFileName = getTestFile();
+    cFileArchive fileArc;
+    cDebug              d("TestMD5");
+
+    // general signature & archive variables
+    byte abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
+    int cbRead;
 
     // test MD5
     cMD5Signature md51, md52;
@@ -236,7 +270,18 @@ void TestSignature()
         md52.Read(&readSer);
         TEST(md51.Compare(&md52, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
     }
+}
 
+void TestSHA1()
+{
+    TSTRING sigFileName = getTestFile();
+    cFileArchive fileArc;
+    cDebug              d("TestSHA1");
+
+    // general signature & archive variables
+    byte abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
+    int cbRead;
 
     // test SHA
     cSHASignature sha1, sha2;
@@ -281,8 +326,19 @@ void TestSignature()
         sha2.Read(&readSer);
         TEST(sha1.Compare(&sha2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
     }
+}
 
-    
+void TestHAVAL()
+{
+    TSTRING sigFileName = getTestFile();
+    cFileArchive fileArc;
+    cDebug              d("TestHAVAL");
+
+    // general signature & archive variables
+    byte abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
+    int cbRead;
+
     // test HAVAL
     cHAVALSignature haval1, haval2;
     d.TraceDetail("Testing HAVAL.\n");
@@ -323,10 +379,16 @@ void TestSignature()
         haval1.Write(&writeSer);
         sigArchive.Seek(0, cBidirArchive::BEGINNING);
         cSerializerImpl readSer(sigArchive, cSerializerImpl::S_READ);
-        md52.Read(&readSer);
+        haval2.Read(&readSer);
         TEST(haval1.Compare(&haval2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
     }
-    
+}
+
+void TestArchiveSigGen()
+{
+    TSTRING sigFileName = getTestFile();
+    cFileArchive fileArc;
+    cDebug              d("TestArchiveSigGen");
 
     // test cArchiveSigGen
     cArchiveSigGen asgtest;
@@ -357,8 +419,96 @@ void TestSignature()
     TEST(haval3.AsString().compare(_T("BL6bFSo0EP5zf8lGSueeed")) == 0);
     TEST(haval3.AsStringHex().compare(_T("4be9b152a3410fe737fc9464ae79e79d")) == 0);
     
-    fileArc.Close();    
-
-    return;
+    fileArc.Close();
 }
 
+void assertMD5(const std::string& source, const std::string& expectedHex)
+{
+    // Signature usage example (?)
+    cMD5Signature     md5Sig;
+
+    md5Sig.Init();
+    md5Sig.Update( (const byte*)source.c_str(), source.length() );
+    md5Sig.Finit();
+
+    TEST( md5Sig.AsStringHex() == expectedHex);
+}
+
+void assertSHA1(const std::string& source, const std::string& expectedHex)
+{
+    // Signature usage example (?)
+    cSHASignature     shaSig;
+
+    shaSig.Init();
+    shaSig.Update( (const byte*)source.c_str(), source.length() );
+    shaSig.Finit();
+
+    TEST( shaSig.AsStringHex() == expectedHex);
+}
+
+
+void TestRFC1321()
+{
+    // All MD5 test cases from RFC 1321, appendix A.5
+    // https://www.ietf.org/rfc/rfc1321.txt
+
+    assertMD5("", "d41d8cd98f00b204e9800998ecf8427e");
+    assertMD5("a", "0cc175b9c0f1b6a831c399e269772661");
+    assertMD5("abc", "900150983cd24fb0d6963f7d28e17f72");
+    assertMD5("message digest", "f96b697d7cb7938d525a2f31aaf161d0");
+    assertMD5("abcdefghijklmnopqrstuvwxyz", "c3fcd3d76192e4007dfb496cca67e13b");
+    assertMD5(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+        "d174ab98d277d9f5a5611c2c9f419d9f");
+    assertMD5(
+        "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
+        "57edf4a22be3c955ac49da2e2107b67a");
+}
+
+void TestRFC3174()
+{
+    // SHA1 test cases from RFC 3174, section 7.3
+    // https://www.ietf.org/rfc/rfc3174.txt
+    // plus BSD libmd test cases
+    // https://opensource.apple.com/source/libmd/libmd-3/Makefile
+    //
+    // TODO: Compare against NIST test vectors for extra pedanticity
+    // http://csrc.nist.gov/groups/STM/cavp/secure-hashing.html
+
+    assertSHA1("abc", "a9993e364706816aba3e25717850c26c9cd0d89d");
+    assertSHA1(
+       "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq",
+       "84983e441c3bd26ebaae4aa1f95129e5e54670f1");
+
+    assertSHA1("a", "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8");
+    assertSHA1(
+       "0123456701234567012345670123456701234567012345670123456701234567",
+       "e0c094e867ef46c350ef54a7f59dd60bed92ae83");
+
+    assertSHA1("", "da39a3ee5e6b4b0d3255bfef95601890afd80709");
+    assertSHA1("abc", "a9993e364706816aba3e25717850c26c9cd0d89d");
+    assertSHA1("message digest", "c12252ceda8be8994d5fa0290a47231c1d16aae3");
+    assertSHA1(
+        "abcdefghijklmnopqrstuvwxyz",
+        "32d10c7b8cf96570ca04ce37f2a19d84240d3a89");
+    assertSHA1(
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+        "761c457bf73b14d27e9e9265c46f4b4dda11f940");
+    assertSHA1(
+        "12345678901234567890123456789012345678901234567890123456789012345678901234567890",
+        "50abf5706a150990a08b2c5ea40fa0e585554732");
+}
+
+
+void RegisterSuite_Signature()
+{
+    RegisterTest("Signature", "Basic", TestSignatureBasic);
+    RegisterTest("Signature", "Checksum", TestChecksum);
+    RegisterTest("Signature", "CRC32", TestCRC32);
+    RegisterTest("Signature", "MD5", TestMD5);
+    RegisterTest("Signature", "SHA1", TestSHA1);
+    RegisterTest("Signature", "HAVAL", TestHAVAL);
+    RegisterTest("Signature", "ArchiveSigGen", TestArchiveSigGen);
+    RegisterTest("Signature", "RFC1321", TestRFC1321);
+    RegisterTest("Signature", "RFC3174", TestRFC3174);
+}

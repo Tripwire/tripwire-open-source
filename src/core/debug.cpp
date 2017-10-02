@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -307,7 +307,7 @@ void cDebug::DebugOut( const char* lpOutputString, ... )
     vsnprintf(buf, 2048, lpOutputString, args);
     va_end(args);
     
-	#ifdef _DEBUG
+	#ifdef DEBUG
 	TCERR << buf;
 	#endif  //_DEBUG
 

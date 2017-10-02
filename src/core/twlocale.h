@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -79,12 +79,13 @@ public:
     static TSTRING& FormatNumber( uint64 ui, TSTRING& strBuf );
     static TSTRING& FormatNumber( double  d, TSTRING& strBuf );
         // returns the locale-specific representation of the given cardinal number
-    
+/*
     static TSTRING  FormatNumberClassic( int32 i );
     static int32    FormatNumberClassic( const TSTRING& s );
         // returns the C-locale representation of the given cardinal number
-    
-    static TSTRING  FormatNumberAsHex( int32 x );
+*/
+//      disabled this since nobody's using it
+//    static TSTRING  FormatNumberAsHex( int32 x );
         // locale-independant
 
     static TSTRING& FormatTime( int64 t, TSTRING& strBuf );

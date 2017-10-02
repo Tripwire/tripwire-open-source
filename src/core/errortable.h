@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -66,14 +66,14 @@ public:
     static cErrorTable* GetInstance();
 
 private:
-    #ifdef _DEBUG
+    #ifdef DEBUG
     static void AssertMsgValidity(const TCHAR* msg);
     #endif
 };
 
 inline void cErrorTable::Put( const eError& e, const TCHAR* msg )
 {
-    #ifdef _DEBUG
+    #ifdef DEBUG
     AssertMsgValidity(msg);
     #endif
 

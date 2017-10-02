@@ -1,0 +1,2 @@
+@@section GLOBAL
+/foo -> $(IgnoreNone);

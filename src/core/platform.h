@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -64,6 +64,9 @@
 #define OS_DARWIN       0x0304
 #define OS_DRAGONFLYBSD 0x0305
 #define OS_MIDNIGHTBSD  0x0306
+#define OS_MIRBSD       0x0307
+#define OS_BITRIG       0x0308
+#define OS_LIBERTYBSD   0x0309
 
 #define OS_SOLARIS      0x0400
 #define OS_AIX          0x0401
@@ -80,6 +83,9 @@
 #define OS_MINT         0x0507
 #define OS_AROS         0x0508
 #define OS_RTEMS        0x0509   
+#define OS_RISCOS       0x050A
+#define OS_REDOX        0x050B
+#define OS_QNX          0x050C
 
 #define COMP_UNKNOWN        0
 #define COMP_GCC            0x0001
@@ -130,8 +136,18 @@
 #elif defined(__linux__)
 	#define OS                  OS_LINUX
 	#define IS_LINUX 			1
-	
-	
+
+    
+// A herd of BSDs.  Have to detect MidnightBSD before FreeBSD, and MirOS & Bitrig before OpenBSD
+// because they also define symbols for their ancestor BSDs.
+#elif defined(__DragonFly__)
+    #define OS                  OS_DRAGONFLYBSD
+    #define IS_DRAGONFLYBSD     1
+
+#elif defined(__MidnightBSD__)
+    #define OS                  OS_MIDNIGHTBSD
+    #define IS_MIDNIGHTBSD      1
+
 #elif defined(__FreeBSD__)
     #define OS                  OS_FREEBSD
     #define IS_FREEBSD          1	
@@ -140,6 +156,18 @@
     #define OS                  OS_NETBSD
     #define IS_NETBSD           1
 
+#elif defined(__MirBSD__)
+    #define OS                  OS_MIRBSD
+    #define IS_MIRBSD           1
+
+#elif defined(__Bitrig__)
+    #define OS                  OS_BITRIG
+    #define IS_BITRIG           1
+
+#elif defined(TW_LibertyBSD)
+    #define OS                  OS_LIBERTYBSD
+    #define IS_LIBERTYBSD       1
+
 #elif defined(__OpenBSD__)
     #define OS                  OS_OPENBSD
     #define IS_OPENBSD          1
@@ -147,14 +175,6 @@
 #elif defined(__APPLE__)
     #define OS                  OS_DARWIN
     #define IS_DARWIN           1	
-
-#elif defined(__DragonFly__)
-    #define OS                  OS_DRAGONFLYBSD
-    #define IS_DRAGONFLYBSD     1
-
-#elif defined(__MidnightBSD__)
-    #define OS                  OS_MIDNIGHTBSD
-    #define IS_MIDNIGHTBSD      1
 
 
 #elif defined(__sun)
@@ -209,14 +229,23 @@
 #elif defined(__AROS__)
     #define OS                  OS_AROS
     #define IS_AROS             1 
-		
+	
 #elif defined(__rtems__)
     #define OS                  OS_RTEMS
     #define IS_RTEMS            1
 
-#else
-//  OK for OS not to resolve, it's being phased out.
-//    #error Unknown OS
+#elif defined(__riscos__)
+    #define OS                  OS_RISCOS
+    #define IS_RISCOS           1
+
+#elif defined(__redox__)
+    #define OS                  OS_REDOX
+    #define IS_REDOX            1
+
+#elif defined(__QNX__)
+    #define OS                  OS_QNX
+    #define IS_QNX              1
+
 #endif
 	
 	
@@ -297,19 +326,21 @@
 #define SUPPORTS_MEMBER_TEMPLATES               ( ! IS_SUNPRO )
 #define SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST    ( ! IS_SUNPRO )
 
-#define SUPPORTS_ST_BLOCKS          (!IS_DOS_DJGPP)
 #define SUPPORTS_POSIX_SIGNALS      (!IS_DOS_DJGPP)
-#define SUPPORTS_NETWORKING         (!IS_SORTIX && !IS_DOS_DJGPP)
-#define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS)
-#define NEEDS_SWAB_IMPL             (IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
+#define SUPPORTS_NETWORKING         (!IS_SORTIX && !IS_DOS_DJGPP && !IS_REDOX)
+#define SUPPORTS_SYSLOG             (HAVE_SYSLOG_H && !IS_SKYOS && !IS_RISCOS)
+#define NEEDS_SWAB_IMPL             (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #define USES_MBLEN                  (!IS_ANDROID && !IS_AROS)
-#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP)
+#define USES_DEVICE_PATH            (IS_AROS || IS_DOS_DJGPP || IS_RISCOS || IS_REDOX)
 #define ICONV_CONST_SOURCE          (IS_MINIX)
 #define SUPPORTS_DIRECT_IO          (IS_LINUX) 
 // Linux is the only platform where direct i/o hashing has been tested & works properly so far.
 
-#define SUPPORTS_TERMIOS            (!IS_RTEMS)
+#define SUPPORTS_TERMIOS            (!IS_RTEMS && !IS_REDOX)
 // RTEMS errors are probably just a buildsys issue & this will change or go away.
+// Redox will probably implement this in the future.
+
+#define CAN_UNLINK_WHILE_OPEN       (!IS_AROS && !IS_RISCOS && !IS_REDOX && !IS_DOS_DJGPP)
 
 #define SUPPORTS_DOUBLE_SLASH_PATH  (IS_CYGWIN)
 // POSIX standard says paths beginning with 2 slashes are "implementation defined"
@@ -317,6 +348,8 @@
 // The only platform OST works on (afaik) that actually defines a double-slash behavior is Cygwin
 // which uses this syntax for UNC paths.  So we'll allow leading double slashes there, but
 // continue removing them on all other platforms
+
+#define USE_DEV_URANDOM (HAVE_DEV_URANDOM && ENABLE_DEV_URANDOM)
 
 //=============================================================================
 // Miscellaneous

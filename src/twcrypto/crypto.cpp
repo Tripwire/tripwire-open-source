@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -39,6 +39,7 @@
 #include "core/errorgeneral.h"
 #include "time.h"
 #include "core/archive.h"
+#include "core/usernotify.h"
 
 #include "cryptlib/sha.h"
 #include "cryptlib/rng.h"
@@ -52,6 +53,9 @@
 #ifdef _RSA_ENCRYPTION
 #include "cryptlib/rsa.h"
 #endif
+
+#include <unistd.h>
+#include <fcntl.h>
 
 const uint32 EL_GAMAL_SIG_PUBLIC_MAGIC_NUM = 0x7ae2c945;
 const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
@@ -476,7 +480,7 @@ void cRSAPublicKey::Write(void* pDataStream) const
     WRITE_INTEGER(e);
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void cRSAPublicKey::TraceContents()
 {
     cDebug d("cRSAPublicKey::TraceContents");
@@ -687,7 +691,7 @@ void cRSA::GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic)
     retPublic->mpData->mpKey = pNewPublicKey;
     retPublic->mpData->mKeyLength = mpData->mKeyBits;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     int l;
     l = retPublic->mpData->mpKey->MaxPlainTextLength();
     ASSERT(l == GetBlockSizePlain());
@@ -954,7 +958,7 @@ bool cElGamalSigPublicKey::IsEqual(const cElGamalSigPublicKey& rhs) const
            ;
 }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 void cElGamalSigPublicKey::TraceContents()
 {
     cDebug d("cElGamalSigPublicKey::TraceContents");
@@ -1167,7 +1171,7 @@ void cElGamalSig::GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPu
     retPublic->mpData->mpKey = pNewPublicKey;
     retPublic->mpData->mKeyLength = (int16)mpData->mKeyBits;
 
-#ifdef _DEBUG
+#ifdef DEBUG
     int l;
     l = retPublic->mpData->mpKey->SignatureLength();
     ASSERT(l + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
@@ -1235,13 +1239,40 @@ cHashedKey192::~cHashedKey192()
     RandomizeBytes(mKey, KEYLEN);
 }
 
+/////////////////////////////////////////////////////////
+
+#if USE_DEV_URANDOM
+static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
+{
+    static int rng_device = -1;
+
+    if (-1 == rng_device)
+        rng_device = open(device_name, O_RDONLY|O_NONBLOCK);
+
+    if (rng_device >= 0)
+    {
+        int bytes_read = read(rng_device, destbuf, len);
+        if (bytes_read == len)
+            return true;
+    }
+
+    return false;
+}
+#else
+static bool gRandomizeBytesSeeded = false;
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // void RandomizeBytes(byte* destbuf, int len) -- Fill a buffer with random bytes
 
-static bool gRandomizeBytesSeeded = false;
-
 void RandomizeBytes(int8* destbuf, int len)
 {
+#if USE_DEV_URANDOM
+    if (randomize_by_device("/dev/urandom", destbuf, len))
+        return;
+
+    ThrowAndAssert(eInternal(_T("Failed to read from RNG device")));
+#else
     if (!gRandomizeBytesSeeded)
     {
         // generate a rancom number from processor timing.
@@ -1250,7 +1281,7 @@ void RandomizeBytes(int8* destbuf, int len)
         for (mask = 0xb147688c; time(NULL) - start < 1; mask += 0x8984cc88)
             ;
 
-        #ifdef _DEBUG
+        #ifdef DEBUG
         time_t t = time(NULL);
         t ^= mask;
         
@@ -1267,5 +1298,6 @@ void RandomizeBytes(int8* destbuf, int len)
     int i;
     for (i = 0; i < len; ++i)
         destbuf[i] = (byte)( (rand() * 256 / RAND_MAX) ^ 0xdc );  // 0xdc came from random.org
+#endif
 }
 

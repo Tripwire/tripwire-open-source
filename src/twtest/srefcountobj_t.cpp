@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -95,11 +95,9 @@ void cSerRefCountObjTest::Write(iSerializer* pSerializer) const
 
 void TestSerRefCountObj()
 {
-  TCERR << "TODO: TestSerRefCountObj ifdef'd due to internal error" << std::endl;
-#if 0
     // first, we need to register the object with the serializer class...
     cSerializerImpl::RegisterSerializableRefCt(CLASS_TYPE(cSerRefCountObjTest), cSerRefCountObjTest::Create);
-    
+
     cSerRefCountObjTest* pObj1 = new cSerRefCountObjTest;
     cSerRefCountObjTest* pObj2 = new cSerRefCountObjTest;
     pObj1->AddRef();
@@ -144,6 +142,9 @@ void TestSerRefCountObj()
     pObj4->Release();
 
     return;
-#endif
 }
 
+void RegisterSuite_SerRefCountObj()
+{
+    RegisterTest("SerRefCountObj", "Basic", TestSerRefCountObj);
+}

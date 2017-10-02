@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -66,18 +66,32 @@ public:
 
 TSS_EndPackage( cTest )
 
+void CountMacro();
+
 ///////////////////////////////////////////////////////////////////////////////
-// TEST() -- Works like ASSERT() but it also breaks during release mode
-#define TEST(exp)   if (!(exp)) \
+// TEST() -- throw a std::runtime error if test condition is false.
+//
+#define TEST(exp)   CountMacro(); \
+                    if (!(exp)) \
                     { \
                         std::cerr<<"TEST(" << #exp << ") failure, file " << __FILE__ << " line " << __LINE__ << std::endl; \
                         throw std::runtime_error(#exp); \
                     } 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Platform dependancies
-#define TEMP_DIR   _T("/tmp")
-#define TEMP_DIR_N "/tmp"
+
+std::string TwTestDir();
+std::string TwTestPath(const std::string& child);
+
+typedef void (*TestPtr)();
+typedef std::map< std::string, TestPtr >  SuiteMap;
+typedef std::map< std::string, SuiteMap > TestMap;
+
+void RegisterTest(const std::string& suite, const std::string testName, TestPtr testPtr );
+
+void skip(const std::string& reason);
+void fail(const std::string& reason);
+
 
 #endif // __TEST_H
 

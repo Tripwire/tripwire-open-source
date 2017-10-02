@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -194,7 +194,7 @@ iTWMode* cTWPrintCmdLine::GetMode( int argc, const TCHAR* const * argv )
         // unknown mode switch
         cDebug d("cTWPrintCmdLine::GetMode");
         d.TraceError(_T("Error: Bad mode switch: %s\n"), pcMode);
-        TCERR << TSS_GetString(cTW, tw::STR_UNKOWN_MODE_SPECIFIED) << pcMode << std::endl;
+        TCERR << TSS_GetString(cTW, tw::STR_UNKNOWN_MODE_SPECIFIED) << pcMode << std::endl;
         TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
         return NULL;
     }

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -67,7 +67,7 @@ TSS_BeginStringtable( cTWPrint )
                 _T("  -c cfgfile           --cfgfile cfgfile\n")
                 _T("  -d database          --dbfile database\n")
                 _T("  -L localkey          --local-keyfile localkey\n")
-                _T("[object1 [object2 ...]\n")
+                _T("[object1 [object2 ...]]\n")
                 _T("\n")
                 _T("The -v and -s options are mutually exclusive.\n")
                 _T("\n")

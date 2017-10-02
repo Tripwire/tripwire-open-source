@@ -1,0 +1,7 @@
+@@section GLOBAL
+FOO =/foo ;
+BAR = +pinug ;
+
+@@section FS
+$(FOO) -> $(BAR);
+
