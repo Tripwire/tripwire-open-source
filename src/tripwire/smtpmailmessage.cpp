@@ -37,7 +37,6 @@
 #include "tripwirestrings.h"
 #include "core/stringutil.h"
 #include <sstream>
-#include "core/msystem.h"
 #include "core/file.h"
 
 #include <time.h>
