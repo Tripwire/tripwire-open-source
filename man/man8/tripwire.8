@@ -36,9 +36,9 @@
 .\"
 .nh
 .ad l
-.TH TRIPWIRE 8 "1 July 2000"
+.TH TRIPWIRE 8 "04 Jan 2018" "Open Source Tripwire 2.4"
 .SH NAME
-tripwire \- a file integrity checker for \s-1UNIX\s0 systems
+tripwire \- a file integrity checker for \s-1UNIX-like\s0 systems
 .SH SYNOPSIS
 .B tripwire
 .RB "{ " "-m i" " | " "--init" " } "  
@@ -554,6 +554,19 @@ Mode selector.
 Use the specified email address.  This parameter must
 be supplied when test mode is used. Only one address
 may be specified.
+.SH EXIT STATUS
+.SS Integrity Checking Mode
+\fBtripwire\fP exits 0 if no changes are detected. Otherwise the exit value is a bit mask:
+.TP
+\fB1\fP At least one file or directory has been added.
+.TP
+\fB2\fP At least one file or directory has been modified.
+.TP
+\fB4\fP At least one file or directory has been modified.
+.TP
+\fB8\fP Error(s) occurred during the check.
+.SS All Other Modes
+\fBtripwire\fP exits 0 on success, 8 on error.
 .SH VERSION INFORMATION
 This man page describes
 .B tripwire

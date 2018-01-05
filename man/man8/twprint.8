@@ -2,7 +2,7 @@
 .\" Do not move or remove previous line.
 .\" Used by some man commands to know that tbl should be used.
 .ad l
-.TH TWPRINT 8 "1 July 2000"
+.TH TWPRINT 8 "04 Jan 2018" "Open Source Tripwire 2.4"
 .nh
 .SH NAME
 twprint \- Tripwire database and report printer
@@ -132,6 +132,8 @@ be printed. The format for a list of objects is:
 .if n .I "section: objname objname... section: objname..."
 .if t .br
 .if t .I "section: objectname objectname... section: objectname..."
+.SH EXIT STATUS
+\fBtwprint\fP exits 0 on success, 1 on error.
 .SH VERSION INFORMATION
 This man page describes
 .B twprint

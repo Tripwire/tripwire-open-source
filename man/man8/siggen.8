@@ -2,9 +2,9 @@
 .\" Do not move or remove previous line.
 .\" Used by some man commands to know that tbl should be used.
 .nh
-.TH SIGGEN 8 "19 Feb 2004"
+.TH SIGGEN 8 "04 Jan 2018" "Open Source Tripwire 2.4"
 .SH NAME
-siggen \- signature gathering routine for Tripwire
+siggen \- signature gathering utility for Tripwire
 .SH SYNOPSIS
 .B siggen
 [
@@ -54,6 +54,8 @@ Display Haval value, a 128-bit hash code.
 .TP
 .IR file1 " [ " "file2... " ]
 List of filesystem objects for which to display values.
+.SH EXIT STATUS
+\fBsiggen\fP exits 0 on success, 1 on error.
 .SH VERSION INFORMATION
 This man page describes
 .B siggen
