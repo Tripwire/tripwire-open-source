@@ -4,105 +4,151 @@ Open Source Tripwire<sup>®</sup> software is a security and data integrity tool
 
 Open Source Tripwire is suitable for monitoring a small number of servers, where centralized control and reporting is not needed and professional support or system automation is not a requirement.
 
-## General Instruction
+## Overview
+A tripwire check compares the current filesystem state against a known baseline state, and alerts on any changes it detects.  The baseline and check behavior are controlled by a policy file, which specifies which files or directories to monitor, and which attributes to monitor on them, such as hashes, file permissions, and ownership.  
 
-via a fork: https://raw.githubusercontent.com/circuitStatic/tripwireOpenSource/master/README.md
-
-The tripwire package comes with a basic configuration file
-/etc/tripwire/twcfg.txt, which sets the mandatory variables
-to the defaults as described in the twconfig(4) manual
-page. This configuration is merely enough to set tripwire
-to work.
-
-The following five steps can serve you as a quick cookbook for
-setting tripwire to work.
-
-1. Choose a convenient HOSTNAME and generate site and local keys using
-```
-     twadmin --generate-keys -L /etc/tripwire/${HOSTNAME}-local.key
-     twadmin --generate-keys -S /etc/tripwire/site.key
-```
-   This creates the files named above as arguments.
-
-2. Compile the configuration file with
-```
-     twadmin --create-cfgfile -S /etc/tripwire/site.key /etc/tripwire/twcfg.txt
-```
-   This creates file /etc/tripwire/tw.cfg.
-
-3. Create a policy file. A complex example can be found in
-   /usr/share/doc/packages/tripwire/twpol-Linux.txt. For test purposes,
-   a single rule
-```
-     /bin -> $(ReadOnly);   # the ending semicolon is mandatory
-```
-   or alike will do. Compile this with
-```
-     twadmin --create-polfile -S /etc/tripwire/site.key /etc/tripwire/twpol.txt
-```
-   provided /etc/tripwire/twpol.txt is the name of your policy file.
-   This creates file /etc/tripwire/tw.pol.
-
-4. Generates a baseline database (snapshot of the objects residing on
-   the system, according to the installed policy file) using
-```
-     tripwire --init
-```
-   This creates file /var/lib/tripwire/${HOSTNAME}.twd.
-
-5. You can check the system with
-```
-     tripwire --check
-```
-   This prints a report on the standard output and generates file
-   /var/lib/tripwire/report/${HOSTNAME}-YYYYMMDD-HHMMSS.twr. The report can
-   be redisplayed using
-```
-     twprint --print-report -r /var/lib/tripwire/report/${HOSTNAME}-YYYYMMDD-HMMSS.twr
-```
-
+When a desired change occurs, such as upgrading a package, the baseline database can be updated to the new known-good state.  The policy can also be updated, for example to reduce noise or cover a newly installed package.
 
 ## Getting Started
 
-via template: https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+This section covers manual setup of Open Source Tripwire.  If you're installing from an RPM or Debian package, or via "make install", a setup script will walk you through the initial setup steps and these will not need to be done by hand.
 
-TODO: These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+### Generating Keys
+The first step is to generate site and local key files.  This is necessary because Tripwire policy, configuration, and database files are signed by default, and report files may also be signed.  The site key is used to sign config and policy files, with the idea that multiple machines will share a site key, but each will have its own local key.  The policy and config files can then be created once and distributed across these machines.
+
+A common practice is to include the hostname in the local key filename, as follows: 
+ 
+```
+     ./twadmin --generate-keys -L /etc/tripwire/${HOSTNAME}-local.key
+     ./twadmin --generate-keys -S /etc/tripwire/site.key
+``` 
+
+### Creating a configuration file
+The next step is to create a tripwire config file.  The config file contains a variety of settings including the locations of tripwire binaries and key files, email report settings, and parameters that control baseline/check behavior.  These settings are explained in detail in the twconfig(4) manual page.  
+
+This command line creates the config text in /etc/tripwire/twcfg.txt, validates and signs it with the site key file, and writes the results to /etc/tripwire/tw.cfg:
+
+```
+     ./twadmin --create-cfgfile -S /etc/tripwire/site.key /etc/tripwire/twcfg.txt
+```
+### Generating a policy file
+
+Now it's time to configure OST for what you want to monitor.  A few simple examples of policy rules:
+
+```
+/start/point -> $(IgnoreNone); # Get all attributes for this dir tree
+/another/start -> +pinugS; # Get selected attributes for this dir tree
+!/start/point/subdir/to/ignore; # Don't monitor this dir tree
+```
+The tripwire policy language is documented in detail in the twpolicy(4) manual page, and default policies for several popular operating systems are available in the OST project's policy subdirectory. 
+
+```
+     ./twadmin --create-polfile -S /etc/tripwire/twpol.txt
+```
+
+### Baselining your system
+
+Now you're ready to baseline the system for the first time.  
+
+```
+     tripwire --init
+```
+This creates a database file in the configured directory, typically a file with a .twd extension /var/lib/tripwire.  The optional "--verbose" argument to init mode lists files and directories as they're being scanned.
+   
+### Running a check
+```
+     tripwire --check
+```
+This runs a check, again with an optional "--verbose" option that explains what it's doing.  Scan results are written to standard out, as well as a report file, which typically has a .twr extension and lives in /var/lib/tripwire/report.  If email reporting is enabled, emails will be sent at the end of the check.
+
+### Printing a report
+``` 
+	twprint -m r -r /path/to/reportfile.twr
+```
+Databases can be also printed with
+
+```
+	twprint -m d -d /path/to/database.twd
+```
+
+### Updating a database
+The simplest form of update updates the database with all the changes in a report file:
+
+```
+	tripwire --update --accept-all
+```
+
+While a 
+``` 
+	tripwire --update
+```
+brings up a text report in the user's preferred editor (as configured in the config file), wich a checkbox next to each detected change.  If you save and exit the editor, the database will only be updated for those objects that remain selected with an [x].
+
+### Updating a policy
+TODO
+
+### Testing the email configuration
+TODO
+
+
+## Building OST
 
 ### Prerequisites
 
-TODO: What things you need to install the software and how to install them
+A C++ compiler.  It's known to build with gcc and clang; OST should work with gcc versions as old as 2.95.2, although gcc older than version 3.1 will need an external STLPort package.
 
+A POSIX-like operating system.  TODO: list
+
+Perl 5 [what version?] to run the project's test suite.
+
+### Configuring & Building
+
+OST uses a fairly standard automake build, such that your first step will generally be:
 ```
-Give examples
-```
-
-### Installing
-
-TODO: A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
-
-```
-Give the example
+./configure
 ```
 
-And repeat
+Different paths, compiler args (like Debian hardening options), non-default locations can be set up in this step.
 
-```
-until finished
-```
+[give some common configure options here]
 
-End with an example of getting some data out of the system or using it for a little demo
+You might need to run the script
+```
+./touchconfig.sh```
+before you're able to build the project.  The script simply touches files in the right order so files' last change times are not all identical, and that they're different in the right order.
+
+Then just 
+```
+make```
+to build the project.
 
 ## Running the test suites
 
-TODO: Explain how to run the automated tests for this system
+the "make check" make target runs two things:  The test harness suite in the src/test-harness directory, and unit tests by running twtest, which is built in the bin directory along with other tripwire binaries.  These tests can also be run separately:
+```
+./twtest
+```
+runs all unit tests, while 
+```
+./twtest list
+```
+lists all available tests.
+```
+./twtest Groupname
+```
+runs all tests in a group, and 
+```
+./twtest Groupname/Testname
+```
+just runs the specified test.
+ 
 
+[ TODO: how to run test-harness tests ]
+ 
 
 ## Deployment
 
-TODO: Add additional notes about how to deploy this on a live system
-
+The "make install" target installs OST to the configured location, and "make install-strip" installs and removes symbols from the tripwire binaries.  A "make dist" creates a gzipped source bundle.
 
 ## Authors
 
