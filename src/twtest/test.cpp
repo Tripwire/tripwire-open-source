@@ -60,6 +60,7 @@
 #include "db/blockfile.h"
 #include "db/blockrecordarray.h"
 #include "db/hierdatabase.h"
+#include "config.h"
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -132,12 +133,26 @@ void RegisterSuite_Wchar16();
 /// This is easier than all the (cpp) files and declarations
 #include "stringutil_t.h"
 
+#if IS_AROS
+# define VERSION_PREFIX "$VER: "
+#else
+# define VERSION_PREFIX "@(#)"
+#endif
+
+const char* STR_EMBEDDED_VERSION = _T(VERSION_PREFIX "twtest " PACKAGE_VERSION);
+
+
 void Usage()
 {
-    TCERR << _T("Usage: test {all | list | testid [testid ...]}\n")
+    TCERR << _T("Usage: twtest {all | list | help | version | testid [testid ...]}\n")
              _T("\n")
-             _T("Ex: test foo bar/baz\n")
+             _T("Ex: twtest foo bar/baz\n")
              _T("(runs suite foo and test bar/baz)\n\n");
+}
+
+void Version()
+{
+    TCOUT << "twtest " << PACKAGE_VERSION << std::endl;
 }
 
 static int ran_count    = 0;
@@ -432,8 +447,10 @@ int _tmain(int argc, TCHAR** argv)
         EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
-        if (argc < 2)
+        if (argc < 2) {
             Usage();
+            return 0;
+        }
 
         cTWInit twInit;
         twInit.Init( argv[0] );
@@ -445,14 +462,27 @@ int _tmain(int argc, TCHAR** argv)
         //cDebug::SetDebugLevel(cDebug::D_DEBUG);
 
         RegisterSuites();
+        std::string arg1 = argv[1];
 
-        if (_tcsicmp(argv[1], _T("all")) == 0)
+
+        if (arg1 == "all" || arg1 == "--all")
         {
             RunAllTests();
         }
-        else if(_tcsicmp(argv[1], _T("list")) == 0)
+        else if(arg1 == "list" || arg1 == "--list")
         {
             ListTests();
+            return 0;
+        }
+        else if(arg1 == "help" || arg1 == "--help" || arg1 == "-?")
+        {
+            Usage();
+            return 0;
+        }
+        else if(arg1 == "version" || arg1 == "--version")
+        {
+            Version();
+            return 0;
         }
         else
         {
@@ -467,6 +497,12 @@ int _tmain(int argc, TCHAR** argv)
         ASSERT(false);
         return 1;
     }
+    catch (std::exception& error)
+    {
+        TCERR << "Caught std::exception: " << error.what() << std::endl;
+        ASSERT(false);
+        return 1;
+    }
     catch (...)
     {        
         TCERR << _T("Unhandled exception caught!");
@@ -477,6 +513,12 @@ int _tmain(int argc, TCHAR** argv)
     // make sure all the reference counted objects have been destroyed
     // this test always fails because of the static cFCONameTbl
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
+
+    if (!ran_count)
+    {
+        std::cout << "Ran 0 unit tests. The specified group/test names may be incorrect (names are case sensitive).\n";
+        return 1;
+    }
 
     std::cout << std::endl << "Ran " << ran_count << " unit tests with " << failed_count << " failures, " << skipped_count << " skipped." << std::endl;
     std::cout << "(total test assertions: " << macro_count << ")" << std::endl;
@@ -502,6 +544,9 @@ int _tmain(int argc, TCHAR** argv)
     }
 
     std::cout << std::endl;
+
+
+
 
     return failed_count ? -1 : 0;
 }
