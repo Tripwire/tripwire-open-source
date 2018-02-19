@@ -386,9 +386,37 @@ else
 ## Verify that the specified editor program exists
 ##-------------------------------------------------------
 
-DEFAULTEDITOR=${EDITOR:-‘/bin/vi’}
-TWEDITOR=${TWEDITOR:-$DEFAULTEDITOR}
-TWEDITOR_PATH=`command -v $TWEDITOR`
+# If user specified an editor in $path_to_vi or $TWEDITOR, try that first.
+# $path_to_vi defaults to /usr/bin/vi, so we usually succeed here.
+#
+if [ -n ${TWEDITOR} ]; then
+    TWEDITOR_PATH=`command -v $TWEDITOR`
+fi
+
+# If user's environment includes $EDITOR, try that next
+if [ -n ${EDITOR} ] && [ -z ${TWEDITOR_PATH} ]; then
+    TWEDITOR_PATH=`command -v $EDITOR`
+fi
+
+# Ok, now search path for vi
+if [ -z ${TWEDITOR_PATH} ]; then
+    TWEDITOR_PATH=`command -v vi`
+fi
+
+# Try vim in case there isn't a link named vi
+if [ -z ${TWEDITOR_PATH} ]; then
+    TWEDITOR_PATH=`command -v vim`
+fi
+
+# No vi/vim? See if nano is present
+if [ -z ${TWEDITOR_PATH} ]; then
+    TWEDITOR_PATH=`command -v nano`
+fi
+
+# No vi or nano? See if emacs is available
+if [ -z ${TWEDITOR_PATH} ]; then
+    TWEDITOR_PATH=`command -v emacs`
+fi
 
 if [ -n ${TWEDITOR_PATH} ]; then
     TWEDITOR=$TWEDITOR_PATH
