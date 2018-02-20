@@ -5,8 +5,8 @@ EXTRA_DIST = COMMERCIAL MAINTAINERS TRADEMARK LICENSE Packaging ReadMe-2.4.3 REA
 install-data-hook:
 	export INSTALL_STRIP_FLAG
 	prefix="$(prefix)" sysconfdir="$(sysconfdir)" \
-        path_to_vi="$(path_to_vi)" path_to_sendmail="$(path_to_sendmail)" \
-        $(top_srcdir)/installer/install.sh
+	path_to_vi="$(path_to_vi)" path_to_sendmail="$(path_to_sendmail)" \
+	$(top_srcdir)/installer/install.sh
 
 uninstall-hook:
 	rm -f ${prefix}/sbin/tripwire $(prefix)/sbin/twadmin $(prefix)/sbin/twprint $(prefix)/sbin/siggen
