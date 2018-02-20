@@ -3,7 +3,7 @@ SUBDIRS = man src
 EXTRA_DIST = COMMERCIAL MAINTAINERS TRADEMARK LICENSE Packaging ReadMe-2.4.3 README.md autogen.sh autogen.sh.README touchconfig.sh contrib policy installer
 
 install-data-hook:
-	export INSTALL_STRIP_FLAG
+	INSTALL_STRIP_FLAG="$(INSTALL_STRIP_FLAG)" \
 	prefix="$(prefix)" sysconfdir="$(sysconfdir)" \
 	path_to_vi="$(path_to_vi)" path_to_sendmail="$(path_to_sendmail)" \
 	$(top_srcdir)/installer/install.sh
