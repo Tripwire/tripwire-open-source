@@ -139,7 +139,6 @@ Temporary     = +pugt ;
 (rulename="Etc",)
 {
   /etc -> $(IgnoreNone) -a;
-  /usr/etc -> $(IgnoreNone) -a;
   /usr/local/etc -> $(IgnoreNone) -a;
 }
 
