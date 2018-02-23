@@ -154,9 +154,15 @@ TAR_DIR=${TAR_DIR:-${START_DIR}}
 
 OS=`uname -s`
 POLICYSRC="twpol-${OS:=GENERIC}.txt"
-if [ ! -r ${TAR_DIR}/policy/${POLICYSRC} ]
-then POLICYSRC="twpol-GENERIC.txt"
+if [ ! -r ${TAR_DIR}/policy/${POLICYSRC} ]; then
+    OS=`uname -o`
+    POLICYSRC="twpol-${OS:=GENERIC}.txt"
 fi
+
+if [ ! -r ${TAR_DIR}/policy/${POLICYSRC} ]; then
+    POLICYSRC="twpol-GENERIC.txt"
+fi
+
 
 ##-------------------------------------------------------
 ## Parse the command line.
