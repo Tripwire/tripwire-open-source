@@ -1,0 +1,183 @@
+###############################################################################
+#                                                                            ##
+#    Default Tripwire 2.4 Policy file for SkyOS                             ##
+#                                                                            ##
+###############################################################################
+
+
+###############################################################################
+#                                                                            ##
+# Global Variable Definitions                                                ##
+#                                                                            ##
+# These are defined at install time by the installation script.  You may     ##
+# Manually edit these if you are using this file directly and not from the   ##
+# installation script itself.                                                ##
+#                                                                            ##
+###############################################################################
+
+@@section GLOBAL
+TWROOT=;
+TWBIN=;
+TWPOL=;
+TWDB=;
+TWSKEY=;
+TWLKEY=;
+TWREPORT=;
+HOSTNAME=;
+
+##############################################################################
+#  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+#Device        = +pugsdr-intlbamcCMSH ;
+#Dynamic       = +pinugtd-srlbamcCMSH ;
+#Growing       = +pinugtdl-srbamcCMSH ;
+#IgnoreAll     = -pinugtsdrlbamcCMSH ;
+#IgnoreNone    = +pinugtsdrbamcCMSH-l ;
+#ReadOnly      = +pinugtsdbmCM-rlacSH ;
+Temporary     = +pugt ;
+
+@@section FS 
+
+#########################################
+#                                      ##
+#  Tripwire Binaries and Data Files    ##
+#                                      ##
+#########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries",
+)
+{
+  $(TWBIN)/siggen                      -> $(ReadOnly) ;
+  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
+  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
+  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files",
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(Dynamic) -i ;
+  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
+  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
+  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+}
+
+
+##############################################################################
+
+
+### System dir ###############################################################
+#
+(rulename = "System Directory",)
+{
+  /boot/system -> $(IgnoreNone) -a;
+  /boot/system/registry.rsm -> $(IgnoreNone) -am; 
+}
+
+(rulename = "System Files",)
+{
+  /boot/kernel.sys -> $(IgnoreNone) -a;
+  /boot/kernel.dbg -> $(IgnoreNone) -a;
+  /boot/init.scr -> $(IgnoreNone) -a;
+  /boot/install.sif -> $(IgnoreNone) -a;
+}
+
+### Other bin dirs ############################################################
+#
+(rulename = "Binary Directories",)
+{
+  /boot/programs -> $(IgnoreNone) -a;
+}
+
+### Other lib dirs ############################################################
+#
+(rulename = "Library Directories",)
+{
+  /usr/lib -> $(IgnoreNone) -a;
+  /usr/local/lib -> $(IgnoreNone) -a;
+}
+
+### Other boot dirs ###########################################################
+#
+(rulename = "Boot Directories",)
+{
+  /boot/boot/grub -> $(IgnoreNone) -a;
+}
+
+### Settings ##################################################################
+#
+(rulename = "Settings",)
+{
+  /boot/programs/unix/etc -> $(IgnoreNone) -a;
+  /usr/local/etc -> $(IgnoreNone) -a;
+}
+
+# Logs ########################################################################
+#
+(rulename = "Logs",)
+{
+  /var/log -> $(Growing) -a;
+}
+
+# Dev #########################################################################
+#
+(rulename = "Devices",)
+{
+  /dev -> $(Device) -a;
+  /fifo -> $(Device) -a;
+  /pty -> $(Device) -as;
+  /systeminterface -> $(Device) -a;
+  /umfs -> $(Device) -a;
+}
+
+# Temp dirs #########################
+#
+(rulename = "Temp Directories",)
+{
+  /boot/temp -> $(Temporary) -a;
+}
