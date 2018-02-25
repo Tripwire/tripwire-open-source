@@ -320,7 +320,10 @@
 #define WCHAR_IS_16_BITS        IS_WIN32
 #define WCHAR_IS_32_BITS        IS_UNIX
 #define WCHAR_REP_IS_UCS2       IS_WIN32
-#define USES_MPOPEN             IS_UNIX
+// msystem+mpopen fail on Syllable, so use the libc equivalents until we figure out why.
+// TODO: Figure out why.
+#define USES_MPOPEN             (IS_UNIX && !IS_SYLLABLE)
+#define USES_MSYSTEM            (IS_UNIX && !IS_SYLLABLE)
 #define SUPPORTS_WCHART         IS_WIN32    // TODO: Remove after getting new ver of KAI
 #define USES_GLIBC              ((COMP == COMP_KAI_GLIBC) || HAVE_GCC)
 #define SUPPORTS_MEMBER_TEMPLATES               ( ! IS_SUNPRO )

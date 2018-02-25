@@ -696,6 +696,7 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
     // make sure we can read from this file
     cFileUtil::TestFileReadable( strFilename );
 
+#if USES_MSYSTEM
     // editor is going to need terminal type, so tell msystem to include
     // it in environment when it makes its system call.
     le_set("TERM");
@@ -707,6 +708,9 @@ bool cTextReportViewer::LaunchEditorOnFile( const TSTRING& strFilename, const TS
     le_unset("HOME");
     le_unset("DISPLAY");
     le_unset("TERM");
+#else
+    int systemRet = system( (char*) ( ( editor+ _T(' ') + strFilename ).c_str() ) );
+#endif
 
     if( 0 == systemRet )
     {

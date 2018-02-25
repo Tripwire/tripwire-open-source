@@ -155,9 +155,7 @@ void cPipedMailMessage::SendInit()// throw( eMailMessageError )
     strHeader += cStringUtil::StrToTstr( cMailMessage::Create822Header() );
 
 #if !USES_MPOPEN
-    // Call _wpopen under NT
-    // TODO  access the risk of _wpopen under NT
-    mpFile = _wpopen(mstrSendMailExePath.c_str(), _T("w"));
+    mpFile = popen(mstrSendMailExePath.c_str(), _T("w"));
 #else
     // call mpopen, our safe version popen
     mpFile = mpopen( (char*) mstrSendMailExePath.c_str(), _T("w") );
