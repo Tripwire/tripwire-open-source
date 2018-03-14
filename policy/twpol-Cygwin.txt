@@ -56,13 +56,13 @@ HOSTNAME=;
 #
 ##############################################################################
 
-#Device        = +pugsdr-intlbamcCMSH ;
-#Dynamic       = +pinugtd-srlbamcCMSH ;
-#Growing       = +pinugtdl-srbamcCMSH ;
-#IgnoreAll     = -pinugtsdrlbamcCMSH ;
-#IgnoreNone    = +pinugtsdrbamcCMSH-l ;
-#ReadOnly      = +pinugtsdbmCM-rlacSH ;
-Temporary     = +pugt ;
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
 
 @@section FS 
 
@@ -77,10 +77,10 @@ Temporary     = +pugt ;
   rulename = "Tripwire Binaries",
 )
 {
-  $(TWBIN)/siggen                      -> $(ReadOnly) ;
-  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
-  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
-  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
 }
 
 # Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
@@ -97,67 +97,67 @@ Temporary     = +pugt ;
   # afterward triggers this rule until a database update is run, since the
   # database file does not exist before that point.
 
-  $(TWDB)                              -> $(Dynamic) -i ;
-  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
-  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
-  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
-  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
 
   # don't scan the individual reports
-  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
 }
 
 ##############################################################################
 
 (rulename="Binary files",)
 {
-  /bin -> $(IgnoreNone) -a;
-  /usr/bin -> $(IgnoreNone) -a;
-  /usr/local/bin -> $(IgnoreNone) -a;
+  /bin -> $(SEC_READONLY) -a;
+  /usr/bin -> $(SEC_READONLY) -a;
+  /usr/local/bin -> $(SEC_READONLY) -a;
 }
 
 (rulename="Development",)
 {
-  /usr/x86_64-pc-cygwin -> $(IgnoreNone) -a;
+  /usr/x86_64-pc-cygwin -> $(SEC_READONLY) -a;
 }
 
 (rulename="Libexec",)
 {
-  /usr/libexec -> $(IgnoreNone) -a;
+  /usr/libexec -> $(SEC_READONLY) -a;
 }
 
 (rulename="Admin binaries",)
 {
-  /sbin -> $(IgnoreNone) -a;
-  /usr/sbin -> $(IgnoreNone) -a;
+  /sbin -> $(SEC_READONLY) -a;
+  /usr/sbin -> $(SEC_READONLY) -a;
 }
 
 (rulename="Libraries",)
 {
-  /lib -> $(IgnoreNone) -a;
-  /usr/lib -> $(IgnoreNone) -a;
-  /usr/local/lib -> $(IgnoreNone) -a;
+  /lib -> $(SEC_READONLY) -a;
+  /usr/lib -> $(SEC_READONLY) -a;
+  /usr/local/lib -> $(SEC_READONLY) -a;
 }
 
 (rulename="Etc",)
 {
-  /etc -> $(IgnoreNone) -a;
-  /usr/local/etc -> $(IgnoreNone) -a;
+  /etc -> $(SEC_READONLY) -a;
+  /usr/local/etc -> $(SEC_READONLY) -a;
 }
 
 (rulename="Dev",)
 {
-  /dev -> $(Device);
+  /dev -> $(SEC_DEVICE);
 }
 
 (rulename="Tmp",)
 {
-  /tmp -> $(Temporary);
-  /var/tmp -> $(Temporary);
-  /usr/tmp -> $(Temporary);
+  /tmp -> $(SEC_TEMPORARY);
+  /var/tmp -> $(SEC_TEMPORARY);
+  /usr/tmp -> $(SEC_TEMPORARY);
 }
 
 (rulename="Log",)
 {
-  /var/log -> $(Growing);
+  /var/log -> $(SEC_GROWING);
 }
