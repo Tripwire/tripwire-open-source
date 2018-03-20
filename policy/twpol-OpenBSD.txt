@@ -2,8 +2,8 @@
  #                                                                            ##
 ############################################################################## #
 #                                                                            # #
-#                      Policy file for OpenBSD 3.5                           # #
-#                             May 20, 2003                                   # #
+#                      Tripwire 2.4 policy for OpenBSD                       # #
+#                            updated March 2018                              # #
 #                                                                            ##
 ##############################################################################
 
@@ -60,13 +60,13 @@ HOSTNAME=;
 #
 ##############################################################################
 
-Device        = +pugsdr-intlbamcCMSH ;
-Dynamic       = +pinugtd-srlbamcCMSH ;
-Growing       = +pinugtdl-srbamcCMSH ;
-IgnoreAll     = -pinugtsdrlbamcCMSH ;
-IgnoreNone    = +pinugtsdrbamcCMSH-l ;
-ReadOnly      = +pinugtsdbmCM-rlacSH ;
-Temporary     = +pugt ;
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
 
 @@section FS 
 
@@ -83,10 +83,10 @@ Temporary     = +pugt ;
   rulename = "Tripwire Binaries",
 )
 {
-  $(TWBIN)/siggen                      -> $(ReadOnly) ;
-  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
-  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
-  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
 }
 
 # Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
@@ -103,14 +103,14 @@ Temporary     = +pugt ;
   # afterward triggers this rule until a database update is run, since the
   # database file does not exist before that point.
 
-  $(TWDB)                              -> $(Dynamic) -i ;
-  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
-  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
-  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
-  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
 
   # don't scan the individual reports
-  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
 
   # In this configuration /usr/local is a symbolic link to /home/local.
   # We want to ignore the following directories since they are already
@@ -131,9 +131,9 @@ Temporary     = +pugt ;
   rulename = "OS Boot and Configuration Files",
 )
 {
-  /boot                         -> $(ReadOnly) ;
-  /bsd                          -> $(ReadOnly) ;
-  /etc                          -> $(IgnoreNone) -SHa ;
+  /boot                         -> $(SEC_READONLY) ;
+  /bsd                          -> $(SEC_READONLY) ;
+  /etc                          -> $(SEC_IGNORE_NONE) -SHa ;
 }
 
   ###################################################
@@ -147,13 +147,13 @@ Temporary     = +pugt ;
   rulename = "Mount Points",
 )
 {
-  /                             -> $(ReadOnly) ;
-  /cdrom                        -> $(Dynamic) ;
-  /floppy                       -> $(Dynamic) ;
-  /home                         -> $(ReadOnly) ;  # Modify as needed
-  /mnt                          -> $(Dynamic) ;
-  /usr                          -> $(ReadOnly) ;
-  /var                          -> $(ReadOnly) ;
+  /                             -> $(SEC_READONLY) ;
+  /cdrom                        -> $(SEC_DYNAMIC) ;
+  /floppy                       -> $(SEC_DYNAMIC) ;
+  /home                         -> $(SEC_READONLY) ;  # Modify as needed
+  /mnt                          -> $(SEC_DYNAMIC) ;
+  /usr                          -> $(SEC_READONLY) ;
+  /var                          -> $(SEC_READONLY) ;
 }
 
   ###################################################
@@ -167,8 +167,8 @@ Temporary     = +pugt ;
   rulename = "Misc Top-Level Directories",
 )
 {
-  /altroot                      -> $(Dynamic) ;
-  /stand                        -> $(Dynamic) ;
+  /altroot                      -> $(SEC_DYNAMIC) ;
+  /stand                        -> $(SEC_DYNAMIC) ;
 }
 
   ################################################
@@ -182,10 +182,10 @@ Temporary     = +pugt ;
   rulename = "System Devices",
 )
 {
-  /dev                          -> $(Device) ;
-  /dev/fd                       -> $(Device) ;
-  /var/cron/tabs/.sock          -> $(Device) ; 
-  /var/empty/dev/log            -> $(Device) ; 
+  /dev                          -> $(SEC_DEVICE) ;
+  /dev/fd                       -> $(SEC_DEVICE) ;
+  /var/cron/tabs/.sock          -> $(SEC_DEVICE) ; 
+  /var/empty/dev/log            -> $(SEC_DEVICE) ; 
 }
 
   ################################################
@@ -199,14 +199,14 @@ Temporary     = +pugt ;
   rulename = "OS Binaries and Libraries",
 )
 {
-  /bin                          -> $(ReadOnly) ;
-  /sbin                         -> $(ReadOnly) ;
-  /usr/bin                      -> $(ReadOnly) ;
-  /usr/lib                      -> $(ReadOnly) ;
-  /usr/libexec                  -> $(ReadOnly) ;
-  /usr/sbin                     -> $(ReadOnly) ;
-  /usr/X11R6/bin                -> $(ReadOnly) ;
-  /usr/X11R6/lib                -> $(ReadOnly) ;
+  /bin                          -> $(SEC_READONLY) ;
+  /sbin                         -> $(SEC_READONLY) ;
+  /usr/bin                      -> $(SEC_READONLY) ;
+  /usr/lib                      -> $(SEC_READONLY) ;
+  /usr/libexec                  -> $(SEC_READONLY) ;
+  /usr/sbin                     -> $(SEC_READONLY) ;
+  /usr/X11R6/bin                -> $(SEC_READONLY) ;
+  /usr/X11R6/lib                -> $(SEC_READONLY) ;
 }
   ################################################
  #                                              ##
@@ -219,19 +219,19 @@ Temporary     = +pugt ;
   #OKrulename = "Usr Local Files",
 #OK)
 #OK{
-  #OK/usr/local                    -> $(ReadOnly) ;
-  #OK/usr/local/bin                -> $(ReadOnly) ;
-  #OK/usr/local/doc                -> $(ReadOnly) ;
-  #OK/usr/local/etc                -> $(ReadOnly) ;
-  #OK/usr/local/include            -> $(ReadOnly) ;
-  #OK/usr/local/info               -> $(ReadOnly) ;
-  #OK/usr/local/lib                -> $(ReadOnly) ;
-  #OK/usr/local/libdata            -> $(ReadOnly) ;
-  #OK/usr/local/libexec            -> $(ReadOnly) ;
-  #OK/usr/local/man                -> $(ReadOnly) ;
-  #OK/usr/local/sbin               -> $(ReadOnly) ;
-  #OK/usr/local/share              -> $(ReadOnly) ;
-  #OK/usr/local/src                -> $(ReadOnly) ;
+  #OK/usr/local                    -> $(SEC_READONLY) ;
+  #OK/usr/local/bin                -> $(SEC_READONLY) ;
+  #OK/usr/local/doc                -> $(SEC_READONLY) ;
+  #OK/usr/local/etc                -> $(SEC_READONLY) ;
+  #OK/usr/local/include            -> $(SEC_READONLY) ;
+  #OK/usr/local/info               -> $(SEC_READONLY) ;
+  #OK/usr/local/lib                -> $(SEC_READONLY) ;
+  #OK/usr/local/libdata            -> $(SEC_READONLY) ;
+  #OK/usr/local/libexec            -> $(SEC_READONLY) ;
+  #OK/usr/local/man                -> $(SEC_READONLY) ;
+  #OK/usr/local/sbin               -> $(SEC_READONLY) ;
+  #OK/usr/local/share              -> $(SEC_READONLY) ;
+  #OK/usr/local/src                -> $(SEC_READONLY) ;
 #OK}
 
   ################################################
@@ -245,9 +245,9 @@ Temporary     = +pugt ;
   rulename = "Root Directory and Files",
 )
 {
-  /root                          -> $(IgnoreNone) -SHa ;
-  /root/.cshrc                   -> $(Dynamic) ;
-  /root/.profile                 -> $(Dynamic) ;
+  /root                          -> $(SEC_IGNORE_NONE) -SHa ;
+  /root/.cshrc                   -> $(SEC_DYNAMIC) ;
+  /root/.profile                 -> $(SEC_DYNAMIC) ;
 }
 
   ################################################
@@ -261,8 +261,8 @@ Temporary     = +pugt ;
   rulename = "Temporary Directories",
 )
 {
-  /tmp                          -> $(Temporary) ;
-  /var/tmp                      -> $(Temporary) ;
+  /tmp                          -> $(SEC_TEMPORARY) ;
+  /var/tmp                      -> $(SEC_TEMPORARY) ;
 }
 
   ################################################
@@ -276,15 +276,15 @@ Temporary     = +pugt ;
   rulename = "System and Boot Changes",
 )
 {
-  /var/backups                    -> $(Dynamic) -i ;
-  /var/db/host.random             -> $(ReadOnly) -mCM ;
-  /var/cron                       -> $(Growing) -i ;
-  /var/log                        -> $(Growing) -i ;
-  /var/run                        -> $(Dynamic) -i ;
-  /var/mail                       -> $(Growing) ;
-  /var/msgs/bounds                -> $(ReadOnly) -smbCM ;
-  /var/spool/clientmqueue         -> $(Temporary) ;
-  /var/spool/mqueue               -> $(Temporary) ;
+  /var/backups                    -> $(SEC_DYNAMIC) -i ;
+  /var/db/host.random             -> $(SEC_READONLY) -mCM ;
+  /var/cron                       -> $(SEC_GROWING) -i ;
+  /var/log                        -> $(SEC_GROWING) -i ;
+  /var/run                        -> $(SEC_DYNAMIC) -i ;
+  /var/mail                       -> $(SEC_GROWING) ;
+  /var/msgs/bounds                -> $(SEC_READONLY) -smbCM ;
+  /var/spool/clientmqueue         -> $(SEC_TEMPORARY) ;
+  /var/spool/mqueue               -> $(SEC_TEMPORARY) ;
 }
 
 #
