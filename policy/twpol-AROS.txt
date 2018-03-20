@@ -56,13 +56,13 @@ HOSTNAME=;
 #
 ##############################################################################
 
-#Device        = +pugsdr-intlbamcCMSH ;
-#Dynamic       = +pinugtd-srlbamcCMSH ;
-#Growing       = +pinugtdl-srbamcCMSH ;
-#IgnoreAll     = -pinugtsdrlbamcCMSH ;
-#IgnoreNone    = +pinugtsdrbamcCMSH-l ;
-#ReadOnly      = +pinugtsdbmCM-rlacSH ;
-Temporary     = +pugt ;
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE    = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY       = +pugt ;
 
 @@section FS 
 
@@ -77,10 +77,10 @@ Temporary     = +pugt ;
   rulename = "Tripwire Binaries",
 )
 {
-  $(TWBIN)/siggen                      -> $(ReadOnly) ;
-  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
-  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
-  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
 }
 
 # Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
@@ -97,14 +97,14 @@ Temporary     = +pugt ;
   # afterward triggers this rule until a database update is run, since the
   # database file does not exist before that point.
 
-  $(TWDB)                              -> $(Dynamic) -i ;
-  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
-  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
-  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
-  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
 
   # don't scan the individual reports
-  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
 }
 
 
@@ -112,21 +112,21 @@ Temporary     = +pugt ;
 
 (rulename="OS Files",)
 {
-  AROS:System -> $(IgnoreNone);
-  AROS:Devs -> $(IgnoreNone);
-  AROS:Libs -> $(IgnoreNone);
-  AROS:Tools-> $(IgnoreNone);
-  AROS:Prefs -> $(IgnoreNone);
-  AROS:Utilities -> $(IgnoreNone);
-  AROS:WBStartup -> $(IgnoreNone);
+  AROS:System -> $(SEC_READONLY);
+  AROS:Devs -> $(SEC_READONLY);
+  AROS:Libs -> $(SEC_READONLY);
+  AROS:Tools-> $(SEC_READONLY);
+  AROS:Prefs -> $(SEC_READONLY);
+  AROS:Utilities -> $(SEC_READONLY);
+  AROS:WBStartup -> $(SEC_READONLY);
 }
 
 (rulename="Development Tools",)
 {
-  Work:Development -> $(IgnoreNone);
+  Work:Development -> $(SEC_READONLY);
 }
 
 (rulename="Extras",)
 {
-  Work:Extras -> $(IgnoreNone);
+  Work:Extras -> $(SEC_READONLY);
 }

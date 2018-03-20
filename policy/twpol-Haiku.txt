@@ -56,13 +56,13 @@ HOSTNAME=;
 #
 ##############################################################################
 
-#Device        = +pugsdr-intlbamcCMSH ;
-#Dynamic       = +pinugtd-srlbamcCMSH ;
-#Growing       = +pinugtdl-srbamcCMSH ;
-#IgnoreAll     = -pinugtsdrlbamcCMSH ;
-#IgnoreNone    = +pinugtsdrbamcCMSH-l ;
-#ReadOnly      = +pinugtsdbmCM-rlacSH ;
-Temporary     = +pugt ;
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE    = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY       = +pugt ;
 
 @@section FS 
 
@@ -77,10 +77,10 @@ Temporary     = +pugt ;
   rulename = "Tripwire Binaries",
 )
 {
-  $(TWBIN)/siggen                      -> $(ReadOnly) ;
-  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
-  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
-  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
 }
 
 # Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
@@ -97,14 +97,14 @@ Temporary     = +pugt ;
   # afterward triggers this rule until a database update is run, since the
   # database file does not exist before that point.
 
-  $(TWDB)                              -> $(Dynamic) -i ;
-  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
-  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
-  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
-  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
 
   # don't scan the individual reports
-  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
 }
 
 
@@ -115,7 +115,7 @@ Temporary     = +pugt ;
 #
 (rulename = "System Directory",)
 {
-   /boot/system -> $(IgnoreNone) -a;
+   /boot/system -> $(SEC_READONLY) -a;
 }
 
 
@@ -123,10 +123,10 @@ Temporary     = +pugt ;
 #
 (rulename = "Binary Directories",)
 {
-  /boot/home/config/bin -> $(IgnoreNone) -a;
-  /boot/common/bin -> $(IgnoreNone) -a;
-  /boot/apps -> $(IgnoreNone) -a;
-# /boot/develop/tools/gnupro/bin -> $(IgnoreNone) -a; #uncomment to monitor dev tools if present
+  /boot/home/config/bin -> $(SEC_READONLY) -a;
+  /boot/common/bin -> $(SEC_READONLY) -a;
+  /boot/apps -> $(SEC_READONLY) -a;
+# /boot/develop/tools/gnupro/bin -> $(SEC_READONLY) -a; #uncomment to monitor dev tools if present
 }
 
 
@@ -134,45 +134,45 @@ Temporary     = +pugt ;
 #
 (rulename = "Library Directories",)
 {
-  /boot/common/lib -> $(IgnoreNone) -a;
-  /boot/home/config/lib -> $(IgnoreNone) -a;
+  /boot/common/lib -> $(SEC_READONLY) -a;
+  /boot/home/config/lib -> $(SEC_READONLY) -a;
 }
 
 ### Other boot dirs ###########################################################
 #
 (rulename = "Boot Directories",)
 {
-  /boot/common/boot -> $(IgnoreNone) -a;
-  /boot/home/config/boot -> $(IgnoreNone) -a;
+  /boot/common/boot -> $(SEC_READONLY) -a;
+  /boot/home/config/boot -> $(SEC_READONLY) -a;
 }
 
 ### Settings ##################################################################
 #
 (rulename = "Settings",)
 {
-  /boot/common/settings -> $(IgnoreNone) -a;
-  /boot/common/data -> $(IgnoreNone) -a;
-  /boot/common/etc -> $(IgnoreNone) -a;
-  /boot/home/config/settings -> $(IgnoreNone) -a;
+  /boot/common/settings -> $(SEC_READONLY) -a;
+  /boot/common/data -> $(SEC_READONLY) -a;
+  /boot/common/etc -> $(SEC_READONLY) -a;
+  /boot/home/config/settings -> $(SEC_READONLY) -a;
 }
 
 # Logs ########################################################################
 #
 (rulename = "Logs",)
 {
-  /boot/common/var/log -> $(Growing) -a;
+  /boot/common/var/log -> $(SEC_GROWING) -a;
 }
 
 # Dev #########################################################################
 #
 (rulename = "Devices",)
 {
-  /dev -> $(Device) -a;
+  /dev -> $(SEC_DEVICE) -a;
 }
 
 # Temp dirs #########################
 #
 (rulename = "Temp Directories",)
 {
-  /boot/common/cache/tmp -> $(Temporary) -a;
+  /boot/common/cache/tmp -> $(SEC_TEMPORARY) -a;
 }
