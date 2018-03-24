@@ -1,3 +1,13 @@
+2018-03-24 Brian Cox <bcox@tripwire.com>
+	* Update version to 2.4.3.7
+	* Provide a useful README.md (Github issue #17).
+	* Document return codes in man pages (Github issue #28).
+	* Update install script after testing on additional platforms.
+	* Provide default policies for more operating systems, and update some existing policies
+	* Usability tweaks to twtest.
+	* Fix email reporting on Syllable
+	* Update copyright dates to 2018
+
 2017-10-01 Brian Cox <bcox@tripwire.com>
 	* Update version to 2.4.3.6
 	* Fix & expand tests in Perl acceptance test framework
