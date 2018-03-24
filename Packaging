@@ -33,3 +33,5 @@ A few third party projects that might be useful with OST
    (and related .fc and .if files in the same repo)
 
  * A Gentoo SELinux policy, different from the one above: https://packages.gentoo.org/packages/sec-policy/selinux-tripwire
+
+ * An experimental(?) Dockerfile for CentOS: https://hub.docker.com/r/prateeknischal/tripwire-play/
