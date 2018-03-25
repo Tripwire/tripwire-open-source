@@ -7,6 +7,7 @@
 	* Usability tweaks to twtest.
 	* Fix email reporting on Syllable
 	* Update copyright dates to 2018
+	* Clean up code style with clang-format, & add a custom style that approximates existing OST usage.
 
 2017-10-01 Brian Cox <bcox@tripwire.com>
 	* Update version to 2.4.3.6
