@@ -3,33 +3,33 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
-//dbdebug.h 
+//dbdebug.h
 
 #ifndef __DBDEBUG_H
 #define __DBDEBUG_H
@@ -48,10 +48,10 @@
 #endif
 
 // STL stuff...
-#include<map>
-#include<list>
-#include<utility>
-#include<vector>
+#include <map>
+#include <list>
+#include <utility>
+#include <vector>
 
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS
@@ -73,15 +73,24 @@ class cFCOName;
 class cDebugHierDb : public cHierDatabase
 {
 public:
-    cDebugHierDb() : cHierDatabase() {}
+    cDebugHierDb() : cHierDatabase()
+    {
+    }
 
-    typedef std::vector<cBlockRecordArray>  BlockArray;
+    typedef std::vector<cBlockRecordArray> BlockArray;
 
     //
     // Methods for accessing the two data members of cBlockRecordFile that we
     // are interested in.
-    cBlockFile*         myGetBlockFile  ()      { return GetBlockFile(); }
-    BlockArray*         myGetBlockArray ()      { return GetBlockArray(); }     
+    cBlockFile* myGetBlockFile()
+    {
+        return GetBlockFile();
+    }
+    BlockArray* myGetBlockArray()
+    {
+        return GetBlockArray();
+    }
+
 private:
 };
 
@@ -94,16 +103,23 @@ public:
     //
     // Type Defines:
     //
-    typedef std::vector< cHierEntry > EntryArray;
+    typedef std::vector<cHierEntry> EntryArray;
 
     // Ctor, Dtor:
-    ~cDebugHierDbIter   () {}
-    explicit cDebugHierDbIter    ( cHierDatabase* pDb ) : cHierDatabaseIter( pDb ) {}
+    ~cDebugHierDbIter()
+    {
+    }
+    explicit cDebugHierDbIter(cHierDatabase* pDb) : cHierDatabaseIter(pDb)
+    {
+    }
 
     //
     // Methods for obtaining protected members of cHierDatabaseIter:
     //
-    cHierAddr           myGetCurrentAddr()  { return GetCurrentAddr(); }
+    cHierAddr myGetCurrentAddr()
+    {
+        return GetCurrentAddr();
+    }
     // We need this method to match the hierarchy information with that of the
     // quantum database.
 
@@ -111,12 +127,26 @@ public:
     // Methods for accessing data members:
     // TODO: Get rid of the stuff I don't end up using.
     //
-    EntryArray::iterator&   myGetEntryArrayIt() { return mIter; }
-    EntryArray&             myGetEntryArray()   { return mEntries; }
-    cHierArrayInfo&         myGetArrayInfo()    { return mInfo; }
-    cHierAddr&              myGetInfoAddr()     { return mInfoAddr; }
-    cHierDbPath&            myGetCurrPath()     { return mCurPath; }
-
+    EntryArray::iterator& myGetEntryArrayIt()
+    {
+        return mIter;
+    }
+    EntryArray& myGetEntryArray()
+    {
+        return mEntries;
+    }
+    cHierArrayInfo& myGetArrayInfo()
+    {
+        return mInfo;
+    }
+    cHierAddr& myGetInfoAddr()
+    {
+        return mInfoAddr;
+    }
+    cHierDbPath& myGetCurrPath()
+    {
+        return mCurPath;
+    }
 };
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -131,29 +161,29 @@ public:
     cDbDebug();
     ~cDbDebug();
 
-    static void     Execute             ( cFCODatabaseFileIter& dbIter, const TSTRING& dbFile );
-    void            MapQuantumDatabase  ( cDebugHierDb& db );
-        // Traverses a blockfile and records all valid addresses
-    void            TraverseHierarchy   ( cDebugHierDbIter pIter );
-        // Traverses a hierarchical database and "updates" the map for addresses that it finds.
-    void            MapHierDbNodes      ( std::map< std::pair<int, int>, int >& dbMap, std::pair<int, int>, cDebugHierDbIter& );
-        // Changes the map for a given address, in order to record entries that were found in the hierarchy.
-    void            CongruencyTest      ( void );
-        // Looks at the map to see if all entries have been accounted for.
-    void            OutputResults       ( void );
-        // Gives a clean report only if the two database representations match exactly.
-    
+    static void Execute(cFCODatabaseFileIter& dbIter, const TSTRING& dbFile);
+    void        MapQuantumDatabase(cDebugHierDb& db);
+    // Traverses a blockfile and records all valid addresses
+    void TraverseHierarchy(cDebugHierDbIter pIter);
+    // Traverses a hierarchical database and "updates" the map for addresses that it finds.
+    void MapHierDbNodes(std::map<std::pair<int, int>, int>& dbMap, std::pair<int, int>, cDebugHierDbIter&);
+    // Changes the map for a given address, in order to record entries that were found in the hierarchy.
+    void CongruencyTest(void);
+    // Looks at the map to see if all entries have been accounted for.
+    void OutputResults(void);
+    // Gives a clean report only if the two database representations match exactly.
+
     //
     // The map that will be used to test for congruency between the quantum database
     // and the hierarchical database.
     //
-    typedef std::map< std::pair< int, int > , int > hierDbMap;
+    typedef std::map<std::pair<int, int>, int> hierDbMap;
 
-    hierDbMap*      GetHierDbMap        ( void );
-    void            DisplayDbMap        ( void );
-        // Displays the whole map TODO: Somehow the spacing in the output got messed up...
+    hierDbMap* GetHierDbMap(void);
+    void       DisplayDbMap(void);
+    // Displays the whole map TODO: Somehow the spacing in the output got messed up...
     //void          ManipDb             ( cFCODatabaseFileIter& dbIter );
-        // A hook to DbExplore-like code.  For convenience only.
+    // A hook to DbExplore-like code.  For convenience only.
 
 private:
     // (somewhat) Insulated implementation:
@@ -162,4 +192,3 @@ private:
 
 
 #endif //__DBDEBUG_H
-

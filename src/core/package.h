@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -52,7 +52,7 @@
 // themselves singletons or shared. Using the package interface
 // guarantees that all shared resources will be properely
 // initialized before they are used. When creating a package
-// representation you can declare other packages that your 
+// representation you can declare other packages that your
 // package depends on, ensuring that predicate packages and their
 // resources will be initialized before the package that uses
 // those resources.
@@ -60,8 +60,8 @@
 // Contents of this File
 //
 //  TSS_Package( cPackage )
-//  TSS_BeginPackage( cPackage )  
-//  TSS_EndPackage( cPackage )  
+//  TSS_BeginPackage( cPackage )
+//  TSS_EndPackage( cPackage )
 //  TSS_ImplementPackage( cPackage )
 //  TSS_Dependency( cPackage )
 //
@@ -71,7 +71,7 @@
 //  TSS_BeginStringtable( cPackage )
 //  TSS_StringEntry( IDS, "message" )
 //  TSS_EndStringtable( cPackage )
-// 
+//
 //  TSS_BeginStringIds( package_namespace )
 //  TSS_EndStringIds( package_namespace )
 //
@@ -82,7 +82,7 @@
 #ifndef __PACKAGE_H
 #define __PACKAGE_H
 
-#include "resources.h"                          // for: cMessage_<KEY,CHAR>
+#include "resources.h" // for: cMessage_<KEY,CHAR>
 
 
 //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -91,90 +91,92 @@
 
 //--PACKAGE Helpers
 
-#define TSS_Package( pkg )  \
-    pkg::GetInstance()                          // Access "the" Package obj
+#define TSS_Package(pkg) pkg::GetInstance() // Access "the" Package obj
 
-#define TSS_Dependency( pkg ) \
-    TSS_Package( pkg )            // Declare a Package Depend.
+#define TSS_Dependency(pkg) TSS_Package(pkg) // Declare a Package Depend.
 
 
-
-#define TSS_BeginPackage( pkg ) \
-    class pkg : public cPackageBase_< TCHAR >   \
-    { \
-        public: \
+#define TSS_BeginPackage(pkg)               \
+    class pkg : public cPackageBase_<TCHAR> \
+    {                                       \
+    public:                                 \
         static pkg& GetInstance();
 
 
-#define TSS_EndPackage( pkg ) \
-    };
+#define TSS_EndPackage(pkg) \
+    }                       \
+    ;
 
-#define TSS_ImplementPackage( pkg ) \
-    pkg& pkg::GetInstance() \
-    { \
+#define TSS_ImplementPackage(pkg)         \
+    pkg& pkg::GetInstance()               \
+    {                                     \
         static bool bConstructed = false; \
-        static pkg x; \
-        if ( !bConstructed ) \
-        { \
-            bConstructed = true; \
-            x.LoadStrings(); \
-        } \
-        return x; \
+        static pkg  x;                    \
+        if (!bConstructed)                \
+        {                                 \
+            bConstructed = true;          \
+            x.LoadStrings();              \
+        }                                 \
+        return x;                         \
     }
-
-
 
 
 //--STRINGTABLE Helperfs
 
-#define TSS_GetString( pkg, id ) \
-    TSS_Package( pkg ).GetString( id )          // Access the Message String
+#define TSS_GetString(pkg, id) TSS_Package(pkg).GetString(id) // Access the Message String
 
 
-#define TSS_DECLARE_STRINGTABLE \
-    public: \
-        Messages::String \
-        GetString( \
-            Messages::ConstKeyRef id ) const { \
-                return m_messages.Get( id ); } \
-        void LoadStrings(); \
-    private: \
-        Messages m_messages                     // Decare a Stringtable
+#define TSS_DECLARE_STRINGTABLE                                \
+public:                                                        \
+    Messages::String GetString(Messages::ConstKeyRef id) const \
+    {                                                          \
+        return m_messages.Get(id);                             \
+    }                                                          \
+    void LoadStrings();                                        \
+                                                               \
+private:                                                       \
+    Messages m_messages // Decare a Stringtable
 
 
 #ifdef DEBUG
-#define TSS_BeginStringtable( pkg ) \
-    void pkg::LoadStrings() \
-    {   cDebug d( #pkg "::LoadStrings()" ); \
-        d.TraceDebug("Loading strings for " #pkg " package.\n"); \
-        Messages::Pair astr[] = {               // Define a Stringtable
-#else // DEBUG
-#define TSS_BeginStringtable( pkg ) \
-    void pkg::LoadStrings() \
-    {   Messages::Pair astr[] = {               // Define a Stringtable
-#endif // DEBUG
+#    define TSS_BeginStringtable(pkg)                                \
+        void pkg::LoadStrings()                                      \
+        {                                                            \
+            cDebug d(#pkg "::LoadStrings()");                        \
+            d.TraceDebug("Loading strings for " #pkg " package.\n"); \
+            Messages::Pair astr[] = { // Define a Stringtable
+#else                                 // DEBUG
+#    define TSS_BeginStringtable(pkg) \
+        void pkg::LoadStrings()       \
+        {                             \
+            Messages::Pair astr[] = { // Define a Stringtable
+#endif                                // DEBUG
 
-#define TSS_EndStringtable( pkg ) \
-    }; m_messages.Put( \
-        astr, astr + countof(astr) ); }         // End define Strintable
+#define TSS_EndStringtable(pkg)                 \
+    }                                           \
+    ;                                           \
+    m_messages.Put(astr, astr + countof(astr)); \
+    } // End define Strintable
 
 
-#define TSS_StringEntry( id, s ) \
-    Messages::Pair( id, s )                     // Stringtable Entry
+#define TSS_StringEntry(id, s) Messages::Pair(id, s) // Stringtable Entry
 
-#define TSS_BeginStringIds( pns ) \
-    namespace pns { \
-        enum {                                  // Define String IDs
+#define TSS_BeginStringIds(pns) \
+    namespace pns               \
+    {                           \
+    enum                        \
+    { // Define String IDs
 
-#define TSS_EndStringIds( pns ) \
-    }; }                                        // End define String IDs
-
+#define TSS_EndStringIds(pns) \
+    }                         \
+    ;                         \
+    } // End define String IDs
 
 
 //=============================================================================
 // cPackageBase_<CharT> -- Base class for all Package Resources
 //-----------------------------------------------------------------------------
-//  SYNOPSIS: 
+//  SYNOPSIS:
 //      This class is the base class for all package representations
 //      and, thus, establishes the package contract. It's interface
 //      is relied on by the Package singleton wrapper, TSS_Package.
@@ -184,28 +186,25 @@
 //      be called once.
 //
 //  CONSTRAINTS:
-//      A Package representation template must be instantiated with a 
+//      A Package representation template must be instantiated with a
 //      "character concept" that is a valid STDCPP NTCTS.
 //      This will most often be char (for NTBS), wchar_t (for NTWCS),
 //      but may also be unsigned char (for NTMBCS).
 //
 //  INVARIANTS:
 //      m_nInstances <= 1
-//  
+//
 //
 
-template< class CharT >
-class cPackageBase_
+template<class CharT> class cPackageBase_
 {
-    public:
+public:
+    typedef cMessages_<int, CharT> Messages;
 
-        typedef cMessages_< int, CharT > Messages;
-
-        void LoadStrings()
-        {
-        }
+    void LoadStrings()
+    {
+    }
 };
 
 
-#endif//__PACKAGE_H
-
+#endif //__PACKAGE_H

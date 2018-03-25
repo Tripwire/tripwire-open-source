@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -59,8 +59,8 @@
 
 //#ifdef FIXED_TRV_TEST_SUITE
 
-void MakeFile( TSTRING& fcoNameMakeMe );
-void MakeDir( const TCHAR* const lpszDirName );
+void MakeFile(TSTRING& fcoNameMakeMe);
+void MakeDir(const TCHAR* const lpszDirName);
 
 // we use this instead of TraceContents() so we can test the report iterators.
 static void TraceReport(const cFCOReport& r, cDebug& d)
@@ -69,16 +69,16 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
     r.GetErrorQueue()->TraceContents();
 
     cFCOReportGenreIter genreIter(r);
-    int genreCount = 0;
+    int                 genreCount = 0;
 
     for (genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next())
     {
         d.TraceDebug("> Genre [%d]:\n", genreCount);
 
         cFCOReportSpecIter specIter(genreIter);
-        int ct = 0;
+        int                ct = 0;
 
-        for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ct++)
+        for (specIter.SeekBegin(); !specIter.Done(); specIter.Next(), ct++)
         {
             d.TraceDebug(">>> Spec [%d]:\n", ct);
             TEST(specIter.GetSpec());
@@ -88,12 +88,12 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
             d.TraceDebug(">>> Added Files:\n");
             specIter.GetAddedSet()->TraceContents();
             d.TraceDebug(">>> Removed Files:\n");
-            specIter.GetRemovedSet()->TraceContents ();
+            specIter.GetRemovedSet()->TraceContents();
 
             // trace out changed files
             cFCOReportChangeIter changeIter(specIter);
-            int changeCtr = 0;
-            for(changeIter.SeekBegin(); ! changeIter.Done(); changeIter.Next(), changeCtr++)
+            int                  changeCtr = 0;
+            for (changeIter.SeekBegin(); !changeIter.Done(); changeIter.Next(), changeCtr++)
             {
                 d.TraceDebug(">>>>> Changed fco [%d]\n", changeCtr);
                 d.TraceDebug(">>>>>   Old FCO:\n");
@@ -124,11 +124,10 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
  */
 
 
-
 void TestTextReportViewer()
 {
     skip("TestTextReportViewer needs to be cleaned up & fixed, currently disabled");
-    
+
 #if 0
     cFCOReport  report;
     cFCOReportGenreIter genreIter(report);
@@ -431,47 +430,48 @@ void TestTextReportViewer()
     oldChangedFCO4->Release();
     newChangedFCO4->Release();
 #endif
-    
+
     return;
 }
 
-void MakeFile( TSTRING& strNameMakeMe )
+void MakeFile(TSTRING& strNameMakeMe)
 {
     try
     {
-        iFSServices* pFSServices = iFSServices::GetInstance(); TEST( pFSServices );
-        pFSServices->MakeTempFilename( strNameMakeMe );
+        iFSServices* pFSServices = iFSServices::GetInstance();
+        TEST(pFSServices);
+        pFSServices->MakeTempFilename(strNameMakeMe);
 
         std::string strA;
-        for( TSTRING::iterator i = strNameMakeMe.begin(); i != strNameMakeMe.end(); ++i )
+        for (TSTRING::iterator i = strNameMakeMe.begin(); i != strNameMakeMe.end(); ++i)
         {
             char ach[6];
-            TEST( MB_CUR_MAX <= 6 );
+            TEST(MB_CUR_MAX <= 6);
 
-            int n = wctomb( ach, *i );
-            TEST( n != -1 );
-            
-            for( int j = 0; j < n; j++ )
+            int n = wctomb(ach, *i);
+            TEST(n != -1);
+
+            for (int j = 0; j < n; j++)
                 strA += ach[j];
         }
 
-        TOFSTREAM file( strA.c_str() );
-        TEST( file );
+        TOFSTREAM file(strA.c_str());
+        TEST(file);
         file.close();
     }
-    catch( eFSServices e )
+    catch (eFSServices e)
     {
-        TEST( false );
+        TEST(false);
     }
-    catch( ... )
+    catch (...)
     {
-        TEST( false );
+        TEST(false);
     }
 }
 
-void MakeDir( const TCHAR* const lpszDirName )
+void MakeDir(const TCHAR* const lpszDirName)
 {
-    TEST(0 == mkdir(lpszDirName, 0777 ))
+    TEST(0 == mkdir(lpszDirName, 0777))
 }
 
 //#endif //FIXED_TRV_TEST_SUITE

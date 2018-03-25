@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -50,13 +50,19 @@
 class iCipher
 {
 public:
-    virtual ~iCipher() {}
+    virtual ~iCipher()
+    {
+    }
 
-    enum EncryptionDir { ENCRYPT, DECRYPT };
+    enum EncryptionDir
+    {
+        ENCRYPT,
+        DECRYPT
+    };
 
-    virtual int  GetBlockSizePlain() = 0;
-    virtual int  GetBlockSizeCipher() = 0;
-        // return the size of data blocks this crypter works on.
+    virtual int GetBlockSizePlain()  = 0;
+    virtual int GetBlockSizeCipher() = 0;
+    // return the size of data blocks this crypter works on.
     virtual void ProcessBlock(const void* indata, void* outdata) = 0; // throw eArchive
         // process a block of data.  indata and outdata may be the same memory
 };
@@ -67,14 +73,18 @@ public:
 class cNullCipher : public iCipher
 {
 public:
-    cNullCipher() {}
-    virtual ~cNullCipher() {}
+    cNullCipher()
+    {
+    }
+    virtual ~cNullCipher()
+    {
+    }
 
-    virtual int  GetBlockSizePlain();
-    virtual int  GetBlockSizeCipher();
-        // return the size of data blocks for plaintext and cipertext
+    virtual int GetBlockSizePlain();
+    virtual int GetBlockSizeCipher();
+    // return the size of data blocks for plaintext and cipertext
     virtual void ProcessBlock(const void* indata, void* outdata);
-        // process a block of data.  indata and outdata may be the same memory
+    // process a block of data.  indata and outdata may be the same memory
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -92,11 +102,11 @@ public:
 
     void SetKey(iCipher::EncryptionDir dir, const cHashedKey128& key);
 
-    virtual int  GetBlockSizePlain();
-    virtual int  GetBlockSizeCipher();
-        // return the size of data blocks for plaintext and cipertext
+    virtual int GetBlockSizePlain();
+    virtual int GetBlockSizeCipher();
+    // return the size of data blocks for plaintext and cipertext
     virtual void ProcessBlock(const void* indata, void* outdata);
-        // process a block of data.  indata and outdata may be the same memory
+    // process a block of data.  indata and outdata may be the same memory
 
 protected:
     cIDEA_i* mpData;
@@ -117,11 +127,11 @@ public:
 
     void SetKey(iCipher::EncryptionDir dir, const cHashedKey192& key);
 
-    virtual int  GetBlockSizePlain();
-    virtual int  GetBlockSizeCipher();
-        // return the size of data blocks for plaintext and cipertext
+    virtual int GetBlockSizePlain();
+    virtual int GetBlockSizeCipher();
+    // return the size of data blocks for plaintext and cipertext
     virtual void ProcessBlock(const void* indata, void* outdata);
-        // process a block of data.  indata and outdata may be the same memory
+    // process a block of data.  indata and outdata may be the same memory
 
 protected:
     cTripleDES_i* mpData;
@@ -139,17 +149,17 @@ class cRSAPrivateKey;
 class cRSA : public iCipher
 {
 public:
-    enum KeySize 
-    { 
-        KEY256 = 256, 
-        KEY512 = 512, 
-        KEY1024 = 1024, 
+    enum KeySize
+    {
+        KEY256  = 256,
+        KEY512  = 512,
+        KEY1024 = 1024,
         KEY2048 = 2048
     };
-    
+
     explicit cRSA(KeySize keysize);
-    explicit cRSA(const cRSAPublicKey& publicKey);     // read keysize from key
-    explicit cRSA(const cRSAPrivateKey& privateKey);   // ditto
+    explicit cRSA(const cRSAPublicKey& publicKey);   // read keysize from key
+    explicit cRSA(const cRSAPrivateKey& privateKey); // ditto
     virtual ~cRSA();
 
     void SetEncrypting(const cRSAPublicKey* pKey);
@@ -157,14 +167,14 @@ public:
     void SetSigning(const cRSAPrivateKey* pKey);
     void SetVerifying(const cRSAPublicKey* pKey);
 
-    virtual int  GetBlockSizePlain();
-    virtual int  GetBlockSizeCipher();
-        // return the size of data blocks for plaintext and cipertext
+    virtual int GetBlockSizePlain();
+    virtual int GetBlockSizeCipher();
+    // return the size of data blocks for plaintext and cipertext
     virtual void ProcessBlock(const void* indata, void* outdata);
-        // process a block of data.  indata and outdata may be the same memory
+    // process a block of data.  indata and outdata may be the same memory
 
     void GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic);
-        // generate public and private keys.  Caller is responsible for deleting these keys when done
+    // generate public and private keys.  Caller is responsible for deleting these keys when done
 
 protected:
     cRSA_i* mpData;
@@ -182,15 +192,16 @@ class cRSAPrivateKey
 {
     friend class cRSA;
     friend class cRSAPublicKey;
+
 public:
     explicit cRSAPrivateKey(void* pDataStream);
     ~cRSAPrivateKey();
 
-    int     GetWriteLen() const;
-    void    Write(void* pDataStream) const;
+    int  GetWriteLen() const;
+    void Write(void* pDataStream) const;
 
 protected:
-    cRSAPrivateKey_i*   mpData;
+    cRSAPrivateKey_i* mpData;
 
 private:
     cRSAPrivateKey(); // cRSA should be used to generate keys
@@ -201,20 +212,21 @@ private:
 class cRSAPublicKey
 {
     friend class cRSA;
+
 public:
     explicit cRSAPublicKey(void* pDataStream);
     explicit cRSAPublicKey(const cRSAPrivateKey& privateKey);
     ~cRSAPublicKey();
 
-    int     GetWriteLen() const;
-    void    Write(void* pDataStream) const;
+    int  GetWriteLen() const;
+    void Write(void* pDataStream) const;
 
-#ifdef DEBUG
+#    ifdef DEBUG
     void TraceContents();
-#endif
+#    endif
 
 protected:
-    cRSAPublicKey_i*    mpData;
+    cRSAPublicKey_i* mpData;
 
 private:
     cRSAPublicKey(); // cRSA should be used to generate keys
@@ -241,30 +253,30 @@ class cElGamalSigPrivateKey;
 class cElGamalSig : public iCipher
 {
 public:
-    enum KeySize 
-    { 
-        KEY256 = 256, 
-        KEY512 = 512, 
-        KEY1024 = 1024, 
+    enum KeySize
+    {
+        KEY256  = 256,
+        KEY512  = 512,
+        KEY1024 = 1024,
         KEY2048 = 2048
     };
-    
+
     explicit cElGamalSig(KeySize keysize);
-    explicit cElGamalSig(const cElGamalSigPublicKey& publicKey);     // read keysize from key
-    explicit cElGamalSig(const cElGamalSigPrivateKey& privateKey);   // ditto
+    explicit cElGamalSig(const cElGamalSigPublicKey& publicKey);   // read keysize from key
+    explicit cElGamalSig(const cElGamalSigPrivateKey& privateKey); // ditto
     virtual ~cElGamalSig();
 
     void SetSigning(const cElGamalSigPrivateKey* pKey);
     void SetVerifying(const cElGamalSigPublicKey* pKey);
 
-    virtual int  GetBlockSizePlain();
-    virtual int  GetBlockSizeCipher();
-        // return the size of data blocks for plaintext and cipertext
+    virtual int GetBlockSizePlain();
+    virtual int GetBlockSizeCipher();
+    // return the size of data blocks for plaintext and cipertext
     virtual void ProcessBlock(const void* indata, void* outdata);
-        // process a block of data.  indata and outdata may be the same memory
+    // process a block of data.  indata and outdata may be the same memory
 
     void GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPublicKey*& retPublic);
-        // generate public and private keys.  Caller is responsible for deleting these keys when done
+    // generate public and private keys.  Caller is responsible for deleting these keys when done
 
 protected:
     cElGamalSig_i* mpData;
@@ -272,7 +284,10 @@ protected:
 private:
     void Init(KeySize keysize);
 
-    enum { PLAIN_BLOCK_SIZE = 4083 };
+    enum
+    {
+        PLAIN_BLOCK_SIZE = 4083
+    };
 };
 
 class cElGamalSigPrivateKey_i;
@@ -284,15 +299,16 @@ class cElGamalSigPrivateKey
 {
     friend class cElGamalSig;
     friend class cElGamalSigPublicKey;
+
 public:
     explicit cElGamalSigPrivateKey(void* pDataStream);
     ~cElGamalSigPrivateKey();
 
-    int     GetWriteLen() const;
-    void    Write(void* pDataStream) const;
+    int  GetWriteLen() const;
+    void Write(void* pDataStream) const;
 
 protected:
-    cElGamalSigPrivateKey_i*    mpData;
+    cElGamalSigPrivateKey_i* mpData;
 
 private:
     cElGamalSigPrivateKey(); // cElGamal should be used to generate keys
@@ -303,17 +319,18 @@ private:
 class cElGamalSigPublicKey
 {
     friend class cElGamalSig;
+
 public:
     explicit cElGamalSigPublicKey(void* pDataStream);
     explicit cElGamalSigPublicKey(const cElGamalSigPrivateKey& privateKey);
     ~cElGamalSigPublicKey();
 
-    int     GetWriteLen() const;
-    void    Write(void* pDataStream) const;
+    int  GetWriteLen() const;
+    void Write(void* pDataStream) const;
 
-    bool    IsEqual(const cElGamalSigPublicKey& rhs) const;
-        // This is used to make sure the key used to sign the config
-        // file is the same as the key we are currently using.
+    bool IsEqual(const cElGamalSigPublicKey& rhs) const;
+    // This is used to make sure the key used to sign the config
+    // file is the same as the key we are currently using.
 
 #ifdef DEBUG
     void TraceContents();
@@ -342,9 +359,13 @@ public:
     void       Write(void* pDataStream);
 
 protected:
-    enum { KEYLEN = 16, BUFSIZE = 20};
+    enum
+    {
+        KEYLEN  = 16,
+        BUFSIZE = 20
+    };
 
-    int8    mKey[BUFSIZE];
+    int8 mKey[BUFSIZE];
 };
 
 inline const int8* cHashedKey128::GetKey() const
@@ -352,7 +373,7 @@ inline const int8* cHashedKey128::GetKey() const
     return mKey;
 }
 
-inline int  cHashedKey128::GetWriteLen()
+inline int cHashedKey128::GetWriteLen()
 {
     return KEYLEN;
 }
@@ -378,9 +399,12 @@ public:
     void       Write(void* pDataStream);
 
 protected:
-    enum { KEYLEN = 24 };
+    enum
+    {
+        KEYLEN = 24
+    };
 
-    int8    mKey[KEYLEN];
+    int8 mKey[KEYLEN];
 };
 
 inline const int8* cHashedKey192::GetKey() const
@@ -388,7 +412,7 @@ inline const int8* cHashedKey192::GetKey() const
     return mKey;
 }
 
-inline int  cHashedKey192::GetWriteLen()
+inline int cHashedKey192::GetWriteLen()
 {
     return KEYLEN;
 }
@@ -404,4 +428,3 @@ inline void cHashedKey192::Write(void* pDataStream)
 void RandomizeBytes(int8* destbuf, int len);
 
 #endif // __CRYPTO_H
-

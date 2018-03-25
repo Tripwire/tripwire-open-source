@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -51,12 +51,12 @@
 #include "tw/twutil.h"
 #include "tw/twstrings.h"
 
-#include "twprint.h"    // package initialization
+#include "twprint.h" // package initialization
 
 #include "core/unixfsservices.h"
 #include <unistd.h>
 
-#include <memory>       // for auto_ptr
+#include <memory> // for auto_ptr
 #include <iostream>
 #include <exception>
 
@@ -76,7 +76,7 @@ void tw_unexpected_handler()
     _exit(1);
 }
 
-int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
+int __cdecl _tmain(int argc, const TCHAR* argv[])
 {
     int ret = 0;
 
@@ -86,18 +86,18 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
 
     cTWInit twInit;
 
-    try  
+    try
     {
         // set unexpected and terminate handlers
         // Note: we do this before Init() in case it attempts to call these handlers
         // TODO: move this into the Init() routine
 
-      EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
-      EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
+        EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
+        EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
-        twInit.Init( argv[0] );
-        TSS_Dependency( cTWPrint );
-        
+        twInit.Init(argv[0]);
+        TSS_Dependency(cTWPrint);
+
         // init twprint strings
         //
 
@@ -111,7 +111,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
             TCOUT << TSS_GetString(cTWPrint, twprint::STR_TWPRINT_VERSION) << std::endl;
             TCOUT << TSS_GetString(cTW, tw::STR_VERSION) << std::endl;
             TCOUT << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
-            
+
             ret = 1;
             goto exit;
         }
@@ -120,7 +120,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         // Display the version info...
         // this is quick and dirty ... just the way I like it :-) -- mdb
         //
-        if  (_tcscmp(argv[1], _T("--version")) == 0)
+        if (_tcscmp(argv[1], _T("--version")) == 0)
         {
             TCOUT << TSS_GetString(cTW, tw::STR_VERSION_LONG) << std::endl;
             ret = 0;
@@ -129,7 +129,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
 
         // Next, set the mode... exit with error if now valid mode specified.
         TW_UNIQUE_PTR<iTWMode> pMode(cTWPrintCmdLine::GetMode(argc, argv));
-        if(! pMode.get())
+        if (!pMode.get())
         {
             // no valid mode passed; GetMode will display an appropriate string (include usage statement)
             ret = 1;
@@ -144,11 +144,11 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         {
             cmdLine.Parse(argc, argv);
         }
-        catch( eError& e )
+        catch (eError& e)
         {
             cTWUtil::PrintErrorMsg(e);
             TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
-            
+
             ret = 1;
             goto exit;
         }
@@ -157,13 +157,13 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         // TODO: it might be a good idea to move this to cTWUtil
         int i;
         for (i = 1; i < argc; ++i)
-            memset((char*)argv[i], 0, strlen(argv[i])*sizeof(char));
+            memset((char*)argv[i], 0, strlen(argv[i]) * sizeof(char));
 
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cTWPrintCmdLine::HELP))
         {
             TCOUT << TSS_GetString(cTWPrint, twprint::STR_TWPRINT_VERSION) << std::endl;
-            TCOUT << TSS_GetString(cTW,      tw::STR_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cTW, tw::STR_VERSION) << std::endl;
             // Output a specific usage statement for this mode.
             TCOUT << pMode->GetModeUsage();
             ret = 1;
@@ -171,19 +171,19 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         }
 
         // open up the config file, possibly using the passed in path
-        cConfigFile config;
+        cConfigFile    config;
         cErrorReporter errorReporter;
 
-        if( pMode->GetModeID() != cTWPrintCmdLine::MODE_HELP )
+        if (pMode->GetModeID() != cTWPrintCmdLine::MODE_HELP)
         {
             try
             {
                 //open cfg file
                 TSTRING cfgPath;
                 cTWUtil::OpenConfigFile(config, cmdLine, cTWPrintCmdLine::CFG_FILE, errorReporter, cfgPath);
-                pMode->SetConfigFile( cfgPath );
+                pMode->SetConfigFile(cfgPath);
             }
-            catch(eError& error)
+            catch (eError& error)
             {
                 cTWUtil::PrintErrorMsg(error);
                 TCERR << TSS_GetString(cTW, tw::STR_ERR_TWCFG_CANT_READ) << std::endl;
@@ -193,7 +193,7 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
         }
 
         // ok, now we can initialize the mode object and have it execute
-        if(! pMode->Init(config, cmdLine))
+        if (!pMode->Init(config, cmdLine))
         {
             // TODO -- Init should spit out the error msg...
             // I don't think this error message is necessary
@@ -202,9 +202,9 @@ int __cdecl _tmain( int argc, const TCHAR* argv[ ] )
             ret = 1;
             goto exit;
         }
-        ret = pMode->Execute( &twInit.errorQueue );
+        ret = pMode->Execute(&twInit.errorQueue);
 
-    }//end try block
+    } //end try block
 
     catch (eError& error)
     {
@@ -241,5 +241,4 @@ exit:
 
     return ret;
 
-}//end MAIN
-
+} //end MAIN

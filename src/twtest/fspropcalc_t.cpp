@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -52,13 +52,13 @@
 
 static void PrintProps(const iFCO* pFCO)
 {
-    cDebug d("PrintProps");
-    const iFCOPropSet* pSet = pFCO->GetPropSet();
-    const cFCOPropVector& v = pSet->GetValidVector();
-    
-    for(int i=0; i<pSet->GetNumProps(); i++)
+    cDebug                d("PrintProps");
+    const iFCOPropSet*    pSet = pFCO->GetPropSet();
+    const cFCOPropVector& v    = pSet->GetValidVector();
+
+    for (int i = 0; i < pSet->GetNumProps(); i++)
     {
-        if(v.ContainsItem(i))
+        if (v.ContainsItem(i))
         {
             d.TraceDebug("[%d] %s\t%s\n", i, pSet->GetPropName(i).c_str(), pSet->GetPropAt(i)->AsString().c_str());
         }
@@ -67,35 +67,35 @@ static void PrintProps(const iFCO* pFCO)
 
 void TestFSPropCalc()
 {
-    cDebug d("TestFSPropCalc");
+    cDebug            d("TestFSPropCalc");
     cFSDataSourceIter ds;
-    TSTRING foo_bin = TwTestPath("foo.bin");
-    
+    TSTRING           foo_bin = TwTestPath("foo.bin");
+
     //iFSServices* pFSServices = iFSServices::GetInstance();
 
     // oh boy! I finally get to test property calculation!
     d.TraceDebug("Creating FCO c:\\temp\\foo.bin\n");
 
     std::ofstream fstr(foo_bin.c_str());
-    if(fstr.bad())
+    if (fstr.bad())
     {
         d.TraceError("Unable to create test file %s!\n", foo_bin.c_str());
         TEST(false);
     }
     fstr.close();
-    
+
     cFileArchive arch;
     arch.OpenReadWrite(foo_bin.c_str(), true);
     arch.WriteBlob("\x1\x2\x3\x4\x5\x6\x7\x8\x9\x0", 10);
     arch.Close();
-    
+
     // get the fco but none of its children...
     ds.SeekToFCO(cFCOName(foo_bin), false);
     iFCO* pFCO = ds.CreateFCO();
     TEST(pFCO);
 
     // create the calculator and set some properties to calculate...
-    cFSPropCalc propCalc;
+    cFSPropCalc    propCalc;
     cFCOPropVector v(pFCO->GetPropSet()->GetValidVector().GetSize());
     v.AddItem(cFSPropSet::PROP_DEV);
     v.AddItem(cFSPropSet::PROP_CTIME);
@@ -119,7 +119,7 @@ void TestFSPropCalc()
     propCalc.SetCollisionAction(iFCOPropCalc::PROP_LEAVE);
     pFCO->AcceptVisitor(&propCalc);
 
-    
+
     // test only calculating unevaluated props...
     d.TraceDebug("invalidating PROP_MD5 in fco, and changing the file. \n\tAll should remain the same except md5.\n");
     arch.OpenReadWrite(foo_bin.c_str(), true);
@@ -149,10 +149,10 @@ void TestGetSymLinkStr()
     TEST(fd >= 0);
     close(fd);
 
-    unlink(link.c_str()); 
+    unlink(link.c_str());
     TEST(0 == symlink(file.c_str(), link.c_str()));
 
-    cMemoryArchive arch(1024*1024);
+    cMemoryArchive arch(1024 * 1024);
     TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
     TEST(arch.Length() == (int64)file.size());
 }

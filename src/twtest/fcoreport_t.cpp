@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -52,15 +52,15 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
     r.GetErrorQueue()->TraceContents();
 
     cFCOReportGenreIter genreIter(r);
-    int genreCount = 0;
+    int                 genreCount = 0;
 
     for (genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next(), ++genreCount)
     {
         d.TraceDebug("> Genre [%d]:\n", genreCount);
 
         cFCOReportSpecIter specIter(genreIter);
-        int specCount = 0;
-        for(specIter.SeekBegin(); ! specIter.Done(); specIter.Next(), ++specCount)
+        int                specCount = 0;
+        for (specIter.SeekBegin(); !specIter.Done(); specIter.Next(), ++specCount)
         {
             d.TraceDebug(">>> Spec [%d]:\n", specCount);
             TEST(specIter.GetSpec());
@@ -75,8 +75,8 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
 
             // trace out changed files
             cFCOReportChangeIter changeIter(specIter);
-            int changeCtr = 0;
-            for(changeIter.SeekBegin(); ! changeIter.Done(); changeIter.Next(), changeCtr++)
+            int                  changeCtr = 0;
+            for (changeIter.SeekBegin(); !changeIter.Done(); changeIter.Next(), changeCtr++)
             {
                 d.TraceDebug(">>>>> Changed fco [%d]\n", changeCtr);
                 d.TraceDebug(">>>>>   Old FCO:\n");
@@ -94,13 +94,13 @@ void TestFCOReport()
 {
     cDebug d("TestFCOReport");
 
-    cFCOSpecImpl*   pSpec           = new cFCOSpecImpl(_T("/etc"), NULL, new cFCOSpecStopPointSet);
-    cFCOSpecAttr*   pAttr           = new cFCOSpecAttr;
-    cFSObject*      addedFCO        = new cFSObject(cFCOName(_T("/etc/added_file")));
-    cFSObject*      removedFCO      = new cFSObject(cFCOName(_T("/etc/removed_file")));
-    cFSObject*      changedFCO      = new cFSObject(cFCOName(_T("/etc/changed_file")));
-    cFSObject*      oldChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
-    cFSObject*      newChangedFCO   = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFCOSpecImpl*  pSpec         = new cFCOSpecImpl(_T("/etc"), NULL, new cFCOSpecStopPointSet);
+    cFCOSpecAttr*  pAttr         = new cFCOSpecAttr;
+    cFSObject*     addedFCO      = new cFSObject(cFCOName(_T("/etc/added_file")));
+    cFSObject*     removedFCO    = new cFSObject(cFCOName(_T("/etc/removed_file")));
+    cFSObject*     changedFCO    = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFSObject*     oldChangedFCO = new cFSObject(cFCOName(_T("/etc/changed_file")));
+    cFSObject*     newChangedFCO = new cFSObject(cFCOName(_T("/etc/changed_file")));
     cFCOPropVector changedPropVector;
 
     //Calculate the time taken to generate the test report:
@@ -109,7 +109,7 @@ void TestFCOReport()
     //time_t    time_begin = time(dummy_arg);
 
     {
-        cFCOReport  report;
+        cFCOReport report;
 
         changedPropVector.AddItem(cFSPropSet::PROP_SIZE);
         pSpec->SetStartPoint(cFCOName(_T("/etc")));
@@ -130,7 +130,7 @@ void TestFCOReport()
         d.TraceDebug("Before serializing report:\n");
         TraceReport(report, d);
         {
-            std::string filepath = TwTestPath("tmp.twr");
+            std::string  filepath = TwTestPath("tmp.twr");
             cFileArchive outFile;
             outFile.OpenReadWrite(filepath.c_str());
             cSerializerImpl outSer(outFile, cSerializerImpl::S_WRITE);

@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -83,12 +83,12 @@ cFCOSetImpl::cFCOSetImpl(const cFCOSetImpl& rhs) : iFCOSet()
 cFCOSetImpl& cFCOSetImpl::operator=(const cFCOSetImpl& rhs)
 {
     std::set<cFCONode>::const_iterator i;
-    for(i = rhs.mFCOSet.begin(); i != rhs.mFCOSet.end(); ++i)
+    for (i = rhs.mFCOSet.begin(); i != rhs.mFCOSet.end(); ++i)
     {
         i->mpFCO->AddRef();
         mFCOSet.insert(cFCONode(i->mpFCO));
     }
-    
+
     return *this;
 }
 
@@ -99,7 +99,7 @@ void cFCOSetImpl::Clear()
 {
     // release our grip on all the fcos.
     std::set<cFCONode>::iterator i;
-    for(i = mFCOSet.begin(); i != mFCOSet.end(); ++i)
+    for (i = mFCOSet.begin(); i != mFCOSet.end(); ++i)
     {
         i->mpFCO->Release();
     }
@@ -117,12 +117,12 @@ bool cFCOSetImpl::IsEmpty() const
 
 ///////////////////////////////////////////////////////////////////////////////
 // Lookup -- TODO: figure out how I can implement const and non-const versions
-//      without duplicating code. 
+//      without duplicating code.
 ///////////////////////////////////////////////////////////////////////////////
 const iFCOIter* cFCOSetImpl::Lookup(const cFCOName& name) const
 {
     const cFCOIterImpl* pIter = CreateIterator(this);
-    if(! pIter->SeekToFCO(name))
+    if (!pIter->SeekToFCO(name))
     {
         pIter->DestroyIter();
         pIter = NULL;
@@ -133,7 +133,7 @@ const iFCOIter* cFCOSetImpl::Lookup(const cFCOName& name) const
 iFCOIter* cFCOSetImpl::Lookup(const cFCOName& name)
 {
     cFCOIterImpl* pIter = CreateIterator(this);
-    if(! pIter->SeekToFCO(name))
+    if (!pIter->SeekToFCO(name))
     {
         pIter->DestroyIter();
         pIter = NULL;
@@ -160,7 +160,7 @@ void cFCOSetImpl::ReturnIter(const cFCOIterImpl* pIter) const
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Insertion 
+// Insertion
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::Insert(iFCO* pFCO)
 {
@@ -171,12 +171,12 @@ void cFCOSetImpl::Insert(iFCO* pFCO)
     p = mFCOSet.insert(cFCONode(pFCO));
     // if the element already existed in the set, p.second is false.
     ASSERT(p.second);
-    if(p.second)
+    if (p.second)
         pFCO->AddRef();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// AcceptSerializer 
+// AcceptSerializer
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::Read(iSerializer* pSerializer, int32 version)
 {
@@ -185,10 +185,10 @@ void cFCOSetImpl::Read(iSerializer* pSerializer, int32 version)
 
     Clear();
 
-    int i;
+    int   i;
     int32 size;
     pSerializer->ReadInt32(size);
-    
+
     // TODO -- don't assert; throw an exception or noop -- mdb
     //ASSERT(size >= 0);
 
@@ -204,24 +204,24 @@ void cFCOSetImpl::Write(iSerializer* pSerializer) const
     pSerializer->WriteInt32(mFCOSet.size());
 
     std::set<cFCONode>::const_iterator itr;
-    for( itr = mFCOSet.begin(); itr != mFCOSet.end(); ++itr)
+    for (itr = mFCOSet.begin(); itr != mFCOSet.end(); ++itr)
     {
         pSerializer->WriteObjectDynCreate(itr->mpFCO);
     }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// TraceContents 
+// TraceContents
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOSetImpl::TraceContents(int dl) const
 {
-    if(dl < 0) 
+    if (dl < 0)
         dl = cDebug::D_DEBUG;
 
-    cDebug d("cFCOSetImpl::TraceContents");
+    cDebug                             d("cFCOSetImpl::TraceContents");
     std::set<cFCONode>::const_iterator i;
-    int count = 0;
-    for(i = mFCOSet.begin(); i != mFCOSet.end(); ++i, ++count)
+    int                                count = 0;
+    for (i = mFCOSet.begin(); i != mFCOSet.end(); ++i, ++count)
     {
         d.Trace(dl, "[FCO %d]\n", count);
         i->mpFCO->TraceContents(dl);
@@ -236,16 +236,12 @@ void cFCOSetImpl::TraceContents(int dl) const
 ///////////////////////////////////////////////////////////////////////////////
 // ctor and dtor
 ///////////////////////////////////////////////////////////////////////////////
-cFCOIterImpl::cFCOIterImpl(cFCOSetImpl* pSet) :
-    mpSet(pSet),
-    mIter()
+cFCOIterImpl::cFCOIterImpl(cFCOSetImpl* pSet) : mpSet(pSet), mIter()
 {
     mIter = mpSet->mFCOSet.begin();
 }
 
-cFCOIterImpl::cFCOIterImpl(const cFCOSetImpl* pSet) :
-    mpSet((cFCOSetImpl *)pSet),
-    mIter()
+cFCOIterImpl::cFCOIterImpl(const cFCOSetImpl* pSet) : mpSet((cFCOSetImpl*)pSet), mIter()
 {
     mIter = mpSet->mFCOSet.begin();
 }
@@ -323,5 +319,3 @@ void cFCOIterImpl::DestroyIter() const
     ASSERT(mpSet != 0);
     mpSet->ReturnIter(this);
 }
-
-

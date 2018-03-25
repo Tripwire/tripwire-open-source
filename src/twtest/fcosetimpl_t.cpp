@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -43,7 +43,7 @@
 static void PrintIter(const iFCOIter* pIter, cDebug& d)
 {
     TSTRING str;
-    for(; ! pIter->Done(); pIter->Next())
+    for (; !pIter->Done(); pIter->Next())
     {
         str += pIter->FCO()->GetName().AsString().c_str();
         str += _T(" ");
@@ -75,7 +75,7 @@ void TestFCOSetImpl()
     pFCO3->Release();
 
     // let's iterate over the fcos
-    iFCOIter* pIter = set.GetIter();
+    iFCOIter*            pIter = set.GetIter();
     cIterProxy<iFCOIter> pit(pIter);
     pit->SeekBegin();
     PrintIter(pit, d);
@@ -83,12 +83,12 @@ void TestFCOSetImpl()
 
     // lookup a specific fco
     cIterProxy<iFCOIter> pit2(set.Lookup(cFCOName(_T("fco2"))));
-    if(! (iFCOIter*)pit2)
+    if (!(iFCOIter*)pit2)
     {
         d.TraceError("Lookup failed for fco2!\n");
         TEST(false);
     }
-    
+
     d.TraceDebug("Iterating from fco2 to end...\n");
     PrintIter(pit2, d);
 
@@ -103,7 +103,7 @@ void TestFCOSetImpl()
     // ...and then remove it
     d.TraceDebug("Removing fco3\n");
     cIterProxy<iFCOIter> pit3(set.Lookup(cFCOName(_T("fco3"))));
-    if(! (iFCOIter*)pit3)
+    if (!(iFCOIter*)pit3)
     {
         d.TraceError("Lookup failed for fco3!\n");
         TEST(false);
@@ -118,7 +118,7 @@ void TestFCOSetImpl()
 
     pIter->DestroyIter();
     pIter = set2.GetIter();
-    pit = pIter;
+    pit   = pIter;
     d.TraceDebug("Made a new set and set it equal to the first with operator=; printing out...\n");
     PrintIter(pit, d);
 
@@ -133,8 +133,8 @@ void TestFCOSetImpl()
     PrintIter(pit, d);
 
     // test serialization
-    cFCOSetImpl set3;
-    cMemoryArchive a;
+    cFCOSetImpl     set3;
+    cMemoryArchive  a;
     cSerializerImpl writeSer(a, cSerializerImpl::S_WRITE);
     writeSer.Init();
     set2.Write(&writeSer);
@@ -152,7 +152,6 @@ void TestFCOSetImpl()
 
     d.TraceDebug("Leaving...\n");
     return;
-
 }
 
 void RegisterSuite_FCOSetImpl()

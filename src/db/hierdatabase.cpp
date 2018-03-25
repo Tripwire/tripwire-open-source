@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -41,52 +41,52 @@
 #include "core/errorbucket.h"
 #include "core/errorbucketimpl.h"
 
-// TODO -- all of these util_ functions should throw an eArchive if an attempt is made to 
+// TODO -- all of these util_ functions should throw an eArchive if an attempt is made to
 //      write to a null address
 
-static inline void util_ThrowIfNull( const cHierAddr& addr, const TSTRING& context )
+static inline void util_ThrowIfNull(const cHierAddr& addr, const TSTRING& context)
 {
-    ASSERT( ! addr.IsNull() );
-    if( addr.IsNull() )
+    ASSERT(!addr.IsNull());
+    if (addr.IsNull())
     {
         TSTRING msg(_T("Attempt to access null address"));
-        if( ! context.empty() )
+        if (!context.empty())
         {
             msg += _T(" in ") + context;
         }
-        throw eHierDatabase( msg );
-    }   
+        throw eHierDatabase(msg);
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // util_ReadObject -- this will read the given object from the database from the
 //      given address. eArchive is thrown on exception.
 ///////////////////////////////////////////////////////////////////////////////
-static void util_ReadObject( cHierDatabase* pDb, cHierNode* pNode, const cHierAddr& addr )
+static void util_ReadObject(cHierDatabase* pDb, cHierNode* pNode, const cHierAddr& addr)
 {
-    int32       dataSize;
-    int8*       pData = pDb->GetDataForReading( cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize );
+    int32 dataSize;
+    int8* pData = pDb->GetDataForReading(cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize);
     //
     // make sure we aren't trying to read a null object
     //
-    util_ThrowIfNull( addr, _T("util_ReadObject") );
+    util_ThrowIfNull(addr, _T("util_ReadObject"));
 
-    cFixedMemArchive    arch( pData, dataSize );
-    pNode->Read( arch );
+    cFixedMemArchive arch(pData, dataSize);
+    pNode->Read(arch);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // util_WriteObject -- this will write the given object to the database, returning
 //      the address that it was written to, and throwing eArchive on error.
 ///////////////////////////////////////////////////////////////////////////////
-static cHierAddr util_WriteObject( cHierDatabase* pDb, cHierNode* pNode )
+static cHierAddr util_WriteObject(cHierDatabase* pDb, cHierNode* pNode)
 {
     static cMemoryArchive arch;
-    arch.Seek( 0, cBidirArchive::BEGINNING );
-    pNode->Write( arch );
+    arch.Seek(0, cBidirArchive::BEGINNING);
+    pNode->Write(arch);
 
-    cBlockRecordFile::tAddr addr = pDb->AddItem( arch.GetMemory(), arch.CurrentPos() );
-    return cHierAddr( addr.mBlockNum, addr.mIndex );
+    cBlockRecordFile::tAddr addr = pDb->AddItem(arch.GetMemory(), arch.CurrentPos());
+    return cHierAddr(addr.mBlockNum, addr.mIndex);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -94,27 +94,24 @@ static cHierAddr util_WriteObject( cHierDatabase* pDb, cHierNode* pNode )
 //      its size has not; this will update the database without changing the
 //      object's address.
 ///////////////////////////////////////////////////////////////////////////////
-static void util_RewriteObject( cHierDatabase* pDb, cHierNode* pNode, const cHierAddr& addr )
+static void util_RewriteObject(cHierDatabase* pDb, cHierNode* pNode, const cHierAddr& addr)
 {
-    int32       dataSize;
-    int8*       pData = pDb->GetDataForWriting( cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize );
+    int32 dataSize;
+    int8* pData = pDb->GetDataForWriting(cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize);
 
-    util_ThrowIfNull( addr, _T("util_RewriteObject") );
+    util_ThrowIfNull(addr, _T("util_RewriteObject"));
 
-    cFixedMemArchive    arch( pData, dataSize );
-    pNode->Write( arch );
+    cFixedMemArchive arch(pData, dataSize);
+    pNode->Write(arch);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // ctor
 ///////////////////////////////////////////////////////////////////////////////
-cHierDatabase::cHierDatabase( bool bCaseSensitive, TCHAR delChar )
-:   mRootArrayAddr  (),
-    mbCaseSensitive ( bCaseSensitive ),
-    mDelimitingChar ( delChar )
+cHierDatabase::cHierDatabase(bool bCaseSensitive, TCHAR delChar)
+    : mRootArrayAddr(), mbCaseSensitive(bCaseSensitive), mDelimitingChar(delChar)
 {
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -122,22 +119,21 @@ cHierDatabase::cHierDatabase( bool bCaseSensitive, TCHAR delChar )
 ///////////////////////////////////////////////////////////////////////////////
 cHierDatabase::~cHierDatabase()
 {
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Open
 ///////////////////////////////////////////////////////////////////////////////
-void cHierDatabase::Open ( cBidirArchive* pArch, int numPages ) //throw (eArchive, eHierDatabase)
+void cHierDatabase::Open(cBidirArchive* pArch, int numPages) //throw (eArchive, eHierDatabase)
 {
-    bool bTruncate = ( pArch->Length() == 0 );
-    inherited::Open( pArch, numPages );
+    bool bTruncate = (pArch->Length() == 0);
+    inherited::Open(pArch, numPages);
 
-    OpenImpl( bTruncate );
+    OpenImpl(bTruncate);
 }
 
 
-void cHierDatabase::Open ( const TSTRING& fileName, int numPages, bool bTruncate )  //throw (eArchive, eHierDatabase)
+void cHierDatabase::Open(const TSTRING& fileName, int numPages, bool bTruncate) //throw (eArchive, eHierDatabase)
 {
     inherited::Open(fileName, numPages, bTruncate);
 
@@ -145,49 +141,49 @@ void cHierDatabase::Open ( const TSTRING& fileName, int numPages, bool bTruncate
     AssertValid();
 #endif
 
-    OpenImpl( bTruncate );
+    OpenImpl(bTruncate);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // OpenImpl
 ///////////////////////////////////////////////////////////////////////////////
-void cHierDatabase::OpenImpl ( bool bTruncate ) //throw (eArchive, eHierDatabase)
+void cHierDatabase::OpenImpl(bool bTruncate) //throw (eArchive, eHierDatabase)
 {
     // now, we should write the root node at (0,0) if we are creating, and assert that the root node
     // is there if we are opening an existing one...
     //
-    if( bTruncate )
+    if (bTruncate)
     {
         //
         // make the root node that we are creating...
         //
         cHierRoot rootNode;
-        rootNode.mChild             = cHierAddr( 0, 1 );    // the first array will be placed at (0,1)
-        rootNode.mbCaseSensitive    = mbCaseSensitive;
-        rootNode.mDelimitingChar    = mDelimitingChar;
-        cHierAddr addr = util_WriteObject( this, &rootNode );
+        rootNode.mChild          = cHierAddr(0, 1); // the first array will be placed at (0,1)
+        rootNode.mbCaseSensitive = mbCaseSensitive;
+        rootNode.mDelimitingChar = mDelimitingChar;
+        cHierAddr addr           = util_WriteObject(this, &rootNode);
         //
         // assert that it was written to (0, 0)
         //
-        ASSERT( (addr.mBlockNum == 0) && (addr.mIndex == 0) );
+        ASSERT((addr.mBlockNum == 0) && (addr.mIndex == 0));
         //
         // make an empty array to serve as the root array.
         //
-        cHierArrayInfo  arrayInfo;
-        arrayInfo.mParent   = cHierAddr();
-        arrayInfo.mArray    = cHierAddr();
+        cHierArrayInfo arrayInfo;
+        arrayInfo.mParent = cHierAddr();
+        arrayInfo.mArray  = cHierAddr();
         //
         // actually write the objects and assert that they were written to the right places.
         //
-        addr = util_WriteObject( this, &arrayInfo );
-        ASSERT( (addr.mBlockNum == 0) && (addr.mIndex == 1) );
+        addr = util_WriteObject(this, &arrayInfo);
+        ASSERT((addr.mBlockNum == 0) && (addr.mIndex == 1));
 
-        mRootArrayAddr = cHierAddr( 0, 1 );
+        mRootArrayAddr = cHierAddr(0, 1);
     }
     else
     {
         cHierRoot rootNode;
-        util_ReadObject( this, &rootNode, cHierAddr( 0, 0 ) );
+        util_ReadObject(this, &rootNode, cHierAddr(0, 0));
         //
         // set the location of the top-level array and the other root parameters...
         //
@@ -198,16 +194,15 @@ void cHierDatabase::OpenImpl ( bool bTruncate ) //throw (eArchive, eHierDatabase
 }
 
 //-----------------------------------------------------------------------------
-// cHierDatabaseIter 
+// cHierDatabaseIter
 //-----------------------------------------------------------------------------
 
-cHierDatabaseIter::cHierDatabaseIter( cHierDatabase* pDb ) //throw(eArchive)
-:   mpDb    ( pDb ),
-    mCurPath( )
+cHierDatabaseIter::cHierDatabaseIter(cHierDatabase* pDb) //throw(eArchive)
+    : mpDb(pDb), mCurPath()
 {
-    ASSERT( pDb != 0);
-    mCurPath.SetCaseSensitive   ( mpDb->IsCaseSensitive() );
-    mCurPath.SetDelimiter       ( mpDb->GetDelimitingChar() );
+    ASSERT(pDb != 0);
+    mCurPath.SetCaseSensitive(mpDb->IsCaseSensitive());
+    mCurPath.SetDelimiter(mpDb->GetDelimitingChar());
     //
     // load in the root array...
     //
@@ -223,16 +218,16 @@ cHierDatabaseIter::~cHierDatabaseIter()
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::SeekToRoot() //throw (eArchive)
 {
-    ASSERT( mpDb != 0);
-    ASSERT( ! mpDb->mRootArrayAddr.IsNull() );
+    ASSERT(mpDb != 0);
+    ASSERT(!mpDb->mRootArrayAddr.IsNull());
     mCurPath.Clear();
-    LoadArrayAt( mpDb->mRootArrayAddr );
+    LoadArrayAt(mpDb->mRootArrayAddr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // copy ctor
 ///////////////////////////////////////////////////////////////////////////////
-cHierDatabaseIter::cHierDatabaseIter( const cHierDatabaseIter& rhs )
+cHierDatabaseIter::cHierDatabaseIter(const cHierDatabaseIter& rhs)
 {
     *this = rhs;
 }
@@ -240,26 +235,26 @@ cHierDatabaseIter::cHierDatabaseIter( const cHierDatabaseIter& rhs )
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-cHierDatabaseIter& cHierDatabaseIter::operator=( const cHierDatabaseIter& rhs )
+cHierDatabaseIter& cHierDatabaseIter::operator=(const cHierDatabaseIter& rhs)
 {
-    mpDb        = rhs.mpDb;
-    mEntries    = rhs.mEntries;
-    mInfo       = rhs.mInfo;
-    mInfoAddr   = rhs.mInfoAddr;
-    mCurPath    = rhs.mCurPath;
+    mpDb      = rhs.mpDb;
+    mEntries  = rhs.mEntries;
+    mInfo     = rhs.mInfo;
+    mInfoAddr = rhs.mInfoAddr;
+    mCurPath  = rhs.mCurPath;
     //
     // the iterator is a little trickier
     //
-    if( rhs.Done() )
+    if (rhs.Done())
     {
         mIter = mEntries.end();
     }
     else
     {
         EntryArray::const_iterator p1, p2;
-        p1 = rhs.mIter;
-        p2 = rhs.mEntries.begin();
-        mIter       = mEntries.begin() + (p1 - p2);
+        p1    = rhs.mIter;
+        p2    = rhs.mEntries.begin();
+        mIter = mEntries.begin() + (p1 - p2);
     }
 
     return (*this);
@@ -271,7 +266,7 @@ cHierDatabaseIter& cHierDatabaseIter::operator=( const cHierDatabaseIter& rhs )
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::LoadArrayAt(const cHierAddr& addr) //throw (eArchive, eHierDatabase)
 {
-    ASSERT( mpDb != 0);
+    ASSERT(mpDb != 0);
     //
     // make sure the address is non-null
     //
@@ -279,22 +274,22 @@ void cHierDatabaseIter::LoadArrayAt(const cHierAddr& addr) //throw (eArchive, eH
     //
     // load the info and the array
     //
-    mInfoAddr       = addr;
-    util_ReadObject( mpDb, &mInfo, mInfoAddr );
+    mInfoAddr = addr;
+    util_ReadObject(mpDb, &mInfo, mInfoAddr);
     cHierAddr curAddr = mInfo.mArray;
     //
     // load in all the array entries...
     //
     mEntries.clear();
-    while( ! curAddr.IsNull() )
+    while (!curAddr.IsNull())
     {
-        mEntries.push_back( cHierEntry() );
+        mEntries.push_back(cHierEntry());
         //Catch db errors, in case only part of db is broken
         try
         {
-            util_ReadObject( mpDb, &mEntries.back(), curAddr );
+            util_ReadObject(mpDb, &mEntries.back(), curAddr);
         }
-        catch( eError& e )
+        catch (eError& e)
         {
             e.SetFatality(false);
             cErrorReporter::PrintErrorMsg(e);
@@ -304,7 +299,7 @@ void cHierDatabaseIter::LoadArrayAt(const cHierAddr& addr) //throw (eArchive, eH
 
         curAddr = mEntries.back().mNext;
     }
-    
+
     //
     // seek to the beginning of the array
     //
@@ -317,42 +312,42 @@ void cHierDatabaseIter::LoadArrayAt(const cHierAddr& addr) //throw (eArchive, eH
 ///////////////////////////////////////////////////////////////////////////////
 bool cHierDatabaseIter::AtRoot() const //throw (eHierDatabase)
 {
-    bool bResult = ( mInfoAddr == mpDb->mRootArrayAddr );
+    bool bResult = (mInfoAddr == mpDb->mRootArrayAddr);
 
     // TODO -- maybe I want to put this in a #ifdef?
     //
-    if( bResult )
+    if (bResult)
     {
         // we are at the root; assert that we have no parent...
         //
-        ASSERT( mInfo.mParent.IsNull() );
-        if( ! mInfo.mParent.IsNull() )
+        ASSERT(mInfo.mParent.IsNull());
+        if (!mInfo.mParent.IsNull())
         {
-            throw eHierDatabase( _T("Root node of db has a non-null parent") );
+            throw eHierDatabase(_T("Root node of db has a non-null parent"));
         }
     }
     else
     {
         // if we are not at the root, assert that we have a parent...
-        ASSERT( ! mInfo.mParent.IsNull() );
-        if( mInfo.mParent.IsNull() )
+        ASSERT(!mInfo.mParent.IsNull());
+        if (mInfo.mParent.IsNull())
         {
-            throw eHierDatabase( _T("Non-root node of db has a null parent!") );
+            throw eHierDatabase(_T("Non-root node of db has a null parent!"));
         }
     }
 
     return bResult;
-} 
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // CanDescend
 ///////////////////////////////////////////////////////////////////////////////
 bool cHierDatabaseIter::CanDescend() const
 {
-    if( Done() )
+    if (Done())
         return false;
 
-    return (! mIter->mChild.IsNull() );
+    return (!mIter->mChild.IsNull());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -360,13 +355,13 @@ bool cHierDatabaseIter::CanDescend() const
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::Descend()
 {
-    ASSERT( CanDescend() );
-    // 
+    ASSERT(CanDescend());
+    //
     // alter the cwd...
     //
-    mCurPath.Push( mIter->mName );
+    mCurPath.Push(mIter->mName);
 
-    LoadArrayAt ( mIter->mChild );
+    LoadArrayAt(mIter->mChild);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -374,14 +369,14 @@ void cHierDatabaseIter::Descend()
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::Ascend()
 {
-    ASSERT( ! AtRoot() );
-    ASSERT( mCurPath.GetSize() > 0 );
+    ASSERT(!AtRoot());
+    ASSERT(mCurPath.GetSize() > 0);
     //
     // alter the cwd...
     //
     mCurPath.Pop();
-    
-    LoadArrayAt ( mInfo.mParent );
+
+    LoadArrayAt(mInfo.mParent);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -390,14 +385,14 @@ void cHierDatabaseIter::Ascend()
 void cHierDatabaseIter::SeekBegin()
 {
     mIter = mEntries.begin();
-}   
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Done
 ///////////////////////////////////////////////////////////////////////////////
-bool cHierDatabaseIter::Done()  const
+bool cHierDatabaseIter::Done() const
 {
-    return ( mIter == mEntries.end() );
+    return (mIter == mEntries.end());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -413,10 +408,10 @@ void cHierDatabaseIter::Next()
 ///////////////////////////////////////////////////////////////////////////////
 bool cHierDatabaseIter::SeekTo(const TCHAR* pName)
 {
-    EntryArray::iterator i = UpperBound( pName );    
-    if( i != mEntries.end() )
+    EntryArray::iterator i = UpperBound(pName);
+    if (i != mEntries.end())
     {
-        if( 0 == Compare( pName, (*i).mName.c_str() ) )
+        if (0 == Compare(pName, (*i).mName.c_str()))
         {
             mIter = i;
             return true;
@@ -432,10 +427,10 @@ bool cHierDatabaseIter::SeekTo(const TCHAR* pName)
 ///////////////////////////////////////////////////////////////////////////////
 const TCHAR* cHierDatabaseIter::GetName() const
 {
-    ASSERT( ! Done() );
-    if( Done() )
+    ASSERT(!Done());
+    if (Done())
     {
-        throw eHierDatabase( _T("Attempt to call iter::GetName() when done is true"));
+        throw eHierDatabase(_T("Attempt to call iter::GetName() when done is true"));
     }
 
     return mIter->mName.c_str();
@@ -444,7 +439,7 @@ const TCHAR* cHierDatabaseIter::GetName() const
 ///////////////////////////////////////////////////////////////////////////////
 // GetCwd
 ///////////////////////////////////////////////////////////////////////////////
-const TSTRING cHierDatabaseIter::GetCwd()   const
+const TSTRING cHierDatabaseIter::GetCwd() const
 {
     return mCurPath.AsString();
 }
@@ -454,18 +449,18 @@ const TSTRING cHierDatabaseIter::GetCwd()   const
 ///////////////////////////////////////////////////////////////////////////////
 cHierAddr cHierDatabaseIter::GetCurrentAddr() const
 {
-    ASSERT( ! Done() );
-    if( Done() )
+    ASSERT(!Done());
+    if (Done())
     {
         return cHierAddr();
     }
 
-    if( mIter == mEntries.begin() )
+    if (mIter == mEntries.begin())
     {
         return mInfo.mArray;
     }
 
-    return (mIter-1)->mNext;
+    return (mIter - 1)->mNext;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -473,35 +468,35 @@ cHierAddr cHierDatabaseIter::GetCurrentAddr() const
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::CreateChildArray() //throw (eArchive, eHierDatabase)
 {
-    ASSERT( ! Done() );
-    ASSERT( ! CanDescend() );
-    if( Done() )
+    ASSERT(!Done());
+    ASSERT(!CanDescend());
+    if (Done())
     {
-        throw eHierDatabase( _T("Attempt to call iter::CreateChildArray() when done is true"));
+        throw eHierDatabase(_T("Attempt to call iter::CreateChildArray() when done is true"));
     }
-    if( CanDescend() )
+    if (CanDescend())
     {
-        throw eHierDatabase( _T("Attempt to call iter::CreateChildArray() when child already exists"));
+        throw eHierDatabase(_T("Attempt to call iter::CreateChildArray() when child already exists"));
     }
-        
-    cHierArrayInfo  newInfo;
-    cHierAddr       infoAddr;
+
+    cHierArrayInfo newInfo;
+    cHierAddr      infoAddr;
 
     // write the new info
     newInfo.mParent = mInfoAddr;
-    infoAddr        = util_WriteObject( mpDb, &newInfo );
+    infoAddr        = util_WriteObject(mpDb, &newInfo);
     mIter->mChild   = infoAddr;
     //
     // rewrite the current object, since its child info just changed
     //
-    util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
+    util_RewriteObject(mpDb, &(*mIter), GetCurrentAddr());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // CreateEntry
 //
 ///////////////////////////////////////////////////////////////////////////////
-void cHierDatabaseIter::CreateEntry( const TSTRING& name ) //throw (eArchive, eHierDatabase)
+void cHierDatabaseIter::CreateEntry(const TSTRING& name) //throw (eArchive, eHierDatabase)
 {
     cHierEntry newEntry;
     newEntry.mName = name;
@@ -509,44 +504,44 @@ void cHierDatabaseIter::CreateEntry( const TSTRING& name ) //throw (eArchive, eH
     //
     // insert this in order in the set...
     //
-    mIter = UpperBound( newEntry.mName.c_str() );
-    
+    mIter = UpperBound(newEntry.mName.c_str());
+
     //
     // make sure that no duplicate names are added to the database...
     //
-    if( mIter != mEntries.end() )
+    if (mIter != mEntries.end())
     {
-        if( 0 == Compare( mIter->mName.c_str(), newEntry.mName.c_str() ) )
+        if (0 == Compare(mIter->mName.c_str(), newEntry.mName.c_str()))
         {
-          return;
-          //throw eHierDbDupeName( name );
+            return;
+            //throw eHierDbDupeName( name );
         }
     }
 
     // Note -- insert() inserts directly _before_ the iterator
-    // we need to get the current address so we can set the new object's 
+    // we need to get the current address so we can set the new object's
     //      next pointer appropriately
     //
     cHierAddr nextAddr;
-    if( ! Done() )
+    if (!Done())
     {
         nextAddr = GetCurrentAddr();
     }
-    mIter = mEntries.insert( mIter, newEntry );
+    mIter = mEntries.insert(mIter, newEntry);
     //
     // first, we should write the new object to the database
     //
-    mIter->mNext        = nextAddr;
-    cHierAddr newAddr   = util_WriteObject( mpDb, &(*mIter) );
+    mIter->mNext      = nextAddr;
+    cHierAddr newAddr = util_WriteObject(mpDb, &(*mIter));
     //
     // set the previous object's next pointer, and rewrite that object to disk...
     //
-    if( mIter == mEntries.begin() )
+    if (mIter == mEntries.begin())
     {
         // we need to rewrite the array info...
         //
         mInfo.mArray = newAddr;
-        util_RewriteObject( mpDb, &mInfo, mInfoAddr );
+        util_RewriteObject(mpDb, &mInfo, mInfoAddr);
     }
     else
     {
@@ -554,7 +549,7 @@ void cHierDatabaseIter::CreateEntry( const TSTRING& name ) //throw (eArchive, eH
         //
         --mIter;
         mIter->mNext = newAddr;
-        util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
+        util_RewriteObject(mpDb, &(*mIter), GetCurrentAddr());
         ++mIter;
     }
 }
@@ -564,30 +559,29 @@ void cHierDatabaseIter::CreateEntry( const TSTRING& name ) //throw (eArchive, eH
 ///////////////////////////////////////////////////////////////////////////////
 int8* cHierDatabaseIter::GetData(int32& length) const //throw (eArchive, eHierDatabase)
 {
-    ASSERT( HasData() );
-    if( ! HasData() )
+    ASSERT(HasData());
+    if (!HasData())
     {
-        throw eHierDatabase( _T("Attempt to get data from a node when HasData() is false"));
+        throw eHierDatabase(_T("Attempt to get data from a node when HasData() is false"));
     }
 
     //
     // note that we can only get data for reading; perhaps in the future I will add
     // support for retrieving data for writing as well.
     //
-    return mpDb->GetDataForReading( cBlockRecordFile::tAddr(mIter->mData.mBlockNum, mIter->mData.mIndex), length );
-
+    return mpDb->GetDataForReading(cBlockRecordFile::tAddr(mIter->mData.mBlockNum, mIter->mData.mIndex), length);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // HasData
 ///////////////////////////////////////////////////////////////////////////////
-bool cHierDatabaseIter::HasData() const 
+bool cHierDatabaseIter::HasData() const
 {
-    ASSERT( ! Done() );
-    if( Done() )
+    ASSERT(!Done());
+    if (Done())
         return false;
 
-    return ( ! mIter->mData.IsNull() );
+    return (!mIter->mData.IsNull());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -595,25 +589,24 @@ bool cHierDatabaseIter::HasData() const
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::SetData(int8* pData, int32 length) //throw (eArchive, eHierDatabase)
 {
-    ASSERT( ! Done() );
-    ASSERT( ! HasData() );
-    
+    ASSERT(!Done());
+    ASSERT(!HasData());
+
     // remove the item's data, if there is any...
     //
-    if( HasData() )
+    if (HasData())
     {
         RemoveData();
     }
     //
     // add the data and set the entry's data pointer appropriately
     //
-    cBlockRecordFile::tAddr addr = mpDb->AddItem( pData, length );
-    mIter->mData = cHierAddr( addr.mBlockNum, addr.mIndex );
+    cBlockRecordFile::tAddr addr = mpDb->AddItem(pData, length);
+    mIter->mData                 = cHierAddr(addr.mBlockNum, addr.mIndex);
     //
     // update the entry on disk...
     //
-    util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
-
+    util_RewriteObject(mpDb, &(*mIter), GetCurrentAddr());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -621,21 +614,20 @@ void cHierDatabaseIter::SetData(int8* pData, int32 length) //throw (eArchive, eH
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::RemoveData() //throw (eArchive, eHierDatabase)
 {
-    ASSERT( ! Done() );
-    if( ! HasData() )
+    ASSERT(!Done());
+    if (!HasData())
     {
-        ASSERT( false );
+        ASSERT(false);
         return;
     }
 
-    mpDb->RemoveItem( cBlockRecordFile::tAddr( mIter->mData.mBlockNum, mIter->mData.mIndex ) );
+    mpDb->RemoveItem(cBlockRecordFile::tAddr(mIter->mData.mBlockNum, mIter->mData.mIndex));
     //
     // now, we need to update the node's data pointer and save the node to disk
     //
     mIter->mData = cHierAddr();
-    util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
+    util_RewriteObject(mpDb, &(*mIter), GetCurrentAddr());
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -643,46 +635,45 @@ void cHierDatabaseIter::RemoveData() //throw (eArchive, eHierDatabase)
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::DeleteEntry() //throw (eArchive, eHierDatabase)
 {
-    ASSERT( ! Done() );
-    ASSERT( ! CanDescend() ); // this node can't have any children.
+    ASSERT(!Done());
+    ASSERT(!CanDescend()); // this node can't have any children.
     cDebug d("cHierDatabaseIter::DeleteEntry");
 
-    if( Done() )
+    if (Done())
     {
         d.TraceDetail("Attempt to DeleteEntry() when Done() == true; returning\n");
         return;
     }
-    if( CanDescend() )
+    if (CanDescend())
     {
-        throw eHierDatabase( _T("Attempt to delete an entry that still has children.\n"));
+        throw eHierDatabase(_T("Attempt to delete an entry that still has children.\n"));
     }
-    
+
     //
     // first, we should set the previous node's next pointer...
     //
     cHierAddr curAddr = GetCurrentAddr();
-    if( mIter == mEntries.begin() )
+    if (mIter == mEntries.begin())
     {
         // we are changing the info's mArray pointer
         //
         mInfo.mArray = mIter->mNext;
-        util_RewriteObject( mpDb, &mInfo, mInfoAddr );
+        util_RewriteObject(mpDb, &mInfo, mInfoAddr);
     }
     else
     {
         // altering the previous node...
         //
         --mIter;
-        mIter->mNext = (mIter+1)->mNext;
-        util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
+        mIter->mNext = (mIter + 1)->mNext;
+        util_RewriteObject(mpDb, &(*mIter), GetCurrentAddr());
         ++mIter;
     }
     //
     // now, delete the node from the file and from our array...
     //
-    mpDb->RemoveItem( cBlockRecordFile::tAddr( curAddr.mBlockNum, curAddr.mIndex ) );
+    mpDb->RemoveItem(cBlockRecordFile::tAddr(curAddr.mBlockNum, curAddr.mIndex));
     mIter = mEntries.erase(mIter);
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -690,12 +681,12 @@ void cHierDatabaseIter::DeleteEntry() //throw (eArchive, eHierDatabase)
 ///////////////////////////////////////////////////////////////////////////////
 bool cHierDatabaseIter::ChildArrayEmpty()
 {
-    ASSERT( ! Done() );
-    ASSERT( CanDescend() );
+    ASSERT(!Done());
+    ASSERT(CanDescend());
 
-    cHierArrayInfo  info;
-    util_ReadObject ( mpDb, &info, mIter->mChild );
-    return          ( info.mArray.IsNull() );
+    cHierArrayInfo info;
+    util_ReadObject(mpDb, &info, mIter->mChild);
+    return (info.mArray.IsNull());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -703,16 +694,16 @@ bool cHierDatabaseIter::ChildArrayEmpty()
 ///////////////////////////////////////////////////////////////////////////////
 void cHierDatabaseIter::DeleteChildArray() //throw (eArchive, eHierDatabase)
 {
-    ASSERT( ! Done() );
-    ASSERT( CanDescend() );
+    ASSERT(!Done());
+    ASSERT(CanDescend());
     cDebug d("cHierDatabaseIter::DeleteChildArray");
 
-    if( Done() )
+    if (Done())
     {
         d.TraceDetail("Attempt to DeleteChildArray() when Done() == true; returning\n");
         return;
     }
-    if( ! CanDescend() )
+    if (!CanDescend())
     {
         d.TraceDetail("Attempt to DeleteChildArray() when none exists; returning\n");
         return;
@@ -720,17 +711,17 @@ void cHierDatabaseIter::DeleteChildArray() //throw (eArchive, eHierDatabase)
     //
     // make sure that the child index is empty...
     //
-    if( ! ChildArrayEmpty() )
+    if (!ChildArrayEmpty())
     {
-        ASSERT( false );
-        throw eHierDatabase( _T("Attempt to delete a child array that still has entries") );
+        ASSERT(false);
+        throw eHierDatabase(_T("Attempt to delete a child array that still has entries"));
     }
     //
     // ok, no we can remove it...
     //
-    mpDb->RemoveItem( cBlockRecordFile::tAddr( mIter->mChild.mBlockNum, mIter->mChild.mIndex ) );
+    mpDb->RemoveItem(cBlockRecordFile::tAddr(mIter->mChild.mBlockNum, mIter->mChild.mIndex));
     mIter->mChild = cHierAddr();
-    util_RewriteObject( mpDb, &(*mIter), GetCurrentAddr() );
+    util_RewriteObject(mpDb, &(*mIter), GetCurrentAddr());
 }
 
 
@@ -738,25 +729,24 @@ void cHierDatabaseIter::DeleteChildArray() //throw (eArchive, eHierDatabase)
 // CompareForUpperBound
 ///////////////////////////////////////////////////////////////////////////////
 
-bool cHierDatabaseIter::CompareForUpperBound( const cHierEntry& he, const TCHAR* pchName ) const
+bool cHierDatabaseIter::CompareForUpperBound(const cHierEntry& he, const TCHAR* pchName) const
 {
-    return( 0 > Compare( he.mName.c_str(), pchName ) );
+    return (0 > Compare(he.mName.c_str(), pchName));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // cHierDatabaseIterCallCompare
-//                 -- used to sneak a pointer-to-member-function where a 
+//                 -- used to sneak a pointer-to-member-function where a
 //                    pointer-to-non-member-function is expected
 ///////////////////////////////////////////////////////////////////////////////
 class cHierDatabaseIterCallCompare
 {
 public:
-    explicit cHierDatabaseIterCallCompare( const cHierDatabaseIter* pcls )
-        : pc( pcls ) {};
-    
-    bool operator()( const cHierEntry& a1, const TCHAR* a2 )
+    explicit cHierDatabaseIterCallCompare(const cHierDatabaseIter* pcls) : pc(pcls){};
+
+    bool operator()(const cHierEntry& a1, const TCHAR* a2)
     {
-        return pc->CompareForUpperBound( a1, a2 );
+        return pc->CompareForUpperBound(a1, a2);
     }
 
 private:
@@ -767,10 +757,8 @@ private:
 // UpperBound
 ///////////////////////////////////////////////////////////////////////////////
 
-cHierDatabaseIter::EntryArray::iterator cHierDatabaseIter::UpperBound( const TCHAR* pchName )
+cHierDatabaseIter::EntryArray::iterator cHierDatabaseIter::UpperBound(const TCHAR* pchName)
 {
-    cHierDatabaseIterCallCompare comp( this );
-    return ::UpperBound( mEntries.begin(), mEntries.end(), pchName, comp );
+    cHierDatabaseIterCallCompare comp(this);
+    return ::UpperBound(mEntries.begin(), mEntries.end(), pchName, comp);
 }
-
-

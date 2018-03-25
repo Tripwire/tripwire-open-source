@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -45,11 +45,11 @@
 #include "twtest/test.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-// UTIL 
+// UTIL
 ///////////////////////////////////////////////////////////////////////////////
 
-#define TSS_TCHAR_MIN   CHAR_MIN
-#define TSS_TCHAR_MAX   CHAR_MAX
+#define TSS_TCHAR_MIN CHAR_MIN
+#define TSS_TCHAR_MAX CHAR_MAX
 
 /*
 template< class CharT > bool IsPrintable( const std::basic_string< CharT >& str )
@@ -65,19 +65,18 @@ template< class CharT > bool IsPrintable( const std::basic_string< CharT >& str 
 }
 */
 
-static void util_TestUnprintable( const TSTRING& strCUnprintable )
+static void util_TestUnprintable(const TSTRING& strCUnprintable)
 {
-    cDisplayEncoder e( cDisplayEncoder::ROUNDTRIP );
-    TSTRING strEncoded = strCUnprintable;
+    cDisplayEncoder e(cDisplayEncoder::ROUNDTRIP);
+    TSTRING         strEncoded = strCUnprintable;
 
-    e.Encode( strEncoded );
-//    TCOUT << strEncoded << std::endl;
+    e.Encode(strEncoded);
+    //    TCOUT << strEncoded << std::endl;
     TSTRING strOut = strEncoded;
-    e.Decode( strOut );
+    e.Decode(strOut);
 
-    TEST( strOut == strCUnprintable );
+    TEST(strOut == strCUnprintable);
 }
-
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -85,53 +84,53 @@ static void util_TestUnprintable( const TSTRING& strCUnprintable )
 ///////////////////////////////////////////////////////////////////////////
 void test_char_to_hex(char ch, const TSTRING& expected)
 {
-    TSTRING observed = cCharEncoderUtil::char_to_hex( ch );
+    TSTRING observed = cCharEncoderUtil::char_to_hex(ch);
     TEST(expected == observed);
 }
 
 
 void TestCharToHex()
 {
-    test_char_to_hex( 0xfe, "fe");
-    test_char_to_hex( 0xff, "ff");
-    test_char_to_hex( 0x00, "00");
-    test_char_to_hex( 0x01, "01");
-    test_char_to_hex( 0x7f, "7f");
-    test_char_to_hex( 0x80, "80");
+    test_char_to_hex(0xfe, "fe");
+    test_char_to_hex(0xff, "ff");
+    test_char_to_hex(0x00, "00");
+    test_char_to_hex(0x01, "01");
+    test_char_to_hex(0x7f, "7f");
+    test_char_to_hex(0x80, "80");
 }
 
 
 ///////////////////////////////////////////////////////////////////////////
 // TestHexToChar
 ///////////////////////////////////////////////////////////////////////////
-void test_hex_to_char(const TSTRING& str, char expected, bool should_throw=false)
+void test_hex_to_char(const TSTRING& str, char expected, bool should_throw = false)
 {
     bool threw = false;
     try
     {
-        char observed = cCharEncoderUtil::hex_to_char( str.begin(), str.end() );
+        char observed = cCharEncoderUtil::hex_to_char(str.begin(), str.end());
         TEST(expected == observed);
     }
-    catch(eError& e)
+    catch (eError& e)
     {
         threw = true;
     }
-    
+
     TEST(should_throw == threw);
 }
 
 
 void TestHexToChar()
 {
-    test_hex_to_char( "fe", 0xfe );
-    test_hex_to_char( "ff", 0xff );
-    test_hex_to_char( "00", 0x00 );
-    test_hex_to_char( "01", 0x01 );
-    test_hex_to_char( "7f", 0x7f );
-    test_hex_to_char( "80", 0x80 );
-    
-    test_hex_to_char( "100", 0, true); // should throw
-    test_hex_to_char( "-01", 0, true); // should throw
+    test_hex_to_char("fe", 0xfe);
+    test_hex_to_char("ff", 0xff);
+    test_hex_to_char("00", 0x00);
+    test_hex_to_char("01", 0x01);
+    test_hex_to_char("7f", 0x7f);
+    test_hex_to_char("80", 0x80);
+
+    test_hex_to_char("100", 0, true); // should throw
+    test_hex_to_char("-01", 0, true); // should throw
 }
 
 
@@ -146,10 +145,10 @@ void test_string_to_hex(const std::string& str, const std::string& expected)
 
 void TestStringToHex()
 {
-    test_string_to_hex( "\n", "0a" );
-    test_string_to_hex( "\r", "0d" );
-    test_string_to_hex( "\r\n", "0d0a" );
-    test_string_to_hex( "a\r\nb", "610d0a62" );
+    test_string_to_hex("\n", "0a");
+    test_string_to_hex("\r", "0d");
+    test_string_to_hex("\r\n", "0d0a");
+    test_string_to_hex("a\r\nb", "610d0a62");
 }
 
 
@@ -164,10 +163,10 @@ void test_hex_to_string(const std::string& str, const std::string& expected)
 
 void TestHexToString()
 {
-    test_hex_to_string( "0a", "\n");
-    test_hex_to_string( "0d", "\r");
-    test_hex_to_string( "0d0a", "\r\n");
-    test_hex_to_string( "610d0a62", "a\r\nb");
+    test_hex_to_string("0a", "\n");
+    test_hex_to_string("0d", "\r");
+    test_hex_to_string("0d0a", "\r\n");
+    test_hex_to_string("610d0a62", "a\r\nb");
 }
 
 #if 0
@@ -182,12 +181,12 @@ void TestUnconvertable()
     TCHAR ch;
 
     // only use lowercase strings with this define
-    #define TSS_UNCONVERTABLE_TEST( n ) \
-        ch = 0x ## n; \
-        str = ch; \
-        e.Encode( str ); \
-        ct.tolower( str.begin(), str.end() ); \
-        TEST( str == _T("\\x") _T( #n ) _T("x") );
+#    define TSS_UNCONVERTABLE_TEST(n)       \
+        ch  = 0x##n;                        \
+        str = ch;                           \
+        e.Encode(str);                      \
+        ct.tolower(str.begin(), str.end()); \
+        TEST(str == _T("\\x") _T(#n) _T("x"));
 
     TSS_UNCONVERTABLE_TEST( fefe );
     TSS_UNCONVERTABLE_TEST( 1234 );
@@ -211,12 +210,12 @@ void TestUnprintable()
     TCHAR ch;
 
     // only use lowercase strings with this define
-    #define TSS_UNPRINTABLE_TEST( n ) \
-        ch = 0x ## n; \
-        str = ch; \
-        e.Encode( str ); \
-        ct.tolower( str.begin(), str.end() ); \
-        TEST( str == _T("\\x") _T( #n ) _T("x") );
+#    define TSS_UNPRINTABLE_TEST(n)         \
+        ch  = 0x##n;                        \
+        str = ch;                           \
+        e.Encode(str);                      \
+        ct.tolower(str.begin(), str.end()); \
+        TEST(str == _T("\\x") _T(#n) _T("x"));
 
     TSS_UNPRINTABLE_TEST( 000a );
     TSS_UNPRINTABLE_TEST( 000d );
@@ -225,19 +224,19 @@ void TestUnprintable()
 
 //////////////////////////////////////////////////////////////////////////
 // TestQuoteAndBackSlash
-///////////////////////////////////////////////////////////////////////////    
+///////////////////////////////////////////////////////////////////////////
 void TestQuoteAndBackSlash()
 {
-    cDisplayEncoder e( cDisplayEncoder::ROUNDTRIP );
-    TSTRING str;
+    cDisplayEncoder e(cDisplayEncoder::ROUNDTRIP);
+    TSTRING         str;
 
     str = _T("\\");
-    e.Encode( str );
-    TEST( str == _T("\\\\") );
-        
+    e.Encode(str);
+    TEST(str == _T("\\\\"));
+
     str = _T("\"");
-    e.Encode( str );
-    TEST( str == _T("\\\"") );
+    e.Encode(str);
+    TEST(str == _T("\\\""));
 }
 
 // TODO:BAM -- try multibyte now.....
@@ -245,30 +244,30 @@ void TestQuoteAndBackSlash()
 
 ///////////////////////////////////////////////////////////////////////////
 // Basic
-///////////////////////////////////////////////////////////////////////////    
+///////////////////////////////////////////////////////////////////////////
 void TestDisplayEncoderBasic1()
 {
     //=============================================================
     // TEST UNPRINTABLE ENCODING/ROUNDTRIP
     //=============================================================
 
-    util_TestUnprintable( _T("normal string") );
+    util_TestUnprintable(_T("normal string"));
 
-    util_TestUnprintable( _T("return\n") );
-    util_TestUnprintable( _T("ret\rurn\n") );
-    util_TestUnprintable( _T("ret\rnurn\n") );
+    util_TestUnprintable(_T("return\n"));
+    util_TestUnprintable(_T("ret\rurn\n"));
+    util_TestUnprintable(_T("ret\rnurn\n"));
 
-    util_TestUnprintable( _T("bell\x08") );
-    util_TestUnprintable( _T("\x08 bell") );
-    util_TestUnprintable( _T("be\x08ll") );
+    util_TestUnprintable(_T("bell\x08"));
+    util_TestUnprintable(_T("\x08 bell"));
+    util_TestUnprintable(_T("be\x08ll"));
 
-    util_TestUnprintable( _T("\x1F\x1F\x1F") );
+    util_TestUnprintable(_T("\x1F\x1F\x1F"));
 
-    util_TestUnprintable( _T("big\xFF") );
-    util_TestUnprintable( _T("\xEE big") );
-    util_TestUnprintable( _T("\xEE\xEEtwo big") );
-    util_TestUnprintable( _T("small\x01") );
-    util_TestUnprintable( _T("\x01\x01two small") );
+    util_TestUnprintable(_T("big\xFF"));
+    util_TestUnprintable(_T("\xEE big"));
+    util_TestUnprintable(_T("\xEE\xEEtwo big"));
+    util_TestUnprintable(_T("small\x01"));
+    util_TestUnprintable(_T("\x01\x01two small"));
 }
 
 void TestDisplayEncoderBasic2()
@@ -276,17 +275,15 @@ void TestDisplayEncoderBasic2()
     //=============================================================
     // TEST UNCONVERTABLE CHARS
     //=============================================================
-    TSTRING strMessWithMe  = _T("Mess with me...");
-    for( size_t c = TSS_TCHAR_MIN; 
-         c < TSS_TCHAR_MAX;
-         c++ )
+    TSTRING strMessWithMe = _T("Mess with me...");
+    for (size_t c = TSS_TCHAR_MIN; c < TSS_TCHAR_MAX; c++)
     {
-        if( ( c != '\0' ) )
+        if ((c != '\0'))
         {
             strMessWithMe += c;
         }
     }
-    util_TestUnprintable( strMessWithMe );
+    util_TestUnprintable(strMessWithMe);
 }
 
 void TestDisplayEncoderBasic3()
@@ -295,15 +292,15 @@ void TestDisplayEncoderBasic3()
     // TEST \\ and \x ENCODING/ROUNDTRIP
     //=============================================================
 
-    util_TestUnprintable( _T("\\Other \\\\slashes") );
-    util_TestUnprintable( _T("\\Other slashes\\\\") );
-    util_TestUnprintable( _T("O\\ther slashes\\\\") );
-    util_TestUnprintable( _T("\\\\\\") );
+    util_TestUnprintable(_T("\\Other \\\\slashes"));
+    util_TestUnprintable(_T("\\Other slashes\\\\"));
+    util_TestUnprintable(_T("O\\ther slashes\\\\"));
+    util_TestUnprintable(_T("\\\\\\"));
 
-    util_TestUnprintable( _T("\\xTricky") );
-    util_TestUnprintable( _T("Tri\\xcky") );
-    util_TestUnprintable( _T("Tricky\\x") );
-    util_TestUnprintable( _T("\\Tricky\\\\x") );
+    util_TestUnprintable(_T("\\xTricky"));
+    util_TestUnprintable(_T("Tri\\xcky"));
+    util_TestUnprintable(_T("Tricky\\x"));
+    util_TestUnprintable(_T("\\Tricky\\\\x"));
 }
 
 void TestDisplayEncoderBasic4()
@@ -311,21 +308,19 @@ void TestDisplayEncoderBasic4()
     //=============================================================
     // TEST UNCONVERTABLE, UNPRINTABLE, AND \\ and \" CHARS
     //=============================================================
-    TSTRING strMessWithMe2  = _T("Mess with me...");
-    for( size_t ch = TSS_TCHAR_MIN; 
-         ch < TSS_TCHAR_MAX;
-         ch++ )
+    TSTRING strMessWithMe2 = _T("Mess with me...");
+    for (size_t ch = TSS_TCHAR_MIN; ch < TSS_TCHAR_MAX; ch++)
     {
-        if( ( ch != '\0' ) )
+        if ((ch != '\0'))
         {
             strMessWithMe2 += ch;
         }
     }
-    
-    strMessWithMe2 += _T("\r\n\t\b\\\"\\\\\\\"\v\"");
-    util_TestUnprintable( strMessWithMe2 );
 
-    // TODO:BAM -- create multibyte tests (create a mb string at random, then test it.  
+    strMessWithMe2 += _T("\r\n\t\b\\\"\\\\\\\"\v\"");
+    util_TestUnprintable(strMessWithMe2);
+
+    // TODO:BAM -- create multibyte tests (create a mb string at random, then test it.
     // make sure there are '\' and '"' in it )
 }
 
@@ -343,5 +338,3 @@ void RegisterSuite_DisplayEncoder()
     //RegisterTest("DisplayEncoder", "Unprintable", TestUnprintable);
     RegisterTest("DisplayEncoder", "QuoteAndBackSlash", TestQuoteAndBackSlash);
 }
-
-

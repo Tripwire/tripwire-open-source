@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -44,19 +44,19 @@
 // A magic number to identify key files
 // I just picked this at random (I took the current time (14:34) squared it,
 // converted it to hex and xor'ed with 0xffffffff, just in case you are wondering) - dmb
-const uint32 KEY_MAGIC_NUMBER = 0xffe09f5b; 
-static const uint32 CURRENT_FIXED_VERSION  = 0x02020000;
-static const uint32 TW_21_VERSION          = 0x02010000;
+const uint32        KEY_MAGIC_NUMBER      = 0xffe09f5b;
+static const uint32 CURRENT_FIXED_VERSION = 0x02020000;
+static const uint32 TW_21_VERSION         = 0x02010000;
 
 ///////////////////////////////////////////////////////////////////////////////
 // class cKeyFile
 
 cKeyFile::cKeyFile()
 {
-    mpPrivateKeyMem = 0;
-    mPrivateKeyMemLen = 0;
-    mpPrivateKey = 0;
-    mpPublicKey = 0;
+    mpPrivateKeyMem     = 0;
+    mPrivateKeyMemLen   = 0;
+    mpPrivateKey        = 0;
+    mpPublicKey         = 0;
     mPrivateKeyUseCount = 0;
 }
 
@@ -72,10 +72,10 @@ void cKeyFile::ReleaseMem()
     delete [] mpPrivateKeyMem;
     delete mpPrivateKey;
     delete mpPublicKey;
-    mpPrivateKeyMem = 0;
-    mPrivateKeyMemLen = 0;
-    mpPrivateKey = 0;
-    mpPublicKey = 0;
+    mpPrivateKeyMem     = 0;
+    mPrivateKeyMemLen   = 0;
+    mpPrivateKey        = 0;
+    mpPublicKey         = 0;
     mPrivateKeyUseCount = 0;
 }
 
@@ -83,11 +83,18 @@ void cKeyFile::ReleaseMem()
 // GetFileHeaderID()
 ///////////////////////////////////////////////////////////////////////////////
 
-struct cKeyFileFHID {
+struct cKeyFileFHID
+{
     cFileHeaderID* KeyFileID;
 
-    cKeyFileFHID() { KeyFileID = 0; }
-    ~cKeyFileFHID() { delete KeyFileID; }
+    cKeyFileFHID()
+    {
+        KeyFileID = 0;
+    }
+    ~cKeyFileFHID()
+    {
+        delete KeyFileID;
+    }
 } gKeyFileFHID;
 
 const cFileHeaderID& cKeyFile::GetFileHeaderID()
@@ -119,7 +126,7 @@ void cKeyFile::ReadFile(const TCHAR* filename) // throw eKeyFile()
     try
     {
         cFileArchive inFile;
-        cFileHeader fileHeader;
+        cFileHeader  fileHeader;
 
         inFile.OpenRead(filename);
 
@@ -144,8 +151,7 @@ void cKeyFile::ReadFile(const TCHAR* filename) // throw eKeyFile()
         //      tw21 key files, since their formatting is exactly the same besides
         //      the version number.
         //
-        if( (fileHeader.GetVersion() != CURRENT_FIXED_VERSION) &&
-            (fileHeader.GetVersion() != TW_21_VERSION) )
+        if ((fileHeader.GetVersion() != CURRENT_FIXED_VERSION) && (fileHeader.GetVersion() != TW_21_VERSION))
         {
             ASSERT(false);
             throw eKeyFileInvalidFmt();
@@ -181,28 +187,28 @@ void cKeyFile::ReadFile(const TCHAR* filename) // throw eKeyFile()
         }
 
         mPrivateKeyMemLen = len;
-        mpPrivateKeyMem = new int8[len];
+        mpPrivateKeyMem   = new int8[len];
         if (inFile.ReadBlob(mpPrivateKeyMem, mPrivateKeyMemLen) < mPrivateKeyMemLen)
         {
             ASSERT(false);
             delete mpPublicKey;
             delete [] mpPrivateKeyMem;
-            mpPublicKey = 0;
-            mpPrivateKeyMem = 0;
+            mpPublicKey       = 0;
+            mpPrivateKeyMem   = 0;
             mPrivateKeyMemLen = 0;
             throw eKeyFileInvalidFmt();
         }
     }
-    catch(eArchive&)
+    catch (eArchive&)
     {
         delete mpPublicKey;
         delete [] mpPrivateKeyMem;
-        mpPublicKey = 0;
-        mpPrivateKeyMem = 0;
+        mpPublicKey       = 0;
+        mpPrivateKeyMem   = 0;
         mPrivateKeyMemLen = 0;
         throw eKeyFileArchive(filename);
     }
-    catch(eKeyFile&)
+    catch (eKeyFile&)
     {
         throw;
     }
@@ -215,7 +221,7 @@ void cKeyFile::WriteFile(const TCHAR* filename) const // throw eKeyFile()
     try
     {
         cFileArchive outFile;
-        cFileHeader fileHeader;
+        cFileHeader  fileHeader;
 
         outFile.OpenReadWrite(filename);
 
@@ -234,7 +240,7 @@ void cKeyFile::WriteFile(const TCHAR* filename) const // throw eKeyFile()
         }
 
         // save public key
-        int16 len = mpPublicKey->GetWriteLen();
+        int16 len       = mpPublicKey->GetWriteLen();
         int8* publicMem = new int8[len];
         mpPublicKey->Write(publicMem);
 
@@ -248,7 +254,7 @@ void cKeyFile::WriteFile(const TCHAR* filename) const // throw eKeyFile()
         outFile.WriteInt16(len);
         outFile.WriteBlob(mpPrivateKeyMem, mPrivateKeyMemLen);
     }
-    catch(eArchive&)
+    catch (eArchive&)
     {
         throw eKeyFileArchive(filename);
     }
@@ -268,7 +274,7 @@ void cKeyFile::ReadMem(const int8* pMem) // throw eKeyFile()
     if ((unsigned int)tw_ntohl(i32) != KEY_MAGIC_NUMBER)
         throw eKeyFileInvalidFmt();
     pMem += sizeof(int32);
-    
+
     memcpy(&i32, pMem, sizeof(i32));
     if (tw_ntohl(i32) != 1) // version check
         throw eKeyFileInvalidFmt();
@@ -321,7 +327,7 @@ void cKeyFile::WriteMem(int8* pMem) const // throw eKeyFile()
 
     // save public key
     int16 len = mpPublicKey->GetWriteLen();
-    i16 = tw_htons(len);
+    i16       = tw_htons(len);
     memcpy(pMem, &i16, sizeof(i16));
     pMem += sizeof(int16);
 
@@ -355,11 +361,11 @@ int cKeyFile::GetWriteLen() // throw eKeyFile()
 
 void cKeyFile::ProtectKeys(int8* passphrase, int passphraseLen) // throw eKeyFile()
 {
-    int i;
+    int   i;
     int16 i16;
 
     // generate the hash value of the private key
-    int len = mpPrivateKey->GetWriteLen();
+    int   len            = mpPrivateKey->GetWriteLen();
     int8* privateKeyBits = new int8[len];
     mpPrivateKey->Write(privateKeyBits);
     cHashedKey128 privateHash(privateKeyBits, len);
@@ -368,7 +374,7 @@ void cKeyFile::ProtectKeys(int8* passphrase, int passphraseLen) // throw eKeyFil
 
     // generate cipher for encrypting private key
     cHashedKey192 desKey(passphrase, passphraseLen);
-    cTripleDES des;
+    cTripleDES    des;
     des.SetKey(iCipher::ENCRYPT, desKey);
 
     ASSERT(des.GetBlockSizeCipher() == des.GetBlockSizePlain());
@@ -376,7 +382,7 @@ void cKeyFile::ProtectKeys(int8* passphrase, int passphraseLen) // throw eKeyFil
     // calculate size of the memory image of the private key
     mPrivateKeyMemLen = cHashedKey128::GetWriteLen() + sizeof(int16) + mpPrivateKey->GetWriteLen();
     mPrivateKeyMemLen = (mPrivateKeyMemLen / des.GetBlockSizePlain() + 1) * des.GetBlockSizePlain();
-    int sluff = mPrivateKeyMemLen - cHashedKey128::GetWriteLen() - sizeof(int16) - mpPrivateKey->GetWriteLen();
+    int sluff         = mPrivateKeyMemLen - cHashedKey128::GetWriteLen() - sizeof(int16) - mpPrivateKey->GetWriteLen();
 
     // write the hash of the private key, the size of the private key, and the private key,
     // all as plaintext.
@@ -425,7 +431,10 @@ void cKeyFile::GenerateKeys(int keySize, int8* passphrase, int passphraseLen) //
     ProtectKeys(passphrase, passphraseLen);
 }
 
-void cKeyFile::ChangePassphrase(int8* passphraseOld, int passphraseOldLen, int8* passphrase, int passphraseLen) // throw eKeyFile()
+void cKeyFile::ChangePassphrase(int8* passphraseOld,
+                                int   passphraseOldLen,
+                                int8* passphrase,
+                                int   passphraseLen) // throw eKeyFile()
 {
     if (GetPrivateKey(passphraseOld, passphraseOldLen) == 0)
     {
@@ -455,7 +464,7 @@ const cElGamalSigPrivateKey* cKeyFile::GetPrivateKey(int8* passphrase, int passp
     {
         // generate cipher for decrypting private key
         cHashedKey192 desKey(passphrase, passphraseLen);
-        cTripleDES des;
+        cTripleDES    des;
         des.SetKey(iCipher::DECRYPT, desKey);
 
         ASSERT(des.GetBlockSizeCipher() == des.GetBlockSizePlain());
@@ -497,7 +506,7 @@ const cElGamalSigPrivateKey* cKeyFile::GetPrivateKey(int8* passphrase, int passp
         }
 
         mpPrivateKey = new cElGamalSigPrivateKey(plainPrivateKeyMem + cHashedKey128::GetWriteLen() + sizeof(int16));
-        
+
         RandomizeBytes(plainPrivateKeyMem, mPrivateKeyMemLen);
         delete [] plainPrivateKeyMem;
 
@@ -552,8 +561,8 @@ bool cPrivateKeyProxy::AquireKey(cKeyFile& keyFile, int8* passphrase, int passph
     }
 
     mpKeyFile = &keyFile;
-    mpKey = keyFile.GetPrivateKey(passphrase, passphraseLen);
-    
+    mpKey     = keyFile.GetPrivateKey(passphrase, passphraseLen);
+
     return mpKey != 0;
 }
 
@@ -577,4 +586,3 @@ const cElGamalSigPrivateKey* cPrivateKeyProxy::GetKey() const // throw eKeyFile(
 
     return mpKey;
 }
-

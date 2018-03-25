@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -56,49 +56,49 @@ public:
     cHeaderInfo();
     virtual ~cHeaderInfo();
     virtual void Clear();
-        //Clears all data in a header to 0 or NULL equivalents.
+    //Clears all data in a header to 0 or NULL equivalents.
 
     //Functions for getting & setting header values:
-    const TSTRING&      GetPolicyFilename() const;
-    const TSTRING&      GetConfigFilename() const;
-    const TSTRING&      GetDBFilename() const;
-    const TSTRING&      GetSystemName() const;
-    const TSTRING&      GetCommandLineParams() const;
-    const TSTRING&      GetIPAddress() const;
-    const TSTRING&      GetCreator() const;
-    const TSTRING&      GetHostID() const;
-    int64               GetCreationTime() const;
-    int64               GetLastDBUpdateTime() const;
+    const TSTRING& GetPolicyFilename() const;
+    const TSTRING& GetConfigFilename() const;
+    const TSTRING& GetDBFilename() const;
+    const TSTRING& GetSystemName() const;
+    const TSTRING& GetCommandLineParams() const;
+    const TSTRING& GetIPAddress() const;
+    const TSTRING& GetCreator() const;
+    const TSTRING& GetHostID() const;
+    int64          GetCreationTime() const;
+    int64          GetLastDBUpdateTime() const;
     //Set:
-    void                SetPolicyFilename( const TSTRING& );
-    void                SetConfigFilename( const TSTRING& );
-    void                SetDBFilename( const TSTRING& );
-    void                SetSystemName( const TSTRING& );
-    void                SetCommandLineParams( const TSTRING& );
-    void                SetIPAddress( const TSTRING& );
-    void                SetCreator( const TSTRING& );
-    void                SetHostID( const TSTRING& );
-    void                SetCreationTime( int64 );
-    void                SetLastDBUpdateTime( int64 );
-        
+    void SetPolicyFilename(const TSTRING&);
+    void SetConfigFilename(const TSTRING&);
+    void SetDBFilename(const TSTRING&);
+    void SetSystemName(const TSTRING&);
+    void SetCommandLineParams(const TSTRING&);
+    void SetIPAddress(const TSTRING&);
+    void SetCreator(const TSTRING&);
+    void SetHostID(const TSTRING&);
+    void SetCreationTime(int64);
+    void SetLastDBUpdateTime(int64);
+
     // iSerializable interface
-    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 private:
-    cHeaderInfo& operator=( cHeaderInfo& );
+    cHeaderInfo& operator=(cHeaderInfo&);
 
     //Header Data:
-    TSTRING             tstr_PolicyFilename;
-    TSTRING             tstr_ConfigFilename;
-    TSTRING             tstr_DBFilename;
-    TSTRING             tstr_SystemName;
-    TSTRING             tstr_CommandLineParams;
-    TSTRING             tstr_IPAddress;
-    TSTRING             tstr_CreatedBy;
-    TSTRING             tstr_HostID;
-    int64               i64_CreationTime;
-    mutable int64       i64_LastDBUpdateTime;   
+    TSTRING       tstr_PolicyFilename;
+    TSTRING       tstr_ConfigFilename;
+    TSTRING       tstr_DBFilename;
+    TSTRING       tstr_SystemName;
+    TSTRING       tstr_CommandLineParams;
+    TSTRING       tstr_IPAddress;
+    TSTRING       tstr_CreatedBy;
+    TSTRING       tstr_HostID;
+    int64         i64_CreationTime;
+    mutable int64 i64_LastDBUpdateTime;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,29 +108,29 @@ class cGenreHeaderInfo : public iTypedSerializable
 {
     DECLARE_TYPEDSERIALIZABLE()
 
-public:    
+public:
     cGenreHeaderInfo();
-    cGenreHeaderInfo( const cGenreHeaderInfo& );
+    cGenreHeaderInfo(const cGenreHeaderInfo&);
     virtual ~cGenreHeaderInfo();
 
     void Clear();
 
     // the prop displayer ... once this is set, this object owns the destruction of it.
-    void                        SetPropDisplayer(iFCOPropDisplayer* pPropDisplayer);
-            iFCOPropDisplayer*  GetPropDisplayer();
-    const   iFCOPropDisplayer*  GetPropDisplayer() const;
+    void                     SetPropDisplayer(iFCOPropDisplayer* pPropDisplayer);
+    iFCOPropDisplayer*       GetPropDisplayer();
+    const iFCOPropDisplayer* GetPropDisplayer() const;
 
-    void                SetObjectsScanned( int32 );
-    int32               GetObjectsScanned() const;
+    void  SetObjectsScanned(int32);
+    int32 GetObjectsScanned() const;
 
     // iSerializable interface
-    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 private:
-    cGenreHeaderInfo& operator=( cGenreHeaderInfo& );
+    cGenreHeaderInfo& operator=(cGenreHeaderInfo&);
 
-    iFCOPropDisplayer*  mpPropDisplayer;
-    int32               i32_ObjectsScanned;
+    iFCOPropDisplayer* mpPropDisplayer;
+    int32              i32_ObjectsScanned;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -141,10 +141,11 @@ class cFCODbGenreHeader : public cGenreHeaderInfo
 {
     DECLARE_TYPEDSERIALIZABLE()
 public:
-    cFCODbGenreHeader() {};
-    cFCODbGenreHeader( const cFCODbGenreHeader& rhs ) : cGenreHeaderInfo( rhs ) {};
+    cFCODbGenreHeader(){};
+    cFCODbGenreHeader(const cFCODbGenreHeader& rhs) : cGenreHeaderInfo(rhs){};
+
 private:
-    cFCODbGenreHeader& operator=( cFCODbGenreHeader& );
+    cFCODbGenreHeader& operator=(cFCODbGenreHeader&);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -154,13 +155,12 @@ private:
 class cFCOReportGenreHeader : public cGenreHeaderInfo
 {
 public:
-    cFCOReportGenreHeader() {};
-    cFCOReportGenreHeader( const cFCOReportGenreHeader& rhs ) : cGenreHeaderInfo( rhs ) {};
+    cFCOReportGenreHeader(){};
+    cFCOReportGenreHeader(const cFCOReportGenreHeader& rhs) : cGenreHeaderInfo(rhs){};
     DECLARE_TYPEDSERIALIZABLE()
 private:
-    cFCOReportGenreHeader& operator=( cFCOReportGenreHeader& );
+    cFCOReportGenreHeader& operator=(cFCOReportGenreHeader&);
 };
-
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -172,8 +172,9 @@ class cFCODbHeader : public cHeaderInfo
     DECLARE_TYPEDSERIALIZABLE()
 public:
     typedef cHeaderInfo inherited;
+
 private:
-    cFCODbHeader& operator=( cFCODbHeader& );
+    cFCODbHeader& operator=(cFCODbHeader&);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -185,7 +186,7 @@ class cFCOReportHeader : public cHeaderInfo
     typedef cHeaderInfo inherited;
     DECLARE_TYPEDSERIALIZABLE()
 private:
-    cFCOReportHeader& operator=( cFCOReportHeader& );
+    cFCOReportHeader& operator=(cFCOReportHeader&);
 };
 
 
@@ -193,34 +194,108 @@ private:
 // inline implementation
 //-----------------------------------------------------------------------------
 
-inline const TSTRING&   cHeaderInfo::GetPolicyFilename() const              { return tstr_PolicyFilename; };
-inline const TSTRING&   cHeaderInfo::GetConfigFilename() const              { return tstr_ConfigFilename; };
-inline const TSTRING&   cHeaderInfo::GetDBFilename() const                  { return tstr_DBFilename; };
-inline const TSTRING&   cHeaderInfo::GetSystemName() const                  { return tstr_SystemName; };
-inline const TSTRING&   cHeaderInfo::GetCommandLineParams() const           { return tstr_CommandLineParams; };
-inline const TSTRING&   cHeaderInfo::GetCreator() const                     { return tstr_CreatedBy; };
-inline const TSTRING&   cHeaderInfo::GetIPAddress() const                   { return tstr_IPAddress; };
-inline const TSTRING&   cHeaderInfo::GetHostID() const                      { return tstr_HostID; };
-inline int64            cHeaderInfo::GetCreationTime() const                { return i64_CreationTime; };
-inline int64            cHeaderInfo::GetLastDBUpdateTime() const            { return i64_LastDBUpdateTime; };
+inline const TSTRING& cHeaderInfo::GetPolicyFilename() const
+{
+    return tstr_PolicyFilename;
+};
+inline const TSTRING& cHeaderInfo::GetConfigFilename() const
+{
+    return tstr_ConfigFilename;
+};
+inline const TSTRING& cHeaderInfo::GetDBFilename() const
+{
+    return tstr_DBFilename;
+};
+inline const TSTRING& cHeaderInfo::GetSystemName() const
+{
+    return tstr_SystemName;
+};
+inline const TSTRING& cHeaderInfo::GetCommandLineParams() const
+{
+    return tstr_CommandLineParams;
+};
+inline const TSTRING& cHeaderInfo::GetCreator() const
+{
+    return tstr_CreatedBy;
+};
+inline const TSTRING& cHeaderInfo::GetIPAddress() const
+{
+    return tstr_IPAddress;
+};
+inline const TSTRING& cHeaderInfo::GetHostID() const
+{
+    return tstr_HostID;
+};
+inline int64 cHeaderInfo::GetCreationTime() const
+{
+    return i64_CreationTime;
+};
+inline int64 cHeaderInfo::GetLastDBUpdateTime() const
+{
+    return i64_LastDBUpdateTime;
+};
 
-inline void             cHeaderInfo::SetPolicyFilename( const TSTRING& tstr )       { tstr_PolicyFilename = tstr; };
-inline void             cHeaderInfo::SetConfigFilename( const TSTRING& tstr )       { tstr_ConfigFilename = tstr; };
-inline void             cHeaderInfo::SetDBFilename( const TSTRING& tstr )           { tstr_DBFilename = tstr; };
-inline void             cHeaderInfo::SetSystemName( const TSTRING& name )           { tstr_SystemName = name; };
-inline void             cHeaderInfo::SetCommandLineParams( const TSTRING& tstr )    { tstr_CommandLineParams = tstr; };
-inline void             cHeaderInfo::SetCreator( const TSTRING& tstr )              { tstr_CreatedBy = tstr; };
-inline void             cHeaderInfo::SetHostID( const TSTRING& tstr )               { tstr_HostID = tstr; };
-inline void             cHeaderInfo::SetIPAddress( const TSTRING& tstr )            { tstr_IPAddress = tstr; };
-inline void             cHeaderInfo::SetCreationTime( int64 i )                     { i64_CreationTime = i; };
-inline void             cHeaderInfo::SetLastDBUpdateTime( int64 i )                 { i64_LastDBUpdateTime = i; };
+inline void cHeaderInfo::SetPolicyFilename(const TSTRING& tstr)
+{
+    tstr_PolicyFilename = tstr;
+};
+inline void cHeaderInfo::SetConfigFilename(const TSTRING& tstr)
+{
+    tstr_ConfigFilename = tstr;
+};
+inline void cHeaderInfo::SetDBFilename(const TSTRING& tstr)
+{
+    tstr_DBFilename = tstr;
+};
+inline void cHeaderInfo::SetSystemName(const TSTRING& name)
+{
+    tstr_SystemName = name;
+};
+inline void cHeaderInfo::SetCommandLineParams(const TSTRING& tstr)
+{
+    tstr_CommandLineParams = tstr;
+};
+inline void cHeaderInfo::SetCreator(const TSTRING& tstr)
+{
+    tstr_CreatedBy = tstr;
+};
+inline void cHeaderInfo::SetHostID(const TSTRING& tstr)
+{
+    tstr_HostID = tstr;
+};
+inline void cHeaderInfo::SetIPAddress(const TSTRING& tstr)
+{
+    tstr_IPAddress = tstr;
+};
+inline void cHeaderInfo::SetCreationTime(int64 i)
+{
+    i64_CreationTime = i;
+};
+inline void cHeaderInfo::SetLastDBUpdateTime(int64 i)
+{
+    i64_LastDBUpdateTime = i;
+};
 
-inline void                     cGenreHeaderInfo::SetPropDisplayer(iFCOPropDisplayer* pPropDisplayer) { mpPropDisplayer = pPropDisplayer; }
-inline iFCOPropDisplayer*       cGenreHeaderInfo::GetPropDisplayer()        { return mpPropDisplayer; }
-inline const iFCOPropDisplayer* cGenreHeaderInfo::GetPropDisplayer() const  { return mpPropDisplayer; }
-inline void                     cGenreHeaderInfo::SetObjectsScanned( int32 i ) { i32_ObjectsScanned = i; };
-inline int32                    cGenreHeaderInfo::GetObjectsScanned() const    { return i32_ObjectsScanned; };
+inline void cGenreHeaderInfo::SetPropDisplayer(iFCOPropDisplayer* pPropDisplayer)
+{
+    mpPropDisplayer = pPropDisplayer;
+}
+inline iFCOPropDisplayer* cGenreHeaderInfo::GetPropDisplayer()
+{
+    return mpPropDisplayer;
+}
+inline const iFCOPropDisplayer* cGenreHeaderInfo::GetPropDisplayer() const
+{
+    return mpPropDisplayer;
+}
+inline void cGenreHeaderInfo::SetObjectsScanned(int32 i)
+{
+    i32_ObjectsScanned = i;
+};
+inline int32 cGenreHeaderInfo::GetObjectsScanned() const
+{
+    return i32_ObjectsScanned;
+};
 
 
 #endif //__HEADERINFO_H
-

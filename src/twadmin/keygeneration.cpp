@@ -3,34 +3,34 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
 ///////////////////////////////////////////////////////////////////////////////
-// keygeneration.cpp 
+// keygeneration.cpp
 //
 
 #include "stdtwadmin.h"
@@ -44,28 +44,28 @@
 
 struct tGK
 {
-    bool    doneFlag;
-    int     retValue;
-    int8*   passphrase;
-    int     passphraseLen;
+    bool         doneFlag;
+    int          retValue;
+    int8*        passphrase;
+    int          passphraseLen;
     const TCHAR* keyPath;
 
     enum ReturnValue
     {
-        OK = 0,
-        INVALIDPARAM = 1,
+        OK               = 0,
+        INVALIDPARAM     = 1,
         GENERATION_ERROR = 2,
         FILE_WRITE_ERROR = 3,
         LAST
     };
 
-    tGK() 
+    tGK()
     {
-        doneFlag = false;
-        retValue = 0;
-        passphrase = 0;
+        doneFlag      = false;
+        retValue      = 0;
+        passphrase    = 0;
         passphraseLen = 0;
-        keyPath = 0;
+        keyPath       = 0;
     }
 };
 
@@ -73,28 +73,27 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
 {
     tGK* pGK = (tGK*)pParams;
 
-    if (pGK->doneFlag != false ||
-        pGK->keyPath == 0 ||
-        _tcslen(pGK->keyPath) == 0)
+    if (pGK->doneFlag != false || pGK->keyPath == 0 || _tcslen(pGK->keyPath) == 0)
     {
         pGK->retValue = tGK::INVALIDPARAM;
         pGK->doneFlag = true;
         return;
     }
 
-    try {
+    try
+    {
         cKeyFile keyfile;
 
 #ifdef DEBUG
         cDebug d("GeneratePublicPrivateKeys");
         d.TraceDebug("calling keyfile.GenerateKeys()\n");
 #endif
-        
+
         try
         {
             keyfile.GenerateKeys(key_size, pGK->passphrase, pGK->passphraseLen);
         }
-        catch(eKeyFile&)
+        catch (eKeyFile&)
         {
             pGK->retValue = tGK::GENERATION_ERROR;
             pGK->doneFlag = true;
@@ -109,14 +108,14 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
         {
             keyfile.WriteFile(pGK->keyPath);
         }
-        catch(eKeyFile&)
+        catch (eKeyFile&)
         {
             pGK->retValue = tGK::FILE_WRITE_ERROR;
             pGK->doneFlag = true;
             return;
         }
     }
-    catch(eError& e)
+    catch (eError& e)
     {
         (void)e;
         pGK->retValue = tGK::GENERATION_ERROR;
@@ -137,18 +136,19 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
 
 #ifdef DEBUG
     // test reading in the keys
-    wc16_string passphrase_copy = passphrase.c_str();
+    wc16_string passphrase_copy  = passphrase.c_str();
     wc16_string passphrase_copy2 = passphrase.c_str();
 #endif
 
-    iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_GENERATING_KEYS).c_str());
+    iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL,
+                                       TSS_GetString(cTWAdmin, twadmin::STR_GENERATING_KEYS).c_str());
 
     fflush(stdout);
 
     tGK gk;
-    gk.passphrase = (int8*)passphrase.data();
+    gk.passphrase    = (int8*)passphrase.data();
     gk.passphraseLen = passphrase.length() * sizeof(WCHAR16);
-    gk.keyPath = keyPath;
+    gk.keyPath       = keyPath;
 
     GeneratePublicPrivateKeys(&gk, key_size);
 
@@ -157,11 +157,13 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
         switch (gk.retValue)
         {
         case tGK::FILE_WRITE_ERROR:
-            TCERR << std::endl << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN_FILEWRITE) << gk.keyPath << std::endl;
+            TCERR << std::endl
+                  << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN_FILEWRITE) << gk.keyPath << std::endl;
             break;
 
         default:
-            TCERR << std::endl << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN) << gk.keyPath 
+            TCERR << std::endl
+                  << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN) << gk.keyPath
                   << TSS_GetString(cTWAdmin, twadmin::STR_ERR2_KEYGEN2) << std::endl;
             break;
         }
@@ -181,7 +183,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     //keyfile.WriteFile(_T("tripwire2.key"));
 
     // test memory writing
-    int8    mem[4000];
+    int8 mem[4000];
     ASSERT(4000 > keyfile.GetWriteLen());
 
     keyfile.WriteMem(mem);
@@ -193,8 +195,8 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     k2.ReleasePrivateKey();
 #endif
 
-    iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL, TSS_GetString(cTWAdmin, twadmin::STR_GENERATION_COMPLETE).c_str());
+    iUserNotify::GetInstance()->Notify(iUserNotify::V_NORMAL,
+                                       TSS_GetString(cTWAdmin, twadmin::STR_GENERATION_COMPLETE).c_str());
 
     return true;
 }
-

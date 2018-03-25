@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -49,83 +49,95 @@ public:
     explicit cByteQueueNode(unsigned int maxSize);
 
     unsigned int CurrentSize() const
-        {return tail-head;}
+    {
+        return tail - head;
+    }
     unsigned int UsedUp() const
-        {return (head==MaxSize());}
+    {
+        return (head == MaxSize());
+    }
 
     unsigned int Put(byte inByte);
-    unsigned int Put(const byte *inString, unsigned int length);
+    unsigned int Put(const byte* inString, unsigned int length);
 
-    unsigned int Get(byte &outByte);
-    unsigned int Get(byte *outString, unsigned int getMax);
+    unsigned int Get(byte& outByte);
+    unsigned int Get(byte* outString, unsigned int getMax);
 
-    unsigned int Peek(byte &outByte) const;
+    unsigned int Peek(byte& outByte) const;
 
-    void CopyTo(BufferedTransformation &target) const
-        {target.Put(buf+head, tail-head);}
-    void CopyTo(byte *target) const
-        {memcpy(target, buf+head, tail-head);}
+    void CopyTo(BufferedTransformation& target) const
+    {
+        target.Put(buf + head, tail - head);
+    }
+    void CopyTo(byte* target) const
+    {
+        memcpy(target, buf + head, tail - head);
+    }
 
     byte operator[](unsigned int i) const
-        {return buf[i-head];}
+    {
+        return buf[i - head];
+    }
 
-    cByteQueueNode *next;
+    cByteQueueNode* next;
 
 private:
-    unsigned int MaxSize() const {return buf.size;}
+    unsigned int MaxSize() const
+    {
+        return buf.size;
+    }
 
     SecByteBlock buf;
     unsigned int head, tail;
 };
 
 
-cByteQueueNode::cByteQueueNode(unsigned int maxSize)
-    : buf(maxSize)
+cByteQueueNode::cByteQueueNode(unsigned int maxSize) : buf(maxSize)
 {
     head = tail = 0;
-    next = 0;
+    next        = 0;
 }
 
 unsigned int cByteQueueNode::Put(byte inByte)
 {
-    if (MaxSize()==tail)
+    if (MaxSize() == tail)
         return 0;
 
-    buf[tail++]=inByte;
+    buf[tail++] = inByte;
     return 1;
 }
 
-unsigned int cByteQueueNode::Put(const byte *inString, unsigned int length)
+unsigned int cByteQueueNode::Put(const byte* inString, unsigned int length)
 {
-    unsigned int l = STDMIN(length, MaxSize()-tail);
-    memcpy(buf+tail, inString, l);
+    unsigned int l = STDMIN(length, MaxSize() - tail);
+    memcpy(buf + tail, inString, l);
     tail += l;
     return l;
 }
 
-unsigned int cByteQueueNode::Get(byte &outByte)
+unsigned int cByteQueueNode::Get(byte& outByte)
 {
-    if (tail==head)
+    if (tail == head)
         return 0;
 
-    outByte=buf[head++];
+    outByte = buf[head++];
     return 1;
 }
 
-unsigned int cByteQueueNode::Get(byte *outString, unsigned int getMax)
+unsigned int cByteQueueNode::Get(byte* outString, unsigned int getMax)
 {
-    unsigned int l = STDMIN(getMax, tail-head);
-    memcpy(outString, buf+head, l);
+    unsigned int l = STDMIN(getMax, tail - head);
+    memcpy(outString, buf + head, l);
     head += l;
     return l;
 }
 
-unsigned int cByteQueueNode::Peek(byte &outByte) const
+unsigned int cByteQueueNode::Peek(byte& outByte) const
 {
-    if (tail==head)
+    if (tail == head)
         return 0;
 
-    outByte=buf[head];
+    outByte = buf[head];
     return 1;
 }
 
@@ -133,30 +145,27 @@ unsigned int cByteQueueNode::Peek(byte &outByte) const
 // cByteQueue
 //-----------------------------------------------------------------------------
 
-cByteQueue::cByteQueue(int nodeSize)
-    :   BufferedTransformation(),
-        mNodeSize(nodeSize),
-        mCurrentSize(0)
+cByteQueue::cByteQueue(int nodeSize) : BufferedTransformation(), mNodeSize(nodeSize), mCurrentSize(0)
 {
     head = tail = new cByteQueueNode(mNodeSize);
 }
 
-cByteQueue::cByteQueue(const cByteQueue &copy) : BufferedTransformation()
+cByteQueue::cByteQueue(const cByteQueue& copy) : BufferedTransformation()
 {
     CopyFrom(copy);
 }
 
-void cByteQueue::CopyFrom(const cByteQueue &copy)
+void cByteQueue::CopyFrom(const cByteQueue& copy)
 {
-    mNodeSize       = copy.mNodeSize;
-    mCurrentSize    = copy.mCurrentSize;
+    mNodeSize    = copy.mNodeSize;
+    mCurrentSize = copy.mCurrentSize;
 
     head = tail = new cByteQueueNode(*copy.head);
 
-    for (cByteQueueNode *current=copy.head->next; current; current=current->next)
+    for (cByteQueueNode* current = copy.head->next; current; current = current->next)
     {
         tail->next = new cByteQueueNode(*current);
-        tail = tail->next;
+        tail       = tail->next;
     }
 
     tail->next = NULL;
@@ -169,11 +178,11 @@ cByteQueue::~cByteQueue()
 
 void cByteQueue::Destroy()
 {
-    cByteQueueNode *next;
+    cByteQueueNode* next;
 
-    for (cByteQueueNode *current=head; current; current=next)
+    for (cByteQueueNode* current = head; current; current = next)
     {
-        next=current->next;
+        next = current->next;
         delete current;
     }
 
@@ -183,15 +192,15 @@ void cByteQueue::Destroy()
 ///////////////////////////////////////////////////////////////////////////////
 // CopyTo -- note that this does not remove anything from the queue
 ///////////////////////////////////////////////////////////////////////////////
-void cByteQueue::CopyTo(BufferedTransformation &target) const
+void cByteQueue::CopyTo(BufferedTransformation& target) const
 {
-    for (cByteQueueNode *current=head; current; current=current->next)
+    for (cByteQueueNode* current = head; current; current = current->next)
         current->CopyTo(target);
 }
 
-void cByteQueue::CopyTo(byte *target) const
+void cByteQueue::CopyTo(byte* target) const
 {
-    for (cByteQueueNode *current=head; current; current=current->next)
+    for (cByteQueueNode* current = head; current; current = current->next)
     {
         current->CopyTo(target);
         target += current->CurrentSize();
@@ -216,38 +225,38 @@ void cByteQueue::Put(byte inByte)
     if (!tail->Put(inByte))
     {
         tail->next = new cByteQueueNode(mNodeSize);
-        tail = tail->next;
+        tail       = tail->next;
         tail->Put(inByte);
     }
     // put increases the size of the queue by one
     mCurrentSize++;
 }
 
-void cByteQueue::Put(const byte *inString, unsigned int length)
+void cByteQueue::Put(const byte* inString, unsigned int length)
 {
     unsigned int l;
 
     // put increases the size of the queue by length
     mCurrentSize += length;
 
-    while ((l=tail->Put(inString, length)) < length)
+    while ((l = tail->Put(inString, length)) < length)
     {
         tail->next = new cByteQueueNode(mNodeSize);
-        tail = tail->next;
+        tail       = tail->next;
         inString += l;
         length -= l;
     }
 }
 
-unsigned int cByteQueue::Get(byte &outByte)
+unsigned int cByteQueue::Get(byte& outByte)
 {
     int l = head->Get(outByte);
     if (head->UsedUp())
     {
-        cByteQueueNode *temp=head;
-        head = head->next;
+        cByteQueueNode* temp = head;
+        head                 = head->next;
         delete temp;
-        if (!head)  // just deleted the last node
+        if (!head) // just deleted the last node
             head = tail = new cByteQueueNode(mNodeSize);
     }
     // put decreases the size of the queue by one
@@ -256,14 +265,14 @@ unsigned int cByteQueue::Get(byte &outByte)
     return l;
 }
 
-unsigned int cByteQueue::Get(byte *outString, unsigned int getMax)
+unsigned int cByteQueue::Get(byte* outString, unsigned int getMax)
 {
-    unsigned int getMaxSave=getMax;
-    cByteQueueNode *current=head;
+    unsigned int    getMaxSave = getMax;
+    cByteQueueNode* current    = head;
 
     while (getMax && current)
     {
-        int l=current->Get(outString, getMax);
+        int l = current->Get(outString, getMax);
 
         outString += l;
         getMax -= l;
@@ -275,8 +284,8 @@ unsigned int cByteQueue::Get(byte *outString, unsigned int getMax)
     // that used to be below....
     while (head && head->UsedUp() && (head != tail))
     {
-        current=head;
-        head=head->next;
+        current = head;
+        head    = head->next;
         delete current;
     }
 
@@ -285,32 +294,32 @@ unsigned int cByteQueue::Get(byte *outString, unsigned int getMax)
         head = tail = new cByteQueueNode(mNodeSize);
     */
 
-    int rtn = getMaxSave-getMax;
+    int rtn = getMaxSave - getMax;
     mCurrentSize -= rtn;
 
     return (rtn);
 }
 
-unsigned int cByteQueue::Peek(byte &outByte) const
+unsigned int cByteQueue::Peek(byte& outByte) const
 {
     return head->Peek(outByte);
 }
 
-cByteQueue & cByteQueue::operator=(const cByteQueue &rhs)
+cByteQueue& cByteQueue::operator=(const cByteQueue& rhs)
 {
     Destroy();
     CopyFrom(rhs);
     return *this;
 }
 
-bool cByteQueue::operator==(const cByteQueue &rhs) const
+bool cByteQueue::operator==(const cByteQueue& rhs) const
 {
     const unsigned long currentSize = CurrentSize();
 
     if (currentSize != rhs.CurrentSize())
         return false;
 
-    for (unsigned long i = 0; i<currentSize; i++)
+    for (unsigned long i = 0; i < currentSize; i++)
         if ((*this)[i] != rhs[i])
             return false;
 
@@ -319,11 +328,11 @@ bool cByteQueue::operator==(const cByteQueue &rhs) const
 
 byte cByteQueue::operator[](unsigned long i) const
 {
-    for (cByteQueueNode *current=head; current; current=current->next)
+    for (cByteQueueNode* current = head; current; current = current->next)
     {
         if (i < current->CurrentSize())
             return (*current)[i];
-        
+
         i -= current->CurrentSize();
     }
 
@@ -331,4 +340,3 @@ byte cByteQueue::operator[](unsigned long i) const
     assert(false);
     return 0;
 }
-

@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -54,8 +54,7 @@ void TestSizes();
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL FUNCTION PROTOTYPES
 /////////////////////////////////////////////////////////
-template< class E, class T >
-bool CanBeRepresentedAs( E e, T t );
+template<class E, class T> bool CanBeRepresentedAs(E e, T t);
 
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL CLASSES DECLARATIONS
@@ -63,21 +62,20 @@ bool CanBeRepresentedAs( E e, T t );
 
 // Constructing this class will write to a memory location
 // offset by ALIGN_SIZE.  If it chokes, you'll get a bus error
-template<int ALIGN_SIZE> 
-class AlignMe
+template<int ALIGN_SIZE> class AlignMe
 {
-    public:
-        AlignMe();
-    private:
-        byte a[sizeof(int64)+ALIGN_SIZE];  // we want to be able to access a int64 at address [ALIGN_SIZE]
+public:
+    AlignMe();
+
+private:
+    byte a[sizeof(int64) + ALIGN_SIZE]; // we want to be able to access a int64 at address [ALIGN_SIZE]
 };
 
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL CLASSES IMPLEMENTATIONS
 /////////////////////////////////////////////////////////
 
-template<int ALIGN_SIZE> 
-AlignMe<ALIGN_SIZE>::AlignMe()
+template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
 {
 // HP-UX does not play your silly alignment games, at least unless you
 // first invoke something called "allow_unaligned_data_access()", which
@@ -90,8 +88,8 @@ AlignMe<ALIGN_SIZE>::AlignMe()
 
     // access a double in the byte array to see if it is aligned.  if it isn't and the CPU
     // can't handle it, you'll get a bus error
-    
-    // this should choke if the CPU can't 
+
+    // this should choke if the CPU can't
     // handle misaligned memory access
     int32* pi = (int32*)&a[ALIGN_SIZE];
     //TCOUT << _T("Testing alignment of an int32...") << std::endl;
@@ -103,7 +101,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     TCOUT << _T("Write succeeded.") << std::endl;
 
 
-    // this should choke if the CPU can't 
+    // this should choke if the CPU can't
     // handle misaligned memory access
     int64* pb = (int64*)&a[ALIGN_SIZE];
     //TCOUT << _T("Testing alignment of an int64...") << std::endl;
@@ -114,7 +112,7 @@ AlignMe<ALIGN_SIZE>::AlignMe()
     *pb = I; // access memory for write
     //TCOUT << _T("Write succeeded.") << std::endl;
 
-    
+
     /*TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
           << _T("=========================================\n"); */
 
@@ -130,72 +128,72 @@ AlignMe<ALIGN_SIZE>::AlignMe()
 
 void TestAlignment()
 {
-    // - - - - - - - - - - - - - - - - - - - - - -  
+    // - - - - - - - - - - - - - - - - - - - - - -
     // empirically determine byte alignment -- see AlignMe definition
-    // The last AlignMe to be successfully constructed 
-    // - - - - - - - - - - - - - - - - - - - - - -  
+    // The last AlignMe to be successfully constructed
+    // - - - - - - - - - - - - - - - - - - - - - -
 
-//    TCOUT << _T("Testing for byte alignment\n")
-//          << _T("=========================================\n");
+    //    TCOUT << _T("Testing for byte alignment\n")
+    //          << _T("=========================================\n");
 
     AlignMe<128> a128;
-    AlignMe<64> a64;
-    AlignMe<32> a32;
-    AlignMe<16> a16;
-    AlignMe<8> a8;
-    AlignMe<4> a4;
-    AlignMe<2> a2;
-    AlignMe<1> a1;
+    AlignMe<64>  a64;
+    AlignMe<32>  a32;
+    AlignMe<16>  a16;
+    AlignMe<8>   a8;
+    AlignMe<4>   a4;
+    AlignMe<2>   a2;
+    AlignMe<1>   a1;
 
-    // - - - - - - - - - - - - - - - - - - - - - -  
-    // test a misaligned memory access -- if this 
+    // - - - - - - - - - - - - - - - - - - - - - -
+    // test a misaligned memory access -- if this
     // chokes, your CPU can't handle such accesses
     // (if it works, your CPU may still not handle
-    // such accesses: it may have handled the 
+    // such accesses: it may have handled the
     // hardware interrupt that might have occured.
-    // - - - - - - - - - - - - - - - - - - - - - -  
-    byte a[sizeof(int32)+sizeof(byte)];
+    // - - - - - - - - - - - - - - - - - - - - - -
+    byte a[sizeof(int32) + sizeof(byte)];
 
     // this should be fine
     a[0] = 0xAB;
 
-    
-/*    TCOUT << _T("=========================================\n")
+
+    /*    TCOUT << _T("=========================================\n")
           << _T("About to test memory access off by 1 byte\n") 
           << _T("If you do not see a confirmation after this line, the test choked") 
           << std::endl; */
 
-    // this should choke if the CPU can't 
-    // handle misaligned memory access        
+    // this should choke if the CPU can't
+    // handle misaligned memory access
     int32* pi = (int32*)&a[1];
-    *pi = *pi; // misaligned access (read and write)
-    
+    *pi       = *pi; // misaligned access (read and write)
+
     TCOUT << _T("Misaligned access OK.") << std::endl;
     TEST("Misaligned ok"); //again, the test is not exploding up above
 
-    // - - - - - - - - - - - - - - - - - - - - - -  
+    // - - - - - - - - - - - - - - - - - - - - - -
     // make sure our BYTE_ALIGN value is correct --
     // OK, if the above test failed, then comment it out and try this one.
     // if it works, then our BYTE_ALIGN value is large enough
-    // - - - - - - - - - - - - - - - - - - - - - - 
-    
-    byte b[2*sizeof(BYTE_ALIGN)];
+    // - - - - - - - - - - - - - - - - - - - - - -
+
+    byte b[2 * sizeof(BYTE_ALIGN)];
 
     // this should be fine
     b[0] = 0xAB;
 
-/*    TCOUT << _T("=========================================\n")
+    /*    TCOUT << _T("=========================================\n")
           << _T("About to test memory access off by ") << BYTE_ALIGN 
           << _T(" ") << ( BYTE_ALIGN == 1 ? _T("byte") : _T("bytes") ) << std::endl
           << _T("If you do not see a confirmation after this line, the test choked") 
           << std::endl;
 */
-    // this should choke if the CPU can't 
-    // handle misaligned memory access        
-    pi = (int32*)&b[BYTE_ALIGN];
+    // this should choke if the CPU can't
+    // handle misaligned memory access
+    pi  = (int32*)&b[BYTE_ALIGN];
     *pi = *pi; // aligned (hopefully) access (read and write)
-    
-/*    TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;
+
+    /*    TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;
     TCOUT << _T("=========================================\n");
     TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up. */
 }
@@ -204,34 +202,33 @@ void TestAlignment()
 // work the way we think they do.
 void TestSizes()
 {
-    TEST( CanBeRepresentedAs( int8(), int8() ) );
-    TEST( ! CanBeRepresentedAs( int8(), uint8() ) );
-    TEST( ! CanBeRepresentedAs( uint8(), int8() ) );
-    TEST( CanBeRepresentedAs( uint8(), uint8() ) );
+    TEST(CanBeRepresentedAs(int8(), int8()));
+    TEST(!CanBeRepresentedAs(int8(), uint8()));
+    TEST(!CanBeRepresentedAs(uint8(), int8()));
+    TEST(CanBeRepresentedAs(uint8(), uint8()));
 
-    TEST( CanBeRepresentedAs( int8(),  int16() ) );
-    TEST( CanBeRepresentedAs( int16(), int32() ) );
-    TEST( CanBeRepresentedAs( int32(), int64() ) );
+    TEST(CanBeRepresentedAs(int8(), int16()));
+    TEST(CanBeRepresentedAs(int16(), int32()));
+    TEST(CanBeRepresentedAs(int32(), int64()));
 
-    TEST( CanBeRepresentedAs( uint8(),  uint16() ) );
-    TEST( CanBeRepresentedAs( uint16(), uint32() ) );
-    TEST( CanBeRepresentedAs( uint32(), uint64() ) );
+    TEST(CanBeRepresentedAs(uint8(), uint16()));
+    TEST(CanBeRepresentedAs(uint16(), uint32()));
+    TEST(CanBeRepresentedAs(uint32(), uint64()));
 }
 
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL FUNCTION IMPEMENTATIONS
-/////////////////////////////////////////////////////////   
+/////////////////////////////////////////////////////////
 
-template< class E, class T >
-bool CanBeRepresentedAs( E e, T t )
+template<class E, class T> bool CanBeRepresentedAs(E e, T t)
 {
-    ASSERT( std::numeric_limits< E >::is_specialized );
-    ASSERT( std::numeric_limits< T >::is_specialized );
+    ASSERT(std::numeric_limits<E>::is_specialized);
+    ASSERT(std::numeric_limits<T>::is_specialized);
 
     bool fReturn = true;
 
-    fReturn &= ( std::numeric_limits< E >::min() >= std::numeric_limits< T >::min() );
-    fReturn &= ( std::numeric_limits< E >::max() <= std::numeric_limits< T >::max() );
+    fReturn &= (std::numeric_limits<E>::min() >= std::numeric_limits<T>::min());
+    fReturn &= (std::numeric_limits<E>::max() <= std::numeric_limits<T>::max());
 
     return fReturn;
 }
@@ -307,14 +304,14 @@ void TestPlatformDetection()
 {
 #if HAVE_SYS_UTSNAME_H
     struct utsname os_info;
-    TEST( uname(&os_info) == 0);
+    TEST(uname(&os_info) == 0);
 
     TSTRING observed_os(os_info.sysname);
 
-    if ( observed_os != expected_os )
+    if (observed_os != expected_os)
         TCERR << "Expected OS: " << expected_os << " | Observed OS: " << observed_os << std::endl;
 
-    TEST( observed_os == expected_os );
+    TEST(observed_os == expected_os);
 #endif
 }
 

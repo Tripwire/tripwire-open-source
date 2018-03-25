@@ -3,29 +3,29 @@
 // Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -49,34 +49,34 @@
 #include "file.h"
 #include "stringutil.h"
 
-#include "corestrings.h"    // for: STR_ERR2_ARCH_CRYPTO_ERR
+#include "corestrings.h" // for: STR_ERR2_ARCH_CRYPTO_ERR
 
 //=============================================================================
 // eArchiveCrypto
 //=============================================================================
-TSTRING eArchiveCrypto::GetMsg( ) const
+TSTRING eArchiveCrypto::GetMsg() const
 {
     // RAD: Updated this to use new stringtable
-    return ( mMsg + TSS_GetString( cCore, core::STR_ERR2_ARCH_CRYPTO_ERR ) );
+    return (mMsg + TSS_GetString(cCore, core::STR_ERR2_ARCH_CRYPTO_ERR));
 }
 
 
 //=============================================================================
-// cArchive 
+// cArchive
 //=============================================================================
 
 // convenience methods
 //
 // Specific Read functions throw eArchive if EOF is reached because
-// if the caller is requesting a certain amount of data to be present, 
+// if the caller is requesting a certain amount of data to be present,
 // reaching EOF is unexpected
 //
 // ReadBlob and WriteBlob return number of bytes read or written.  Notice
 // that ReadBlob does not throw an exception since eventually EOF is expected.
 //
 // ReadBlob can take NULL as a destination pointer
-// 
-// All write functions throw exceptions for unexpected events like 
+//
+// All write functions throw exceptions for unexpected events like
 // running out of memory or disk space.
 //
 
@@ -105,7 +105,7 @@ void cArchive::ReadInt64(int64& ret) // throw(eArchive)
 }
 
 // NOTE:BAM 10/11/99 -- we store unsigned size, but it really only works with
-// lengths < INT16_MAX due to sign extension in integral promotion during the 
+// lengths < INT16_MAX due to sign extension in integral promotion during the
 // resize() in ReadString().
 // format for written string: 16-bit unsigned size, then a list of 16-bit UCS2 (Unicode) characters
 // not including terminating NULL
@@ -113,25 +113,25 @@ void cArchive::ReadString(TSTRING& ret) // throw(eArchive)
 {
     // read in size of string
     int16 size;
-    ReadInt16( size );
+    ReadInt16(size);
 
     // create buffer for WCHAR16 string
     wc16_string ws;
-    ws.resize( size );
+    ws.resize(size);
     WCHAR16* pwc = (WCHAR16*)ws.data();
 
-    for( int n = 0; n < size; n++ )
+    for (int n = 0; n < size; n++)
     {
         int16 i16;
-        ReadInt16( i16 );
+        ReadInt16(i16);
         *pwc++ = i16;
     }
 
     // convert WCHAR16 string to a TSTRING
-    ret = cStringUtil::WstrToTstr( ws );
+    ret = cStringUtil::WstrToTstr(ws);
 }
 
-int  cArchive::ReadBlob(void* pBlob, int count)
+int cArchive::ReadBlob(void* pBlob, int count)
 {
     return Read(pBlob, count);
 }
@@ -155,7 +155,7 @@ void cArchive::WriteInt64(int64 i) // throw(eArchive)
 }
 
 // NOTE:BAM 10/11/99 -- we store unsigned size, but it really only works with
-// lengths < INT16_MAX due to sign extension in integral promotion during the 
+// lengths < INT16_MAX due to sign extension in integral promotion during the
 // resize() in ReadString().
 // format for written string: 16-bit unsigned size, then a list of 16-bit UCS2 (Unicode) characters
 // not including terminating NULL
@@ -163,20 +163,20 @@ void cArchive::WriteString(TSTRING s) // throw(eArchive)
 {
     // convert string to a UCS2 string
     wc16_string ws;
-    cStringUtil::Convert( ws, s );  // Make convert "type-dispatched"
+    cStringUtil::Convert(ws, s); // Make convert "type-dispatched"
 
-    // we assume that we can represent the size as a unsigned 16-bit number    
+    // we assume that we can represent the size as a unsigned 16-bit number
     // (we actually write  it as a signed number, but we cast it)
-    if( ws.length() > TSS_INT16_MAX )
-        ThrowAndAssert( eArchiveStringTooLong() );
+    if (ws.length() > TSS_INT16_MAX)
+        ThrowAndAssert(eArchiveStringTooLong());
 
-    WriteInt16( static_cast<int16>( ws.length() ) );
+    WriteInt16(static_cast<int16>(ws.length()));
 
     // write out each 16 bit character
     // RAD:09/03/99 -- Optimized for performance with "const"
     wc16_string::const_iterator at = ws.begin();
-    while ( at != ws.end() )
-        WriteInt16( *at++ );
+    while (at != ws.end())
+        WriteInt16(*at++);
 }
 
 
@@ -190,27 +190,30 @@ int32 cArchive::GetStorageSize(const TSTRING& str)
 {
     int32 size = sizeof(int32); // the length is always stored
     //
-    // after the length, all of the characters in the string are written as 16-bit values, 
+    // after the length, all of the characters in the string are written as 16-bit values,
     // except for the null character
     //
-    size += ( str.length() * 2 );
+    size += (str.length() * 2);
 
     return size;
 }
 
 int64 cArchive::Copy(cArchive* pFrom, int64 amt)
 {
-    enum { BUF_SIZE = 2048 };
-    int8    buf[BUF_SIZE];
-    int64   amtLeft = amt;
+    enum
+    {
+        BUF_SIZE = 2048
+    };
+    int8  buf[BUF_SIZE];
+    int64 amtLeft = amt;
 
-    while(amtLeft > 0)
+    while (amtLeft > 0)
     {
         int64 amtToRead = amtLeft > (int64)BUF_SIZE ? (int64)BUF_SIZE : amtLeft;
-        int64 amtRead = pFrom->ReadBlob(buf, static_cast<int>( amtToRead ) );
+        int64 amtRead   = pFrom->ReadBlob(buf, static_cast<int>(amtToRead));
         amtLeft -= amtRead;
-        WriteBlob(buf, static_cast<int>( amtRead ) );
-        if(amtRead < amtToRead)
+        WriteBlob(buf, static_cast<int>(amtRead));
+        if (amtRead < amtToRead)
             break;
     }
 
@@ -224,7 +227,7 @@ int64 cArchive::Copy(cArchive* pFrom, int64 amt)
 
 cMemMappedArchive::cMemMappedArchive()
 {
-    mpMappedMem = 0;
+    mpMappedMem   = 0;
     mMappedOffset = 0;
     mMappedLength = 0;
 }
@@ -269,13 +272,13 @@ void cMemMappedArchive::SetNewMap(void* pMap, int64 offset, int64 length) const
 {
     if (pMap == 0)
     {
-        mpMappedMem = 0;
+        mpMappedMem   = 0;
         mMappedOffset = 0;
         mMappedLength = 0;
     }
     else
     {
-        mpMappedMem = pMap;
+        mpMappedMem   = pMap;
         mMappedOffset = offset;
         mMappedLength = length;
     }
@@ -288,14 +291,13 @@ void cMemMappedArchive::SetNewMap(void* pMap, int64 offset, int64 length) const
 //      mapped.
 ///////////////////////////////////////////////////////////////////////////////
 
-cMemoryArchive::cMemoryArchive(int maxSize)
-:   mMaxAllocatedLen(maxSize)
+cMemoryArchive::cMemoryArchive(int maxSize) : mMaxAllocatedLen(maxSize)
 {
     ASSERT(maxSize > 0);
-    mpMemory = 0;
+    mpMemory      = 0;
     mAllocatedLen = 0;
-    mLogicalSize = 0;
-    mReadHead = 0;
+    mLogicalSize  = 0;
+    mReadHead     = 0;
 }
 
 cMemoryArchive::~cMemoryArchive()
@@ -321,13 +323,15 @@ void cMemoryArchive::Seek(int64 offset, SeekFrom from) // throw(eArchive)
         offset = mLogicalSize + (int)offset;
         break;
     default:
-        ThrowAndAssert(eArchiveSeek(TSS_GetString( cCore, core::STR_MEMARCHIVE_FILENAME), TSS_GetString( cCore, core::STR_MEMARCHIVE_ERRSTR)));
+        ThrowAndAssert(eArchiveSeek(TSS_GetString(cCore, core::STR_MEMARCHIVE_FILENAME),
+                                    TSS_GetString(cCore, core::STR_MEMARCHIVE_ERRSTR)));
     }
 
     if (offset > mLogicalSize)
-        ThrowAndAssert(eArchiveSeek(TSS_GetString( cCore, core::STR_MEMARCHIVE_FILENAME), TSS_GetString( cCore, core::STR_MEMARCHIVE_ERRSTR)));
+        ThrowAndAssert(eArchiveSeek(TSS_GetString(cCore, core::STR_MEMARCHIVE_FILENAME),
+                                    TSS_GetString(cCore, core::STR_MEMARCHIVE_ERRSTR)));
 
-    mReadHead = static_cast<int>( offset );
+    mReadHead = static_cast<int>(offset);
 }
 
 int64 cMemoryArchive::CurrentPos() const
@@ -350,8 +354,8 @@ void cMemoryArchive::Truncate()
 
 void cMemoryArchive::MapArchive(int64 offset, int64 len) // throw(eArchive)
 {
-    if ( offset + (int)len > mLogicalSize )
-        AllocateMemory( static_cast<int>( offset + len ) );
+    if (offset + (int)len > mLogicalSize)
+        AllocateMemory(static_cast<int>(offset + len));
 
     SetNewMap(mpMemory + offset, offset, len);
 }
@@ -404,9 +408,9 @@ void cMemoryArchive::AllocateMemory(int len) // throw(eArchive)
             ThrowAndAssert(eArchiveOutOfMem());
 #endif
 
-        if( 0 == mAllocatedLen )
+        if (0 == mAllocatedLen)
             mAllocatedLen = MIN_ALLOCATED_SIZE;
-        
+
         while (mAllocatedLen < len)
             mAllocatedLen *= 2;
 
@@ -416,7 +420,7 @@ void cMemoryArchive::AllocateMemory(int len) // throw(eArchive)
             memcpy(pNewMem, mpMemory, mLogicalSize);
             delete [] mpMemory;
         }
-        mpMemory = pNewMem;
+        mpMemory     = pNewMem;
         mLogicalSize = len;
 
         // update memory map if there is one
@@ -436,7 +440,7 @@ void cMemoryArchive::AllocateMemory(int len) // throw(eArchive)
             ASSERT(mpMemory);
             memcpy(pNewMem, mpMemory, len);
             delete [] mpMemory;
-            mpMemory = pNewMem;
+            mpMemory     = pNewMem;
             mLogicalSize = len;
 
             // update memory map if there is one
@@ -464,33 +468,27 @@ public:
 //-----------------------------------------------------------------------------
 // cFixedMemArchive
 //-----------------------------------------------------------------------------
-cFixedMemArchive::cFixedMemArchive()
-:   mpMemory    (0),
-    mSize       (0),
-    mReadHead   (0)
+cFixedMemArchive::cFixedMemArchive() : mpMemory(0), mSize(0), mReadHead(0)
 {
 }
 
-cFixedMemArchive::cFixedMemArchive( int8* pMem, int32 size )
-:   mpMemory    (0),
-    mSize       (0),
-    mReadHead   (0)
+cFixedMemArchive::cFixedMemArchive(int8* pMem, int32 size) : mpMemory(0), mSize(0), mReadHead(0)
 {
-    Attach( pMem, size );
+    Attach(pMem, size);
 }
 
 cFixedMemArchive::~cFixedMemArchive()
 {
 }
 
-void cFixedMemArchive::Attach( int8* pMem, int32 size )
+void cFixedMemArchive::Attach(int8* pMem, int32 size)
 {
-    mpMemory    = pMem;
-    mSize       = size;
-    mReadHead   = 0;
+    mpMemory  = pMem;
+    mSize     = size;
+    mReadHead = 0;
 }
 
-void cFixedMemArchive::Seek(int64 offset, SeekFrom from)  // throw(eArchive)
+void cFixedMemArchive::Seek(int64 offset, SeekFrom from) // throw(eArchive)
 {
     switch (from)
     {
@@ -503,21 +501,23 @@ void cFixedMemArchive::Seek(int64 offset, SeekFrom from)  // throw(eArchive)
         offset = mSize + (int)offset;
         break;
     default:
-        ThrowAndAssert(eArchiveSeek(TSS_GetString( cCore, core::STR_MEMARCHIVE_FILENAME), TSS_GetString( cCore, core::STR_MEMARCHIVE_ERRSTR)));
+        ThrowAndAssert(eArchiveSeek(TSS_GetString(cCore, core::STR_MEMARCHIVE_FILENAME),
+                                    TSS_GetString(cCore, core::STR_MEMARCHIVE_ERRSTR)));
     }
 
     if (offset > mSize)
-        ThrowAndAssert(eArchiveSeek(TSS_GetString( cCore, core::STR_MEMARCHIVE_FILENAME), TSS_GetString( cCore, core::STR_MEMARCHIVE_ERRSTR)));
+        ThrowAndAssert(eArchiveSeek(TSS_GetString(cCore, core::STR_MEMARCHIVE_FILENAME),
+                                    TSS_GetString(cCore, core::STR_MEMARCHIVE_ERRSTR)));
 
-    mReadHead = static_cast<int32>( offset );
+    mReadHead = static_cast<int32>(offset);
 }
 
-int64 cFixedMemArchive::CurrentPos() const 
+int64 cFixedMemArchive::CurrentPos() const
 {
     return mReadHead;
 }
 
-int64 cFixedMemArchive::Length() const 
+int64 cFixedMemArchive::Length() const
 {
     return mSize;
 }
@@ -527,12 +527,12 @@ bool cFixedMemArchive::EndOfFile()
     return (mReadHead >= mSize);
 }
 
-int cFixedMemArchive::Read(void* pDest, int count)          // throw(eArchive)
+int cFixedMemArchive::Read(void* pDest, int count) // throw(eArchive)
 {
-    ASSERT( pDest );
+    ASSERT(pDest);
     if (mReadHead + count > mSize)
     {
-        count = static_cast<int>( mSize - mReadHead );
+        count = static_cast<int>(mSize - mReadHead);
         if (count <= 0)
             return 0;
     }
@@ -545,11 +545,11 @@ int cFixedMemArchive::Read(void* pDest, int count)          // throw(eArchive)
     return count;
 }
 
-int cFixedMemArchive::Write(const void* pDest, int count)   // throw(eArchive)
+int cFixedMemArchive::Write(const void* pDest, int count) // throw(eArchive)
 {
     if (mReadHead + count > mSize)
     {
-        ASSERT( false );
+        ASSERT(false);
         throw eArchiveWrite();
     }
 
@@ -566,11 +566,9 @@ int cFixedMemArchive::Write(const void* pDest, int count)   // throw(eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 
 //Ctor -- Initialize member variables to 0 or NULL equivalents.
-cFileArchive::cFileArchive() :
-    mFileSize(0),
-    mReadHead(0),
-    isWritable(false)
-{}
+cFileArchive::cFileArchive() : mFileSize(0), mReadHead(0), isWritable(false)
+{
+}
 
 cFileArchive::~cFileArchive()
 {
@@ -578,16 +576,16 @@ cFileArchive::~cFileArchive()
 
 bool cFileArchive::EndOfFile()
 {
-    return ( mReadHead >= mFileSize );
+    return (mReadHead >= mFileSize);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Seek -- This is where the actual offset is performed.  The default
 // for each archive will be 0.
 /////////////////////////////////////////////////////////////////////////
-void cFileArchive::Seek( int64 offset, SeekFrom from) // throw(eArchive)
+void cFileArchive::Seek(int64 offset, SeekFrom from) // throw(eArchive)
 {
-    try 
+    try
     {
         switch (from)
         {
@@ -600,19 +598,19 @@ void cFileArchive::Seek( int64 offset, SeekFrom from) // throw(eArchive)
             offset = mFileSize + offset;
             break;
         default:
-            throw eArchiveSeek( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
+            throw eArchiveSeek(mCurrentFilename, iFSServices::GetInstance()->GetErrString());
         }
 
-        if ( offset > mFileSize )
-            throw eArchiveSeek( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
+        if (offset > mFileSize)
+            throw eArchiveSeek(mCurrentFilename, iFSServices::GetInstance()->GetErrString());
         mReadHead = offset;
 
         mCurrentFile.Seek(mReadHead, cFile::SEEK_BEGIN);
-            //This is where the actual read/writehead is set!!
-    }//try
-    catch( eFile& fileError )
+        //This is where the actual read/writehead is set!!
+    } //try
+    catch (eFile& fileError)
     {
-        throw( eArchiveSeek( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveSeek(mCurrentFilename, fileError.GetDescription()));
     }
 }
 
@@ -626,13 +624,13 @@ int64 cFileArchive::CurrentPos(void) const
 /////////////////////////////////////////////////////////////////////////
 int64 cFileArchive::Length(void) const
 {
-    try 
+    try
     {
         return mCurrentFile.GetSize();
     }
-    catch(eFile& fileError)
+    catch (eFile& fileError)
     {
-        throw( eArchiveSeek( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveSeek(mCurrentFilename, fileError.GetDescription()));
     }
 }
 
@@ -641,26 +639,26 @@ int64 cFileArchive::Length(void) const
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
 {
-    try 
+    try
     {
         // set up open flags
         uint32 flags = cFile::OPEN_READ;
-        flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
-        flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
-        flags |= ( ( openFlags & FA_SCANNING      ) ? cFile::OPEN_SCANNING : 0 );
-        flags |= ( ( openFlags & FA_DIRECT        ) ? cFile::OPEN_DIRECT   : 0 );
+        flags |= ((openFlags & FA_OPEN_TRUNCATE) ? cFile::OPEN_TRUNCATE : 0);
+        flags |= ((openFlags & FA_OPEN_TEXT)     ? cFile::OPEN_TEXT     : 0);
+        flags |= ((openFlags & FA_SCANNING)      ? cFile::OPEN_SCANNING : 0);
+        flags |= ((openFlags & FA_DIRECT)        ? cFile::OPEN_DIRECT   : 0);
 
-        mOpenFlags = openFlags; 
+        mOpenFlags       = openFlags;
         mCurrentFilename = filename;
-        mCurrentFile.Open( filename, flags );
+        mCurrentFile.Open(filename, flags);
         isWritable = false;
 
-        mFileSize           = mCurrentFile.GetSize();
-        mReadHead           = mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
+        mFileSize = mCurrentFile.GetSize();
+        mReadHead = mCurrentFile.Seek(0, cFile::SEEK_BEGIN);
     }
-    catch(eFile& fileError)
+    catch (eFile& fileError)
     {
-        throw(eArchiveOpen( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveOpen(mCurrentFilename, fileError.GetDescription()));
     }
 }
 
@@ -669,26 +667,26 @@ void cFileArchive::OpenRead(const TCHAR* filename, uint32 openFlags)
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::OpenReadWrite(const TCHAR* filename, uint32 openFlags)
 {
-    try 
-    {        
+    try
+    {
         // set up open flags
         uint32 flags = cFile::OPEN_WRITE;
-        flags |= ( ( openFlags & FA_OPEN_TRUNCATE ) ? cFile::OPEN_TRUNCATE : 0 );
-        flags |= ( ( openFlags & FA_OPEN_TEXT     ) ? cFile::OPEN_TEXT     : 0 );
-        flags |= ( ( openFlags & FA_SCANNING      ) ? cFile::OPEN_SCANNING : 0 );
-        flags |= ( ( openFlags & FA_DIRECT        ) ? cFile::OPEN_DIRECT   : 0 );
+        flags |= ((openFlags & FA_OPEN_TRUNCATE) ? cFile::OPEN_TRUNCATE : 0);
+        flags |= ((openFlags & FA_OPEN_TEXT)     ? cFile::OPEN_TEXT     : 0);
+        flags |= ((openFlags & FA_SCANNING)      ? cFile::OPEN_SCANNING : 0);
+        flags |= ((openFlags & FA_DIRECT)        ? cFile::OPEN_DIRECT   : 0);
 
-        mOpenFlags = openFlags;
+        mOpenFlags       = openFlags;
         mCurrentFilename = filename;
-        mCurrentFile.Open( filename, flags );
+        mCurrentFile.Open(filename, flags);
         isWritable = true;
 
         mFileSize = mCurrentFile.GetSize();
-        mReadHead = mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
+        mReadHead = mCurrentFile.Seek(0, cFile::SEEK_BEGIN);
     }
-    catch(eFile& fileError)
+    catch (eFile& fileError)
     {
-        throw( eArchiveOpen( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveOpen(mCurrentFilename, fileError.GetDescription()));
     }
 }
 
@@ -706,66 +704,65 @@ TSTRING cFileArchive::GetCurrentFilename(void) const
 /////////////////////////////////////////////////////////////////////////
 void cFileArchive::Close()
 {
-    try 
+    try
     {
         mCurrentFile.Close();
-        mFileSize       = 0;
-        mReadHead       = 0;
+        mFileSize = 0;
+        mReadHead = 0;
 
         mCurrentFilename = _T("");
     }
-    catch(eFile& fileError)
+    catch (eFile& fileError)
     {
-        throw( eArchive( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchive(mCurrentFilename, fileError.GetDescription()));
     }
 }
 
 /////////////////////////////////////////////////////////////////////////
-// Read -- Read places bytes in location designated by pDest.  Returns 
+// Read -- Read places bytes in location designated by pDest.  Returns
 // The actual amount read into *pDest.
 /////////////////////////////////////////////////////////////////////////
 int cFileArchive::Read(void* pDest, int count)
 {
 
-    try 
+    try
     {
-        if ( mReadHead + count > mFileSize && !(mOpenFlags & FA_DIRECT))
-            count = static_cast<int>( mFileSize - mReadHead );
+        if (mReadHead + count > mFileSize && !(mOpenFlags & FA_DIRECT))
+            count = static_cast<int>(mFileSize - mReadHead);
 
-        if ( pDest != NULL )
+        if (pDest != NULL)
         {
-            int nbRead = 
-                static_cast<int>( mCurrentFile.Read( pDest, count ) );
+            int nbRead = static_cast<int>(mCurrentFile.Read(pDest, count));
 
             // 'count' may not be equal to 'nbRead' if the file is open in
             // text mode.
             count = nbRead;
-            if(count < 0) count = 0;
+            if (count < 0)
+                count = 0;
         }
         else
         {
-            int i;
+            int   i;
             int32 dummy;
-            for (i = count; ; i -= sizeof(int32))
+            for (i = count;; i -= sizeof(int32))
             {
                 if (i < (int)sizeof(int32))
                 {
                     if (i > 0)
-                        mCurrentFile.Read( &dummy, i );
+                        mCurrentFile.Read(&dummy, i);
                     break;
                 }
-                mCurrentFile.Read( &dummy, i );
+                mCurrentFile.Read(&dummy, i);
             }
         }
 
         mReadHead += count;
         return count;
     }
-    catch( eFile& fileError )
+    catch (eFile& fileError)
     {
-        throw( eArchiveRead( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveRead(mCurrentFilename, fileError.GetDescription()));
     }
-
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -774,38 +771,38 @@ int cFileArchive::Read(void* pDest, int count)
 /////////////////////////////////////////////////////////////////////////
 int cFileArchive::Write(const void* pDest, int count) // throw(eArchive)
 {
-    try 
+    try
     {
         int64 actual_count = 0;
-        ASSERT( mCurrentFile.isWritable );
+        ASSERT(mCurrentFile.isWritable);
 
-        actual_count = mCurrentFile.Write( pDest, count );
+        actual_count = mCurrentFile.Write(pDest, count);
 
-        if ( actual_count < count )
+        if (actual_count < count)
         {
             //Disk full??
-            throw eArchiveWrite( mCurrentFilename, iFSServices::GetInstance()->GetErrString() ) ;
+            throw eArchiveWrite(mCurrentFilename, iFSServices::GetInstance()->GetErrString());
         }
 
         // increment the read/write head
         mReadHead += actual_count;
 
         // increase the size, if needed
-        if( mReadHead > mFileSize )
+        if (mReadHead > mFileSize)
         {
-            #if 0 // IS_SUNPRO
-            // These two lines seem to be all there is between code that crashes and code that works for sunpro
+#if 0 // IS_SUNPRO \
+      // These two lines seem to be all there is between code that crashes and code that works for sunpro
             cDebug d("cFileArchive::Write()");
             d.TraceDebug(_T("file(%s) adjusted mFileSize = %d mReadHead = %d\n"), mCurrentFilename.c_str(), (int)mFileSize, (int)mReadHead);
-            #endif
+#endif
             mFileSize = mReadHead;
         }
 
         return (int)actual_count;
     }
-    catch( eFile& fileError )
+    catch (eFile& fileError)
     {
-        throw( eArchiveWrite( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveWrite(mCurrentFilename, fileError.GetDescription()));
     }
 }
 
@@ -813,24 +810,23 @@ int cFileArchive::Write(const void* pDest, int count) // throw(eArchive)
 /////////////////////////////////////////////////////////////////////////
 // Truncate
 /////////////////////////////////////////////////////////////////////////
-void cFileArchive::Truncate() // throw(eArchive) 
+void cFileArchive::Truncate() // throw(eArchive)
 {
-    ASSERT( mCurrentFile.IsOpen() );
-    ASSERT( mCurrentFile.isWritable );
+    ASSERT(mCurrentFile.IsOpen());
+    ASSERT(mCurrentFile.isWritable);
 
-    try 
+    try
     {
-        mCurrentFile.Truncate ( mReadHead );
+        mCurrentFile.Truncate(mReadHead);
     }
-    catch( eFile& fileError )
+    catch (eFile& fileError)
     {
         //TODO: create an error number for truncate...
-        throw( eArchiveWrite( mCurrentFilename, fileError.GetDescription() ) );
+        throw(eArchiveWrite(mCurrentFilename, fileError.GetDescription()));
     }
 
     mFileSize = mReadHead;
 }
-
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -838,66 +834,68 @@ void cFileArchive::Truncate() // throw(eArchive)
 //
 // since we'll never open an existing file, the truncateFile flag is unnecessary.
 /////////////////////////////////////////////////////////////////////////
-void cLockedTemporaryFileArchive::OpenReadWrite( const TCHAR* filename, uint32 openFlags )
+void cLockedTemporaryFileArchive::OpenReadWrite(const TCHAR* filename, uint32 openFlags)
 {
-  TSTRING strTempFile;
+    TSTRING strTempFile;
 
-  try {
+    try
+    {
 
-    ASSERT( !mCurrentFile.IsOpen() ); // shouldn't be able to create a new file when we're already open
-    if    ( mCurrentFile.IsOpen() ) 
-        throw( eArchive( mCurrentFilename, _T("Internal Error") ) );
+        ASSERT(!mCurrentFile.IsOpen()); // shouldn't be able to create a new file when we're already open
+        if (mCurrentFile.IsOpen())
+            throw(eArchive(mCurrentFilename, _T("Internal Error")));
 
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // if filename is NULL, create a temp file for the caller
-    if( filename == NULL )
-      {
-        try
-          {
-            iFSServices::GetInstance()->GetTempDirName( strTempFile );
-            strTempFile += _T("twtempXXXXXX");  
-            iFSServices::GetInstance()->MakeTempFilename( strTempFile );
-          }
-        catch( eFSServices& fileError)
-          {
-            TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
-            throw eArchiveOpen(strTempFile, errStr);
-          }
-      }
-    ///////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////
+        // if filename is NULL, create a temp file for the caller
+        if (filename == NULL)
+        {
+            try
+            {
+                iFSServices::GetInstance()->GetTempDirName(strTempFile);
+                strTempFile += _T("twtempXXXXXX");
+                iFSServices::GetInstance()->MakeTempFilename(strTempFile);
+            }
+            catch (eFSServices& fileError)
+            {
+                TSTRING errStr = TSS_GetString(cCore, core::STR_BAD_TEMPDIRECTORY);
+                throw eArchiveOpen(strTempFile, errStr);
+            }
+        }
+        ///////////////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // create file
+        ///////////////////////////////////////////////////////////////////////////////
+        // create file
 
-    // set up flags
-    uint32 flags = cFile::OPEN_WRITE | cFile::OPEN_LOCKED_TEMP | cFile::OPEN_CREATE | cFile::OPEN_EXCLUSIVE;
-    if ( openFlags & FA_OPEN_TRUNCATE ) 
-      flags |= cFile::OPEN_TRUNCATE;
-    if ( openFlags & FA_OPEN_TEXT ) 
-      flags |= cFile::OPEN_TEXT;
+        // set up flags
+        uint32 flags = cFile::OPEN_WRITE | cFile::OPEN_LOCKED_TEMP | cFile::OPEN_CREATE | cFile::OPEN_EXCLUSIVE;
+        if (openFlags & FA_OPEN_TRUNCATE)
+            flags |= cFile::OPEN_TRUNCATE;
+        if (openFlags & FA_OPEN_TEXT)
+            flags |= cFile::OPEN_TEXT;
 
-    // open file
-    mCurrentFilename = filename ? filename : strTempFile.c_str();
-    mCurrentFile.Open( mCurrentFilename, flags );
-    
-    isWritable = true;
-    mFileSize = mCurrentFile.GetSize();
-    mReadHead = mCurrentFile.Seek( 0, cFile::SEEK_BEGIN );
+        // open file
+        mCurrentFilename = filename ? filename : strTempFile.c_str();
+        mCurrentFile.Open(mCurrentFilename, flags);
+
+        isWritable = true;
+        mFileSize  = mCurrentFile.GetSize();
+        mReadHead  = mCurrentFile.Seek(0, cFile::SEEK_BEGIN);
 
 #if 0 // IS_SUNPRO
     cDebug d("cLockedTemporaryFileArchive::OpenReadWrite()");
     d.TraceDebug(_T("file(%s) set mFileSize to %d mReadHead to %d\n"), mCurrentFilename.c_str(), (int)mFileSize, (int)mReadHead);
 #endif
 
-  }//try
-  catch (eFile& fileError) {
-    TSTRING errStr = TSS_GetString( cCore, core::STR_BAD_TEMPDIRECTORY );
-    eArchiveOpen e(strTempFile, errStr);
-    throw e;
-  }
+    } //try
+    catch (eFile& fileError)
+    {
+        TSTRING      errStr = TSS_GetString(cCore, core::STR_BAD_TEMPDIRECTORY);
+        eArchiveOpen e(strTempFile, errStr);
+        throw e;
+    }
 
-  ///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
 }
 
 /////////////////////////////////////////////////////////////////////////
@@ -907,4 +905,3 @@ void cLockedTemporaryFileArchive::Close()
     // Note: this deletes the file as well
     cFileArchive::Close();
 }
-
