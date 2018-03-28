@@ -50,7 +50,16 @@ class iFCONameTranslator;
 class cTextDBViewer
 {
 public:
-    static void PrintDB(cFCODatabaseFile& rd, const TSTRING& strFilename); // throw
+
+    enum DbVerbosity
+    {
+        INVALID,
+        SUMMARY,
+        CONCISE,
+        VERBOSE
+    };
+
+    static void PrintDB(cFCODatabaseFile& rd, const TSTRING& strFilename, DbVerbosity=VERBOSE); // throw
 
     static void OutputFCO(cDbDataSourceIter&        dbIter,
                           const iFCOPropDisplayer*  pPD,
@@ -59,6 +68,7 @@ public:
                           bool                      fDetails = true);
     // prints to the given ostream a text representation of the FCO pointed at by the iter. Silently
     // does nothing if(dbIter.Done()).
+
 private:
     //
     // private enums

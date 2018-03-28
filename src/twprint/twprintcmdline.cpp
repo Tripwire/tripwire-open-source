@@ -296,30 +296,8 @@ static void FillOutCmdLineInfo(cTWPrintModeCommon* pModeInfo, const cCmdLinePars
             // this bites! I have to make sure it is a narrow char string
             ASSERT(iter.NumParams() > 0); // should be caught by cmd line parser
             pModeInfo->mPassPhrase = iter.ParamAt(0);
+            break;
         }
-        break;
-        case cTWPrintCmdLine::REPORTLEVEL:
-        {
-            if (iter.ParamAt(0) == _T("0"))
-                pModeInfo->mReportLevel = cTextReportViewer::SINGLE_LINE;
-            else if (iter.ParamAt(0) == _T("1"))
-                pModeInfo->mReportLevel = cTextReportViewer::PARSEABLE;
-            else if (iter.ParamAt(0) == _T("2"))
-                pModeInfo->mReportLevel = cTextReportViewer::SUMMARY_ONLY;
-            else if (iter.ParamAt(0) == _T("3"))
-                pModeInfo->mReportLevel = cTextReportViewer::CONCISE_REPORT;
-            else if (iter.ParamAt(0) == _T("4"))
-                pModeInfo->mReportLevel = cTextReportViewer::FULL_REPORT;
-            else
-            {
-                // They specified an illegal level, error.
-                TSTRING errStr = _T("Invalid Level: ");
-                errStr += iter.ParamAt(0);
-                throw eTWPrintInvalidReportLevel(errStr);
-            }
-        }
-        //done with report-level stuff.
-        break;
         default:
             break;
         }
@@ -562,11 +540,12 @@ TSTRING cTWPrintReportMode::GetModeUsage()
 class cTWPrintDBMode_i : public cTWPrintModeCommon
 {
 public:
-    TSTRING              mDbFile;
-    std::vector<TSTRING> mFilesToCheck;
+    TSTRING                    mDbFile;
+    std::vector<TSTRING>       mFilesToCheck;
+    cTextDBViewer::DbVerbosity mDbVerbosity;
 
     // ctor can set up some default values
-    cTWPrintDBMode_i() : cTWPrintModeCommon()
+    cTWPrintDBMode_i() : cTWPrintModeCommon(), mVerbosity(cTextDBViewer::VERBOSE)
     {
     }
 };
@@ -598,6 +577,26 @@ void cTWPrintDBMode::FillOutDBModeConfigInfo(cTWPrintDBMode_i* pModeInfo, const 
     if (cf.Lookup(TSTRING(_T("DBFILE")), str))
         pModeInfo->mDbFile = str;
 
+    if (cf.Lookup(TSTRING(_T("DBPRINTLEVEL")), str))
+    {
+        if (_tcsicmp(str.c_str(), _T("0")) == 0)
+            pModeInfo->mDbVerbosity = cTextDBViewer::SUMMARY;
+        else if (_tcsicmp(str.c_str(), _T("1")) == 0)
+            pModeInfo->mDbVerbosity = cTextDBViewer::CONCISE;
+        else if (_tcsicmp(str.c_str(), _T("2")) == 0)
+            pModeInfo->mDbVerbosity = cTextDBViewer::VERBOSE;
+        else
+        {
+            // They specified an illegal level, error.
+            TSTRING errStr = _T("Invalid Level: ");
+            errStr += str;
+            throw eTWPrintInvalidDbPrintLevelCfg(errStr);
+        }
+    }
+    else
+        // Use the default level of reporting, they specified none in configuration file.
+        pModeInfo->mVerbosity = cTextDBViewer::VERBOSE;
+
     //
     // turn all of the file names into full paths (they're relative to the exe dir)
     //
@@ -614,6 +613,10 @@ void cTWPrintDBMode::InitCmdLineParser(cCmdLineParser& parser)
     InitCmdLineCommon(parser);
 
     parser.AddArg(cTWPrintCmdLine::DB_FILE, TSTRING(_T("d")), TSTRING(_T("dbfile")), cCmdLineParser::PARAM_ONE);
+
+    // multiple levels of reporting
+    parser.AddArg(
+        cTWPrintCmdLine::REPORTLEVEL, TSTRING(_T("t")), TSTRING(_T("output-level")), cCmdLineParser::PARAM_ONE);
 
     // For the variable object list.
     parser.AddArg(cTWPrintCmdLine::PARAMS, TSTRING(_T("")), TSTRING(_T("")), cCmdLineParser::PARAM_MANY);
@@ -642,10 +645,30 @@ bool cTWPrintDBMode::Init(const cConfigFile& cf, const cCmdLineParser& cmdLine)
     {
         switch (iter.ArgId())
         {
+
         case cTWPrintCmdLine::DB_FILE:
+        {
             ASSERT(iter.NumParams() > 0); // should be caught by cmd line parser
             mpData->mDbFile = iter.ParamAt(0);
             break;
+        }
+        case cTWPrintCmdLine::REPORTLEVEL:
+        {
+            if (iter.ParamAt(0) == _T("0"))
+                mpData->mDbVerbosity = cTextDBViewer::SUMMARY;
+            else if (iter.ParamAt(0) == _T("1"))
+                mpData->mDbVerbosity = cTextDBViewer::CONCISE;
+            else if (iter.ParamAt(0) == _T("2"))
+                mpData->mDbVerbosity = cTextDBViewer::VERBOSE;
+            else
+            {
+                // They specified an illegal level, error.
+                TSTRING errStr = _T("Invalid Level: ");
+                errStr += iter.ParamAt(0);
+                throw eTWPrintInvalidDbPrintLevel(errStr);
+            }
+            break;
+        }
         case cTWPrintCmdLine::PARAMS:
         {
             // pack all of these onto the files to check list...
@@ -725,6 +748,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
 
         if (mpData->mFilesToCheck.size() > 0)
         {
+            bool details = (mpData->mDbVerbosity == cTextDBViewer::VERBOSE);
             //------------------------------------------------
             // print specific FCOs from the database
             //------------------------------------------------
@@ -757,7 +781,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
                             if ((!dsIter.Done()) && (dsIter.HasFCOData()))
                             {
                                 cTextDBViewer::OutputFCO(
-                                    dsIter, dbIter.GetGenreHeader().GetPropDisplayer(), pNT, &TCOUT);
+                                    dsIter, dbIter.GetGenreHeader().GetPropDisplayer(), pNT, &TCOUT, details);
                             }
                             else
                             {
@@ -787,7 +811,7 @@ int cTWPrintDBMode::Execute(cErrorQueue* pQueue)
             //------------------------------------------------
             // printing the entire db
             //------------------------------------------------
-            cTextDBViewer::PrintDB(db, _T("-"));
+            cTextDBViewer::PrintDB(db, _T("-"), mpData->mDbVerbosity);
         }
     }
     catch (eError& e)

@@ -134,7 +134,7 @@ static TSTRING util_Encode(const TSTRING& sIn)
 // METHOD CODE
 //=========================================================================
 
-void cTextDBViewer::PrintDB(cFCODatabaseFile& rd, const TSTRING& strFilename)
+void cTextDBViewer::PrintDB(cFCODatabaseFile& rd, const TSTRING& strFilename, DbVerbosity verbosity)
 {
     TOSTREAM* pOut;
     TOFSTREAM fileOut;
@@ -168,10 +168,18 @@ void cTextDBViewer::PrintDB(cFCODatabaseFile& rd, const TSTRING& strFilename)
     //
     OutputDatabaseHeader(rd.GetHeader(), pOut);
 
-    OutputObjectSummary(rd, pOut, DETAILS_MARGIN);
 
-    OutputObjectDetail(rd, pOut);
+    if (verbosity > SUMMARY)
+    {
+        //TODO: OutputRulesSummary() would go here
 
+        OutputObjectSummary(rd, pOut, DETAILS_MARGIN);
+
+        if (verbosity == VERBOSE)
+        {
+            OutputObjectDetail(rd, pOut);
+        }
+    }
 
     // we're done
     (*pOut) << g_sz79Dashes << endl;

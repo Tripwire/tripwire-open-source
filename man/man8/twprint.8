@@ -83,7 +83,7 @@ Print the specified report file.
 Use the specified local key file to perform verification
 with reports which are signed.
 .TP
-.BI \(hyt " level\fR, " --report-level " level
+.BI \(hyt " level\fR, " --report-level " level"
 Specifies the detail level of the printed report, overriding the
 \f(CWREPORTLEVEL\fP variable in the configuration
 file. \fIlevel\fR must be a number from 0\ to\ 4.
@@ -100,6 +100,7 @@ lbw(1.2i) lb.
 -c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
 -d \fIdatabase\fP	--dbfile \fIdatabase\fP
 -L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-t \fR{ 0|1|2 }\fP	--output-level \fR{ 0|1|2 }\fP
 .TE
 .RI "[ " "object1" " [ " "object2..." " ]]"
 .RE
@@ -124,6 +125,11 @@ Print the specified database file.
 .TP
 .BI \(hyL " localkey\fR, " --local-keyfile " localkey"
 Use the specified local key file to read the database.
+.TP
+.BI \(hyt " level\fR, " --output-level " level"
+Specifies the detail level of the printed database, overriding the
+\f(CWDBPRINTLEVEL\fP variable in the configuration
+file. \fIlevel\fR must be a number from 0\ to\ 2.
 .TP
 .RI "[ " "object1" " [ " "object2..." " ]]"
 List of filesystem objects in the database to print. If no

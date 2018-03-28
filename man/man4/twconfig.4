@@ -215,6 +215,15 @@ parameter; reports displayed by other modes and other commands
 are not affected.
 .br
 Initial value:  \fI3\fP
+.IP \f(CWDBPRINTLEVEL\fP
+Specifies the default level of report produced by the \fBtwprint
+\(hy\(hyprint\(hydbfile\fP mode. Valid values for this option are 0 to
+2. The output
+level specified by this option can be overridden with the (\fB\(hyt\fP\ or\ \fB\(hy\(hyoutput\(hylevel\fP) option on the command line. If
+this variable is not included in the configuration file, the default
+output level is 2.
+.br
+Initial value:  \fI2\fP
 .IP \f(CWHASH_DIRECT_IO\fP
 Use direct i/o when hashing files. (Linux-only as of OST 2.4.3.2) 
 .br

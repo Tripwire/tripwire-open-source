@@ -50,6 +50,8 @@ class iTWMode;
 TSS_EXCEPTION(eTWPrintInvalidParamHelp, eError)
 TSS_EXCEPTION(eTWPrintInvalidReportLevel, eError)
 TSS_EXCEPTION(eTWPrintInvalidReportLevelCfg, eError)
+TSS_EXCEPTION(eTWPrintInvalidDbPrintLevel, eError)
+TSS_EXCEPTION(eTWPrintInvalidDbPrintLevelCfg, eError)
 
 // Help is requested for a non-existent mode.
 
