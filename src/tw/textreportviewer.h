@@ -120,6 +120,8 @@ public:
     int GetMaxSeverityViolated();
     int GetNumberViolations();
 
+    void SetObjects(const std::set<std::string>& objects);
+
 protected:
     //
     // don't let C++ create these functions
@@ -246,6 +248,7 @@ protected:
     //
 
     virtual bool IgnoreThisSpec(const cFCOSpecAttr* attr);
+    virtual bool IgnoreThisFCO(const iFCO* fco);
     virtual bool WantOutputReportHeader();
     virtual bool WantOutputRulesSummary();
     virtual bool WantOutputSpecHeader();
@@ -274,6 +277,8 @@ protected:
     bool                    mfGotNumbers;
     char                    mCurrentChar[6];
     size_t                  mCurrentCharSize;
+    bool                    mFilterFCOs;
+    std::set<std::string>   mObjects;
 };
 
 

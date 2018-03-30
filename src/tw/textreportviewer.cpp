@@ -157,6 +157,7 @@ int cTextReportViewer::Init(const cFCOReportHeader& h, cFCOReport& r)
     mfGotNumbers         = false;
     mCurrentChar[0]      = '\0';
     mCurrentCharSize     = 0;
+    mFilterFCOs          = false;
     return 0;
 }
 
@@ -1508,11 +1509,15 @@ void cTextReportViewer::OutputAddedSummary(const cFCOReportSpecIter& ri, FCOList
         const cIterProxy<iFCOIter> pSetIterAdded = ri.GetAddedSet()->GetIter();
         for (pSetIterAdded->SeekBegin(); !pSetIterAdded->Done(); pSetIterAdded->Next())
         {
-            PrintBallotLine(*pSetIterAdded->FCO());
+            const iFCO* fco = pSetIterAdded->FCO();
+            if (!IgnoreThisFCO(fco))
+            {
+                PrintBallotLine(*fco);
 
-            // if we're updating, save a list of FCO names
-            if (mfUpdate && pFCONameList)
-                pFCONameList->insert(pSetIterAdded->FCO()->GetName());
+                // if we're updating, save a list of FCO names
+                if (mfUpdate && pFCONameList)
+                    pFCONameList->insert(fco->GetName());
+            }
         }
         (*mpOut) << endl;
     }
@@ -1528,11 +1533,15 @@ void cTextReportViewer::OutputRemovedSummary(const cFCOReportSpecIter& ri, FCOLi
         const cIterProxy<iFCOIter> pSetIterRemoved = ri.GetRemovedSet()->GetIter();
         for (pSetIterRemoved->SeekBegin(); !pSetIterRemoved->Done(); pSetIterRemoved->Next())
         {
-            PrintBallotLine(*pSetIterRemoved->FCO());
+            const iFCO* fco = pSetIterRemoved->FCO();
+            if (!IgnoreThisFCO(fco))
+            {
+                PrintBallotLine(*fco);
 
-            // if we're updating, save a list of FCO names
-            if (mfUpdate && pFCONameList)
-                pFCONameList->insert(pSetIterRemoved->FCO()->GetName());
+                // if we're updating, save a list of FCO names
+                if (mfUpdate && pFCONameList)
+                    pFCONameList->insert(fco->GetName());
+            }
         }
         (*mpOut) << endl;
     }
@@ -1548,11 +1557,15 @@ void cTextReportViewer::OutputChangedSummary(const cFCOReportSpecIter& ri, FCOLi
         cFCOReportChangeIter changedIter(ri);
         for (changedIter.SeekBegin(); !changedIter.Done(); changedIter.Next())
         {
-            PrintBallotLine(*changedIter.GetNew());
+            const iFCO* fco = changedIter.GetNew();
+            if (!IgnoreThisFCO(fco))
+            {
+                PrintBallotLine(*fco);
 
-            // if we're updating, save a list of FCO names
-            if (mfUpdate && pFCONameList)
-                pFCONameList->insert(changedIter.GetNew()->GetName());
+                // if we're updating, save a list of FCO names
+                if (mfUpdate && pFCONameList)
+                    pFCONameList->insert(fco->GetName());
+            }
         }
 
         (*mpOut) << endl;
@@ -1570,14 +1583,18 @@ void cTextReportViewer::OutputAddedDetails(const cFCOReportSpecIter& ri)
         ASSERT(pSetIterAdded != 0);
         for (pSetIterAdded->SeekBegin(); !pSetIterAdded->Done(); pSetIterAdded->Next())
         {
-            (*mpOut) << TSS_GetString(cTW, tw::STR_ADDED_FILE_NAME) << _T(" ")
-                     << mpCurNT->ToStringDisplay(pSetIterAdded->FCO()->GetName()).c_str() << endl;
-
-            if (FULL_REPORT == mReportingLevel)
+            const iFCO* fco = pSetIterAdded->FCO();
+            if (!IgnoreThisFCO(fco))
             {
-                (*mpOut) << endl;
-                DisplayChangedProps(NULL, pSetIterAdded->FCO(), NULL);
-                (*mpOut) << endl << endl;
+                (*mpOut) << TSS_GetString(cTW, tw::STR_ADDED_FILE_NAME) << _T(" ")
+                         << mpCurNT->ToStringDisplay(fco->GetName()).c_str() << endl;
+
+                if (FULL_REPORT == mReportingLevel)
+                {
+                    (*mpOut) << endl;
+                    DisplayChangedProps(NULL, fco, NULL);
+                    (*mpOut) << endl << endl;
+                }
             }
         }
 
@@ -1596,14 +1613,18 @@ void cTextReportViewer::OutputRemovedDetails(const cFCOReportSpecIter& ri)
         ASSERT(pSetIterRemoved != 0);
         for (pSetIterRemoved->SeekBegin(); !pSetIterRemoved->Done(); pSetIterRemoved->Next())
         {
-            (*mpOut) << TSS_GetString(cTW, tw::STR_REMOVED_FILE_NAME) << _T(" ")
-                     << mpCurNT->ToStringDisplay(pSetIterRemoved->FCO()->GetName()).c_str() << endl;
-
-            if (FULL_REPORT == mReportingLevel)
+            const iFCO* fco = pSetIterRemoved->FCO();
+            if (!IgnoreThisFCO(fco))
             {
-                (*mpOut) << endl;
-                DisplayChangedProps(pSetIterRemoved->FCO(), NULL, NULL);
-                (*mpOut) << endl << endl;
+                (*mpOut) << TSS_GetString(cTW, tw::STR_REMOVED_FILE_NAME) << _T(" ")
+                         << mpCurNT->ToStringDisplay(fco->GetName()).c_str() << endl;
+
+                if (FULL_REPORT == mReportingLevel)
+                {
+                    (*mpOut) << endl;
+                    DisplayChangedProps(fco, NULL, NULL);
+                    (*mpOut) << endl << endl;
+                }
             }
         }
         (*mpOut) << endl;
@@ -1620,13 +1641,26 @@ void cTextReportViewer::OutputChangedDetails(const cFCOReportSpecIter& ri)
         cFCOReportChangeIter changedIter(ri);
         for (changedIter.SeekBegin(); !changedIter.Done(); changedIter.Next())
         {
-            (*mpOut) << TSS_GetString(cTW, tw::STR_CHANGED_FILE_NAME) << _T(" ")
-                     << mpCurNT->ToStringDisplay(changedIter.GetOld()->GetName()).c_str() << endl
-                     << endl;
-            DisplayChangedProps(changedIter.GetOld(), changedIter.GetNew(), &changedIter.GetChangeVector());
-            (*mpOut) << endl << endl;
+            const iFCO* fco = changedIter.GetOld();
+            if (!IgnoreThisFCO(fco))
+            {
+                (*mpOut) << TSS_GetString(cTW, tw::STR_CHANGED_FILE_NAME) << _T(" ")
+                         << mpCurNT->ToStringDisplay(fco->GetName()).c_str() << endl
+                         << endl;
+                DisplayChangedProps(fco, changedIter.GetNew(), &changedIter.GetChangeVector());
+                (*mpOut) << endl << endl;
+            }
         }
         (*mpOut) << endl;
+    }
+}
+
+void cTextReportViewer::SetObjects(const std::set<std::string>& objects)
+{
+    if (!objects.empty())
+    {
+        mObjects = objects;
+        mFilterFCOs = true;
     }
 }
 
@@ -1636,26 +1670,41 @@ bool cTextReportViewer::IgnoreThisSpec(const cFCOSpecAttr* attr)
 {
     return false;
 }
+
+bool cTextReportViewer::IgnoreThisFCO(const iFCO* fco)
+{
+    if (!mFilterFCOs)
+    {
+        return false;
+    }
+    return (mObjects.find(fco->GetName().AsString()) == mObjects.end());
+}
+
 bool cTextReportViewer::WantOutputReportHeader()
 {
     return true;
 }
+
 bool cTextReportViewer::WantOutputRulesSummary()
 {
     return true;
 }
+
 bool cTextReportViewer::WantOutputSpecHeader()
 {
     return true;
 }
+
 bool cTextReportViewer::WantOutputObjectSummary()
 {
     return true;
 }
+
 bool cTextReportViewer::WantOutputObjectDetails()
 {
     return true;
 }
+
 bool cTextReportViewer::CanUpdate()
 {
     return true;
@@ -1891,28 +1940,37 @@ void cTextReportViewer::OutputParseableReport()
         cFCOReportSpecIter ri(genreIter);
         for (ri.SeekBegin(); !ri.Done(); ri.Next())
         {
-            // iterate over all removed fcos
+            // iterate over all added fcos
             const cIterProxy<iFCOIter> pSetIterAdded = ri.GetAddedSet()->GetIter();
             for (pSetIterAdded->SeekBegin(); !pSetIterAdded->Done(); pSetIterAdded->Next())
             {
-                (*mpOut) << TSS_GetString(cTW, tw::STR_ADDED) << _T(":\t");
-                (*mpOut) << mpCurNT->ToStringDisplay(pSetIterAdded->FCO()->GetName(), true) << endl;
+                if (!IgnoreThisFCO(pSetIterAdded->FCO()))
+                {
+                    (*mpOut) << TSS_GetString(cTW, tw::STR_ADDED) << _T(":\t");
+                    (*mpOut) << mpCurNT->ToStringDisplay(pSetIterAdded->FCO()->GetName(), true) << endl;
+                }
             }
 
             // iterate over all removed fcos
             const cIterProxy<iFCOIter> pSetIterRemoved = ri.GetRemovedSet()->GetIter();
             for (pSetIterRemoved->SeekBegin(); !pSetIterRemoved->Done(); pSetIterRemoved->Next())
             {
-                (*mpOut) << TSS_GetString(cTW, tw::STR_REMOVED) << _T(":\t");
-                (*mpOut) << mpCurNT->ToStringDisplay(pSetIterRemoved->FCO()->GetName(), true) << endl;
+                if (!IgnoreThisFCO(pSetIterRemoved->FCO()))
+                {
+                    (*mpOut) << TSS_GetString(cTW, tw::STR_REMOVED) << _T(":\t");
+                    (*mpOut) << mpCurNT->ToStringDisplay(pSetIterRemoved->FCO()->GetName(), true) << endl;
+                }
             }
 
             // iterate over all changed fcos
             cFCOReportChangeIter changedIter(ri);
             for (changedIter.SeekBegin(); !changedIter.Done(); changedIter.Next())
             {
-                (*mpOut) << TSS_GetString(cTW, tw::STR_CHANGED) << _T(":\t");
-                (*mpOut) << mpCurNT->ToStringDisplay(changedIter.GetNew()->GetName(), true) << endl;
+                if (!IgnoreThisFCO(changedIter.GetNew()))
+                {
+                    (*mpOut) << TSS_GetString(cTW, tw::STR_CHANGED) << _T(":\t");
+                    (*mpOut) << mpCurNT->ToStringDisplay(changedIter.GetNew()->GetName(), true) << endl;
+                }
             }
         }
     }

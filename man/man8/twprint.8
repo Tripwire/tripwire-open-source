@@ -10,6 +10,9 @@ twprint \- Tripwire database and report printer
 .B twprint
 .RB "{ " "-m r" " | " "--print-report" " } "
 .RI "[ " options... " ]"
+.if n .br
+.if n .ti +.5i
+.RI " [ " "object1" " [ " "object2..." " ]]"
 .br
 .B twprint
 .RB "{ " "-m d" " | " "--print-dbfile" " } "
@@ -59,6 +62,7 @@ lbw(1.2i) lb.
 -L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
 -t \fR{ 0|1|2|3|4 }\fP	--report-level \fR{ 0|1|2|3|4 }\fP
 .TE
+.RI "[ " "object1" " [ " "object2..." " ]]"
 .RE
 .TP
 .BR "\(hym r" ", " --print-report
@@ -87,6 +91,11 @@ with reports which are signed.
 Specifies the detail level of the printed report, overriding the
 \f(CWREPORTLEVEL\fP variable in the configuration
 file. \fIlevel\fR must be a number from 0\ to\ 4.
+.TP
+.RI "[ " "object1" " [ " "object2..." " ]]"
+List of filesystem objects in the report to print. If no
+objects are specified, every object in the report will
+be printed. 
 .\" *****************************************
 .SS Database printing mode:
 .RS 0.4i

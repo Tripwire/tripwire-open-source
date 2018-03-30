@@ -314,7 +314,8 @@ static void FillOutCmdLineInfo(cTWPrintModeCommon* pModeInfo, const cCmdLinePars
 class cTWPrintReportMode_i : public cTWPrintModeCommon
 {
 public:
-    TSTRING mReportFile;
+    TSTRING                 mReportFile;
+    std::set<TSTRING>       mFilesToCheck;
 
     // ctor can set up some default values
     cTWPrintReportMode_i() : cTWPrintModeCommon()
@@ -398,6 +399,9 @@ void cTWPrintReportMode::InitCmdLineParser(cCmdLineParser& parser)
     // multiple levels of reporting
     parser.AddArg(
         cTWPrintCmdLine::REPORTLEVEL, TSTRING(_T("t")), TSTRING(_T("report-level")), cCmdLineParser::PARAM_ONE);
+
+    // For the variable object list.
+    parser.AddArg(cTWPrintCmdLine::PARAMS, TSTRING(_T("")), TSTRING(_T("")), cCmdLineParser::PARAM_MANY);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -445,6 +449,16 @@ bool cTWPrintReportMode::Init(const cConfigFile& cf, const cCmdLineParser& cmdLi
                 TSTRING errStr = _T("Invalid Level: ");
                 errStr += iter.ParamAt(0);
                 throw eTWPrintInvalidReportLevel(errStr);
+            }
+            break;
+        }
+        case cTWPrintCmdLine::PARAMS:
+        {
+            // pack all of these onto the files to check list...
+            mpData->mFilesToCheck.clear();
+            for (int i = 0; i < iter.NumParams(); i++)
+            {
+                mpData->mFilesToCheck.insert(iter.ParamAt(i));
             }
         }
         //done with report-level stuff.
@@ -515,6 +529,11 @@ int cTWPrintReportMode::Execute(cErrorQueue* pQueue)
 
         // print it
         cTextReportViewer trv(reportHeader, report);
+        if (!mpData->mFilesToCheck.empty())
+        {
+            trv.SetObjects(mpData->mFilesToCheck);
+        }
+
         trv.PrintTextReport(_T("-"), mpData->mReportLevel);
     }
     catch (eError& e)
@@ -545,7 +564,7 @@ public:
     cTextDBViewer::DbVerbosity mDbVerbosity;
 
     // ctor can set up some default values
-    cTWPrintDBMode_i() : cTWPrintModeCommon(), mVerbosity(cTextDBViewer::VERBOSE)
+    cTWPrintDBMode_i() : cTWPrintModeCommon(), mDbVerbosity(cTextDBViewer::VERBOSE)
     {
     }
 };
