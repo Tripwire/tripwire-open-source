@@ -76,71 +76,78 @@ sub run() {
     # Now run thru the valid report levels & verify return codes
     #  TODO: look for expected result in various report levels
 
-    twtools::RunReport({ report-level => 0 });
+    twtools::RunReport({ report_level => 0 });
     if ( $? != 0 ) {
         twtools::logStatus("level 0 report failed\n");
         $twpassed = 0;
     }
     
-    twtools::RunReport({ report-level => 1 });
+    twtools::RunReport({ report_level => 1 });
     if ( $? != 0 ) {
         twtools::logStatus("level 1 report failed\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => 2 });
+    twtools::RunReport({ report_level => 2 });
     if ( $? != 0 ) {
         twtools::logStatus("level 2 report failed\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => 3 });
+    twtools::RunReport({ report_level => 3 });
     if ( $? != 0 ) {
         twtools::logStatus("level 3 report failed\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => 4 });
+    twtools::RunReport({ report_level => 4 });
     if ( $? != 0 ) {
         twtools::logStatus("level 4 report failed\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => "4 --verbose --hexadecimal" });
+    twtools::RunReport({ report_level => "4 --verbose --hexadecimal" });
     if ( $? != 0 ) {
         twtools::logStatus("level 4 report (verbose, hex) failed\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => "4 --silent" });
+    twtools::RunReport({ report_level => "4 --silent" });
     if ( $? != 0 ) {
         twtools::logStatus("level 4 report (silent) failed\n");
         $twpassed = 0;
     }
 
+    twtools::RunReport({ report_object_list =>  "$twtools::twrootdir/printme.txt" });
+    if ( $? != 0 ) {
+        twtools::logStatus("print-report with an object list failedn");
+        $twpassed = 0;
+    }
+
+
     #########################################################
     #
     # Now some failure cases, to verify they fail
     #
-    twtools::RunReport({ report-level => 5 });
+    twtools::RunReport({ report_level => 5 });
     if ( $? != 256 ) {
         twtools::logStatus("nonexistent level 5 report failed, result = $?\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => "asdf" });
+    twtools::RunReport({ report_level => "asdf" });
     if ( $? != 256 ) {
         twtools::logStatus("nonexistent level 'asdf' report failed, result = $?\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => "0 --help" });
+    twtools::RunReport({ report_level => "0 --help" });
     if ( $? != 256 ) {
         twtools::logStatus("print-report help mode failed, result = $?\n");
         $twpassed = 0;
     }
 
-    twtools::RunReport({ report-level => "4 --verbose --silent" });
+    twtools::RunReport({ report_level => "4 --verbose --silent" });
     if ( $? != 256 ) {
         twtools::logStatus("print-report verbose vs silent failed, result = $?\n");
         $twpassed = 0;
@@ -156,17 +163,36 @@ sub run() {
         $twpassed = 0;
     }
 
-    twtools::RunDbPrint({ db-object-list => "$twtools::twrootdir/printme.txt" });
+    twtools::RunDbPrint({ db_object_list => "$twtools::twrootdir/printme.txt" });
     if ( $? != 0 ) {
-        twtools::logStatus("db print failed\n");
+        twtools::logStatus("db print with an object failed\n");
         $twpassed = 0;
     }
 
-    twtools::RunDbPrint({ db-object-list => "$twtools::twrootdir/nonexistent.vbs" });
+    twtools::RunDbPrint({ db_object_list => "$twtools::twrootdir/nonexistent.vbs" });
     if ( $? != 0 ) {
-        twtools::logStatus("db print failed\n");
+        twtools::logStatus("db print with nonexistent object failed\n");
         $twpassed = 0;
     }
+
+    twtools::RunDbPrint({ db_print_level => 0 });
+    if ( $? != 0 ) {
+        twtools::logStatus("db print level 0 failed\n");
+        $twpassed = 0;
+    }
+
+    twtools::RunDbPrint({ db_print_level => 1 });
+    if ( $? != 0 ) {
+        twtools::logStatus("db print level 1 failed\n");
+        $twpassed = 0;
+    }
+
+    twtools::RunDbPrint({ db_print_level => 2 });
+    if ( $? != 0 ) {
+        twtools::logStatus("db print level 2 failed\n");
+        $twpassed = 0;
+    }
+
 
     #########################################################
     #

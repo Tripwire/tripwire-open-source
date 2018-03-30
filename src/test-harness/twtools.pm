@@ -1,4 +1,3 @@
-
 package twtools;
 
 ######################################################################
@@ -364,11 +363,13 @@ sub UpdatePolicy {
 sub RunReport {
 
     my (%params) = %{$_[0]};
+    my ($reportobjects);
 
     $params{report} = $reportloc if( ! defined($params{report}) );
-    $params{report-level} = 0 if( ! defined($params{report-level}) );
+    $params{report_level} = 0 if( ! defined($params{report_level}) );
+    $params{report_object_list} = "" if( ! defined($params{report_object_list}) );
 
-    my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t $params{report-level} -r $params{report} 2>&1`;
+    my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t $params{report_level} -r $params{report} $params{report_object_list} 2>&1`;
 
     logStatus(@out);
 
@@ -383,9 +384,11 @@ sub RunReport {
 sub RunDbPrint {
 
     my (%params) = %{$_[0]};
-    $params{db-object-list} = "" if( ! defined($params{db-object-list}) );
+ 
+    $params{db_object_list} = "" if( ! defined($params{db_object_list}) );
+    $params{db_print_level} = "2" if( ! defined($params{db_print_level}) );
 
-    my (@out) =  `$twrootdir/bin/twprint -m d -c $twrootdir/$twcfgloc $params{db-object-list} 2>&1`;
+    my (@out) =  `$twrootdir/bin/twprint -m d -c $twrootdir/$twcfgloc -t $params{db_print_level} $params{db_object_list} 2>&1`;
 
     logStatus(@out);
 
