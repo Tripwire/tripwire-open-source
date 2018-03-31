@@ -201,7 +201,7 @@ sub run
     #######################################################
     # Do it again, but sign it this time.
     #
-    #twtools::RunIntegrityCheck({trailing-opts => "-E -P $twtools::twlocalpass"});
+    #twtools::RunIntegrityCheck({trailing_opts => "-E -P $twtools::twlocalpass"});
 
     # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
@@ -217,7 +217,7 @@ sub run
     # Now run 'just' the FS section, aka the whole policy
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck(trailing-opts => "-x FS");
+    twtools::RunIntegrityCheck(trailing_opts => "-x FS");
 
 	# Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
@@ -235,7 +235,7 @@ sub run
     # Now run a check ignoring the SHA attribute, should still return same changes
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck(trailing-opts => "-i S");
+    twtools::RunIntegrityCheck(trailing_opts => "-i S");
 
     # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
@@ -253,7 +253,7 @@ sub run
     # Now just run RuleA
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck({trailing-opts => "-R RuleA"});
+    twtools::RunIntegrityCheck({trailing_opts => "-R RuleA"});
 
     # Make sure we got 4 violations this time: 2 mod, 1 add, 1 rm.
     #
@@ -271,7 +271,7 @@ sub run
     # Now run severity level 200, meaning RuleB
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck({trailing-opts => "-l 200"});
+    twtools::RunIntegrityCheck({trailing_opts => "-l 200"});
 
     # Make sure we got 2 violations this time: 1 mod, 0 add, 1 rm.
     #
@@ -289,7 +289,7 @@ sub run
     # Now run severity level "high", also meaning RuleB
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck({trailing-opts => "-l high"});
+    twtools::RunIntegrityCheck({trailing_opts => "-l high"});
 
     # Make sure we got 2 violations this time: 1 mod, 0 add, 1 rm.
     #
@@ -307,7 +307,7 @@ sub run
     # Now run against one object, modify.txt
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck({trailing-opts => "$root/subdir/modify.txt"});
+    twtools::RunIntegrityCheck({trailing_opts => "$root/subdir/modify.txt"});
 
     # Make sure we got 1 violation this time: 1 mod, 0 add, 0 rm.
     #
@@ -324,11 +324,11 @@ sub run
     #  (we're configured to pipe to cat as a fake mailprogram)
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck({trailing-opts => "-M -t 0"});
-    twtools::RunIntegrityCheck({trailing-opts => "-M -t 1"});
-    twtools::RunIntegrityCheck({trailing-opts => "-M -t 2"});
-    twtools::RunIntegrityCheck({trailing-opts => "-M -t 3"});
-    twtools::RunIntegrityCheck({trailing-opts => "-M -t 4"});
+    twtools::RunIntegrityCheck({trailing_opts => "-M -t 0"});
+    twtools::RunIntegrityCheck({trailing_opts => "-M -t 1"});
+    twtools::RunIntegrityCheck({trailing_opts => "-M -t 2"});
+    twtools::RunIntegrityCheck({trailing_opts => "-M -t 3"});
+    twtools::RunIntegrityCheck({trailing_opts => "-M -t 4"});
 
     # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
@@ -347,7 +347,7 @@ sub run
     # Now run an interactive IC with cat as a fake editor, so DB gets auto updated.
     #
     RemoveFile("$reportloc");
-    twtools::RunIntegrityCheck({trailing-opts => "-I -V cat -P $twtools::twlocalpass"});
+    twtools::RunIntegrityCheck({trailing_opts => "-I -V cat -P $twtools::twlocalpass"});
 
     # Make sure we got 6 violations: 3 mod, 1 add, 2 rm.
     #
@@ -366,7 +366,7 @@ sub run
     #  + also exercise the verbose & hex output options since we don't elsewhere.
     #
     RemoveFile("$reportloc"); 
-    twtools::RunIntegrityCheck({trailing-opts => "-v -h"});
+    twtools::RunIntegrityCheck({trailing_opts => "-v -h"});
 
     # Make sure we got no violations this time
     #

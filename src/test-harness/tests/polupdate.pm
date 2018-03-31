@@ -199,13 +199,13 @@ sub RunBasicTest
 # 
 sub RunSecureModeTest
 {
-       twtools::logStatus("*** Beginning polupdate.secure-mode test\n");
-	printf("%-30s", "-- polupdate.secure-mode test");
+       twtools::logStatus("*** Beginning polupdate.secure_mode test\n");
+	printf("%-30s", "-- polupdate.secure_mode test");
 
 	PrepareForTest();
 
 	twtools::WritePolicyFile( PolicyFileStringNew() );
-	if( ! twtools::UpdatePolicy({ secure-mode => "high" } ))
+	if( ! twtools::UpdatePolicy({ secure_mode => "high" } ))
         {
             twtools::logStatus("FAILED -- update policy returned nonzero\n");
             return 0;

@@ -36,7 +36,7 @@ sub test_policy_dir
 
         twtools::logStatus "Trying policy text $policydir/$current_file\n";
 
-        twtools::CreatePolicy({policy-text => "$policydir/$current_file"});
+        twtools::CreatePolicy({policy_text => "$policydir/$current_file"});
         if ( $? != $expected ) {
             twtools::logStatus ("*** create-polfile with $policydir/$current_file failed, error = $?\n");
             $twpassed = 0;

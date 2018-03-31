@@ -195,12 +195,12 @@ sub RunBasicTest
 }
 
 ######################################################################
-# RunSecureModeTest -- test that secure-mode high and low are working
+# RunSecureModeTest -- test that secure_mode high and low are working
 #
 sub RunSecureModeTest
 {
-    twtools::logStatus("*** Beginning dbupdate.secure-mode test\n");
-    printf("%-30s", "-- dbupdate.secure-mode test");
+    twtools::logStatus("*** Beginning dbupdate.secure_mode test\n");
+    printf("%-30s", "-- dbupdate.secure_mode test");
 
     PrepareForTest();
 
@@ -230,22 +230,22 @@ sub RunSecureModeTest
     twtools::UpdateDatabase( { report => $report1 } );
 
     # Try to update the database with report 1 again ... this should fail
-    # in secure-mode == high because the db can't accept same changes again.
+    # in secure_mode == high because the db can't accept same changes again.
     #
     if( 0 == twtools::UpdateDatabase(
-    { report => $report1, secure-mode => "high" } ) )
+    { report => $report1, secure_mode => "high" } ) )
     {
-        twtools::logStatus("FAILED ... Secure-mode high didn't catch a bad update\n");
+        twtools::logStatus("FAILED ... secure_mode high didn't catch a bad update\n");
         return 0;
     }
 
     # Try to update the database with report 2 ... this should fail
-    # in secure-mode == high because the "old" values don't match.
+    # in secure_mode == high because the "old" values don't match.
     #
     if( 0 == twtools::UpdateDatabase(
-        { report => $report2, secure-mode => "high" } ) )
+        { report => $report2, secure_mode => "high" } ) )
     {
-        twtools::logStatus("FAILED ... Secure-mode high didn't catch a bad update\n");
+        twtools::logStatus("FAILED ... secure_mode high didn't catch a bad update\n");
         return 0;
     }
 
@@ -253,7 +253,7 @@ sub RunSecureModeTest
     # succeed 
     #
     if(  0 != twtools::UpdateDatabase(
-        { report => $report3, secure-mode => "high" } ) )
+        { report => $report3, secure_mode => "high" } ) )
     {
         twtools::logStatus("FAILED ... Update with report 3 failed\n");
         return 0;
@@ -264,14 +264,14 @@ sub RunSecureModeTest
     # succeed in low but fail in high.
     #
     if( 0 == twtools::UpdateDatabase(
-        { report => $report2, secure-mode => "high" } ) )
+        { report => $report2, secure_mode => "high" } ) )
     {
         twtools::logStatus("FAILED ... Update with report 2 after 3 succeeded in high mode\n");
         return 0;
     }
 
     if( 0 != twtools::UpdateDatabase(
-        { report => $report2, secure-mode => "low" } ) )
+        { report => $report2, secure_mode => "low" } ) )
     {
         twtools::logStatus("FAILED ... Update with report 2 after 3 failed in low mode\n");
         return 0;
