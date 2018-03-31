@@ -1,0 +1,292 @@
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+#                     Tripwire 2.4 policy for LibertyBSD                     # #
+#                            updated March 2018                              # #
+#                                                                            ##
+##############################################################################
+
+  ##############################################################################
+ #                                                                            ##
+############################################################################## #
+#                                                                            # #
+# Global Variable Definitions                                                # #
+#                                                                            # #
+# These are defined at install time by the installation script.  You may     # #
+# manually edit these if you are using this file directly and not from the   # #
+# installation script itself.                                                # #
+#                                                                            ##
+##############################################################################
+
+@@section GLOBAL
+TWROOT=;
+TWBIN=;
+TWPOL=;
+TWDB=;
+TWSKEY=;
+TWLKEY=;
+TWREPORT=;
+HOSTNAME=;
+
+  ##############################################################################
+ #  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
+
+@@section FS 
+
+  ########################################
+ #                                      ##
+######################################## #
+#                                      # #
+#  Tripwire Binaries and Data Files    # #
+#                                      ##
+########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries",
+)
+{
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files",
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
+
+  # In this configuration /usr/local is a symbolic link to /home/local.
+  # We want to ignore the following directories since they are already
+  # scanned using the real directory or mount point.  Otherwise we see
+  # duplicates in the reports.
+
+  !/home/local ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Boot and Configuration Files             # #
+#                                              ##
+################################################
+(
+  rulename = "OS Boot and Configuration Files",
+)
+{
+  /boot                         -> $(SEC_READONLY) ;
+  /bsd                          -> $(SEC_READONLY) ;
+  /etc                          -> $(SEC_IGNORE_NONE) -SHa ;
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Mount Points                                   # #
+#                                                 ##
+###################################################
+(
+  rulename = "Mount Points",
+)
+{
+  /                             -> $(SEC_READONLY) ;
+  /cdrom                        -> $(SEC_DYNAMIC) ;
+  /floppy                       -> $(SEC_DYNAMIC) ;
+  /home                         -> $(SEC_READONLY) ;  # Modify as needed
+  /mnt                          -> $(SEC_DYNAMIC) ;
+  /usr                          -> $(SEC_READONLY) ;
+  /var                          -> $(SEC_READONLY) ;
+}
+
+  ###################################################
+ #                                                 ##
+################################################### #
+#                                                 # #
+#  Misc Top-Level Directories                     # #
+#                                                 ##
+###################################################
+(
+  rulename = "Misc Top-Level Directories",
+)
+{
+  /altroot                      -> $(SEC_DYNAMIC) ;
+  /stand                        -> $(SEC_DYNAMIC) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#   System Devices                             # #
+#                                              ##
+################################################
+(
+  rulename = "System Devices",
+)
+{
+  /dev                          -> $(SEC_DEVICE) ;
+  /dev/fd                       -> $(SEC_DEVICE) ;
+  /var/cron/tabs/.sock          -> $(SEC_DEVICE) ; 
+  /var/empty/dev/log            -> $(SEC_DEVICE) ; 
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  OS Binaries and Libraries                   # #   
+#                                              ##
+################################################
+(
+  rulename = "OS Binaries and Libraries",
+)
+{
+  /bin                          -> $(SEC_READONLY) ;
+  /sbin                         -> $(SEC_READONLY) ;
+  /usr/bin                      -> $(SEC_READONLY) ;
+  /usr/lib                      -> $(SEC_READONLY) ;
+  /usr/libexec                  -> $(SEC_READONLY) ;
+  /usr/sbin                     -> $(SEC_READONLY) ;
+  /usr/X11R6/bin                -> $(SEC_READONLY) ;
+  /usr/X11R6/lib                -> $(SEC_READONLY) ;
+}
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Usr Local Files                             # #   
+#                                              ##
+################################################
+#OK(
+  #OKrulename = "Usr Local Files",
+#OK)
+#OK{
+  #OK/usr/local                    -> $(SEC_READONLY) ;
+  #OK/usr/local/bin                -> $(SEC_READONLY) ;
+  #OK/usr/local/doc                -> $(SEC_READONLY) ;
+  #OK/usr/local/etc                -> $(SEC_READONLY) ;
+  #OK/usr/local/include            -> $(SEC_READONLY) ;
+  #OK/usr/local/info               -> $(SEC_READONLY) ;
+  #OK/usr/local/lib                -> $(SEC_READONLY) ;
+  #OK/usr/local/libdata            -> $(SEC_READONLY) ;
+  #OK/usr/local/libexec            -> $(SEC_READONLY) ;
+  #OK/usr/local/man                -> $(SEC_READONLY) ;
+  #OK/usr/local/sbin               -> $(SEC_READONLY) ;
+  #OK/usr/local/share              -> $(SEC_READONLY) ;
+  #OK/usr/local/src                -> $(SEC_READONLY) ;
+#OK}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Root Directory and Files                    # #
+#                                              ##
+################################################
+(
+  rulename = "Root Directory and Files",
+)
+{
+  /root                          -> $(SEC_IGNORE_NONE) -SHa ;
+  /root/.cshrc                   -> $(SEC_DYNAMIC) ;
+  /root/.profile                 -> $(SEC_DYNAMIC) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  Temporary Directories                       # #
+#                                              ##
+################################################
+(
+  rulename = "Temporary Directories",
+)
+{
+  /tmp                          -> $(SEC_TEMPORARY) ;
+  /var/tmp                      -> $(SEC_TEMPORARY) ;
+}
+
+  ################################################
+ #                                              ##
+################################################ #
+#                                              # #
+#  System and Boot Changes                     # #
+#                                              ##
+################################################
+(
+  rulename = "System and Boot Changes",
+)
+{
+  /var/backups                    -> $(SEC_DYNAMIC) -i ;
+  /var/db/host.random             -> $(SEC_READONLY) -mCM ;
+  /var/cron                       -> $(SEC_GROWING) -i ;
+  /var/log                        -> $(SEC_GROWING) -i ;
+  /var/run                        -> $(SEC_DYNAMIC) -i ;
+  /var/mail                       -> $(SEC_GROWING) ;
+  /var/msgs/bounds                -> $(SEC_READONLY) -smbCM ;
+  /var/spool/clientmqueue         -> $(SEC_TEMPORARY) ;
+  /var/spool/mqueue               -> $(SEC_TEMPORARY) ;
+}
+
+#
+# $Id: twpol-OpenBSD.txt,v 1.2 2004/05/14 21:56:21 pherman Exp $
+#

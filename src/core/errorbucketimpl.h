@@ -1,37 +1,37 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
 ///////////////////////////////////////////////////////////////////////////////
 // errorbucketimpl.h
-// 
+//
 // This component contains classes derived from cErrorBucket and helper classes.
 // They were broken out of errorbucket.h becuase many components will only need to
 // know about cErrorBucket, so we reduce system dependencies by keeping these classes
@@ -60,22 +60,22 @@
 #endif
 
 //////////////////////////////////////////////////////
-// cErrorReporter -- sends all error messages to 
+// cErrorReporter -- sends all error messages to
 //      stderr
 //////////////////////////////////////////////////////
 class cErrorReporter : public cErrorBucket
 {
 public:
     static void PrintErrorMsg(const eError& error, const TSTRING& strExtra = _T(""));
-        // function that HandleError() uses to print the error messages to stderr.
-        // this function uses the current authoritative format for error reporting, so
-        // other functions needing to display errors to the user should use this.
-        //
+    // function that HandleError() uses to print the error messages to stderr.
+    // this function uses the current authoritative format for error reporting, so
+    // other functions needing to display errors to the user should use this.
+    //
 
-        // NOTE:bam 5/7/99 -- I don't think the below is true anymore?
-        // NOTE:mdb -- if the error has an ID of zero, nothing will be printed. This
-        //      is a way to throw a fatal error where the error reporting has already
-        //      occurred.
+    // NOTE:bam 5/7/99 -- I don't think the below is true anymore?
+    // NOTE:mdb -- if the error has an ID of zero, nothing will be printed. This
+    //      is a way to throw a fatal error where the error reporting has already
+    //      occurred.
 
 protected:
     virtual void HandleError(const eError& error);
@@ -100,17 +100,18 @@ protected:
 class cErrorQueue : public cErrorBucket, public iTypedSerializable
 {
     friend class cErrorQueueIter;
+
 public:
-    void Clear();   
-        // remove all errors from the queue
+    void Clear();
+    // remove all errors from the queue
     int GetNumErrors() const;
-        // returns how many errors are in the queue
+    // returns how many errors are in the queue
 
     //
     // iSerializable interface
     //
-    virtual void Read (iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-    virtual void Write(iSerializer* pSerializer) const; // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     //
     // Debugging
@@ -119,9 +120,10 @@ public:
 
 protected:
     virtual void HandleError(const eError& error);
+
 private:
     typedef std::list<ePoly> ListType;
-    ListType mList;
+    ListType                 mList;
 
     DECLARE_TYPEDSERIALIZABLE()
 };
@@ -131,7 +133,9 @@ class cErrorQueueIter
 public:
     cErrorQueueIter(cErrorQueue& queue);
     cErrorQueueIter(const cErrorQueue& queue);
-    ~cErrorQueueIter() {}
+    ~cErrorQueueIter()
+    {
+    }
 
     // iteration methods
     void SeekBegin();
@@ -139,9 +143,9 @@ public:
     bool Done() const;
 
     // access to the error
-    const ePoly&   GetError() const;
-        // both of these return results are undefined if the iterator 
-        // is not valid (ie - IsDone() == true)
+    const ePoly& GetError() const;
+    // both of these return results are undefined if the iterator
+    // is not valid (ie - IsDone() == true)
 private:
     cErrorQueue::ListType&          mList;
     cErrorQueue::ListType::iterator mIter;
@@ -153,9 +157,14 @@ private:
 //////////////////////////////////////////////////////
 class cErrorBucketNull : public cErrorBucket
 {
-    virtual void AddError(const eError& ) {}
+    virtual void AddError(const eError&)
+    {
+    }
+
 protected:
-    virtual void HandleError(const eError& ) {}
+    virtual void HandleError(const eError&)
+    {
+    }
 };
 
 //////////////////////////////////////////////////////
@@ -165,10 +174,10 @@ protected:
 class cErrorBucketPassThru : public cErrorBucket
 {
 protected:
-    virtual void HandleError(const eError& ) {}
+    virtual void HandleError(const eError&)
+    {
+    }
 };
 
 
-
 #endif
-

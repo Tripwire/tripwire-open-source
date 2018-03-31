@@ -1,37 +1,36 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
 // siggenmain.cpp
 #include "stdsiggen.h"
-
 
 
 #include "core/types.h"
@@ -46,7 +45,7 @@
 #include "core/epoch.h"
 #include "fs/fsstrings.h"
 #include "tw/twstrings.h"
-#include "tw/twutil.h"      // for cTWUtil::PrintErrorMsg
+#include "tw/twutil.h" // for cTWUtil::PrintErrorMsg
 #include "siggenstrings.h"
 
 #include "siggen.h"
@@ -76,28 +75,28 @@ void tw_unexpected_handler()
 
 static void SiggenInit()
 {
-    TSS_Dependency( cSiggen );
-    
-    static cUserNotifyStdout    unStdout;
-    static cErrorTracer         et;
-    static cErrorReporter       er;
+    TSS_Dependency(cSiggen);
+
+    static cUserNotifyStdout unStdout;
+    static cErrorTracer      et;
+    static cErrorReporter    er;
 
     //
     // initialize iUserNotify
     //
-    iUserNotify::SetInstance( &unStdout );
+    iUserNotify::SetInstance(&unStdout);
     iUserNotify::GetInstance()->SetVerboseLevel(iUserNotify::V_NORMAL);
 
     //
-    // set up the file system services    
+    // set up the file system services
     //
-    static cUnixFSServices  fss;
-    iFSServices::SetInstance( &fss );
+    static cUnixFSServices fss;
+    iFSServices::SetInstance(&fss);
 
     //
     // set up an error bucket that will spit things to stderr
     //
-    et.SetChild( &er );
+    et.SetChild(&er);
 }
 
 int __cdecl _tmain(int argc, const TCHAR** argv)
@@ -107,7 +106,7 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
     if (CheckEpoch())
         return 1;
 
-    try 
+    try
     {
         // set unexpected and terminate handlers
         // Note: we do this before Init() in case it attempts to call these handlers
@@ -124,10 +123,10 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         // first, process the command line
         if (argc < 2)
         {
-            TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
-            TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
-            TCOUT << TSS_GetString( cTW, tw::STR_GET_HELP) << std::endl;
-            
+            TCOUT << TSS_GetString(cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cTW, tw::STR_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
+
             ret = 1;
             goto exit;
         }
@@ -137,9 +136,9 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         // this is quick and dirty ... just the way I like it :-) -- mdb
         //
         if (_tcscmp(argv[1], _T("--version")) == 0)
-    {
-            TCOUT << TSS_GetString( cTW, tw::STR_VERSION_LONG) << std::endl;
-            ret=0;
+        {
+            TCOUT << TSS_GetString(cTW, tw::STR_VERSION_LONG) << std::endl;
+            ret = 0;
             goto exit;
         }
 
@@ -150,11 +149,11 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         {
             cmdLine.Parse(argc, argv);
         }
-        catch( eError& e )
+        catch (eError& e)
         {
             cTWUtil::PrintErrorMsg(e);
-            TCERR << TSS_GetString( cTW, tw::STR_GET_HELP) << std::endl;
-            
+            TCERR << TSS_GetString(cTW, tw::STR_GET_HELP) << std::endl;
+
             ret = 1;
             goto exit;
         }
@@ -162,22 +161,22 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         cCmdLineIter iter(cmdLine);
         if (iter.SeekToArg(cSiggenCmdLine::HELP))
         {
-            TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
-            TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
-            TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_USAGE) << std::endl;
+            TCOUT << TSS_GetString(cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cTW, tw::STR_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cSiggen, siggen::STR_SIGGEN_USAGE) << std::endl;
             ret = 1;
             goto exit;
         }
 
-        if(! siggen.Init(cmdLine))
+        if (!siggen.Init(cmdLine))
         {
-            TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
-            TCOUT << TSS_GetString( cTW, tw::STR_VERSION) << std::endl;
-            TCOUT << TSS_GetString( cSiggen, siggen::STR_SIGGEN_USAGE) << std::endl;
+            TCOUT << TSS_GetString(cSiggen, siggen::STR_SIGGEN_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cTW, tw::STR_VERSION) << std::endl;
+            TCOUT << TSS_GetString(cSiggen, siggen::STR_SIGGEN_USAGE) << std::endl;
             ret = 1;
             goto exit;
         }
-    ret = siggen.Execute();
+        ret = siggen.Execute();
 
     } //end try block
     catch (eError& error)
@@ -189,5 +188,4 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
 exit:
 
     return ret;
-}//end MAIN
-
+} //end MAIN

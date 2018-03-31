@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -34,19 +34,19 @@
 #include "serializerimpl.h"
 #include "debug.h"
 #include "archive.h"
-#include "ntmbs.h"         // for: eCharacterEncoding
+#include "ntmbs.h" // for: eCharacterEncoding
 #include "crc32.h"
 
 // static members
-cSerializerImpl::SerMap         cSerializerImpl::mSerCreateMap ;
-cSerializerImpl::SerRefCountMap cSerializerImpl::mSerRefCountCreateMap ;
+cSerializerImpl::SerMap         cSerializerImpl::mSerCreateMap;
+cSerializerImpl::SerRefCountMap cSerializerImpl::mSerRefCountCreateMap;
 
 ///////////////////////////////////////////////////////////////////////////////
 // util_GetCrc -- calculates the crc for the narrow version of the type's AsString()
 ///////////////////////////////////////////////////////////////////////////////
-static uint32 util_GetCRC( const cType& type )
+static uint32 util_GetCRC(const cType& type)
 {
-    // 
+    //
     // convert this to narrow...
     //
 
@@ -59,19 +59,19 @@ static uint32 util_GetCRC( const cType& type )
 
     // We only need to count the characters
     // RAD: Yeesh! This is already done for us in cType::mString!!!
-    const uint8* pszType = (const uint8*)( type.AsString() );
-    int nBytes = ::strlen( (const char*)pszType );
+    const uint8* pszType = (const uint8*)(type.AsString());
+    int          nBytes  = ::strlen((const char*)pszType);
 
-    ASSERT( sizeof(uint8) == sizeof(byte) );
-    ASSERT( pszType && *pszType );
+    ASSERT(sizeof(uint8) == sizeof(byte));
+    ASSERT(pszType && *pszType);
 
     //
     // calculate the crc...
     //
     CRC_INFO crc;
-    crcInit( crc );
-    crcUpdate( crc, pszType, nBytes );
-    crcFinit( crc );
+    crcInit(crc);
+    crcUpdate(crc, pszType, nBytes);
+    crcFinit(crc);
 
     return crc.crc;
 }
@@ -79,11 +79,8 @@ static uint32 util_GetCRC( const cType& type )
 //#############################################################################
 // class cSerializerImpl
 //#############################################################################
-cSerializerImpl::cSerializerImpl(cArchive& archive, Mode action, const TSTRING& fileName) :
-    mpArchive(&archive),
-    mMode(action),
-    mbInit(false),
-    mFileName( fileName )
+cSerializerImpl::cSerializerImpl(cArchive& archive, Mode action, const TSTRING& fileName)
+    : mpArchive(&archive), mMode(action), mbInit(false), mFileName(fileName)
 {
 }
 
@@ -107,13 +104,13 @@ bool cSerializerImpl::IsWriting() const
 
 void cSerializerImpl::RegisterSerializable(const cType& type, iTypedSerializable::CreateFunc pFunc)
 {
-    uint32 crc = util_GetCRC( type );
+    uint32 crc = util_GetCRC(type);
 
-    if( cSerializerImpl::mSerCreateMap.find( crc ) != cSerializerImpl::mSerCreateMap.end() )
+    if (cSerializerImpl::mSerCreateMap.find(crc) != cSerializerImpl::mSerCreateMap.end())
     {
         // duplicate entry!
         //
-        ASSERT( false );
+        ASSERT(false);
         TOSTRINGSTREAM str;
         str << _T("Duplicate entry in type table: ") << type.AsString() << std::endl;
         throw eInternal(str.str());
@@ -123,13 +120,13 @@ void cSerializerImpl::RegisterSerializable(const cType& type, iTypedSerializable
 
 void cSerializerImpl::RegisterSerializableRefCt(const cType& type, iSerRefCountObj::CreateFunc pFunc)
 {
-    uint32 crc = util_GetCRC( type );
+    uint32 crc = util_GetCRC(type);
 
-    if( cSerializerImpl::mSerRefCountCreateMap.find( crc ) != cSerializerImpl::mSerRefCountCreateMap.end() )
+    if (cSerializerImpl::mSerRefCountCreateMap.find(crc) != cSerializerImpl::mSerRefCountCreateMap.end())
     {
         // duplicate entry!
         //
-        ASSERT( false );
+        ASSERT(false);
         TOSTRINGSTREAM str;
         str << _T("Duplicate entry in type table: ") << type.AsString() << std::ends;
         throw eInternal(str.str());
@@ -153,7 +150,7 @@ void cSerializerImpl::Init()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// Finit 
+// Finit
 ///////////////////////////////////////////////////////////////////////////////
 void cSerializerImpl::Finit()
 {
@@ -184,23 +181,23 @@ void cSerializerImpl::WriteObjectDynCreate(const iTypedSerializable* pObj)
 
     // get the ident for this class type
     //
-    uint32 crc = util_GetCRC( pObj->GetType() );
+    uint32 crc = util_GetCRC(pObj->GetType());
 
     //
     // make sure this type is registered, and figure out if it is refrence counted
     //
-    SerRefCountMap::iterator i = mSerRefCountCreateMap.find( crc );
-    bool bRefCount = true;
-    if( i == mSerRefCountCreateMap.end() )
+    SerRefCountMap::iterator i         = mSerRefCountCreateMap.find(crc);
+    bool                     bRefCount = true;
+    if (i == mSerRefCountCreateMap.end())
     {
         //
         // maybe it is not refrence counted...
         //
-        SerMap::iterator si = mSerCreateMap.find( crc );
-        if( si == mSerCreateMap.end() )
+        SerMap::iterator si = mSerCreateMap.find(crc);
+        if (si == mSerCreateMap.end())
         {
             d.TraceError("Attempt to serialize unregistered type : %s\n", pObj->GetType().AsString());
-            ThrowAndAssert(eSerializerUnknownType( pObj->GetType().AsString(), mFileName, eSerializer::TY_FILE ));
+            ThrowAndAssert(eSerializerUnknownType(pObj->GetType().AsString(), mFileName, eSerializer::TY_FILE));
         }
         bRefCount = false;
     }
@@ -209,12 +206,12 @@ void cSerializerImpl::WriteObjectDynCreate(const iTypedSerializable* pObj)
     mpArchive->WriteInt32(pObj->Version());
     // write a placeholder for the size; we will come back and fill in the right value later...
     mpArchive->WriteInt32(0xffffffff);
-    
-    if(bRefCount)
+
+    if (bRefCount)
     {
         // see if the object has already been serialized...
         int idx;
-        if((idx = mRefCtObjTbl.Lookup(static_cast<const iSerRefCountObj*>(pObj))) == 0)
+        if ((idx = mRefCtObjTbl.Lookup(static_cast<const iSerRefCountObj*>(pObj))) == 0)
         {
             // it is not in the table yet; add it and serialize the object
             idx = mRefCtObjTbl.Add(static_cast<const iSerRefCountObj*>(pObj));
@@ -235,7 +232,6 @@ void cSerializerImpl::WriteObjectDynCreate(const iTypedSerializable* pObj)
         mpArchive->WriteInt32(0);
         // ... then write the object.
         pObj->Write(this);
-
     }
 }
 
@@ -247,7 +243,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
     cDebug d("cSerializerImpl::ReadObjectDynCreate");
     //d.TraceDetail("Entering... archive offset = %d\n", mpArchive->CurrentPos());
 
-    int32 size, objIdx; 
+    int32  size, objIdx;
     uint32 crc;
     // first, get the type...
     mpArchive->ReadInt32(reinterpret_cast<int32&>(crc));
@@ -263,21 +259,21 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
     //int64 sizePos = mpArchive->CurrentPos();
 
     mpArchive->ReadInt32(objIdx);
-    if(objIdx == 0)
+    if (objIdx == 0)
     {
         // the object is not reference counted; create and read in the object
         // first, we need to create the object.
         SerMap::iterator si;
         si = mSerCreateMap.find(crc);
-        if(si == mSerCreateMap.end())
+        if (si == mSerCreateMap.end())
         {
             // unable to find the creation function...
             d.TraceError("Unable to find creation function for non-ref counted object %d\n", crc);
             TOSTRINGSTREAM str;
-            #ifdef DEBUG
+#ifdef DEBUG
             // Let's only report the actual crc in debug mode
             str << (int32)crc << std::ends;
-            #endif
+#endif
             ThrowAndAssert(eSerializerUnknownType(str.str(), mFileName, eSerializer::TY_FILE));
         }
         iTypedSerializable* pObj = ((*si).second)();
@@ -286,7 +282,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
 
         // seek past this object in case filepos is not correct!
         //mpArchive->Seek(sizePos + size, cBidirArchive::BEGINNING);
-        
+
         return pObj;
     }
     else
@@ -294,12 +290,12 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
         // refrence counted...
         iSerRefCountObj* pObj;
         pObj = mRefCtObjTbl.Lookup(objIdx);
-        if(pObj == NULL)
+        if (pObj == NULL)
         {
             // not in table yet...first find the creation function
             SerRefCountMap::iterator rci;
             rci = mSerRefCountCreateMap.find(crc);
-            if(rci == mSerRefCountCreateMap.end())
+            if (rci == mSerRefCountCreateMap.end())
             {
                 // unable to find the creation function...
                 d.TraceError("Unable to find creation function for ref counted object %d\n", crc);
@@ -311,7 +307,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
             d.TraceDetail("Creating Ref-Coutnted object [%d] %s(%p)\n", objIdx, pObj->GetType().AsString(), pObj);
             pObj->Read(this);
             mRefCtObjTbl.Add(pObj, objIdx);
-        
+
             // seek past this object in case filepos is not correct!
             //mpArchive->Seek(sizePos + size, cBidirArchive::BEGINNING);
 
@@ -320,10 +316,13 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
         else
         {
             // already serialized; just return this object.
-            d.TraceDetail("Adding refrence to previously serialized object [%d] %s(%p)\n", objIdx, pObj->GetType().AsString(), pObj);
+            d.TraceDetail("Adding refrence to previously serialized object [%d] %s(%p)\n",
+                          objIdx,
+                          pObj->GetType().AsString(),
+                          pObj);
             pObj->AddRef();
         }
-        
+
         // seek past this object in case filepos is not correct!
         //mpArchive->Seek(sizePos + size, cBidirArchive::BEGINNING);
 
@@ -349,12 +348,12 @@ void cSerializerImpl::WriteObject(const iTypedSerializable* pObj)
     // data  the object data
     ASSERT(mpArchive != 0);
 
-    
+
     // 5Nov 98 mdb -- I am removing the read and write of type info for this method; it is never used, since
     // the object is already created when ReadObject() happens. The only good it might serve is in asserting that
     // the input stream is valid, but I can do that with the 0xffffffff size below (asserting that it is the same
     // when it is read back in)
-/*  int i = 0;
+    /*  int i = 0;
     for(; i < mTypeArray.size(); i++)
     {
         if(pObj->GetType() == *mTypeArray[i])
@@ -373,13 +372,13 @@ void cSerializerImpl::WriteObject(const iTypedSerializable* pObj)
     mpArchive->WriteInt32(i);
 */
 
-    mpArchive->WriteInt32(0);   // place holder for type array index
+    mpArchive->WriteInt32(0); // place holder for type array index
     mpArchive->WriteInt32(pObj->Version());
     // write a placeholder for the size; we will come back and fill in the right value later...
     //int64 sizePos = mpArchive->CurrentPos();
     mpArchive->WriteInt32(0xffffffff);
-    
-    // write out the object! 
+
+    // write out the object!
     pObj->Write(this);
 
     // finally, we need to go back and patch up the size...
@@ -395,7 +394,7 @@ void cSerializerImpl::ReadObject(iTypedSerializable* pObj)
     //d.TraceDetail("Entering... archive offset = %d\n", mpArchive->CurrentPos());
 
     // NOTE -- type index stuff is gone; see the comment in WriteObject()
-    int32 /*typeIdx,*/ size; 
+    int32 /*typeIdx,*/ size;
     // first, get the type...
     /*
     mpArchive->ReadInt32(typeIdx);
@@ -410,14 +409,14 @@ void cSerializerImpl::ReadObject(iTypedSerializable* pObj)
 
     // read in the version
     int32 dummy, version;
-    mpArchive->ReadInt32(dummy);    // old type array index
+    mpArchive->ReadInt32(dummy); // old type array index
     mpArchive->ReadInt32(version);
 
     // read in the size and the index...
     mpArchive->ReadInt32(size);
 
     // use the size to assert that the file format is correct
-    if(size != (int)0xffffffff)
+    if (size != (int)0xffffffff)
     {
         // unknown type index!
         d.TraceError("Encountered bad size: %d\n", size);
@@ -493,6 +492,5 @@ void cSerializerImpl::WriteBlob(const void* pBlob, int count)
 ///////////////////////////////////////////////////////////////////////////////
 TSTRING cSerializerImpl::GetFileName() const
 {
-    return mFileName;   
+    return mFileName;
 }
-

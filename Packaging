@@ -9,10 +9,6 @@ Packaging for Open Source Tripwire is maintained by various third parties:
  * Debian: https://tracker.debian.org/pkg/tripwire
 
  * Gentoo: https://packages.gentoo.org/packages/app-admin/tripwire
-    Gentoo also has an SELinux policy for OST:
-    https://packages.gentoo.org/packages/sec-policy/selinux-tripwire
-
- * Chef cookbook: https://github.com/rackspace-cookbooks/rackspace_tripwire
 
  * FreeBSD Ports: http://svnweb.freebsd.org/ports/head/security/tripwire/
 
@@ -23,5 +19,19 @@ Packaging for Open Source Tripwire is maintained by various third parties:
  * NetBSD pkgsrc: http://ftp.netbsd.org/pub/pkgsrc/current/pkgsrc/security/tripwire/README.html
     NOTE: At present (April 2016) pkgsrc only provides the obsolete Tripwire 1.2, from the mid-1990s.
     That version lacks contemporary hash algorithms, and you probably don't want to use it.
+    There's an unfinished pkgsrc port for OST 2.3+ here, if someone who understands pkgsrc
+    is looking for a fun(?) project: http://pkgsrc.se/wip/tripwire2
 
 
+A few third party projects that might be useful with OST
+
+ * Chef cookbook: https://github.com/rackspace-cookbooks/rackspace_tripwire
+
+ * Puppet module: https://github.com/razorsedge/puppet-tripwire
+
+ * SELinux policies from Tresys: https://github.com/TresysTechnology/refpolicy-contrib/blob/master/tripwire.te
+   (and related .fc and .if files in the same repo)
+
+ * A Gentoo SELinux policy, different from the one above: https://packages.gentoo.org/packages/sec-policy/selinux-tripwire
+
+ * An experimental(?) Dockerfile for CentOS: https://hub.docker.com/r/prateeknischal/tripwire-play/

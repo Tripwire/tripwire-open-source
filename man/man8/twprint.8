@@ -2,7 +2,7 @@
 .\" Do not move or remove previous line.
 .\" Used by some man commands to know that tbl should be used.
 .ad l
-.TH TWPRINT 8 "1 July 2000"
+.TH TWPRINT 8 "04 Jan 2018" "Open Source Tripwire 2.4"
 .nh
 .SH NAME
 twprint \- Tripwire database and report printer
@@ -10,6 +10,9 @@ twprint \- Tripwire database and report printer
 .B twprint
 .RB "{ " "-m r" " | " "--print-report" " } "
 .RI "[ " options... " ]"
+.if n .br
+.if n .ti +.5i
+.RI " [ " "object1" " [ " "object2..." " ]]"
 .br
 .B twprint
 .RB "{ " "-m d" " | " "--print-dbfile" " } "
@@ -59,6 +62,7 @@ lbw(1.2i) lb.
 -L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
 -t \fR{ 0|1|2|3|4 }\fP	--report-level \fR{ 0|1|2|3|4 }\fP
 .TE
+.RI "[ " "object1" " [ " "object2..." " ]]"
 .RE
 .TP
 .BR "\(hym r" ", " --print-report
@@ -83,10 +87,15 @@ Print the specified report file.
 Use the specified local key file to perform verification
 with reports which are signed.
 .TP
-.BI \(hyt " level\fR, " --report-level " level
+.BI \(hyt " level\fR, " --report-level " level"
 Specifies the detail level of the printed report, overriding the
 \f(CWREPORTLEVEL\fP variable in the configuration
 file. \fIlevel\fR must be a number from 0\ to\ 4.
+.TP
+.RI "[ " "object1" " [ " "object2..." " ]]"
+List of filesystem objects in the report to print. If no
+objects are specified, every object in the report will
+be printed. 
 .\" *****************************************
 .SS Database printing mode:
 .RS 0.4i
@@ -100,6 +109,7 @@ lbw(1.2i) lb.
 -c \fIcfgfile\fP	--cfgfile \fIcfgfile\fP
 -d \fIdatabase\fP	--dbfile \fIdatabase\fP
 -L \fIlocalkey\fP	--local-keyfile \fIlocalkey\fP
+-t \fR{ 0|1|2 }\fP	--output-level \fR{ 0|1|2 }\fP
 .TE
 .RI "[ " "object1" " [ " "object2..." " ]]"
 .RE
@@ -125,6 +135,11 @@ Print the specified database file.
 .BI \(hyL " localkey\fR, " --local-keyfile " localkey"
 Use the specified local key file to read the database.
 .TP
+.BI \(hyt " level\fR, " --output-level " level"
+Specifies the detail level of the printed database, overriding the
+\f(CWDBPRINTLEVEL\fP variable in the configuration
+file. \fIlevel\fR must be a number from 0\ to\ 2.
+.TP
 .RI "[ " "object1" " [ " "object2..." " ]]"
 List of filesystem objects in the database to print. If no
 objects are specified, every object in the database will
@@ -132,6 +147,8 @@ be printed. The format for a list of objects is:
 .if n .I "section: objname objname... section: objname..."
 .if t .br
 .if t .I "section: objectname objectname... section: objectname..."
+.SH EXIT STATUS
+\fBtwprint\fP exits 0 on success, 1 on error.
 .SH VERSION INFORMATION
 This man page describes
 .B twprint
@@ -145,7 +162,7 @@ Permission is granted to copy and distribute modified versions of this man page 
 .PP
 Permission is granted to copy and distribute translations of this man page into another language, under the above conditions for modified versions, except that this permission notice may be stated in a translation approved by Tripwire, Inc.
 .PP
-Copyright 2000-2017 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
+Copyright 2000-2018 Tripwire, Inc. Tripwire is a registered trademark of Tripwire, Inc. in the United States and other countries. All rights reserved.
 .SH SEE ALSO
 .BR twintro (8),
 .BR tripwire (8),

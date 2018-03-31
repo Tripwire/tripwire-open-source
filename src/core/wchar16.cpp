@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -40,7 +40,7 @@
 #include "debug.h"
 #include <stdexcept> // for stl::out_of_range
 #ifdef HAVE_MEMORY_H
-# include <memory.h>
+#include <memory.h>
 #endif
 
 int wchar16len(const WCHAR16* s)
@@ -55,8 +55,8 @@ int wchar16len(const WCHAR16* s)
 //=============================================================================
 // class wc16_string
 //
-// This clas implements enough of the std::basic_string interface so we 
-// can use it like an STL string. 
+// This clas implements enough of the std::basic_string interface so we
+// can use it like an STL string.
 //
 // In an ideal world we this would be a std::basic_string instantiation, but
 // UNIX doesn't seem to dealing 16 bit wide chars, it uses 32 bit chars.
@@ -76,17 +76,19 @@ public:
     void Release();
     void Resize(int newlen);
     void CopyString(const wc16_string_impl& rhs);
-        // note: does not alter this->referenceCount, and ASSERTs that refcount == 1
+    // note: does not alter this->referenceCount, and ASSERTs that refcount == 1
 
-    ~wc16_string_impl();    // call Release() to delete
+    ~wc16_string_impl(); // call Release() to delete
 private:
-    void operator = (const wc16_string_impl& rhs) { return; }   // don't call
+    void operator=(const wc16_string_impl& rhs)
+    {
+        return;
+    } // don't call
 };
 
 static WCHAR16 NULL_WCHAR16 = 0;
 
-wc16_string::wc16_string()
-:   mpData(0)
+wc16_string::wc16_string() : mpData(0)
 {
 }
 
@@ -112,42 +114,39 @@ wc16_string::~wc16_string()
         mpData->Release();
 }
 
-void wc16_string::operator = (const wc16_string& rhs)
+void wc16_string::operator=(const wc16_string& rhs)
 {
     if (mpData)
         mpData->Release();
 
     mpData = rhs.mpData;
 
-    if( mpData )
+    if (mpData)
         mpData->AddRef();
 }
 
 
 int wc16_string::compare(const wc16_string& rhs) const
 {
-    if( length() > rhs.length() )
+    if (length() > rhs.length())
         return 1;
-    else if ( length() < rhs.length() )
+    else if (length() < rhs.length())
         return -1;
     else
-        return memcmp( c_str(), rhs.c_str(), length()*sizeof( WCHAR16 ) );
+        return memcmp(c_str(), rhs.c_str(), length() * sizeof(WCHAR16));
 }
 
-wc16_string::size_type
-wc16_string::length() const
+wc16_string::size_type wc16_string::length() const
 {
     return mpData ? mpData->length : 0;
 }
 
-wc16_string::size_type
-wc16_string::size() const
+wc16_string::size_type wc16_string::size() const
 {
     return mpData ? mpData->length : 0;
 }
 
-wc16_string::const_iterator
-wc16_string::c_str() const
+wc16_string::const_iterator wc16_string::c_str() const
 {
     if (mpData == 0)
         return &NULL_WCHAR16;
@@ -157,35 +156,24 @@ wc16_string::c_str() const
     return mpData->pString;
 }
 
-wc16_string::const_iterator
-wc16_string::begin() const
+wc16_string::const_iterator wc16_string::begin() const
 {
     return (const_cast<wc16_string*>(this))->begin();
 }
 
-wc16_string::iterator
-wc16_string::begin()
+wc16_string::iterator wc16_string::begin()
 {
     return mpData ? mpData->pString : &NULL_WCHAR16;
 }
 
-wc16_string::const_iterator
-wc16_string::end() const
+wc16_string::const_iterator wc16_string::end() const
 {
-    return 
-        const_cast< iterator >(
-            mpData 
-                ? mpData->pString + mpData->length
-                : &NULL_WCHAR16 );
+    return const_cast<iterator>(mpData ? mpData->pString + mpData->length : &NULL_WCHAR16);
 }
 
-wc16_string::iterator
-wc16_string::end()
+wc16_string::iterator wc16_string::end()
 {
-    return 
-        mpData 
-            ? mpData->pString + mpData->length
-            : &NULL_WCHAR16;
+    return mpData ? mpData->pString + mpData->length : &NULL_WCHAR16;
 }
 
 wc16_string::const_iterator wc16_string::data() const
@@ -193,7 +181,7 @@ wc16_string::const_iterator wc16_string::data() const
     return begin();
 }
 
-const wc16_string::value_type& wc16_string::operator [] (int i) const
+const wc16_string::value_type& wc16_string::operator[](int i) const
 {
     ASSERT(i >= 0);
 
@@ -206,7 +194,7 @@ const wc16_string::value_type& wc16_string::operator [] (int i) const
     return mpData->pString[i];
 }
 
-wc16_string::value_type& wc16_string::operator [] (int i)
+wc16_string::value_type& wc16_string::operator[](int i)
 {
     ASSERT(i >= 0);
 
@@ -222,24 +210,24 @@ wc16_string::value_type& wc16_string::operator [] (int i)
         mpData->Release();
         mpData = newImpl;
     }
-    
+
     return mpData->pString[i];
 }
 
-void wc16_string::resize( size_type nCount )
+void wc16_string::resize(size_type nCount)
 {
-    if ( mpData == 0 )
+    if (mpData == 0)
     {
         mpData = new wc16_string_impl;
     }
-    else if ( mpData->refCount > 1 )
+    else if (mpData->refCount > 1)
     {
-        wc16_string_impl* newImpl = new wc16_string_impl( *mpData );
+        wc16_string_impl* newImpl = new wc16_string_impl(*mpData);
         mpData->Release();
         mpData = newImpl;
     }
 
-    mpData->Resize( nCount );
+    mpData->Resize(nCount);
 }
 
 // useful to convert to network byte order
@@ -264,17 +252,17 @@ void wc16_string::swapbytes()
 
 wc16_string_impl::wc16_string_impl()
 {
-    length = 0;
-    pString = new WCHAR16[1];
+    length   = 0;
+    pString  = new WCHAR16[1];
     refCount = 1;
 }
 
 wc16_string_impl::wc16_string_impl(const wc16_string_impl& rhs)
 {
     int newlen = rhs.length;
-    pString = new WCHAR16[newlen + 1];
-    length = newlen;
-    refCount = 1;
+    pString    = new WCHAR16[newlen + 1];
+    length     = newlen;
+    refCount   = 1;
 
     memcpy(pString, rhs.pString, newlen * sizeof(WCHAR16));
 }
@@ -306,13 +294,13 @@ void wc16_string_impl::Resize(int newlen)
         return;
 
     WCHAR16* newString = new WCHAR16[newlen + 1];
-    
+
     if (newlen < length)
     {
         memcpy(newString, pString, newlen * sizeof(WCHAR16));
         delete [] pString;
         pString = newString;
-        length = newlen;
+        length  = newlen;
     }
     else
     {
@@ -320,7 +308,7 @@ void wc16_string_impl::Resize(int newlen)
         memset(newString + length, 0, (newlen - length) * sizeof(WCHAR16));
         delete [] pString;
         pString = newString;
-        length = newlen;
+        length  = newlen;
     }
 }
 
@@ -333,10 +321,9 @@ void wc16_string_impl::CopyString(const wc16_string_impl& rhs)
     if (rhs.length != this->length)
     {
         delete [] pString;
-        pString = new WCHAR16[newlen + 1];
+        pString      = new WCHAR16[newlen + 1];
         this->length = newlen;
     }
 
     memcpy(this->pString, rhs.pString, newlen * sizeof(WCHAR16));
 }
-

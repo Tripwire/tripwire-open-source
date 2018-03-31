@@ -60,13 +60,14 @@ HOSTNAME=;
 #
 ##############################################################################
 
-Device        = +pugsdr-intlbamcCMSH ;
-Dynamic       = +pinugtd-srlbamcCMSH ;
-Growing       = +pinugtdl-srbamcCMSH ;
-IgnoreAll     = -pinugtsdrlbamcCMSH ;
-IgnoreNone    = +pinugtsdrbamcCMSH-l ;
-ReadOnly      = +pinugtsdbmCM-rlacSH ;
-Temporary     = +pugt ;
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
+
 
 @@section FS 
 
@@ -83,10 +84,10 @@ Temporary     = +pugt ;
   rulename = "Tripwire Binaries",
 )
 {
-  $(TWBIN)/siggen                      -> $(ReadOnly) ;
-  $(TWBIN)/tripwire                    -> $(ReadOnly) ;
-  $(TWBIN)/twadmin                     -> $(ReadOnly) ;
-  $(TWBIN)/twprint                     -> $(ReadOnly) ;
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
 }
 
 # Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
@@ -103,14 +104,14 @@ Temporary     = +pugt ;
   # afterward triggers this rule until a database update is run, since the
   # database file does not exist before that point.
 
-  $(TWDB)                              -> $(Dynamic) -i ;
-  $(TWPOL)/tw.pol                      -> $(ReadOnly) -i ;
-  $(TWPOL)/tw.cfg                      -> $(ReadOnly) -i ;
-  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(ReadOnly) ;
-  $(TWSKEY)/site.key                   -> $(ReadOnly) ;
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
 
   # don't scan the individual reports
-  $(TWREPORT)                          -> $(Dynamic) (recurse=0) ;
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
 }
 
   ################################################
@@ -124,7 +125,7 @@ Temporary     = +pugt ;
   rulename = "OS Boot and Configuration Files",
 )
 {
-  /etc                          -> $(IgnoreNone) -SHa ;
+  /etc                          -> $(SEC_IGNORE_NONE) -SHa ;
 }
 
   ###################################################
@@ -138,9 +139,9 @@ Temporary     = +pugt ;
   rulename = "Mount Points",
 )
 {
-  /                             -> $(ReadOnly) ;
-  /usr                          -> $(ReadOnly) ;
-  /var                          -> $(ReadOnly) ;
+  /                             -> $(SEC_READONLY) ;
+  /usr                          -> $(SEC_READONLY) ;
+  /var                          -> $(SEC_READONLY) ;
 }
 
   ###################################################
@@ -154,10 +155,10 @@ Temporary     = +pugt ;
   rulename = "Misc Top-Level Directories",
 )
 {
-  /lost+found                   -> $(ReadOnly) ;
-  /hacmplocal                   -> $(ReadOnly) ;
-  /homelocal                    -> $(ReadOnly) ;
-  /opt                          -> $(ReadOnly) ;
+  /lost+found                   -> $(SEC_READONLY) ;
+  /hacmplocal                   -> $(SEC_READONLY) ;
+  /homelocal                    -> $(SEC_READONLY) ;
+  /opt                          -> $(SEC_READONLY) ;
   !/var/adm/csd	;
 }
 
@@ -172,7 +173,7 @@ Temporary     = +pugt ;
   rulename = "System Devices",
 )
 {
-  /dev                          -> $(Device) ;
+  /dev                          -> $(SEC_DEVICE) ;
 }
 
   ################################################
@@ -186,10 +187,10 @@ Temporary     = +pugt ;
   rulename = "OS Binaries and Libraries",
 )
 {
-  /sbin                         -> $(ReadOnly) ;
-  /usr/bin                      -> $(ReadOnly) ;
-  /usr/lib                      -> $(ReadOnly) ;
-  /usr/sbin                     -> $(ReadOnly) ;
+  /sbin                         -> $(SEC_READONLY) ;
+  /usr/bin                      -> $(SEC_READONLY) ;
+  /usr/lib                      -> $(SEC_READONLY) ;
+  /usr/sbin                     -> $(SEC_READONLY) ;
 }
 
   ################################################
@@ -203,11 +204,11 @@ Temporary     = +pugt ;
   rulename = "Root Directory and Files",
 )
 {
-  #/.dtprofile                    -> $(Dynamic) ;
+  #/.dtprofile                    -> $(SEC_DYNAMIC) ;
   ! /.netscape/cache ; 
-  /.netscape/history.dat         -> $(Dynamic) ;
-  /.sh_history                   -> $(Dynamic) ;
-  #/.Xauthority                   -> $(ReadOnly) ;
+  /.netscape/history.dat         -> $(SEC_DYNAMIC) ;
+  /.sh_history                   -> $(SEC_DYNAMIC) ;
+  #/.Xauthority                   -> $(SEC_READONLY) ;
 }
 
   ################################################
@@ -221,8 +222,8 @@ Temporary     = +pugt ;
   rulename = "Temporary Directories",
 )
 {
-  /tmp                          -> $(Temporary) ;
-  /var/tmp                      -> $(Temporary) ;
+  /tmp                          -> $(SEC_TEMPORARY) ;
+  /var/tmp                      -> $(SEC_TEMPORARY) ;
 }
 
   ################################################
@@ -251,31 +252,31 @@ Temporary     = +pugt ;
   rulename = "System and Boot Changes",
 )
 {
-  /etc/es/objrepos		-> $(ReadOnly) -SHacm ;
-  /etc/es/objrepos/HACMPresource -> $(ReadOnly) -SHCMcm ;
-  /etc/lpp/diagnostics/data 	-> $(ReadOnly) -SHCMacm ;
-  /etc/ntp.drift		-> $(ReadOnly) -SHiacm ;
+  /etc/es/objrepos		-> $(SEC_READONLY) -SHacm ;
+  /etc/es/objrepos/HACMPresource -> $(SEC_READONLY) -SHCMcm ;
+  /etc/lpp/diagnostics/data 	-> $(SEC_READONLY) -SHCMacm ;
+  /etc/ntp.drift		-> $(SEC_READONLY) -SHiacm ;
   !/etc/objrepos ;
-  /etc/security			-> $(ReadOnly) -SHacm ;
-  /usr/es/adm/cluster.log	-> $(ReadOnly) -SHCMsbm ;
-  /usr/es/sbin/cluster/etc/objrepos/active -> $(ReadOnly) -SHim ;
+  /etc/security			-> $(SEC_READONLY) -SHacm ;
+  /usr/es/adm/cluster.log	-> $(SEC_READONLY) -SHCMsbm ;
+  /usr/es/sbin/cluster/etc/objrepos/active -> $(SEC_READONLY) -SHim ;
   !/usr/etc/sbin/cluster/history ;
-  /usr/share/lib/objrepos      -> $(ReadOnly) -m ;
-  /usr/lib/objrepos      -> $(ReadOnly) -m ;
+  /usr/share/lib/objrepos      -> $(SEC_READONLY) -m ;
+  /usr/lib/objrepos      -> $(SEC_READONLY) -m ;
   !/var/adm/SPlogs ;
-  /var/ha/log                      -> $(Growing) -i ;
+  /var/ha/log                      -> $(SEC_GROWING) -i ;
   !/var/adm ;
   !/var/ct ;
 
-  #/var/backups                    -> $(Dynamic) -i ;
-  #/var/db/host.random             -> $(ReadOnly) -mCM ;
-  #/var/db/locate.database         -> $(ReadOnly) -misCM ;
-  #/var/cron                       -> $(Growing) -i ;
-  #/var/log                        -> $(Growing) -i ;
-  #/var/run                        -> $(Dynamic) -i ;
-  #/var/mail                       -> $(Growing) ;
-  #/var/msgs/bounds                -> $(ReadOnly) -smbCM ;
-  #/var/spool/clientmqueue         -> $(Temporary) ;
-  #/var/spool/mqueue               -> $(Temporary) ;
+  #/var/backups                    -> $(SEC_DYNAMIC) -i ;
+  #/var/db/host.random             -> $(SEC_READONLY) -mCM ;
+  #/var/db/locate.database         -> $(SEC_READONLY) -misCM ;
+  #/var/cron                       -> $(SEC_GROWING) -i ;
+  #/var/log                        -> $(SEC_GROWING) -i ;
+  #/var/run                        -> $(SEC_DYNAMIC) -i ;
+  #/var/mail                       -> $(SEC_GROWING) ;
+  #/var/msgs/bounds                -> $(SEC_READONLY) -smbCM ;
+  #/var/spool/clientmqueue         -> $(SEC_TEMPORARY) ;
+  #/var/spool/mqueue               -> $(SEC_TEMPORARY) ;
   #!/var/tmp/vi.recover ;           # perl script periodically removes this
 }

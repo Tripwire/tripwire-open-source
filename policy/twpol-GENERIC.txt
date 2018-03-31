@@ -65,15 +65,24 @@ TWREPORT=;
 HOSTNAME=;
 
 @@section FS
-SEC_CRIT      = $(IgnoreNone)-SHa ;  # Critical files that cannot change
-SEC_SUID      = $(IgnoreNone)-SHa ;  # Binaries with the SUID or SGID flags set
-SEC_BIN       = $(ReadOnly) ;        # Binaries that should not change
-SEC_CONFIG    = $(Dynamic) ;         # Config files that are changed infrequently but accessed often
-SEC_LOG       = $(Growing) ;         # Files that grow, but that should never change ownership
-SEC_INVARIANT = +tpug ;              # Directories that should never change permission or ownership
-SIG_LOW       = 33 ;                 # Non-critical files that are of minimal security impact
-SIG_MED       = 66 ;                 # Non-critical files that are of significant security impact
-SIG_HI        = 100 ;                # Critical files that are significant points of vulnerability
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
+
+SEC_CRIT      = $(SEC_IGNORE_NONE)-SHa ; # Critical files that cannot change
+SEC_SUID      = $(SEC_IGNORE_NONE)-SHa ; # Binaries with the SUID or SGID flags set
+SEC_BIN       = $(SEC_READONLY) ;        # Binaries that should not change
+SEC_CONFIG    = $(SEC_DYNAMIC) ;         # Config files that are changed infrequently but accessed often
+SEC_TTY       = $(SEC_DYNAMIC)-ugp ;     # Tty files that change ownership at login
+SEC_LOG       = $(SEC_GROWING) ;         # Files that grow, but that should never change ownership
+SEC_INVARIANT = $(SEC_TEMPORARY) ;       # Directories that should never change permission or ownership
+SIG_LOW       = 33 ;                     # Non-critical files that are of minimal security impact
+SIG_MED       = 66 ;                     # Non-critical files that are of significant security impact
+SIG_HI        = 100 ;                    # Critical files that are significant points of vulnerability
 
 
 # Tripwire Binaries
@@ -112,56 +121,6 @@ SIG_HI        = 100 ;                # Critical files that are significant point
   #don't scan the individual reports
   $(TWREPORT)                          -> $(SEC_CONFIG) (recurse=0) ;
 }
-
-
-# Tripwire HQ Connector Binaries
-#(
-#  rulename = "Tripwire HQ Connector Binaries",
-#  severity = $(SIG_HI)
-#)
-#{
-#  $(TWBIN)/hqagent                     -> $(SEC_BIN) ;
-#}
-#
-# Tripwire HQ Connector - Configuration Files, Keys, and Logs
-
-  ##############################################################################
- #                                                                            ##
-############################################################################## #
-#                                                                            # #
-# Note: File locations here are different than in a stock HQ Connector       # #
-# installation.  This is because Tripwire 2.3 uses a different path          # #
-# structure than Tripwire 2.2.1.                                             # #
-#                                                                            # #
-# You may need to update your HQ Agent configuation file (or this policy     # #
-# file) to correct the paths.  We have attempted to support the FHS standard # #
-# here by placing the HQ Agent files similarly to the way Tripwire 2.3       # #
-# places them.                                                               # #
-#                                                                            ##
-##############################################################################
-
-#(
-#  rulename = "Tripwire HQ Connector Data Files",
-#  severity = $(SIG_HI)
-#)
-#{
-#   #############################################################################
-#  ##############################################################################
-#  # NOTE: Removing the inode attribute because when Tripwire creates a backup ##
-#  # it does so by renaming the old file and creating a new one (which will    ##
-#  # have a new inode number).  Leaving inode turned on for keys, which        ##
-#  # shouldn't ever change.                                                    ##
-#  #############################################################################
-#
-#  $(TWBIN)/agent.cfg                   -> $(SEC_BIN) -i ;
-#  $(TWLKEY)/authentication.key         -> $(SEC_BIN) ;
-#  $(TWDB)/tasks.dat                    -> $(SEC_CONFIG) ;
-#  $(TWDB)/schedule.dat                 -> $(SEC_CONFIG) ;
-#
-#  # Uncomment if you have agent logging enabled.
-#  #/var/log/tripwire/agent.log      -> $(SEC_LOG) ;
-#}
-
 
 
 # Commonly accessed directories that should remain static with regards to owner and group
@@ -1078,7 +1037,7 @@ SIG_HI        = 100 ;                # Critical files that are significant point
 
 #=============================================================================
 #
-# Copyright 2000-2017 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
+# Copyright 2000-2018 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
 # Inc. in the United States and other countries. All rights reserved.
 #
 # Linux is a registered trademark of Linus Torvalds.

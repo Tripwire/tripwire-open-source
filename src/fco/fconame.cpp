@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -44,21 +44,24 @@
 #include <vector>
 
 //#############################################################################
-// cFCOName_i -- an implementation of a cFCOName -- this object is refrence 
+// cFCOName_i -- an implementation of a cFCOName -- this object is refrence
 //      counted (so copies are cheap) and contains a linked list of cFCOTableNodes
 //      as well as the static instance of the cFCONameTbl.
 //#############################################################################
 class cFCOName_i : public cRefCountObj
 {
 public:
-    cFCOName::ListType  mNames;
+    cFCOName::ListType mNames;
 
-    ~cFCOName_i()                                                   { ClearList(); }
+    ~cFCOName_i()
+    {
+        ClearList();
+    }
     void ClearList();
-        // releases all the names in mNames and clears the list
+    // releases all the names in mNames and clears the list
 
     // the single name table
-    static cFCONameTbl  msNameTbl;
+    static cFCONameTbl msNameTbl;
 };
 
 ///////////////////////////////////////////////////
@@ -67,7 +70,7 @@ public:
 inline void cFCOName_i::ClearList()
 {
     cFCOName::ListType::iterator i;
-    for(i = mNames.begin(); i != mNames.end(); ++i)
+    for (i = mNames.begin(); i != mNames.end(); ++i)
         (*i)->Release();
     mNames.clear();
 }
@@ -92,119 +95,130 @@ void cFCOName::ClearNameTable()
 ///////////////////////////////////////////////////////////////////////////////
 // ctor, dtor
 ///////////////////////////////////////////////////////////////////////////////
-cFCOName::cFCOName(iFCONameInfo* pNI) : 
-    iTypedSerializable(), mpPathName(0), mDelimiter('/')
+cFCOName::cFCOName(iFCONameInfo* pNI) : iTypedSerializable(), mpPathName(0), mDelimiter('/')
 {
     SetNameInfo(pNI);
     mpPathName = new cFCOName_i;
 #ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(iFCONameInfo*)");
-    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
-#endif 
+    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"),
+                 this,
+                 mpPathName,
+                 mDebugStrName.c_str(),
+                 mpPathName->GetRefCount());
+#endif
 }
 
-cFCOName::cFCOName(const cFCOName& rhs) :
-    iTypedSerializable(),
-    mpPathName(rhs.mpPathName),
-    mDelimiter(rhs.mDelimiter),
-    mbCaseSensitive(rhs.mbCaseSensitive)
+cFCOName::cFCOName(const cFCOName& rhs)
+    : iTypedSerializable(), mpPathName(rhs.mpPathName), mDelimiter(rhs.mDelimiter), mbCaseSensitive(rhs.mbCaseSensitive)
 {
     mpPathName->AddRef();
 #ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(cFCOName&)");
-    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
-#endif 
+    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"),
+                 this,
+                 mpPathName,
+                 mDebugStrName.c_str(),
+                 mpPathName->GetRefCount());
+#endif
 }
 
-cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) :
-    iTypedSerializable(), mpPathName(0), mDelimiter('/')
-{    
+cFCOName::cFCOName(const TSTRING& rhs, iFCONameInfo* pNI) : iTypedSerializable(), mpPathName(0), mDelimiter('/')
+{
     SetNameInfo(pNI);
     mpPathName = new cFCOName_i;
     ParseString(rhs.c_str());
-    
+
 #ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(cFCOName&,iFCONameInfo*)");
-    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
-#endif 
+    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"),
+                 this,
+                 mpPathName,
+                 mDebugStrName.c_str(),
+                 mpPathName->GetRefCount());
+#endif
 }
 
-cFCOName::cFCOName(const TCHAR* rhs, iFCONameInfo* pNI) : 
-    iTypedSerializable(), mpPathName(0), mDelimiter('/')
+cFCOName::cFCOName(const TCHAR* rhs, iFCONameInfo* pNI) : iTypedSerializable(), mpPathName(0), mDelimiter('/')
 {
     SetNameInfo(pNI);
     mpPathName = new cFCOName_i;
     ParseString(rhs);
-    
+
 #ifdef DEBUG
     mDebugStrName = AsString();
     cDebug d("cFCOName::cFCOName(cFCOName&,iFCONameInfo*)");
-    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
-#endif 
+    d.TraceNever(_T("constructing %X:%X %s (refcount=%d)\n"),
+                 this,
+                 mpPathName,
+                 mDebugStrName.c_str(),
+                 mpPathName->GetRefCount());
+#endif
 }
 
 cFCOName::~cFCOName()
 {
 #ifdef DEBUG
     cDebug d("cFCOName::~cFCOName()");
-    d.TraceNever(_T("destructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
-#endif 
+    d.TraceNever(
+        _T("destructing %X:%X %s (refcount=%d)\n"), this, mpPathName, mDebugStrName.c_str(), mpPathName->GetRefCount());
+#endif
 
     mpPathName->Release();
 }
 
 void cFCOName::SetNameInfo(iFCONameInfo* pNI)
-{    
-    if( pNI )
+{
+    if (pNI)
     {
         mbCaseSensitive = pNI->IsCaseSensitive();
-        mDelimiter = pNI->GetDelimitingChar();
+        mDelimiter      = pNI->GetDelimitingChar();
     }
     else
     {
         mbCaseSensitive = iTWFactory::GetInstance()->GetNameInfo()->IsCaseSensitive();
-        mDelimiter = iTWFactory::GetInstance()->GetNameInfo()->GetDelimitingChar();
+        mDelimiter      = iTWFactory::GetInstance()->GetNameInfo()->GetDelimitingChar();
     }
 #ifdef DEBUG
-    if( mpPathName != NULL ) // this could be called from the constructor before this is initialized.
+    if (mpPathName != NULL) // this could be called from the constructor before this is initialized.
         mDebugStrName = AsString();
-#endif 
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // operator=
 ///////////////////////////////////////////////////////////////////////////////
-cFCOName& cFCOName::operator = (const cFCOName& rhs)
+cFCOName& cFCOName::operator=(const cFCOName& rhs)
 {
     mpPathName->Release();
     // TODO -- I am sure this won't work (const-ness)
-    mpPathName      = rhs.mpPathName;
+    mpPathName = rhs.mpPathName;
     mpPathName->AddRef();
     mDelimiter      = rhs.mDelimiter;
     mbCaseSensitive = rhs.mbCaseSensitive;
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
     return *this;
 }
 
-cFCOName& cFCOName::operator = (const TSTRING& rhs)
+cFCOName& cFCOName::operator=(const TSTRING& rhs)
 {
     *this = rhs.c_str();
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
     return *this;
 }
 
-cFCOName&  cFCOName::operator = (const TCHAR* rhs)
+cFCOName& cFCOName::operator=(const TCHAR* rhs)
 {
     // if I have the only handle on this vector, I can reuse it
     // otherwise, I have to release it.
-    if(mpPathName->GetRefCount() != 1)
+    if (mpPathName->GetRefCount() != 1)
     {
         mpPathName->Release();
         mpPathName = new cFCOName_i;
@@ -212,50 +226,49 @@ cFCOName&  cFCOName::operator = (const TCHAR* rhs)
     ParseString(rhs);
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
     return *this;
 }
 
-void cFCOName::ParseString( const TCHAR* pszin )
+void cFCOName::ParseString(const TCHAR* pszin)
 {
-   ASSERT(mpPathName != 0);
-   ASSERT(pszin != 0);
-  
-   mpPathName->ClearList();
-   
-   const TCHAR* at = (pszin + 0);
-   const TCHAR* begin = at;
-   const TCHAR* end = at;
-   int components = 0;
+    ASSERT(mpPathName != 0);
+    ASSERT(pszin != 0);
 
-   while (*end)
-      ++end;  
+    mpPathName->ClearList();
 
-   while (at < end)
-   {
-      while (*at && !(*at == mDelimiter) && (at < end))
-         at++;
+    const TCHAR* at         = (pszin + 0);
+    const TCHAR* begin      = at;
+    const TCHAR* end        = at;
+    int          components = 0;
 
-      TSTRING name(begin, at);      
+    while (*end)
+        ++end;
+
+    while (at < end)
+    {
+        while (*at && !(*at == mDelimiter) && (at < end))
+            at++;
+
+        TSTRING name(begin, at);
 
 //NOTE: To be truly standards compliant we ought to turn >2 slashes into 1, not 2.
 #if SUPPORTS_DOUBLE_SLASH_PATH
-      if (name.length() > 0 || components < 2)
-#else 
-      if (name.length() > 0 || components == 0)
+        if (name.length() > 0 || components < 2)
+#else
+        if (name.length() > 0 || components == 0)
 #endif
-      {
-         cFCONameTblNode* pNode = 
-            cFCOName_i::msNameTbl.CreateNode(name);
-       
-         mpPathName->mNames.push_back(pNode);
-      }         
+        {
+            cFCONameTblNode* pNode = cFCOName_i::msNameTbl.CreateNode(name);
 
-      components++;
-      at++;
-      begin=at;
-      //begin = (at = tss::strinc(at));
-   }
+            mpPathName->mNames.push_back(pNode);
+        }
+
+        components++;
+        at++;
+        begin = at;
+        //begin = (at = tss::strinc(at));
+    }
 }
 
 
@@ -272,10 +285,10 @@ TSTRING cFCOName::AsString() const
     // if I don't, it appears as an empty string
     // 15 Oct -- I also had to add a yucky hack for c:\ in windows
     //
-    // 13 Jan 99 mdb -- I have decided that all fconames that are one item long should be 
+    // 13 Jan 99 mdb -- I have decided that all fconames that are one item long should be
     // considered "root items" and should thus be displayed with a trailing delimiting character.
     //
-    if(mpPathName->mNames.size() == 1)
+    if (mpPathName->mNames.size() == 1)
     {
         str = (*mpPathName->mNames.begin())->GetString();
         str += mDelimiter;
@@ -283,17 +296,17 @@ TSTRING cFCOName::AsString() const
     }
     // end ugly root dir hacks ...
     ListType::iterator i = mpPathName->mNames.begin();
-    while(i != mpPathName->mNames.end())
+    while (i != mpPathName->mNames.end())
     {
         TSTRING current = (*i)->GetString();
         // the loop is constructed in this odd fashion because I don't want a trailing mDelimiter
         str += current;
         ++i;
 
-        if(i != mpPathName->mNames.end() && current != "/")
+        if (i != mpPathName->mNames.end() && current != "/")
             str += mDelimiter;
     }
-    
+
     return str;
 }
 
@@ -302,11 +315,11 @@ TSTRING cFCOName::AsString() const
 ///////////////////////////////////////////////////////////////////////////////
 const TCHAR* cFCOName::GetShortName() const
 {
-    ASSERT( ! mpPathName->mNames.empty() );
-    if( mpPathName->mNames.empty() )
+    ASSERT(!mpPathName->mNames.empty());
+    if (mpPathName->mNames.empty())
         return 0;
 
-    return ( mpPathName->mNames.back()->GetString() );
+    return (mpPathName->mNames.back()->GetString());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -316,13 +329,13 @@ void cFCOName::Clear()
 {
     //TODO -- I could probably implement this a little cleaner...
     //
-    while( ! mpPathName->mNames.empty() )
+    while (!mpPathName->mNames.empty())
     {
         Pop();
     }
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
 }
 
 
@@ -334,29 +347,29 @@ cFCOName::Relationship cFCOName::GetRelationship(const cFCOName& rhs) const
     ListType::iterator myIter, rhsIter;
 
     // get the easy equality out of the case first...
-    if(mpPathName == rhs.mpPathName)
+    if (mpPathName == rhs.mpPathName)
         return REL_EQUAL;
 
     // if either name is case sensitive, we will do a case sensitive compare
     bool bCaseSensitive = (IsCaseSensitive() || rhs.IsCaseSensitive());
     bool bEqual;
 
-    for(myIter =  mpPathName->mNames.begin(),   rhsIter =  rhs.mpPathName->mNames.begin();
-        (myIter != mpPathName->mNames.end() &&  rhsIter != rhs.mpPathName->mNames.end());
-        ++myIter, ++rhsIter)
+    for (myIter = mpPathName->mNames.begin(), rhsIter = rhs.mpPathName->mNames.begin();
+         (myIter != mpPathName->mNames.end() && rhsIter != rhs.mpPathName->mNames.end());
+         ++myIter, ++rhsIter)
     {
-        if(bCaseSensitive)
+        if (bCaseSensitive)
             bEqual = (*myIter == *rhsIter);
         else
             bEqual = ((*myIter)->GetLowercaseNode() == (*rhsIter)->GetLowercaseNode());
-        if(! bEqual)
+        if (!bEqual)
             return REL_UNRELATED;
     }
 
     // if we got this far, one is above another, or they are equal...
-    if((myIter == mpPathName->mNames.end()) &&  (rhsIter == rhs.mpPathName->mNames.end()))
+    if ((myIter == mpPathName->mNames.end()) && (rhsIter == rhs.mpPathName->mNames.end()))
         return REL_EQUAL;
-    else if(myIter == mpPathName->mNames.end())
+    else if (myIter == mpPathName->mNames.end())
         // I am shorter; I am above rhs
         return REL_ABOVE;
     else
@@ -364,29 +377,28 @@ cFCOName::Relationship cFCOName::GetRelationship(const cFCOName& rhs) const
 }
 
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 // TODO -- serialize the hash table and nodes instead of reading and writing
 //      as a string
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOName::Read(iSerializer* pSerializer, int32 version) 
+void cFCOName::Read(iSerializer* pSerializer, int32 version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Name Read")));
 
     TSTRING str;
     pSerializer->ReadString(str);
-   
+
     int16 dummy = 0;
 
     // serialize the delimiter
-    pSerializer->ReadInt16( dummy ); // delimiter, but it's always '/' anyway in OST.
+    pSerializer->ReadInt16(dummy); // delimiter, but it's always '/' anyway in OST.
     mDelimiter = '/';
 
     // read the case-sensitiveness
     pSerializer->ReadInt16(dummy);
-    if(dummy == 0)
+    if (dummy == 0)
         mbCaseSensitive = false;
     else
         mbCaseSensitive = true;
@@ -394,7 +406,7 @@ void cFCOName::Read(iSerializer* pSerializer, int32 version)
     ParseString(str.c_str());
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -409,7 +421,7 @@ void cFCOName::Write(iSerializer* pSerializer) const
     // serialize the delimiter
     unsigned short wc = (unsigned short)'/';
     pSerializer->WriteInt16(wc);
-    pSerializer->WriteInt16( mbCaseSensitive ? (int16)1 : (int16)0);
+    pSerializer->WriteInt16(mbCaseSensitive ? (int16)1 : (int16)0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -418,19 +430,18 @@ void cFCOName::Write(iSerializer* pSerializer) const
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOName::CopyOnModify()
 {
-    if(mpPathName->GetRefCount() > 1)
+    if (mpPathName->GetRefCount() > 1)
     {
-        cFCOName_i* pOld= mpPathName;
-        mpPathName = new cFCOName_i;
+        cFCOName_i* pOld = mpPathName;
+        mpPathName       = new cFCOName_i;
         ListType::iterator i;
-        for(i = pOld->mNames.begin(); i != pOld->mNames.end(); ++i)
+        for (i = pOld->mNames.begin(); i != pOld->mNames.end(); ++i)
         {
             (*i)->AddRef();
             mpPathName->mNames.push_back(*i);
         }
         pOld->Release();
     }
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -445,13 +456,13 @@ void cFCOName::Push(const TSTRING& str)
     mpPathName->mNames.push_back(pNode);
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // Pop
 ///////////////////////////////////////////////////////////////////////////////
-const TCHAR*    cFCOName::Pop()
+const TCHAR* cFCOName::Pop()
 {
     // we must copy the fconame if there is more than one refrence to it...
     CopyOnModify();
@@ -467,23 +478,23 @@ const TCHAR*    cFCOName::Pop()
     pNode->Release();
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
     return ret;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // PopFront
 ///////////////////////////////////////////////////////////////////////////////
-const TCHAR*    cFCOName::PopFront()
+const TCHAR* cFCOName::PopFront()
 {
     // we must copy the fconame if there is more than one reference to it...
     CopyOnModify();
 
     ASSERT(GetSize() > 0);
 
-    cFCONameTblNode* pNode = mpPathName->mNames.front();
-    cFCOName::ListType::iterator i = mpPathName->mNames.begin();
-    mpPathName->mNames.erase( i );
+    cFCONameTblNode*             pNode = mpPathName->mNames.front();
+    cFCOName::ListType::iterator i     = mpPathName->mNames.begin();
+    mpPathName->mNames.erase(i);
 
     // I do this assertion because it should also be in the hash table
     ASSERT(pNode->GetRefCount() > 1);
@@ -491,7 +502,7 @@ const TCHAR*    cFCOName::PopFront()
     pNode->Release();
 #ifdef DEBUG
     mDebugStrName = AsString();
-#endif 
+#endif
     return ret;
 }
 
@@ -506,7 +517,7 @@ int cFCOName::GetSize() const
 
 ///////////////////////////////////////////////////////////////////////////////
 // operator< -- provides an arbitrary ordering to cFCONames. The algorithm I chose
-//      is like strcmp, except instead of comparing characters, I compare 
+//      is like strcmp, except instead of comparing characters, I compare
 //      cFCONameTblNode* addresses
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCOName::operator<(const cFCOName& rhs) const
@@ -517,16 +528,16 @@ bool cFCOName::operator<(const cFCOName& rhs) const
     bool bCaseSensitive = (IsCaseSensitive() || rhs.IsCaseSensitive());
 
     // get the easy equality out of the case first...
-    if(mpPathName == rhs.mpPathName)
+    if (mpPathName == rhs.mpPathName)
         return false;
 
-    for(myIter =  mpPathName->mNames.begin(),   rhsIter =  rhs.mpPathName->mNames.begin();
-        (myIter != mpPathName->mNames.end() &&  rhsIter != rhs.mpPathName->mNames.end());
-        ++myIter, ++rhsIter)
+    for (myIter = mpPathName->mNames.begin(), rhsIter = rhs.mpPathName->mNames.begin();
+         (myIter != mpPathName->mNames.end() && rhsIter != rhs.mpPathName->mNames.end());
+         ++myIter, ++rhsIter)
     {
-        if(bCaseSensitive)
+        if (bCaseSensitive)
         {
-            if      (*myIter > *rhsIter)
+            if (*myIter > *rhsIter)
                 return false;
             else if (*myIter < *rhsIter)
                 return true;
@@ -534,7 +545,7 @@ bool cFCOName::operator<(const cFCOName& rhs) const
         else
         {
             // not case sensitive
-            if      ((*myIter)->GetLowercaseNode() > (*rhsIter)->GetLowercaseNode())
+            if ((*myIter)->GetLowercaseNode() > (*rhsIter)->GetLowercaseNode())
                 return false;
             else if ((*myIter)->GetLowercaseNode() < (*rhsIter)->GetLowercaseNode())
                 return true;
@@ -543,10 +554,10 @@ bool cFCOName::operator<(const cFCOName& rhs) const
     }
 
     // if we got this far, one is above another, or they are equal...
-    if(rhsIter == rhs.mpPathName->mNames.end())
+    if (rhsIter == rhs.mpPathName->mNames.end())
         // either I am longer of we are equal; so return false
         return false;
-    
+
     return true;
 }
 
@@ -558,8 +569,7 @@ bool cFCOName::operator<(const cFCOName& rhs) const
 ///////////////////////////////////////////////////////////////////////////////
 // cFCONameIter
 ///////////////////////////////////////////////////////////////////////////////
-cFCONameIter::cFCONameIter(const cFCOName& name)
-: mName(name)
+cFCONameIter::cFCONameIter(const cFCOName& name) : mName(name)
 {
     SeekBegin();
 }
@@ -569,7 +579,6 @@ cFCONameIter::cFCONameIter(const cFCOName& name)
 ///////////////////////////////////////////////////////////////////////////////
 cFCONameIter::~cFCONameIter()
 {
-
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -601,7 +610,7 @@ void cFCONameIter::Next()
 ///////////////////////////////////////////////////////////////////////////////
 bool cFCONameIter::Done() const
 {
-    return ( mIter == mName.mpPathName->mNames.end() );
+    return (mIter == mName.mpPathName->mNames.end());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -609,7 +618,7 @@ bool cFCONameIter::Done() const
 ///////////////////////////////////////////////////////////////////////////////
 const TCHAR* cFCONameIter::GetName() const
 {
-    ASSERT( ! Done() );
+    ASSERT(!Done());
 
     return (*mIter)->GetString();
 }
@@ -627,18 +636,16 @@ void cFCONameIter::Prev()
 ///////////////////////////////////////////////////////////////////////////////
 int cFCONameIter::Index() const
 {
-    ASSERT( ! Done() );
-    return ( mIter - mName.mpPathName->mNames.begin() );
+    ASSERT(!Done());
+    return (mIter - mName.mpPathName->mNames.begin());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // SeekTo
 ///////////////////////////////////////////////////////////////////////////////
-void cFCONameIter::SeekTo( int index )
+void cFCONameIter::SeekTo(int index)
 {
-    ASSERT( (index >= 0) && (index < mName.GetSize()) );
+    ASSERT((index >= 0) && (index < mName.GetSize()));
 
-    mIter = ( mName.mpPathName->mNames.begin() + index );
+    mIter = (mName.mpPathName->mNames.begin() + index);
 }
-
-

@@ -2,8 +2,8 @@
  #                                                                            ##
 ############################################################################## #
 #                                                                            # #
-#                    Policy file for Mac OS X                                # #
-#                        September 3, 2003                                   # #
+#                 Tripwire 2.4 policy for Mac OS X                           # #
+#                       updated March 2018                                   # #
 #                                                                            ##
 ##############################################################################
 
@@ -28,7 +28,7 @@ TWDB=;
 TWSKEY=;
 TWLKEY=;
 TWREPORT=;
-#USER1=frodo ;
+HOSTNAME=;
 
 
   ##############################################################################
@@ -67,9 +67,10 @@ SEC_DYNAMIC       = +pinugt-dsrlbamcCMSH ;
 SEC_READONLY      = +pinugtsbmCM-drlacSH ;
 SEC_GROWING       = +pinugtl-dsrbamcCMSH ;
 
-IgnoreAll     = -pinugtsdrlbamcCMSH ;
-IgnoreNone    = +pinugtsdrbamcCMSH-l ;
-Temporary     = +pugt ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE    = +pinugtsdrbamcCMSH-l ;
+SEC_TEMPORARY     = +pugt ;
+
 
 @@section FS 
 
@@ -109,7 +110,7 @@ Temporary     = +pugt ;
   $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
   $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
   $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
-  $(TWLKEY)/local.key                  -> $(SEC_READONLY) ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
   $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
 
   # don't scan the individual reports
@@ -129,14 +130,14 @@ Temporary     = +pugt ;
   rulename = "OS Boot and Configuration Files", severity=100
 )
 {
-  /mach.sym                               -> $(SEC_READONLY)-im ;
+ #/mach.sym                               -> $(SEC_READONLY)-im ;
   /mach_kernel                            -> $(SEC_READONLY) ;
   /private/etc                            -> $(SEC_READONLY)-m ;
 
  #/private/etc/appletalk.cfg              -> $(SEC_READONLY)-im ;
  #/private/etc/appletalk.nvram.en0        -> $(SEC_DYNAMIC) ;
   /private/etc/cups/certs                 -> $(SEC_DYNAMIC) -i(recurse=0) ;
-  /private/etc/smb.conf                   -> $(SEC_READONLY)-im ;
+ #/private/etc/smb.conf                   -> $(SEC_READONLY)-im ;
 
   /Library                                -> $(SEC_READONLY) ;
   /System                                 -> $(SEC_READONLY) ;
@@ -182,8 +183,6 @@ Temporary     = +pugt ;
 )
 {
   /dev                          -> $(SEC_DEVICE)(recurse=0) ;
- #/private/var/cron/tabs/.sock  -> $(SEC_DEVICE) ; 
-
 }
 
   ################################################
@@ -203,8 +202,8 @@ Temporary     = +pugt ;
   /usr/lib                      -> $(SEC_READONLY) ;
   /usr/libexec                  -> $(SEC_READONLY) ;
   /usr/sbin                     -> $(SEC_READONLY) ;
- #/usr/X11R6                    -> $(SEC_READONLY)(recurse=2) ;   # May not be present
- #/usr/X11R6/man                -> $(SEC_DYNAMIC)-i(recurse=1) ;  # May not be present
+  /usr/X11                      -> $(SEC_READONLY)(recurse=2) ;   # May not be present
+ #/usr/X11/man                  -> $(SEC_DYNAMIC)-i(recurse=1) ;  # May not be present
   /usr/share                    -> $(SEC_READONLY) ;
   /usr/share/man                -> $(SEC_DYNAMIC)-i(recurse=1) ;
 
@@ -223,12 +222,6 @@ Temporary     = +pugt ;
 )
 {
    /Applications                -> $(SEC_READONLY)-im(recurse=2) ;
-  "/Applications (Mac OS 9)"    -> $(SEC_READONLY) ;
-
-
-  !/Applications/Internet/P2P/Downloads ;
-  !/Applications/Games/"Warcraft III Folder"/Save ;
-
 }
 
   ################################################
@@ -243,10 +236,19 @@ Temporary     = +pugt ;
 )
 {
   /usr/local                    -> $(SEC_READONLY) ;
- #/usr/local/bin                -> $(SEC_READONLY) ;
+  /usr/local/sbin               -> $(SEC_READONLY) ;
+  /usr/local/bin                -> $(SEC_READONLY) ;
+  /usr/local/include            -> $(SEC_READONLY) ;
+  /usr/local/opt                -> $(SEC_READONLY) ;
+  /usr/local/libexec            -> $(SEC_READONLY) ;
+  /usr/local/lib                -> $(SEC_READONLY) ;
   /usr/local/etc                -> $(SEC_READONLY) ;
- #/usr/local/sbin               -> $(SEC_READONLY) ;
- #/usr/local/share              -> $(SEC_READONLY) ;
+  /usr/local/share              -> $(SEC_READONLY) ;
+  /usr/local/man                -> $(SEC_READONLY) ;
+  /usr/local/Frameworks         -> $(SEC_READONLY) ;
+  # Homebrew
+  /usr/local/.git               -> $(SEC_READONLY) ;
+  /usr/local/Cellar             -> $(SEC_READONLY) ;
 }
 
 
@@ -263,24 +265,26 @@ Temporary     = +pugt ;
 {
   /private/tmp                                 -> $(SEC_DYNAMIC)-in(recurse=0) ;
 
+  /private/tftpboot                            -> $(SEC_READONLY)-i ;
+
   /private/var                                 -> $(SEC_READONLY)-i ;
   /private/var/backups                         -> $(SEC_READONLY)-imc(severity=100) ;
  #/private/var/backups/local.nidump            -> $(SEC_DYNAMIC) -i(severity=100) ;
  #/private/var/cron                            -> $(SEC_DYNAMIC) -i ;
   /private/var/db                              -> $(SEC_READONLY)-im ;
   /private/var/db/BootCache.playlist           -> $(SEC_DYNAMIC) -i ;
-  /private/var/db/netinfo/local.nidb/Store.384 -> $(SEC_READONLY)-imc(severity=100) ;
+ #/private/var/db/netinfo/local.nidb/Store.384 -> $(SEC_READONLY)-imc(severity=100) ;
  #/private/var/db/netinfo/local.nidb/Store.672 -> $(SEC_READONLY)-imc(severity=100) ;
-  /private/var/db/prebindOnDemandBadFiles      -> $(SEC_DYNAMIC) -i ;
+ #/private/var/db/prebindOnDemandBadFiles      -> $(SEC_DYNAMIC) -i ;
   /private/var/log                             -> $(SEC_DYNAMIC) -i ;
  #/private/var/mail                            -> $(SEC_DYNAMIC) ;
   /private/var/msgs/bounds                     -> $(SEC_READONLY)-smbCM ;
   /private/var/root/Library/Caches             -> $(SEC_DYNAMIC) -i ;
   /private/var/run                             -> $(SEC_DYNAMIC) -i(rulename="Running Services") ;
  #/private/var/slp.regfile                     -> $(SEC_READONLY)-im ;
-  /private/var/spool/clientmqueue              -> $(SEC_DYNAMIC)(recurse=0) ;
+ #/private/var/spool/clientmqueue              -> $(SEC_DYNAMIC)(recurse=0) ;
   /private/var/spool/mqueue                    -> $(SEC_DYNAMIC)(recurse=0) ;
-  /private/var/spool/lock                      -> $(SEC_DYNAMIC) -i(recurse=1) ;
+ #/private/var/spool/lock                      -> $(SEC_DYNAMIC) -i(recurse=1) ;
   /private/var/spool/cups                      -> $(SEC_DYNAMIC) -i(recurse=0) ;
   /private/var/tmp                             -> $(SEC_DYNAMIC) -i(recurse=0) ;
   /private/var/vm                              -> $(SEC_DYNAMIC)(recurse=0) ;
@@ -294,35 +298,17 @@ Temporary     = +pugt ;
  !/private/var/db/dhcpd_leases ;
  !/private/var/db/locate.database ;
  !/private/var/db/SystemEntropyCache ;
+ !/private/var/db/mds/messages/se_SecurityMessages ;
  !/private/var/db/samba/secrets.tdb ;
-
+ !/private/var/db/ntp.drift ;
+ !/private/var/folders ;
+ !/private/var/vm/sleepimage ;
+ !/private/var/vm/swap0 ;
+ !/private/var/vm/swap[1-9][0-9]* ;
+ # Sophos
+ !/Library/Caches/com.sophos.sau ;
+ !/Library/Caches/com.sophos.sxld ;
 }
-
-
-
-  ################################################
- #                                              ##
-################################################ #
-#                                              # #
-#  Classic Environment                         # #
-#                                              ##
-################################################
-(
-  rulename = "Classic Environment", severity=100
-)
-{
-
-  /"System Folder"                     -> $(SEC_READONLY) ;
-  /"System Folder"/Preferences         -> $(SEC_DYNAMIC)-i(recurse=0) ;
-  /"System Folder"/Extensions          -> $(SEC_READONLY)-im ;
-  /"System Folder/Apple Menu Items"   -> $(SEC_READONLY)-im(recurse=0) ;
-  /"System Folder"/Clipboard           -> $(SEC_DYNAMIC) ;
-
- !/"System Folder"/VolumeNameIconPict ;
-
-}
-
-
 
 
   ###################################################
@@ -375,7 +361,3 @@ Temporary     = +pugt ;
 #!"/Users/$(USER1)/.lpoptions" ;
 #!"/Users/$(USER1)/.Trash" ;
 }
-
-#
-# JTI
-#

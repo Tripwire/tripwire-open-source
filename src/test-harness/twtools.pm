@@ -1,4 +1,3 @@
-
 package twtools;
 
 ######################################################################
@@ -291,11 +290,11 @@ sub CreatePolicy {
 
     my (%params) = %{$_[0]};
 
-    $params{policy-text} = "$twrootdir/$twpolicyloc" if( ! defined($params{policy-text}) );
+    $params{policy_text} = "$twrootdir/$twpolicyloc" if( ! defined($params{policy_text}) );
 
     print "generating policy file...\n" if $verbose;
 
-    my (@out) = `$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy-text} 2>&1`;
+    my (@out) = `$twrootdir/bin/twadmin -m P -c $twrootdir/$twcfgloc -Q $twsitepass -p $twrootdir/$twpolfileloc $params{policy_text} 2>&1`;
 
     my ($result) = $?;
 
@@ -330,10 +329,10 @@ sub UpdateDatabase {
 
     my (%params) = %{$_[0]};
     $params{report}      = $reportloc if( ! defined($params{report}) );
-    $params{secure-mode} = "low" if( ! defined($params{secure-mode}) );
+    $params{secure_mode} = "low" if( ! defined($params{secure_mode}) );
     
     print "updating database for '$twmsg' test...\n" if $verbose;
-    my (@out) = `$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{secure-mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc -r $params{report} 2>&1`;
+    my (@out) = `$twrootdir/bin/tripwire -m u -a -P $twsitepass -Z $params{secure_mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc -r $params{report} 2>&1`;
 
     my ($result) = $?;
 
@@ -348,10 +347,10 @@ sub UpdateDatabase {
 sub UpdatePolicy {
 
     my (%params) = %{$_[0]};
-    $params{secure-mode} = "low" if( ! defined($params{secure-mode}) );
+    $params{secure_mode} = "low" if( ! defined($params{secure_mode}) );
 
     print "updating policy for '$twmsg' test...\n" if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m p -P $twsitepass -Q $twlocalpass -Z $params{secure-mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $twrootdir/$twpolicyloc 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m p -P $twsitepass -Q $twlocalpass -Z $params{secure_mode} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $twrootdir/$twpolicyloc 2>&1`);
 
     return ($? == 0);
 }
@@ -364,11 +363,13 @@ sub UpdatePolicy {
 sub RunReport {
 
     my (%params) = %{$_[0]};
+    my ($reportobjects);
 
     $params{report} = $reportloc if( ! defined($params{report}) );
-    $params{report-level} = 0 if( ! defined($params{report-level}) );
+    $params{report_level} = 0 if( ! defined($params{report_level}) );
+    $params{report_object_list} = "" if( ! defined($params{report_object_list}) );
 
-    my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t $params{report-level} -r $params{report} 2>&1`;
+    my (@out) =  `$twrootdir/bin/twprint -m r -c $twrootdir/$twcfgloc -t $params{report_level} -r $params{report} $params{report_object_list} 2>&1`;
 
     logStatus(@out);
 
@@ -383,9 +384,11 @@ sub RunReport {
 sub RunDbPrint {
 
     my (%params) = %{$_[0]};
-    $params{db-object-list} = "" if( ! defined($params{db-object-list}) );
+ 
+    $params{db_object_list} = "" if( ! defined($params{db_object_list}) );
+    $params{db_print_level} = "2" if( ! defined($params{db_print_level}) );
 
-    my (@out) =  `$twrootdir/bin/twprint -m d -c $twrootdir/$twcfgloc $params{db-object-list} 2>&1`;
+    my (@out) =  `$twrootdir/bin/twprint -m d -c $twrootdir/$twcfgloc -t $params{db_print_level} $params{db_object_list} 2>&1`;
 
     logStatus(@out);
 
@@ -414,10 +417,10 @@ sub RunIntegrityCheck {
 
     my (%params) = %{$_[0]};
 	$params{report} = $reportloc if( ! defined($params{report}) );
-	$params{trailing-opts} = "" if( ! defined($params{trailing-opts}) );
+	$params{trailing_opts} = "" if( ! defined($params{trailing_opts}) );
 
     print("running integrity check for test '$twmsg'...\n") if $verbose;
-    logStatus(`$twrootdir/bin/tripwire -m c -r $params{report} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $params{trailing-opts} 2>&1`);
+    logStatus(`$twrootdir/bin/tripwire -m c -r $params{report} -p $twrootdir/$twpolfileloc -c $twrootdir/$twcfgloc $params{trailing_opts} 2>&1`);
 
     return ($? & 8);
 }

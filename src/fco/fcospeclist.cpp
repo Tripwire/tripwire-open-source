@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -81,7 +81,7 @@ int cFCOSpecList::Size() const
     return mAddedList.size();
 }
 
-const cFCOSpecList& cFCOSpecList::operator = (const cFCOSpecList& rhs)
+const cFCOSpecList& cFCOSpecList::operator=(const cFCOSpecList& rhs)
 {
     Clear();
 
@@ -99,14 +99,13 @@ void cFCOSpecList::Add(iFCOSpec* pSpec, cFCOSpecAttr* pAttr)
 {
     std::list<PairType>::iterator itr;
     pSpec->AddRef();
-    if(pAttr == 0)
+    if (pAttr == 0)
         pAttr = new cFCOSpecAttr;
     else
         pAttr->AddRef();
-    for (itr = mCanonicalList.begin(); ; ++itr)
+    for (itr = mCanonicalList.begin();; ++itr)
     {
-        if (itr == mCanonicalList.end() ||
-            iFCOSpecUtil::FCOSpecLessThan(*pSpec, *itr->first))
+        if (itr == mCanonicalList.end() || iFCOSpecUtil::FCOSpecLessThan(*pSpec, *itr->first))
         {
             mCanonicalList.insert(itr, PairType(pSpec, pAttr));
             mAddedList.push_back(PairType(pSpec, pAttr));
@@ -142,14 +141,14 @@ void cFCOSpecList::Read(iSerializer* pSerializer, int32 version)
 
     Clear();
 
-    int i;
+    int   i;
     int32 size;
     pSerializer->ReadInt32(size);
 
     for (i = 0; i < size; ++i)
     {
-        iFCOSpec*       pReadInSpec = static_cast<iFCOSpec*>    (pSerializer->ReadObjectDynCreate());
-        cFCOSpecAttr*   pSpecAttr   = static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());
+        iFCOSpec*     pReadInSpec = static_cast<iFCOSpec*>(pSerializer->ReadObjectDynCreate());
+        cFCOSpecAttr* pSpecAttr   = static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());
         Add(pReadInSpec, pSpecAttr);
         pReadInSpec->Release(); // Add() will increase the ref count by 1
         pSpecAttr->Release();
@@ -176,7 +175,7 @@ void cFCOSpecList::Write(iSerializer* pSerializer) const
 cFCOSpecListAddedIter::cFCOSpecListAddedIter(const cFCOSpecList& list)
 {
     mpSpecList = (cFCOSpecList*)&list;
-    mIter = mpSpecList->mAddedList.begin();
+    mIter      = mpSpecList->mAddedList.begin();
 }
 
 cFCOSpecListAddedIter::~cFCOSpecListAddedIter()
@@ -212,7 +211,7 @@ iFCOSpec* cFCOSpecListAddedIter::Spec()
 {
     return mIter->first;
 }
-const cFCOSpecAttr*   cFCOSpecListAddedIter::Attr() const
+const cFCOSpecAttr* cFCOSpecListAddedIter::Attr() const
 {
     return mIter->second;
 }
@@ -223,13 +222,13 @@ cFCOSpecAttr* cFCOSpecListAddedIter::Attr()
 
 void cFCOSpecListAddedIter::Remove()
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
 
     // the tricky part is finding the spec in the other list...
     std::list<cFCOSpecList::PairType>::iterator i;
-    for(i = mpSpecList->mCanonicalList.begin(); i != mpSpecList->mCanonicalList.end(); ++i)
+    for (i = mpSpecList->mCanonicalList.begin(); i != mpSpecList->mCanonicalList.end(); ++i)
     {
-        if(i->first == mIter->first)
+        if (i->first == mIter->first)
             break;
     }
     ASSERT(i != mpSpecList->mCanonicalList.end());
@@ -248,7 +247,7 @@ void cFCOSpecListAddedIter::Remove()
 cFCOSpecListCanonicalIter::cFCOSpecListCanonicalIter(const cFCOSpecList& list)
 {
     mpSpecList = (cFCOSpecList*)&list;
-    mIter = mpSpecList->mCanonicalList.begin();
+    mIter      = mpSpecList->mCanonicalList.begin();
 }
 
 cFCOSpecListCanonicalIter::~cFCOSpecListCanonicalIter()
@@ -284,7 +283,7 @@ iFCOSpec* cFCOSpecListCanonicalIter::Spec()
 {
     return mIter->first;
 }
-const cFCOSpecAttr*   cFCOSpecListCanonicalIter::Attr() const
+const cFCOSpecAttr* cFCOSpecListCanonicalIter::Attr() const
 {
     return mIter->second;
 }
@@ -292,4 +291,3 @@ cFCOSpecAttr* cFCOSpecListCanonicalIter::Attr()
 {
     return mIter->second;
 }
-

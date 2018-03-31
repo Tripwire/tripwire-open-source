@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -60,6 +60,7 @@
 #include "db/blockfile.h"
 #include "db/blockrecordarray.h"
 #include "db/hierdatabase.h"
+#include "config.h"
 
 #include <unistd.h>
 #include <sys/stat.h>
@@ -132,18 +133,32 @@ void RegisterSuite_Wchar16();
 /// This is easier than all the (cpp) files and declarations
 #include "stringutil_t.h"
 
+#if IS_AROS
+#    define VERSION_PREFIX "$VER: "
+#else
+#    define VERSION_PREFIX "@(#)"
+#endif
+
+const char* STR_EMBEDDED_VERSION = _T(VERSION_PREFIX "twtest " PACKAGE_VERSION);
+
+
 void Usage()
 {
-    TCERR << _T("Usage: test {all | list | testid [testid ...]}\n")
+    TCERR << _T("Usage: twtest {all | list | help | version | testid [testid ...]}\n")
              _T("\n")
-             _T("Ex: test foo bar/baz\n")
+             _T("Ex: twtest foo bar/baz\n")
              _T("(runs suite foo and test bar/baz)\n\n");
 }
 
-static int ran_count    = 0;
-static int failed_count = 0;
+void Version()
+{
+    TCOUT << "twtest " << PACKAGE_VERSION << std::endl;
+}
+
+static int ran_count     = 0;
+static int failed_count  = 0;
 static int skipped_count = 0;
-static int macro_count = 0;
+static int macro_count   = 0;
 
 static std::vector<std::string> error_strings;
 static std::vector<std::string> skipped_strings;
@@ -151,7 +166,9 @@ static std::vector<std::string> skipped_strings;
 class skip_exception : public std::runtime_error
 {
 public:
-    skip_exception(const std::string& reason) : std::runtime_error(reason) {}
+    skip_exception(const std::string& reason) : std::runtime_error(reason)
+    {
+    }
 };
 
 void skip(const std::string& reason)
@@ -173,7 +190,7 @@ void CountMacro()
 
 static TestMap tests;
 
-void RegisterTest(const std::string& suite, const std::string testName, TestPtr testPtr )
+void RegisterTest(const std::string& suite, const std::string testName, TestPtr testPtr)
 {
     tests[suite][testName] = testPtr;
 }
@@ -207,7 +224,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     }
     catch (eError& error)
     {
-        TCERR << "FAILED: " ;
+        TCERR << "FAILED: ";
         cTWUtil::PrintErrorMsg(error);
 
         std::stringstream sstr;
@@ -216,7 +233,8 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
 
         failed_count++;
     }
-    catch (std::exception& e) {
+    catch (std::exception& e)
+    {
         TCERR << "FAILED: " << e.what() << std::endl;
 
         std::stringstream sstr;
@@ -225,7 +243,8 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
 
         failed_count++;
     }
-    catch (...) {
+    catch (...)
+    {
         TCERR << "FAILED: <unknown>" << std::endl;
 
         std::stringstream sstr;
@@ -238,7 +257,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
 static void RunTestSuite(const std::string& suiteName, SuiteMap suite)
 {
     SuiteMap::const_iterator itr;
-    for( itr = suite.begin(); itr != suite.end(); ++itr)
+    for (itr = suite.begin(); itr != suite.end(); ++itr)
     {
         TCERR << "----- Running test: " << suiteName << "/" << itr->first << " -----" << std::endl << std::endl;
         RunTest(suiteName, itr->first, itr->second);
@@ -249,7 +268,7 @@ static void RunTestSuite(const std::string& suiteName, SuiteMap suite)
 static void RunAllTests()
 {
     TestMap::const_iterator itr;
-    for( itr = tests.begin(); itr != tests.end(); ++itr)
+    for (itr = tests.begin(); itr != tests.end(); ++itr)
     {
         TCERR << std::endl << "===== Starting test suite: " << itr->first << " =====" << std::endl;
         RunTestSuite(itr->first, itr->second);
@@ -260,14 +279,14 @@ static void RunAllTests()
 static void ListTests()
 {
     TestMap::const_iterator itr;
-    for( itr = tests.begin(); itr != tests.end(); ++itr)
+    for (itr = tests.begin(); itr != tests.end(); ++itr)
     {
         std::string suiteName = itr->first;
-        SuiteMap suite = itr->second;
+        SuiteMap    suite     = itr->second;
 
         TCERR << suiteName << std::endl;
         SuiteMap::const_iterator itr;
-        for( itr = suite.begin(); itr != suite.end(); ++itr)
+        for (itr = suite.begin(); itr != suite.end(); ++itr)
         {
             TCERR << "  " << suiteName << "/" << itr->first << std::endl;
         }
@@ -277,14 +296,14 @@ static void ListTests()
 static void RunTest(const std::string& to_run)
 {
     std::string::size_type pos = to_run.find_first_of("/");
-    if(pos == std::string::npos)
+    if (pos == std::string::npos)
     {
         RunTestSuite(to_run, tests[to_run]);
     }
     else
     {
-        std::string suite = to_run.substr(0, pos);
-        std::string testName = to_run.substr(pos+1);
+        std::string suite    = to_run.substr(0, pos);
+        std::string testName = to_run.substr(pos + 1);
         RunTest(suite, testName, tests[suite][testName]);
     }
 }
@@ -361,7 +380,7 @@ std::string TwTestDir()
 {
     static std::string dir;
 
-    if(dir.empty())
+    if (dir.empty())
     {
         iFSServices::GetInstance()->GetCurrentDir(dir);
         dir.append("/TWTestData");
@@ -385,21 +404,21 @@ std::string TwTestPath(const std::string& child)
 ///////////////////////////////////////////////////////////////////////////////
 // cTest
 ///////////////////////////////////////////////////////////////////////////////
-TSS_ImplementPackage( cTest )
+TSS_ImplementPackage(cTest)
 
-cTest::cTest()
+    cTest::cTest()
 {
-    TSS_Dependency( cCore );
-    TSS_Dependency( cDb );
-    TSS_Dependency( cTWCrypto );
-    TSS_Dependency( cTWParser );
-    TSS_Dependency( cTW );
-    TSS_Dependency( cFCO );
-    TSS_Dependency( cFS );
-    TSS_Dependency( cUtil );
+    TSS_Dependency(cCore);
+    TSS_Dependency(cDb);
+    TSS_Dependency(cTWCrypto);
+    TSS_Dependency(cTWParser);
+    TSS_Dependency(cTW);
+    TSS_Dependency(cFCO);
+    TSS_Dependency(cFS);
+    TSS_Dependency(cUtil);
 
-// no erros excluivly for test package
-//  TSS_REGISTER_PKG_ERRORS( test )
+    // no erros excluivly for test package
+    //  TSS_REGISTER_PKG_ERRORS( test )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -433,10 +452,13 @@ int _tmain(int argc, TCHAR** argv)
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 
         if (argc < 2)
+        {
             Usage();
+            return 0;
+        }
 
         cTWInit twInit;
-        twInit.Init( argv[0] );
+        twInit.Init(argv[0]);
 
         // set up the debug output
         cDebug::AddOutTarget(cDebug::OUT_STDOUT);
@@ -445,30 +467,48 @@ int _tmain(int argc, TCHAR** argv)
         //cDebug::SetDebugLevel(cDebug::D_DEBUG);
 
         RegisterSuites();
+        std::string arg1 = argv[1];
 
-        if (_tcsicmp(argv[1], _T("all")) == 0)
+
+        if (arg1 == "all" || arg1 == "--all")
         {
             RunAllTests();
         }
-        else if(_tcsicmp(argv[1], _T("list")) == 0)
+        else if (arg1 == "list" || arg1 == "--list")
         {
             ListTests();
+            return 0;
+        }
+        else if (arg1 == "help" || arg1 == "--help" || arg1 == "-?")
+        {
+            Usage();
+            return 0;
+        }
+        else if (arg1 == "version" || arg1 == "--version")
+        {
+            Version();
+            return 0;
         }
         else
         {
             for (int i = 1; i < argc; ++i)
                 RunTest(argv[i]);
         }
-
     }
     catch (eError& error)
-    {        
+    {
         cTWUtil::PrintErrorMsg(error);
         ASSERT(false);
         return 1;
     }
+    catch (std::exception& error)
+    {
+        TCERR << "Caught std::exception: " << error.what() << std::endl;
+        ASSERT(false);
+        return 1;
+    }
     catch (...)
-    {        
+    {
         TCERR << _T("Unhandled exception caught!");
         ASSERT(false);
         return 1;
@@ -478,7 +518,15 @@ int _tmain(int argc, TCHAR** argv)
     // this test always fails because of the static cFCONameTbl
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);
 
-    std::cout << std::endl << "Ran " << ran_count << " unit tests with " << failed_count << " failures, " << skipped_count << " skipped." << std::endl;
+    if (!ran_count)
+    {
+        std::cout << "Ran 0 unit tests. The specified group/test names may be incorrect (names are case sensitive).\n";
+        return 1;
+    }
+
+    std::cout << std::endl
+              << "Ran " << ran_count << " unit tests with " << failed_count << " failures, " << skipped_count
+              << " skipped." << std::endl;
     std::cout << "(total test assertions: " << macro_count << ")" << std::endl;
 
     if (failed_count)
@@ -503,8 +551,6 @@ int _tmain(int argc, TCHAR** argv)
 
     std::cout << std::endl;
 
+
     return failed_count ? -1 : 0;
 }
-
-
-

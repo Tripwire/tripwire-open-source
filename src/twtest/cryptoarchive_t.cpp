@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -41,10 +41,10 @@ void TestCryptoArchive()
 {
     cDebug d("TestCryptoArchive()");
 
-    cMemoryArchive  memory(0x800000);  // max size 8 meg
+    cMemoryArchive memory(0x800000); // max size 8 meg
 
-    const int SIZEOF_CHUNK = 7;
-    const int NUM_CHUNKS = 1024 * 32;  // 32k
+    const int SIZEOF_CHUNK   = 7;
+    const int NUM_CHUNKS     = 1024 * 32; // 32k
     const int TEST_CHUNKSIZE = 1023 * 7;
 
     d.TraceDetail("Building test memory image of size %dK bytes\n", SIZEOF_CHUNK * NUM_CHUNKS / 1024);
@@ -63,8 +63,8 @@ void TestCryptoArchive()
 
 #ifdef _IDEA_ENCRYPTION
 
-    cIDEA           idea;
-    cHashedKey128   ideaKey(_T("puddy, puddy, puddy, poo!"));
+    cIDEA         idea;
+    cHashedKey128 ideaKey(_T("puddy, puddy, puddy, poo!"));
 
     {
         d.TraceDetail("Encrypting using symmetric key\n");
@@ -76,7 +76,7 @@ void TestCryptoArchive()
         cCryptoArchive outCrypt;
         outCrypt.Start(&outFile, &idea);
 
-        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile(); )
+        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
         {
             int8 buf[SIZEOF_CHUNK];
             memory.ReadBlob(buf, SIZEOF_CHUNK);
@@ -101,9 +101,8 @@ void TestCryptoArchive()
         {
             int8 buf[TEST_CHUNKSIZE];
 
-            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) 
-                    ? TEST_CHUNKSIZE 
-                    : NUM_CHUNKS * SIZEOF_CHUNK - index;
+            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
+                                                                            NUM_CHUNKS * SIZEOF_CHUNK - index;
 
             inCrypt.ReadBlob(buf, s);
 
@@ -119,59 +118,58 @@ void TestCryptoArchive()
     // Testing cElGamalSigArchive
 
     {
-    cElGamalSig            cipher(cElGamalSig::KEY1024);
-    cElGamalSigPrivateKey* privateKey;
-    cElGamalSigPublicKey*  publicKey;
-    cipher.GenerateKeys(privateKey, publicKey);
+        cElGamalSig            cipher(cElGamalSig::KEY1024);
+        cElGamalSigPrivateKey* privateKey;
+        cElGamalSigPublicKey*  publicKey;
+        cipher.GenerateKeys(privateKey, publicKey);
 
-    {
-        // encypt using private key
-        d.TraceDetail("Signing using asymmetric key\n");
-
-        cFileArchive outFile;
-        outFile.OpenReadWrite(TwTestPath("rsacrypted.bin").c_str());
-
-        cElGamalSigArchive outCrypt;
-        outCrypt.SetWrite(&outFile, privateKey);
-
-        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile(); )
         {
-            int8 buf[SIZEOF_CHUNK];
-            memory.ReadBlob(buf, SIZEOF_CHUNK);
-            outCrypt.WriteBlob(buf, SIZEOF_CHUNK);
+            // encypt using private key
+            d.TraceDetail("Signing using asymmetric key\n");
+
+            cFileArchive outFile;
+            outFile.OpenReadWrite(TwTestPath("rsacrypted.bin").c_str());
+
+            cElGamalSigArchive outCrypt;
+            outCrypt.SetWrite(&outFile, privateKey);
+
+            for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
+            {
+                int8 buf[SIZEOF_CHUNK];
+                memory.ReadBlob(buf, SIZEOF_CHUNK);
+                outCrypt.WriteBlob(buf, SIZEOF_CHUNK);
+            }
+
+            outCrypt.FlushWrite();
         }
 
-        outCrypt.FlushWrite();
-    }
-
-    {
-        // decrypt using public key
-        d.TraceDetail("Verifying using asymmetric key\n");
-
-        cFileArchive inFile;
-        inFile.OpenRead(TwTestPath("rsacrypted.bin").c_str());
-
-        cElGamalSigArchive inCrypt;
-        inCrypt.SetRead(&inFile, publicKey);
-
-        int index;
-        for (index = 0; index < NUM_CHUNKS * SIZEOF_CHUNK; index += TEST_CHUNKSIZE)
         {
-            int8 buf[TEST_CHUNKSIZE];
+            // decrypt using public key
+            d.TraceDetail("Verifying using asymmetric key\n");
 
-            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) 
-                    ? TEST_CHUNKSIZE 
-                    : NUM_CHUNKS * SIZEOF_CHUNK - index;
+            cFileArchive inFile;
+            inFile.OpenRead(TwTestPath("rsacrypted.bin").c_str());
 
-            inCrypt.ReadBlob(buf, s);
+            cElGamalSigArchive inCrypt;
+            inCrypt.SetRead(&inFile, publicKey);
 
-            memory.MapArchive(index, s);
-            TEST(memcmp(buf, memory.GetMap(), s) == 0);
+            int index;
+            for (index = 0; index < NUM_CHUNKS * SIZEOF_CHUNK; index += TEST_CHUNKSIZE)
+            {
+                int8 buf[TEST_CHUNKSIZE];
+
+                int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
+                                                                                NUM_CHUNKS * SIZEOF_CHUNK - index;
+
+                inCrypt.ReadBlob(buf, s);
+
+                memory.MapArchive(index, s);
+                TEST(memcmp(buf, memory.GetMap(), s) == 0);
+            }
         }
-    }
 
-    delete privateKey;
-    delete publicKey;
+        delete privateKey;
+        delete publicKey;
     }
 
 #ifdef _RSA_ENCRYPTION
@@ -180,11 +178,11 @@ void TestCryptoArchive()
     cRSAPublicKey*  publicKey;
     cipher.GenerateKeys(privateKey, publicKey);
 
-    cIDEA           idea;
-    cHashedKey128   ideaKey(_T("puddy, puddy, puddy, poo!"));
+    cIDEA         idea;
+    cHashedKey128 ideaKey(_T("puddy, puddy, puddy, poo!"));
 
-    const int SIZEOF_CHUNK = 7;
-    const int NUM_CHUNKS = 1024 * 32;  // 32k
+    const int SIZEOF_CHUNK   = 7;
+    const int NUM_CHUNKS     = 1024 * 32; // 32k
     const int TEST_CHUNKSIZE = 1023 * 7;
 
     d.TraceDetail("Building test memory image of size %dK bytes\n", SIZEOF_CHUNK * NUM_CHUNKS / 1024);
@@ -211,7 +209,7 @@ void TestCryptoArchive()
         cRSAArchive outCrypt;
         outCrypt.SetWrite(&outFile, publicKey);
 
-        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile(); )
+        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
         {
             int8 buf[SIZEOF_CHUNK];
             memory.ReadBlob(buf, SIZEOF_CHUNK);
@@ -236,9 +234,8 @@ void TestCryptoArchive()
         {
             int8 buf[TEST_CHUNKSIZE];
 
-            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) 
-                    ? TEST_CHUNKSIZE 
-                    : NUM_CHUNKS * SIZEOF_CHUNK - index;
+            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
+                                                                            NUM_CHUNKS * SIZEOF_CHUNK - index;
 
             inCrypt.ReadBlob(buf, s);
 
@@ -257,7 +254,7 @@ void TestCryptoArchive()
         cRSAArchive outCrypt;
         outCrypt.SetWrite(&outFile, privateKey);
 
-        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile(); )
+        for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
         {
             int8 buf[SIZEOF_CHUNK];
             memory.ReadBlob(buf, SIZEOF_CHUNK);
@@ -282,9 +279,8 @@ void TestCryptoArchive()
         {
             int8 buf[TEST_CHUNKSIZE];
 
-            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) 
-                    ? TEST_CHUNKSIZE 
-                    : NUM_CHUNKS * SIZEOF_CHUNK - index;
+            int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
+                                                                            NUM_CHUNKS * SIZEOF_CHUNK - index;
 
             inCrypt.ReadBlob(buf, s);
 

@@ -1,0 +1,163 @@
+###############################################################################
+#                                                                            ##
+#    Default Tripwire 2.4 Policy file for Cygwin                             ##
+#                                                                            ##
+###############################################################################
+
+
+###############################################################################
+#                                                                            ##
+# Global Variable Definitions                                                ##
+#                                                                            ##
+# These are defined at install time by the installation script.  You may     ##
+# Manually edit these if you are using this file directly and not from the   ##
+# installation script itself.                                                ##
+#                                                                            ##
+###############################################################################
+
+@@section GLOBAL
+TWROOT=;
+TWBIN=;
+TWPOL=;
+TWDB=;
+TWSKEY=;
+TWLKEY=;
+TWREPORT=;
+HOSTNAME=;
+
+##############################################################################
+#  Predefined Variables                                                      #
+##############################################################################
+#
+#  Property Masks
+#
+#  -  ignore the following properties
+#  +  check the following properties
+#
+#  a  access timestamp (mutually exclusive with +CMSH)
+#  b  number of blocks allocated
+#  c  inode creation/modification timestamp
+#  d  ID of device on which inode resides
+#  g  group id of owner
+#  i  inode number
+#  l  growing files (logfiles for example)
+#  m  modification timestamp
+#  n  number of links
+#  p  permission and file mode bits
+#  r  ID of device pointed to by inode (valid only for device objects)
+#  s  file size
+#  t  file type
+#  u  user id of owner
+#
+#  C  CRC-32 hash
+#  H  HAVAL hash
+#  M  MD5 hash
+#  S  SHA hash
+#
+##############################################################################
+
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
+
+@@section FS 
+
+#########################################
+#                                      ##
+#  Tripwire Binaries and Data Files    ##
+#                                      ##
+#########################################
+
+# Tripwire Binaries
+(
+  rulename = "Tripwire Binaries",
+)
+{
+  $(TWBIN)/siggen                      -> $(SEC_READONLY) ;
+  $(TWBIN)/tripwire                    -> $(SEC_READONLY) ;
+  $(TWBIN)/twadmin                     -> $(SEC_READONLY) ;
+  $(TWBIN)/twprint                     -> $(SEC_READONLY) ;
+}
+
+# Tripwire Data Files - Configuration Files, Policy Files, Keys, Reports, Databases
+(
+  rulename = "Tripwire Data Files",
+)
+{
+  # NOTE: We remove the inode attribute because when Tripwire creates a backup,
+  # it does so by renaming the old file and creating a new one (which will
+  # have a new inode number).  Inode is left turned on for keys, which shouldn't
+  # ever change.
+
+  # NOTE: The first integrity check triggers this rule and each integrity check
+  # afterward triggers this rule until a database update is run, since the
+  # database file does not exist before that point.
+
+  $(TWDB)                              -> $(SEC_DYNAMIC) -i ;
+  $(TWPOL)/tw.pol                      -> $(SEC_READONLY) -i ;
+  $(TWPOL)/tw.cfg                      -> $(SEC_READONLY) -i ;
+  $(TWLKEY)/$(HOSTNAME)-local.key      -> $(SEC_READONLY) ;
+  $(TWSKEY)/site.key                   -> $(SEC_READONLY) ;
+
+  # don't scan the individual reports
+  $(TWREPORT)                          -> $(SEC_DYNAMIC) (recurse=0) ;
+}
+
+##############################################################################
+
+(rulename="Binary files",)
+{
+  /bin -> $(SEC_READONLY) -a;
+  /usr/bin -> $(SEC_READONLY) -a;
+  /usr/local/bin -> $(SEC_READONLY) -a;
+}
+
+(rulename="Development",)
+{
+  /usr/x86_64-pc-cygwin -> $(SEC_READONLY) -a;
+}
+
+(rulename="Libexec",)
+{
+  /usr/libexec -> $(SEC_READONLY) -a;
+}
+
+(rulename="Admin binaries",)
+{
+  /sbin -> $(SEC_READONLY) -a;
+  /usr/sbin -> $(SEC_READONLY) -a;
+}
+
+(rulename="Libraries",)
+{
+  /lib -> $(SEC_READONLY) -a;
+  /usr/lib -> $(SEC_READONLY) -a;
+  /usr/local/lib -> $(SEC_READONLY) -a;
+}
+
+(rulename="Etc",)
+{
+  /etc -> $(SEC_READONLY) -a;
+  /usr/local/etc -> $(SEC_READONLY) -a;
+}
+
+(rulename="Dev",)
+{
+  /dev -> $(SEC_DEVICE);
+}
+
+(rulename="Tmp",)
+{
+  /tmp -> $(SEC_TEMPORARY);
+  /var/tmp -> $(SEC_TEMPORARY);
+  /usr/tmp -> $(SEC_TEMPORARY);
+}
+
+(rulename="Log",)
+{
+  /var/log -> $(SEC_GROWING);
+}

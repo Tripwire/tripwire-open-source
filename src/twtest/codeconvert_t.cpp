@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -43,7 +43,7 @@
 
 #include <iomanip>
 
-bool util_IsWideCharSameAsNarrow( char ch );
+bool util_IsWideCharSameAsNarrow(char ch);
 bool LowASCIILooksLikeUCS2InWchart();
 void TestMbToDb();
 void TestDbToMb();
@@ -59,13 +59,13 @@ void TestCodeConverter()
     //
     TEST( LowASCIILooksLikeUCS2InWchart() );
 #endif
-    
+
     d.TraceDetail("Testing multi byte to double byte conversion.\n");
     TestMbToDb();
     d.TraceDetail("TestMbToDb() done.\n");
 
-// Took out this test as it currently throws and exception.
-// We expect not to be able to convert every UCS2 to a multi-byte char.
+    // Took out this test as it currently throws and exception.
+    // We expect not to be able to convert every UCS2 to a multi-byte char.
     d.TraceDetail("Testing double byte to multi byte conversion.\n");
     TestDbToMb();
 }
@@ -73,110 +73,90 @@ void TestCodeConverter()
 // first last identify the lhs string
 // x identifies the start of the second string
 // start identifies the original start of the lhs string
-template< class IterT >
-bool Compare( IterT first, IterT last, IterT x, IterT start )
+template<class IterT> bool Compare(IterT first, IterT last, IterT x, IterT start)
 {
-    std::pair< IterT, IterT > 
-               p = std::mismatch( first,
-                                  last, 
-                                  x );
-    
-    if( p.first != last )
+    std::pair<IterT, IterT> p = std::mismatch(first, last, x);
+
+    if (p.first != last)
     {
         // success !!
-        std::cout << "*** mismatched value at: " 
-                  << (int)(p.first - start)
-                  << ".  Values are: "
-                  << (size_t)tss::util::char_to_size(*p.first)
-                  << " and "
-                  << (size_t)tss::util::char_to_size(*p.second)
-                  << std::endl;
- 
-        return Compare( p.first + 1, last, p.second + 1, start );
+        std::cout << "*** mismatched value at: " << (int)(p.first - start)
+                  << ".  Values are: " << (size_t)tss::util::char_to_size(*p.first) << " and "
+                  << (size_t)tss::util::char_to_size(*p.second) << std::endl;
+
+        return Compare(p.first + 1, last, p.second + 1, start);
     }
 
     return true;
 }
 
-void CompareStrings( const std::string& s1, const std::string& s2 )
+void CompareStrings(const std::string& s1, const std::string& s2)
 {
-    if( s1.length() != s2.length() )
+    if (s1.length() != s2.length())
     {
-        std::cout << "*** string lengths didn't match. Lengths were: "
-                  << s1.length()
-                  << " and "
-                  << s2.length()
+        std::cout << "*** string lengths didn't match. Lengths were: " << s1.length() << " and " << s2.length()
                   << std::endl;
     }
 
-    if( Compare( s1.begin(), s1.end(), s2.begin(), s1.begin() ) )
+    if (Compare(s1.begin(), s1.end(), s2.begin(), s1.begin()))
     {
-        std::cout << "** string matched."
-                  << std::endl;
+        std::cout << "** string matched." << std::endl;
     }
 }
 
 
-
-
-void DisplayString( const std::string& s )
+void DisplayString(const std::string& s)
 {
     std::string::size_type i;
-    for( i = 0; i < s.length(); ++i )
+    for (i = 0; i < s.length(); ++i)
     {
-        std::cout << std::hex 
-                  << std::setw(2) 
-                  << std::setfill('0') 
-                  << (size_t)(unsigned char) s[i]
-                  << " ";
+        std::cout << std::hex << std::setw(2) << std::setfill('0') << (size_t)(unsigned char)s[i] << " ";
     }
 }
 
-size_t DistanceToOne( size_t n )
+size_t DistanceToOne(size_t n)
 {
     size_t dist;
-    for( dist = 0;
-         n != 1;
-         dist++ )
+    for (dist = 0; n != 1; dist++)
     {
-        n = ( n >> 1 );
+        n = (n >> 1);
     }
 
-    TEST( n == 1 ); // n was not a power of 2!
+    TEST(n == 1); // n was not a power of 2!
 
     return dist;
 }
 
 
-void ConvertAndCompareString( const std::string& s )
+void ConvertAndCompareString(const std::string& s)
 {
     std::cout << "* Converting: ";
-    DisplayString( s );
+    DisplayString(s);
     std::cout << std::endl;
 
     // convert to dbchar_t string
-    int nWrote;
+    int         nWrote;
     wc16_string ws;
-    ws.resize( s.length() );
-    nWrote = iCodeConverter::GetInstance()->Convert( (ntdbs_t)ws.c_str(), ws.length(), s.c_str(), ws.length() );
-    TEST( nWrote != -1 );
-    ws.resize( nWrote );
+    ws.resize(s.length());
+    nWrote = iCodeConverter::GetInstance()->Convert((ntdbs_t)ws.c_str(), ws.length(), s.c_str(), ws.length());
+    TEST(nWrote != -1);
+    ws.resize(nWrote);
 
     // convert back to mbchar_t string
     std::string s2;
-    s2.resize( ws.length() * MB_CUR_MAX );
-    nWrote = iCodeConverter::GetInstance()->Convert( (ntmbs_t)s2.c_str(), s2.length(), ws.c_str(), ws.length() );
-    TEST( nWrote != -1 );
-    s2.resize( nWrote );
+    s2.resize(ws.length() * MB_CUR_MAX);
+    nWrote = iCodeConverter::GetInstance()->Convert((ntmbs_t)s2.c_str(), s2.length(), ws.c_str(), ws.length());
+    TEST(nWrote != -1);
+    s2.resize(nWrote);
 
     std::cout << "* Result    : ";
-    DisplayString( s2 );
+    DisplayString(s2);
     std::cout << std::endl;
 
-    CompareStrings( s, s2 );
+    CompareStrings(s, s2);
 }
 
-char NonZeroChar( char ch )
+char NonZeroChar(char ch)
 {
     return ch == 0 ? '0' : ch;
 }
@@ -186,7 +166,7 @@ char NonZeroChar( char ch )
 void TestMbToDb()
 {
     skip("This test is flaky & needs to be fixed/replaced; currently disabled.");
-    
+
 #if 0
     std::string s;
     s.resize( 0x10000 * 2 ); // two bytes for each combination
@@ -236,13 +216,13 @@ void TestMbToDb()
 
     */
 }
- 
+
 
 // dbchar_t to mbchar_t
 void TestDbToMb()
 {
-  skip("This test fails, most likely due to not speaking UTF-16. Should fix this.");
-    
+    skip("This test fails, most likely due to not speaking UTF-16. Should fix this.");
+
 #if 0
     wc16_string ws;
     wc16_string::size_type n;
@@ -311,7 +291,7 @@ bool LowASCIILooksLikeUCS2InWchart()
     cDebug d("LowASCIILooksLikeUCS2InWchart()");
     bool fOK = true;
 
-#if 0 // I hear this function isn't even correct... rjf
+#    if 0 // I hear this function isn't even correct... rjf
 
     //
     // save old locale
@@ -341,7 +321,7 @@ bool LowASCIILooksLikeUCS2InWchart()
     TEST( 0 == strcmp( pOldLocale, setlocale( LC_CTYPE, NULL ) ) );
     free( pOldLocale );
 
-#endif
+#    endif
     return fOK;
 }
 #endif

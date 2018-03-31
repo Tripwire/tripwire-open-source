@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -45,7 +45,7 @@ TSS_EXCEPTION(eTestArchiveError, eError);
 
 void TestMemoryArchive()
 {
-    // cMemoryArchive 
+    // cMemoryArchive
     cMemoryArchive memarch;
 
     memarch.WriteInt32(1);
@@ -83,7 +83,8 @@ void TestMemoryArchive()
     TEST(memarch.ReadBlob(NULL, sizeof(int16)) == sizeof(int16));
     TEST(memarch.ReadBlob(NULL, 1024) == 0);
 
-    try {
+    try
+    {
         memarch.ReadInt32(i);
         throw eTestArchiveError();
     }
@@ -101,7 +102,7 @@ void TestMemoryArchive()
     memarch.MapArchive(4 * sizeof(int32) + sizeof(int32) + 6, sizeof(int64));
     TEST(memarch.GetMappedOffset() == 4 * sizeof(int32) + sizeof(int32) + 6);
     TEST(memarch.GetMappedLength() == sizeof(int64));
-//    TEST(tw_ntohll(*(int64*)memarch.GetMap()) == 1234567L);
+    //    TEST(tw_ntohll(*(int64*)memarch.GetMap()) == 1234567L);
 }
 
 void TestLockedTemporaryArchive()
@@ -122,7 +123,7 @@ void TestLockedTemporaryArchive()
     }
     catch (eError& e)
     {
-        threw=true;
+        threw = true;
         TCERR << "Error opening locked temp archive" << std::endl;
         cTWUtil::PrintErrorMsg(e);
     }
@@ -151,8 +152,8 @@ void TestLockedTemporaryArchive()
     }
     catch (eError& e)
     {
-        threw=true;
-        TCERR << "Error writing locked temp archive" << std::endl;        
+        threw = true;
+        TCERR << "Error writing locked temp archive" << std::endl;
         cTWUtil::PrintErrorMsg(e);
     }
     catch (...)
@@ -165,8 +166,8 @@ void TestLockedTemporaryArchive()
 
 void TestFileArchive()
 {
-    bool threw = false;
-    TSTRING s = _T("Acanthogorgia");
+    bool    threw = false;
+    TSTRING s     = _T("Acanthogorgia");
     // cFileArchive
     TSTRING fileName = TwTestPath("archive_test.bin");
 
@@ -207,7 +208,8 @@ void TestFileArchive()
     TEST(filearch.ReadBlob(NULL, sizeof(int16)) == sizeof(int16));
     TEST(filearch.ReadBlob(NULL, 1024) == 0); // should be EOF
 
-    try {
+    try
+    {
         filearch.ReadInt32(j);
         throw eTestArchiveError();
     }
@@ -218,7 +220,7 @@ void TestFileArchive()
     }
     catch (eError& e)
     {
-        threw=true;
+        threw = true;
         (void)e;
     }
 
@@ -229,5 +231,5 @@ void RegisterSuite_Archive()
 {
     RegisterTest("Archive", "MemoryArchive", TestMemoryArchive);
     RegisterTest("Archive", "LockedTemporaryArchive", TestLockedTemporaryArchive);
-    RegisterTest("Archive", "FileArchive",   TestFileArchive);
+    RegisterTest("Archive", "FileArchive", TestFileArchive);
 }

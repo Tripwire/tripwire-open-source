@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -79,42 +79,54 @@ using namespace std;
 // GLOBALS
 //=========================================================================
 
-static const TCHAR* g_sz79Dashes = _T("-------------------------------------------------------------------------------");
-static const TCHAR* g_sz79Equals = _T("===============================================================================");
+static const TCHAR* g_sz79Dashes =
+    _T("-------------------------------------------------------------------------------");
+static const TCHAR* g_sz79Equals =
+    _T("===============================================================================");
 
 //=========================================================================
 // UTIL FUNCTION PROTOTYES
 //=========================================================================
-static void InitOStream( TOSTREAM* pOut );
-static void DisplayFCOProps( const iFCO* const pFCO, const iFCOPropDisplayer* pPD, TOSTREAM* pOut );
+static void InitOStream(TOSTREAM* pOut);
+static void DisplayFCOProps(const iFCO* const pFCO, const iFCOPropDisplayer* pPD, TOSTREAM* pOut);
 
-static void OutputDatabaseHeader    ( const cFCODbHeader& dbHeader, TOSTREAM* pOut );
+static void OutputDatabaseHeader(const cFCODbHeader& dbHeader, TOSTREAM* pOut);
 // Currently we don't have a rule summary.  See function definition below
 //static void OutputRulesSummary    ( const cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut );
 
 
-static void OutputSectionDelimiter( int nString, TOSTREAM* pOut );
-static void OutputGenreDelimiter( cGenre::Genre g, TOSTREAM* pOut );
+static void OutputSectionDelimiter(int nString, TOSTREAM* pOut);
+static void OutputGenreDelimiter(cGenre::Genre g, TOSTREAM* pOut);
 
-static void OutputObjectSummary( cFCODatabaseFile& rd, TOSTREAM* pOut, int margin );
-static void OutputObjectDetail( cFCODatabaseFile& rd, TOSTREAM* pOut );
+static void OutputObjectSummary(cFCODatabaseFile& rd, TOSTREAM* pOut, int margin);
+static void OutputObjectDetail(cFCODatabaseFile& rd, TOSTREAM* pOut);
 
-static void OutputObjectSummary( cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin );
-static void OutputObjectDetail( cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut );
+static void
+            OutputObjectSummary(cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin);
+static void OutputObjectDetail(cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut);
 
 
-static void OutputIterChildren  ( cDbDataSourceIter dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails );
-static void OutputIterPeers     ( cDbDataSourceIter dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails );
+static void OutputIterChildren(cDbDataSourceIter         dbIter,
+                               const iFCOPropDisplayer*  pPD,
+                               const iFCONameTranslator* pNT,
+                               TOSTREAM*                 pOut,
+                               bool                      fDetails);
+static void OutputIterPeers(cDbDataSourceIter         dbIter,
+                            const iFCOPropDisplayer*  pPD,
+                            const iFCONameTranslator* pNT,
+                            TOSTREAM*                 pOut,
+                            bool                      fDetails);
 //static void OutputIter          ( cDbDataSourceIter& dbIter, const iFCOPropDisplayer* pPD, TOSTREAM* pOut, bool fDetails );
-static void PrintFCOShort       ( const iFCO* pFCO, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin );
+static void PrintFCOShort(
+    const iFCO* pFCO, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin);
 //static void OutputSpecHeader( const cFCODbSpecIter& dbi, TOSTREAM* pOut );
 //static void OutputDetailHeader( const cFCODbSpecIter& dbi, int nObjects, TOSTREAM* pOut );
 
-static TSTRING util_Encode( const TSTRING& sIn )
+static TSTRING util_Encode(const TSTRING& sIn)
 {
     static cDisplayEncoder e;
-    TSTRING sOut = sIn;
-    e.Encode( sOut );
+    TSTRING                sOut = sIn;
+    e.Encode(sOut);
     return sOut;
 }
 
@@ -122,51 +134,59 @@ static TSTRING util_Encode( const TSTRING& sIn )
 // METHOD CODE
 //=========================================================================
 
-void cTextDBViewer::PrintDB( cFCODatabaseFile& rd, const TSTRING& strFilename )
+void cTextDBViewer::PrintDB(cFCODatabaseFile& rd, const TSTRING& strFilename, DbVerbosity verbosity)
 {
     TOSTREAM* pOut;
     TOFSTREAM fileOut;
-    bool fIsFile = false;
+    bool      fIsFile = false;
 
-    if( strFilename == _T("-") )
+    if (strFilename == _T("-"))
     {
         pOut = &TCOUT;
     }
     else
     {
         //Gonna have to insert a lame hack here, since ostr.open DEMANDS a const char*!!
-        fileOut.open( strFilename.c_str() );
+        fileOut.open(strFilename.c_str());
 
-        if( fileOut.is_open() )
+        if (fileOut.is_open())
         {
-            pOut = &fileOut;
+            pOut    = &fileOut;
             fIsFile = true;
         }
         else
         {
-            ASSERT( false );
-            throw eArchiveOpen( strFilename, iFSServices::GetInstance()->GetErrString() );
+            ASSERT(false);
+            throw eArchiveOpen(strFilename, iFSServices::GetInstance()->GetErrString());
         }
     }
 
-    InitOStream( pOut );
-    
+    InitOStream(pOut);
+
     //
     // output header, just like it sez....
     //
-    OutputDatabaseHeader( rd.GetHeader(), pOut );
+    OutputDatabaseHeader(rd.GetHeader(), pOut);
 
-    OutputObjectSummary( rd, pOut, DETAILS_MARGIN );
 
-    OutputObjectDetail( rd, pOut );
+    if (verbosity > SUMMARY)
+    {
+        //TODO: OutputRulesSummary() would go here
 
-    
+        OutputObjectSummary(rd, pOut, DETAILS_MARGIN);
+
+        if (verbosity == VERBOSE)
+        {
+            OutputObjectDetail(rd, pOut);
+        }
+    }
+
     // we're done
     (*pOut) << g_sz79Dashes << endl;
-    (*pOut) << TSS_GetString( cTW, tw::STR_END_OF_DB ) << endl << endl;
-    (*pOut) << TSS_GetString( cTW, tw::STR_COPYRIGHT ) << endl;    
+    (*pOut) << TSS_GetString(cTW, tw::STR_END_OF_DB) << endl << endl;
+    (*pOut) << TSS_GetString(cTW, tw::STR_COPYRIGHT) << endl;
 
-    if( fIsFile )
+    if (fIsFile)
         static_cast<TOFSTREAM*>(pOut)->close();
 
     return;
@@ -176,22 +196,28 @@ void cTextDBViewer::PrintDB( cFCODatabaseFile& rd, const TSTRING& strFilename )
 ///////////////////////////////////////////////////////////////////////////////
 // OutputFCO
 ///////////////////////////////////////////////////////////////////////////////
-void cTextDBViewer::OutputFCO( cDbDataSourceIter& dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails )
-{    
-    InitOStream( pOut );
+void cTextDBViewer::OutputFCO(cDbDataSourceIter&        dbIter,
+                              const iFCOPropDisplayer*  pPD,
+                              const iFCONameTranslator* pNT,
+                              TOSTREAM*                 pOut,
+                              bool                      fDetails)
+{
+    InitOStream(pOut);
 
-    if( dbIter.HasFCOData() )
+    if (dbIter.HasFCOData())
     {
         iFCO* pFCO = dbIter.CreateFCO();
-        
-        if( fDetails )
+
+        if (fDetails)
         {
-            (*pOut) << TSS_GetString( cTW, tw::STR_OBJECT_NAME ) << _T(" ") << pNT->ToStringDisplay( pFCO->GetName() ).c_str() << endl << endl;
-            DisplayFCOProps( pFCO, pPD, pOut );
+            (*pOut) << TSS_GetString(cTW, tw::STR_OBJECT_NAME) << _T(" ")
+                    << pNT->ToStringDisplay(pFCO->GetName()).c_str() << endl
+                    << endl;
+            DisplayFCOProps(pFCO, pPD, pOut);
             (*pOut) << endl << endl;
         }
         else
-            PrintFCOShort( pFCO, pPD, pNT, pOut, DETAILS_MARGIN );
+            PrintFCOShort(pFCO, pPD, pNT, pOut, DETAILS_MARGIN);
 
         pFCO->Release();
     }
@@ -202,115 +228,117 @@ void cTextDBViewer::OutputFCO( cDbDataSourceIter& dbIter, const iFCOPropDisplaye
 //  UTIL FUNCTION CODE
 //=========================================================================
 
-void InitOStream( TOSTREAM* pOut )
+void InitOStream(TOSTREAM* pOut)
 {
     // align left
-    (*pOut).flags( ( (*pOut).flags() & ~std::ios::adjustfield ) | std::ios::left );
+    (*pOut).flags(((*pOut).flags() & ~std::ios::adjustfield) | std::ios::left);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintFCOShort
 ///////////////////////////////////////////////////////////////////////////////
-static void PrintFCOShort( const iFCO* pFCO, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin )
+static void
+PrintFCOShort(const iFCO* pFCO, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin)
 {
-    ASSERT( pOut != 0);
+    ASSERT(pOut != 0);
 
     TSTRING strDetails;
 
-    // 
+    //
     // output "<name of FCO>"\n\t<details of FCO>"
     //
     (*pOut) << _T(" ");
-    (*pOut) << pNT->ToStringDisplay( pFCO->GetName() ).c_str();    
+    (*pOut) << pNT->ToStringDisplay(pFCO->GetName()).c_str();
     (*pOut) << endl;
-    (*pOut) << setw( margin ) << _T("");
-    pPD->GetDetails( pFCO, strDetails );
+    (*pOut) << setw(margin) << _T("");
+    pPD->GetDetails(pFCO, strDetails);
     (*pOut) << strDetails;
     (*pOut) << _T("\n");
 }
 
 
-static void OutputIterChildren( cDbDataSourceIter dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails )
+static void OutputIterChildren(cDbDataSourceIter         dbIter,
+                               const iFCOPropDisplayer*  pPD,
+                               const iFCONameTranslator* pNT,
+                               TOSTREAM*                 pOut,
+                               bool                      fDetails)
 {
     dbIter.Descend();
-    OutputIterPeers( dbIter, pPD, pNT, pOut, fDetails );
+    OutputIterPeers(dbIter, pPD, pNT, pOut, fDetails);
 }
 
-static void OutputIterPeers( cDbDataSourceIter dbIter, const iFCOPropDisplayer* pPD, const iFCONameTranslator* pNT, TOSTREAM* pOut, bool fDetails )
+static void OutputIterPeers(cDbDataSourceIter         dbIter,
+                            const iFCOPropDisplayer*  pPD,
+                            const iFCONameTranslator* pNT,
+                            TOSTREAM*                 pOut,
+                            bool                      fDetails)
 {
-    for ( dbIter.SeekBegin(); ! dbIter.Done(); dbIter.Next() )
+    for (dbIter.SeekBegin(); !dbIter.Done(); dbIter.Next())
     {
         // TODO: this obviously needs to be expanded upon.
-        cTextDBViewer::OutputFCO( dbIter, pPD, pNT, pOut, fDetails );
+        cTextDBViewer::OutputFCO(dbIter, pPD, pNT, pOut, fDetails);
 
-        if( dbIter.CanDescend() )
-            OutputIterChildren( dbIter, pPD, pNT, pOut, fDetails );
+        if (dbIter.CanDescend())
+            OutputIterChildren(dbIter, pPD, pNT, pOut, fDetails);
     }
 }
 
 
-static void OutputDatabaseHeader( const cFCODbHeader& dbHeader, TOSTREAM* pOut )
+static void OutputDatabaseHeader(const cFCODbHeader& dbHeader, TOSTREAM* pOut)
 {
     const int headerColumnWidth = 30;
-    (*pOut) << TSS_GetString( cTW, tw::STR_DBPRINT_TITLE ) << endl << endl;
-    
+    (*pOut) << TSS_GetString(cTW, tw::STR_DBPRINT_TITLE) << endl << endl;
+
     (*pOut).width(headerColumnWidth);
-    (*pOut) << TSS_GetString( cTW, tw::STR_DB_GENERATED_BY ) << util_Encode( dbHeader.GetCreator() ) << endl;
-    
+    (*pOut) << TSS_GetString(cTW, tw::STR_DB_GENERATED_BY) << util_Encode(dbHeader.GetCreator()) << endl;
+
     TSTRING tstrDummy;
-    int64 i64CreateTime = dbHeader.GetCreationTime();
+    int64   i64CreateTime = dbHeader.GetCreationTime();
     (*pOut).width(headerColumnWidth);
-    (*pOut) << TSS_GetString( cTW, tw::STR_DB_CREATED_ON ) << cTWLocale::FormatTime( i64CreateTime, tstrDummy ).c_str() << endl;
-        
+    (*pOut) << TSS_GetString(cTW, tw::STR_DB_CREATED_ON) << cTWLocale::FormatTime(i64CreateTime, tstrDummy).c_str()
+            << endl;
+
     (*pOut).width(headerColumnWidth);
-    (*pOut) << TSS_GetString( cTW, tw::STR_DB_LAST_UPDATE );
+    (*pOut) << TSS_GetString(cTW, tw::STR_DB_LAST_UPDATE);
 
     int64 i64LastDBUTime = dbHeader.GetLastDBUpdateTime();
-    if( i64LastDBUTime == 0 )
-    {        
-        (*pOut) << TSS_GetString( cTW, tw::STR_NEVER ) << endl << endl;
+    if (i64LastDBUTime == 0)
+    {
+        (*pOut) << TSS_GetString(cTW, tw::STR_NEVER) << endl << endl;
     }
     else
-    {        
-        (*pOut) << cTWLocale::FormatTime( i64LastDBUTime, tstrDummy ).c_str() << endl << endl;
+    {
+        (*pOut) << cTWLocale::FormatTime(i64LastDBUTime, tstrDummy).c_str() << endl << endl;
     }
 
-    OutputSectionDelimiter( tw::STR_DB_SUMMARY, pOut );
+    OutputSectionDelimiter(tw::STR_DB_SUMMARY, pOut);
 
     (*pOut).width(headerColumnWidth);
-    (*pOut) << TSS_GetString( cTW, tw::STR_HOST_NAME ) << dbHeader.GetSystemName().c_str() << endl;    
+    (*pOut) << TSS_GetString(cTW, tw::STR_HOST_NAME) << dbHeader.GetSystemName().c_str() << endl;
     (*pOut).width(headerColumnWidth);
-    (*pOut) << TSS_GetString( cTW, tw::STR_HOST_IP ) << dbHeader.GetIPAddress() << endl;
+    (*pOut) << TSS_GetString(cTW, tw::STR_HOST_IP) << dbHeader.GetIPAddress() << endl;
 
-    
-    (*pOut).width(headerColumnWidth);    
-    (*pOut) << TSS_GetString( cTW, tw::STR_HOST_ID );
 
-    if(! dbHeader.GetHostID().empty() )
+    (*pOut).width(headerColumnWidth);
+    (*pOut) << TSS_GetString(cTW, tw::STR_HOST_ID);
+
+    if (!dbHeader.GetHostID().empty())
         (*pOut) << dbHeader.GetHostID() << endl;
     else
-        (*pOut) << TSS_GetString( cTW, tw::STR_NONE ) << endl;
+        (*pOut) << TSS_GetString(cTW, tw::STR_NONE) << endl;
 
 
-    (*pOut) << setw(headerColumnWidth)
-            << TSS_GetString( cTW, tw::STR_POLICY_FILE_USED ) 
-            << util_Encode( dbHeader.GetPolicyFilename() )
-            << endl;
+    (*pOut) << setw(headerColumnWidth) << TSS_GetString(cTW, tw::STR_POLICY_FILE_USED)
+            << util_Encode(dbHeader.GetPolicyFilename()) << endl;
 
-    (*pOut) << setw(headerColumnWidth)
-            << TSS_GetString( cTW, tw::STR_CONFIG_FILE_USED ) 
-            << util_Encode( dbHeader.GetConfigFilename() )
-            << endl;
+    (*pOut) << setw(headerColumnWidth) << TSS_GetString(cTW, tw::STR_CONFIG_FILE_USED)
+            << util_Encode(dbHeader.GetConfigFilename()) << endl;
 
-    (*pOut) << setw(headerColumnWidth)
-            << TSS_GetString( cTW, tw::STR_DB_FILE_USED ) 
-            << util_Encode( dbHeader.GetDBFilename() )
-            << endl;
+    (*pOut) << setw(headerColumnWidth) << TSS_GetString(cTW, tw::STR_DB_FILE_USED)
+            << util_Encode(dbHeader.GetDBFilename()) << endl;
 
-    (*pOut) << setw(headerColumnWidth)
-            << TSS_GetString( cTW, tw::STR_CMD_LINE_USED ) 
-            << util_Encode( dbHeader.GetCommandLineParams() )
-            << endl
+    (*pOut) << setw(headerColumnWidth) << TSS_GetString(cTW, tw::STR_CMD_LINE_USED)
+            << util_Encode(dbHeader.GetCommandLineParams()) << endl
             << endl;
 }
 
@@ -377,78 +405,77 @@ static void OutputRulesSummary(const cFCODatabaseFileIter& genreIter, const iFCO
 #endif
 
 
-
-void OutputSectionDelimiter( int nString, TOSTREAM* pOut )
+void OutputSectionDelimiter(int nString, TOSTREAM* pOut)
 {
     (*pOut) << g_sz79Equals << endl;
-    (*pOut) << TSS_GetString( cTW, nString ) << endl;
+    (*pOut) << TSS_GetString(cTW, nString) << endl;
     (*pOut) << g_sz79Equals << endl << endl;
 }
 
-void OutputGenreDelimiter( cGenre::Genre g, TOSTREAM* pOut )
+void OutputGenreDelimiter(cGenre::Genre g, TOSTREAM* pOut)
 {
     (*pOut) << g_sz79Dashes << endl;
-    (*pOut) << _T("# ") << TSS_GetString( cTW, tw::STR_SECTION );
-    (*pOut) << _T(": ") << cGenreSwitcher::GetInstance()->GenreToString( g, true ) << endl;
+    (*pOut) << _T("# ") << TSS_GetString(cTW, tw::STR_SECTION);
+    (*pOut) << _T(": ") << cGenreSwitcher::GetInstance()->GenreToString(g, true) << endl;
     (*pOut) << g_sz79Dashes << endl << endl;
 }
 
-void OutputObjectSummary( cFCODatabaseFile& rd, TOSTREAM* pOut, int margin )
-{    
-    OutputSectionDelimiter( tw::STR_OBJECT_SUMMARY, pOut );
+void OutputObjectSummary(cFCODatabaseFile& rd, TOSTREAM* pOut, int margin)
+{
+    OutputSectionDelimiter(tw::STR_OBJECT_SUMMARY, pOut);
 
     cFCODatabaseFileIter genreIter(rd);
     for (genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next())
     {
-        cGenreSwitcher::GetInstance()->SelectGenre( (cGenre::Genre) genreIter.GetGenre() );
-        
+        cGenreSwitcher::GetInstance()->SelectGenre((cGenre::Genre)genreIter.GetGenre());
+
         iFCONameTranslator* pNT = iTWFactory::GetInstance()->GetNameTranslator();
-        
-        OutputGenreDelimiter( (cGenre::Genre) genreIter.GetGenre(), pOut );
+
+        OutputGenreDelimiter((cGenre::Genre)genreIter.GetGenre(), pOut);
 
         // Currently we don't have a rule summary.  See function definition below
         //OutputRulesSummary( genreIter, pNT, pOut);
 
-        OutputObjectSummary( genreIter, pNT, pOut, margin );
+        OutputObjectSummary(genreIter, pNT, pOut, margin);
     }
 }
 
-void OutputObjectSummary( cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin )
+void OutputObjectSummary(cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut, int margin)
 {
-    const cDbDataSourceIter dbIter( &genreIter.GetDb() );
+    const cDbDataSourceIter dbIter(&genreIter.GetDb());
     ASSERT(dbIter.AtRoot());
 
-    (*pOut) << setw( margin ) << _T("");
+    (*pOut) << setw(margin) << _T("");
     TSTRING strBuf;
-    (*pOut) << genreIter.GetGenreHeader().GetPropDisplayer()->GetDetailsHeader( strBuf, margin ).c_str() << endl;
+    (*pOut) << genreIter.GetGenreHeader().GetPropDisplayer()->GetDetailsHeader(strBuf, margin).c_str() << endl;
 
-    OutputIterPeers( dbIter, genreIter.GetGenreHeader().GetPropDisplayer(), pNT, pOut, false );
+    OutputIterPeers(dbIter, genreIter.GetGenreHeader().GetPropDisplayer(), pNT, pOut, false);
     (*pOut) << endl;
 }
 
 
-void OutputObjectDetail( cFCODatabaseFile& rd, TOSTREAM* pOut )
+void OutputObjectDetail(cFCODatabaseFile& rd, TOSTREAM* pOut)
 {
-    OutputSectionDelimiter( tw::STR_OBJECT_DETAIL, pOut );
+    OutputSectionDelimiter(tw::STR_OBJECT_DETAIL, pOut);
 
     cFCODatabaseFileIter genreIter(rd);
     for (genreIter.SeekBegin(); !genreIter.Done(); genreIter.Next())
     {
-        cGenreSwitcher::GetInstance()->SelectGenre( (cGenre::Genre) genreIter.GetGenre() );        
+        cGenreSwitcher::GetInstance()->SelectGenre((cGenre::Genre)genreIter.GetGenre());
         iFCONameTranslator* pNT = iTWFactory::GetInstance()->GetNameTranslator();
-        
-        OutputGenreDelimiter( (cGenre::Genre) genreIter.GetGenre(), pOut );
 
-        OutputObjectDetail( genreIter, pNT, pOut );
+        OutputGenreDelimiter((cGenre::Genre)genreIter.GetGenre(), pOut);
+
+        OutputObjectDetail(genreIter, pNT, pOut);
     }
 }
 
 
-void OutputObjectDetail( cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut )
+void OutputObjectDetail(cFCODatabaseFileIter& genreIter, const iFCONameTranslator* pNT, TOSTREAM* pOut)
 {
     const cDbDataSourceIter dbIterDetails(&genreIter.GetDb());
- 
-    OutputIterPeers( dbIterDetails, genreIter.GetGenreHeader().GetPropDisplayer(), pNT, pOut, true);
+
+    OutputIterPeers(dbIterDetails, genreIter.GetGenreHeader().GetPropDisplayer(), pNT, pOut, true);
     (*pOut) << endl;
 }
 
@@ -485,47 +512,43 @@ static void OutputSpecHeader( const cFCODbSpecIter &dbi, TOSTREAM* pOut )
 */
 
 
-void DisplayFCOProps( const iFCO* const pFCO, const iFCOPropDisplayer* pPD, TOSTREAM* pOut )
+void DisplayFCOProps(const iFCO* const pFCO, const iFCOPropDisplayer* pPD, TOSTREAM* pOut)
 {
-    ASSERT( pOut != 0);
-    ASSERT( pFCO != 0);
-   
-    const int attrNameWidth = 24;
+    ASSERT(pOut != 0);
+    ASSERT(pFCO != 0);
+
+    const int attrNameWidth  = 24;
     const int attrValueWidth = 28;
 
     // output header
     // TODO: make these constants into enums
-    (*pOut).width( attrNameWidth );
-    (*pOut) << TSS_GetString( cTW, tw::STR_ATTRIBUTES );
-    (*pOut).width( attrValueWidth );
-    (*pOut) << TSS_GetString( cTW, tw::STR_ATTR_VALUE );
+    (*pOut).width(attrNameWidth);
+    (*pOut) << TSS_GetString(cTW, tw::STR_ATTRIBUTES);
+    (*pOut).width(attrValueWidth);
+    (*pOut) << TSS_GetString(cTW, tw::STR_ATTR_VALUE);
     (*pOut) << endl;
-    
-    (*pOut).width( attrNameWidth );
+
+    (*pOut).width(attrNameWidth);
     (*pOut) << _T("-------------");
-    (*pOut).width( attrValueWidth );
+    (*pOut).width(attrValueWidth);
     (*pOut) << _T("-----------");
     (*pOut) << endl;
 
     int iNumProps = pFCO->GetPropSet()->GetNumProps();
-    for( int j = 0; j < iNumProps; j++ )
+    for (int j = 0; j < iNumProps; j++)
     {
         // output if prop is in FCO, and prop is not cFCOUndefinedProp
-        if( 
-            pFCO->GetPropSet()->GetValidVector().ContainsItem( j )
-            &&
-            pFCO->GetPropSet()->GetPropAt( j )->GetType() != cFCOUndefinedProp::GetInstance()->GetType()
-          )
+        if (pFCO->GetPropSet()->GetValidVector().ContainsItem(j) &&
+            pFCO->GetPropSet()->GetPropAt(j)->GetType() != cFCOUndefinedProp::GetInstance()->GetType())
         {
             TSTRING strProp;
 
             // output property name
-            (*pOut).width( attrNameWidth );
+            (*pOut).width(attrNameWidth);
             (*pOut) << pFCO->GetPropSet()->GetPropName(j);
-            (*pOut).width( attrValueWidth );
-            (*pOut) << pPD->PropAsString( pFCO, j, attrNameWidth, 0 );
+            (*pOut).width(attrValueWidth);
+            (*pOut) << pPD->PropAsString(pFCO, j, attrNameWidth, 0);
             (*pOut) << _T("\n");
         }
     }
 }
-

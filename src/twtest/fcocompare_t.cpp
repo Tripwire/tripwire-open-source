@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -46,13 +46,13 @@
 
 static void PrintProps(const iFCO* pFCO)
 {
-    cDebug d("PrintProps");
-    const iFCOPropSet* pSet = pFCO->GetPropSet();
-    const cFCOPropVector& v = pSet->GetValidVector();
-    
-    for(int i=0; i<pSet->GetNumProps(); i++)
+    cDebug                d("PrintProps");
+    const iFCOPropSet*    pSet = pFCO->GetPropSet();
+    const cFCOPropVector& v    = pSet->GetValidVector();
+
+    for (int i = 0; i < pSet->GetNumProps(); i++)
     {
-        if(v.ContainsItem(i))
+        if (v.ContainsItem(i))
         {
             d.TraceDebug(_T("[%d] %s\t%s\n"), i, pSet->GetPropName(i).c_str(), pSet->GetPropAt(i)->AsString().c_str());
         }
@@ -68,9 +68,9 @@ void TestFCOCompare()
     d.TraceDebug("Entering...\n");
 
     // first, create an fco to compare with...
-    
+
     TOFSTREAM fstr(filename.c_str());
-    if(fstr.bad())
+    if (fstr.bad())
     {
         d.TraceError("Unable to create test file %s!\n", filename.c_str());
         TEST(false);
@@ -87,7 +87,7 @@ void TestFCOCompare()
     TEST(pFCO);
 
     // measure a couple of properties, some of which will change...
-    cFSPropCalc propCalc;
+    cFSPropCalc    propCalc;
     cFCOPropVector v(pFCO->GetPropSet()->GetValidVector().GetSize());
     v.AddItem(cFSPropSet::PROP_DEV);
     v.AddItem(cFSPropSet::PROP_CTIME);
@@ -101,16 +101,16 @@ void TestFCOCompare()
     PrintProps(pFCO);
 
     // first, try comparing it to itself...
-    cFCOCompare                 comp;
+    cFCOCompare comp;
     comp.SetPropsToCmp(v);
     unsigned int result = comp.Compare(pFCO, pFCO);
-    d.TraceDebug("Compare to itself is (expect true) %s\n", result == cFCOCompare::EQUAL? "true" : "false");
+    d.TraceDebug("Compare to itself is (expect true) %s\n", result == cFCOCompare::EQUAL ? "true" : "false");
     TEST(result == cFCOCompare::EQUAL);
 
     // change the file...
     d.TraceDebug("Changing the file...\n");
     fstr.open(filename.c_str());
-    if(fstr.bad())
+    if (fstr.bad())
     {
         d.TraceError("Unable to reopen %s!\n", filename.c_str());
         TEST(false);
@@ -130,7 +130,7 @@ void TestFCOCompare()
     PrintProps(pFCO2);
 
     result = comp.Compare(pFCO, pFCO2);
-    d.TraceDebug("Compare to new object is (expect false) %s\n", result == cFCOCompare::EQUAL? "true" : "false");
+    d.TraceDebug("Compare to new object is (expect false) %s\n", result == cFCOCompare::EQUAL ? "true" : "false");
     TEST(result == cFCOCompare::PROPS_UNEQUAL);
     d.TraceDebug("Properties that differ are:\n");
     //result.mPropVector.TraceContents();
@@ -140,7 +140,7 @@ void TestFCOCompare()
     // try testing properties that weren't calculated...
     d.TraceDebug("Comparing FCOs with different properties calculated\n");
     iFCO* pFCO3 = ds3.CreateFCO();
-    v = propCalc.GetPropVector();
+    v           = propCalc.GetPropVector();
     v.AddItem(cFSPropSet::PROP_MD5);
     propCalc.SetPropVector(v);
     pFCO3->AcceptVisitor(&propCalc);

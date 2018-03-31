@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -57,33 +57,33 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-const uint32 EL_GAMAL_SIG_PUBLIC_MAGIC_NUM = 0x7ae2c945;
+const uint32 EL_GAMAL_SIG_PUBLIC_MAGIC_NUM  = 0x7ae2c945;
 const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
 
 ///////////////////////////////////////////////////////////////////////////////
 // macros for reading and writing integers
 
-#define WRITE_INTEGER(I) \
+#define WRITE_INTEGER(I)                       \
     len = I.MinEncodedSize(Integer::UNSIGNED); \
-    ASSERT(len >=0 && len < 9000); \
-    i32 = tw_htonl(len); \
-    memcpy(pOut, &i32, sizeof(i32)); \
-    pOut += sizeof(int32); \
-    I.Encode(pOut, len, Integer::UNSIGNED); \
+    ASSERT(len >= 0 && len < 9000);            \
+    i32 = tw_htonl(len);                       \
+    memcpy(pOut, &i32, sizeof(i32));           \
+    pOut += sizeof(int32);                     \
+    I.Encode(pOut, len, Integer::UNSIGNED);    \
     pOut += len;
 
-#define READ_INTEGER(I) \
-    memcpy(&i32, pIn, sizeof(i32)); \
-    len = tw_ntohl(i32); \
-    ASSERT(len >= 0 && len < 9000); \
-    pIn += sizeof(int32); \
+#define READ_INTEGER(I)                    \
+    memcpy(&i32, pIn, sizeof(i32));        \
+    len = tw_ntohl(i32);                   \
+    ASSERT(len >= 0 && len < 9000);        \
+    pIn += sizeof(int32);                  \
     I.Decode(pIn, len, Integer::UNSIGNED); \
     pIn += len;
 
 ///////////////////////////////////////////////////////////////////////////////
 // class cNullCipher -- no encryption cipher
 
-int  cNullCipher::GetBlockSizePlain()
+int cNullCipher::GetBlockSizePlain()
 {
     // lets use the blocksize of TripleDES_Encryption since that may be
     // better than picking a blocksize at random
@@ -91,11 +91,11 @@ int  cNullCipher::GetBlockSizePlain()
 }
 
 // return the size of data blocks for plaintext and cipertext
-int  cNullCipher::GetBlockSizeCipher()
+int cNullCipher::GetBlockSizeCipher()
 {
     return TripleDES_Encryption::BLOCKSIZE;
 }
-        
+
 // process a block of data.  indata and outdata may be the same memory
 void cNullCipher::ProcessBlock(const void* indata, void* outdata)
 {
@@ -111,7 +111,7 @@ void cNullCipher::ProcessBlock(const void* indata, void* outdata)
 class cIDEA_i
 {
 public:
-    IDEA*   mpIDEA;
+    IDEA* mpIDEA;
 };
 
 cIDEA::cIDEA()
@@ -143,12 +143,12 @@ int cIDEA::GetBlockSizePlain()
 {
     return IDEA::BLOCKSIZE;
 }
-        
+
 int cIDEA::GetBlockSizeCipher()
 {
     return IDEA::BLOCKSIZE;
 }
-        
+
 // process a block of data.  indata and outdata may be the same memory
 void cIDEA::ProcessBlock(const void* indata, void* outdata)
 {
@@ -171,8 +171,8 @@ void cIDEA::ProcessBlock(const void* indata, void* outdata)
 class cTripleDES_i
 {
 public:
-    TripleDES_Encryption*   mpEncryptor;
-    TripleDES_Decryption*   mpDecryptor;
+    TripleDES_Encryption* mpEncryptor;
+    TripleDES_Decryption* mpDecryptor;
 };
 
 cTripleDES::cTripleDES()
@@ -220,13 +220,13 @@ int cTripleDES::GetBlockSizePlain()
     ASSERT(TripleDES_Encryption::BLOCKSIZE == TripleDES_Decryption::BLOCKSIZE);
     return TripleDES_Encryption::BLOCKSIZE;
 }
-        
+
 int cTripleDES::GetBlockSizeCipher()
 {
     ASSERT(TripleDES_Encryption::BLOCKSIZE == TripleDES_Decryption::BLOCKSIZE);
     return TripleDES_Encryption::BLOCKSIZE;
 }
-        
+
 // process a block of data.  indata and outdata may be the same memory
 void cTripleDES::ProcessBlock(const void* indata, void* outdata)
 {
@@ -235,7 +235,8 @@ void cTripleDES::ProcessBlock(const void* indata, void* outdata)
 
     if (!mpData->mpEncryptor && !mpData->mpDecryptor)
     {
-        ThrowAndAssert(INTERNAL_ERROR("crypto.cpp")); //cTWError::E_INTERNAL, TSTRING(_T("Key not set in symmetric encryption."))));
+        ThrowAndAssert(INTERNAL_ERROR(
+            "crypto.cpp")); //cTWError::E_INTERNAL, TSTRING(_T("Key not set in symmetric encryption."))));
     }
 
     if (mpData->mpEncryptor)
@@ -260,8 +261,8 @@ public:
 
 cRSAPrivateKey::cRSAPrivateKey()
 {
-    mpData = new cRSAPrivateKey_i;
-    mpData->mpKey = 0;
+    mpData             = new cRSAPrivateKey_i;
+    mpData->mpKey      = 0;
     mpData->mKeyLength = 0;
 }
 
@@ -295,7 +296,7 @@ cRSAPrivateKey::cRSAPrivateKey(void* pDataStream)
 
 cRSAPrivateKey::~cRSAPrivateKey()
 {
-    if (mpData) 
+    if (mpData)
     {
         delete mpData->mpKey;
         delete mpData;
@@ -315,15 +316,16 @@ int cRSAPrivateKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().IsPositive());
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterU().IsPositive());
 
-    int len = sizeof(int16) + 
-              mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetPrime1().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetPrime2().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetDecryptionExponent().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetParameterDP().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetParameterU().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32);
+    int len = sizeof(int16) + mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetPrime1().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetPrime2().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) +
+              mpData->mpKey->GetTrapdoorFunction().GetDecryptionExponent().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetParameterDP().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetParameterU().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32);
 
     return len;
 }
@@ -350,25 +352,25 @@ void cRSAPrivateKey::Write(void* pDataStream) const
     pOut += sizeof(int16);
 
     Integer n, e, d, p, q, dp, dq, u;
-    
-    n = mpData->mpKey->GetTrapdoorFunction().GetModulus();
-    e = mpData->mpKey->GetTrapdoorFunction().GetExponent();
-    p = mpData->mpKey->GetTrapdoorFunction().GetPrime1();
-    q = mpData->mpKey->GetTrapdoorFunction().GetPrime2();
-    d = mpData->mpKey->GetTrapdoorFunction().GetDecryptionExponent();
+
+    n  = mpData->mpKey->GetTrapdoorFunction().GetModulus();
+    e  = mpData->mpKey->GetTrapdoorFunction().GetExponent();
+    p  = mpData->mpKey->GetTrapdoorFunction().GetPrime1();
+    q  = mpData->mpKey->GetTrapdoorFunction().GetPrime2();
+    d  = mpData->mpKey->GetTrapdoorFunction().GetDecryptionExponent();
     dp = mpData->mpKey->GetTrapdoorFunction().GetParameterDP();
     dq = mpData->mpKey->GetTrapdoorFunction().GetParameterDQ();
-    u = mpData->mpKey->GetTrapdoorFunction().GetParameterU();
+    u  = mpData->mpKey->GetTrapdoorFunction().GetParameterU();
 
     int32 len;
 
-#define WRITE_INTEGER(I) \
-    len = I.MinEncodedSize(Integer::UNSIGNED); \
-    i32 = tw_htonl(len); \
-    memcpy(pOut, &i32, sizeof(i32)); \
-    pOut += sizeof(int32); \
-    I.Encode(pOut, len, Integer::UNSIGNED); \
-    pOut += len;
+#    define WRITE_INTEGER(I)                       \
+        len = I.MinEncodedSize(Integer::UNSIGNED); \
+        i32 = tw_htonl(len);                       \
+        memcpy(pOut, &i32, sizeof(i32));           \
+        pOut += sizeof(int32);                     \
+        I.Encode(pOut, len, Integer::UNSIGNED);    \
+        pOut += len;
 
     WRITE_INTEGER(n);
     WRITE_INTEGER(e);
@@ -385,14 +387,14 @@ void cRSAPrivateKey::Write(void* pDataStream) const
 class cRSAPublicKey_i
 {
 public:
-    int16           mKeyLength;
-    RSAPublicKey*   mpKey;
+    int16         mKeyLength;
+    RSAPublicKey* mpKey;
 };
 
 cRSAPublicKey::cRSAPublicKey()
 {
-    mpData = new cRSAPublicKey_i;
-    mpData->mpKey = 0;
+    mpData             = new cRSAPublicKey_i;
+    mpData->mpKey      = 0;
     mpData->mKeyLength = 0;
 }
 
@@ -401,9 +403,9 @@ cRSAPublicKey::cRSAPublicKey(void* pDataStream)
     mpData = new cRSAPublicKey_i;
 
     Integer n, e;
-    int32 len;
-    int16 i16;
-    int32 i32;
+    int32   len;
+    int16   i16;
+    int32   i32;
 
     byte* pIn = (byte*)pDataStream;
 
@@ -428,12 +430,12 @@ cRSAPublicKey::cRSAPublicKey(const cRSAPrivateKey& privateKey)
     ASSERT(privateKey.mpData->mpKey);
 
     mpData->mKeyLength = privateKey.mpData->mKeyLength;
-    mpData->mpKey = new RSAPublicKey(*privateKey.mpData->mpKey);
+    mpData->mpKey      = new RSAPublicKey(*privateKey.mpData->mpKey);
 }
 
 cRSAPublicKey::~cRSAPublicKey()
 {
-    if (mpData) 
+    if (mpData)
     {
         delete mpData->mpKey;
         delete mpData;
@@ -447,9 +449,9 @@ int cRSAPublicKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetModulus().IsPositive());
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetExponent().IsPositive());
 
-    int len = sizeof(int16) + 
-              mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32);
+    int len = sizeof(int16) + mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32);
 
     return len;
 }
@@ -470,7 +472,7 @@ void cRSAPublicKey::Write(void* pDataStream) const
     pOut += sizeof(int16);
 
     Integer n, e;
-    
+
     n = mpData->mpKey->GetTrapdoorFunction().GetModulus();
     e = mpData->mpKey->GetTrapdoorFunction().GetExponent();
 
@@ -480,23 +482,23 @@ void cRSAPublicKey::Write(void* pDataStream) const
     WRITE_INTEGER(e);
 }
 
-#ifdef DEBUG
+#    ifdef DEBUG
 void cRSAPublicKey::TraceContents()
 {
     cDebug d("cRSAPublicKey::TraceContents");
 
     {
-    std::ostringstream os;
-    os << mpData->mpKey->GetTrapdoorFunction().GetModulus();
-    d.TraceDebug("Modulus = %s\n", os.str().c_str());
+        std::ostringstream os;
+        os << mpData->mpKey->GetTrapdoorFunction().GetModulus();
+        d.TraceDebug("Modulus = %s\n", os.str().c_str());
     }
     {
-    std::ostringstream os;
-    os << mpData->mpKey->GetTrapdoorFunction().GetExponent();
-    d.TraceDebug("Exponent = %s\n", os.str().c_str());
+        std::ostringstream os;
+        os << mpData->mpKey->GetTrapdoorFunction().GetExponent();
+        d.TraceDebug("Exponent = %s\n", os.str().c_str());
     }
 }
-#endif
+#    endif
 
 // class cRSA
 
@@ -505,12 +507,18 @@ class cRSA_i
 public:
     int mKeyBits;
 
-    enum Action { ENCRYPT, DECRYPT, SIGN, VERIFY };
+    enum Action
+    {
+        ENCRYPT,
+        DECRYPT,
+        SIGN,
+        VERIFY
+    };
 
     Action mAction;
 
     const cRSAPrivateKey* mpPrivateKey;
-    const cRSAPublicKey* mpPublicKey;
+    const cRSAPublicKey*  mpPublicKey;
 
     X917RNG* mpRNG;
 };
@@ -534,15 +542,13 @@ cRSA::cRSA(const cRSAPrivateKey& privateKey)
 
 void cRSA::Init(KeySize keysize)
 {
-    mpData = new cRSA_i;
+    mpData               = new cRSA_i;
     mpData->mpPrivateKey = 0;
-    mpData->mpPublicKey = 0;
+    mpData->mpPublicKey  = 0;
 
-    mpData->mKeyBits = (keysize == KEY256) ? 256 :
-                       (keysize == KEY512) ? 512 :
-                       (keysize == KEY1024) ? 1024 :
-                       (keysize == KEY2048) ? 2048 :
-                       256;
+    mpData->mKeyBits = (keysize == KEY256) ?
+                           256 :
+                           (keysize == KEY512) ? 512 : (keysize == KEY1024) ? 1024 : (keysize == KEY2048) ? 2048 : 256;
 
     // Create a random seed and a key
     byte seed[MD5::DATASIZE];
@@ -555,7 +561,7 @@ void cRSA::Init(KeySize keysize)
 
 cRSA::~cRSA()
 {
-    if (mpData) 
+    if (mpData)
     {
         delete mpData->mpRNG;
         delete mpData;
@@ -570,8 +576,8 @@ void cRSA::SetEncrypting(const cRSAPublicKey* pKey)
         ThrowAndAssert(eInternal(_T("RSA Key length mismatch.")));
 
 
-    mpData->mAction = cRSA_i::ENCRYPT;
-    mpData->mpPublicKey = pKey;
+    mpData->mAction      = cRSA_i::ENCRYPT;
+    mpData->mpPublicKey  = pKey;
     mpData->mpPrivateKey = 0;
 }
 
@@ -581,9 +587,9 @@ void cRSA::SetDecrypting(const cRSAPrivateKey* pKey)
     if (pKey->mpData->mKeyLength != mpData->mKeyBits)
         ThrowAndAssert(eInternal(_T("RSA Key length mismatch.")));
 
-    mpData->mAction = cRSA_i::DECRYPT;
+    mpData->mAction      = cRSA_i::DECRYPT;
     mpData->mpPrivateKey = pKey;
-    mpData->mpPublicKey = 0;
+    mpData->mpPublicKey  = 0;
 }
 
 void cRSA::SetSigning(const cRSAPrivateKey* pKey)
@@ -592,9 +598,9 @@ void cRSA::SetSigning(const cRSAPrivateKey* pKey)
     if (pKey->mpData->mKeyLength != mpData->mKeyBits)
         ThrowAndAssert(eInternal(_T("RSA Key length mismatch.")));
 
-    mpData->mAction = cRSA_i::SIGN;
+    mpData->mAction      = cRSA_i::SIGN;
     mpData->mpPrivateKey = pKey;
-    mpData->mpPublicKey = 0;
+    mpData->mpPublicKey  = 0;
 }
 
 void cRSA::SetVerifying(const cRSAPublicKey* pKey)
@@ -603,14 +609,14 @@ void cRSA::SetVerifying(const cRSAPublicKey* pKey)
     if (pKey->mpData->mKeyLength != mpData->mKeyBits)
         ThrowAndAssert(eInternal(_T("RSA Key length mismatch.")));
 
-    mpData->mAction = cRSA_i::VERIFY;
-    mpData->mpPublicKey = pKey;
+    mpData->mAction      = cRSA_i::VERIFY;
+    mpData->mpPublicKey  = pKey;
     mpData->mpPrivateKey = 0;
 }
 
 // Lets encrypt in 128 bit chunks, even though the crypto
 // lib implementation can do arbitrary length plaintext
-// encryptions.  We will most likely only use this to 
+// encryptions.  We will most likely only use this to
 // encrypt a 128 bit random number anyway.
 int cRSA::GetBlockSizePlain()
 {
@@ -635,63 +641,65 @@ void cRSA::ProcessBlock(const void* indata, void* outdata)
     unsigned int l;
 
     switch (mpData->mAction)
-    { 
-        case cRSA_i::ENCRYPT:
-        {
-            ASSERT(mpData->mpPublicKey);
-            ASSERT(mpData->mpPublicKey->mpData->mpKey->MaxPlainTextLength() == GetBlockSizePlain());
-            ASSERT(mpData->mpPublicKey->mpData->mpKey->CipherTextLength() == GetBlockSizeCipher());
-            mpData->mpPublicKey->mpData->mpKey->Encrypt(*mpData->mpRNG, (const byte *)indata, GetBlockSizePlain(), (byte *)outdata);
-            break;
-        }
-        case cRSA_i::DECRYPT:
-        {
-            ASSERT(mpData->mpPrivateKey);
-            ASSERT(mpData->mpPrivateKey->mpData->mpKey->CipherTextLength() == GetBlockSizeCipher());
-            l = mpData->mpPrivateKey->mpData->mpKey->Decrypt((const byte *)indata, (byte *)outdata);
-            if (l != GetBlockSizePlain())
-                throw eArchiveCrypto();
-            break;
-        }
-        case cRSA_i::SIGN:
-        {
-            ASSERT(mpData->mpPrivateKey);
-            ASSERT(mpData->mpPrivateKey->mpData->mpKey->MaxMessageLength() == GetBlockSizePlain());
-            ASSERT(mpData->mpPrivateKey->mpData->mpKey->SignatureLength() == GetBlockSizeCipher());
-            mpData->mpPrivateKey->mpData->mpKey->Sign(*mpData->mpRNG, (const byte *)indata, GetBlockSizePlain(), (byte *)outdata);
-            break;
-        }
-        case cRSA_i::VERIFY:
-        {
-            ASSERT(mpData->mpPublicKey);
-            ASSERT(mpData->mpPublicKey->mpData->mpKey->SignatureLength() == GetBlockSizeCipher());
-            l = mpData->mpPublicKey->mpData->mpKey->Recover((const byte *)indata, (byte *)outdata);
-            if (l != GetBlockSizePlain())
-                throw eArchiveCrypto();
-            break;
-        }
-        default:
-        {
-            ASSERT(false);
-            break;
-        }
+    {
+    case cRSA_i::ENCRYPT:
+    {
+        ASSERT(mpData->mpPublicKey);
+        ASSERT(mpData->mpPublicKey->mpData->mpKey->MaxPlainTextLength() == GetBlockSizePlain());
+        ASSERT(mpData->mpPublicKey->mpData->mpKey->CipherTextLength() == GetBlockSizeCipher());
+        mpData->mpPublicKey->mpData->mpKey->Encrypt(
+            *mpData->mpRNG, (const byte*)indata, GetBlockSizePlain(), (byte*)outdata);
+        break;
+    }
+    case cRSA_i::DECRYPT:
+    {
+        ASSERT(mpData->mpPrivateKey);
+        ASSERT(mpData->mpPrivateKey->mpData->mpKey->CipherTextLength() == GetBlockSizeCipher());
+        l = mpData->mpPrivateKey->mpData->mpKey->Decrypt((const byte*)indata, (byte*)outdata);
+        if (l != GetBlockSizePlain())
+            throw eArchiveCrypto();
+        break;
+    }
+    case cRSA_i::SIGN:
+    {
+        ASSERT(mpData->mpPrivateKey);
+        ASSERT(mpData->mpPrivateKey->mpData->mpKey->MaxMessageLength() == GetBlockSizePlain());
+        ASSERT(mpData->mpPrivateKey->mpData->mpKey->SignatureLength() == GetBlockSizeCipher());
+        mpData->mpPrivateKey->mpData->mpKey->Sign(
+            *mpData->mpRNG, (const byte*)indata, GetBlockSizePlain(), (byte*)outdata);
+        break;
+    }
+    case cRSA_i::VERIFY:
+    {
+        ASSERT(mpData->mpPublicKey);
+        ASSERT(mpData->mpPublicKey->mpData->mpKey->SignatureLength() == GetBlockSizeCipher());
+        l = mpData->mpPublicKey->mpData->mpKey->Recover((const byte*)indata, (byte*)outdata);
+        if (l != GetBlockSizePlain())
+            throw eArchiveCrypto();
+        break;
+    }
+    default:
+    {
+        ASSERT(false);
+        break;
+    }
     }
 }
 
 void cRSA::GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic)
 {
     RSAPrivateKey* pNewPrivateKey = new RSAPrivateKey(*mpData->mpRNG, mpData->mKeyBits);
-    RSAPublicKey* pNewPublicKey = new RSAPublicKey(*pNewPrivateKey);
+    RSAPublicKey*  pNewPublicKey  = new RSAPublicKey(*pNewPrivateKey);
 
-    retPrivate = new cRSAPrivateKey();
-    retPrivate->mpData->mpKey = pNewPrivateKey;
+    retPrivate                     = new cRSAPrivateKey();
+    retPrivate->mpData->mpKey      = pNewPrivateKey;
     retPrivate->mpData->mKeyLength = mpData->mKeyBits;
 
-    retPublic = new cRSAPublicKey();
-    retPublic->mpData->mpKey = pNewPublicKey;
+    retPublic                     = new cRSAPublicKey();
+    retPublic->mpData->mpKey      = pNewPublicKey;
     retPublic->mpData->mKeyLength = mpData->mKeyBits;
 
-#ifdef DEBUG
+#    ifdef DEBUG
     int l;
     l = retPublic->mpData->mpKey->MaxPlainTextLength();
     ASSERT(l == GetBlockSizePlain());
@@ -699,7 +707,7 @@ void cRSA::GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic)
     ASSERT(l == GetBlockSizeCipher());
     l = retPrivate->mpData->mpKey->CipherTextLength();
     ASSERT(l == GetBlockSizeCipher());
-#endif
+#    endif
 }
 
 #endif // _RSA_ENCRYPTION
@@ -712,14 +720,14 @@ void cRSA::GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic)
 class cElGamalSigPrivateKey_i
 {
 public:
-    int16          mKeyLength;
+    int16                 mKeyLength;
     ElGamalSigPrivateKey* mpKey;
 };
 
 cElGamalSigPrivateKey::cElGamalSigPrivateKey()
 {
-    mpData = new cElGamalSigPrivateKey_i;
-    mpData->mpKey = 0;
+    mpData             = new cElGamalSigPrivateKey_i;
+    mpData->mpKey      = 0;
     mpData->mKeyLength = 0;
 }
 
@@ -727,9 +735,9 @@ cElGamalSigPrivateKey::cElGamalSigPrivateKey(void* pDataStream)
 {
     mpData = new cElGamalSigPrivateKey_i;
 
-    int32 len;
-    int32 i32;
-    int16 i16;
+    int32  len;
+    int32  i32;
+    int16  i16;
     uint32 magicNum;
 
     byte* pIn = (byte*)pDataStream;
@@ -743,7 +751,7 @@ cElGamalSigPrivateKey::cElGamalSigPrivateKey(void* pDataStream)
     pIn += sizeof(int32);
 
     if (magicNum != EL_GAMAL_SIG_PRIVATE_MAGIC_NUM)
-        ThrowAndAssert( eArchiveOpen() );
+        ThrowAndAssert(eArchiveOpen());
 
     Integer p, q, g, y, x;
 
@@ -758,7 +766,7 @@ cElGamalSigPrivateKey::cElGamalSigPrivateKey(void* pDataStream)
 
 cElGamalSigPrivateKey::~cElGamalSigPrivateKey()
 {
-    if (mpData) 
+    if (mpData)
     {
         delete mpData->mpKey;
         delete mpData;
@@ -775,9 +783,8 @@ int cElGamalSigPrivateKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
     ASSERT(mpData->mpKey->GetParameterX().IsPositive());
 
-    int len = sizeof(int16) + sizeof(int32) +
-              mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
+    int len = sizeof(int16) + sizeof(int32) + mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
               mpData->mpKey->GetParameterG().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
               mpData->mpKey->GetParameterY().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
               mpData->mpKey->GetParameterX().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32);
@@ -808,7 +815,7 @@ void cElGamalSigPrivateKey::Write(void* pDataStream) const
     pOut += sizeof(int32);
 
     Integer p, q, g, y, x;
-    
+
     p = mpData->mpKey->GetPrime();
     q = mpData->mpKey->GetParameterQ();
     g = mpData->mpKey->GetParameterG();
@@ -829,14 +836,14 @@ void cElGamalSigPrivateKey::Write(void* pDataStream) const
 class cElGamalSigPublicKey_i
 {
 public:
-    int16           mKeyLength;
-    ElGamalSigPublicKey*   mpKey;
+    int16                mKeyLength;
+    ElGamalSigPublicKey* mpKey;
 };
 
 cElGamalSigPublicKey::cElGamalSigPublicKey()
 {
-    mpData = new cElGamalSigPublicKey_i;
-    mpData->mpKey = 0;
+    mpData             = new cElGamalSigPublicKey_i;
+    mpData->mpKey      = 0;
     mpData->mKeyLength = 0;
 }
 
@@ -845,10 +852,10 @@ cElGamalSigPublicKey::cElGamalSigPublicKey(void* pDataStream)
     mpData = new cElGamalSigPublicKey_i;
 
     Integer p, q, g, y;
-    int32 len;
-    int16 i16;
-    int32 i32;
-    uint32 magicNum;
+    int32   len;
+    int16   i16;
+    int32   i32;
+    uint32  magicNum;
 
     byte* pIn = (byte*)pDataStream;
 
@@ -861,7 +868,7 @@ cElGamalSigPublicKey::cElGamalSigPublicKey(void* pDataStream)
     pIn += sizeof(int32);
 
     if (magicNum != EL_GAMAL_SIG_PUBLIC_MAGIC_NUM)
-        ThrowAndAssert( eArchiveOpen() );
+        ThrowAndAssert(eArchiveOpen());
 
     READ_INTEGER(p);
     READ_INTEGER(q);
@@ -882,12 +889,12 @@ cElGamalSigPublicKey::cElGamalSigPublicKey(const cElGamalSigPrivateKey& privateK
     ASSERT(privateKey.mpData->mpKey != 0);
 
     mpData->mKeyLength = privateKey.mpData->mKeyLength;
-    mpData->mpKey = new ElGamalSigPublicKey(*privateKey.mpData->mpKey);
+    mpData->mpKey      = new ElGamalSigPublicKey(*privateKey.mpData->mpKey);
 }
 
 cElGamalSigPublicKey::~cElGamalSigPublicKey()
 {
-    if (mpData) 
+    if (mpData)
     {
         delete mpData->mpKey;
         delete mpData;
@@ -903,14 +910,12 @@ int cElGamalSigPublicKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetParameterG().IsPositive());
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
 
-    int len = sizeof(int16) + sizeof(int32) +
-              mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
+    int len = sizeof(int16) + sizeof(int32) + mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32) + mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
               mpData->mpKey->GetParameterG().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
               mpData->mpKey->GetParameterY().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32);
 
     return len;
-
 }
 
 void cElGamalSigPublicKey::Write(void* pDataStream) const
@@ -935,7 +940,7 @@ void cElGamalSigPublicKey::Write(void* pDataStream) const
     pOut += sizeof(int32);
 
     Integer p, q, g, y;
-    
+
     p = mpData->mpKey->GetPrime();
     q = mpData->mpKey->GetParameterQ();
     g = mpData->mpKey->GetParameterG();
@@ -952,10 +957,9 @@ void cElGamalSigPublicKey::Write(void* pDataStream) const
 bool cElGamalSigPublicKey::IsEqual(const cElGamalSigPublicKey& rhs) const
 {
     return this->mpData->mpKey->GetPrime() == rhs.mpData->mpKey->GetPrime() &&
-           this->mpData->mpKey->GetParameterQ() == rhs.mpData->mpKey->GetParameterQ() && 
+           this->mpData->mpKey->GetParameterQ() == rhs.mpData->mpKey->GetParameterQ() &&
            this->mpData->mpKey->GetParameterG() == rhs.mpData->mpKey->GetParameterG() &&
-           this->mpData->mpKey->GetParameterY() == rhs.mpData->mpKey->GetParameterY()
-           ;
+           this->mpData->mpKey->GetParameterY() == rhs.mpData->mpKey->GetParameterY();
 }
 
 #ifdef DEBUG
@@ -964,24 +968,24 @@ void cElGamalSigPublicKey::TraceContents()
     cDebug d("cElGamalSigPublicKey::TraceContents");
 
     {
-    std::ostringstream os;
-    os << mpData->mpKey->GetPrime();
-    d.TraceDebug("Prime = %s\n", os.str().c_str());
+        std::ostringstream os;
+        os << mpData->mpKey->GetPrime();
+        d.TraceDebug("Prime = %s\n", os.str().c_str());
     }
     {
-    std::ostringstream os;
-    os << mpData->mpKey->GetParameterQ();
-    d.TraceDebug("Q = %s\n", os.str().c_str());
+        std::ostringstream os;
+        os << mpData->mpKey->GetParameterQ();
+        d.TraceDebug("Q = %s\n", os.str().c_str());
     }
     {
-    std::ostringstream os;
-    os << mpData->mpKey->GetParameterG();
-    d.TraceDebug("G = %s\n", os.str().c_str());
+        std::ostringstream os;
+        os << mpData->mpKey->GetParameterG();
+        d.TraceDebug("G = %s\n", os.str().c_str());
     }
     {
-    std::ostringstream os;
-    os << mpData->mpKey->GetParameterY();
-    d.TraceDebug("Y = %s\n", os.str().c_str());
+        std::ostringstream os;
+        os << mpData->mpKey->GetParameterY();
+        d.TraceDebug("Y = %s\n", os.str().c_str());
     }
 }
 #endif
@@ -993,14 +997,16 @@ class cElGamalSig_i
 public:
     int mKeyBits;
 
-    enum Action { /*ENCRYPT, DECRYPT,*/ SIGN, VERIFY };
+    enum Action
+    { /*ENCRYPT, DECRYPT,*/ SIGN,
+      VERIFY };
 
     Action mAction;
 
     const cElGamalSigPrivateKey* mpPrivateKey;
-    const cElGamalSigPublicKey* mpPublicKey;
+    const cElGamalSigPublicKey*  mpPublicKey;
 
-    SHA mSHA;
+    SHA      mSHA;
     X917RNG* mpRNG;
 };
 
@@ -1023,15 +1029,13 @@ cElGamalSig::cElGamalSig(const cElGamalSigPrivateKey& privateKey)
 
 void cElGamalSig::Init(KeySize keysize)
 {
-    mpData = new cElGamalSig_i;
+    mpData               = new cElGamalSig_i;
     mpData->mpPrivateKey = 0;
-    mpData->mpPublicKey = 0;
+    mpData->mpPublicKey  = 0;
 
-    mpData->mKeyBits = (keysize == KEY256) ? 256 :
-                       (keysize == KEY512) ? 512 :
-                       (keysize == KEY1024) ? 1024 :
-                       (keysize == KEY2048) ? 2048 :
-                       256;
+    mpData->mKeyBits = (keysize == KEY256) ?
+                           256 :
+                           (keysize == KEY512) ? 512 : (keysize == KEY1024) ? 1024 : (keysize == KEY2048) ? 2048 : 256;
 
     // Create a random seed and a key
     byte seed[SHA::DATASIZE];
@@ -1044,7 +1048,7 @@ void cElGamalSig::Init(KeySize keysize)
 
 cElGamalSig::~cElGamalSig()
 {
-    if (mpData) 
+    if (mpData)
     {
         delete mpData->mpRNG;
         delete mpData;
@@ -1058,9 +1062,9 @@ void cElGamalSig::SetSigning(const cElGamalSigPrivateKey* pKey)
     if (pKey->mpData->mKeyLength != mpData->mKeyBits)
         ThrowAndAssert(eInternal(_T("Signature Key length mismatch.")));
 
-    mpData->mAction = cElGamalSig_i::SIGN;
+    mpData->mAction      = cElGamalSig_i::SIGN;
     mpData->mpPrivateKey = pKey;
-    mpData->mpPublicKey = 0;
+    mpData->mpPublicKey  = 0;
 }
 
 void cElGamalSig::SetVerifying(const cElGamalSigPublicKey* pKey)
@@ -1069,8 +1073,8 @@ void cElGamalSig::SetVerifying(const cElGamalSigPublicKey* pKey)
     if (pKey->mpData->mKeyLength != mpData->mKeyBits)
         ThrowAndAssert(eInternal(_T("Signature Key length mismatch.")));
 
-    mpData->mAction = cElGamalSig_i::VERIFY;
-    mpData->mpPublicKey = pKey;
+    mpData->mAction      = cElGamalSig_i::VERIFY;
+    mpData->mpPublicKey  = pKey;
     mpData->mpPrivateKey = 0;
 }
 
@@ -1082,8 +1086,8 @@ int cElGamalSig::GetBlockSizePlain()
 int cElGamalSig::GetBlockSizeCipher()
 {
     return PLAIN_BLOCK_SIZE + (NumberTheory::DiscreteLogWorkFactor(mpData->mKeyBits) >> 1) + 4;
-        // got this from nbtheory.cpp in crypto++ lib
-        // El Gamal's sig size = 2 * 2 * (DiscreteLogWorkFactor() >> 3)
+    // got this from nbtheory.cpp in crypto++ lib
+    // El Gamal's sig size = 2 * 2 * (DiscreteLogWorkFactor() >> 3)
 }
 
 void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
@@ -1097,20 +1101,21 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
         ThrowAndAssert(eInternal(_T("Signature Key length mismatch.")));
 
     switch (mpData->mAction)
-    { 
-        case cElGamalSig_i::SIGN:
-        {
-            ASSERT(mpData->mpPrivateKey != 0);
-            ASSERT((int)mpData->mpPrivateKey->mpData->mpKey->SignatureLength() + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
+    {
+    case cElGamalSig_i::SIGN:
+    {
+        ASSERT(mpData->mpPrivateKey != 0);
+        ASSERT((int)mpData->mpPrivateKey->mpData->mpKey->SignatureLength() + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
 
-            memmove(outdata, indata, PLAIN_BLOCK_SIZE);
+        memmove(outdata, indata, PLAIN_BLOCK_SIZE);
 
-            mpData->mSHA.CalculateDigest((byte*)shaSig, (byte*)outdata, PLAIN_BLOCK_SIZE);
+        mpData->mSHA.CalculateDigest((byte*)shaSig, (byte*)outdata, PLAIN_BLOCK_SIZE);
 
-            RandomizeBytes((int8 *)outdata + PLAIN_BLOCK_SIZE, GetBlockSizeCipher() - PLAIN_BLOCK_SIZE);
-            mpData->mpPrivateKey->mpData->mpKey->Sign(*mpData->mpRNG, (const byte *)shaSig, SHA::DIGESTSIZE, (byte *)outdata + PLAIN_BLOCK_SIZE);
+        RandomizeBytes((int8*)outdata + PLAIN_BLOCK_SIZE, GetBlockSizeCipher() - PLAIN_BLOCK_SIZE);
+        mpData->mpPrivateKey->mpData->mpKey->Sign(
+            *mpData->mpRNG, (const byte*)shaSig, SHA::DIGESTSIZE, (byte*)outdata + PLAIN_BLOCK_SIZE);
 
-            /*
+        /*
                 Integer m((const byte*)indata, PLAIN_BLOCK_SIZE);
 
                 std::cout << "Signing:\n";
@@ -1124,16 +1129,16 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
                 std::cout << "Stored S = " << ss << std::endl;
             */
 
-            break;
-        }
-        case cElGamalSig_i::VERIFY:
-        {
-            ASSERT(mpData->mpPublicKey != 0);
-            ASSERT((int)mpData->mpPublicKey->mpData->mpKey->SignatureLength() + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
+        break;
+    }
+    case cElGamalSig_i::VERIFY:
+    {
+        ASSERT(mpData->mpPublicKey != 0);
+        ASSERT((int)mpData->mpPublicKey->mpData->mpKey->SignatureLength() + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
 
-            mpData->mSHA.CalculateDigest((byte*)shaSig, (byte*)indata, PLAIN_BLOCK_SIZE);
+        mpData->mSHA.CalculateDigest((byte*)shaSig, (byte*)indata, PLAIN_BLOCK_SIZE);
 
-            /*
+        /*
                 const byte* signature = (const byte *)indata + PLAIN_BLOCK_SIZE;
                 int qLen = mpData->mpPublicKey->mpData->mpKey->q.ByteCount();
                 Integer m((const byte*)indata, PLAIN_BLOCK_SIZE);
@@ -1145,30 +1150,31 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
                 std::cout << "S = " << s << std::endl;
             */
 
-            if (mpData->mpPublicKey->mpData->mpKey->Verify((const byte *)shaSig, SHA::DIGESTSIZE, (const byte *)indata + PLAIN_BLOCK_SIZE) == false)
-                throw eArchiveCrypto();
-            memmove(outdata, indata, PLAIN_BLOCK_SIZE);
-            break;
-        }
-        default:
-        {
-            ASSERT(false);
-            break;
-        }
+        if (mpData->mpPublicKey->mpData->mpKey->Verify(
+                (const byte*)shaSig, SHA::DIGESTSIZE, (const byte*)indata + PLAIN_BLOCK_SIZE) == false)
+            throw eArchiveCrypto();
+        memmove(outdata, indata, PLAIN_BLOCK_SIZE);
+        break;
+    }
+    default:
+    {
+        ASSERT(false);
+        break;
+    }
     }
 }
 
 void cElGamalSig::GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPublicKey*& retPublic)
 {
     ElGamalSigPrivateKey* pNewPrivateKey = new ElGamalSigPrivateKey(*mpData->mpRNG, mpData->mKeyBits);
-    ElGamalSigPublicKey* pNewPublicKey = new ElGamalSigPublicKey(*pNewPrivateKey);
+    ElGamalSigPublicKey*  pNewPublicKey  = new ElGamalSigPublicKey(*pNewPrivateKey);
 
-    retPrivate = new cElGamalSigPrivateKey();
-    retPrivate->mpData->mpKey = pNewPrivateKey;
+    retPrivate                     = new cElGamalSigPrivateKey();
+    retPrivate->mpData->mpKey      = pNewPrivateKey;
     retPrivate->mpData->mKeyLength = (int16)mpData->mKeyBits;
 
-    retPublic = new cElGamalSigPublicKey();
-    retPublic->mpData->mpKey = pNewPublicKey;
+    retPublic                     = new cElGamalSigPublicKey();
+    retPublic->mpData->mpKey      = pNewPublicKey;
     retPublic->mpData->mKeyLength = (int16)mpData->mKeyBits;
 
 #ifdef DEBUG
@@ -1214,7 +1220,7 @@ cHashedKey192::cHashedKey192(const TSTRING& data)
 
     ASSERT(SHA::DIGESTSIZE == 20);
     ASSERT(40 >= KEYLEN);
-    
+
     byte localKey[40];
     sha.CalculateDigest(localKey, (byte*)data.data(), data.length() * sizeof(TCHAR));
     sha.CalculateDigest(localKey + 20, localKey, 20);
@@ -1227,7 +1233,7 @@ cHashedKey192::cHashedKey192(void* pData, int dataLen)
 
     ASSERT(SHA::DIGESTSIZE == 20);
     ASSERT(40 >= KEYLEN);
-    
+
     byte localKey[40];
     sha.CalculateDigest(localKey, (byte*)pData, dataLen);
     sha.CalculateDigest(localKey + 20, localKey, 20);
@@ -1247,7 +1253,7 @@ static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
     static int rng_device = -1;
 
     if (-1 == rng_device)
-        rng_device = open(device_name, O_RDONLY|O_NONBLOCK);
+        rng_device = open(device_name, O_RDONLY | O_NONBLOCK);
 
     if (rng_device >= 0)
     {
@@ -1281,23 +1287,22 @@ void RandomizeBytes(int8* destbuf, int len)
         for (mask = 0xb147688c; time(NULL) - start < 1; mask += 0x8984cc88)
             ;
 
-        #ifdef DEBUG
+#    ifdef DEBUG
         time_t t = time(NULL);
         t ^= mask;
-        
+
         //time_t t = 920492046 - 3600; // try to the same random values each time
         //std::cerr << (*(time_t*)mask()) << ":" << t << std::endl;
 
-        srand( t );
-        #else
-        srand( time(NULL) ^ mask );
-        #endif
+        srand(t);
+#    else
+        srand(time(NULL) ^ mask);
+#    endif
         gRandomizeBytesSeeded = true;
     }
 
     int i;
     for (i = 0; i < len; ++i)
-        destbuf[i] = (byte)( (rand() * 256 / RAND_MAX) ^ 0xdc );  // 0xdc came from random.org
+        destbuf[i] = (byte)((rand() * 256 / RAND_MAX) ^ 0xdc); // 0xdc came from random.org
 #endif
 }
-

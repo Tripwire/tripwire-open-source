@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -51,11 +51,11 @@ void TestWchar16()
     wc16_string b(a);
     TEST(b.empty());
 
-//#if !IS_UNIX // need to get the L"" stuff working
+    //#if !IS_UNIX // need to get the L"" stuff working
 
-    static WCHAR16 STRING1[] = { 65, 66, 67, 68, 0 };
-    static WCHAR16 STRING2[] = { 40, 66, 67, 68, 0 };
-    static WCHAR16 STRING0[] = { 65, 66, 67, 68, 0, 0 };
+    static WCHAR16 STRING1[] = {65, 66, 67, 68, 0};
+    static WCHAR16 STRING2[] = {40, 66, 67, 68, 0};
+    static WCHAR16 STRING0[] = {65, 66, 67, 68, 0, 0};
 
     a = STRING1;
     TEST(a.length() == 4);
@@ -75,16 +75,16 @@ void TestWchar16()
     b.resize(5);
     TEST(memcmp(b.data(), STRING0, 5 * sizeof(WCHAR16)) == 0);
 
-    a = STRING1;
-    b = a;
+    a    = STRING1;
+    b    = a;
     a[0] = 40;
     TEST(a.length() == 4);
     TEST(memcmp(a.data(), STRING2, 4 * sizeof(WCHAR16)) == 0);
     TEST(b.length() == 4);
     TEST(memcmp(b.data(), STRING1, 4 * sizeof(WCHAR16)) == 0);
-    
-    a = STRING1;
-    b = a;
+
+    a    = STRING1;
+    b    = a;
     a[0] = 40;
     TEST(a.length() == 4);
     TEST(memcmp(a.data(), STRING2, 4 * sizeof(WCHAR16)) == 0);
@@ -120,7 +120,7 @@ void TestWchar16()
     TEST(memcmp(a.data(), STRING1, 4) == 0);
     b.swapbytes();
     TEST(memcmp(b.data(), STRING1, 4) == 0);
-//#endif // IS_UNIX
+    //#endif // IS_UNIX
 
     db.TraceAlways("Done...\n");
 }

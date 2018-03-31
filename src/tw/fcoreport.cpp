@@ -1,31 +1,31 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2017 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
-// 
+//
 // This program is free software.  The contents of this file are subject
 // to the terms of the GNU General Public License as published by the
 // Free Software Foundation; either version 2 of the License, or (at your
 // option) any later version.  You may redistribute it and/or modify it
 // only in compliance with the GNU General Public License.
-// 
+//
 // This program is distributed in the hope that it will be useful.
 // However, this program is distributed AS-IS WITHOUT ANY
 // WARRANTY; INCLUDING THE IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS
 // FOR A PARTICULAR PURPOSE.  Please see the GNU General Public License
 // for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
 // USA.
-// 
+//
 // Nothing in the GNU General Public License or any other license to use
 // the code or files shall permit you to use Tripwire's trademarks,
 // service marks, or other intellectual property without Tripwire's
 // prior written consent.
-// 
+//
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
 //
@@ -57,7 +57,7 @@
 // class cFCOReport_i
 //=============================================================================
 
-class cFCOReport_i 
+class cFCOReport_i
 {
 public:
     cFCOReport_i();
@@ -67,25 +67,25 @@ public:
     // and will be Release()d when deleted.
     struct cChangeNode
     {
-        const iFCO*     mpOldFCO;
-        const iFCO*     mpNewFCO;
-        cFCOPropVector  mChangeVector;
-    
+        const iFCO*    mpOldFCO;
+        const iFCO*    mpNewFCO;
+        cFCOPropVector mChangeVector;
+
         cChangeNode();
         cChangeNode(const cChangeNode& rhs);
         ~cChangeNode();
         void Clear();
     };
-    
+
     struct cNode
     {
-        iFCOSpec*                   mpSpec;     // _must_ be valid (non-0)
-        const cFCOSpecAttr*         mpSpecAttr; // _must_ be valid (non-0)
-        cFCOSetWS                   mAdded;     // these two sets make sure their fcos are in mpSpec.
-        cFCOSetWS                   mRemoved;
-        std::list<cChangeNode>      mChanged;
-        cErrorQueue                 mErrorQueue;    
-        int32                       mnObjectsScanned;
+        iFCOSpec*              mpSpec;     // _must_ be valid (non-0)
+        const cFCOSpecAttr*    mpSpecAttr; // _must_ be valid (non-0)
+        cFCOSetWS              mAdded;     // these two sets make sure their fcos are in mpSpec.
+        cFCOSetWS              mRemoved;
+        std::list<cChangeNode> mChanged;
+        cErrorQueue            mErrorQueue;
+        int32                  mnObjectsScanned;
 
         cNode();
         cNode(const cNode& rhs);
@@ -94,27 +94,27 @@ public:
     };
 
 
-    typedef std::list<cNode>            SpecList;
-    
+    typedef std::list<cNode> SpecList;
+
     struct cGenreNode
     {
-        cGenreNode() {};
-        cGenreNode( const cGenreNode& rhs );
-        cFCOReportGenreHeader   mGenreHeader;
-        cGenre::Genre           mGenre;
-        SpecList                mSpecList;
+        cGenreNode(){};
+        cGenreNode(const cGenreNode& rhs);
+        cFCOReportGenreHeader mGenreHeader;
+        cGenre::Genre         mGenre;
+        SpecList              mSpecList;
     };
 
-    typedef std::list<cGenreNode>       GenreSpecList;
-    
+    typedef std::list<cGenreNode> GenreSpecList;
+
     // data members
-    cErrorQueue         mErrorQueue;    // the general error queue
-    GenreSpecList       mGenreList;
+    cErrorQueue   mErrorQueue; // the general error queue
+    GenreSpecList mGenreList;
 };
 
 
-cFCOReport_i::cGenreNode::cGenreNode( const cFCOReport_i::cGenreNode& rhs )
- : mGenreHeader( rhs.mGenreHeader ), mGenre( rhs.mGenre ), mSpecList( rhs.mSpecList )
+cFCOReport_i::cGenreNode::cGenreNode(const cFCOReport_i::cGenreNode& rhs)
+    : mGenreHeader(rhs.mGenreHeader), mGenre(rhs.mGenre), mSpecList(rhs.mSpecList)
 {
 }
 
@@ -127,9 +127,7 @@ cFCOReport_i::~cFCOReport_i()
 }
 
 
-cFCOReport_i::cChangeNode::cChangeNode()
-:   mpOldFCO(0),
-    mpNewFCO(0)
+cFCOReport_i::cChangeNode::cChangeNode() : mpOldFCO(0), mpNewFCO(0)
 {
 }
 
@@ -153,25 +151,18 @@ cFCOReport_i::cChangeNode::~cChangeNode()
 
 void cFCOReport_i::cChangeNode::Clear()
 {
-    if(mpOldFCO)
+    if (mpOldFCO)
         mpOldFCO->Release();
-    if(mpNewFCO)
+    if (mpNewFCO)
         mpNewFCO->Release();
     mpOldFCO = mpNewFCO = 0;
 }
 
-cFCOReport_i::cNode::cNode() :
-    mpSpec(0),
-    mpSpecAttr(0),
-    mAdded(0),
-    mRemoved(0),    
-    mnObjectsScanned(0)
+cFCOReport_i::cNode::cNode() : mpSpec(0), mpSpecAttr(0), mAdded(0), mRemoved(0), mnObjectsScanned(0)
 {
 }
 
-cFCOReport_i::cNode::cNode(const cFCOReport_i::cNode& rhs)
-:   mAdded(rhs.mAdded),
-    mRemoved(rhs.mRemoved)
+cFCOReport_i::cNode::cNode(const cFCOReport_i::cNode& rhs) : mAdded(rhs.mAdded), mRemoved(rhs.mRemoved)
 {
     mpSpec = rhs.mpSpec;
     if (mpSpec)
@@ -181,8 +172,8 @@ cFCOReport_i::cNode::cNode(const cFCOReport_i::cNode& rhs)
     if (mpSpecAttr)
         mpSpecAttr->AddRef();
 
-    mChanged = rhs.mChanged;
-    mErrorQueue = rhs.mErrorQueue;
+    mChanged         = rhs.mChanged;
+    mErrorQueue      = rhs.mErrorQueue;
     mnObjectsScanned = rhs.mnObjectsScanned;
 }
 
@@ -199,12 +190,12 @@ void cFCOReport_i::cNode::Clear()
     mRemoved.SetSpec(0);
     mChanged.clear();
     mErrorQueue.Clear();
-    if(mpSpec)
+    if (mpSpec)
         mpSpec->Release();
-    if(mpSpecAttr)
+    if (mpSpecAttr)
         mpSpecAttr->Release();
-    mpSpec      = 0;
-    mpSpecAttr  = 0;
+    mpSpec           = 0;
+    mpSpecAttr       = 0;
     mnObjectsScanned = 0;
 }
 
@@ -215,8 +206,8 @@ void cFCOReport_i::cNode::Clear()
 class cFCOReportGenreIter_i
 {
 public:
-    cFCOReport_i::GenreSpecList*            mpList;
-    cFCOReport_i::GenreSpecList::iterator   mIter;
+    cFCOReport_i::GenreSpecList*          mpList;
+    cFCOReport_i::GenreSpecList::iterator mIter;
 };
 
 cFCOReportGenreIter::cFCOReportGenreIter(const cFCOReport& report)
@@ -224,7 +215,7 @@ cFCOReportGenreIter::cFCOReportGenreIter(const cFCOReport& report)
     mpData = new cFCOReportGenreIter_i;
 
     mpData->mpList = &report.mpData->mGenreList;
-    mpData->mIter = mpData->mpList->begin();
+    mpData->mIter  = mpData->mpList->begin();
 }
 
 cFCOReportGenreIter::cFCOReportGenreIter(const cFCOReportGenreIter& rhs)
@@ -242,8 +233,8 @@ cFCOReportGenreIter::~cFCOReportGenreIter()
 cFCOReportGenreIter& cFCOReportGenreIter::operator=(const cFCOReportGenreIter& rhs)
 {
     mpData->mpList = rhs.mpData->mpList;
-    mpData->mIter = rhs.mpData->mIter;
-    
+    mpData->mIter  = rhs.mpData->mIter;
+
     return *this;
 }
 
@@ -266,7 +257,7 @@ bool cFCOReportGenreIter::Done() const
 // seeks to specific genre.  Returns false if genre does not exist in report
 bool cFCOReportGenreIter::SeekToGenre(cGenre::Genre genre)
 {
-    for (mpData->mIter = mpData->mpList->begin(); ; ++mpData->mIter)
+    for (mpData->mIter = mpData->mpList->begin();; ++mpData->mIter)
     {
         if (mpData->mIter == mpData->mpList->end())
             return false;
@@ -292,7 +283,7 @@ cFCOReportGenreHeader& cFCOReportGenreIter::GetGenreHeader() const
 }
 
 // Get current genre
-cGenre::Genre cFCOReportGenreIter::GetGenre()       const
+cGenre::Genre cFCOReportGenreIter::GetGenre() const
 {
     if (mpData->mIter == mpData->mpList->end())
     {
@@ -310,8 +301,8 @@ cGenre::Genre cFCOReportGenreIter::GetGenre()       const
 class cFCOReportSpecIter_i
 {
 public:
-    cFCOReport_i::SpecList*             mpList;
-    cFCOReport_i::SpecList::iterator    mIter;
+    cFCOReport_i::SpecList*          mpList;
+    cFCOReport_i::SpecList::iterator mIter;
 };
 
 /////////////////////////
@@ -322,7 +313,7 @@ cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReport& report, cGenre::Genre g
     mpData = 0;
 
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    for (genreIter = report.mpData->mGenreList.begin(); ; ++genreIter)
+    for (genreIter = report.mpData->mGenreList.begin();; ++genreIter)
     {
         if (genreIter == report.mpData->mGenreList.end())
         {
@@ -334,7 +325,7 @@ cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReport& report, cGenre::Genre g
             break;
     }
 
-    mpData = new cFCOReportSpecIter_i();
+    mpData         = new cFCOReportSpecIter_i();
     mpData->mpList = &genreIter->mSpecList;
     mpData->mIter  = mpData->mpList->begin();
 }
@@ -344,7 +335,7 @@ cFCOReportSpecIter::cFCOReportSpecIter(cFCOReport& report, cGenre::Genre genre)
     mpData = 0;
 
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    for (genreIter = report.mpData->mGenreList.begin(); ; ++genreIter)
+    for (genreIter = report.mpData->mGenreList.begin();; ++genreIter)
     {
         if (genreIter == report.mpData->mGenreList.end())
         {
@@ -359,14 +350,14 @@ cFCOReportSpecIter::cFCOReportSpecIter(cFCOReport& report, cGenre::Genre genre)
             break;
     }
 
-    mpData = new cFCOReportSpecIter_i();
+    mpData         = new cFCOReportSpecIter_i();
     mpData->mpList = &genreIter->mSpecList;
     mpData->mIter  = mpData->mpList->begin();
 }
 
 cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReportGenreIter& genreIter)
 {
-    mpData = new cFCOReportSpecIter_i();
+    mpData         = new cFCOReportSpecIter_i();
     mpData->mpList = &genreIter.mpData->mIter->mSpecList;
     mpData->mIter  = mpData->mpList->begin();
 }
@@ -379,7 +370,7 @@ cFCOReportSpecIter::~cFCOReportSpecIter()
 cFCOReportSpecIter::cFCOReportSpecIter(const cFCOReportSpecIter& rhs)
 {
     mpData = new cFCOReportSpecIter_i();
-    *this = rhs;
+    *this  = rhs;
 }
 
 cFCOReportSpecIter& cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
@@ -387,19 +378,19 @@ cFCOReportSpecIter& cFCOReportSpecIter::operator=(const cFCOReportSpecIter& rhs)
     if (mpData == 0)
         mpData = new cFCOReportSpecIter_i();
 
-    mpData->mpList  = rhs.mpData->mpList;
-    mpData->mIter   = rhs.mpData->mIter;
-    
+    mpData->mpList = rhs.mpData->mpList;
+    mpData->mIter  = rhs.mpData->mIter;
+
     return *this;
 }
 
 int cFCOReportSpecIter::GetNumChanged() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? mpData->mIter->mChanged.size() : 0;
 }
 
-void cFCOReportSpecIter::SetObjectsScanned( int nObjectsScanned )
+void cFCOReportSpecIter::SetObjectsScanned(int nObjectsScanned)
 {
     ASSERT(mpData != 0);
     if (mpData == 0)
@@ -410,13 +401,13 @@ void cFCOReportSpecIter::SetObjectsScanned( int nObjectsScanned )
 
 int cFCOReportSpecIter::GetObjectsScanned() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? mpData->mIter->mnObjectsScanned : 0;
 }
 
 void cFCOReportSpecIter::Remove()
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     mpData->mIter->Clear();
     mpData->mIter = mpData->mpList->erase(mpData->mIter);
 }
@@ -443,16 +434,16 @@ bool cFCOReportSpecIter::Done() const
 
 const iFCOSpec* cFCOReportSpecIter::GetSpec() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (mpData->mIter->mpSpec) : 0;
 }
 
 bool cFCOReportSpecIter::SeekToSpec(const iFCOSpec* pSpec)
 {
     if (mpData)
-        for(mpData->mIter = mpData->mpList->begin();  mpData->mIter != mpData->mpList->end(); ++(mpData->mIter))
+        for (mpData->mIter = mpData->mpList->begin(); mpData->mIter != mpData->mpList->end(); ++(mpData->mIter))
         {
-            if(iFCOSpecUtil::FCOSpecEqual(*mpData->mIter->mpSpec, *pSpec))
+            if (iFCOSpecUtil::FCOSpecEqual(*mpData->mIter->mpSpec, *pSpec))
                 return true;
         }
 
@@ -461,43 +452,43 @@ bool cFCOReportSpecIter::SeekToSpec(const iFCOSpec* pSpec)
 
 const cFCOSpecAttr* cFCOReportSpecIter::GetAttr() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (mpData->mIter->mpSpecAttr) : 0;
 }
 
 const cErrorQueue* cFCOReportSpecIter::GetErrorQueue() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (&mpData->mIter->mErrorQueue) : 0;
 }
 
-cErrorQueue*    cFCOReportSpecIter::GetErrorQueue()
+cErrorQueue* cFCOReportSpecIter::GetErrorQueue()
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (&mpData->mIter->mErrorQueue) : 0;
 }
 
-const iFCOSet* cFCOReportSpecIter::GetAddedSet()    const
+const iFCOSet* cFCOReportSpecIter::GetAddedSet() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (&mpData->mIter->mAdded) : 0;
 }
 
 iFCOSet* cFCOReportSpecIter::GetAddedSet()
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (&mpData->mIter->mAdded) : 0;
 }
 
-const iFCOSet* cFCOReportSpecIter::GetRemovedSet()  const
+const iFCOSet* cFCOReportSpecIter::GetRemovedSet() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (&mpData->mIter->mRemoved) : 0;
 }
 
 iFCOSet* cFCOReportSpecIter::GetRemovedSet()
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return mpData ? (&mpData->mIter->mRemoved) : 0;
 }
 
@@ -507,8 +498,8 @@ iFCOSet* cFCOReportSpecIter::GetRemovedSet()
 class cFCOReportChangeIter_i
 {
 public:
-    std::list<cFCOReport_i::cChangeNode>*               mpList;
-    std::list<cFCOReport_i::cChangeNode>::iterator      mIter;
+    std::list<cFCOReport_i::cChangeNode>*          mpList;
+    std::list<cFCOReport_i::cChangeNode>::iterator mIter;
 };
 
 cFCOReportChangeIter::cFCOReportChangeIter(const cFCOReportSpecIter& specIter)
@@ -521,7 +512,7 @@ cFCOReportChangeIter::cFCOReportChangeIter(const cFCOReportSpecIter& specIter)
 cFCOReportChangeIter::cFCOReportChangeIter(const cFCOReportChangeIter& rhs)
 {
     mpData = new cFCOReportChangeIter_i;
-    *this = rhs;
+    *this  = rhs;
 }
 
 cFCOReportChangeIter::~cFCOReportChangeIter()
@@ -531,17 +522,17 @@ cFCOReportChangeIter::~cFCOReportChangeIter()
 
 cFCOReportChangeIter& cFCOReportChangeIter::operator=(const cFCOReportChangeIter& rhs)
 {
-    mpData->mpList  = rhs.mpData->mpList;
-    mpData->mIter   = rhs.mpData->mIter;
-    
+    mpData->mpList = rhs.mpData->mpList;
+    mpData->mIter  = rhs.mpData->mIter;
+
     return *this;
 }
 
 void cFCOReportChangeIter::SetSpecIter(const cFCOReportSpecIter& specIter)
 {
-    ASSERT(! specIter.Done());  
+    ASSERT(!specIter.Done());
     mpData->mpList = &specIter.mpData->mIter->mChanged;
-    mpData->mIter = mpData->mpList->begin();
+    mpData->mIter  = mpData->mpList->begin();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -549,12 +540,12 @@ void cFCOReportChangeIter::SetSpecIter(const cFCOReportSpecIter& specIter)
 ///////////////////////////////////////////////////////////////////////////////
 void cFCOReportChangeIter::Remove()
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     mpData->mIter->Clear();
     mpData->mIter = mpData->mpList->erase(mpData->mIter);
 }
 
-void cFCOReportChangeIter::SeekBegin()  const
+void cFCOReportChangeIter::SeekBegin() const
 {
     ASSERT(mpData->mpList != 0);
     mpData->mIter = mpData->mpList->begin();
@@ -569,28 +560,28 @@ void cFCOReportChangeIter::Next() const
 bool cFCOReportChangeIter::Done() const
 {
     ASSERT(mpData->mpList != 0);
-    if(! mpData->mpList)
+    if (!mpData->mpList)
         return true;
     return (mpData->mIter == mpData->mpList->end());
 }
 
 const iFCO* cFCOReportChangeIter::GetOld() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return (mpData->mIter->mpOldFCO);
 }
 
 
 const iFCO* cFCOReportChangeIter::GetNew() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return (mpData->mIter->mpNewFCO);
 }
 
 
-const cFCOPropVector&   cFCOReportChangeIter::GetChangeVector() const
+const cFCOPropVector& cFCOReportChangeIter::GetChangeVector() const
 {
-    ASSERT(! Done());
+    ASSERT(!Done());
     return (mpData->mIter->mChangeVector);
 }
 
@@ -629,7 +620,7 @@ const cErrorQueue* cFCOReport::GetErrorQueue() const
 int cFCOReport::GetNumSpecs(cGenre::Genre genre) const
 {
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    for (genreIter = mpData->mGenreList.begin(); ; ++genreIter)
+    for (genreIter = mpData->mGenreList.begin();; ++genreIter)
     {
         if (genreIter == mpData->mGenreList.end())
         {
@@ -654,17 +645,20 @@ void cFCOReport::ClearReport()
 ///////////////////////////////////////////////////////////////////////////////
 // AddSpec
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOReport::AddSpec(cGenre::Genre genre, const iFCOSpec* pSpec, const cFCOSpecAttr* pAttr, cFCOReportSpecIter* pIter)
+void cFCOReport::AddSpec(cGenre::Genre       genre,
+                         const iFCOSpec*     pSpec,
+                         const cFCOSpecAttr* pAttr,
+                         cFCOReportSpecIter* pIter)
 {
     // look up the genre
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    for (genreIter = mpData->mGenreList.begin(); ; ++genreIter)
+    for (genreIter = mpData->mGenreList.begin();; ++genreIter)
     {
         if (genreIter == mpData->mGenreList.end())
         {
             cFCOReport_i::cGenreNode newGenre;
             newGenre.mGenre = genre;
-            
+
             mpData->mGenreList.push_back(newGenre);
 
             genreIter = mpData->mGenreList.end();
@@ -685,10 +679,10 @@ void cFCOReport::AddSpec(cGenre::Genre genre, const iFCOSpec* pSpec, const cFCOS
 
     // make sure this spec doesn't overlap any others
     cFCOReport_i::SpecList::iterator specIter;
-    for(specIter = genreIter->mSpecList.begin(); specIter != genreIter->mSpecList.end(); ++specIter)
+    for (specIter = genreIter->mSpecList.begin(); specIter != genreIter->mSpecList.end(); ++specIter)
     {
         // TODO -- what is the right action to take?
-        if(iFCOSpecUtil::SpecsOverlap(pSpec, specIter->mpSpec))
+        if (iFCOSpecUtil::SpecsOverlap(pSpec, specIter->mpSpec))
         {
             ASSERT(false);
             THROW_INTERNAL("fcoreport.cpp");
@@ -697,8 +691,8 @@ void cFCOReport::AddSpec(cGenre::Genre genre, const iFCOSpec* pSpec, const cFCOS
 
     genreIter->mSpecList.push_back(cFCOReport_i::cNode());
     cFCOReport_i::cNode& node = genreIter->mSpecList.back();
-    node.mpSpec = pSpec->Clone();
-    node.mpSpecAttr = pAttr;
+    node.mpSpec               = pSpec->Clone();
+    node.mpSpecAttr           = pAttr;
     pAttr->AddRef();
     node.mAdded.SetSpec(node.mpSpec);
     node.mRemoved.SetSpec(node.mpSpec);
@@ -716,29 +710,32 @@ void cFCOReport::AddSpec(cGenre::Genre genre, const iFCOSpec* pSpec, const cFCOS
 ///////////////////////////////////////////////////////////////////////////////
 // AddChangedFCO
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOReport::AddChangedFCO(const cFCOReportSpecIter& iter, const iFCO* pOldFCO, const iFCO* pNewFCO, const cFCOPropVector& changedProps)
+void cFCOReport::AddChangedFCO(const cFCOReportSpecIter& iter,
+                               const iFCO*               pOldFCO,
+                               const iFCO*               pNewFCO,
+                               const cFCOPropVector&     changedProps)
 {
     cDebug d("cFCOReport::AddChangedFCO");
 
     // make some assertions about the iterator
 
-    #ifdef DEBUG
+#ifdef DEBUG
     // make sure iter points to one of our spec lists
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    for (genreIter = mpData->mGenreList.begin(); ; ++genreIter)
+    for (genreIter = mpData->mGenreList.begin();; ++genreIter)
     {
         if (genreIter == mpData->mGenreList.end())
         {
             ASSERT(false);
-            THROW_INTERNAL("fcoreport.cpp"); 
+            THROW_INTERNAL("fcoreport.cpp");
         }
 
         if (&genreIter->mSpecList == iter.mpData->mpList)
             break;
     }
-    #endif
+#endif
 
-    ASSERT(! iter.Done());                              // make sure it points to something valid
+    ASSERT(!iter.Done()); // make sure it points to something valid
 
     // some sanity checking for the fco names...
     ASSERT(pOldFCO->GetName().IsEqual(pNewFCO->GetName()));
@@ -746,9 +743,9 @@ void cFCOReport::AddChangedFCO(const cFCOReportSpecIter& iter, const iFCO* pOldF
 
     iter.mpData->mIter->mChanged.push_back(cFCOReport_i::cChangeNode());
     cFCOReport_i::cChangeNode& changeNode = iter.mpData->mIter->mChanged.back();
-    changeNode.mpOldFCO         = pOldFCO;
-    changeNode.mpNewFCO         = pNewFCO;
-    changeNode.mChangeVector    = changedProps;
+    changeNode.mpOldFCO                   = pOldFCO;
+    changeNode.mpNewFCO                   = pNewFCO;
+    changeNode.mChangeVector              = changedProps;
     pOldFCO->AddRef();
     pNewFCO->AddRef();
 }
@@ -765,7 +762,7 @@ void cFCOReport::Read(iSerializer* pSerializer, int32 version)
 
     // read in main error queue
     pSerializer->ReadObject(&mpData->mErrorQueue);
-    
+
     // read in the genres
     int32 genreIter, genreCount;
     int32 specIter, specCount;
@@ -774,13 +771,13 @@ void cFCOReport::Read(iSerializer* pSerializer, int32 version)
     for (genreIter = 0; genreIter < genreCount; genreIter++)
     {
         cFCOReport_i::cGenreNode newGenre;
-        int32 genre;
+        int32                    genre;
 
         // TODO:BAM -- this used to be int16, so take care of backwards compatability
         pSerializer->ReadInt32(genre);
         newGenre.mGenre = (cGenre::Genre)genre;
-        
-        pSerializer->ReadObject( &newGenre.mGenreHeader );
+
+        pSerializer->ReadObject(&newGenre.mGenreHeader);
 
         pSerializer->ReadInt32(specCount);
         for (specIter = 0; specIter < specCount; specIter++)
@@ -788,26 +785,26 @@ void cFCOReport::Read(iSerializer* pSerializer, int32 version)
             newGenre.mSpecList.push_back(cFCOReport_i::cNode());
             cFCOReport_i::cNode& node = newGenre.mSpecList.back();
 
-            node.mpSpec     = static_cast<iFCOSpec*>    (pSerializer->ReadObjectDynCreate());
+            node.mpSpec     = static_cast<iFCOSpec*>(pSerializer->ReadObjectDynCreate());
             node.mpSpecAttr = static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());
 
             pSerializer->ReadObject(&node.mErrorQueue);
             pSerializer->ReadObject(&node.mAdded);
             pSerializer->ReadObject(&node.mRemoved);
-            pSerializer->ReadInt32( node.mnObjectsScanned );
+            pSerializer->ReadInt32(node.mnObjectsScanned);
 
             node.mAdded.SetSpec(node.mpSpec);
             node.mRemoved.SetSpec(node.mpSpec);
-            
+
             int32 changeSize;
             pSerializer->ReadInt32(changeSize);
-            for(int j=0; j<changeSize; j++)
+            for (int j = 0; j < changeSize; j++)
             {
                 node.mChanged.push_back(cFCOReport_i::cChangeNode());
                 cFCOReport_i::cChangeNode& cnode = node.mChanged.back();
-                cnode.mpOldFCO = static_cast<iFCO*>(pSerializer->ReadObjectDynCreate());
-                cnode.mpNewFCO = static_cast<iFCO*>(pSerializer->ReadObjectDynCreate());
-                cnode.mChangeVector.Read(pSerializer);            
+                cnode.mpOldFCO                   = static_cast<iFCO*>(pSerializer->ReadObjectDynCreate());
+                cnode.mpNewFCO                   = static_cast<iFCO*>(pSerializer->ReadObjectDynCreate());
+                cnode.mChangeVector.Read(pSerializer);
             }
         }
 
@@ -821,7 +818,7 @@ void cFCOReport::Read(iSerializer* pSerializer, int32 version)
 void cFCOReport::Write(iSerializer* pSerializer) const
 {
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    cFCOReport_i::SpecList::iterator specIter;
+    cFCOReport_i::SpecList::iterator      specIter;
 
     // write out the main error queue
     pSerializer->WriteObject(&mpData->mErrorQueue);
@@ -833,8 +830,8 @@ void cFCOReport::Write(iSerializer* pSerializer) const
     {
         // TODO:BAM -- this used to be int16, so take care of backwards compatability
         pSerializer->WriteInt32(genreIter->mGenre);
-        pSerializer->WriteObject( &genreIter->mGenreHeader );
-        
+        pSerializer->WriteObject(&genreIter->mGenreHeader);
+
 
         // write each node out...
         pSerializer->WriteInt32(genreIter->mSpecList.size());
@@ -846,11 +843,11 @@ void cFCOReport::Write(iSerializer* pSerializer) const
             pSerializer->WriteObject(&specIter->mErrorQueue);
             pSerializer->WriteObject(&specIter->mAdded);
             pSerializer->WriteObject(&specIter->mRemoved);
-            pSerializer->WriteInt32( specIter->mnObjectsScanned );
+            pSerializer->WriteInt32(specIter->mnObjectsScanned);
 
             std::list<cFCOReport_i::cChangeNode>::iterator changedIter;
             pSerializer->WriteInt32(specIter->mChanged.size());
-            for(changedIter = specIter->mChanged.begin(); changedIter != specIter->mChanged.end(); ++changedIter)
+            for (changedIter = specIter->mChanged.begin(); changedIter != specIter->mChanged.end(); ++changedIter)
             {
                 pSerializer->WriteObjectDynCreate(changedIter->mpOldFCO);
                 pSerializer->WriteObjectDynCreate(changedIter->mpNewFCO);
@@ -864,11 +861,18 @@ void cFCOReport::Write(iSerializer* pSerializer) const
 // GetFileHeaderID()
 ///////////////////////////////////////////////////////////////////////////////
 
-struct cFCOReportFHID {
+struct cFCOReportFHID
+{
     cFileHeaderID* ReportID;
 
-    cFCOReportFHID() { ReportID = 0; }
-    ~cFCOReportFHID() { delete ReportID; }
+    cFCOReportFHID()
+    {
+        ReportID = 0;
+    }
+    ~cFCOReportFHID()
+    {
+        delete ReportID;
+    }
 } gFCOReportFHID;
 
 const cFileHeaderID& cFCOReport::GetFileHeaderID()
@@ -885,16 +889,16 @@ const cFileHeaderID& cFCOReport::GetFileHeaderID()
 
 void cFCOReport::TraceContents(int dl) const
 {
-    if(dl < 0) 
+    if (dl < 0)
         dl = cDebug::D_DEBUG;
 
     cDebug d("cFCOReport:");
 
     d.TraceDebug("Global Error Queue:\n");
     mpData->mErrorQueue.TraceContents(dl);
-    
+
     cFCOReport_i::GenreSpecList::iterator genreIter;
-    cFCOReport_i::SpecList::iterator specIter;
+    cFCOReport_i::SpecList::iterator      specIter;
 
     for (genreIter = mpData->mGenreList.begin(); genreIter != mpData->mGenreList.end(); ++genreIter)
     {
@@ -918,8 +922,9 @@ void cFCOReport::TraceContents(int dl) const
             // trace out changed files
             d.TraceDebug(">>> Changed Files:\n");
             std::list<cFCOReport_i::cChangeNode>::iterator changedIter;
-            int changeCounter = 0;
-            for (changedIter = specIter->mChanged.begin(); changedIter != specIter->mChanged.end(); ++changedIter, ++changeCounter)
+            int                                            changeCounter = 0;
+            for (changedIter = specIter->mChanged.begin(); changedIter != specIter->mChanged.end();
+                 ++changedIter, ++changeCounter)
             {
                 d.Trace(dl, ">>>>> Changed fco [%d]\n", changeCounter);
                 d.Trace(dl, ">>>>>   Old FCO:\n");
@@ -931,5 +936,3 @@ void cFCOReport::TraceContents(int dl) const
         }
     }
 }
-
-
