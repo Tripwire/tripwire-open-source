@@ -53,16 +53,24 @@ TWREPORT=;
 HOSTNAME=;
 
 @@section FS
-SEC_CRIT      = $(IgnoreNone)-SHa ;  # Critical files that cannot change
-SEC_SUID      = $(IgnoreNone)-SHa ;  # Binaries with the SUID or SGID flags set
-SEC_BIN       = $(ReadOnly) ;        # Binaries that should not change
-SEC_CONFIG    = $(Dynamic) ;         # Config files that are changed infrequently but accessed often
-SEC_TTY    = $(Dynamic)-ugp ;        # Tty files that change ownership at login
-SEC_LOG       = $(Growing) ;         # Files that grow, but that should never change ownership
-SEC_INVARIANT = +tpug ;              # Directories that should never change permission or ownership
-SIG_LOW       = 33 ;                 # Non-critical files that are of minimal security impact
-SIG_MED       = 66 ;                 # Non-critical files that are of significant security impact
-SIG_HI        = 100 ;                # Critical files that are significant points of vulnerability
+SEC_DEVICE        = +pugsdr-intlbamcCMSH ;
+SEC_DYNAMIC       = +pinugtd-srlbamcCMSH ;
+SEC_GROWING       = +pinugtdl-srbamcCMSH ;
+SEC_IGNORE_ALL    = -pinugtsdrlbamcCMSH ;
+SEC_IGNORE_NONE   = +pinugtsdrbamcCMSH-l ;
+SEC_READONLY      = +pinugtsdbmCM-rlacSH ;
+SEC_TEMPORARY     = +pugt ;
+
+SEC_CRIT      = $(SEC_IGNORE_NONE)-SHa ; # Critical files that cannot change
+SEC_SUID      = $(SEC_IGNORE_NONE)-SHa ; # Binaries with the SUID or SGID flags set
+SEC_BIN       = $(SEC_READONLY) ;        # Binaries that should not change
+SEC_CONFIG    = $(SEC_DYNAMIC) ;         # Config files that are changed infrequently but accessed often
+SEC_TTY       = $(SEC_DYNAMIC)-ugp ;     # Tty files that change ownership at login
+SEC_LOG       = $(SEC_GROWING) ;         # Files that grow, but that should never change ownership
+SEC_INVARIANT = $(SEC_TEMPORARY) ;       # Directories that should never change permission or ownership
+SIG_LOW       = 33 ;                     # Non-critical files that are of minimal security impact
+SIG_MED       = 66 ;                     # Non-critical files that are of significant security impact
+SIG_HI        = 100 ;                    # Critical files that are significant points of vulnerability
 
 
 # Tripwire Binaries
