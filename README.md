@@ -3,7 +3,7 @@
 Open Source Tripwire<sup>®</sup> is a security and data integrity tool for monitoring and alerting on file & directory changes. This project is based on code originally contributed by [Tripwire, Inc.](http://www.tripwire.com) in 2000.
 
 ## Overview
-A Tripwire check compares the current filesystem state against a known baseline state, and alerts on any changes it detects.  The baseline and check behavior are controlled by a policy file, which specifies which files or directories to monitor, and which attributes to monitor on them, such as hashes, file permissions, and ownership.  
+A Tripwire check compares the current filesystem state against a known baseline state, and alerts on any changes it detects.  The baseline and check behavior are controlled by a policy file, which specifies which files or directories to monitor, and which attributes to monitor on them, such as hashes, file permissions, and ownership.
 
 When an expected change occurs, such as upgrading a package, the baseline database can be updated to the new known-good state.  The policy can also be updated, for example to reduce noise or cover a newly installed package.
 
@@ -14,15 +14,15 @@ This section covers manual setup of Open Source Tripwire.  If installing via an 
 ### Generating Keys
 The first step is to generate site and local key files.  This is necessary because Tripwire policy, configuration, and database files are signed by default, and report files may also be signed.  The site key is used to sign config and policy files, while databases and reports are signed with the local key.  The idea here is that multiple machines can share a site key, but each will have its own local key.  The policy and config files can then be created once and distributed across these machines.
 
-A common practice is to include the hostname in the local key filename, as follows: 
- 
+A common practice is to include the hostname in the local key filename, as follows:
+
 ```
 ./twadmin --generate-keys -L /etc/tripwire/${HOSTNAME}-local.key
 ./twadmin --generate-keys -S /etc/tripwire/site.key
-``` 
+```
 
 ### Creating a configuration file
-The next step is to create a Tripwire config file.  The config file contains a variety of settings including the locations of Tripwire binaries and key files, email report settings, and parameters that control baseline/check behavior.  These settings are explained in detail in the **twconfig(4)** manual page.  
+The next step is to create a Tripwire config file.  The config file contains a variety of settings including the locations of Tripwire binaries and key files, email report settings, and parameters that control baseline/check behavior.  These settings are explained in detail in the **twconfig(4)** manual page.
 
 This command line reads and validates the config text in /path/to/twcfg.txt, writes the results to tw.cfg, and signs the resulting file with the provided site key:
 
@@ -38,7 +38,7 @@ Now it's time to configure which files & directories OST will monitor.  A few si
 /another/start -> +pinugS; # Get selected attributes for this dir tree
 !/start/point/subdir/to/ignore; # Don't monitor this dir tree
 ```
-The Tripwire policy language is documented in detail in the **twpolicy(4)** manual page, and default policies for most common operating systems are available in the OST project's policy subdirectory. 
+The Tripwire policy language is documented in detail in the **twpolicy(4)** manual page, and default policies for most common operating systems are available in the OST project's policy subdirectory.
 
 ```
 ./twadmin --create-polfile -S /etc/tripwire/twpol.txt
@@ -46,13 +46,13 @@ The Tripwire policy language is documented in detail in the **twpolicy(4)** manu
 
 ### Creating a baseline
 
-The next step is to baseline the system for the first time.  This step is necessary even if the previous steps are handled by a setup/install script. 
+The next step is to baseline the system for the first time.  This step is necessary even if the previous steps are handled by a setup/install script.
 
 ```
 ./tripwire --init
 ```
 This creates a database file in the configured directory, typically a file with a .twd extension in /var/lib/tripwire.  The optional **--verbose** argument to init mode lists files and directories as they're being scanned.
-   
+
 ### Running a check
 ```
 ./tripwire --check
@@ -62,7 +62,7 @@ This runs a check, again with an optional **--verbose** option that displays wha
 A common way to use OST is to set up a cron job to run checks periodically, emailing results to an administrative account.  Note that the OST install script currently does not create any cron jobs, and this will need to be done by hand.
 
 ### Printing a report
-``` 
+```
 ./twprint -m r -t [0-4] -r /path/to/reportfile.twr
 ```
 The -t argument specifies the level of report verbosity, where 0 is a single line summary of the report contents, and 4 displays all gathered attributes on all changed objects.  The report level defaults to 3 if not specified on the command line or via the REPORTLEVEL config file option.
@@ -80,8 +80,8 @@ The simplest form of update updates the database with all the changes in a repor
 ./tripwire --update --accept-all
 ```
 
-While a 
-``` 
+While a
+```
 ./tripwire --update
 ```
 brings up a text report in the user's preferred editor (as configured in the config file's EDITOR option), with a checkbox next to each detected change.  After saving and exiting the editor, the database will only be updated for those objects that remain selected with an **[x]**.
@@ -109,7 +109,7 @@ This sends a test email to the specified address, using the email settings speci
 
 A C++ compiler.  It's known to build with gcc and clang; OST should work with gcc versions as old as 2.95.2, although gcc older than version 3.1 will need an external STLPort package.
 
-A POSIX-like operating system, including Linux, macOS, various BSDs, Solaris, AIX, HP-UX, Minix, Haiku, GNU/Hurd, and others.  Windows users can build OST under Cygwin, although this does not provide support for monitoring the Registry or any Windows-specific file attributes.  
+A POSIX-like operating system, including Linux, macOS, various BSDs, Solaris, AIX, HP-UX, Minix, Haiku, GNU/Hurd, and others.  Windows users can build OST under Cygwin, although this does not provide support for monitoring the Registry or any Windows-specific file attributes.
 
 Perl 5+ is needed to run the project's test suite.
 
@@ -124,16 +124,15 @@ Additional compiler arguments (such as Debian hardening options), non-default pa
 
 The ```--prefix=/some/path``` option controls where a subsequent ```make install``` will install to, and where Tripwire binaries will look for a configuration file.
 
-The ```--enable-static``` option causes the build to create statically linked binaries.  This is often used as a security enhancement, so that Tripwire will not rely on the shared libraries on the machine.  This is not possible on all platforms, as some (like macOS and Solaris) don't provide the necessary static libraries to link against.  
+The ```--enable-static``` option causes the build to create statically linked binaries.  This is often used as a security enhancement, so that Tripwire will not rely on the shared libraries on the machine.  This is not possible on all platforms, as some (like macOS and Solaris) don't provide the necessary static libraries to link against.
 
-Note that Linux systems that use NSS for name lookups will still employ shared libraries behind the scenes even when the OST binaries are statically linked.  There have been occasional reports of segfaults when trying to do a name lookup in these circumstances, particularly when the binary was built on a different machine or it's trying to do an LDAP or NIS name lookup.  If this occurs, there are two ways to work around it:  Either switch to dynamic binaries, or set the Tripwire config file option ```RESOLVE_IDS_TO_NAMES=false```, which tells OST to just watch numeric user & group IDs and not perform name lookups. 
+Note that Linux systems that use NSS for name lookups will still employ shared libraries behind the scenes even when the OST binaries are statically linked.  There have been occasional reports of segfaults when trying to do a name lookup in these circumstances, particularly when the binary was built on a different machine or it's trying to do an LDAP or NIS name lookup.  If this occurs, there are two ways to work around it:  Either switch to dynamic binaries, or set the Tripwire config file option ```RESOLVE_IDS_TO_NAMES=false```, which tells OST to just watch numeric user & group IDs and not perform name lookups.
 
 If the configure or make step fails with errors about the automake/autoconf version, it may be necessary to run the script
-```
-./touchconfig.sh```
+```./touchconfig.sh```
 before building the project.  This script simply touches files in the correct order such that their last change times are not all identical, and that they're different in the right order.
 
-Then just 
+Then just
 ```make```
 to build the project.
 
@@ -141,12 +140,12 @@ to build the project.
 
 the ```make check``` make target runs two things:  The acceptance test suite in the src/test-harness directory, and unit tests by running twtest, which is built in the bin directory along with other Tripwire binaries.  These tests can also be run separately:
 ```./twtest``` runs all unit tests, while ```./twtest list``` lists all available tests.
-```./twtest Groupname``` runs all tests in a group, and 
+```./twtest Groupname``` runs all tests in a group, and
 ```./twtest Groupname/Testname``` just runs the specified test.
- 
+
 
 To run the acceptance tests manually, cd to the src/test-harness directory and run ```perl ./twtest.pl```.
- 
+
 
 ## Deployment
 
@@ -159,7 +158,7 @@ The ```make install``` target installs OST to the configured location, and ```ma
 
 ## License
 
-The developer of the original code and/or files is Tripwire, Inc. 
+The developer of the original code and/or files is Tripwire, Inc.
 Portions created by Tripwire, Inc. are copyright 2000-2018 Tripwire, Inc.
 Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.
 
