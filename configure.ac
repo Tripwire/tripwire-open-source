@@ -1,4 +1,4 @@
-dnl Process this file with autoconf to produce a configure script.
+zdnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
@@ -11,11 +11,62 @@ AM_CONFIG_HEADER(config.h)
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2018 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
 AC_REVISION([$Revision: 2.4.3.8 $])
 
-dnl ###############
-dnl Setup defaults
-dnl ###############
+
+
+dnl ###################
+dnl Checks for programs
+dnl ###################
+AC_PROG_CC([gcc clang suncc aCC gxlc xlC_r xlC cl.exe])
+AC_PROG_CXX([g++ c++ clang++ sunCC aCC gxlc++ xlC_r xlC cl.exe])
+AC_PROG_RANLIB
+AC_PROG_YACC
+AC_PROG_LN_S
+AC_PROG_LN
+AN_MAKEVAR([AR], [AC_PROG_AR])
+AN_PROGRAM([ar], [AC_PROG_AR])
+AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
+AC_PROG_AR
+AC_PATH_PROG(path_to_vi, vi)
+AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
+
+if test "x${GXX}" != "x"; then
+ AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
+else
+ AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
+fi
+
+if test "x${CXX}" = "xclang++"; then
+ AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
+else
+ AC_DEFINE(HAVE_CLANG, 0, [Uses the Clang compiler])
+fi
+
+if test "x${CXX}" = "xgxlc++"; then
+ AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
+else
+ AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
+fi
+
+if test "x${CXX}" = "xsunCC"; then
+ AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
+else
+ AC_DEFINE(HAVE_ORACLE_SUNCC, 0, [Uses the sunCC compiler])
+fi
+
+if test "x${CXX}" = "xaCC"; then
+ AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
+else
+ AC_DEFINE(HAVE_HP_ACC, 0, [Uses the aCC compiler])
+fi
+
+
+dnl #####################
+dnl Set up base compiler flags
+dnl #####################
+
 CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+
 
 dnl #####################
 dnl Configuration options
@@ -66,27 +117,6 @@ then
    AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
 fi
 
-dnl ###################
-dnl Checks for programs
-dnl ###################
-AC_PROG_CC([gcc clang suncc aCC gxlc xlC_r xlC cl.exe])
-AC_PROG_CXX([g++ c++ clang++ sunCC aCC gxlc++ xlC_r xlC cl.exe])
-AC_PROG_RANLIB
-AC_PROG_YACC
-AC_PROG_LN_S
-AC_PROG_LN
-AN_MAKEVAR([AR], [AC_PROG_AR])
-AN_PROGRAM([ar], [AC_PROG_AR])
-AC_DEFUN([AC_PROG_AR], [AC_CHECK_TOOL(AR, ar, :)])
-AC_PROG_AR
-AC_PATH_PROG(path_to_vi, vi)
-AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
-
-if test "x${GXX}" != "x"; then
- AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
-else
- AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
-fi
 
 dnl #######################
 dnl Checks for header files

@@ -127,7 +127,7 @@ protected:
 //      to be added to the exception class.
 ///////////////////////////////////////////////////////////////////////////////
 
-#if HAVE_GCC
+#if HAVE_GCC || HAVE_IBM_GXLC
 #    define TSS_BEGIN_EXCEPTION_EXPLICIT
 #else
 #    define TSS_BEGIN_EXCEPTION_EXPLICIT explicit

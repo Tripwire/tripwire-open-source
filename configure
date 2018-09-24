@@ -747,13 +747,13 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_silent_rules
+enable_dependency_tracking
 enable_extrawarnings
 enable_static
 enable_debug
 enable_coverage
 enable_profiling
 enable_urandom
-enable_dependency_tracking
 enable_commoncrypto
 enable_iconv
 enable_openssl
@@ -1395,16 +1395,16 @@ Optional Features:
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-silent-rules   less verbose build output (undo: "make V=1")
   --disable-silent-rules  verbose build output (undo: "make V=0")
+  --enable-dependency-tracking
+                          do not reject slow dependency extractors
+  --disable-dependency-tracking
+                          speeds up one-time build
   —-disable-extrawarnings do not compile with -Wextra warnings enabled
   --enable-static         compile static binaries
   --enable-debug          compile with debuging enabled
   --enable-coverage       enable code coverage
   --enable-profiling      enable profiling
   --enable-urandom        use /dev/urandom
-  --enable-dependency-tracking
-                          do not reject slow dependency extractors
-  --disable-dependency-tracking
-                          speeds up one-time build
   --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)
   --enable-iconv          Use iconv for locale-independent report and db files
   --disable-openssl       Don't link against OpenSSL libraries
@@ -3517,84 +3517,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
 
-
-# This is primarily to support old compilers that don’t understand -Wextra
-# Check whether --enable-extrawarnings was given.
-if test "${enable_extrawarnings+set}" = set; then :
-  enableval=$enable_extrawarnings;
-fi
-
-if test "x$enable_extrawarnings" != "xno"
-then
-   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
-   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
-fi
-
-# Check whether --enable-static was given.
-if test "${enable_static+set}" = set; then :
-  enableval=$enable_static;
-fi
-
-if test "x$enable_static" = xyes
-then LDFLAGS="${LDFLAGS} -static"
-fi
-
-# Check whether --enable-debug was given.
-if test "${enable_debug+set}" = set; then :
-  enableval=$enable_debug;
-fi
-
-if test "x$enable_debug" = xyes
-then
-   CFLAGS="${CFLAGS} -g"
-   CXXFLAGS="${CXXFLAGS} -g"
-
-$as_echo "#define DEBUG 1" >>confdefs.h
-
-else
-
-$as_echo "#define NDEBUG 1" >>confdefs.h
-
-fi
-
-# Check whether --enable-coverage was given.
-if test "${enable_coverage+set}" = set; then :
-  enableval=$enable_coverage;
-fi
-
-if test "x$enable_coverage" = xyes
-then
-   CFLAGS="${CFLAGS} --coverage"
-   CXXFLAGS="${CXXFLAGS} --coverage"
-   LDFLAGS="${LDFLAGS} --coverage"
-fi
-
-# Check whether --enable-profiling was given.
-if test "${enable_profiling+set}" = set; then :
-  enableval=$enable_profiling;
-fi
-
-if test "x$enable_profiling" = xyes
-then
-   CFLAGS="${CFLAGS} -pg"
-   CXXFLAGS="${CXXFLAGS} -pg"
-   LDFLAGS="${LDFLAGS} -pg"
-fi
-
-# Check whether --enable-urandom was given.
-if test "${enable_urandom+set}" = set; then :
-  enableval=$enable_urandom;
-fi
-
-if test "x$enable_urandom" = xyes
-then
-
-$as_echo "#define ENABLE_DEV_URANDOM 1" >>confdefs.h
-
-fi
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -5186,6 +5109,129 @@ else
 $as_echo "#define HAVE_GCC 0" >>confdefs.h
 
 fi
+
+if test "x${CXX}" = "xclang++"; then
+
+$as_echo "#define HAVE_CLANG 1" >>confdefs.h
+
+else
+
+$as_echo "#define HAVE_CLANG 0" >>confdefs.h
+
+fi
+
+if test "x${CXX}" = "xgxlc++"; then
+
+$as_echo "#define HAVE_IBM_GXLC 1" >>confdefs.h
+
+else
+
+$as_echo "#define HAVE_IBM_GXLC 0" >>confdefs.h
+
+fi
+
+if test "x${CXX}" = "xsunCC"; then
+
+$as_echo "#define HAVE_ORACLE_SUNCC 1" >>confdefs.h
+
+else
+
+$as_echo "#define HAVE_ORACLE_SUNCC 0" >>confdefs.h
+
+fi
+
+if test "x${CXX}" = "xaCC"; then
+
+$as_echo "#define HAVE_HP_ACC 1" >>confdefs.h
+
+else
+
+$as_echo "#define HAVE_HP_ACC 0" >>confdefs.h
+
+fi
+
+
+
+CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+
+
+
+# This is primarily to support old compilers that don’t understand -Wextra
+# Check whether --enable-extrawarnings was given.
+if test "${enable_extrawarnings+set}" = set; then :
+  enableval=$enable_extrawarnings;
+fi
+
+if test "x$enable_extrawarnings" != "xno"
+then
+   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
+   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
+fi
+
+# Check whether --enable-static was given.
+if test "${enable_static+set}" = set; then :
+  enableval=$enable_static;
+fi
+
+if test "x$enable_static" = xyes
+then LDFLAGS="${LDFLAGS} -static"
+fi
+
+# Check whether --enable-debug was given.
+if test "${enable_debug+set}" = set; then :
+  enableval=$enable_debug;
+fi
+
+if test "x$enable_debug" = xyes
+then
+   CFLAGS="${CFLAGS} -g"
+   CXXFLAGS="${CXXFLAGS} -g"
+
+$as_echo "#define DEBUG 1" >>confdefs.h
+
+else
+
+$as_echo "#define NDEBUG 1" >>confdefs.h
+
+fi
+
+# Check whether --enable-coverage was given.
+if test "${enable_coverage+set}" = set; then :
+  enableval=$enable_coverage;
+fi
+
+if test "x$enable_coverage" = xyes
+then
+   CFLAGS="${CFLAGS} --coverage"
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+# Check whether --enable-profiling was given.
+if test "${enable_profiling+set}" = set; then :
+  enableval=$enable_profiling;
+fi
+
+if test "x$enable_profiling" = xyes
+then
+   CFLAGS="${CFLAGS} -pg"
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
+fi
+
+# Check whether --enable-urandom was given.
+if test "${enable_urandom+set}" = set; then :
+  enableval=$enable_urandom;
+fi
+
+if test "x$enable_urandom" = xyes
+then
+
+$as_echo "#define ENABLE_DEV_URANDOM 1" >>confdefs.h
+
+fi
+
 
 
 ac_ext=c
