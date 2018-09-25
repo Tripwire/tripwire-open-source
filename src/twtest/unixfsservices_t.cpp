@@ -206,6 +206,24 @@ void TestFileDelete()
     TEST(iFSServices::GetInstance()->FileDelete(to_rm));
 }
 
+// This looks silly, but we've run into situations where basic exception handling fails due to
+// fun linker issues, so here's a test to verify that we were built correctly.
+void TestCatch()
+{
+    bool threw = false;
+    try
+    {
+        throw eFSServices("a thing happened");
+    }
+    catch (const eFSServices& e)
+    {
+        threw = true;
+    }
+
+    TEST(threw);
+}
+
+
 void RegisterSuite_UnixFSServices()
 {
     RegisterTest("UnixFSServices", "ReadDir", TestReadDir);
@@ -219,4 +237,5 @@ void RegisterSuite_UnixFSServices()
     RegisterTest("UnixFSServices", "GetExecutableFilename", TestGetExecutableFilename);
     RegisterTest("UnixFSServices", "Rename", TestRename);
     RegisterTest("UnixFSServices", "FileDelete", TestFileDelete);
+    RegisterTest("UnixFSServices", "TestCatch", TestCatch);
 }
