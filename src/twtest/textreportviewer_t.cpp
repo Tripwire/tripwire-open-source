@@ -62,6 +62,7 @@
 void MakeFile(TSTRING& fcoNameMakeMe);
 void MakeDir(const TCHAR* const lpszDirName);
 
+#if 0 // Not used untill this test is fixed
 // we use this instead of TraceContents() so we can test the report iterators.
 static void TraceReport(const cFCOReport& r, cDebug& d)
 {
@@ -105,6 +106,7 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
         }
     }
 }
+#endif
 
 /*
  //
@@ -156,7 +158,7 @@ void TestTextReportViewer()
         fcoNameTempFile = fcoNameTempDir += _T("twtempXXXXXX");
         pFSServices->MakeTempFilename( fcoNameTempFile );
     }
-    catch(eFSServices& /* e */)
+    catch(const eFSServices& /* e */)
     {
         // TODO: properly handle error
         TEST( false );
@@ -459,7 +461,7 @@ void MakeFile(TSTRING& strNameMakeMe)
         TEST(file);
         file.close();
     }
-    catch (eFSServices e)
+    catch (const eFSServices& e)
     {
         TEST(false);
     }

@@ -111,7 +111,7 @@ bool cFileUtil::IsDir(const TSTRING& fileName)
     {
         iFSServices::GetInstance()->Stat(fileName, s);
     }
-    catch (eFSServices)
+    catch (const eFSServices&)
     {
         return false;
     }
@@ -126,7 +126,7 @@ bool cFileUtil::IsRegularFile(const TSTRING& fileName)
     {
         iFSServices::GetInstance()->Stat(fileName, s);
     }
-    catch (eFSServices)
+    catch (const eFSServices&)
     {
         return false;
     }

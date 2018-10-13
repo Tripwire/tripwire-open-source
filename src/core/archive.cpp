@@ -790,7 +790,7 @@ int cFileArchive::Write(const void* pDest, int count) // throw(eArchive)
         // increase the size, if needed
         if (mReadHead > mFileSize)
         {
-#if 0 // IS_SUNPRO \
+#if 0 // IS_SUNPRO
       // These two lines seem to be all there is between code that crashes and code that works for sunpro
             cDebug d("cFileArchive::Write()");
             d.TraceDebug(_T("file(%s) adjusted mFileSize = %d mReadHead = %d\n"), mCurrentFilename.c_str(), (int)mFileSize, (int)mReadHead);

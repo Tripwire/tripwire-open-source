@@ -141,7 +141,7 @@ void cFSPropDisplayer::Merge(const iFCOPropDisplayer* const ppd)
     if (ppd->GetType() != this->GetType())
         ASSERT(false);
 
-    const cFSPropDisplayer* const pfspd = static_cast<const cFSPropDisplayer* const>(ppd);
+    const cFSPropDisplayer* const pfspd = static_cast<const cFSPropDisplayer*>(ppd);
 
     // merge propvectors
     mpvPropsWeDisplay |= pfspd->GetPropsConverted();
@@ -260,7 +260,7 @@ void cFSPropDisplayer::InitForProp(const iFCO* const pFCO, const int propIdx)
     case cFSPropSet::PROP_UID:
     {
         const int64& i64UID =
-            static_cast<const cFCOPropInt64* const>(pFCO->GetPropSet()->GetPropAt(cFSPropSet::PROP_UID))->GetValue();
+            static_cast<const cFCOPropInt64*>(pFCO->GetPropSet()->GetPropAt(cFSPropSet::PROP_UID))->GetValue();
 
         // check if prop is in table.  if it is, then don't hit the FS
         TSTRING tstrDummy;
@@ -279,7 +279,7 @@ void cFSPropDisplayer::InitForProp(const iFCO* const pFCO, const int propIdx)
     case cFSPropSet::PROP_GID:
     {
         const int64& i64GID =
-            static_cast<const cFCOPropInt64* const>(pFCO->GetPropSet()->GetPropAt(cFSPropSet::PROP_GID))->GetValue();
+            static_cast<const cFCOPropInt64*>(pFCO->GetPropSet()->GetPropAt(cFSPropSet::PROP_GID))->GetValue();
 
         // check if prop is in table.  if it is, then don't hit the FS
         TSTRING tstrDummy;
@@ -330,7 +330,9 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
         case cFSPropSet::PROP_SIZE:
         case cFSPropSet::PROP_NLINK:
         {
-            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64* const>(pProp);
+	    // Note that supplying both consts within the static cast makes gcc emit a
+	    // "type qualifiers ignored on cast result type" (-Wignored-qualifiers) warning.
+            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64*>(pProp);
             cTWLocale::FormatNumber(pTypedProp->GetValue(), strProp);
         }
         break;
@@ -338,14 +340,14 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
         case cFSPropSet::PROP_MTIME:
         case cFSPropSet::PROP_CTIME:
         {
-            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64* const>(pProp);
+            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64*>(pProp);
             int64                      i64        = pTypedProp->GetValue();
             cTWLocale::FormatTime(i64, strProp);
         }
         break;
         case cFSPropSet::PROP_MODE:
         {
-            const cFCOPropUint64* const pTypedProp = static_cast<const cFCOPropUint64* const>(pProp);
+            const cFCOPropUint64* const pTypedProp = static_cast<const cFCOPropUint64*>(pProp);
             ASSERT(pTypedProp != 0);
 
             iFSServices::GetInstance()->ConvertModeToString(pTypedProp->GetValue(), strProp);
@@ -353,7 +355,7 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
         break;
         case cFSPropSet::PROP_UID:
         {
-            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64* const>(pProp);
+            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64*>(pProp);
             ASSERT(pTypedProp != 0);
             if (GetUsername(pTypedProp->GetValue(), strProp))
             {
@@ -367,7 +369,7 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
         break;
         case cFSPropSet::PROP_GID:
         {
-            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64* const>(pProp);
+            const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64*>(pProp);
             ASSERT(pTypedProp != 0);
             if (GetGroupname(pTypedProp->GetValue(), strProp))
             {
