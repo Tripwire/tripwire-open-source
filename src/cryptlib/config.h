@@ -84,6 +84,8 @@
 
 #if __cplusplus < 201103L
 typedef unsigned char uint8_t;
+#else
+#include <stdint.h>
 #endif
 
 typedef unsigned short word16;
