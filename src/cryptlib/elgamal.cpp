@@ -53,7 +53,7 @@ void ElGamalCryptoPublicKey::SavePrecomputation(BufferedTransformation &bt) cons
     ypc.Save(bt);
 }
 
-void ElGamalCryptoPublicKey::Encrypt(RandomNumberGenerator &rng, const byte *plainText, unsigned int plainTextLength, byte *cipherText)
+void ElGamalCryptoPublicKey::Encrypt(RandomNumberGenerator &rng, const uint8_t *plainText, unsigned int plainTextLength, uint8_t *cipherText)
 {
     assert(plainTextLength <= MaxPlainTextLength());
 
@@ -140,7 +140,7 @@ void ElGamalCryptoPrivateKey::DEREncode(BufferedTransformation &bt) const
     x.DEREncode(seq);
 }
 
-unsigned int ElGamalCryptoPrivateKey::Decrypt(const byte *cipherText, byte *plainText)
+unsigned int ElGamalCryptoPrivateKey::Decrypt(const uint8_t *cipherText, uint8_t *plainText)
 {
     Integer a(cipherText, modulusLen);
     Integer b(cipherText+modulusLen, modulusLen);
@@ -211,7 +211,7 @@ void ElGamalSigPublicKey::SavePrecomputation(BufferedTransformation &bt) const
     ypc.Save(bt);
 }
 
-bool ElGamalSigPublicKey::Verify(const byte *message, unsigned int messageLen, const byte *signature)
+bool ElGamalSigPublicKey::Verify(const uint8_t *message, unsigned int messageLen, const uint8_t *signature)
 {
     assert(messageLen <= MaxMessageLength());
 
@@ -287,7 +287,7 @@ void ElGamalSigPrivateKey::DEREncode(BufferedTransformation &bt) const
     x.DEREncode(seq);
 }
 
-void ElGamalSigPrivateKey::Sign(RandomNumberGenerator &rng, const byte *message, unsigned int messageLen, byte *signature)
+void ElGamalSigPrivateKey::Sign(RandomNumberGenerator &rng, const uint8_t *message, unsigned int messageLen, uint8_t *signature)
 {
     assert(messageLen <= MaxMessageLength());
 

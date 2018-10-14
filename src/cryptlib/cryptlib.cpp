@@ -9,7 +9,7 @@ unsigned int RandomNumberGenerator::GetBit()
     return Parity(GetByte());
 }
 
-void RandomNumberGenerator::GetBlock(byte *output, unsigned int size)
+void RandomNumberGenerator::GetBlock(uint8_t *output, unsigned int size)
 {
     while (size--)
         *output++ = GetByte();
@@ -35,19 +35,19 @@ word32 RandomNumberGenerator::GetLong(word32 min, word32 max)
     return value+min;
 }
 
-void StreamCipher::ProcessString(byte *outString, const byte *inString, unsigned int length)
+void StreamCipher::ProcessString(uint8_t *outString, const uint8_t *inString, unsigned int length)
 {
     while(length--)
         *outString++ = ProcessByte(*inString++);
 }
 
-void StreamCipher::ProcessString(byte *inoutString, unsigned int length)
+void StreamCipher::ProcessString(uint8_t *inoutString, unsigned int length)
 {
     for(;length--; inoutString++)
         *inoutString = ProcessByte(*inoutString);
 }
 
-bool MessageAuthenticationCode::Verify(const byte *macIn)
+bool MessageAuthenticationCode::Verify(const uint8_t *macIn)
 {
     SecByteBlock mac(DigestSize());
     Final(mac);
@@ -82,11 +82,11 @@ void BufferedTransformation::PutShort(word16 value, bool highFirst)
     if (highFirst)
     {
         Put(value>>8);
-        Put(byte(value));
+        Put(uint8_t(value));
     }
     else
     {
-        Put(byte(value));
+        Put(uint8_t(value));
         Put(value>>8);
     }
 }
@@ -96,12 +96,12 @@ void BufferedTransformation::PutLong(word32 value, bool highFirst)
     if (highFirst)
     {
         for (int i=0; i<4; i++)
-            Put(byte(value>>((3-i)*8)));
+            Put(uint8_t(value>>((3-i)*8)));
     }
     else
     {
         for (int i=0; i<4; i++)
-            Put(byte(value>>(i*8)));
+            Put(uint8_t(value>>(i*8)));
     }
 }
 
@@ -110,7 +110,7 @@ int BufferedTransformation::GetShort(word16 &value, bool highFirst)
     if (MaxRetrieveable()<2)
         return 0;
 
-    byte buf[2];
+    uint8_t buf[2];
     Get(buf, 2);
 
     if (highFirst)
@@ -126,7 +126,7 @@ int BufferedTransformation::GetLong(word32 &value, bool highFirst)
     if (MaxRetrieveable()<4)
         return 0;
 
-    byte buf[4];
+    uint8_t buf[4];
     Get(buf, 4);
 
     if (highFirst)
@@ -139,7 +139,7 @@ int BufferedTransformation::GetLong(word32 &value, bool highFirst)
 
 unsigned int BufferedTransformation::Skip(unsigned int skipMax)
 {
-    byte b;
+    uint8_t b;
     unsigned int skipActual=0;
 
     while (skipMax-- && Get(b))
@@ -163,7 +163,7 @@ unsigned int PK_FixedLengthCryptoSystem::CipherTextLength(unsigned int plainText
         return 0;
 }
 
-unsigned int PK_FixedLengthDecryptor::Decrypt(const byte *cipherText, unsigned int cipherTextLength, byte *plainText)
+unsigned int PK_FixedLengthDecryptor::Decrypt(const uint8_t *cipherText, unsigned int cipherTextLength, uint8_t *plainText)
 {
     if (cipherTextLength != CipherTextLength())
         return 0;
@@ -171,7 +171,7 @@ unsigned int PK_FixedLengthDecryptor::Decrypt(const byte *cipherText, unsigned i
     return Decrypt(cipherText, plainText);
 }
 
-bool PK_VerifierWithRecovery::Verify(const byte *message, unsigned int messageLength, const byte *signature)
+bool PK_VerifierWithRecovery::Verify(const uint8_t *message, unsigned int messageLength, const uint8_t *signature)
 {
     SecByteBlock recovered(MaxMessageLength());
     unsigned int rLen = Recover(signature, recovered);

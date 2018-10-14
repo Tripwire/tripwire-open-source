@@ -227,7 +227,7 @@ char *getenv();             /* get variable from environment */
     char *str;
 #   endif
     {
-        register char *p;   /* temp pointer */
+        char *p;   /* temp pointer */
 
         /*
          * allocate space for the string, and copy if successful
@@ -253,7 +253,7 @@ char **old;
 int *sz_alloc;
 #endif
 {
-    register int i;     /* counter in a for loop */
+    int i;     /* counter in a for loop */
     union xyzzy x;      /* used to cast malloc properly */
 
     /*
@@ -284,8 +284,8 @@ static int initenv(void)
 static int initenv()
 #endif
 {
-    register int i;
-    register int rval;
+    int i;
+    int rval;
 
     if (envp != NULL)
         le_clobber();
@@ -306,7 +306,7 @@ void le_clobber(void)
 void le_clobber()
 #endif
 {
-    register int i;     /* counter in a for loop */
+    int i;     /* counter in a for loop */
     union {
         char **ep;
         char *p;
@@ -344,8 +344,8 @@ static int le_getenv(var)
 char *var;
 #endif
 {
-    register int i;         /* counter in a for loop */
-    register char *p, *q;       /* used to compare two strings */
+    int i;         /* counter in a for loop */
+    char *p, *q;       /* used to compare two strings */
 
     /*
      * check for no environment
@@ -385,8 +385,8 @@ int le_set(env)
 char *env;
 #endif
 {
-    register char *p, *q;       /* what is to be put into env */
-    register int n;         /* where a previous definition is */
+    char *p, *q;       /* what is to be put into env */
+    int n;         /* where a previous definition is */
 
     /*
      * see if you need to create the environment list
@@ -475,7 +475,7 @@ int le_unset(env)
 char *env;
 #endif
 {
-    register int i;     /* counter in a for loop */
+    int i;     /* counter in a for loop */
 
     /*
      * delete it from the environment
@@ -595,8 +595,8 @@ static const char *shellenv(void)
 static const char *shellenv()
 #endif
 {
-    register int i;     /* counter in a for loop */
-    register const char *shptr; /* points to shell name */
+    int i;     /* counter in a for loop */
+    const char *shptr; /* points to shell name */
 
     /*
      * error check; should never happen
@@ -631,9 +631,9 @@ char *cmd;
 #endif
 {
     const char *argv[5];            /* argument list */
-    register const char *p;     /* temoporary pointers */
-    register const char* shptr;     /* the program to be run */
-    register int i;         /* index number of child */
+    const char *p;     /* temoporary pointers */
+    const char* shptr;     /* the program to be run */
+    int i;         /* index number of child */
 
     /*
      * if it's NULL, initialize it
@@ -684,10 +684,10 @@ char *mode;
 #endif
 {
     const char *argv[5];            /* argument list */
-    register const char *p;     /* temoporary pointers */
-    register const char *shptr;     /* the program to be run */
+    const char *p;     /* temoporary pointers */
+    const char *shptr;     /* the program to be run */
     FILE *fpa[3];           /* process communication descriptors */
-    register int indx;      /* index number of child */
+    int indx;      /* index number of child */
 
     /*
      * see if anything is available
@@ -733,8 +733,8 @@ int mpclose(fp)
 FILE *fp;
 #endif
 {
-    register int indx;  /* used to look for corresponding pid */
-    register int rstatus;   /* return status of command */
+    int indx;  /* used to look for corresponding pid */
+    int rstatus;   /* return status of command */
 
     /*
      * loop until you find the right process
@@ -771,9 +771,9 @@ FILE *fpa[];
 #endif
 {
     const char *argv[5];            /* argument list */
-    register const char *p;     /* temoporary pointers */
-    register const char *shptr;     /* the program to be run */
-    register int indx;      /* index number of child */
+    const char *p;     /* temoporary pointers */
+    const char *shptr;     /* the program to be run */
+    int indx;      /* index number of child */
 
     /*
      * see if anything is available
@@ -816,7 +816,7 @@ int indx;
 FILE *fp[];
 #endif
 {
-    register int rstatus;   /* return status of command */
+    int rstatus;   /* return status of command */
 
     /*
      * loop until you find the right process
@@ -850,7 +850,7 @@ char *argv[];
 FILE *fpa[];
 #endif
 {
-        register int indx;              /* index number of child */
+        int indx;              /* index number of child */
 
         /*
          * see if anything is available
@@ -910,9 +910,9 @@ int mask;
 #endif
 {
     int p[3][2];            /* pipes to/from child */
-    register int i;         /* counter in for loop */
-    register int ch_pid;        /* child PID */
-    register int euid, egid;    /* in case reset[gu]id is -1 */
+    int i;         /* counter in for loop */
+    int ch_pid;        /* child PID */
+    int euid, egid;    /* in case reset[gu]id is -1 */
     /*
      * create 1 pipe for each of standard input, output, error
      */
@@ -1029,7 +1029,7 @@ int pid;
 #endif
 {
 
-    register int r;     /* PID of process just exited */
+    int r;     /* PID of process just exited */
     int status;     /* status of wait call */
 
     /*

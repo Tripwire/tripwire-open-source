@@ -44,8 +44,9 @@
 //-----------------------------------------------------------------------------
 // standard TSS types
 //-----------------------------------------------------------------------------
-
-typedef unsigned char byte; // platform-independent
+#if __cplusplus < 201103L
+typedef unsigned char uint8_t
+#endif
 
 typedef signed char    int8;
 typedef short          int16;

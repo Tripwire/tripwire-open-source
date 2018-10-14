@@ -54,7 +54,7 @@ public:
 
 private:
     int     mNumber;
-    byte    mData[20];
+    uint8_t mData[20];
     TSTRING mString;
 };
 

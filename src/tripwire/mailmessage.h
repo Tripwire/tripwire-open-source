@@ -128,7 +128,7 @@ public:
         _EOL_LEN               = 2
     };
 
-    static const std::string::value_type* ConvertBase64(std::string&, const byte*, size_t);
+    static const std::string::value_type* ConvertBase64(std::string&, const uint8_t*, size_t);
 
     static bool        HasNonAsciiChars(const std::string& s);
     static std::string CreateEncodedText(const std::string& text);

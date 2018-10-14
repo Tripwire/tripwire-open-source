@@ -107,10 +107,10 @@ void cArchiveSigGen::AddSig(iSignature* pSig)
 
 void cArchiveSigGen::CalculateSignatures(cArchive& a)
 {
-    byte                      abBuf[iSignature::SUGGESTED_BLOCK_SIZE * 2];
+    uint8_t                      abBuf[iSignature::SUGGESTED_BLOCK_SIZE * 2];
     int                       cbRead;
     container_type::size_type i;
-    byte*                     pBuf = abBuf;
+    uint8_t*                     pBuf = abBuf;
 
     if (s_direct)
     {
@@ -154,13 +154,13 @@ void cArchiveSigGen::SetHex(bool hex)
 //        number of bits in the array
 //        ptr-to-str for return string val
 ///////////////////////////////////////////////////////////////////////////////
-char* btob64(const register byte* pcbitvec, register char* pcout, int numbits)
+char* btob64(const uint8_t* pcbitvec, char* pcout, int numbits)
 {
-    register unsigned int val;
-    register int          offset;
+    unsigned int val;
+    int          offset;
     uint8*                pcorig = (uint8*)pcout;
 
-    ASSERT(sizeof(uint8) == sizeof(byte)); /* everything breaks otherwise */
+    ASSERT(sizeof(uint8) == sizeof(uint8_t)); /* everything breaks otherwise */
     assert(numbits > 0);
 
     val = *pcbitvec;
@@ -200,8 +200,8 @@ char* btob64(const register byte* pcbitvec, register char* pcout, int numbits)
 #define NUMTMPLONGS 1000
 char* pltob64(uint32* pl, char* pcout, int numlongs)
 {
-    register int     i;
-    register uint32* plto;
+    int     i;
+    uint32* plto;
     uint32           larray[NUMTMPLONGS];
 
     assert(numlongs < NUMTMPLONGS);
@@ -214,7 +214,7 @@ char* pltob64(uint32* pl, char* pcout, int numlongs)
         ++plto;
     }
 
-    return btob64((byte*)larray, (char*)pcout, numlongs * sizeof(uint32) * 8);
+    return btob64((uint8_t*)larray, (char*)pcout, numlongs * sizeof(uint32) * 8);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ void cNullSignature::Init()
 {
 }
 
-void cNullSignature::Update(const byte* const pbData, int cbDataLen)
+void cNullSignature::Update(const uint8_t* const pbData, int cbDataLen)
 {
 }
 
@@ -310,9 +310,9 @@ void cChecksumSignature::Init()
 {
 }
 
-void cChecksumSignature::Update(const byte* const pbDataC, int cbDataLen)
+void cChecksumSignature::Update(const uint8_t* const pbDataC, int cbDataLen)
 {
-    byte* pbData = (byte*)pbDataC;
+    uint8_t* pbData = (uint8_t*)pbDataC;
     for (int i = 0; i < cbDataLen; i++, pbData++)
         mChecksum += *pbData;
 }
@@ -398,9 +398,9 @@ void cCRC32Signature::Init()
     crcInit(mCRCInfo);
 }
 
-void cCRC32Signature::Update(const byte* const pbData, int cbDataLen)
+void cCRC32Signature::Update(const uint8_t* const pbData, int cbDataLen)
 {
-    ASSERT(sizeof(byte) == sizeof(uint8));
+    ASSERT(sizeof(uint8_t) == sizeof(uint8));
     crcUpdate(mCRCInfo, (uint8*)pbData, cbDataLen);
 }
 
@@ -501,7 +501,7 @@ void cMD5Signature::Init()
 #endif
 }
 
-void cMD5Signature::Update(const byte* const pbData, int cbDataLen)
+void cMD5Signature::Update(const uint8_t* const pbData, int cbDataLen)
 {
 #ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
     CC_MD5_Update(&mMD5Info, (uint8*)pbData, cbDataLen);
@@ -534,8 +534,8 @@ TSTRING cMD5Signature::AsString() const
     TSTRING ret;
     char    buf[24];
 
-    ASSERT(sizeof(uint8) == sizeof(byte)); /* everything breaks otherwise */
-    btob64((byte*)md5_digest, buf, SIG_BYTE_SIZE * 8);
+    ASSERT(sizeof(uint8) == sizeof(uint8_t)); /* everything breaks otherwise */
+    btob64((uint8_t*)md5_digest, buf, SIG_BYTE_SIZE * 8);
     //converting to base64 representation.
 
     ret.append(buf);
@@ -626,9 +626,9 @@ void cSHASignature::Init()
 #endif
 }
 
-void cSHASignature::Update(const byte* const pbData, int cbDataLen)
+void cSHASignature::Update(const uint8_t* const pbData, int cbDataLen)
 {
-    ASSERT(sizeof(byte) == sizeof(uint8));
+    ASSERT(sizeof(uint8_t) == sizeof(uint8));
 #ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
     CC_SHA1_Update(&mSHAInfo, (uint8*)pbData, cbDataLen);
 #elif HAVE_OPENSSL_SHA_H
@@ -822,7 +822,7 @@ void cHAVALSignature::Init()
     haval_start(&mHavalState);
 }
 
-void cHAVALSignature::Update(const byte* const pbData, int cbDataLen)
+void cHAVALSignature::Update(const uint8_t* const pbData, int cbDataLen)
 {
     haval_hash(&mHavalState, (uint8*)pbData, cbDataLen);
 }
@@ -842,7 +842,7 @@ TSTRING cHAVALSignature::AsString() const
     TSTRING ret;
     char    buf[24];
 
-    btob64((byte*)mSignature, buf, 128);
+    btob64((uint8_t*)mSignature, buf, 128);
     //converting to base64 representation.
 
     ret.append(buf);

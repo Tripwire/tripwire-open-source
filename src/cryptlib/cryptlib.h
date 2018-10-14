@@ -53,11 +53,11 @@ public:
 
     /// encrypt or decrypt one block in place
     //* Precondition: size of inoutBlock == BlockSize().
-    virtual void ProcessBlock(byte *inoutBlock) =0;
+    virtual void ProcessBlock(uint8_t *inoutBlock) =0;
 
     /// encrypt or decrypt one block, may assume inBlock != outBlock
     //* Precondition: size of inBlock and outBlock == BlockSize().
-    virtual void ProcessBlock(const byte *inBlock, byte *outBlock) =0;
+    virtual void ProcessBlock(const uint8_t *inBlock, uint8_t *outBlock) =0;
 
     /// block size of the cipher in bytes
     virtual unsigned int BlockSize() const =0;
@@ -73,12 +73,12 @@ public:
     virtual ~StreamCipher() {}
 
     /// encrypt or decrypt one byte
-    virtual byte ProcessByte(byte input) =0;
+    virtual uint8_t ProcessByte(uint8_t input) =0;
 
     /// encrypt or decrypt an array of bytes of specified length in place
-    virtual void ProcessString(byte *inoutString, unsigned int length);
+    virtual void ProcessString(uint8_t *inoutString, unsigned int length);
     /// encrypt or decrypt an array of bytes of specified length, may assume inString != outString
-    virtual void ProcessString(byte *outString, const byte *inString, unsigned int length);
+    virtual void ProcessString(uint8_t *outString, const uint8_t *inString, unsigned int length);
 };
 
 /// abstract base class for random access stream ciphers
@@ -103,7 +103,7 @@ public:
     virtual ~RandomNumberGenerator() {}
 
     /// generate new random byte and return it
-    virtual byte GetByte() =0;
+    virtual uint8_t GetByte() =0;
 
     /// generate new random bit and return it
     /** Default implementation is to call GetByte() and return its parity. */
@@ -117,7 +117,7 @@ public:
 
     /// generate random array of bytes
     //* Default implementation is to call GetByte size times.
-    virtual void GetBlock(byte *output, unsigned int size);
+    virtual void GetBlock(uint8_t *output, unsigned int size);
 };
 
 /// randomly shuffle the specified array, resulting permutation is uniformly distributed
@@ -141,18 +141,18 @@ public:
     virtual ~HashModule() {}
 
     /// process more input
-    virtual void Update(const byte *input, unsigned int length) =0;
+    virtual void Update(const uint8_t *input, unsigned int length) =0;
 
     /*/ calculate hash for the current message (the concatenation of all 
         inputs passed in via Update()), then reinitialize the object */
     //* Precondition: size of digest == DigestSize().
-    virtual void Final(byte *digest) =0;
+    virtual void Final(uint8_t *digest) =0;
 
     /// size of the hash returned by Final()
     virtual unsigned int DigestSize() const =0;
 
     /// use this if your input is short and you don't want to call Update() and Final() seperately
-    virtual void CalculateDigest(byte *digest, const byte *input, int length)
+    virtual void CalculateDigest(uint8_t *digest, const uint8_t *input, int length)
         {Update(input, length); Final(digest);}
 };
 
@@ -173,10 +173,10 @@ public:
     /// verify that mac is a valid MAC for the current message, then reinitialize the object
     /** Default implementation is to call Final() and do a bitwise comparison
         between its output and mac. */
-    virtual bool Verify(const byte *mac);
+    virtual bool Verify(const uint8_t *mac);
 
     /// use this if your input is short and you don't want to call Update() and Verify() seperately
-    virtual bool VerifyMAC(const byte *mac, const byte *input, int length)
+    virtual bool VerifyMAC(const uint8_t *mac, const uint8_t *input, int length)
         {Update(input, length); return Verify(mac);}
 };
 
@@ -203,9 +203,9 @@ public:
     //@Man: INPUT
     //@{
         /// input a byte for processing
-        virtual void Put(byte inByte) =0;
+        virtual void Put(uint8_t inByte) =0;
         /// input multiple bytes
-        virtual void Put(const byte *inString, unsigned int length) =0;
+        virtual void Put(const uint8_t *inString, unsigned int length) =0;
         /// signal that no more input is available
         virtual void InputFinished() {}
 
@@ -224,9 +224,9 @@ public:
         virtual unsigned long MaxRetrieveable() =0;
 
         /// try to retrieve a single byte
-        virtual unsigned int Get(byte &outByte) =0;
+        virtual unsigned int Get(uint8_t &outByte) =0;
         /// try to retrieve multiple bytes
-        virtual unsigned int Get(byte *outString, unsigned int getMax) =0;
+        virtual unsigned int Get(uint8_t *outString, unsigned int getMax) =0;
 
         /// try to retrieve a 16-bit word, big-endian or little-endian depending on highFirst
         int GetShort(word16 &value, bool highFirst=true);
@@ -239,7 +239,7 @@ public:
         virtual unsigned int TransferTo(BufferedTransformation &target, unsigned int transferMax);
 
         /// peek at the next byte without removing it from the output buffer
-        virtual unsigned int Peek(byte &outByte) const =0;
+        virtual unsigned int Peek(uint8_t &outByte) const =0;
 
         /// discard some bytes from the output buffer
         unsigned int Skip(unsigned int skipMax);
@@ -299,7 +299,7 @@ public:
             \item size of cipherText == CipherTextLength(plainTextLength)
             \end{itemize}
     */
-    virtual void Encrypt(RandomNumberGenerator &rng, const byte *plainText, unsigned int plainTextLength, byte *cipherText) =0;
+    virtual void Encrypt(RandomNumberGenerator &rng, const uint8_t *plainText, unsigned int plainTextLength, uint8_t *cipherText) =0;
 };
 
 /// abstract base class for public-key decryptors
@@ -317,7 +317,7 @@ public:
         The function returns the actual length of the plaintext, or 0
         if decryption fails.
     */
-    virtual unsigned int Decrypt(const byte *cipherText, unsigned int cipherTextLength, byte *plainText) =0;
+    virtual unsigned int Decrypt(const uint8_t *cipherText, unsigned int cipherTextLength, uint8_t *plainText) =0;
 };
 
 /// abstract base class for encryptors and decryptors with fixed length ciphertext
@@ -361,9 +361,9 @@ public:
         The function returns the actual length of the plaintext, or 0
         if decryption fails.
     */
-    virtual unsigned int Decrypt(const byte *cipherText, byte *plainText) =0;
+    virtual unsigned int Decrypt(const uint8_t *cipherText, uint8_t *plainText) =0;
 
-    unsigned int Decrypt(const byte *cipherText, unsigned int cipherTextLength, byte *plainText);
+    unsigned int Decrypt(const uint8_t *cipherText, unsigned int cipherTextLength, uint8_t *plainText);
 };
 
 /// abstract base class for public-key signers and verifiers
@@ -402,7 +402,7 @@ public:
             \item size of signature == SignatureLength()
             \end{itemize}
     */
-    virtual void Sign(RandomNumberGenerator &rng, const byte *message, unsigned int messageLen, byte *signature) =0;
+    virtual void Sign(RandomNumberGenerator &rng, const uint8_t *message, unsigned int messageLen, uint8_t *signature) =0;
 };
 
 /// abstract base class for public-key verifiers
@@ -420,7 +420,7 @@ public:
             \item length of signature == SignatureLength()
             \end{itemize}
     */
-    virtual bool Verify(const byte *message, unsigned int messageLen, const byte *sig) =0;
+    virtual bool Verify(const uint8_t *message, unsigned int messageLen, const uint8_t *sig) =0;
 };
 
 /// abstract base class for public-key verifiers with recovery
@@ -439,9 +439,9 @@ public:
             \item size of recoveredMessage == MaxMessageLength()
             \end{itemize}
     */
-    virtual unsigned int Recover(const byte *signature, byte *recoveredMessage) =0;
+    virtual unsigned int Recover(const uint8_t *signature, uint8_t *recoveredMessage) =0;
 
-    bool Verify(const byte *message, unsigned int messageLen, const byte *signature);
+    bool Verify(const uint8_t *message, unsigned int messageLen, const uint8_t *signature);
 };
 
 /// abstract base class for key agreement protocols
@@ -471,7 +471,7 @@ public:
 
     /// produce public value
     //* Precondition: size of publicValue == PublicValueLength()
-    virtual void Setup(RandomNumberGenerator &rng, byte *publicValue) =0;
+    virtual void Setup(RandomNumberGenerator &rng, uint8_t *publicValue) =0;
 
     /// calculate agreed key given other party's public value
     /** Precondition:
@@ -480,7 +480,7 @@ public:
             \item size of agreedKey == AgreedKeyLength()
             \end{itemize}
     */
-    virtual void Agree(const byte *otherPublicValue, byte *agreedKey) const =0;
+    virtual void Agree(const uint8_t *otherPublicValue, uint8_t *agreedKey) const =0;
 };
 
 /// abstract base class for all objects that support precomputation

@@ -20,12 +20,12 @@ public:
     unsigned long MaxRetrieveable()
         {return outQueue->MaxRetrieveable();}
 
-    unsigned int Get(byte &outByte)
+    unsigned int Get(uint8_t &outByte)
         {return outQueue->Get(outByte);}
-    unsigned int Get(byte *outString, unsigned int getMax)
+    unsigned int Get(uint8_t *outString, unsigned int getMax)
         {return outQueue->Get(outString, getMax);}
 
-    unsigned int Peek(byte &outByte) const
+    unsigned int Peek(uint8_t &outByte) const
         {return outQueue->Peek(outByte);}
 
     BufferedTransformation *OutQueue() {return outQueue.get();}
@@ -44,14 +44,14 @@ public:
                     BufferedTransformation *outQueue);
     virtual ~BlockFilterBase() {}
 
-    void Put(byte inByte)
+    void Put(uint8_t inByte)
     {
         if (inBufSize == S)
             ProcessBuf();
         inBuf[inBufSize++]=inByte;
     }
 
-    void Put(const byte *inString, unsigned int length);
+    void Put(const uint8_t *inString, unsigned int length);
 
 protected:
     void ProcessBuf();
@@ -89,10 +89,10 @@ public:
                        BufferedTransformation *outQueue = NULL)
         : Filter(outQueue), cipher(c) {}
 
-    void Put(byte inByte)
+    void Put(uint8_t inByte)
         {outQueue->Put(cipher.ProcessByte(inByte));}
 
-    void Put(const byte *inString, unsigned int length);
+    void Put(const uint8_t *inString, unsigned int length);
 
 private:
     StreamCipher &cipher;
@@ -106,10 +106,10 @@ public:
 
     void InputFinished();
 
-    void Put(byte inByte)
+    void Put(uint8_t inByte)
         {hash.Update(&inByte, 1);}
 
-    void Put(const byte *inString, unsigned int length)
+    void Put(const uint8_t *inString, unsigned int length)
         {hash.Update(inString, length);}
 
 private:
@@ -122,9 +122,9 @@ public:
     Source(BufferedTransformation *outQ = NULL)
         : Filter(outQ) {}
 
-    void Put(byte)
+    void Put(uint8_t)
         {Pump(1);}
-    void Put(const byte *, unsigned int length)
+    void Put(const uint8_t *, unsigned int length)
         {Pump(length);}
     void InputFinished()
         {PumpAll();}
@@ -138,22 +138,22 @@ class Sink : public BufferedTransformation
 public:
     unsigned long MaxRetrieveable()
         {return 0;}
-    unsigned int Get(byte &)
+    unsigned int Get(uint8_t &)
         {return 0;}
-    unsigned int Get(byte *, unsigned int)
+    unsigned int Get(uint8_t *, unsigned int)
         {return 0;}
-    unsigned int Peek(byte &) const
+    unsigned int Peek(uint8_t &) const
         {return 0;}
 };
 
 class BitBucket : public Sink
 {
 public:
-    void Put(byte) {}
-    void Put(const byte *, unsigned int) {}
+    void Put(uint8_t) {}
+    void Put(const uint8_t *, unsigned int) {}
 };
 
-BufferedTransformation *Insert(const byte *in, unsigned int length, BufferedTransformation *outQueue);
-unsigned int Extract(Source *source, byte *out, unsigned int length);
+BufferedTransformation *Insert(const uint8_t *in, unsigned int length, BufferedTransformation *outQueue);
+unsigned int Extract(Source *source, uint8_t *out, unsigned int length);
 
 #endif

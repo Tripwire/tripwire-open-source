@@ -222,27 +222,27 @@ static uint8 padding[128] = {        /* constants for padding */
 #define rotate_right(x, n) (((x) >> (n)) | ((x) << (32-(n))))
 
 #define FF_1(x7, x6, x5, x4, x3, x2, x1, x0, w) {                        \
-      register haval_word temp = Fphi_1(x6, x5, x4, x3, x2, x1, x0);     \
+      haval_word temp = Fphi_1(x6, x5, x4, x3, x2, x1, x0);     \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w);       \
       }
 
 #define FF_2(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_2(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_2(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
 #define FF_3(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_3(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_3(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
 #define FF_4(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_4(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_4(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
 #define FF_5(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_5(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_5(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
@@ -448,7 +448,7 @@ void haval_end (haval_state* state, uint8 final_fpt[FPTLEN >> 3])
 /* hash a 32-word block */
 void haval_hash_block (haval_state* state)
 {
-  register haval_word t0 = state->fingerprint[0],    /* make use of */
+  haval_word t0 = state->fingerprint[0],    /* make use of */
                       t1 = state->fingerprint[1],    /* internal registers */
                       t2 = state->fingerprint[2],
                       t3 = state->fingerprint[3],

@@ -14,16 +14,16 @@ public:
     Inflator(BufferedTransformation *output = NULL,
              BufferedTransformation *bypassed = NULL);
 
-    void Put(byte b)
+    void Put(uint8_t b)
         {Inflator::Put(&b, 1);}
 
-    void Put(const byte *inString, unsigned int length);
+    void Put(const uint8_t *inString, unsigned int length);
     void InputFinished();
 
 private:
     struct huft {
-      byte e;                /* number of extra bits or operation */
-      byte b;                /* number of bits in this code or subcode */
+      uint8_t e;                /* number of extra bits or operation */
+      uint8_t b;                /* number of bits in this code or subcode */
       union {
         word16 n;              /* literal, length base, or distance base */
         struct huft *t;     /* pointer to next level of table */
@@ -49,7 +49,7 @@ private:
     static const word16 mask_bits[18];
 
     ByteQueue inQueue;
-    byte NEXTBYTE();
+    uint8_t NEXTBYTE();
 
     SecByteBlock slide;
     unsigned int wp;

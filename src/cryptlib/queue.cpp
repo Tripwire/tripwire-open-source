@@ -15,20 +15,20 @@ public:
     unsigned int UsedUp() const
         {return (head==MaxSize());}
 
-    unsigned int Put(byte inByte);
-    unsigned int Put(const byte *inString, unsigned int length);
+    unsigned int Put(uint8_t inByte);
+    unsigned int Put(const uint8_t *inString, unsigned int length);
 
-    unsigned int Get(byte &outByte);
-    unsigned int Get(byte *outString, unsigned int getMax);
+    unsigned int Get(uint8_t &outByte);
+    unsigned int Get(uint8_t *outString, unsigned int getMax);
 
-    unsigned int Peek(byte &outByte) const;
+    unsigned int Peek(uint8_t &outByte) const;
 
     void CopyTo(BufferedTransformation &target) const
         {target.Put(buf+head, tail-head);}
-    void CopyTo(byte *target) const
+    void CopyTo(uint8_t *target) const
         {memcpy(target, buf+head, tail-head);}
 
-    byte operator[](unsigned int i) const
+    uint8_t operator[](unsigned int i) const
         {return buf[i-head];}
 
     ByteQueueNode *next;
@@ -48,7 +48,7 @@ ByteQueueNode::ByteQueueNode(unsigned int maxSize)
     next = 0;
 }
 
-unsigned int ByteQueueNode::Put(byte inByte)
+unsigned int ByteQueueNode::Put(uint8_t inByte)
 {
     if (MaxSize()==tail)
         return 0;
@@ -57,7 +57,7 @@ unsigned int ByteQueueNode::Put(byte inByte)
     return 1;
 }
 
-unsigned int ByteQueueNode::Put(const byte *inString, unsigned int length)
+unsigned int ByteQueueNode::Put(const uint8_t *inString, unsigned int length)
 {
     unsigned int l = STDMIN(length, MaxSize()-tail);
     memcpy(buf+tail, inString, l);
@@ -65,7 +65,7 @@ unsigned int ByteQueueNode::Put(const byte *inString, unsigned int length)
     return l;
 }
 
-unsigned int ByteQueueNode::Get(byte &outByte)
+unsigned int ByteQueueNode::Get(uint8_t &outByte)
 {
     if (tail==head)
         return 0;
@@ -74,7 +74,7 @@ unsigned int ByteQueueNode::Get(byte &outByte)
     return 1;
 }
 
-unsigned int ByteQueueNode::Get(byte *outString, unsigned int getMax)
+unsigned int ByteQueueNode::Get(uint8_t *outString, unsigned int getMax)
 {
     unsigned int l = STDMIN(getMax, tail-head);
     memcpy(outString, buf+head, l);
@@ -82,7 +82,7 @@ unsigned int ByteQueueNode::Get(byte *outString, unsigned int getMax)
     return l;
 }
 
-unsigned int ByteQueueNode::Peek(byte &outByte) const
+unsigned int ByteQueueNode::Peek(uint8_t &outByte) const
 {
     if (tail==head)
         return 0;
@@ -140,7 +140,7 @@ void ByteQueue::CopyTo(BufferedTransformation &target) const
         current->CopyTo(target);
 }
 
-void ByteQueue::CopyTo(byte *target) const
+void ByteQueue::CopyTo(uint8_t *target) const
 {
     for (ByteQueueNode *current=head; current; current=current->next)
     {
@@ -159,7 +159,7 @@ unsigned long ByteQueue::CurrentSize() const
     return size;
 }
 
-void ByteQueue::Put(byte inByte)
+void ByteQueue::Put(uint8_t inByte)
 {
     if (!tail->Put(inByte))
     {
@@ -169,7 +169,7 @@ void ByteQueue::Put(byte inByte)
     }
 }
 
-void ByteQueue::Put(const byte *inString, unsigned int length)
+void ByteQueue::Put(const uint8_t *inString, unsigned int length)
 {
     unsigned int l;
 
@@ -182,7 +182,7 @@ void ByteQueue::Put(const byte *inString, unsigned int length)
     }
 }
 
-unsigned int ByteQueue::Get(byte &outByte)
+unsigned int ByteQueue::Get(uint8_t &outByte)
 {
     int l = head->Get(outByte);
     if (head->UsedUp())
@@ -196,7 +196,7 @@ unsigned int ByteQueue::Get(byte &outByte)
     return l;
 }
 
-unsigned int ByteQueue::Get(byte *outString, unsigned int getMax)
+unsigned int ByteQueue::Get(uint8_t *outString, unsigned int getMax)
 {
     unsigned int getMaxSave=getMax;
     ByteQueueNode *current=head;
@@ -224,7 +224,7 @@ unsigned int ByteQueue::Get(byte *outString, unsigned int getMax)
     return (getMaxSave-getMax);
 }
 
-unsigned int ByteQueue::Peek(byte &outByte) const
+unsigned int ByteQueue::Peek(uint8_t &outByte) const
 {
     return head->Peek(outByte);
 }
@@ -250,7 +250,7 @@ bool ByteQueue::operator==(const ByteQueue &rhs) const
     return true;
 }
 
-byte ByteQueue::operator[](unsigned long i) const
+uint8_t ByteQueue::operator[](unsigned long i) const
 {
     for (ByteQueueNode *current=head; current; current=current->next)
     {

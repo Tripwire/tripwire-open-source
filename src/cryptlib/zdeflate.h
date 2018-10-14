@@ -13,9 +13,9 @@ public:
     // default for the gzip program is 6
     Deflator(int deflate_level, BufferedTransformation *outQ = NULL);
 
-    void Put(byte inByte)
+    void Put(uint8_t inByte)
         {Deflator::Put(&inByte, 1);}
-    void Put(const byte *inString, unsigned int length);
+    void Put(const uint8_t *inString, unsigned int length);
 
     void InputFinished();
 
@@ -52,13 +52,13 @@ private:
     SecByteBlock window;
     SecBlock<Pos> prev, head;
 
-    unsigned fill_window (const byte*, unsigned);
+    unsigned fill_window (const uint8_t*, unsigned);
     void     init_hash   ();
 
     int longest_match (IPos cur_match);
 
-    int fast_deflate(const byte *buffer, unsigned int length);
-    int lazy_deflate(const byte *buffer, unsigned int length);
+    int fast_deflate(const uint8_t *buffer, unsigned int length);
+    int lazy_deflate(const uint8_t *buffer, unsigned int length);
 
     unsigned ins_h;  /* hash index of string to be inserted */
     char uptodate;   /* hash preparation flag */

@@ -679,8 +679,15 @@ void cParserUtil::CreatePropVector(const TSTRING& strPropListC, class cFCOPropVe
 
     // clear out all spaces in the string
     TSTRING strPropList = strPropListC;
-    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(), std::ptr_fun<int, int>(std::isspace)),
-                      strPropList.end());
+
+// C++17 removes std::ptr_fun, so use a lambda where available
+#if __cplusplus < 201103L
+    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(),
+        std::ptr_fun<int, int>(std::isspace)), strPropList.end());
+#else
+    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(),
+        [](int c) {return std::isspace(c);}), strPropList.end());
+#endif
 
     // zero it out
     v.Clear();

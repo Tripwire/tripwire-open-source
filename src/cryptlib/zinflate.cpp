@@ -74,7 +74,7 @@ Inflator::Inflator(BufferedTransformation *output, BufferedTransformation *bypas
     afterEnd = false;
 }
 
-void Inflator::Put(const byte *inString, unsigned int length)
+void Inflator::Put(const uint8_t *inString, unsigned int length)
 {
     if (afterEnd)
         AccessPort(1).Put(inString, length);
@@ -89,7 +89,7 @@ void Inflator::Put(const byte *inString, unsigned int length)
         {
             flush_output(wp);
             if (bk>=8)  // undo too much lookahead
-                AccessPort(1).Put(byte(bb>>(bk-=8)));
+                AccessPort(1).Put(uint8_t(bb>>(bk-=8)));
 
             inQueue.TransferTo(AccessPort(1));
         }
@@ -104,7 +104,7 @@ void Inflator::InputFinished()
     flush_output(wp);
 
     if (bk>=8)  // undo too much lookahead
-        AccessPort(1).Put(byte(bb>>(bk-=8)));
+        AccessPort(1).Put(uint8_t(bb>>(bk-=8)));
 
     inQueue.TransferTo(AccessPort(1));
 }
@@ -183,9 +183,9 @@ const word16 Inflator::mask_bits[] = {
     0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
 };
 
-byte Inflator::NEXTBYTE()
+uint8_t Inflator::NEXTBYTE()
 {
-    byte b;
+    uint8_t b;
     if (!inQueue.Get(b))
 #ifdef THROW_EXCEPTIONS
         throw UnexpectedEndErr();
@@ -252,16 +252,16 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
   unsigned f;                   /* i repeats in table every f entries */
   int g;                        /* maximum code length */
   int h;                        /* table level */
-  register unsigned i;          /* counter, current code */
-  register unsigned j;          /* counter */
-  register int k;               /* number of bits in current code */
+  unsigned i;          /* counter, current code */
+  unsigned j;          /* counter */
+  int k;               /* number of bits in current code */
   int l;                        /* bits per table (returned in m) */
-  register unsigned *p;         /* pointer into c[], b[], or v[] */
-  register huft *q;      /* points to current table */
+  unsigned *p;         /* pointer into c[], b[], or v[] */
+  huft *q;      /* points to current table */
   huft r;                /* table entry for structure assignment */
   huft *u[BMAX];         /* table stack */
   unsigned v[N_MAX];            /* values in order of bit length */
-  register int w;               /* bits before this table == (l * h) */
+  int w;               /* bits before this table == (l * h) */
   unsigned x[BMAX+1];           /* bit offsets, then code stack */
   unsigned *xp;                 /* pointer into x */
   int y;                        /* number of dummy codes added */
@@ -380,8 +380,8 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
         if (h)
         {
           x[h] = i;             /* save pattern for backing up */
-          r.b = (byte)l;         /* bits to dump before this table */
-          r.e = (byte)(16 + j);  /* bits in this table */
+          r.b = (uint8_t)l;         /* bits to dump before this table */
+          r.e = (uint8_t)(16 + j);  /* bits in this table */
           r.v.t = q;            /* pointer to this table */
           j = i >> (w - l);     /* (get around Turbo C bug) */
           u[h-1][j] = r;        /* connect to last table */
@@ -389,18 +389,18 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
       }
 
       /* set up table entry in r */
-      r.b = (byte)(k - w);
+      r.b = (uint8_t)(k - w);
       if (p >= v + n)
         r.e = 99;               /* out of values--invalid code */
       else if (*p < s)
       {
-        r.e = (byte)(*p < 256 ? 16 : 15);    /* 256 is end-of-block code */
+        r.e = (uint8_t)(*p < 256 ? 16 : 15);    /* 256 is end-of-block code */
         r.v.n = (word16)(*p);             /* simple code is just the value */
     p++;                           /* one compiler does not like *p++ */
       }
       else
       {
-        r.e = (byte)e[*p - s];   /* non-simple--look up in lists */
+        r.e = (uint8_t)e[*p - s];   /* non-simple--look up in lists */
         r.v.n = d[*p++ - s];
       }
 
@@ -435,7 +435,7 @@ int Inflator::huft_free(huft *t)
    list of the tables it made, with the links in a dummy first entry of
    each table. */
 {
-  register huft *p, *q;
+  huft *p, *q;
 
 
   /* Go through linked list, freeing from the malloced (t[-1]) address. */
@@ -454,13 +454,13 @@ int Inflator::inflate_codes(huft *tl, huft *td, int bl, int bd)
 /* inflate (decompress) the codes in a deflated (compressed) block.
    Return an error code or zero if it all goes ok. */
 {
-  register unsigned e;  /* table entry flag/number of extra bits */
+  unsigned e;  /* table entry flag/number of extra bits */
   unsigned n, d;        /* length and index for copy */
   unsigned w;           /* current window position */
   huft *t;       /* pointer to table entry */
   unsigned ml, md;      /* masks for bl and bd bits */
-  register word32 b;       /* bit buffer */
-  register unsigned k;  /* number of bits in bit buffer */
+  word32 b;       /* bit buffer */
+  unsigned k;  /* number of bits in bit buffer */
 
 
   /* make local copies of globals */
@@ -485,7 +485,7 @@ int Inflator::inflate_codes(huft *tl, huft *td, int bl, int bd)
     DUMPBITS(t->b)
     if (e == 16)                /* then it's a literal */
     {
-      slide[w++] = (byte)t->v.n;
+      slide[w++] = (uint8_t)t->v.n;
       Tracevv((stderr, "%c", slide[w-1]));
       if (w == WSIZE)
       {
@@ -562,8 +562,8 @@ int Inflator::inflate_stored()
 {
   unsigned n;           /* number of bytes in block */
   unsigned w;           /* current window position */
-  register word32 b;       /* bit buffer */
-  register unsigned k;  /* number of bits in bit buffer */
+  word32 b;       /* bit buffer */
+  unsigned k;  /* number of bits in bit buffer */
 
 
   /* make local copies of globals */
@@ -591,7 +591,7 @@ int Inflator::inflate_stored()
   while (n--)
   {
     NEEDBITS(8)
-    slide[w++] = (byte)b;
+    slide[w++] = (uint8_t)b;
     if (w == WSIZE)
     {
       flush_output(w);
@@ -681,8 +681,8 @@ int Inflator::inflate_dynamic()
 #else
   unsigned ll[286+30];  /* literal/length and distance code lengths */
 #endif
-  register word32 b;       /* bit buffer */
-  register unsigned k;  /* number of bits in bit buffer */
+  word32 b;       /* bit buffer */
+  unsigned k;  /* number of bits in bit buffer */
 
 
   /* make local bit buffer */
@@ -829,8 +829,8 @@ int Inflator::inflate_block(bool &e)
 /* decompress an inflated block */
 {
   unsigned t;           /* block type */
-  register word32 b;       /* bit buffer */
-  register unsigned k;  /* number of bits in bit buffer */
+  word32 b;       /* bit buffer */
+  unsigned k;  /* number of bits in bit buffer */
 
 
   /* make local bit buffer */

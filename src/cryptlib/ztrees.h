@@ -10,7 +10,7 @@ public:
     CodeTree(int deflate_level, BufferedTransformation &outQ);
 
     int  ct_tally (int dist, int lc);
-    word32  flush_block (byte *buf, word32 stored_len, int eof);
+    word32  flush_block (uint8_t *buf, word32 stored_len, int eof);
 
     long block_start;       /* window offset of current block */
     unsigned int strstart; /* window offset of current string */
@@ -73,7 +73,7 @@ private:
     static const int extra_lbits[LENGTH_CODES];
     static const int extra_dbits[D_CODES];
     static const int extra_blbits[BL_CODES];
-    static const byte bl_order[BL_CODES];
+    static const uint8_t bl_order[BL_CODES];
 
 public:
     // Data structure describing a single value and its code string. */
@@ -168,8 +168,8 @@ private:
     unsigned last_lit;    /* running index in l_buf */
     unsigned last_dist;   /* running index in d_buf */
     unsigned last_flags;  /* running index in flag_buf */
-    byte flags;            /* current flags not yet saved in flag_buf */
-    byte flag_bit;         /* current bit used in flags */
+    uint8_t flags;            /* current flags not yet saved in flag_buf */
+    uint8_t flag_bit;         /* current bit used in flags */
     /* bits are filled in flags starting at bit 0 (least significant).
      * Note: these flags are overkill in the current code since we don't
      * take advantage of DIST_BUFSIZE == LIT_BUFSIZE.

@@ -7,7 +7,7 @@ class SHA : public IteratedHash<word32>
 {
 public:
     SHA();
-    void Final(byte *hash);
+    void Final(uint8_t *hash);
     unsigned int DigestSize() const {return DIGESTSIZE;};
 
     static void CorrectEndianess(word32 *out, const word32 *in, unsigned int byteCount)

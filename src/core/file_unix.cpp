@@ -360,7 +360,7 @@ cFile::File_t cFile::Read(void* buffer, File_t nBytes) const //throw(eFile)
     }
     else
     {
-        iBytesRead = fread(buffer, sizeof(byte), nBytes, mpData->mpCurrStream);
+        iBytesRead = fread(buffer, sizeof(uint8_t), nBytes, mpData->mpCurrStream);
         if (ferror(mpData->mpCurrStream) != 0)
         {
             throw eFileRead(mpData->mFileName, iFSServices::GetInstance()->GetErrString());
@@ -382,7 +382,7 @@ cFile::File_t cFile::Write(const void* buffer, File_t nBytes) //throw(eFile)
     ASSERT(mpData->mpCurrStream != NULL);
     ASSERT(isWritable);
 
-    if ((actual_count = fwrite(buffer, sizeof(byte), nBytes, mpData->mpCurrStream)) < nBytes)
+    if ((actual_count = fwrite(buffer, sizeof(uint8_t), nBytes, mpData->mpCurrStream)) < nBytes)
         throw eFileWrite(mpData->mFileName, iFSServices::GetInstance()->GetErrString());
     else
         return actual_count;

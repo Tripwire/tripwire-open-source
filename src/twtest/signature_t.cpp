@@ -76,10 +76,10 @@ void TestSignatureBasic()
     cCRC32Signature crcSig;
     cDebug          d("TestSignature1");
 
-    byte abData[64];
+    uint8_t abData[64];
     int  i;
     for (i = 0; i < 64; i++)
-        abData[i] = static_cast<byte>(rand());
+        abData[i] = static_cast<uint8_t>(rand());
 
     crcSig.Init();
     crcSig.Update(&abData[0], 32);
@@ -111,7 +111,7 @@ void TestChecksum()
     // test begins here
 
     // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    uint8_t      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
     const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
     int       cbRead;
 
@@ -165,7 +165,7 @@ void TestCRC32()
     cDebug       d("TestCRC32");
 
     // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    uint8_t      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
     const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
     int       cbRead;
 
@@ -219,7 +219,7 @@ void TestMD5()
     cDebug       d("TestMD5");
 
     // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    uint8_t      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
     const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
     int       cbRead;
 
@@ -273,7 +273,7 @@ void TestSHA1()
     cDebug       d("TestSHA1");
 
     // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    uint8_t      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
     const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
     int       cbRead;
 
@@ -327,7 +327,7 @@ void TestHAVAL()
     cDebug       d("TestHAVAL");
 
     // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    uint8_t      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
     const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
     int       cbRead;
 
@@ -418,7 +418,7 @@ void assertMD5(const std::string& source, const std::string& expectedHex)
     cMD5Signature md5Sig;
 
     md5Sig.Init();
-    md5Sig.Update((const byte*)source.c_str(), source.length());
+    md5Sig.Update((const uint8_t*)source.c_str(), source.length());
     md5Sig.Finit();
 
     TEST(md5Sig.AsStringHex() == expectedHex);
@@ -430,7 +430,7 @@ void assertSHA1(const std::string& source, const std::string& expectedHex)
     cSHASignature shaSig;
 
     shaSig.Init();
-    shaSig.Update((const byte*)source.c_str(), source.length());
+    shaSig.Update((const uint8_t*)source.c_str(), source.length());
     shaSig.Finit();
 
     TEST(shaSig.AsStringHex() == expectedHex);

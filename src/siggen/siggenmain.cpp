@@ -67,11 +67,13 @@ void tw_terminate_handler()
     _exit(1);
 }
 
+#if __cplusplus < 201703L
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
     _exit(1);
 }
+#endif
 
 static void SiggenInit()
 {
@@ -112,8 +114,9 @@ int __cdecl _tmain(int argc, const TCHAR** argv)
         // Note: we do this before Init() in case it attempts to call these handlers
         // TODO: move this into the Init() routine
         EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
+#if __cplusplus < 201703L
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
-
+#endif
         //cTWInit twInit( argv[0] );
         SiggenInit();
 

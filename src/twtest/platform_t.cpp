@@ -68,7 +68,7 @@ public:
     AlignMe();
 
 private:
-    byte a[sizeof(int64) + ALIGN_SIZE]; // we want to be able to access a int64 at address [ALIGN_SIZE]
+    uint8_t a[sizeof(int64) + ALIGN_SIZE]; // we want to be able to access a int64 at address [ALIGN_SIZE]
 };
 
 /////////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ void TestAlignment()
     // such accesses: it may have handled the
     // hardware interrupt that might have occured.
     // - - - - - - - - - - - - - - - - - - - - - -
-    byte a[sizeof(int32) + sizeof(byte)];
+    uint8_t a[sizeof(int32) + sizeof(uint8_t)];
 
     // this should be fine
     a[0] = 0xAB;
@@ -177,7 +177,7 @@ void TestAlignment()
     // if it works, then our BYTE_ALIGN value is large enough
     // - - - - - - - - - - - - - - - - - - - - - -
 
-    byte b[2 * sizeof(BYTE_ALIGN)];
+    uint8_t b[2 * sizeof(BYTE_ALIGN)];
 
     // this should be fine
     b[0] = 0xAB;

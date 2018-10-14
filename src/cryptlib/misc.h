@@ -31,8 +31,8 @@ inline unsigned int bitsToWords(unsigned int bitCount)
     return ((bitCount+WORD_BITS-1)/(WORD_BITS));
 }
 
-void xorbuf(byte *buf, const byte *mask, unsigned int count);
-void xorbuf(byte *output, const byte *input, const byte *mask, unsigned int count);
+void xorbuf(uint8_t *buf, const uint8_t *mask, unsigned int count);
+void xorbuf(uint8_t *output, const uint8_t *input, const uint8_t *mask, unsigned int count);
 
 template <class T> inline T rotl(T x, unsigned int y)
 {
@@ -262,7 +262,7 @@ template <class T> void SecBlock<T>::swap(SecBlock<T> &b)
     std::swap(ptr, b.ptr);
 }
 
-typedef SecBlock<byte> SecByteBlock;
+typedef SecBlock<uint8_t> SecByteBlock;
 typedef SecBlock<word> SecWordBlock;
 
 #endif // MISC_H
