@@ -45,7 +45,7 @@
 // standard TSS types
 //-----------------------------------------------------------------------------
 #if __cplusplus < 201103L
-typedef unsigned char uint8_t
+typedef unsigned char uint8_t;
 #endif
 
 typedef signed char    int8;
