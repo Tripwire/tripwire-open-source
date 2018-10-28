@@ -353,10 +353,10 @@ public:
     cHashedKey128(void* pData, int dataLen);
     ~cHashedKey128();
 
-    const int8* GetKey() const;
+    const int8_t* GetKey() const;
 
     static int GetWriteLen();
-    void       Write(void* pDataStream);
+    void Write(void* pDataStream);
 
 protected:
     enum
@@ -365,10 +365,10 @@ protected:
         BUFSIZE = 20
     };
 
-    int8 mKey[BUFSIZE];
+    int8_t mKey[BUFSIZE];
 };
 
-inline const int8* cHashedKey128::GetKey() const
+inline const int8_t* cHashedKey128::GetKey() const
 {
     return mKey;
 }
@@ -390,13 +390,13 @@ class cHashedKey192
 {
 public:
     explicit cHashedKey192(const TSTRING& data);
-    cHashedKey192(void* pData, int dataLen);
+    cHashedKey192(void* pData, int32_t dataLen);
     ~cHashedKey192();
 
-    const int8* GetKey() const;
+    const int8_t* GetKey() const;
 
     static int GetWriteLen();
-    void       Write(void* pDataStream);
+    void Write(void* pDataStream);
 
 protected:
     enum
@@ -404,10 +404,10 @@ protected:
         KEYLEN = 24
     };
 
-    int8 mKey[KEYLEN];
+    int8_t mKey[KEYLEN];
 };
 
-inline const int8* cHashedKey192::GetKey() const
+inline const int8_t* cHashedKey192::GetKey() const
 {
     return mKey;
 }
@@ -425,6 +425,6 @@ inline void cHashedKey192::Write(void* pDataStream)
 ///////////////////////////////////////////////////////////////////////////////
 // void RandomizeBytes(byte* destbuf, int len) -- Fill a buffer with random bytes
 
-void RandomizeBytes(int8* destbuf, int len);
+void RandomizeBytes(int8_t* destbuf, int len);
 
 #endif // __CRYPTO_H

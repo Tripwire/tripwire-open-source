@@ -46,8 +46,8 @@ struct tGK
 {
     bool         doneFlag;
     int          retValue;
-    int8*        passphrase;
-    int          passphraseLen;
+    int8_t*      passphrase;
+    int32_t      passphraseLen;
     const TCHAR* keyPath;
 
     enum ReturnValue
@@ -146,7 +146,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     fflush(stdout);
 
     tGK gk;
-    gk.passphrase    = (int8*)passphrase.data();
+    gk.passphrase    = (int8_t*)passphrase.data();
     gk.passphraseLen = passphrase.length() * sizeof(WCHAR16);
     gk.keyPath       = keyPath;
 
@@ -177,13 +177,13 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
 
     keyfile.ReadFile(keyPath);
 
-    ASSERT(keyfile.GetPrivateKey((int8*)passphrase_copy.data(), passphrase_copy.length() * sizeof(WCHAR16)) != 0);
+    ASSERT(keyfile.GetPrivateKey((int8_t*)passphrase_copy.data(), passphrase_copy.length() * sizeof(WCHAR16)) != 0);
     keyfile.ReleasePrivateKey();
 
     //keyfile.WriteFile(_T("tripwire2.key"));
 
     // test memory writing
-    int8 mem[4000];
+    int8_t mem[4000];
     ASSERT(4000 > keyfile.GetWriteLen());
 
     keyfile.WriteMem(mem);
@@ -191,7 +191,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     cKeyFile k2;
     k2.ReadMem(mem);
 
-    k2.GetPrivateKey((int8*)passphrase_copy2.data(), passphrase_copy2.length() * sizeof(WCHAR16));
+    k2.GetPrivateKey((int8_t*)passphrase_copy2.data(), passphrase_copy2.length() * sizeof(WCHAR16));
     k2.ReleasePrivateKey();
 #endif
 

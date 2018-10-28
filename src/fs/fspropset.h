@@ -55,7 +55,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // cFCOPropFileType -- a property that represents a file type. Is is really just
-//      an int32 that overrides the AsString() method to display the file type
+//      an int32_t that overrides the AsString() method to display the file type
 ///////////////////////////////////////////////////////////////////////////////
 class cFCOPropFileType : public cFCOPropInt32
 {
@@ -166,7 +166,7 @@ public:
     //PROPERTY_OBJ(cUnixACL,        ACL,            PROP_ACL)  // will eventually be implememented
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     // debugging method

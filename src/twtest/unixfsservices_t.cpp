@@ -170,7 +170,7 @@ void TestGetCurrentUserName()
 
 void TestGetIPAddress()
 {
-    uint32 ipaddr;
+    uint32_t ipaddr;
     bool   success = iFSServices::GetInstance()->GetIPAddress(ipaddr);
     if (!success)
         skip("GetIPAddress test skipped, usually caused by hostname/IP configuration problems");

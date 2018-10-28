@@ -1433,7 +1433,7 @@ int cGoodEnoughConverterer::Convert(ntdbs_t pwz, size_t nCount, const_ntmbs_t pb
             }
             else
             {
-                *dat = (uint16)(unsigned char)*at;
+                *dat = (uint16_t)(unsigned char)*at;
             }
 
             dat++;

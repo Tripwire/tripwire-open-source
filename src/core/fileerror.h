@@ -56,13 +56,13 @@ private:
 TSTRING mFilename;
 
 public:
-eFileError(const TSTRING& filename, const TSTRING& description, uint32 flags = 0);
+eFileError(const TSTRING& filename, const TSTRING& description, uint32_t flags = 0);
 
 explicit eFileError(const eFileError& rhs) : eError(rhs)
 {
     mFilename = rhs.mFilename;
 }
-eFileError(const TSTRING& msg, uint32 flags = 0) : eError(msg, flags)
+eFileError(const TSTRING& msg, uint32_t flags = 0) : eError(msg, flags)
 {
 }
 
@@ -75,7 +75,7 @@ TSS_END_EXCEPTION()
 
 #    define TSS_FILE_EXCEPTION(except, base)                                                               \
         TSS_BEGIN_EXCEPTION(except, base)                                                                  \
-        except(const TSTRING& filename, const TSTRING& msg, uint32 flags = 0) : base(filename, msg, flags) \
+        except(const TSTRING& filename, const TSTRING& msg, uint32_t flags = 0) : base(filename, msg, flags) \
         {                                                                                                  \
         }                                                                                                  \
         TSS_END_EXCEPTION()

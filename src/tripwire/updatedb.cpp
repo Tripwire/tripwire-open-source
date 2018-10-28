@@ -60,7 +60,7 @@ cUpdateDb::cUpdateDb(cHierDatabase& db, cFCOReport& report, cErrorBucket* pBucke
 ///////////////////////////////////////////////////////////////////////////////
 // Execute
 ///////////////////////////////////////////////////////////////////////////////
-bool cUpdateDb::Execute(uint32 flags)
+bool cUpdateDb::Execute(uint32_t flags)
 {
     cDebug d("cUpdateDb::Execute");
     bool   bResult = true;

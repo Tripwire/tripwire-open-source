@@ -178,7 +178,7 @@ const iFCOSpecMask* cFCOSpecImpl::GetSpecMask(const iFCO* pFCO) const
 }
 
 
-void cFCOSpecImpl::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecImpl::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FS Spec Read")));

@@ -45,9 +45,9 @@ public:
     {
     public:
         size_t mSize;
-        int8*  mpData;
+        int8_t*  mpData;
 
-        cHeap(size_t size) : mSize(size), mpData(new int8[size])
+        cHeap(size_t size) : mSize(size), mpData(new int8_t[size])
         {
             ASSERT(mpData != 0);
         }
@@ -118,7 +118,7 @@ void* cGrowHeap_i::Malloc(size_t size)
         // we have room to add this to the current heap.
         //
         ASSERT(mHeaps.back().mpData);
-        int8* ret = mHeaps.back().mpData + mCurOff;
+        int8_t* ret = mHeaps.back().mpData + mCurOff;
         mCurOff += size;
 
         return ret;

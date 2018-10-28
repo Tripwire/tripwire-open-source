@@ -61,7 +61,7 @@ TSTRING cFCOPropFileType::AsString() const
                               fs::STR_FT_PORT,
                               fs::STR_FT_NAMED};
 
-    int32 fileType = GetValue();
+    int32_t fileType = GetValue();
     if ((fileType > cFSPropSet::FT_INVALID) && (fileType < cFSPropSet::FT_NUMITEMS))
         return TSS_GetString(cFS, fileTypes[fileType]);
     else
@@ -358,7 +358,7 @@ iFCOProp* cFSPropSet::GetPropAt(int index)
     return NULL;
 }
 
-void cFSPropSet::Read(iSerializer* pSerializer, int32 version)
+void cFSPropSet::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FS Property Set Read")));

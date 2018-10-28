@@ -211,7 +211,7 @@ bool cSMTPMailMessage::OpenConnection()
     memset(&sockAddrIn, 0, sizeof(sockaddr));
     sockAddrIn.sin_family = AF_INET;
     sockAddrIn.sin_port = mPfnHtons(mPortNumber);
-    uint32 iServerAddress = GetServerAddress();
+    uint32_t iServerAddress = GetServerAddress();
 
     sockAddrIn.sin_addr.s_addr = iServerAddress;
 

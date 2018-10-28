@@ -46,7 +46,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void iFCOSpecHelper::Read(iSerializer* pSerializer, int32 version)
+void iFCOSpecHelper::Read(iSerializer* pSerializer, int32_t version)
 {
     // read the start point
     pSerializer->ReadObject(&mStartPoint);
@@ -247,14 +247,14 @@ iFCOSpecHelper* cFCOSpecStopPointSet::Clone() const
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecStopPointSet::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecStopPointSet::Read(iSerializer* pSerializer, int32_t version)
 {
     // read the start point
     //pSerializer->ReadObject(&mStartPoint);
     inherited::Read(pSerializer, version);
 
     // read all the stop points
-    int32 size;
+    int32_t size;
     pSerializer->ReadInt32(size);
     ASSERT(size >= 0);
     for (int i = 0; i < size; ++i)
@@ -346,7 +346,7 @@ bool cFCOSpecNoChildren::ShouldStopDescent(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecNoChildren::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecNoChildren::Read(iSerializer* pSerializer, int32_t version)
 {
     inherited::Read(pSerializer, version);
 }

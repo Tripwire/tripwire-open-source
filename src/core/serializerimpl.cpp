@@ -44,7 +44,7 @@ cSerializerImpl::SerRefCountMap cSerializerImpl::mSerRefCountCreateMap;
 ///////////////////////////////////////////////////////////////////////////////
 // util_GetCrc -- calculates the crc for the narrow version of the type's AsString()
 ///////////////////////////////////////////////////////////////////////////////
-static uint32 util_GetCRC(const cType& type)
+static uint32_t util_GetCRC(const cType& type)
 {
     //
     // convert this to narrow...
@@ -59,10 +59,10 @@ static uint32 util_GetCRC(const cType& type)
 
     // We only need to count the characters
     // RAD: Yeesh! This is already done for us in cType::mString!!!
-    const uint8* pszType = (const uint8*)(type.AsString());
-    int          nBytes  = ::strlen((const char*)pszType);
+    const uint8_t* pszType = (const uint8_t*)(type.AsString());
+    int            nBytes  = ::strlen((const char*)pszType);
 
-    ASSERT(sizeof(uint8) == sizeof(byte));
+    ASSERT(sizeof(uint8_t) == sizeof(byte));
     ASSERT(pszType && *pszType);
 
     //
@@ -104,7 +104,7 @@ bool cSerializerImpl::IsWriting() const
 
 void cSerializerImpl::RegisterSerializable(const cType& type, iTypedSerializable::CreateFunc pFunc)
 {
-    uint32 crc = util_GetCRC(type);
+    uint32_t crc = util_GetCRC(type);
 
     if (cSerializerImpl::mSerCreateMap.find(crc) != cSerializerImpl::mSerCreateMap.end())
     {
@@ -120,7 +120,7 @@ void cSerializerImpl::RegisterSerializable(const cType& type, iTypedSerializable
 
 void cSerializerImpl::RegisterSerializableRefCt(const cType& type, iSerRefCountObj::CreateFunc pFunc)
 {
-    uint32 crc = util_GetCRC(type);
+    uint32_t crc = util_GetCRC(type);
 
     if (cSerializerImpl::mSerRefCountCreateMap.find(crc) != cSerializerImpl::mSerRefCountCreateMap.end())
     {
@@ -171,17 +171,17 @@ void cSerializerImpl::WriteObjectDynCreate(const iTypedSerializable* pObj)
     //d.TraceDetail("Entering...  Archive Offset = %d\n", mpArchive->CurrentPos());
     d.TraceDetail(_T("             Object Type    = %s\n"), pObj->GetType().AsString());
     // first, we write out the header, which consists of the following:
-    // uint32   crc of the object's type
-    // int32    version of stored data
-    // int32    size of the chunk (counting from this point; not including the previous int32
-    // int32    index into mRefCountObjTbl, or 0 if it isn't refrence counted.
+    // uint32_t   crc of the object's type
+    // int32_t    version of stored data
+    // int32_t    size of the chunk (counting from this point; not including the previous int32
+    // int32_t    index into mRefCountObjTbl, or 0 if it isn't refrence counted.
     //              if the index already exists, then no data follows; a refrence
     //              should just be added to the existing object.
     ASSERT(mpArchive != 0);
 
     // get the ident for this class type
     //
-    uint32 crc = util_GetCRC(pObj->GetType());
+    uint32_t crc = util_GetCRC(pObj->GetType());
 
     //
     // make sure this type is registered, and figure out if it is refrence counted
@@ -243,20 +243,20 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
     cDebug d("cSerializerImpl::ReadObjectDynCreate");
     //d.TraceDetail("Entering... archive offset = %d\n", mpArchive->CurrentPos());
 
-    int32  size, objIdx;
-    uint32 crc;
+    int32_t  size, objIdx;
+    uint32_t crc;
     // first, get the type...
-    mpArchive->ReadInt32(reinterpret_cast<int32&>(crc));
+    mpArchive->ReadInt32(reinterpret_cast<int32_t&>(crc));
 
     // read in the version
-    int32 version;
+    int32_t version;
     mpArchive->ReadInt32(version);
 
     // read in the size and the index...
     mpArchive->ReadInt32(size);
 
     // Save the position so we can seek correctly later on
-    //int64 sizePos = mpArchive->CurrentPos();
+    //int64_t sizePos = mpArchive->CurrentPos();
 
     mpArchive->ReadInt32(objIdx);
     if (objIdx == 0)
@@ -272,7 +272,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
             TOSTRINGSTREAM str;
 #ifdef DEBUG
             // Let's only report the actual crc in debug mode
-            str << (int32)crc << std::ends;
+            str << (int32_t)crc << std::ends;
 #endif
             ThrowAndAssert(eSerializerUnknownType(str.str(), mFileName, eSerializer::TY_FILE));
         }
@@ -300,7 +300,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
                 // unable to find the creation function...
                 d.TraceError("Unable to find creation function for ref counted object %d\n", crc);
                 TOSTRINGSTREAM str;
-                str << (int32)crc << std::ends;
+                str << (int32_t)crc << std::ends;
                 ThrowAndAssert(eSerializerUnknownType(str.str(), mFileName, eSerializer::TY_FILE));
             }
             pObj = ((*rci).second)();
@@ -342,9 +342,9 @@ void cSerializerImpl::WriteObject(const iTypedSerializable* pObj)
     //d.TraceDetail("Entering...  Archive Offset = %d\n", mpArchive->CurrentPos());
     d.TraceDetail("             Object Type    = %s\n", pObj->GetType().AsString());
     // first, we write out the header, which consists of the following:
-    // int32 refrence into mTypeArray, indicating the object's type
-    // int32 version of stored data
-    // int32 size of the chunk (counting from this point; not including the previous int32
+    // int32_t refrence into mTypeArray, indicating the object's type
+    // int32_t version of stored data
+    // int32_t size of the chunk (counting from this point; not including the previous int32
     // data  the object data
     ASSERT(mpArchive != 0);
 
@@ -375,16 +375,16 @@ void cSerializerImpl::WriteObject(const iTypedSerializable* pObj)
     mpArchive->WriteInt32(0); // place holder for type array index
     mpArchive->WriteInt32(pObj->Version());
     // write a placeholder for the size; we will come back and fill in the right value later...
-    //int64 sizePos = mpArchive->CurrentPos();
+    //int64_t sizePos = mpArchive->CurrentPos();
     mpArchive->WriteInt32(0xffffffff);
 
     // write out the object!
     pObj->Write(this);
 
     // finally, we need to go back and patch up the size...
-    //int64 returnPos = mpArchive->CurrentPos();
+    //int64_t returnPos = mpArchive->CurrentPos();
     //mpArchive->Seek(sizePos, cBidirArchive::BEGINNING);
-    //mpArchive->WriteInt32((int32)(returnPos - sizePos - sizeof(int32)));
+    //mpArchive->WriteInt32((int32_t)(returnPos - sizePos - sizeof(int32_t)));
     //mpArchive->Seek(returnPos, cBidirArchive::BEGINNING);
 }
 
@@ -394,7 +394,7 @@ void cSerializerImpl::ReadObject(iTypedSerializable* pObj)
     //d.TraceDetail("Entering... archive offset = %d\n", mpArchive->CurrentPos());
 
     // NOTE -- type index stuff is gone; see the comment in WriteObject()
-    int32 /*typeIdx,*/ size;
+    int32_t /*typeIdx,*/ size;
     // first, get the type...
     /*
     mpArchive->ReadInt32(typeIdx);
@@ -408,7 +408,7 @@ void cSerializerImpl::ReadObject(iTypedSerializable* pObj)
     */
 
     // read in the version
-    int32 dummy, version;
+    int32_t dummy, version;
     mpArchive->ReadInt32(dummy); // old type array index
     mpArchive->ReadInt32(version);
 
@@ -424,7 +424,7 @@ void cSerializerImpl::ReadObject(iTypedSerializable* pObj)
     }
 
     // remember current position
-    //int64 sizePos = mpArchive->CurrentPos();
+    //int64_t sizePos = mpArchive->CurrentPos();
 
     // read in the object!
     pObj->Read(this, version);
@@ -437,17 +437,17 @@ void cSerializerImpl::ReadObject(iTypedSerializable* pObj)
 ///////////////////////////////////////////////////////////////////////////////
 // archive wrapper
 ///////////////////////////////////////////////////////////////////////////////
-void cSerializerImpl::ReadInt16(int16& ret)
+void cSerializerImpl::ReadInt16(int16_t& ret)
 {
     mpArchive->ReadInt16(ret);
 }
 
-void cSerializerImpl::ReadInt32(int32& ret)
+void cSerializerImpl::ReadInt32(int32_t& ret)
 {
     mpArchive->ReadInt32(ret);
 }
 
-void cSerializerImpl::ReadInt64(int64& ret)
+void cSerializerImpl::ReadInt64(int64_t& ret)
 {
     mpArchive->ReadInt64(ret);
 }
@@ -462,17 +462,17 @@ int cSerializerImpl::ReadBlob(void* pBlob, int count)
     return mpArchive->ReadBlob(pBlob, count);
 }
 
-void cSerializerImpl::WriteInt16(int16 i)
+void cSerializerImpl::WriteInt16(int16_t i)
 {
     mpArchive->WriteInt16(i);
 }
 
-void cSerializerImpl::WriteInt32(int32 i)
+void cSerializerImpl::WriteInt32(int32_t i)
 {
     mpArchive->WriteInt32(i);
 }
 
-void cSerializerImpl::WriteInt64(int64 i)
+void cSerializerImpl::WriteInt64(int64_t i)
 {
     mpArchive->WriteInt64(i);
 }

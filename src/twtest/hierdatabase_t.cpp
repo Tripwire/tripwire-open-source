@@ -48,7 +48,7 @@ static void AddFile(cHierDatabase::iterator& iter, const TSTRING& filename, bool
 
     if (with_data)
     {
-        iter.SetData((int8*)g_block_data.c_str(), g_block_data.length() + 1);
+        iter.SetData((int8_t*)g_block_data.c_str(), g_block_data.length() + 1);
     }
 
     TEST(iter.HasData() == with_data);
@@ -139,7 +139,7 @@ static void AssertData(cHierDatabase::iterator& iter, const TSTRING& filename, b
 
         if (has_data)
         {
-            int32   dummyLength;
+            int32_t   dummyLength;
             TSTRING read_str((TCHAR*)iter.GetData(dummyLength));
             TEST(read_str == g_block_data);
         }

@@ -102,10 +102,10 @@ typedef unsigned short word16;
 
 #if defined(_MSC_VER)
 
-typedef unsigned __int32 word;
-typedef unsigned __int64 dword;
+typedef unsigned __int32_t word;
+typedef unsigned __int64_t dword;
 #define WORD64_AVAILABLE
-typedef unsigned __int64 word64;
+typedef unsigned __int64_t word64;
 #define W64LIT(x) x##i64
 
 #elif defined(_KCC)

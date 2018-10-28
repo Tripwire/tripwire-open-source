@@ -39,11 +39,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 // CalcHash
 ///////////////////////////////////////////////////////////////////////////////
-uint32 eError::CalcHash(const char* name)
+uint32_t eError::CalcHash(const char* name)
 {
     CRC_INFO crc;
     crcInit(crc);
-    crcUpdate(crc, (const uint8*)name, strlen(name));
+    crcUpdate(crc, (const uint8_t*)name, strlen(name));
     crcFinit(crc);
     return crc.crc;
 }

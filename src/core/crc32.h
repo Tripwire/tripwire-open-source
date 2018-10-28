@@ -37,14 +37,14 @@ class cArchive;
 
 typedef struct 
 {
-    uint32 crc;
-    uint32 cbTotalLen;
+    uint32_t crc;
+    uint32_t cbTotalLen;
 }
 CRC_INFO;
  
 // must have 8-bit bytes
 void crcInit  ( CRC_INFO& crcInfo );
-void crcUpdate( CRC_INFO& crcInfo, const uint8* pbData, int cbDataLen );
+void crcUpdate( CRC_INFO& crcInfo, const uint8_t* pbData, int cbDataLen );
 void crcFinit ( CRC_INFO& crcInfo );
 
 

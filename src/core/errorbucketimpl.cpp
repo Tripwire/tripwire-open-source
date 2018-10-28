@@ -77,7 +77,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
     if (errStr.empty())
     {
         TOSTRINGSTREAM strm;
-        ASSERT(sizeof(uint32) == sizeof(unsigned int)); // for cast on next line
+        ASSERT(sizeof(uint32_t) == sizeof(unsigned int)); // for cast on next line
         strm << _T("Unknown Error ID ") << (unsigned int)error.GetID();
         errStr = strm.str();
     }
@@ -189,7 +189,7 @@ void cErrorQueue::Clear()
     mList.clear();
 }
 
-int cErrorQueue::GetNumErrors() const
+cErrorQueue::ListType::size_type cErrorQueue::GetNumErrors() const
 {
     return mList.size();
 }
@@ -234,19 +234,19 @@ const ePoly& cErrorQueueIter::GetError() const
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cErrorQueue::Read(iSerializer* pSerializer, int32 version)
+void cErrorQueue::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("ErrorQueue Read")));
 
-    int32 size;
+    int32_t size;
     mList.clear();
     pSerializer->ReadInt32(size);
     for (int i = 0; i < size; ++i)
     {
-        int32   errorNumber;
+        int32_t   errorNumber;
         TSTRING errorString;
-        int32   flags;
+        int32_t   flags;
 
         pSerializer->ReadInt32(errorNumber);
         pSerializer->ReadString(errorString);

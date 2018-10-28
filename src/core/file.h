@@ -106,7 +106,7 @@ public:
     /************ User Interface **************************/
 
     // Both Open methods ALWAYS open files in BINARY mode!
-    void Open(const TSTRING& sFileName, uint32 flags = OPEN_READ); //throw(eFile)
+    void Open(const TSTRING& sFileName, uint32_t flags = OPEN_READ); //throw(eFile)
     void Close(void);                                              //throw(eFile)
     bool IsOpen(void) const;
 

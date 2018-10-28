@@ -127,7 +127,7 @@ void TestFCOReport()
         /*
         //Store the time taken to generate the test report:
         time_finish = time(dummy_arg);
-        report.SetCreationTime( (int64)difftime(time_finish, time_begin));
+        report.SetCreationTime( (int64_t)difftime(time_finish, time_begin));
         d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
         */
 

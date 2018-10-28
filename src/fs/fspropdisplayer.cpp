@@ -259,7 +259,7 @@ void cFSPropDisplayer::InitForProp(const iFCO* const pFCO, const int propIdx)
     {
     case cFSPropSet::PROP_UID:
     {
-        const int64& i64UID =
+        const int64_t& i64UID =
             static_cast<const cFCOPropInt64*>(pFCO->GetPropSet()->GetPropAt(cFSPropSet::PROP_UID))->GetValue();
 
         // check if prop is in table.  if it is, then don't hit the FS
@@ -278,7 +278,7 @@ void cFSPropDisplayer::InitForProp(const iFCO* const pFCO, const int propIdx)
     break;
     case cFSPropSet::PROP_GID:
     {
-        const int64& i64GID =
+        const int64_t& i64GID =
             static_cast<const cFCOPropInt64*>(pFCO->GetPropSet()->GetPropAt(cFSPropSet::PROP_GID))->GetValue();
 
         // check if prop is in table.  if it is, then don't hit the FS
@@ -341,7 +341,7 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
         case cFSPropSet::PROP_CTIME:
         {
             const cFCOPropInt64* const pTypedProp = static_cast<const cFCOPropInt64*>(pProp);
-            int64                      i64        = pTypedProp->GetValue();
+            int64_t                    i64        = pTypedProp->GetValue();
             cTWLocale::FormatTime(i64, strProp);
         }
         break;
@@ -360,7 +360,8 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
             if (GetUsername(pTypedProp->GetValue(), strProp))
             {
                 TSTRINGSTREAM ostr;
-                ostr << strProp << _T(" (") << (int32)pTypedProp->GetValue() << _T(")");
+                //TODO: can we get rid of this cast now?
+                ostr << strProp << _T(" (") << (int32_t)pTypedProp->GetValue() << _T(")");
                 strProp = ostr.str();
             }
             else
@@ -374,7 +375,8 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
             if (GetGroupname(pTypedProp->GetValue(), strProp))
             {
                 TSTRINGSTREAM ostr;
-                ostr << strProp << _T(" (") << (int32)pTypedProp->GetValue() << _T(")");
+                //TODO: can we get rid of this cast now?
+                ostr << strProp << _T(" (") << (int32_t)pTypedProp->GetValue() << _T(")");
                 strProp = ostr.str();
             }
             else
@@ -422,21 +424,21 @@ void cFSPropDisplayer::Write(iSerializer* pSerializer) const
     }
 }
 
-void cFSPropDisplayer::Read(iSerializer* pSerializer, int32 version)
+void cFSPropDisplayer::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("Property Displayer Read")));
 
     mpvPropsWeDisplay.Read(pSerializer);
 
-    int32 iDummy;
+    int32_t iDummy;
     pSerializer->ReadInt32(iDummy);
     mbLazy = iDummy == 0 ? false : true;
 
     //  stuff
     {
-        int32   nValues;
-        int64   key;
+        int32_t nValues;
+        int64_t key;
         TSTRING val;
         int     i;
 
@@ -465,7 +467,7 @@ void cFSPropDisplayer::Read(iSerializer* pSerializer, int32 version)
 // Lookup functions
 //////////////////////////////////////////////
 
-bool cFSPropDisplayer::GetUsername(const int64& i64uid, TSTRING& tstrUsername) const
+bool cFSPropDisplayer::GetUsername(const int64_t& i64uid, TSTRING& tstrUsername) const
 {
     bool fFound = false;
 
@@ -480,7 +482,7 @@ bool cFSPropDisplayer::GetUsername(const int64& i64uid, TSTRING& tstrUsername) c
     return (fFound && !tstrUsername.empty());
 }
 
-bool cFSPropDisplayer::GetGroupname(const int64& i64gid, TSTRING& tstrGroupname) const
+bool cFSPropDisplayer::GetGroupname(const int64_t& i64gid, TSTRING& tstrGroupname) const
 {
     bool fFound = false;
 
@@ -499,14 +501,14 @@ bool cFSPropDisplayer::GetGroupname(const int64& i64gid, TSTRING& tstrGroupname)
 // Addition functions
 //////////////////////////////////////////////
 
-bool cFSPropDisplayer::AddUsernameMapping(const int64& i64uid, const TSTRING& tstrUsername)
+bool cFSPropDisplayer::AddUsernameMapping(const int64_t& i64uid, const TSTRING& tstrUsername)
 {
     std::pair<INT64_TO_STRING_MAP::iterator, bool> ret =
         uidToUsername.insert(INT64_TO_STRING_MAP::value_type(i64uid, tstrUsername));
     return (ret.second = false); // returns true if key didn't exist before
 }
 
-bool cFSPropDisplayer::AddGroupnameMapping(const int64& i64gid, const TSTRING& tstrGroupname)
+bool cFSPropDisplayer::AddGroupnameMapping(const int64_t& i64gid, const TSTRING& tstrGroupname)
 {
     std::pair<INT64_TO_STRING_MAP::iterator, bool> ret =
         gidToGroupname.insert(INT64_TO_STRING_MAP::value_type(i64gid, tstrGroupname));

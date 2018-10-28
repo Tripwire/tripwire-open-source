@@ -119,7 +119,7 @@ static void util_ProcessDir(
 // Execute
 ///////////////////////////////////////////////////////////////////////////////
 void cGenerateDb::Execute(
-    const cFCOSpecList& specList, cHierDatabase& db, iFCOPropDisplayer* pPD, cErrorBucket* pBucket, uint32 flags)
+    const cFCOSpecList& specList, cHierDatabase& db, iFCOPropDisplayer* pPD, cErrorBucket* pBucket, uint32_t flags)
 {
     // TODO -- assert the db is empty or clear it out myself!
 

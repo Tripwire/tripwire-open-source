@@ -43,11 +43,7 @@
 #include "types.h"
 #endif
 
-#if WCHAR_IS_16_BITS
-typedef unsigned short WCHAR16;
-#else
-typedef uint16 WCHAR16; // unix has 4 byte wchar_t, but we want to standardize on 16 bit wide chars
-#endif
+typedef uint16_t WCHAR16; // unix has 4 byte wchar_t, but we want to standardize on 16 bit wide chars
 
 //=============================================================================
 // class wc16_string

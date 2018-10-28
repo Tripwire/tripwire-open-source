@@ -57,8 +57,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-const uint32 EL_GAMAL_SIG_PUBLIC_MAGIC_NUM  = 0x7ae2c945;
-const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
+const uint32_t EL_GAMAL_SIG_PUBLIC_MAGIC_NUM  = 0x7ae2c945;
+const uint32_t EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
 
 ///////////////////////////////////////////////////////////////////////////////
 // macros for reading and writing integers
@@ -68,7 +68,7 @@ const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
     ASSERT(len >= 0 && len < 9000);            \
     i32 = tw_htonl(len);                       \
     memcpy(pOut, &i32, sizeof(i32));           \
-    pOut += sizeof(int32);                     \
+    pOut += sizeof(int32_t);                     \
     I.Encode(pOut, len, Integer::UNSIGNED);    \
     pOut += len;
 
@@ -76,7 +76,7 @@ const uint32 EL_GAMAL_SIG_PRIVATE_MAGIC_NUM = 0x0d0ffa12;
     memcpy(&i32, pIn, sizeof(i32));        \
     len = tw_ntohl(i32);                   \
     ASSERT(len >= 0 && len < 9000);        \
-    pIn += sizeof(int32);                  \
+    pIn += sizeof(int32_t);                  \
     I.Decode(pIn, len, Integer::UNSIGNED); \
     pIn += len;
 
@@ -255,7 +255,7 @@ void cTripleDES::ProcessBlock(const void* indata, void* outdata)
 class cRSAPrivateKey_i
 {
 public:
-    int16          mKeyLength;
+    int16_t        mKeyLength;
     RSAPrivateKey* mpKey;
 };
 
@@ -270,15 +270,15 @@ cRSAPrivateKey::cRSAPrivateKey(void* pDataStream)
 {
     mpData = new cRSAPrivateKey_i;
 
-    int32 len;
-    int32 i32;
-    int16 i16;
+    int32_t len;
+    int32_t i32;
+    int16_t i16;
 
     uint8_t* pIn = (uint8_t*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
-    pIn += sizeof(int16);
+    pIn += sizeof(int16_t);
 
     Integer n, e, d, p, q, dp, dq, u;
 
@@ -316,16 +316,16 @@ int cRSAPrivateKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().IsPositive());
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterU().IsPositive());
 
-    int len = sizeof(int16) + mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetPrime1().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetPrime2().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) +
+    int len = sizeof(int16_t) + mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetPrime1().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetPrime2().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) +
               mpData->mpKey->GetTrapdoorFunction().GetDecryptionExponent().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetParameterDP().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetParameterU().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32);
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetParameterDP().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetParameterU().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t);
 
     return len;
 }
@@ -344,12 +344,12 @@ void cRSAPrivateKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterU().IsPositive());
 
     uint8_t* pOut = (uint8_t*)pDataStream;
-    int16 i16;
-    int32 i32;
+    int16_t i16;
+    int32_t i32;
 
     i16 = tw_htons(mpData->mKeyLength);
     memcpy(pOut, &i16, sizeof(i16));
-    pOut += sizeof(int16);
+    pOut += sizeof(int16_t);
 
     Integer n, e, d, p, q, dp, dq, u;
 
@@ -362,13 +362,13 @@ void cRSAPrivateKey::Write(void* pDataStream) const
     dq = mpData->mpKey->GetTrapdoorFunction().GetParameterDQ();
     u  = mpData->mpKey->GetTrapdoorFunction().GetParameterU();
 
-    int32 len;
+    int32_t len;
 
 #    define WRITE_INTEGER(I)                       \
         len = I.MinEncodedSize(Integer::UNSIGNED); \
         i32 = tw_htonl(len);                       \
         memcpy(pOut, &i32, sizeof(i32));           \
-        pOut += sizeof(int32);                     \
+        pOut += sizeof(int32_t);                     \
         I.Encode(pOut, len, Integer::UNSIGNED);    \
         pOut += len;
 
@@ -387,7 +387,7 @@ void cRSAPrivateKey::Write(void* pDataStream) const
 class cRSAPublicKey_i
 {
 public:
-    int16         mKeyLength;
+    int16_t       mKeyLength;
     RSAPublicKey* mpKey;
 };
 
@@ -403,15 +403,15 @@ cRSAPublicKey::cRSAPublicKey(void* pDataStream)
     mpData = new cRSAPublicKey_i;
 
     Integer n, e;
-    int32   len;
-    int16   i16;
-    int32   i32;
+    int32_t   len;
+    int16_t   i16;
+    int32_t   i32;
 
     uint8_t* pIn = (uint8_t*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
-    pIn += sizeof(int16);
+    pIn += sizeof(int16_t);
 
     READ_INTEGER(n);
     READ_INTEGER(e);
@@ -449,9 +449,9 @@ int cRSAPublicKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetModulus().IsPositive());
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetExponent().IsPositive());
 
-    int len = sizeof(int16) + mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32);
+    int len = sizeof(int16_t) + mpData->mpKey->GetTrapdoorFunction().GetModulus().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetTrapdoorFunction().GetExponent().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t);
 
     return len;
 }
@@ -463,20 +463,20 @@ void cRSAPublicKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetModulus().IsPositive());
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetExponent().IsPositive());
 
-    int16 i16;
-    int32 i32;
+    int16_t i16;
+    int32_t i32;
     uint8_t* pOut = (uint8_t*)pDataStream;
 
     i16 = tw_htons(mpData->mKeyLength);
     memcpy(pOut, &i16, sizeof(i16));
-    pOut += sizeof(int16);
+    pOut += sizeof(int16_t);
 
     Integer n, e;
 
     n = mpData->mpKey->GetTrapdoorFunction().GetModulus();
     e = mpData->mpKey->GetTrapdoorFunction().GetExponent();
 
-    int32 len;
+    int32_t len;
 
     WRITE_INTEGER(n);
     WRITE_INTEGER(e);
@@ -553,8 +553,8 @@ void cRSA::Init(KeySize keysize)
     // Create a random seed and a key
     uint8_t seed[MD5::DATASIZE];
     uint8_t deskey[TripleDES_Encryption::KEYLENGTH];
-    RandomizeBytes((int8*)seed, MD5::DATASIZE);
-    RandomizeBytes((int8*)deskey, TripleDES_Encryption::KEYLENGTH);
+    RandomizeBytes((int8_t*)seed, MD5::DATASIZE);
+    RandomizeBytes((int8_t*)deskey, TripleDES_Encryption::KEYLENGTH);
 
     mpData->mpRNG = new X917RNG(new TripleDES_Encryption(deskey), seed);
 }
@@ -720,7 +720,7 @@ void cRSA::GenerateKeys(cRSAPrivateKey*& retPrivate, cRSAPublicKey*& retPublic)
 class cElGamalSigPrivateKey_i
 {
 public:
-    int16                 mKeyLength;
+    int16_t               mKeyLength;
     ElGamalSigPrivateKey* mpKey;
 };
 
@@ -735,20 +735,20 @@ cElGamalSigPrivateKey::cElGamalSigPrivateKey(void* pDataStream)
 {
     mpData = new cElGamalSigPrivateKey_i;
 
-    int32  len;
-    int32  i32;
-    int16  i16;
-    uint32 magicNum;
+    int32_t  len;
+    int32_t  i32;
+    int16_t  i16;
+    uint32_t magicNum;
 
     uint8_t* pIn = (uint8_t*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
-    pIn += sizeof(int16);
+    pIn += sizeof(int16_t);
 
     memcpy(&i32, pIn, sizeof(i32));
     magicNum = tw_ntohl(i32);
-    pIn += sizeof(int32);
+    pIn += sizeof(int32_t);
 
     if (magicNum != EL_GAMAL_SIG_PRIVATE_MAGIC_NUM)
         ThrowAndAssert(eArchiveOpen());
@@ -783,11 +783,11 @@ int cElGamalSigPrivateKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
     ASSERT(mpData->mpKey->GetParameterX().IsPositive());
 
-    int len = sizeof(int16) + sizeof(int32) + mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterG().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterY().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterX().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32);
+    int len = sizeof(int16_t) + sizeof(int32_t) + mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t) +
+              mpData->mpKey->GetParameterG().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t) +
+              mpData->mpKey->GetParameterY().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t) +
+              mpData->mpKey->GetParameterX().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t);
 
     return len;
 }
@@ -803,16 +803,16 @@ void cElGamalSigPrivateKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetParameterX().IsPositive());
 
     uint8_t* pOut = (uint8_t*)pDataStream;
-    int16 i16;
-    int32 i32;
+    int16_t i16;
+    int32_t i32;
 
     i16 = tw_htons(mpData->mKeyLength);
     memcpy(pOut, &i16, sizeof(i16));
-    pOut += sizeof(int16);
+    pOut += sizeof(int16_t);
 
     i32 = tw_htonl(EL_GAMAL_SIG_PRIVATE_MAGIC_NUM);
     memcpy(pOut, &i32, sizeof(i32));
-    pOut += sizeof(int32);
+    pOut += sizeof(int32_t);
 
     Integer p, q, g, y, x;
 
@@ -822,7 +822,7 @@ void cElGamalSigPrivateKey::Write(void* pDataStream) const
     y = mpData->mpKey->GetParameterY();
     x = mpData->mpKey->GetParameterX();
 
-    int32 len;
+    int32_t len;
 
     WRITE_INTEGER(p);
     WRITE_INTEGER(q);
@@ -836,7 +836,7 @@ void cElGamalSigPrivateKey::Write(void* pDataStream) const
 class cElGamalSigPublicKey_i
 {
 public:
-    int16                mKeyLength;
+    int16_t              mKeyLength;
     ElGamalSigPublicKey* mpKey;
 };
 
@@ -851,21 +851,21 @@ cElGamalSigPublicKey::cElGamalSigPublicKey(void* pDataStream)
 {
     mpData = new cElGamalSigPublicKey_i;
 
-    Integer p, q, g, y;
-    int32   len;
-    int16   i16;
-    int32   i32;
-    uint32  magicNum;
+    Integer   p, q, g, y;
+    int32_t   len;
+    int16_t   i16;
+    int32_t   i32;
+    uint32_t  magicNum;
 
     uint8_t* pIn = (uint8_t*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
-    pIn += sizeof(int16);
+    pIn += sizeof(int16_t);
 
     memcpy(&i32, pIn, sizeof(i32));
     magicNum = tw_ntohl(i32);
-    pIn += sizeof(int32);
+    pIn += sizeof(int32_t);
 
     if (magicNum != EL_GAMAL_SIG_PUBLIC_MAGIC_NUM)
         ThrowAndAssert(eArchiveOpen());
@@ -910,10 +910,10 @@ int cElGamalSigPublicKey::GetWriteLen() const
     ASSERT(mpData->mpKey->GetParameterG().IsPositive());
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
 
-    int len = sizeof(int16) + sizeof(int32) + mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) +
-              sizeof(int32) + mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterG().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32) +
-              mpData->mpKey->GetParameterY().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32);
+    int len = sizeof(int16_t) + sizeof(int32_t) + mpData->mpKey->GetPrime().MinEncodedSize(Integer::UNSIGNED) +
+              sizeof(int32_t) + mpData->mpKey->GetParameterQ().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t) +
+              mpData->mpKey->GetParameterG().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t) +
+              mpData->mpKey->GetParameterY().MinEncodedSize(Integer::UNSIGNED) + sizeof(int32_t);
 
     return len;
 }
@@ -928,16 +928,16 @@ void cElGamalSigPublicKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
 
     uint8_t* pOut = (uint8_t*)pDataStream;
-    int16 i16;
-    int32 i32;
+    int16_t i16;
+    int32_t i32;
 
     i16 = tw_htons(mpData->mKeyLength);
     memcpy(pOut, &i16, sizeof(i16));
-    pOut += sizeof(int16);
+    pOut += sizeof(int16_t);
 
     i32 = tw_htonl(EL_GAMAL_SIG_PUBLIC_MAGIC_NUM);
     memcpy(pOut, &i32, sizeof(i32));
-    pOut += sizeof(int32);
+    pOut += sizeof(int32_t);
 
     Integer p, q, g, y;
 
@@ -946,7 +946,7 @@ void cElGamalSigPublicKey::Write(void* pDataStream) const
     g = mpData->mpKey->GetParameterG();
     y = mpData->mpKey->GetParameterY();
 
-    int32 len;
+    int32_t len;
 
     WRITE_INTEGER(p);
     WRITE_INTEGER(q);
@@ -1040,8 +1040,8 @@ void cElGamalSig::Init(KeySize keysize)
     // Create a random seed and a key
     uint8_t seed[SHA::DATASIZE];
     uint8_t deskey[TripleDES_Encryption::KEYLENGTH];
-    RandomizeBytes((int8*)seed, SHA::DATASIZE);
-    RandomizeBytes((int8*)deskey, TripleDES_Encryption::KEYLENGTH);
+    RandomizeBytes((int8_t*)seed,   SHA::DATASIZE);
+    RandomizeBytes((int8_t*)deskey, TripleDES_Encryption::KEYLENGTH);
 
     mpData->mpRNG = new X917RNG(new TripleDES_Encryption(deskey), seed);
 }
@@ -1095,7 +1095,7 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
     ASSERT(mpData != 0);
     ASSERT(mpData->mpPrivateKey != 0 || mpData->mpPublicKey != 0);
 
-    int8 shaSig[SHA::DIGESTSIZE];
+    int8_t shaSig[SHA::DIGESTSIZE];
 
     if (mpData->mpPrivateKey == 0 && mpData->mpPublicKey == 0)
         ThrowAndAssert(eInternal(_T("Signature Key length mismatch.")));
@@ -1111,7 +1111,7 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
 
         mpData->mSHA.CalculateDigest((uint8_t*)shaSig, (uint8_t*)outdata, PLAIN_BLOCK_SIZE);
 
-        RandomizeBytes((int8*)outdata + PLAIN_BLOCK_SIZE, GetBlockSizeCipher() - PLAIN_BLOCK_SIZE);
+        RandomizeBytes((int8_t*)outdata + PLAIN_BLOCK_SIZE, GetBlockSizeCipher() - PLAIN_BLOCK_SIZE);
         mpData->mpPrivateKey->mpData->mpKey->Sign(
             *mpData->mpRNG, (const uint8_t*)shaSig, SHA::DIGESTSIZE, (uint8_t*)outdata + PLAIN_BLOCK_SIZE);
 
@@ -1171,11 +1171,11 @@ void cElGamalSig::GenerateKeys(cElGamalSigPrivateKey*& retPrivate, cElGamalSigPu
 
     retPrivate                     = new cElGamalSigPrivateKey();
     retPrivate->mpData->mpKey      = pNewPrivateKey;
-    retPrivate->mpData->mKeyLength = (int16)mpData->mKeyBits;
+    retPrivate->mpData->mKeyLength = (int16_t)mpData->mKeyBits;
 
     retPublic                     = new cElGamalSigPublicKey();
     retPublic->mpData->mpKey      = pNewPublicKey;
-    retPublic->mpData->mKeyLength = (int16)mpData->mKeyBits;
+    retPublic->mpData->mKeyLength = (int16_t)mpData->mKeyBits;
 
 #ifdef DEBUG
     int l;
@@ -1248,7 +1248,7 @@ cHashedKey192::~cHashedKey192()
 /////////////////////////////////////////////////////////
 
 #if USE_DEV_URANDOM
-static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
+static bool randomize_by_device(const char* device_name, int8_t* destbuf, int len)
 {
     static int rng_device = -1;
 
@@ -1257,7 +1257,7 @@ static bool randomize_by_device(const char* device_name, int8* destbuf, int len)
 
     if (rng_device >= 0)
     {
-        int uint8_ts_read = read(rng_device, destbuf, len);
+        int bytes_read = read(rng_device, destbuf, len);
         if (bytes_read == len)
             return true;
     }
@@ -1271,7 +1271,7 @@ static bool gRandomizeBytesSeeded = false;
 ///////////////////////////////////////////////////////////////////////////////
 // void RandomizeBytes(byte* destbuf, int len) -- Fill a buffer with random bytes
 
-void RandomizeBytes(int8* destbuf, int len)
+void RandomizeBytes(int8_t* destbuf, int len)
 {
 #if USE_DEV_URANDOM
     if (randomize_by_device("/dev/urandom", destbuf, len))
@@ -1301,8 +1301,8 @@ void RandomizeBytes(int8* destbuf, int len)
         gRandomizeBytesSeeded = true;
     }
 
-    int i;
-    for (i = 0; i < len; ++i)
-        destbuf[i] = (uint8_t)((rand() * 256 / RAND_MAX) ^ 0xdc); // 0xdc came from random.org
+    for (int i = 0; i < len; ++i) {
+        destbuf[i] = (int8_t)((rand() * 256 / RAND_MAX) ^ 0xdc); // 0xdc came from random.org
+    }
 #endif
 }

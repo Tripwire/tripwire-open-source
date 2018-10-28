@@ -78,7 +78,7 @@ struct cFile_i
     int     m_fd;         //underlying file descriptor
     FILE*   mpCurrStream; //currently defined file stream
     TSTRING mFileName;    //the name of the file we are currently referencing.
-    uint32  mFlags;       //Flags used to open the file
+    uint32_t  mFlags;       //Flags used to open the file
 };
 
 //Ctor
@@ -132,10 +132,10 @@ cFile::~cFile()
 ///////////////////////////////////////////////////////////////////////////////
 
 #if !USES_DEVICE_PATH
-void cFile::Open(const TSTRING& sFileName, uint32 flags)
+void cFile::Open(const TSTRING& sFileName, uint32_t flags)
 {
 #else
-void cFile::Open(const TSTRING& sFileNameC, uint32 flags)
+void cFile::Open(const TSTRING& sFileNameC, uint32_t flags)
 {
     TSTRING sFileName = cDevicePath::AsNative(sFileNameC);
 #endif

@@ -271,7 +271,7 @@ void cIntegrityCheck::CompareFCOs(iFCO* pOldFCO, iFCO* pNewFCO)
     // construct the compare object and actually do the compare
     //
     cFCOCompare compareObj(propsToCheck);
-    uint32      result = compareObj.Compare(pOldFCO, pNewFCO);
+    uint32_t    result = compareObj.Compare(pOldFCO, pNewFCO);
 
     if ((result & cFCOCompare::PROPS_UNEQUAL) || (result & cFCOCompare::PROPS_NOT_ALL_VALID))
     {
@@ -451,7 +451,7 @@ cIntegrityCheck::~cIntegrityCheck()
 ///////////////////////////////////////////////////////////////////////////////
 // Execute
 ///////////////////////////////////////////////////////////////////////////////
-void cIntegrityCheck::Execute(uint32 flags)
+void cIntegrityCheck::Execute(uint32_t flags)
 {
     mFlags = flags;
     // create the data source iterator
@@ -557,7 +557,7 @@ void cIntegrityCheck::Execute(uint32 flags)
 ///////////////////////////////////////////////////////////////////////////////
 // ExecuteOnObjectList
 ///////////////////////////////////////////////////////////////////////////////
-void cIntegrityCheck::ExecuteOnObjectList(const std::list<cFCOName>& fcoNames, uint32 flags)
+void cIntegrityCheck::ExecuteOnObjectList(const std::list<cFCOName>& fcoNames, uint32_t flags)
 {
     iFCONameTranslator* pTrans = iTWFactory::GetInstance()->GetNameTranslator();
     //

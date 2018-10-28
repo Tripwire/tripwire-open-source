@@ -132,7 +132,7 @@ private:
 
     cHierDatabase::iterator     mDbIter;
     iSerRefCountObj::CreateFunc mFCOCreateFunc; // points to the function that creates the fcos we return
-    uint32                      mFlags;         // flags used for iteration
+    uint32_t                    mFlags;         // flags used for iteration
     cErrorBucket*               mpErrorBucket;
 };
 

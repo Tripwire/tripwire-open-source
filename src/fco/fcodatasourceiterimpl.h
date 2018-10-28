@@ -109,7 +109,7 @@ protected:
     cFCOName                mParentName;
     FCOList                 mPeers;
     FCOList::const_iterator mCurPos;
-    uint32                  mFlags;
+    uint32_t                mFlags;
 
     //-------------------------------------------------------------------------
     // helper methods

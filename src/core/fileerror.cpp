@@ -37,7 +37,7 @@
 #include "corestrings.h"
 
 // TODO: Make this use MakeFileError() for consistency
-eFileError::eFileError(const TSTRING& filename, const TSTRING& description, uint32 flags) : eError(_T(""), flags)
+eFileError::eFileError(const TSTRING& filename, const TSTRING& description, uint32_t flags) : eError(_T(""), flags)
 {
     mFilename = filename;
     mMsg      = description;

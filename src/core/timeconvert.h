@@ -62,13 +62,13 @@
 class cTimeUtil
 {
 public:
-    static int64 DateToTime(struct tm* ptm);
+    static int64_t DateToTime(struct tm* ptm);
     // simple conversion.  ptm is considered to be in localtime.
-    static struct tm* TimeToDateGMT(const int64& seconds);
+    static struct tm* TimeToDateGMT(const int64_t& seconds);
     // simple conversion
-    static struct tm* TimeToDateLocal(const int64& seconds);
+    static struct tm* TimeToDateLocal(const int64_t& seconds);
     // conversion with timezone and daylight
-    static int64 GetTime();
+    static int64_t GetTime();
     // returns current time in UTC
 };
 

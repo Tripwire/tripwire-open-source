@@ -57,7 +57,7 @@ public:
     std::string mString;
 
     virtual ~cSerializableNString(){};
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     DECLARE_TYPEDSERIALIZABLE()
@@ -72,7 +72,7 @@ public:
     std::string mString;
 
     virtual ~cSerializableWString(){};
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     DECLARE_TYPEDSERIALIZABLE()

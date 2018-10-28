@@ -68,7 +68,7 @@ static TSTRING util_GetWholeCmdLine(int argc, const TCHAR* argv[]);
 #if defined(HAVE_MALLOC_H)
 #include <malloc.h>
 #endif
-static int32    gCurAlloc=0, 
+static int32_t  gCurAlloc=0,
                 gMaxAlloc=0;
 void* operator new(size_t size)
 {

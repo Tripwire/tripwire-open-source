@@ -96,11 +96,11 @@ public:
     {
         mNumStarts = mStartTime = mTotalTime = 0;
     }
-    uint32 GetTotalTime() const
+    uint32_t GetTotalTime() const
     {
         return mTotalTime;
     }
-    uint32 GetNumTimesStarted() const
+    uint32_t GetNumTimesStarted() const
     {
         return mNumStarts;
     }
@@ -110,10 +110,10 @@ public:
     }
 
 private:
-    TSTRING mName;
-    uint32  mTotalTime;
-    uint32  mStartTime;
-    uint32  mNumStarts;
+    TSTRING   mName;
+    uint32_t  mTotalTime;
+    uint32_t  mStartTime;
+    uint32_t  mNumStarts;
 };
 
 
