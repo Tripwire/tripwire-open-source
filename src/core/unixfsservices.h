@@ -109,7 +109,7 @@ public:
 
     virtual bool GetCurrentUserName(TSTRING& tstrName) const;
 
-    virtual bool GetIPAddress(uint32& uiIPAddress);
+    virtual bool GetIPAddress(uint32_t& uiIPAddress);
 
 
     ////////////////////////////////////////
@@ -143,8 +143,8 @@ public:
     ////////////////////////////////////////
     // miscellaneous utility functions
     ////////////////////////////////////////
-    virtual void ConvertModeToString(uint64 perm, TSTRING& tstrPerm) const;
-    // takes a int64 permission (from stat) and changes it to look like UNIX's 'ls -l' (e.g. drwxrwxrwx)
+    virtual void ConvertModeToString(uint64_t perm, TSTRING& tstrPerm) const;
+    // takes a int64_t permission (from stat) and changes it to look like UNIX's 'ls -l' (e.g. drwxrwxrwx)
     virtual bool FullPath(TSTRING& fullPath, const TSTRING& relPath, const TSTRING& pathRelFrom = _T("")) const;
     // converts relPath into a fully qualified path, storing it in FullPath. If this
     // fails, false is returned.  if the path to which relPath is relative is not CWD, put it in pathRelFrom.

@@ -198,7 +198,7 @@ public:
     virtual TSTRING AsStringHex() const;
     virtual void    Copy(const iFCOProp* rhs);
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 protected:
@@ -225,13 +225,13 @@ public:
     virtual TSTRING AsStringHex() const;
     virtual void    Copy(const iFCOProp* rhs);
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 protected:
     virtual bool IsEqual(const iSignature& rhs) const;
 
-    uint64 mChecksum;
+    uint64_t mChecksum;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ public:
     virtual TSTRING AsStringHex() const;
     virtual void    Copy(const iFCOProp* rhs);
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 protected:
@@ -282,7 +282,7 @@ public:
     virtual TSTRING AsStringHex() const;
     virtual void    Copy(const iFCOProp* rhs);
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 protected:
@@ -294,10 +294,10 @@ protected:
     virtual bool IsEqual(const iSignature& rhs) const;
 #ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
     CC_MD5_CTX mMD5Info;
-    uint8      md5_digest[CC_MD5_DIGEST_LENGTH];
+    uint8_t    md5_digest[CC_MD5_DIGEST_LENGTH];
 #else
     MD5_CTX mMD5Info;
-    uint8   md5_digest[MD5_DIGEST_LENGTH];
+    uint8_t md5_digest[MD5_DIGEST_LENGTH];
 #endif
 };
 
@@ -319,7 +319,7 @@ public:
     virtual TSTRING AsStringHex() const;
     virtual void    Copy(const iFCOProp* rhs);
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0);
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0);
     virtual void Write(iSerializer* pSerializer) const;
 
 protected:
@@ -328,11 +328,11 @@ protected:
 #ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
     enum {SIG_UINT32_SIZE = CC_SHA1_DIGEST_LENGTH / 4};
     CC_SHA1_CTX mSHAInfo;
-    uint32      sha_digest[SIG_UINT32_SIZE];
+    uint32_t    sha_digest[SIG_UINT32_SIZE];
 #elif HAVE_OPENSSL_SHA_H
     enum {SIG_UINT32_SIZE = SHA_DIGEST_LENGTH / 4};
-    SHA_CTX mSHAInfo;
-    uint32  sha_digest[SIG_UINT32_SIZE];
+    SHA_CTX     mSHAInfo;
+    uint32_t    sha_digest[SIG_UINT32_SIZE];
 #else
     enum
     {
@@ -361,7 +361,7 @@ public:
     virtual TSTRING AsStringHex() const;
     virtual void    Copy(const iFCOProp* rhs);
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0);
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0);
     virtual void Write(iSerializer* pSerializer) const;
 
 protected:
@@ -373,7 +373,7 @@ protected:
     virtual bool IsEqual(const iSignature& rhs) const;
 
     haval_state mHavalState;
-    uint8       mSignature[SIG_BYTE_SIZE];
+    uint8_t     mSignature[SIG_BYTE_SIZE];
 };
 
 #endif // __SIGNATURE_H

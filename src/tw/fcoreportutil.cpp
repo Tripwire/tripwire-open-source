@@ -63,8 +63,8 @@ void cFCOReportUtil::CalculateHeaderInfo(cFCOReportHeader& reportHeader,
                                          const TSTRING&    configFilename,
                                          const TSTRING&    dbFilename,
                                          const TSTRING&    commandLineParams,
-                                         int64             createTime,
-                                         int64             lastDBUpdateTime)
+                                         int64_t           createTime,
+                                         int64_t           lastDBUpdateTime)
 {
     reportHeader.SetPolicyFilename(policyFilename);
     reportHeader.SetConfigFilename(configFilename);

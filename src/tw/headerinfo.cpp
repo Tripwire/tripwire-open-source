@@ -76,7 +76,7 @@ void cHeaderInfo::Clear()
 }
 
 
-void cHeaderInfo::Read(iSerializer* pSerializer, int32 version) // throw (eSerializer, eArchive)
+void cHeaderInfo::Read(iSerializer* pSerializer, int32_t version) // throw (eSerializer, eArchive)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("cHeaderInfo Read")));
@@ -138,7 +138,7 @@ void cGenreHeaderInfo::Clear()
     i32_ObjectsScanned = 0;
 }
 
-void cGenreHeaderInfo::Read(iSerializer* pSerializer, int32 version) // throw (eSerializer, eArchive)
+void cGenreHeaderInfo::Read(iSerializer* pSerializer, int32_t version) // throw (eSerializer, eArchive)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("cHeaderInfo Read")));
@@ -146,7 +146,7 @@ void cGenreHeaderInfo::Read(iSerializer* pSerializer, int32 version) // throw (e
     // read the prop displayer
     ASSERT(mpPropDisplayer == 0);
 
-    int32 fMakePD;
+    int32_t fMakePD;
     pSerializer->ReadInt32(fMakePD);
 
     if (fMakePD == 1)

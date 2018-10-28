@@ -142,7 +142,7 @@ bool cGenreSwitcher::IsGenreRegistered(cGenre::Genre g)
 
 bool cGenreSwitcher::IsGenreAppropriate(cGenre::Genre g)
 {
-    const uint32 platformMask = cGenre::PLATFORM_MASK_UNIX;
+    const uint32_t platformMask = cGenre::PLATFORM_MASK_UNIX;
     return ((platformMask & g) != 0);
 }
 

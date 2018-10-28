@@ -61,7 +61,7 @@ public:
     // gets and sets the property vector that indicates what properties the
     // object will consider in the comparisons.
 
-    uint32 Compare(const iFCO* pFco1, const iFCO* pFco2);
+    uint32_t Compare(const iFCO* pFco1, const iFCO* pFco2);
     // compares fco1 and fco2, only considering the properties specified set with
     // SetPropsToCmp(). The result of the comparison is a bitmask that is currently either
     // EQUAL or a combination of PROPS_NOT_ALL_VALID and PROPS_UNEQUAL. You can discover which

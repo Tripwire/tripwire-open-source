@@ -51,10 +51,10 @@ class eError;
 //-----------------------------------------------------------------------------
 // cErrorTable
 //-----------------------------------------------------------------------------
-class cErrorTable : public cMessages_<uint32, TCHAR>
+class cErrorTable : public cMessages_<uint32_t, TCHAR>
 {
 public:
-    typedef cMessages_<uint32, TCHAR> inherited;
+    typedef cMessages_<uint32_t, TCHAR> inherited;
 
     //
     // Convenience Methods

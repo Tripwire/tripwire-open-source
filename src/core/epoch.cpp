@@ -51,7 +51,7 @@ bool CheckEpoch()
     time_struct.tm_mday = 1;
     time_struct.tm_mon  = 0;
     time_struct.tm_year = 138;
-    int64 endoftime     = cTimeUtil::DateToTime(&time_struct);
+    int64_t endoftime     = cTimeUtil::DateToTime(&time_struct);
 
     if (time(0) > endoftime)
     {

@@ -113,7 +113,7 @@ iFCOProp::CmpResult cFCOUndefinedProp::Compare(const iFCOProp* rhs, iFCOProp::Op
     }
 }
 
-void cFCOUndefinedProp::Read(iSerializer* pSerializer, int32 version)
+void cFCOUndefinedProp::Read(iSerializer* pSerializer, int32_t version)
 {
     ThrowAndAssert(INTERNAL_ERROR("fcoundefprop.cpp"));
 }

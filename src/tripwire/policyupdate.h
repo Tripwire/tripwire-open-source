@@ -65,7 +65,7 @@ public:
                   cHierDatabase&      db,
                   cErrorBucket*       pBucket);
 
-    bool Execute(uint32 flags = 0); // throw (eError)
+    bool Execute(uint32_t flags = 0); // throw (eError)
         // if false is returned, then there was at least one conflict that came up during the policy
         // update, and if tripwire was run in secure mode then the policy update should fail.
 

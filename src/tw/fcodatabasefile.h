@@ -100,7 +100,7 @@ public:
     ///////////////////////////////
     // serialization interface
     ///////////////////////////////
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 

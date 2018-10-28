@@ -68,7 +68,7 @@ public:
     AlignMe();
 
 private:
-    uint8_t a[sizeof(int64) + ALIGN_SIZE]; // we want to be able to access a int64 at address [ALIGN_SIZE]
+    uint8_t a[sizeof(int64_t) + ALIGN_SIZE]; // we want to be able to access a int64_t at address [ALIGN_SIZE]
 };
 
 /////////////////////////////////////////////////////////
@@ -91,10 +91,10 @@ template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
 
     // this should choke if the CPU can't
     // handle misaligned memory access
-    int32* pi = (int32*)&a[ALIGN_SIZE];
+    int32_t* pi = (int32_t*)&a[ALIGN_SIZE];
     //TCOUT << _T("Testing alignment of an int32...") << std::endl;
     //TCOUT << _T("Reading...") << std::endl;
-    int32 i = *pi; // access memory for read
+    int32_t i = *pi; // access memory for read
     //TCOUT << _T("Read succeeded.") << std::endl;
     //TCOUT << _T("Writing...") << std::endl;
     *pi = i; // access memory for write
@@ -103,10 +103,10 @@ template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
 
     // this should choke if the CPU can't
     // handle misaligned memory access
-    int64* pb = (int64*)&a[ALIGN_SIZE];
+    int64_t* pb = (int64_t*)&a[ALIGN_SIZE];
     //TCOUT << _T("Testing alignment of an int64...") << std::endl;
     //TCOUT << _T("Reading...") << std::endl;
-    int64 I = *pb; // access memory for read
+    int64_t I = *pb; // access memory for read
     //TCOUT << _T("Read succeeded") << std::endl;
     //TCOUT << _T("Writing...") << std::endl;
     *pb = I; // access memory for write
@@ -152,7 +152,7 @@ void TestAlignment()
     // such accesses: it may have handled the
     // hardware interrupt that might have occured.
     // - - - - - - - - - - - - - - - - - - - - - -
-    uint8_t a[sizeof(int32) + sizeof(uint8_t)];
+    uint8_t a[sizeof(int32_t) + sizeof(uint8_t)];
 
     // this should be fine
     a[0] = 0xAB;
@@ -165,7 +165,7 @@ void TestAlignment()
 
     // this should choke if the CPU can't
     // handle misaligned memory access
-    int32* pi = (int32*)&a[1];
+    int32_t* pi = (int32_t*)&a[1];
     *pi       = *pi; // misaligned access (read and write)
 
     TCOUT << _T("Misaligned access OK.") << std::endl;
@@ -190,7 +190,7 @@ void TestAlignment()
 */
     // this should choke if the CPU can't
     // handle misaligned memory access
-    pi  = (int32*)&b[BYTE_ALIGN];
+    pi  = (int32_t*)&b[BYTE_ALIGN];
     *pi = *pi; // aligned (hopefully) access (read and write)
 
     /*    TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;
@@ -202,18 +202,18 @@ void TestAlignment()
 // work the way we think they do.
 void TestSizes()
 {
-    TEST(CanBeRepresentedAs(int8(), int8()));
-    TEST(!CanBeRepresentedAs(int8(), uint8()));
-    TEST(!CanBeRepresentedAs(uint8(), int8()));
-    TEST(CanBeRepresentedAs(uint8(), uint8()));
+    TEST(CanBeRepresentedAs(int8_t(),   int8_t()));
+    TEST(!CanBeRepresentedAs(int8_t(),  uint8_t()));
+    TEST(!CanBeRepresentedAs(uint8_t(), int8_t()));
+    TEST(CanBeRepresentedAs(uint8_t(),  uint8_t()));
 
-    TEST(CanBeRepresentedAs(int8(), int16()));
-    TEST(CanBeRepresentedAs(int16(), int32()));
-    TEST(CanBeRepresentedAs(int32(), int64()));
+    TEST(CanBeRepresentedAs(int8_t(),   int16_t()));
+    TEST(CanBeRepresentedAs(int16_t(),  int32_t()));
+    TEST(CanBeRepresentedAs(int32_t(),  int64_t()));
 
-    TEST(CanBeRepresentedAs(uint8(), uint16()));
-    TEST(CanBeRepresentedAs(uint16(), uint32()));
-    TEST(CanBeRepresentedAs(uint32(), uint64()));
+    TEST(CanBeRepresentedAs(uint8_t(),  uint16_t()));
+    TEST(CanBeRepresentedAs(uint16_t(), uint32_t()));
+    TEST(CanBeRepresentedAs(uint32_t(), uint64_t()));
 }
 
 /////////////////////////////////////////////////////////

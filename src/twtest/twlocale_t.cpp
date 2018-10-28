@@ -70,7 +70,7 @@ void TestItoa()
         //
         // setup
         //
-        int32   n = 123456;
+        int32_t   n = 123456;
         TSTRING str;
 
         //

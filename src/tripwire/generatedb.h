@@ -53,7 +53,7 @@ public:
                         cHierDatabase&      db,
                         iFCOPropDisplayer*  pPD,
                         cErrorBucket*       pBucket,
-                        uint32              flags = 0);
+                        uint32_t            flags = 0);
     // generates a tripwire database; this asserts that the database is open
 
     enum Flags

@@ -58,8 +58,8 @@ public:
                                     const TSTRING&    configFilename,
                                     const TSTRING&    dbFilename,
                                     const TSTRING&    commandLineParams,
-                                    int64             createTime,
-                                    int64             lastDBUpdateTime);
+                                    int64_t           createTime,
+                                    int64_t           lastDBUpdateTime);
 
     static void FinalizeReport(cFCOReport& rr);
     // call this when you're done adding to the report.

@@ -56,7 +56,7 @@ class cUpdateDb
 public:
     cUpdateDb(cHierDatabase& db, cFCOReport& report, cErrorBucket* pBucket);
 
-    bool Execute(uint32 flags = 0);
+    bool Execute(uint32_t flags = 0);
     // returns false if there were any conflicts in updating
     // the database
     // TODO -- what kind of exceptions can come up from here?

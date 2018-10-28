@@ -134,7 +134,7 @@ iFCOSpec* cFCOSpecList::Lookup(iFCOSpec* pSpec) const
     return NULL;
 }
 
-void cFCOSpecList::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecList::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Spec List")));
@@ -142,7 +142,7 @@ void cFCOSpecList::Read(iSerializer* pSerializer, int32 version)
     Clear();
 
     int   i;
-    int32 size;
+    int32_t size;
     pSerializer->ReadInt32(size);
 
     for (i = 0; i < size; ++i)

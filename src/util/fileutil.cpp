@@ -243,7 +243,7 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
     {
         BUF_SIZE = 4096
     };
-    int8 buf[BUF_SIZE];
+    int8_t buf[BUF_SIZE];
     int  nBytesRead;
 
     cFile srcFile, destFile;

@@ -74,7 +74,7 @@ public:
 
     //void TraceContents(int dl = -1) const;
 private:
-    uint64 mDev; // the device number of the last node reached through SeekTo()
+    uint64_t mDev; // the device number of the last node reached through SeekTo()
                  // if this is zero, then it is assumed to be uninitialized
 
     //-------------------------------------------------------------------------

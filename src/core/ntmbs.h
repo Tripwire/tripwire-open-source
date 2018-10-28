@@ -87,7 +87,7 @@ typedef const wchar_t* const_ntwcs_t;
 #    if WCHAR_IS_16_BITS
 typedef wchar_t dbchar_t; // Same size but use NT's type
 #    else
-typedef uint16      dbchar_t;
+typedef uint16_t        dbchar_t;
 #    endif
 typedef dbchar_t*       ntdbs_t;
 typedef const dbchar_t* const_ntdbs_t;
@@ -101,7 +101,7 @@ typedef const dbchar_t* const_ntdbs_t;
 #    if WCHAR_IS_32_BITS
 typedef wchar_t qbchar_t; // Same size but use NT's type
 #    else
-typedef uint32      qbchar_t;
+typedef uint32_t        qbchar_t;
 #    endif
 typedef qbchar_t*       ntqbs_t;
 typedef const qbchar_t* const_ntqbs_t;

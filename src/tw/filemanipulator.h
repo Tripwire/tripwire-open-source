@@ -100,7 +100,7 @@ public:
     // information for this file
     TSTRING               GetFileName() const;
     const cFileHeaderID*  GetHeaderID();    // returns NULL if error code is non-zero
-    uint32                GetFileVersion(); // throws eFileManipulator if error code is non-zero
+    uint32_t              GetFileVersion(); // throws eFileManipulator if error code is non-zero
     cFileHeader::Encoding GetEncoding();    // throws eFileManipulator if error code is non-zero
 
     // things you can do to this file

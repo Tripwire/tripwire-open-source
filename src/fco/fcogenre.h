@@ -54,7 +54,7 @@
 class cGenre
 {
 public:
-    typedef uint32 Genre;
+    typedef uint32_t Genre;
 
 
     //-----------------------------------------

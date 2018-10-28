@@ -211,7 +211,7 @@ void cTWInit::Init(const TSTRING& strArgv0)
                          // should call this function (cTWInit::Init) on startup
 
     // we require 8-bit bytes for some functionality
-    ASSERT(sizeof(byte) == sizeof(uint8));
+    ASSERT(sizeof(byte) == sizeof(uint8_t));
 
     //
     // set debug level

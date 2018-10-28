@@ -172,9 +172,9 @@ public:
     bool Clear(void);
     //Clears the entire table and sets all node pointers to NULL
     bool   IsEmpty(void) const;
-    uint32 Hash(const KEY_TYPE& key) const;
+    uint32_t Hash(const KEY_TYPE& key) const;
     //The hashing function, taken from old Tripwire
-    int32 GetNumValues() const
+    int32_t GetNumValues() const
     {
         return mValuesInTable;
     };
@@ -189,9 +189,9 @@ private:
     cHashTable(const cHashTable& rhs);     // not impl
     void operator=(const cHashTable& rhs); // not impl
 
-    node** mTable;
-    int    mTableSize;
-    int32  mValuesInTable;
+    node**   mTable;
+    int      mTableSize;
+    int32_t  mValuesInTable;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -506,12 +506,12 @@ bool cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::IsEmpty(void) const
 // Hash -- performs hashing on key, returns an integer index val.
 ////////////////////////////////////////////////////////////////////////////////
 template<class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
-uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash(const KEY_TYPE& key) const
+uint32_t cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash(const KEY_TYPE& key) const
 {
     CONVERTER   converter;
     int         len;
     const uint8_t* pb = converter(key, &len); //locates key
-    uint32      hindex;
+    uint32_t    hindex;
 
     hindex = *pb;
     while (len-- > 0)

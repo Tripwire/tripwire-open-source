@@ -67,7 +67,7 @@ private:
     // don't new or construct these on the stack
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eInternal)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eInternal)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eInternal)
         // These functions should never be called, and they will throw and eInternal if they are.
 };

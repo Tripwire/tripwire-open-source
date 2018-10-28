@@ -104,12 +104,12 @@ void cTWLocale::InitGlobalLocale()
 }
 
 /*
-TSTRING cTWLocale::FormatNumberAsHex( int32 i )
+TSTRING cTWLocale::FormatNumberAsHex( int32_t i )
 {
     //
     // preconditions
     //
-    ASSERT( sizeof( long ) >= sizeof( int32 ) ); // must be able to cast to 'long'
+    ASSERT( sizeof( long ) >= sizeof( int32_t ) ); // must be able to cast to 'long'
 
     //
     // convert long to a string
@@ -181,27 +181,27 @@ public:
 };
 
 /*
-TSTRING cTWLocale::FormatNumberClassic( int32 i )
+TSTRING cTWLocale::FormatNumberClassic( int32_t i )
 {
     TSTRING s;
     return cFormatNumberUtil< long, TCHAR >::Format( i, s, true );
 }
 
-int32 cTWLocale::FormatNumberClassic( const TSTRING& s )
+int32_t cTWLocale::FormatNumberClassic( const TSTRING& s )
 {
     return cFormatNumberUtil< long, TCHAR >::Format( s, true );
 }
 */
 
-TSTRING& cTWLocale::FormatNumber(uint64 ui, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(uint64_t ui, TSTRING& strBuf)
 {
-    // try to use the int64 version
-    if (ui <= (uint64)TSS_INT64_MAX)
-        return (FormatNumber((int64)ui, strBuf));
+    // try to use the int64_t version
+    if (ui <= (uint64_t)TSS_INT64_MAX)
+        return (FormatNumber((int64_t)ui, strBuf));
     else
     {
 #if IS_MSVC
-        // MSVC can't convert from uint64 to a double for some reason
+        // MSVC can't convert from uint64_t to a double for some reason
         strBuf = TSS_GetString(cCore, core::STR_NUMBER_TOO_BIG);
         return (strBuf);
 #else
@@ -211,11 +211,11 @@ TSTRING& cTWLocale::FormatNumber(uint64 ui, TSTRING& strBuf)
     }
 }
 
-TSTRING& cTWLocale::FormatNumber(int64 i, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(int64_t i, TSTRING& strBuf)
 {
-    // try to use the int32 version
-    if (i <= (int64)TSS_INT32_MAX)
-        return (FormatNumber((int32)i, strBuf));
+    // try to use the int32_t version
+    if (i <= (int64_t)TSS_INT32_MAX)
+        return (FormatNumber((int32_t)i, strBuf));
     else
     {
         ASSERT(std::numeric_limits<double>::max() >= TSS_INT64_MAX);
@@ -223,19 +223,19 @@ TSTRING& cTWLocale::FormatNumber(int64 i, TSTRING& strBuf)
     }
 }
 
-TSTRING& cTWLocale::FormatNumber(uint32 ui, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(uint32_t ui, TSTRING& strBuf)
 {
-    ASSERT(sizeof(unsigned long) >= sizeof(uint32)); // must be able to cast to 'ulong'
+    ASSERT(sizeof(unsigned long) >= sizeof(uint32_t)); // must be able to cast to 'ulong'
     return (cFormatNumberUtil<unsigned long, TCHAR>::Format((unsigned long)ui, strBuf));
 }
 
-TSTRING& cTWLocale::FormatNumber(int32 i, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(int32_t i, TSTRING& strBuf)
 {
-    ASSERT(sizeof(long) >= sizeof(int32)); // must be able to cast to 'long'
+    ASSERT(sizeof(long) >= sizeof(int32_t)); // must be able to cast to 'long'
     return (cFormatNumberUtil<long, TCHAR>::Format((long)i, strBuf));
 }
 
-TSTRING& cTWLocale::FormatTime(int64 t, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatTime(int64_t t, TSTRING& strBuf)
 {
     // clear return string
     strBuf.erase();

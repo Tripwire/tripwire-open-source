@@ -73,22 +73,22 @@ public:
     //
     // basic functionality
     //
-    static TSTRING& FormatNumber(int32 i, TSTRING& strBuf);
-    static TSTRING& FormatNumber(int64 i, TSTRING& strBuf);
-    static TSTRING& FormatNumber(uint32 ui, TSTRING& strBuf);
-    static TSTRING& FormatNumber(uint64 ui, TSTRING& strBuf);
+    static TSTRING& FormatNumber(int32_t   i, TSTRING& strBuf);
+    static TSTRING& FormatNumber(int64_t   i, TSTRING& strBuf);
+    static TSTRING& FormatNumber(uint32_t ui, TSTRING& strBuf);
+    static TSTRING& FormatNumber(uint64_t ui, TSTRING& strBuf);
     static TSTRING& FormatNumber(double d, TSTRING& strBuf);
     // returns the locale-specific representation of the given cardinal number
     /*
-    static TSTRING  FormatNumberClassic( int32 i );
-    static int32    FormatNumberClassic( const TSTRING& s );
+    static TSTRING  FormatNumberClassic( int32_t i );
+    static int32_t    FormatNumberClassic( const TSTRING& s );
         // returns the C-locale representation of the given cardinal number
 */
     //      disabled this since nobody's using it
-    //    static TSTRING  FormatNumberAsHex( int32 x );
+    //    static TSTRING  FormatNumberAsHex( int32_t x );
     // locale-independant
 
-    static TSTRING& FormatTime(int64 t, TSTRING& strBuf);
+    static TSTRING& FormatTime(int64_t t, TSTRING& strBuf);
     // returns the local time and date formatted according to the current locale.
     // t is the number of seconds elapsed since midnight (00:00:00),
     // January 1, 1970, coordinated universal time

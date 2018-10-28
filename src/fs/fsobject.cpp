@@ -107,9 +107,9 @@ void cFSObject::SetName(const cFCOName& name)
 ///////////////////////////////////////////////////////////////////////////////
 // GetCaps
 ///////////////////////////////////////////////////////////////////////////////
-uint32 cFSObject::GetCaps() const
+uint32_t cFSObject::GetCaps() const
 {
-    uint32 cap = mName.GetSize() > 1 ? CAP_CAN_HAVE_PARENT : 0;
+    uint32_t cap = mName.GetSize() > 1 ? CAP_CAN_HAVE_PARENT : 0;
 
     ASSERT(GetFSPropSet().GetValidVector().ContainsItem(cFSPropSet::PROP_FILETYPE));
     if (GetFSPropSet().GetFileType() == cFSPropSet::FT_DIR)
@@ -173,7 +173,7 @@ void cFSObject::AcceptVisitor(iFCOVisitor* pVisitor)
 }
 
 
-void cFSObject::Read(iSerializer* pSerializer, int32 version)
+void cFSObject::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("File System Object")));

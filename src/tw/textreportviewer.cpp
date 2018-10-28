@@ -1133,7 +1133,7 @@ void cTextReportViewer::OutputReportHeader()
 
     // TODO: ( start / end / elapsed ) time
     TSTRING tstrDummy;
-    int64   i64CreateTime = mpHeader->GetCreationTime();
+    int64_t i64CreateTime = mpHeader->GetCreationTime();
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString(cTW, tw::STR_R_CREATED_ON) << cTWLocale::FormatTime(i64CreateTime, tstrDummy).c_str()
              << endl;
@@ -1141,7 +1141,7 @@ void cTextReportViewer::OutputReportHeader()
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString(cTW, tw::STR_DB_LAST_UPDATE);
 
-    int64 i64LastDBUTime = mpHeader->GetLastDBUpdateTime();
+    int64_t i64LastDBUTime = mpHeader->GetLastDBUpdateTime();
     if (i64LastDBUTime == 0)
     {
         (*mpOut) << TSS_GetString(cTW, tw::STR_NEVER) << endl << endl;
@@ -1993,7 +1993,7 @@ void cTextReportViewer::GetChar()
 
     // initialize mCurrentChar
     mCurrentCharSize = 0;
-    for (uint32 i = 0; i < sizeof(mCurrentChar); i++)
+    for (uint32_t i = 0; i < sizeof(mCurrentChar); i++)
         mCurrentChar[i] = 0;
 
     static const std::istream::char_type eof = std::char_traits<char>::to_char_type(std::char_traits<char>::eof());

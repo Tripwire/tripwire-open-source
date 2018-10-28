@@ -194,7 +194,7 @@ cBlockFile::Block* cBlockFile::GetBlock(int blockNum) //throw (eArchive)
 #endif
     d.TraceNever("\tBlock %d was not in memory; paging it in\n", blockNum);
 
-    uint32                earliestTime = mvPagedBlocks[0].GetTimestamp();
+    uint32_t                earliestTime = mvPagedBlocks[0].GetTimestamp();
     BlockVector::iterator it           = mvPagedBlocks.begin();
     BlockVector::iterator earliestIter = it;
     ++it; // since we don't want to check the first one

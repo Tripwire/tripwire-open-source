@@ -80,9 +80,9 @@ int _getch(void);
 
 
 // constants
-static const char*  POLICY_FILE_MAGIC_8BYTE = "#POLTXT\n";
-static const char*  CONFIG_FILE_MAGIC_8BYTE = "#CFGTXT\n";
-static const uint32 CURRENT_FIXED_VERSION   = 0x02020000;
+static const char*    POLICY_FILE_MAGIC_8BYTE = "#POLTXT\n";
+static const char*    CONFIG_FILE_MAGIC_8BYTE = "#CFGTXT\n";
+static const uint32_t CURRENT_FIXED_VERSION   = 0x02020000;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -766,7 +766,7 @@ cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyTy
         passphrase.swapbytes();
 #endif
 
-        pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
+        pPrivateKey = keyFile.GetPrivateKey((int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
         if (pPrivateKey)
             return pPrivateKey;
@@ -808,7 +808,7 @@ cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyTy
         passphrase.swapbytes();
 #endif
 
-        pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
+        pPrivateKey = keyFile.GetPrivateKey((int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
         if (pPrivateKey)
             break;
@@ -844,7 +844,7 @@ void cTWUtil::CreatePrivateKey(
         passphrase.swapbytes();
 #endif
 
-        if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
+        if (proxy.AquireKey(keyFile, (int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
             return;
 
         // if we got here, then a passphrase was provided on the command line that
@@ -884,7 +884,7 @@ void cTWUtil::CreatePrivateKey(
         passphrase.swapbytes();
 #endif
 
-        if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
+        if (proxy.AquireKey(keyFile, (int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
             return;
 
         // tell the user that they entered the wrong passphrase
@@ -1150,7 +1150,7 @@ TSTRING cTWUtil::GetSystemName()
 
 TSTRING cTWUtil::GetIPAddress()
 {
-    uint32 ipaddress;
+    uint32_t ipaddress;
     if (iFSServices::GetInstance()->GetIPAddress(ipaddress) == false)
         return TSS_GetString(cTW, tw::STR_IP_UNKNOWN);
 

@@ -58,14 +58,14 @@
 #    define tzset()
 #endif
 
-struct tm* cTimeUtil::TimeToDateGMT(const int64& seconds)
+struct tm* cTimeUtil::TimeToDateGMT(const int64_t& seconds)
 {
     ASSERT(seconds < TIME_MAX); // this assumes time_t size is 32 bit.  Yikes!
     time_t t = static_cast<time_t>(seconds);
     return gmtime(&t);
 }
 
-struct tm* cTimeUtil::TimeToDateLocal(const int64& seconds)
+struct tm* cTimeUtil::TimeToDateLocal(const int64_t& seconds)
 {
     ASSERT(seconds < TIME_MAX); // this assumes time_t size is 32 bit.  Yikes!
     time_t t = static_cast<time_t>(seconds);
@@ -73,13 +73,13 @@ struct tm* cTimeUtil::TimeToDateLocal(const int64& seconds)
     return localtime(&t);
 }
 
-int64 cTimeUtil::DateToTime(struct tm* ptm)
+int64_t cTimeUtil::DateToTime(struct tm* ptm)
 {
     tzset();
     return mktime(ptm);
 }
 
-int64 cTimeUtil::GetTime()
+int64_t cTimeUtil::GetTime()
 {
     return time(NULL);
 }

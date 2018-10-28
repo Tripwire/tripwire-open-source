@@ -115,7 +115,7 @@ const cFileHeaderID* cFileManipulator::GetHeaderID()
     return &mFileHeader.GetID();
 }
 
-uint32 cFileManipulator::GetFileVersion()
+uint32_t cFileManipulator::GetFileVersion()
 {
     ASSERT(mbInit);
     if (!mbInit)

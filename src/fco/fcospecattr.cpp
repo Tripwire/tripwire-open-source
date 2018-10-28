@@ -42,12 +42,12 @@ IMPLEMENT_SERREFCOUNT(cFCOSpecAttr, _T("cFCOSpecAttr"), 0, 1)
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecAttr::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecAttr::Read(iSerializer* pSerializer, int32_t version)
 {
     pSerializer->ReadString(mName);
     pSerializer->ReadInt32(mSeverity);
 
-    int32   size;
+    int32_t   size;
     TSTRING str;
     pSerializer->ReadInt32(size);
     mEmailAddrs.clear();

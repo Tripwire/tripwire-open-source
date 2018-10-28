@@ -44,48 +44,40 @@
 //-----------------------------------------------------------------------------
 // standard TSS types
 //-----------------------------------------------------------------------------
-#if __cplusplus < 201103L
-typedef unsigned char uint8_t;
-#endif
+#if !HAVE_STDINT_H
+typedef unsigned char  uint8_t;
+typedef signed char    int8_t;
+typedef short          int16_t;
+typedef unsigned short uint16_t;
 
-typedef signed char    int8;
-typedef short          int16;
-typedef float          float32;
-typedef double         float64;
-typedef unsigned char  uint8;
-typedef unsigned short uint16;
+//typedef float          float32_t;
+//typedef double         float64_t;
 
-#if HAVE_STDINT_H
-typedef int32_t  int32;
-typedef uint32_t uint32;
-
-#elif SIZEOF_INT == 4
-typedef int           int32;
-typedef unsigned int  uint32;
+#if SIZEOF_INT == 4
+typedef int           int32_t;
+typedef unsigned int  uint32_t;
 
 #elif SIZEOF_LONG == 4
-typedef long               int32;
-typedef unsigned long      uint32;
+typedef long               int32_t;
+typedef unsigned long      uint32_t;
 #else
 #    error "I don't seem to have a 32-bit integer type on this system."
 #endif
 
-#if HAVE_STDINT_H
-typedef int64_t  int64;
-typedef uint64_t uint64;
-#elif SIZEOF_LONG == 8
-typedef long          int64;
-typedef unsigned long uint64;
+#if SIZEOF_LONG == 8
+typedef long          int64_t;
+typedef unsigned long uint64_t;
 #elif SIZEOF_LONG_LONG == 8
-typedef long long          int64;
-typedef unsigned long long uint64;
+typedef long long          int64_t;
+typedef unsigned long long uint64_t;
 #else
 #    error "I don't seem to have a 64-bit integer type on this system."
 #endif
+#endif // !HAVE_STDINT_H
 
 // other Win32 definitions
 //typedef uint16                UINT;
-//typedef uint32                DWORD;
+//typedef uint32_t                DWORD;
 
 //-----------------------------------------------------------------------------
 // Limits -- should be platform independent, right? ( assumes 2's complement numbers )
@@ -153,23 +145,23 @@ namespace std
 // Byte Swapping
 //-----------------------------------------------------------------------------
 
-inline int16 SWAPBYTES16(int16 i)
+inline int16_t SWAPBYTES16(int16_t i)
 {
 
-    return ((uint16)i >> 8) | ((uint16)i << 8);
+    return ((uint16_t)i >> 8) | ((uint16_t)i << 8);
 }
 
-inline int32 SWAPBYTES32(int32 i)
+inline int32_t SWAPBYTES32(int32_t i)
 {
-    return ((uint32)i >> 24) | (((uint32)i & 0x00ff0000) >> 8) | (((uint32)i & 0x0000ff00) << 8) | ((uint32)i << 24);
+    return ((uint32_t)i >> 24) | (((uint32_t)i & 0x00ff0000) >> 8) | (((uint32_t)i & 0x0000ff00) << 8) | ((uint32_t)i << 24);
 }
 
-inline int64 SWAPBYTES64(int64 i)
+inline int64_t SWAPBYTES64(int64_t i)
 {
-    return ((uint64)i >> 56) | (((uint64)i & 0x00ff000000000000ULL) >> 40) |
-           (((uint64)i & 0x0000ff0000000000ULL) >> 24) | (((uint64)i & 0x000000ff00000000ULL) >> 8) |
-           (((uint64)i & 0x00000000ff000000ULL) << 8) | (((uint64)i & 0x0000000000ff0000ULL) << 24) |
-           (((uint64)i & 0x000000000000ff00ULL) << 40) | ((uint64)i << 56);
+    return ((uint64_t)i >> 56) | (((uint64_t)i & 0x00ff000000000000ULL) >> 40) |
+           (((uint64_t)i & 0x0000ff0000000000ULL) >> 24) | (((uint64_t)i & 0x000000ff00000000ULL) >> 8) |
+           (((uint64_t)i & 0x00000000ff000000ULL) << 8) | (((uint64_t)i & 0x0000000000ff0000ULL) << 24) |
+           (((uint64_t)i & 0x000000000000ff00ULL) << 40) | ((uint64_t)i << 56);
 }
 
 
@@ -179,7 +171,7 @@ inline int64 SWAPBYTES64(int64 i)
 #        define tw_ntohl(x) (x)
 #        define tw_htons(x) (x)
 #        define tw_ntohs(x) (x)
-#        define tw_htonll(x) (x) // int64 versions
+#        define tw_htonll(x) (x) // int64_t versions
 #        define tw_ntohll(x) (x)
 
 #    else //!WORDS_BIGENDIAN
@@ -188,7 +180,7 @@ inline int64 SWAPBYTES64(int64 i)
 #        define tw_ntohl(x) SWAPBYTES32((x))
 #        define tw_htons(x) SWAPBYTES16((x))
 #        define tw_ntohs(x) SWAPBYTES16((x))
-#        define tw_htonll(x) SWAPBYTES64((x)) // int64 versions
+#        define tw_htonll(x) SWAPBYTES64((x)) // int64_t versions
 #        define tw_ntohll(x) SWAPBYTES64((x))
 
 #    endif //WORDS_BIGENDIAN

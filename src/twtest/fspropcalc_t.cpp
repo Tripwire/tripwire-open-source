@@ -154,7 +154,7 @@ void TestGetSymLinkStr()
 
     cMemoryArchive arch(1024 * 1024);
     TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
-    TEST(arch.Length() == (int64)file.size());
+    TEST(arch.Length() == (int64_t)file.size());
 }
 
 void RegisterSuite_FSPropCalc()

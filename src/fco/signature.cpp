@@ -107,7 +107,7 @@ void cArchiveSigGen::AddSig(iSignature* pSig)
 
 void cArchiveSigGen::CalculateSignatures(cArchive& a)
 {
-    uint8_t                      abBuf[iSignature::SUGGESTED_BLOCK_SIZE * 2];
+    uint8_t                   abBuf[iSignature::SUGGESTED_BLOCK_SIZE * 2];
     int                       cbRead;
     container_type::size_type i;
     uint8_t*                     pBuf = abBuf;
@@ -158,9 +158,9 @@ char* btob64(const uint8_t* pcbitvec, char* pcout, int numbits)
 {
     unsigned int val;
     int          offset;
-    uint8*                pcorig = (uint8*)pcout;
+    uint8_t*     pcorig = (uint8_t*)pcout;
 
-    ASSERT(sizeof(uint8) == sizeof(uint8_t)); /* everything breaks otherwise */
+    ASSERT(sizeof(uint8_t) == sizeof(uint8_t)); /* everything breaks otherwise */
     assert(numbits > 0);
 
     val = *pcbitvec;
@@ -198,15 +198,15 @@ char* btob64(const uint8_t* pcbitvec, char* pcout, int numbits)
 ///////////////////////////////////////////////////////////////////////////////
 
 #define NUMTMPLONGS 1000
-char* pltob64(uint32* pl, char* pcout, int numlongs)
+char* pltob64(uint32_t* pl, char* pcout, int numlongs)
 {
     int     i;
-    uint32* plto;
-    uint32           larray[NUMTMPLONGS];
+    uint32_t* plto;
+    uint32_t  larray[NUMTMPLONGS];
 
     assert(numlongs < NUMTMPLONGS);
     /* we use our own ntohl() routines, but we have to do it in-place */
-    memcpy((char*)larray, (char*)pl, numlongs * sizeof(uint32));
+    memcpy((char*)larray, (char*)pl, numlongs * sizeof(uint32_t));
 
     for (i = 0, plto = larray; i < numlongs; i++)
     {
@@ -214,7 +214,7 @@ char* pltob64(uint32* pl, char* pcout, int numlongs)
         ++plto;
     }
 
-    return btob64((uint8_t*)larray, (char*)pcout, numlongs * sizeof(uint32) * 8);
+    return btob64((uint8_t*)larray, (char*)pcout, numlongs * sizeof(uint32_t) * 8);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -261,13 +261,13 @@ bool cNullSignature::IsEqual(const iSignature& rhs) const
     return true;
 }
 
-void cNullSignature::Read(iSerializer* pSerializer, int32 version)
+void cNullSignature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("Null Signature Read")));
 
 #ifdef DEBUG
-    int16 ret;
+    int16_t ret;
     pSerializer->ReadInt16(ret);
     ASSERT(ret == 123);
 #endif
@@ -325,11 +325,11 @@ void cChecksumSignature::Finit()
 TSTRING cChecksumSignature::AsString() const
 {
     TSTRING ret;
-    char*   ps_signature;
-    char    buf[100];
-    uint32  local[2];
-    local[0] = (uint32)(mChecksum >> 32); // note we put the MSB first
-    local[1] = (uint32)(mChecksum);
+    char*     ps_signature;
+    char      buf[100];
+    uint32_t  local[2];
+    local[0] = (uint32_t)(mChecksum >> 32); // note we put the MSB first
+    local[1] = (uint32_t)(mChecksum);
 
     ps_signature = pltob64(local, buf, 2);
     //ps_signature holds base64 representation of mCRC
@@ -347,7 +347,7 @@ TSTRING cChecksumSignature::AsStringHex() const
     ss.setf(ios::hex, ios::basefield);
 
     ASSERT(false);
-    ss << (size_t)(uint32)mChecksum; // TODO:BAM -- this is truncating a 64-bit value to 32 bits!
+    ss << (size_t)(uint32_t)mChecksum; // TODO:BAM -- this is truncating a 64-bit value to 32 bits!
 
     return ss.str();
 }
@@ -357,17 +357,17 @@ bool cChecksumSignature::IsEqual(const iSignature& rhs) const
     return mChecksum == ((cChecksumSignature&)rhs).mChecksum;
 }
 
-void cChecksumSignature::Read(iSerializer* pSerializer, int32 version)
+void cChecksumSignature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("Checksum Signature Read")));
 
-    pSerializer->ReadInt64((int64&)mChecksum);
+    pSerializer->ReadInt64((int64_t&)mChecksum);
 }
 
 void cChecksumSignature::Write(iSerializer* pSerializer) const
 {
-    pSerializer->WriteInt64((int64)mChecksum);
+    pSerializer->WriteInt64((int64_t)mChecksum);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -400,8 +400,8 @@ void cCRC32Signature::Init()
 
 void cCRC32Signature::Update(const uint8_t* const pbData, int cbDataLen)
 {
-    ASSERT(sizeof(uint8_t) == sizeof(uint8));
-    crcUpdate(mCRCInfo, (uint8*)pbData, cbDataLen);
+    ASSERT(sizeof(uint8_t) == sizeof(uint8_t));
+    crcUpdate(mCRCInfo, (uint8_t*)pbData, cbDataLen);
 }
 
 void cCRC32Signature::Finit()
@@ -418,9 +418,9 @@ TSTRING cCRC32Signature::AsString() const
         return AsStringHex();
 
     TSTRING ret;
-    char*   ps_signature;
-    char    buf[100];
-    uint32  local = mCRCInfo.crc;
+    char*     ps_signature;
+    char      buf[100];
+    uint32_t  local = mCRCInfo.crc;
 
     ps_signature = pltob64(&local, buf, 1);
     //ps_signature holds base64 representation of mCRCInfo.crc
@@ -448,17 +448,17 @@ bool cCRC32Signature::IsEqual(const iSignature& rhs) const
         return (mCRCInfo.crc == ((cCRC32Signature&)rhs).mCRCInfo.crc);
 }
 
-void cCRC32Signature::Read(iSerializer* pSerializer, int32 version)
+void cCRC32Signature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("CRC32 Read")));
 
-    pSerializer->ReadInt32((int32&)mCRCInfo.crc);
+    pSerializer->ReadInt32((int32_t&)mCRCInfo.crc);
 }
 
 void cCRC32Signature::Write(iSerializer* pSerializer) const
 {
-    pSerializer->WriteInt32((int32)mCRCInfo.crc);
+    pSerializer->WriteInt32((int32_t)mCRCInfo.crc);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -504,11 +504,11 @@ void cMD5Signature::Init()
 void cMD5Signature::Update(const uint8_t* const pbData, int cbDataLen)
 {
 #ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
-    CC_MD5_Update(&mMD5Info, (uint8*)pbData, cbDataLen);
+    CC_MD5_Update(&mMD5Info, (uint8_t*)pbData, cbDataLen);
 #elif HAVE_OPENSSL_MD5_H
-    MD5_Update(&mMD5Info, (uint8*)pbData, cbDataLen);
+    MD5_Update(&mMD5Info, (uint8_t*)pbData, cbDataLen);
 #else
-    MD5Update(&mMD5Info, (uint8*)pbData, cbDataLen);
+    MD5Update(&mMD5Info, (uint8_t*)pbData, cbDataLen);
 #endif
 }
 
@@ -534,7 +534,7 @@ TSTRING cMD5Signature::AsString() const
     TSTRING ret;
     char    buf[24];
 
-    ASSERT(sizeof(uint8) == sizeof(uint8_t)); /* everything breaks otherwise */
+    ASSERT(sizeof(uint8_t) == sizeof(uint8_t)); /* everything breaks otherwise */
     btob64((uint8_t*)md5_digest, buf, SIG_BYTE_SIZE * 8);
     //converting to base64 representation.
 
@@ -550,7 +550,7 @@ TSTRING cMD5Signature::AsStringHex() const
     TCHAR stringBuffer[128];
     TCHAR sigStringOut[129];
     sigStringOut[0] = '\0';
-    uint8* dbuf     = (uint8*)md5_digest;
+    uint8_t* dbuf   = (uint8_t*)md5_digest;
 
     for (int i = 0; i < SIG_BYTE_SIZE; ++i)
     {
@@ -572,7 +572,7 @@ bool cMD5Signature::IsEqual(const iSignature& rhs) const
     }
 }
 
-void cMD5Signature::Read(iSerializer* pSerializer, int32 version)
+void cMD5Signature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("MD5 Read")));
@@ -628,13 +628,13 @@ void cSHASignature::Init()
 
 void cSHASignature::Update(const uint8_t* const pbData, int cbDataLen)
 {
-    ASSERT(sizeof(uint8_t) == sizeof(uint8));
+    ASSERT(sizeof(uint8_t) == sizeof(uint8_t));
 #ifdef HAVE_COMMONCRYPTO_COMMONDIGEST_H
-    CC_SHA1_Update(&mSHAInfo, (uint8*)pbData, cbDataLen);
+    CC_SHA1_Update(&mSHAInfo, (uint8_t*)pbData, cbDataLen);
 #elif HAVE_OPENSSL_SHA_H
-    SHA1_Update(&mSHAInfo, (uint8*)pbData, cbDataLen);
+    SHA1_Update(&mSHAInfo, (uint8_t*)pbData, cbDataLen);
 #else
-    shsUpdate(&mSHAInfo, (uint8*)pbData, cbDataLen);
+    shsUpdate(&mSHAInfo, (uint8_t*)pbData, cbDataLen);
 #endif
 }
 
@@ -661,7 +661,7 @@ TSTRING cSHASignature::AsString(void) const
     char*   ps_signature;
     char    buf[100];
 
-    ps_signature = btob64((uint8*)sha_digest, buf, SIG_UINT32_SIZE * sizeof(uint32) * 8);
+    ps_signature = btob64((uint8_t*)sha_digest, buf, SIG_UINT32_SIZE * sizeof(uint32_t) * 8);
     //converting to base64 representation.
 
     ret.append(ps_signature);
@@ -675,9 +675,9 @@ TSTRING cSHASignature::AsStringHex() const
     TCHAR stringBuffer[128];
     TCHAR sigStringOut[129];
     sigStringOut[0] = '\0';
-    uint8* dbuf     = (uint8*)sha_digest;
+    uint8_t* dbuf   = (uint8_t*)sha_digest;
 
-    for (int i = 0; i < SIG_UINT32_SIZE * (int)sizeof(uint32); ++i)
+    for (int i = 0; i < SIG_UINT32_SIZE * (int)sizeof(uint32_t); ++i)
     {
         snprintf(stringBuffer, 128, _T("%02x"), dbuf[i]);
         strncat(sigStringOut, stringBuffer, 128);
@@ -698,13 +698,13 @@ void cSHASignature::Copy(const iFCOProp* rhs)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Serializer Implementation: Read and Write
-void cSHASignature::Read(iSerializer* pSerializer, int32 version)
+void cSHASignature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("SHA Read")));
 
     for (int i = 0; i < SIG_UINT32_SIZE; ++i)
-        pSerializer->ReadInt32((int32&)sha_digest[i]);
+        pSerializer->ReadInt32((int32_t&)sha_digest[i]);
 }
 
 void cSHASignature::Write(iSerializer* pSerializer) const
@@ -721,7 +721,7 @@ bool cSHASignature::IsEqual(const iSignature& rhs) const
         return true;
     else
     {
-        return (memcmp(sha_digest, ((cSHASignature&)rhs).sha_digest, SIG_UINT32_SIZE * sizeof(uint32)) == 0);
+        return (memcmp(sha_digest, ((cSHASignature&)rhs).sha_digest, SIG_UINT32_SIZE * sizeof(uint32_t)) == 0);
     }
 }
 
@@ -737,7 +737,7 @@ TSTRING cSHASignature::AsString(void) const
     char buf[100];
     buf[99] = 0;
 
-    ps_signature = pltob64((uint32*)mSHAInfo.digest, buf, SIG_UINT32_SIZE);
+    ps_signature = pltob64((uint32_t*)mSHAInfo.digest, buf, SIG_UINT32_SIZE);
     //converting to base64 representation.
 
     ret.append(ps_signature);
@@ -774,13 +774,13 @@ void cSHASignature::Copy(const iFCOProp* rhs)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Serializer Implementation: Read and Write
-void cSHASignature::Read(iSerializer* pSerializer, int32 version)
+void cSHASignature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("SHA Read")));
 
     for (int i = 0; i < SIG_UINT32_SIZE; ++i)
-        pSerializer->ReadInt32((int32&)mSHAInfo.digest[i]);
+        pSerializer->ReadInt32((int32_t&)mSHAInfo.digest[i]);
 }
 
 void cSHASignature::Write(iSerializer* pSerializer) const
@@ -797,7 +797,7 @@ bool cSHASignature::IsEqual(const iSignature& rhs) const
         return true;
     else
     {
-        return (memcmp(mSHAInfo.digest, ((cSHASignature&)rhs).mSHAInfo.digest, SIG_UINT32_SIZE * sizeof(uint32)) == 0);
+        return (memcmp(mSHAInfo.digest, ((cSHASignature&)rhs).mSHAInfo.digest, SIG_UINT32_SIZE * sizeof(uint32_t)) == 0);
     }
 }
 #endif
@@ -824,7 +824,7 @@ void cHAVALSignature::Init()
 
 void cHAVALSignature::Update(const uint8_t* const pbData, int cbDataLen)
 {
-    haval_hash(&mHavalState, (uint8*)pbData, cbDataLen);
+    haval_hash(&mHavalState, (uint8_t*)pbData, cbDataLen);
 }
 
 void cHAVALSignature::Finit()
@@ -877,7 +877,7 @@ void cHAVALSignature::Copy(const iFCOProp* rhs)
 
 ///////////////////////////////////////////////////////////////////////////////
 // Serializer Implementation: Read and Write
-void cHAVALSignature::Read(iSerializer* pSerializer, int32 version)
+void cHAVALSignature::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("HAVAL Read")));

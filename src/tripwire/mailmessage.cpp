@@ -242,7 +242,7 @@ bool cMailMessageUtil::ReadDate(TSTRING& strDateBuf)
 
 #else
 
-    int64 now  = cSystemInfo::GetExeStartTime();
+    int64_t now  = cSystemInfo::GetExeStartTime();
     strDateBuf = cTimeUtil::GetRFC822Date(cTimeUtil::TimeToDateGMT(now));
     fGotDate   = true;
 
@@ -591,7 +591,7 @@ cMailMessageUtil::ConvertBase64(
 std::string 
 cMailMessageUtil::ToBase64( const uint8_t* p, size_t size )
 {
-    ASSERT( sizeof( uint8 ) == sizeof( uint8_t ) ); // everything breaks otherwise
+    ASSERT( sizeof( uint8_t ) == sizeof( uint8_t ) ); // everything breaks otherwise
     std::string s;    
 
     const int MAX_WORKING_BYTES = 3;

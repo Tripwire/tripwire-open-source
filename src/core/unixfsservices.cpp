@@ -479,7 +479,7 @@ bool cUnixFSServices::GetCurrentUserName(TSTRING& strName) const
 
 
 // returns IP address in network byte order
-bool cUnixFSServices::GetIPAddress(uint32& uiIPAddress)
+bool cUnixFSServices::GetIPAddress(uint32_t& uiIPAddress)
 {
     bool   fGotAddress = false;
     cDebug d(_T("cUnixFSServices::GetIPAddress"));
@@ -495,13 +495,13 @@ bool cUnixFSServices::GetIPAddress(uint32& uiIPAddress)
         if (phostent)
         {
             ASSERT(AF_INET == phostent->h_addrtype);
-            ASSERT(sizeof(int32) == phostent->h_length);
+            ASSERT(sizeof(int32_t) == phostent->h_length);
 
             if (phostent->h_length)
             {
                 if (phostent->h_addr_list[0])
                 {
-                    int32* pAddress = reinterpret_cast<int32*>(phostent->h_addr_list[0]);
+                    int32_t* pAddress = reinterpret_cast<int32_t*>(phostent->h_addr_list[0]);
                     uiIPAddress     = *pAddress;
                     fGotAddress     = true;
                 }
@@ -600,21 +600,21 @@ bool cUnixFSServices::GetGroupName(gid_t group_id, TSTRING& tstrGroup) const
 //
 // Returns          : void -- no errors are reported
 //
-// Argument         : uint64 perm -- st_mode from "stat"
+// Argument         : uint64_t perm -- st_mode from "stat"
 // Argument         : TSTRING& tstrPerm -- converted permissions, ls -l style
 //
-void cUnixFSServices::ConvertModeToString(uint64 perm, TSTRING& tstrPerm) const
+void cUnixFSServices::ConvertModeToString(uint64_t perm, TSTRING& tstrPerm) const
 {
     TCHAR szPerm[12]; //10 permission bits plus the NULL
     strncpy(szPerm, _T("----------"), 11);
 
-    ASSERT(sizeof(unsigned short) <= sizeof(uint32));
+    ASSERT(sizeof(unsigned short) <= sizeof(uint32_t));
     // We do this in case an "unsigned short" is ever larger than the
     // value we are switching on, since the size of the mode parameter
     // will be unsigned short (whatever that means, for the given platform...)
 
     // check file type
-    switch ((uint32)perm & S_IFMT) //some versions of Unix don't like to switch on
+    switch ((uint32_t)perm & S_IFMT) //some versions of Unix don't like to switch on
                                    //64 bit values.
     {
     case S_IFDIR:

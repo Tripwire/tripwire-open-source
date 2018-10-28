@@ -135,10 +135,10 @@ iFCOProp::CmpResult cFCOPropInt32::Compare(const iFCOProp* rhs, iFCOProp::Op op)
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropInt32::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropInt32::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
-        ThrowAndAssert(eSerializerVersionMismatch(_T("Int32 Property Read")));
+        ThrowAndAssert(eSerializerVersionMismatch(_T("int32_t Property Read")));
 
     pSerializer->ReadInt32(mValue);
 }
@@ -166,7 +166,7 @@ TSTRING cFCOPropInt64::AsString() const
     //
     TOSTRINGSTREAM ostr;
     ostr.imbue(std::locale::classic());
-    ostr << (int32)mValue;
+    ostr << (int32_t)mValue;  // TODO: remove this cast where possible
     return TSTRING(ostr.str());
 }
 
@@ -175,10 +175,10 @@ iFCOProp::CmpResult cFCOPropInt64::Compare(const iFCOProp* rhs, iFCOProp::Op op)
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropInt64::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropInt64::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
-        ThrowAndAssert(eSerializerVersionMismatch(_T("Int64 Property Read")));
+        ThrowAndAssert(eSerializerVersionMismatch(_T("int64_t Property Read")));
 
     pSerializer->ReadInt64(mValue);
 }
@@ -206,7 +206,7 @@ TSTRING cFCOPropUint64::AsString() const
     //
     TOSTRINGSTREAM ostr;
     ostr.imbue(std::locale::classic());
-    ostr << (int32)mValue;
+    ostr << (int32_t)mValue; // TODO: remove this cast where possible
     return TSTRING(ostr.str());
 }
 
@@ -215,12 +215,12 @@ iFCOProp::CmpResult cFCOPropUint64::Compare(const iFCOProp* rhs, iFCOProp::Op op
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropUint64::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropUint64::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
-        ThrowAndAssert(eSerializerVersionMismatch(_T("uint64 Property Read")));
+        ThrowAndAssert(eSerializerVersionMismatch(_T("uint64_t Property Read")));
 
-    pSerializer->ReadInt64((int64&)mValue);
+    pSerializer->ReadInt64((int64_t&)mValue);
 }
 
 void cFCOPropUint64::Write(iSerializer* pSerializer) const
@@ -250,7 +250,7 @@ iFCOProp::CmpResult cFCOPropTSTRING::Compare(const iFCOProp* rhs, iFCOProp::Op o
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropTSTRING::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropTSTRING::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
         ThrowAndAssert(eSerializerVersionMismatch(_T("String Property Read")));
