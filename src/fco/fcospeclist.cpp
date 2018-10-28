@@ -103,6 +103,7 @@ void cFCOSpecList::Add(iFCOSpec* pSpec, cFCOSpecAttr* pAttr)
         pAttr = new cFCOSpecAttr;
     else
         pAttr->AddRef();
+        
     for (itr = mCanonicalList.begin();; ++itr)
     {
         if (itr == mCanonicalList.end() || iFCOSpecUtil::FCOSpecLessThan(*pSpec, *itr->first))
@@ -118,18 +119,22 @@ iFCOSpec* cFCOSpecList::Lookup(iFCOSpec* pSpec) const
 {
     std::list<PairType>::iterator itr;
     for (itr = mCanonicalList.begin(); itr != mCanonicalList.end(); ++itr)
+    {
         if (itr->first == pSpec)
         {
             pSpec->AddRef();
             return itr->first;
         }
+    }
 
     for (itr = mCanonicalList.begin(); itr != mCanonicalList.end(); ++itr)
+    {
         if (iFCOSpecUtil::FCOSpecEqual(*pSpec, *itr->first))
         {
             itr->first->AddRef();
             return itr->first;
         }
+    }
 
     return NULL;
 }
@@ -141,11 +146,10 @@ void cFCOSpecList::Read(iSerializer* pSerializer, int32_t version)
 
     Clear();
 
-    int   i;
     int32_t size;
     pSerializer->ReadInt32(size);
 
-    for (i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
         iFCOSpec*     pReadInSpec = static_cast<iFCOSpec*>(pSerializer->ReadObjectDynCreate());
         cFCOSpecAttr* pSpecAttr   = static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());

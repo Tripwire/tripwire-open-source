@@ -74,7 +74,7 @@ public:
 
     void ReadMem(const int8_t* pMem);  // throw eKeyFile()
     void WriteMem(int8_t* pMem) const; // throw eKeyFile()
-    int GetWriteLen();              // throw eKeyFile()
+    int  GetWriteLen();              // throw eKeyFile()
         // Functions to read and write the key to memory.  GetWriteLen() will throw an
         // exception if keys are not currently loaded.
 

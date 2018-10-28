@@ -104,7 +104,7 @@ typedef struct {
   haval_word    count[2];                /* number of bits in a message */
   haval_word    fingerprint[8];          /* current state of fingerprint */    
   haval_word    block[32];               /* buffer for a 32-word block */ 
-  uint8_t         remainder[32*4];         /* unhashed chars (No.<128) */
+  uint8_t       remainder[32*4];         /* unhashed chars (No.<128) */
 } haval_state;
 
 /* Do not remove this line.  Protyping depends on it! 

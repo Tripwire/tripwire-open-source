@@ -46,8 +46,8 @@ struct tGK
 {
     bool         doneFlag;
     int          retValue;
-    int8_t*     passphrase;
-    int32_t     passphraseLen;
+    int8_t*      passphrase;
+    int32_t      passphraseLen;
     const TCHAR* keyPath;
 
     enum ReturnValue

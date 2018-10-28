@@ -59,7 +59,7 @@ public:
     // these methods get and set the executable's working directory ... it is asserted
     // that SetExeDir() has been called when GetExeDir() is called.
 
-    static int64_t GetExeStartTime();
+    static int64_t  GetExeStartTime();
     static void     SetExeStartTime(const int64_t& time);
     // Get and set the approximate time (time_t format) which the excecutable was started.
     // This will be used for all times having to do with this run of the executable.

@@ -2062,10 +2062,10 @@ static bool ChangePassphrase(const TCHAR* keyPath, wc16_string passphraseOld, wc
     // we must allocate a BIGENDIAN copy
     // and delete it before we return.
     // auto_ptr does not help (won't work with arrays).
-    size_t passphraseLenOld  = passphraseOld.length() * sizeof(WCHAR16);
-    size_t passphraseLen     = passphrase.length() * sizeof(WCHAR16);
-    int8_t*  passphraseCopyOld = new int8_t[passphraseLenOld];
-    int8_t*  passphraseCopy    = new int8_t[passphraseLen];
+    size_t  passphraseLenOld  = passphraseOld.length() * sizeof(WCHAR16);
+    size_t  passphraseLen     = passphrase.length() * sizeof(WCHAR16);
+    int8_t* passphraseCopyOld = new int8_t[passphraseLenOld];
+    int8_t* passphraseCopy    = new int8_t[passphraseLen];
 #ifdef WORDS_BIGENDIAN
     memcpy(passphraseCopyOld, passphraseOld.data(), passphraseLenOld);
     memcpy(passphraseCopy, passphrase.data(), passphraseLen);

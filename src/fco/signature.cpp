@@ -110,7 +110,7 @@ void cArchiveSigGen::CalculateSignatures(cArchive& a)
     uint8_t                   abBuf[iSignature::SUGGESTED_BLOCK_SIZE * 2];
     int                       cbRead;
     container_type::size_type i;
-    uint8_t*                     pBuf = abBuf;
+    uint8_t*                  pBuf = abBuf;
 
     if (s_direct)
     {

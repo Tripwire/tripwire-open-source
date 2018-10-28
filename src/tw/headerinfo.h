@@ -121,7 +121,7 @@ public:
     const iFCOPropDisplayer* GetPropDisplayer() const;
 
     void                     SetObjectsScanned(int32_t);
-    int32_t                 GetObjectsScanned() const;
+    int32_t                  GetObjectsScanned() const;
 
     // iSerializable interface
     virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
@@ -130,7 +130,7 @@ private:
     cGenreHeaderInfo& operator=(cGenreHeaderInfo&);
 
     iFCOPropDisplayer* mpPropDisplayer;
-    int32_t           i32_ObjectsScanned;
+    int32_t            i32_ObjectsScanned;
 };
 
 ///////////////////////////////////////////////////////////////////////////////

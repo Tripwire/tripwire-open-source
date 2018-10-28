@@ -343,7 +343,7 @@ void cKeyFile::WriteMem(int8_t* pMem) const // throw eKeyFile()
     memcpy(pMem, mpPrivateKeyMem, mPrivateKeyMemLen);
 }
 
-int32_t cKeyFile::GetWriteLen() // throw eKeyFile()
+int cKeyFile::GetWriteLen() // throw eKeyFile()
 {
     if (!KeysLoaded())
     {
@@ -359,7 +359,7 @@ int32_t cKeyFile::GetWriteLen() // throw eKeyFile()
            mPrivateKeyMemLen;           // the private key
 }
 
-void cKeyFile::ProtectKeys(int8_t* passphrase, int32_t passphraseLen) // throw eKeyFile()
+void cKeyFile::ProtectKeys(int8_t* passphrase, int passphraseLen) // throw eKeyFile()
 {
     int     i;
     int16_t i16;
@@ -470,7 +470,7 @@ const cElGamalSigPrivateKey* cKeyFile::GetPrivateKey(int8_t* passphrase, int pas
         ASSERT(des.GetBlockSizeCipher() == des.GetBlockSizePlain());
 
         // get a copy of the ciphertext and decrypt it
-        uint8_t* plainPrivateKeyMem = new uint8_t[mPrivateKeyMemLen];
+        int8_t* plainPrivateKeyMem = new int8_t[mPrivateKeyMemLen];
         memcpy(plainPrivateKeyMem, mpPrivateKeyMem, mPrivateKeyMemLen);
 
         ASSERT(mPrivateKeyMemLen % des.GetBlockSizePlain() == 0);
@@ -486,7 +486,7 @@ const cElGamalSigPrivateKey* cKeyFile::GetPrivateKey(int8_t* passphrase, int pas
 
         if (len + cHashedKey128::GetWriteLen() + sizeof(int16_t) > (unsigned int)mPrivateKeyMemLen)
         {
-            RandomizeBytes((int8_t*)plainPrivateKeyMem, mPrivateKeyMemLen);
+            RandomizeBytes(plainPrivateKeyMem, mPrivateKeyMemLen);
             delete [] plainPrivateKeyMem;
             RandomizeBytes(passphrase, passphraseLen);
             return 0;
@@ -498,7 +498,7 @@ const cElGamalSigPrivateKey* cKeyFile::GetPrivateKey(int8_t* passphrase, int pas
         if (memcmp(plainPrivateKeyMem, privateHash.GetKey(), cHashedKey128::GetWriteLen()) != 0)
         {
             // passphrase didn't do the job
-            RandomizeBytes((int8_t*)plainPrivateKeyMem, mPrivateKeyMemLen);
+            RandomizeBytes(plainPrivateKeyMem, mPrivateKeyMemLen);
             delete [] plainPrivateKeyMem;
             RandomizeBytes(passphrase, passphraseLen);
             return 0;
@@ -506,7 +506,7 @@ const cElGamalSigPrivateKey* cKeyFile::GetPrivateKey(int8_t* passphrase, int pas
 
         mpPrivateKey = new cElGamalSigPrivateKey(plainPrivateKeyMem + cHashedKey128::GetWriteLen() + sizeof(int16_t));
 
-        RandomizeBytes((int8_t*)plainPrivateKeyMem, mPrivateKeyMemLen);
+        RandomizeBytes(plainPrivateKeyMem, mPrivateKeyMemLen);
         delete [] plainPrivateKeyMem;
 
         RandomizeBytes(passphrase, passphraseLen);

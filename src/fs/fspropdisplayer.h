@@ -128,10 +128,10 @@ private:
 
     typedef std::map<int64_t, TSTRING> INT64_TO_STRING_MAP;
 
-    bool GetUsername(  const int64_t& i64uid, TSTRING& tstrUsername) const;
-    bool GetGroupname( const int64_t& i64uid, TSTRING& tstrGroupname) const;
-    bool AddUsernameMapping(  const int64_t& i64ID, const TSTRING& tstrUsername);
-    bool AddGroupnameMapping( const int64_t& i64ID, const TSTRING& tstrGroupname);
+    bool GetUsername(const int64_t& i64uid, TSTRING& tstrUsername) const;
+    bool GetGroupname(const int64_t& i64uid, TSTRING& tstrGroupname) const;
+    bool AddUsernameMapping(const int64_t& i64ID, const TSTRING& tstrUsername);
+    bool AddGroupnameMapping(const int64_t& i64ID, const TSTRING& tstrGroupname);
 
     // storage for conversion stuff
     INT64_TO_STRING_MAP uidToUsername;
