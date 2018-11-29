@@ -41,7 +41,7 @@ Now it's time to configure which files & directories OST will monitor.  A few si
 The Tripwire policy language is documented in detail in the **twpolicy(4)** manual page, and default policies for most common operating systems are available in the OST project's policy subdirectory.
 
 ```
-./twadmin --create-polfile -S /etc/tripwire/twpol.txt
+./twadmin --create-polfile -S /path/to/site.key /etc/tripwire/twpol.txt
 ```
 
 ### Creating a baseline
