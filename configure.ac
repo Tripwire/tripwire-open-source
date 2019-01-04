@@ -8,7 +8,7 @@ AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
-AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2018 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
+AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
 AC_REVISION([$Revision: 2.4.3.8 $])
 
 
