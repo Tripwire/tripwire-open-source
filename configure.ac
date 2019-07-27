@@ -11,13 +11,14 @@ AM_CONFIG_HEADER(config.h)
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
 AC_REVISION([$Revision: 2.4.3.8 $])
 
+AC_LANG_CPLUSPLUS
 
 
 dnl ###################
 dnl Checks for programs
 dnl ###################
-AC_PROG_CC([gcc clang suncc aCC gxlc xlC_r xlC cl.exe])
-AC_PROG_CXX([g++ c++ clang++ sunCC aCC gxlc++ xlC_r xlC cl.exe])
+AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc xlC_r xlC cl.exe])
+AC_PROG_CXX([g++ c++ clang++ sunCC aCC xlc++_r gxlc++ xlC_r xlC cl.exe])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
@@ -29,44 +30,66 @@ AC_PROG_AR
 AC_PATH_PROG(path_to_vi, vi)
 AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
 
+
+dnl #########################################
+dnl Set up per-compiler constants & base args
+dnl #########################################
+
 if test "x${GXX}" != "x"; then
- AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
+    AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
+
+    CFLAGS=${CFLAGS:-"-O -pipe -Wall"}
+    CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall"}
 else
- AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
+    AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
 fi
 
 if test "x${CXX}" = "xclang++"; then
- AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
+    AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
+
+    CFLAGS=${CFLAGS:-"-O -pipe -Wall"}
+    CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall"}
 else
- AC_DEFINE(HAVE_CLANG, 0, [Uses the Clang compiler])
+    AC_DEFINE(HAVE_CLANG, 0, [Uses the Clang compiler])
 fi
 
-if test "x${CXX}" = "xgxlc++"; then
- AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
+if test "x${CXX}" = "xxlc++_r"; then
+    AC_DEFINE(HAVE_CLANG, 1, [Uses the IBM XL C++ compiler])
+
+    CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
+    CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
 else
- AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
+    AC_DEFINE(HAVE_CLANG, 0, [Uses the IBM XL C++ compiler])
+fi
+
+
+dnl *** TODO these compilers need work on default args ****
+
+if test "x${CXX}" = "xgxlc++"; then
+    AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
+else
+    AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
 fi
 
 if test "x${CXX}" = "xsunCC"; then
- AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
+    AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
 else
- AC_DEFINE(HAVE_ORACLE_SUNCC, 0, [Uses the sunCC compiler])
+    AC_DEFINE(HAVE_ORACLE_SUNCC, 0, [Uses the sunCC compiler])
 fi
 
 if test "x${CXX}" = "xaCC"; then
- AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
+    AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
 else
- AC_DEFINE(HAVE_HP_ACC, 0, [Uses the aCC compiler])
+    AC_DEFINE(HAVE_HP_ACC, 0, [Uses the aCC compiler])
 fi
 
-
+dnl ######################
+dnl Enable various warnings
 dnl #####################
-dnl Set up base compiler flags
-dnl #####################
 
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-
+AX_CHECK_COMPILE_FLAG([-Wall],        [CXXFLAGS="$CXXFLAGS -Wall"])
+AX_CHECK_COMPILE_FLAG([-Wextra],      [CXXFLAGS="$CXXFLAGS -Wextra -Wno-unused-parameter"])
+dnl AX_CHECK_COMPILE_FLAG([-Weverything], [CXXFLAGS="$CXXFLAGS -Weverything"])
 
 dnl #####################
 dnl Configuration options
@@ -117,6 +140,23 @@ then
    AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
 fi
 
+AC_ARG_WITH(stlport-dir,
+    [  --with-stlport-dir=PATH     Specify path to STLport installation ],
+    [
+        if test "x$withval" != "xno" ; then
+            stlport_base    = $withval
+            stlport_include = "${stlport_base}/stlport"
+            stlport_lib     = "${stlport_base}/lib"
+            stlport_paths   = "-I ${stlport_include} -L ${stlport_lib}"
+
+            CPPFLAGS = "${CPPFLAGS} ${stlport_paths}"
+            CFLAGS="${CFLAGS} ${stlport_paths}"
+            CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
+            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc"
+        fi
+    ]
+)
+
 
 dnl #######################
 dnl Checks for header files
@@ -158,6 +198,7 @@ dnl All platforms we support use 2's complement, are byte aligned, etc...
 AC_DEFINE(USES_1S_COMPLEMENT, 0, [Uses one's complement])
 AC_DEFINE(USES_2S_COMPLEMENT, 1, [Uses two's complement])
 AC_DEFINE(USES_SIGNED_MAGNITUDE, 0, [Uses signed magnitute])
+
 AC_DEFINE(IS_BYTE_ALIGNED, 1, [Is byte aligned])
 AC_DEFINE(EXCEPTION_NAMESPACE, std::, [this is the prefix for STL exception functions])
 
@@ -167,10 +208,13 @@ dnl target is unix.  This can still be changed in config.h
 AC_DEFINE(IS_UNIX, 1, [Is a unix type platform])
 
 dnl whether or not to generate debuging code?
-AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
+dnl this gets defined elsewhere based on config args AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
 dnl look for struct stat members that aren't always there
 AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks])
+
+dnl detect large file support & use it where available
+AC_SYS_LARGEFILE
 
 dnl #############################
 dnl Checks for standard functions
@@ -196,6 +240,10 @@ AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
 
 dnl check for event port support (Solaris)
 AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+
+dnl check for existence of fseeko() as well as ftello()
+AC_FUNC_FSEEKO
+
 
 dnl ##############################################  
 dnl check for various RNG/PRNG devices
@@ -391,7 +439,7 @@ case $target in
 		 then
 		 AC_MSG_WARN( [
 
-Sorry, tripwire will not properly link staticaly under Solaris.
+Sorry, tripwire will not properly link statically under Solaris.
 This is due to tripwire's extensive use of gethostbyname(),
 which can only be linked dynamicaly.  Please rerun configure
 without the --enable-static option.
