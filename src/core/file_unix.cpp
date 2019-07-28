@@ -284,6 +284,15 @@ bool cFile::IsOpen(void) const
     return (mpData->mpCurrStream != NULL);
 }
 
+// Autoconf docs say HAVE_FSEEKO applies to both fseeko & ftello
+#if HAVE_FSEEKO
+    #define tss_fseek fseeko
+    #define tss_ftell ftello
+#else
+    #define tss_fseek fseek
+    #define tss_ftell ftell
+#endif
+
 ///////////////////////////////////////////////////////////////////////////
 // Seek -- Positions the read/write offset in mpCurrStream.  Returns the
 //      current offset upon completion.  Returns 0 if no stream is defined.
@@ -323,7 +332,9 @@ cFile::File_t cFile::Seek(File_t offset, SeekFrom From) const //throw(eFile)
     fprintf(stderr, "%d\n", blowupCount);
 #endif
 
-    if (fseeko(mpData->mpCurrStream, offset, apiFrom) != 0)
+
+    
+    if (tss_fseek(mpData->mpCurrStream, offset, apiFrom) != 0)
     {
 #ifdef DEBUG
         cDebug d("cFile::Seek");
@@ -332,7 +343,7 @@ cFile::File_t cFile::Seek(File_t offset, SeekFrom From) const //throw(eFile)
         throw eFileSeek();
     }
 
-    return ftello(mpData->mpCurrStream);
+    return tss_ftell(mpData->mpCurrStream);
 }
 
 ///////////////////////////////////////////////////////////////////////////

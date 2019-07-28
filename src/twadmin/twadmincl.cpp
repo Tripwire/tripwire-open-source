@@ -61,6 +61,12 @@
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
 
+#if HAVE_SWAB && (__cplusplus <= 1)
+  #ifndef __USE_XOPEN
+    #define _USE_XOPEN 1
+  #endif
+#endif
+
 #include <unistd.h>
 
 //Provide a swab() impl. from glibc, for platforms that don't have one

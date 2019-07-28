@@ -39,6 +39,9 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
+#undef HAVE_FSEEKO
+
 /* Uses the GNU gcc compiler */
 #undef HAVE_GCC
 
@@ -53,6 +56,9 @@
 
 /* Uses the gxlc++ compiler */
 #undef HAVE_IBM_GXLC
+
+/* Uses the IBM XL C++ compiler */
+#undef HAVE_IBM_XLC
 
 /* Define to 1 if you have the <iconv.h> header file. */
 #undef HAVE_ICONV_H
@@ -180,7 +186,7 @@
 /* Is a unix type platform */
 #undef IS_UNIX
 
-/* don't generate debuging code */
+/* Compile without debug code */
 #undef NDEBUG
 
 /* Name of package */
@@ -251,6 +257,20 @@
 #  undef WORDS_BIGENDIAN
 # endif
 #endif
+
+/* Enable large inode numbers on Mac OS X 10.5.  */
+#ifndef _DARWIN_USE_64_BIT_INODE
+# define _DARWIN_USE_64_BIT_INODE 1
+#endif
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#undef _FILE_OFFSET_BITS
+
+/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
+#undef _LARGEFILE_SOURCE
+
+/* Define for large files, on AIX-style hosts. */
+#undef _LARGE_FILES
 
 /* Define to empty if `const' does not conform to ANSI C. */
 #undef const

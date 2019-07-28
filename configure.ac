@@ -11,8 +11,11 @@ AM_CONFIG_HEADER(config.h)
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
 AC_REVISION([$Revision: 2.4.3.8 $])
 
+dnl AC_LANG_CPLUSPLUS wants to set CXXFLAGS to include '-g -O2', but we probably don't want to
+dnl include debug symbols by default, so save off the previous value & restore it afterward
+tmp_cxxflags=${CXXFLAGS}
 AC_LANG_CPLUSPLUS
-
+CXXFLAGS=${tmp_cxxflags}
 
 dnl ###################
 dnl Checks for programs
@@ -38,8 +41,8 @@ dnl #########################################
 if test "x${GXX}" != "x"; then
     AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
 
-    CFLAGS=${CFLAGS:-"-O -pipe -Wall"}
-    CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall"}
+    CFLAGS=${CFLAGS:-"-O -pipe"}
+    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
 else
     AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
 fi
@@ -47,29 +50,31 @@ fi
 if test "x${CXX}" = "xclang++"; then
     AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
 
-    CFLAGS=${CFLAGS:-"-O -pipe -Wall"}
-    CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall"}
+    CFLAGS=${CFLAGS:-"-O -pipe"}
+    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
 else
     AC_DEFINE(HAVE_CLANG, 0, [Uses the Clang compiler])
 fi
 
+if test "x${CXX}" = "xgxlc++"; then
+    AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
+
+    CFLAGS=${CFLAGS:-"-O -pipe"}
+    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
+else
+    AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
+fi
+
 if test "x${CXX}" = "xxlc++_r"; then
-    AC_DEFINE(HAVE_CLANG, 1, [Uses the IBM XL C++ compiler])
+    AC_DEFINE(HAVE_IBM_XLC, 1, [Uses the IBM XL C++ compiler])
 
     CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
     CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
 else
-    AC_DEFINE(HAVE_CLANG, 0, [Uses the IBM XL C++ compiler])
+    AC_DEFINE(HAVE_IBM_XLC, 0, [Uses the IBM XL C++ compiler])
 fi
-
 
 dnl *** TODO these compilers need work on default args ****
-
-if test "x${CXX}" = "xgxlc++"; then
-    AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
-else
-    AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
-fi
 
 if test "x${CXX}" = "xsunCC"; then
     AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
@@ -96,12 +101,12 @@ dnl Configuration options
 dnl #####################
 
 # This is primarily to support old compilers that don’t understand -Wextra
-AC_ARG_ENABLE(extrawarnings,  [  —-disable-extrawarnings do not compile with -Wextra warnings enabled])
-if test "x$enable_extrawarnings" != "xno"
-then
-   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
-   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
-fi
+#AC_ARG_ENABLE(extrawarnings,  [  —-disable-extrawarnings do not compile with -Wextra warnings enabled])
+#if test "x$enable_extrawarnings" != "xno"
+#then
+#   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
+#   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
+#fi
 
 AC_ARG_ENABLE(static, [  --enable-static         compile static binaries])
 if test "x$enable_static" = xyes
@@ -153,6 +158,9 @@ AC_ARG_WITH(stlport-dir,
             CFLAGS="${CFLAGS} ${stlport_paths}"
             CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
             LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc"
+	    # Append lib dir to LD_LIBRARY_PATH (or set LD_LIBRARY_PATH if unset)
+	    # This is mostly for the benefit of configure-time test programs.
+	    LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${stlport_lib}
         fi
     ]
 )
