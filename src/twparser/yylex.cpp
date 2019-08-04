@@ -831,8 +831,8 @@ yy_scan::yylex()
         yyst = yy_next[yybase];
       yy_jammed: ;
          state[++i] = (yy_state_t) yyst;
-    } while (!(yyst == (unsigned int)yy_endst || YY_INTERACTIVE &&
-        yy_base[yyst] > yy_nxtmax && yy_default[yyst] == yy_endst));
+    } while (!(yyst == (unsigned int)yy_endst || (YY_INTERACTIVE &&
+        (yy_base[yyst] > yy_nxtmax) && (yy_default[yyst] == yy_endst))));
 
     YY_DEBUG("<stopped %d, i = %d>\n", yyst, i);
     if (yyst != (unsigned int)yy_endst)

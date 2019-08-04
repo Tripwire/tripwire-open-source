@@ -275,8 +275,7 @@ void cFile::Close() //throw(eFile)
         mpData->mpCurrStream = NULL;
     }
 
-
-    mpData->mFileName.empty();
+    mpData->mFileName.clear();
 }
 
 bool cFile::IsOpen(void) const
