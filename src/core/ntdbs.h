@@ -89,7 +89,9 @@ typedef std::basic_string<dbchar_t> dbstring;
 
 #if WCHAR_IS_32_BITS // We already have a dbstring implicitly in wstring!!!
 
-#include <locale>
+#if HAVE_LOCALE
+#   include <locale>
+#endif
 
 // specialize *std*::char_traits!!!
 

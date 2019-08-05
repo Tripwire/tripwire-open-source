@@ -5090,15 +5090,15 @@ fi
 if test "${with_stlport_dir+set}" = set; then :
   withval=$with_stlport_dir;
         if test "x$withval" != "xno" ; then
-            stlport_base    = $withval
-            stlport_include = "${stlport_base}/stlport"
-            stlport_lib     = "${stlport_base}/lib"
-            stlport_paths   = "-I ${stlport_include} -L ${stlport_lib}"
+            stlport_base=$withval
+            stlport_include="${stlport_base}/stlport"
+            stlport_lib="${stlport_base}/lib"
+            stlport_paths="-I ${stlport_include} -L ${stlport_lib}"
 
-            CPPFLAGS = "${CPPFLAGS} ${stlport_paths}"
+            CPPFLAGS="${CPPFLAGS} ${stlport_paths}"
             CFLAGS="${CFLAGS} ${stlport_paths}"
             CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
-            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc"
+            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc -lm"
 	    # Append lib dir to LD_LIBRARY_PATH (or set LD_LIBRARY_PATH if unset)
 	    # This is mostly for the benefit of configure-time test programs.
 	    LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${stlport_lib}
@@ -6161,6 +6161,24 @@ _ACEOF
 
 
 fi
+ac_fn_cxx_check_member "$LINENO" "struct stat" "st_flags" "ac_cv_member_struct_stat_st_flags" "$ac_includes_default"
+if test "x$ac_cv_member_struct_stat_st_flags" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_FLAGS 1
+_ACEOF
+
+
+fi
+ac_fn_cxx_check_member "$LINENO" "struct stat" "st_gen" "ac_cv_member_struct_stat_st_gen" "$ac_includes_default"
+if test "x$ac_cv_member_struct_stat_st_gen" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_GEN 1
+_ACEOF
+
+
+fi
 
 
 # Check whether --enable-largefile was given.
@@ -6400,6 +6418,67 @@ fi
 done
 
 
+for ac_func in openat open read close
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in fopen fread fclose
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in opendir readdir closedir
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in statx fstatat lstat stat
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in readlinkat readlink
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
 for ac_header in fcntl.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "fcntl.h" "ac_cv_header_fcntl_h" "$ac_includes_default"
@@ -6423,15 +6502,16 @@ fi
 done
 
 
-# Check whether --enable-commoncrypto was given.
+if [ "${host_os}" == "darwin" ]; then
+    # Check whether --enable-commoncrypto was given.
 if test "${enable_commoncrypto+set}" = set; then :
   enableval=$enable_commoncrypto;
 fi
 
 
-if test "x${enable_commoncrypto}" != "xno"
-then
-  for ac_header in CommonCrypto/CommonDigest.h
+  if test "x${enable_commoncrypto}" != "xno"
+  then
+    for ac_header in CommonCrypto/CommonDigest.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "CommonCrypto/CommonDigest.h" "ac_cv_header_CommonCrypto_CommonDigest_h" "$ac_includes_default"
 if test "x$ac_cv_header_CommonCrypto_CommonDigest_h" = xyes; then :
@@ -6443,9 +6523,11 @@ fi
 
 done
 
+  fi
 fi
 
-for ac_header in door.h
+if [ "${host_os}" == solaris* ]; then
+    for ac_header in door.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "door.h" "ac_cv_header_door_h" "$ac_includes_default"
 if test "x$ac_cv_header_door_h" = xyes; then :
@@ -6467,8 +6549,7 @@ fi
 
 done
 
-
-for ac_header in port.h
+    for ac_header in port.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "port.h" "ac_cv_header_port_h" "$ac_includes_default"
 if test "x$ac_cv_header_port_h" = xyes; then :
@@ -6490,6 +6571,7 @@ fi
 
 done
 
+fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _LARGEFILE_SOURCE value needed for large files" >&5
 $as_echo_n "checking for _LARGEFILE_SOURCE value needed for large files... " >&6; }
@@ -6562,10 +6644,9 @@ fi
 
 
 
-UNAME=`uname`
 
 
-if [ $UNAME != "AROS" ]; then
+if [ "${host_os}" != "aros" ]; then
 
   if test -c "/dev/random"; then
 
@@ -6926,15 +7007,26 @@ fi
 fi
 
 
-ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+for ac_header in limits
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "limits" "ac_cv_header_limits" "$ac_includes_default"
+if test "x$ac_cv_header_limits" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIMITS 1
+_ACEOF
+
+fi
+
+done
 
 
-ac_fn_cxx_check_header_mongrel "$LINENO" "locale" "ac_cv_header_locale" "$ac_includes_default"
+for ac_header in locale
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "locale" "ac_cv_header_locale" "$ac_includes_default"
 if test "x$ac_cv_header_locale" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LOCALE 1
+_ACEOF
 
 else
 
@@ -6945,7 +7037,7 @@ if ${ac_cv_stlportdir+:} false; then :
 else
 
     found_locale=""
-    for inclpath in /usr/local/include /usr/local/include/stlport
+    for inclpath in ${stlport_include} /usr/local/include /usr/local/include/stlport
     do
       CPPFLAGS_save=${CPPFLAGS}
       CPPFLAGS="${CPPFLAGS} -I${inclpath}"
@@ -6994,11 +7086,14 @@ $as_echo "$ac_cv_stlportdir" >&6; }
 
 fi
 
+done
+
 
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    CPPFLAGS="${CPPFLAGS} -I${ac_cv_stlportdir}"
+    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir}"
   fi
+
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 #include <locale>
@@ -7037,7 +7132,8 @@ if test "x$ac_cv_func_pthread_getspecific" = xyes; then :
 else
 
         LDFLAGS="${LDFLAGS_TEMP}"
-        as_fn_error $? "No posix threads detected, cannot continue." "$LINENO" 5
+        { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: No posix threads detected; OST may not link." >&5
+$as_echo "$as_me: WARNING: No posix threads detected; OST may not link." >&2;}
 fi
 
 
@@ -7054,7 +7150,7 @@ if ${ac_cv_stlportlib+:} false; then :
 else
 
       found_lib=""
-      for inclpath in /usr/local/lib /usr/local/lib/stlport
+      for inclpath in ${stlport_lib} /usr/local/lib /usr/local/lib/stlport
       do
         for stllib in stlport stlport_gcc
         do
@@ -7113,18 +7209,19 @@ fi
 $as_echo "$ac_cv_stlportlib" >&6; }
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    LDFLAGS="${LDFLAGS} -L${ac_cv_stlportlib}"
+    LDFLAGS="${LDFLAGS} -L ${ac_cv_stlportlib}"
     LIBS="${LIBS} -l${stllib}"
+
+$as_echo "#define HAVE_LOCALE 1" >>confdefs.h
+
+
+$as_echo "#define HAVE_STLPORT 1" >>confdefs.h
+
   fi
 
 fi
 rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
-ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
 for ac_header in wchar.h
@@ -7142,10 +7239,10 @@ done
 
 
 cat >>confdefs.h <<_ACEOF
-#define TARGET_OS "${target}"
+#define TARGET_OS "${host}"
 _ACEOF
 
-case $target in
+case $host in
 	i386-*-freebsd*)
 		;;
 	alpha-*-freebsd*)

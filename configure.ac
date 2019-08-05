@@ -1,9 +1,10 @@
-zdnl Process this file with autoconf to produce a configure script.
+dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
 AC_INIT([tripwire], [2.4.3.8], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
+AC_CANONICAL_HOST([])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -149,15 +150,15 @@ AC_ARG_WITH(stlport-dir,
     [  --with-stlport-dir=PATH     Specify path to STLport installation ],
     [
         if test "x$withval" != "xno" ; then
-            stlport_base    = $withval
-            stlport_include = "${stlport_base}/stlport"
-            stlport_lib     = "${stlport_base}/lib"
-            stlport_paths   = "-I ${stlport_include} -L ${stlport_lib}"
+            stlport_base=$withval
+            stlport_include="${stlport_base}/stlport"
+            stlport_lib="${stlport_base}/lib"
+            stlport_paths="-I ${stlport_include} -L ${stlport_lib}"
 
-            CPPFLAGS = "${CPPFLAGS} ${stlport_paths}"
+            CPPFLAGS="${CPPFLAGS} ${stlport_paths}"
             CFLAGS="${CFLAGS} ${stlport_paths}"
             CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
-            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc"
+            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc -lm"
 	    # Append lib dir to LD_LIBRARY_PATH (or set LD_LIBRARY_PATH if unset)
 	    # This is mostly for the benefit of configure-time test programs.
 	    LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${stlport_lib}
@@ -219,7 +220,7 @@ dnl whether or not to generate debuging code?
 dnl this gets defined elsewhere based on config args AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
 dnl look for struct stat members that aren't always there
-AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks])
+AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks, struct stat.st_flags, struct stat.st_gen])
 
 dnl detect large file support & use it where available
 AC_SYS_LARGEFILE
@@ -231,23 +232,37 @@ AC_CHECK_FUNCS(strftime gethostname gethostid)
 AC_CHECK_FUNCS(mkstemp mktemp, break)
 AC_CHECK_FUNCS(swab)
 
+dnl posix way to read files
+AC_CHECK_FUNCS(openat open read close)
+dnl standard libc way to read files
+AC_CHECK_FUNCS(fopen fread fclose)
+dnl only standard way to read dir contents
+AC_CHECK_FUNCS(opendir readdir closedir)
+dnl posix (and extended) ways to get file attributes
+AC_CHECK_FUNCS(statx fstatat lstat stat)
+dnl posix way to get symlink contents
+AC_CHECK_FUNCS(readlinkat readlink)
+
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
 
-dnl check for OSX builtin hash algorithms
-AC_ARG_ENABLE(commoncrypto,
+if [[ "${host_os}" == "darwin" ]]; then
+  dnl check for OSX builtin hash algorithms
+  AC_ARG_ENABLE(commoncrypto,
         [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
 
-if test "x${enable_commoncrypto}" != "xno"
-then
-  AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+  if test "x${enable_commoncrypto}" != "xno"
+  then
+    AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+  fi
 fi
 
-dnl check for door support (Solaris)
-AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
-
-dnl check for event port support (Solaris)
-AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+if [[ "${host_os}" == solaris* ]]; then
+  dnl check for door support (Solaris)
+  AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
+  dnl check for event port support (Solaris)
+  AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+fi
 
 dnl check for existence of fseeko() as well as ftello()
 AC_FUNC_FSEEKO
@@ -257,7 +272,6 @@ dnl ##############################################
 dnl check for various RNG/PRNG devices
 dnl ##############################################  
 
-UNAME=`uname`
 
 dnl ############################################## 
 dnl AROS pops up a "Please insert disk" dialog for /dev
@@ -265,7 +279,7 @@ dnl if script looks for devices (which don't exist)
 dnl so don't even try looking.
 dnl ############################################## 
 
-if [[ $UNAME != "AROS" ]]; then
+if [[ "${host_os}" != "aros" ]]; then
 
   if test -c "/dev/random"; then
     AC_DEFINE(HAVE_DEV_RANDOM, [1], [Has /dev/random])
@@ -315,18 +329,20 @@ then
     ], [:]) ])
 fi
 
-dnl check for stl library
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
+dnl Check for STL support, either native or STLport
 
 dnl
 dnl Check for STL headers
 dnl
-AC_CHECK_HEADER(locale,, [
+AC_CHECK_HEADERS(limits)
+
+dnl Use <locale> as a proxy for C++98-compliant-ish STL
+dnl and look for STLport if file isn't found immediately
+AC_CHECK_HEADERS(locale,,[
   dnl Don't have native STL headers, look in other places
   AC_CACHE_CHECK([for STLport directory], ac_cv_stlportdir, [
     found_locale=""
-    for inclpath in /usr/local/include /usr/local/include/stlport
+    for inclpath in ${stlport_include} /usr/local/include /usr/local/include/stlport
     do
       CPPFLAGS_save=${CPPFLAGS}
       CPPFLAGS="${CPPFLAGS} -I${inclpath}"
@@ -351,10 +367,12 @@ AC_CHECK_HEADER(locale,, [
       fi
     ])
   ])
+  
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    CPPFLAGS="${CPPFLAGS} -I${ac_cv_stlportdir}"
+    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir}"    
   fi
+  
   AC_TRY_LINK([#include <locale>],,,[
     dnl Don't have native STL library, look in other places
     dnl First check for POSIX threads if we compile STLport, because it needs it
@@ -369,13 +387,13 @@ AC_CHECK_HEADER(locale,, [
       unset ac_cv_func_pthread_getspecific
       AC_CHECK_FUNC(pthread_getspecific, [:], [
         LDFLAGS="${LDFLAGS_TEMP}"
-        AC_MSG_ERROR([No posix threads detected, cannot continue.]) ])
+        AC_MSG_WARN([No posix threads detected; OST may not link.]) ])
         ])
     ])
 
     AC_CACHE_CHECK([for STLport library directory], ac_cv_stlportlib, [
       found_lib=""
-      for inclpath in /usr/local/lib /usr/local/lib/stlport
+      for inclpath in ${stlport_lib} /usr/local/lib /usr/local/lib/stlport
       do
         for stllib in stlport stlport_gcc
         do
@@ -411,11 +429,13 @@ AC_CHECK_HEADER(locale,, [
     ])
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    LDFLAGS="${LDFLAGS} -L${ac_cv_stlportlib}"
+    LDFLAGS="${LDFLAGS} -L ${ac_cv_stlportlib}"
     LIBS="${LIBS} -l${stllib}"
+    AC_DEFINE(HAVE_LOCALE, 1, [Define to 1 if you have the <locale> header file.])
+    AC_DEFINE(HAVE_STLPORT, 1, [Define if STLport library is used])
   fi
   ])
-AC_LANG_RESTORE
+
 
 dnl #####################
 dnl STL specific headers
@@ -425,8 +445,8 @@ AC_CHECK_HEADERS(wchar.h)
 dnl #######################################################################
 dnl Local checks/hacks.  The goal is to make this part as short as possible
 dnl #######################################################################
-AC_DEFINE_UNQUOTED(TARGET_OS, "${target}", [Target OS])
-case $target in
+AC_DEFINE_UNQUOTED(TARGET_OS, "${host}", [Target OS])
+case $host in
 	i386-*-freebsd*)
 		;;
 	alpha-*-freebsd*)

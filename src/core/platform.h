@@ -309,7 +309,8 @@
 // Used in twlocale
 #    define USE_STD_CPP_LOCALE_WORKAROUND \
         (IS_SUNPRO || (IS_KAI && !IS_KAI_3_4)) // TODO:BAM -- name this something more general.
-#    define USE_CLIB_LOCALE IS_KAI || HAVE_GCC
+//#    define USE_CLIB_LOCALE IS_KAI || HAVE_GCC
+#    define USE_CLIB_LOCALE (!HAVE_LOCALE)
 #    define USES_CLIB_DATE_FUNCTION      \
         (USE_CLIB_LOCALE || IS_SUNPRO || \
          IS_MSVC) // if we use clib, can't use C++ time_put, and SUNPRO and MSVC add characters
@@ -321,6 +322,9 @@
 #    define SUPPORTS_POSIX_THREADS (!SUPPORTS_WIN32_THREADS)
 
 // Miscellaneous
+#    define SUPPORTS_C_FILE_IO (HAVE_FOPEN && HAVE_FREAD && HAVE_FCLOSE)
+#    define SUPPORTS_POSIX_FILE_IO (HAVE_OPEN && HAVE_READ && HAVE_CLOSE)
+
 #    define WCHAR_IS_16_BITS IS_WIN32
 #    define WCHAR_IS_32_BITS IS_UNIX
 #    define WCHAR_REP_IS_UCS2 IS_WIN32
@@ -354,7 +358,7 @@
 // (see http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap04.html#tag_04_11 )
 // The only platform OST works on (afaik) that actually defines a double-slash behavior is Cygwin
 // which uses this syntax for UNC paths.  So we'll allow leading double slashes there, but
-// continue removing them on all other platforms
+// continue removing them on all other platforms for now.  
 
 #    define USE_DEV_URANDOM (HAVE_DEV_URANDOM && ENABLE_DEV_URANDOM)
 

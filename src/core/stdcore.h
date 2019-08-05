@@ -104,9 +104,13 @@
 #include <algorithm>
 #include <set>
 #include <stack>
-#include <locale>
-#include <limits>
-
+#if HAVE_LOCALE
+#   include <locale>
+#endif
+#if HAVE_LIMITS
+#   include <limits>
+#endif
+  
 #if IS_MSVC
 #    pragma warning(pop) // Resume W4 msgs for TSS code
 #endif
