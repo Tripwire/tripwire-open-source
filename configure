@@ -6502,15 +6502,15 @@ fi
 done
 
 
-if [ "${host_os}" == "darwin" ]; then
-    # Check whether --enable-commoncrypto was given.
+
+# Check whether --enable-commoncrypto was given.
 if test "${enable_commoncrypto+set}" = set; then :
   enableval=$enable_commoncrypto;
 fi
 
 
-  if test "x${enable_commoncrypto}" != "xno"
-  then
+if test "x${enable_commoncrypto}" != "xno"
+then
     for ac_header in CommonCrypto/CommonDigest.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "CommonCrypto/CommonDigest.h" "ac_cv_header_CommonCrypto_CommonDigest_h" "$ac_includes_default"
@@ -6523,11 +6523,9 @@ fi
 
 done
 
-  fi
 fi
 
-if [ "${host_os}" == solaris* ]; then
-    for ac_header in door.h
+for ac_header in door.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "door.h" "ac_cv_header_door_h" "$ac_includes_default"
 if test "x$ac_cv_header_door_h" = xyes; then :
@@ -6549,7 +6547,7 @@ fi
 
 done
 
-    for ac_header in port.h
+for ac_header in port.h
 do :
   ac_fn_cxx_check_header_mongrel "$LINENO" "port.h" "ac_cv_header_port_h" "$ac_includes_default"
 if test "x$ac_cv_header_port_h" = xyes; then :
@@ -6571,7 +6569,7 @@ fi
 
 done
 
-fi
+
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for _LARGEFILE_SOURCE value needed for large files" >&5
 $as_echo_n "checking for _LARGEFILE_SOURCE value needed for large files... " >&6; }
@@ -6646,27 +6644,79 @@ fi
 
 
 
-if [ "${host_os}" != "aros" ]; then
+case $host_os in
+  aros*)
+    ;;
+  *)
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for /dev/random" >&5
+$as_echo_n "checking for /dev/random... " >&6; }
+if ${ac_cv_file__dev_random+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "/dev/random"; then
+  ac_cv_file__dev_random=yes
+else
+  ac_cv_file__dev_random=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file__dev_random" >&5
+$as_echo "$ac_cv_file__dev_random" >&6; }
+if test "x$ac_cv_file__dev_random" = xyes; then :
 
-  if test -c "/dev/random"; then
-
-$as_echo "#define HAVE_DEV_RANDOM 1" >>confdefs.h
-
-  fi
-
-  if test -c "/dev/urandom"; then
-
-$as_echo "#define HAVE_DEV_URANDOM 1" >>confdefs.h
-
-  fi
-
-  if test -c "/dev/arandom"; then
-
-$as_echo "#define HAVE_DEV_ARANDOM 1" >>confdefs.h
-
-  fi
+cat >>confdefs.h <<_ACEOF
+#define HAVE__DEV_RANDOM 1
+_ACEOF
 
 fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for /dev/urandom" >&5
+$as_echo_n "checking for /dev/urandom... " >&6; }
+if ${ac_cv_file__dev_urandom+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "/dev/urandom"; then
+  ac_cv_file__dev_urandom=yes
+else
+  ac_cv_file__dev_urandom=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file__dev_urandom" >&5
+$as_echo "$ac_cv_file__dev_urandom" >&6; }
+if test "x$ac_cv_file__dev_urandom" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE__DEV_URANDOM 1
+_ACEOF
+
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for /dev/arandom" >&5
+$as_echo_n "checking for /dev/arandom... " >&6; }
+if ${ac_cv_file__dev_arandom+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  test "$cross_compiling" = yes &&
+  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
+if test -r "/dev/arandom"; then
+  ac_cv_file__dev_arandom=yes
+else
+  ac_cv_file__dev_arandom=no
+fi
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_file__dev_arandom" >&5
+$as_echo "$ac_cv_file__dev_arandom" >&6; }
+if test "x$ac_cv_file__dev_arandom" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE__DEV_ARANDOM 1
+_ACEOF
+
+fi
+
+    ;;
+esac
 
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for socket in -lc" >&5

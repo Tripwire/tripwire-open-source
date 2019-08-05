@@ -246,23 +246,21 @@ AC_CHECK_FUNCS(readlinkat readlink)
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
 
-if [[ "${host_os}" == "darwin" ]]; then
-  dnl check for OSX builtin hash algorithms
-  AC_ARG_ENABLE(commoncrypto,
-        [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
 
-  if test "x${enable_commoncrypto}" != "xno"
-  then
+dnl check for OSX builtin hash algorithms
+AC_ARG_ENABLE(commoncrypto,
+    [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
+
+if test "x${enable_commoncrypto}" != "xno"
+then
     AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
-  fi
 fi
 
-if [[ "${host_os}" == solaris* ]]; then
-  dnl check for door support (Solaris)
-  AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
-  dnl check for event port support (Solaris)
-  AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
-fi
+dnl check for door support (Solaris)
+AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
+dnl check for event port support (Solaris)
+AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+
 
 dnl check for existence of fseeko() as well as ftello()
 AC_FUNC_FSEEKO
@@ -279,21 +277,13 @@ dnl if script looks for devices (which don't exist)
 dnl so don't even try looking.
 dnl ############################################## 
 
-if [[ "${host_os}" != "aros" ]]; then
-
-  if test -c "/dev/random"; then
-    AC_DEFINE(HAVE_DEV_RANDOM, [1], [Has /dev/random])
-  fi
-
-  if test -c "/dev/urandom"; then
-    AC_DEFINE(HAVE_DEV_URANDOM, [1], [Has /dev/urandom])
-  fi
-
-  if test -c "/dev/arandom"; then
-    AC_DEFINE(HAVE_DEV_ARANDOM, [1], [Has /dev/arandom])
-  fi
-
-fi
+case $host_os in
+  aros*)
+    ;;
+  *)
+    AC_CHECK_FILES(/dev/random /dev/urandom /dev/arandom)
+    ;;
+esac
 
 dnl ##############################################
 dnl Checks for various platform specific libraries

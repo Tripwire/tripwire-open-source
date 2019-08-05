@@ -27,15 +27,6 @@
 /* Define to 1 if you have the <CommonCrypto/CommonDigest.h> header file. */
 #undef HAVE_COMMONCRYPTO_COMMONDIGEST_H
 
-/* Has /dev/arandom */
-#undef HAVE_DEV_ARANDOM
-
-/* Has /dev/random */
-#undef HAVE_DEV_RANDOM
-
-/* Has /dev/urandom */
-#undef HAVE_DEV_URANDOM
-
 /* Define to 1 if you have the `door_create' function. */
 #undef HAVE_DOOR_CREATE
 
@@ -242,6 +233,15 @@
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #undef HAVE_WCHAR_H
+
+/* Define to 1 if you have the file `/dev/arandom'. */
+#undef HAVE__DEV_ARANDOM
+
+/* Define to 1 if you have the file `/dev/random'. */
+#undef HAVE__DEV_RANDOM
+
+/* Define to 1 if you have the file `/dev/urandom'. */
+#undef HAVE__DEV_URANDOM
 
 /* Is byte aligned */
 #undef IS_BYTE_ALIGNED
