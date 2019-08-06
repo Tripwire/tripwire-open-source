@@ -52,7 +52,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // TestFileExists
 ///////////////////////////////////////////////////////////////////////////////
@@ -264,8 +263,13 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
 
     // restore permissions and ownership
     // don't worry if it fails. it's not mission-critical.
+#if HAVE_CHMOD    
     chmod(dest_path.c_str(), srcStat.st_mode);
+#endif
+    
+#if HAVE_CHOWN    
     chown(dest_path.c_str(), srcStat.st_uid, srcStat.st_gid);
+#endif
 
     srcFile.Close();
     destFile.Close();

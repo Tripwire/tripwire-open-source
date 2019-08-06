@@ -153,11 +153,13 @@ void cPipedMailMessage::SendInit() // throw( eMailMessageError )
     TSTRING strHeader;
     strHeader += cStringUtil::StrToTstr(cMailMessage::Create822Header());
 
-#if !USES_MPOPEN
+#if USES_MPOPEN
+    // call mpopen, our safe version popen
+    mpFile = mpopen((char*)mstrSendMailExePath.c_str(), _T("w"));    
+#elif HAVE_POPEN
     mpFile = popen(mstrSendMailExePath.c_str(), _T("w"));
 #else
-    // call mpopen, our safe version popen
-    mpFile = mpopen((char*)mstrSendMailExePath.c_str(), _T("w"));
+    // No pipes for you, sorry.
 #endif
     if (!mpFile)
     {

@@ -64,14 +64,22 @@
 void tw_terminate_handler()
 {
     fputs("### Internal Error.\n### Terminate Handler called.\n### Exiting...\n", stderr);
+#if HAVE__EXIT
     _exit(1);
+#else
+    exit(1);
+#endif    
 }
 
 #if __cplusplus < 201703L
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
+#if HAVE__EXIT
     _exit(1);
+#else
+    exit(1);
+#endif
 }
 #endif
 

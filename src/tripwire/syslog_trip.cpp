@@ -37,11 +37,11 @@
 #include "syslog_trip.h"
 
 #if HAVE_SYSLOG_H
-#include <syslog.h>
+#   include <syslog.h>
 #endif
 
 #if HAVE_SYS_SYSLOG_H
-#include <sys/syslog.h>
+#   include <sys/syslog.h>
 #endif
 
 // next three includes are for error reporting
@@ -49,10 +49,11 @@
 #include "tw/twerrors.h"
 #include "tw/twstrings.h"
 
+// TODO:  Handle this in a proper autoconf way
 #if IS_AROS
-#include <proto/bsdsocket.h>
-#    define openlog(a, b, c)
-#    define closelog()
+#   include <proto/bsdsocket.h>
+#   define openlog(a, b, c)
+#   define closelog()
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////

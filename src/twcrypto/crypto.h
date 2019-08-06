@@ -350,7 +350,7 @@ class cHashedKey128
 {
 public:
     explicit cHashedKey128(const TSTRING& data);
-    cHashedKey128(void* pData, int dataLen);
+    cHashedKey128(void* pData, int32_t dataLen);
     ~cHashedKey128();
 
     const int8_t* GetKey() const;
@@ -362,10 +362,10 @@ protected:
     enum
     {
         KEYLEN  = 16,
-        BUFSIZE = 20
+        BUFFER_SIZE = 20
     };
 
-    int8_t mKey[BUFSIZE];
+    int8_t mKey[BUFFER_SIZE];
 };
 
 inline const int8_t* cHashedKey128::GetKey() const

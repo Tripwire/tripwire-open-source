@@ -274,6 +274,15 @@ bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
     case cFSStatArgs::TY_NAMED:
         propSet.SetFileType(cFSPropSet::FT_NAMED);
         break;
+    case cFSStatArgs::TY_MESSAGE_QUEUE:
+        propSet.SetFileType(cFSPropSet::FT_MESSAGE_QUEUE);
+        break;
+    case cFSStatArgs::TY_SEMAPHORE:
+        propSet.SetFileType(cFSPropSet::FT_SEMAPHORE);
+        break;
+    case cFSStatArgs::TY_SHARED_MEMORY:
+        propSet.SetFileType(cFSPropSet::FT_SHARED_MEMORY);
+        break;	
     default:
         // set it to invalid
         propSet.SetFileType(cFSPropSet::FT_INVALID);

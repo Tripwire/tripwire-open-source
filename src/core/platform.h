@@ -55,43 +55,53 @@
 #    define OS_CYGWIN 0x0102
 #    define OS_DOS_DJGPP 0x0103
 
-#    define OS_LINUX 0x0201
+#    define OS_LINUX   0x0201
 #    define OS_ANDROID 0x0202
 
-#    define OS_FREEBSD 0x0301
-#    define OS_NETBSD 0x0302
-#    define OS_OPENBSD 0x0303
-#    define OS_DARWIN 0x0304
+#    define OS_FREEBSD      0x0301
+#    define OS_NETBSD       0x0302
+#    define OS_OPENBSD      0x0303
+#    define OS_DARWIN       0x0304
 #    define OS_DRAGONFLYBSD 0x0305
-#    define OS_MIDNIGHTBSD 0x0306
-#    define OS_MIRBSD 0x0307
-#    define OS_BITRIG 0x0308
-#    define OS_LIBERTYBSD 0x0309
+#    define OS_MIDNIGHTBSD  0x0306
+#    define OS_MIRBSD       0x0307
+#    define OS_BITRIG       0x0308
+#    define OS_LIBERTYBSD   0x0309
+#    define OS_BSDI         0x030A
 
 #    define OS_SOLARIS 0x0400
-#    define OS_AIX 0x0401
-#    define OS_HPUX 0x0402
-#    define OS_IRIX 0x0403
-#    define OS_OSF1 0x0404
+#    define OS_AIX     0x0401
+#    define OS_HPUX    0x0402
+#    define OS_IRIX    0x0403
+#    define OS_OSF1    0x0404
+#    define OS_OS400   0x0405
 
-#    define OS_MINIX 0x0501
-#    define OS_HURD 0x0502
-#    define OS_HAIKU 0x0503
+#    define OS_MINIX   0x0501
+#    define OS_HURD    0x0502
+#    define OS_HAIKU   0x0503
 #    define OS_SYLLABLE 0x0504
-#    define OS_SKYOS 0x0505
-#    define OS_SORTIX 0x0506
-#    define OS_MINT 0x0507
-#    define OS_AROS 0x0508
-#    define OS_RTEMS 0x0509
-#    define OS_RISCOS 0x050A
-#    define OS_REDOX 0x050B
-#    define OS_QNX 0x050C
+#    define OS_SKYOS   0x0505
+#    define OS_SORTIX  0x0506
+#    define OS_MINT    0x0507
+#    define OS_AROS    0x0508
+#    define OS_RTEMS   0x0509
+#    define OS_RISCOS  0x050A
+#    define OS_REDOX   0x050B
+#    define OS_QNX     0x050C
+#    define OS_VXWORKS 0x50D
+#    define OS_LYNXOS  0x50E
+#    define OS_OS9     0x50F // For Microware's OS-9, not the Apple one.
+#    define OS_PLAN9   0x510
 
 #    define COMP_UNKNOWN 0
 #    define COMP_GCC 0x0001
 #    define COMP_CLANG 0x0002
 
 #    define COMP_MSVC 0x0101
+
+// Definitions for the old KAI C++ compiler.
+// KCC was EOL'd ages ago, but I'm leaving these definitions here for now
+// on the off chance someone's still using it.
 #    define COMP_KAI_GCC 0x0201
 #    define COMP_KAI_SUNPRO 0x0202
 #    define COMP_KAI_GLIBC 0x0203
@@ -99,7 +109,10 @@
 #    define COMP_KAI_HPANSIC 0x0205
 #    define COMP_KAI_IRIX 0x0206
 #    define COMP_KAI_OSF1ALPHA 0x0207
+
 #    define COMP_SUNPRO 0x0301
+#    define COMP_XL_C   0x0302
+#    define COMP_ACC    0x0303
 
 //=============================================================================
 // Platform detection
@@ -128,7 +141,7 @@
 #        define OS OS_DOS_DJGPP
 #        define IS_DOS_DJGPP 1
 
-
+// Detect Android first, since Linux macros are also defined there
 #    elif defined(__ANDROID__)
 #        define OS OS_ANDROID
 #        define IS_ANDROID 1
@@ -164,6 +177,9 @@
 #        define OS OS_BITRIG
 #        define IS_BITRIG 1
 
+// Detect LibertyBSD first since OpenBSD macros are also defined.
+// Autotools can tell them apart by target triplet, so we define
+// 'TW_LibertybSD' there and pass it in.
 #    elif defined(TW_LibertyBSD)
 #        define OS OS_LIBERTYBSD
 #        define IS_LIBERTYBSD 1
@@ -197,6 +213,9 @@
 #        define OS OS_OSF1
 #        define IS_OSF1 1
 
+#    elif defined(__OS400__)
+#        define OS OS_OS400
+#        define IS_OS400 1
 
 #    elif defined(__minix__)
 #        define OS OS_MINIX
@@ -242,9 +261,25 @@
 #        define OS OS_REDOX
 #        define IS_REDOX 1
 
-#    elif defined(__QNX__)
+#    elif defined(__QNX__) || defined(__QNXNTO__)
 #        define OS OS_QNX
 #        define IS_QNX 1
+
+#    elif defined(__VXWORKS__)
+#        define OS OS_VXWORKS
+#        define IS_VXWORKS 1
+
+#    elif defined(__Lynx__)
+#        define OS OS_LYNXOS
+#        define IS_LYNXOS 1
+
+#    elif defined(__OS9000)
+#        define OS OS_OS9
+#        define IS_OS9 1
+
+#    elif defined(EPLAN9)
+#        define OS OS_PLAN9
+#        define IS_PLAN9 1
 
 #    endif
 
@@ -271,6 +306,10 @@
 // These macros are the "worker bees" of platform.h.  Programmers should use
 // these macros rather than comparing PLATFORM to the unique IDs by hand.
 //
+// NOTE: Wherever possible, let autotools figure this out & define it in config.h
+// rather than hardcoding it here.  If autotools misdefines something, use
+// core/fixups.h, which is guaranteed to be (re)included right after config.h
+//
 // NB: Programmers are STRONGLY ENCOURAGED not to use the OS detection macros
 // or compiler detection marcros directly.  Instead they should create
 // macros specific to the task at hand.  For example Win32 and Solaris support
@@ -287,6 +326,8 @@
 // #else
 // int network_order = swap(machine_order);
 // #endif
+
+
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -328,26 +369,32 @@
 #    define WCHAR_IS_16_BITS IS_WIN32
 #    define WCHAR_IS_32_BITS IS_UNIX
 #    define WCHAR_REP_IS_UCS2 IS_WIN32
+
+#    define SUPPORTS_POSIX_FORK_EXEC (HAVE_FORK && HAVE_EXEC)
 // msystem+mpopen fail on Syllable, so use the libc equivalents until we figure out why.
 // TODO: Figure out why.
-#    define USES_MPOPEN (IS_UNIX && !IS_SYLLABLE)
-#    define USES_MSYSTEM (IS_UNIX && !IS_SYLLABLE)
+#    define USES_MPOPEN (SUPPORTS_POSIX_FORK_EXEC && !IS_SYLLABLE)
+#    define USES_MSYSTEM (SUPPORTS_POSIX_FORK_EXEC && !IS_SYLLABLE)
 #    define SUPPORTS_WCHART IS_WIN32 // TODO: Remove after getting new ver of KAI
 #    define USES_GLIBC ((COMP == COMP_KAI_GLIBC) || HAVE_GCC)
 #    define SUPPORTS_MEMBER_TEMPLATES (!IS_SUNPRO)
 #    define SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST (!IS_SUNPRO)
 
 #    define SUPPORTS_POSIX_SIGNALS (!IS_DOS_DJGPP)
-#    define SUPPORTS_NETWORKING (!IS_SORTIX && !IS_DOS_DJGPP && !IS_REDOX)
-#    define SUPPORTS_SYSLOG (HAVE_SYSLOG_H && !IS_SKYOS && !IS_RISCOS)
+#    define SUPPORTS_NETWORKING (HAVE_SOCKET && !IS_SORTIX && !IS_DOS_DJGPP && !IS_REDOX)
+#    define SUPPORTS_SYSLOG (HAVE_SYSLOG && !IS_SKYOS && !IS_RISCOS)
 #    define NEEDS_SWAB_IMPL (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #    define USES_MBLEN (!IS_ANDROID && !IS_AROS)
 #    define USES_DEVICE_PATH (IS_AROS || IS_DOS_DJGPP || IS_RISCOS || IS_REDOX)
 #    define ICONV_CONST_SOURCE (IS_MINIX)
 #    define SUPPORTS_DIRECT_IO (IS_LINUX)
+
+#    define READ_TAKES_CHAR_PTR  (IS_VXWORKS)
+#    define BCOPY_TAKES_CHAR_PTR (IS_VXWORKS)
+
 // Linux is the only platform where direct i/o hashing has been tested & works properly so far.
 
-#    define SUPPORTS_TERMIOS (!IS_RTEMS && !IS_REDOX)
+#    define SUPPORTS_TERMIOS (HAVE_TERMIOS_H && (!IS_RTEMS && !IS_REDOX))
 // RTEMS errors are probably just a buildsys issue & this will change or go away.
 // Redox will probably implement this in the future.
 

@@ -28,62 +28,42 @@
 //
 // If you have any questions, please contact Tripwire, Inc. at either
 // info@tripwire.org or www.tripwire.org.
+
+
+// ====================================================================
+// fixups.h :
+// This file is included at the end of the generated config.h, for repairing things
+// the configure script got wrong.  Because this does happen now and then.
 //
-///////////////////////////////////////////////////////////////////////////////
-// timeconvert.cpp
+// This header is intentionally not wrapped with the usual #ifndef/#define/#endif
+// since config.h itself doesn't do that, and we need to be inclded right after
+// it each time it's included.
+
+
+// =====================================================================
+// Cross compiling to powerpc-wrs-vxworks from linux amd64, observed that
+// AC_CHECK_FUNC defines HAVE_xxx for every checked function, including
+// ones that don't and can't exist like fork() & symlink(), and others that
+// could at least optionally exist, but don't in my cross compiler, like socket().
 //
 
-//=========================================================================
-// INCLUDES
-//=========================================================================
-
-#include "stdcore.h"
-#include "timeconvert.h"
-#include "debug.h"
-#include "stringutil.h"
-
-//=========================================================================
-// STANDARD LIBRARY INCLUDES
-//=========================================================================
-
-#include <time.h>
-
-#if IS_AROS
-#   undef HAVE_TZSET
+#if HAVE_BROKEN_AC_CHECK_FUNC
+  #if defined(__VXWORKS__) || defined(__vxworks)
+    #undef HAVE__EXIT
+    #undef HAVE_CHOWN
+    #undef HAVE_EXEC
+    #undef HAVE_FORK
+    #undef HAVE_GETHOSTID
+    #undef HAVE_GETUID
+    #undef HAVE_LSTAT
+    #undef HAVE_MKSTEMP
+    #undef HAVE_MKTEMP
+    #undef HAVE_POPEN
+    #undef HAVE_SOCKET
+    #undef HAVE_SYMLINK
+    #undef HAVE_SYSLOG
+    #undef HAVE_READLINK
+    #undef HAVE_TZSET
+  #endif
 #endif
 
-//=========================================================================
-// METHOD CODE
-//=========================================================================
-
-#define TIME_MAX 2147483647L // largest signed 32 bit number
-
-struct tm* cTimeUtil::TimeToDateGMT(const int64_t& seconds)
-{
-    ASSERT(seconds < TIME_MAX); // this assumes time_t size is 32 bit.  Yikes!
-    time_t t = static_cast<time_t>(seconds);
-    return gmtime(&t);
-}
-
-struct tm* cTimeUtil::TimeToDateLocal(const int64_t& seconds)
-{
-    ASSERT(seconds < TIME_MAX); // this assumes time_t size is 32 bit.  Yikes!
-    time_t t = static_cast<time_t>(seconds);
-#if HAVE_TZSET
-    tzset();
-#endif
-    return localtime(&t);
-}
-
-int64_t cTimeUtil::DateToTime(struct tm* ptm)
-{
-#if HAVE_TZSET
-    tzset();
-#endif
-    return mktime(ptm);
-}
-
-int64_t cTimeUtil::GetTime()
-{
-    return time(NULL);
-}

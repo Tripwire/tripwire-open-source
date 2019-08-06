@@ -72,7 +72,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
-#if !IS_SORTIX
+#if !IS_SORTIX && HAVE_SYS_FILE_H
 # include <sys/file.h>
 #endif
 #include <sys/stat.h>
@@ -98,9 +98,8 @@
 #define setuid(x) sleep(0) 
 #define setgid(x) sleep(0)
 #endif
- 
 
-
+#if SUPPORTS_POSIX_FORK_EXEC
 /*
  * signal type
  */
@@ -620,6 +619,8 @@ static const char *shellenv()
     return(shptr);
 }
 
+
+#if USES_MSYSTEM
 /*
  * like system but A LOT safer
  */ 
@@ -661,6 +662,7 @@ char *cmd;
                 return(127);
     return(echild(i));
 }
+#endif // USES_MSYSTEM
 
 /*
  * this structure holds the information associating
@@ -672,6 +674,7 @@ static struct popenfunc {   /* association of pid, file pointer */
     FILE *fp;           /* the file pointer */
 } pfunc[MAX_MPOPEN];
 
+#if USES_MPOPEN
 /*
  * like popen but A LOT safer
  */ 
@@ -722,6 +725,7 @@ char *mode;
                 return(NULL);
     return(pfunc[indx].fp = ((*mode == 'w') ? fpa[0] : fpa[1]));
 }
+#endif
 
 /*
  * close the pipe
@@ -1028,7 +1032,6 @@ int echild(pid)
 int pid;
 #endif
 {
-
     int r;     /* PID of process just exited */
     int status;     /* status of wait call */
 
@@ -1050,3 +1053,5 @@ int pid;
      */
     return(status);
 }
+
+#endif // SUPPORTS_POSIX_FORK_EXEC

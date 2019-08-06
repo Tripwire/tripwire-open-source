@@ -18,6 +18,13 @@ tmp_cxxflags=${CXXFLAGS}
 AC_LANG_CPLUSPLUS
 CXXFLAGS=${tmp_cxxflags}
 
+dnl *******************************************************
+dnl Append an include to config.h for a handcrafted header
+dnl that sets things back to (hopefully) correct values
+dnl for known cases where autoconf does the Wrong Thing
+dnl *******************************************************
+AH_BOTTOM([#include "core/fixups.h"])
+
 dnl ###################
 dnl Checks for programs
 dnl ###################
@@ -178,8 +185,8 @@ AC_CHECK_HEADERS(sys/mount.h,,,
 #endif
 ]])
 AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
-AC_CHECK_HEADERS(unistd.h sys/unistd.h)
-AC_CHECK_HEADERS(syslog.h langinfo.h sys/statfs.h sys/select.h)
+AC_CHECK_HEADERS(unistd.h sys/unistd.h pwd.h grp.h termios.h)
+AC_CHECK_HEADERS(syslog.h langinfo.h sys/statfs.h sys/select.h sys/time.h sys/file.h)
 AC_CHECK_HEADERS(signum.h bits/signum.h, break )
 AC_CHECK_HEADERS(stdarg.h varargs.h, break )
 AC_CHECK_HEADERS(sys/utsname.h memory.h)
@@ -219,18 +226,27 @@ AC_DEFINE(IS_UNIX, 1, [Is a unix type platform])
 dnl whether or not to generate debuging code?
 dnl this gets defined elsewhere based on config args AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
-dnl look for struct stat members that aren't always there
-AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks, struct stat.st_flags, struct stat.st_gen])
+dnl look for struct stat members that aren't always there:
+dnl   st_rdev & st_blocks are standard but a few platforms don't have them.
+dnl   st_flags & st_gen are BSD-isms & are mostly seen there, including macOS
+dnl   st_flag (singular) is AIX-only, while st_attrib holds DOS attribute bits on VxWorks
+AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks, struct stat.st_flags, struct stat.st_gen, struct stat.st_flag, struct stat.st_attrib])
 
 dnl detect large file support & use it where available
 AC_SYS_LARGEFILE
 
+dnl ******************************************
+dnl Check whether AC_CHECK_FUNC(S) lies to us
+dnl ******************************************
+AC_CHECK_FUNCS(broken_ac_check_func)
+
 dnl #############################
 dnl Checks for standard functions
 dnl #############################
-AC_CHECK_FUNCS(strftime gethostname gethostid)
-AC_CHECK_FUNCS(mkstemp mktemp, break)
-AC_CHECK_FUNCS(swab)
+AC_CHECK_FUNCS(strftime)
+AC_CHECK_FUNCS(gethostname gethostbyname gethostid getuid)
+AC_CHECK_FUNCS(mkstemp mktemp tmpnam break)
+AC_CHECK_FUNCS(swab tzset _exit popen)
 
 dnl posix way to read files
 AC_CHECK_FUNCS(openat open read close)
@@ -242,6 +258,13 @@ dnl posix (and extended) ways to get file attributes
 AC_CHECK_FUNCS(statx fstatat lstat stat)
 dnl posix way to get symlink contents
 AC_CHECK_FUNCS(readlinkat readlink)
+
+dnl posix fns that make filesystem changes
+AC_CHECK_FUNCS(chown chmod link symlink)
+dnl posix syslog fns
+AC_CHECK_FUNCS(openlog syslog closelog)
+dnl assorted other posix fns
+AC_CHECK_FUNCS(fork exec socket)
 
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
@@ -281,7 +304,9 @@ case $host_os in
   aros*)
     ;;
   *)
-    AC_CHECK_FILES(/dev/random /dev/urandom /dev/arandom)
+    if test "$cross_compiling" != yes; then
+        AC_CHECK_FILES(/dev/random /dev/urandom /dev/arandom)
+    fi
     ;;
 esac
 
@@ -487,6 +512,7 @@ if you are trying to compile a static binary.
 dnl Check for OpenSSL, now that we have a working compiler
 AC_ARG_ENABLE(openssl,
         [  --disable-openssl       Don't link against OpenSSL libraries])
+
 AC_ARG_WITH(ssl-dir,
 	[  --with-ssl-dir=PATH     Specify path to OpenSSL installation ],
 	[
@@ -543,7 +569,7 @@ then
 
 		# Basic test to check for compatible library and
 		# correct linking
-		if test "$cross_compiling" = yes; then
+		if test "x$cross_compiling" = "xyes"; then
                         found_crypto=1
                 else       
 		AC_TRY_RUN(

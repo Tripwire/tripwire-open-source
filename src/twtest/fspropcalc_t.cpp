@@ -46,6 +46,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // PrintProps -- prints out all the valid property names and values as pairs...
 ///////////////////////////////////////////////////////////////////////////////
@@ -140,6 +141,7 @@ void TestFSPropCalc()
     return;
 }
 
+#if HAVE_SYMLINK
 void TestGetSymLinkStr()
 {
     std::string file = TwTestPath("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
@@ -156,9 +158,12 @@ void TestGetSymLinkStr()
     TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
     TEST(arch.Length() == (int64_t)file.size());
 }
+#endif
 
 void RegisterSuite_FSPropCalc()
 {
     RegisterTest("FSPropCalc", "Basic", TestFSPropCalc);
+#if HAVE_SYMLINK
     RegisterTest("FSPropCalc", "GetSymLinkStr", TestGetSymLinkStr);
+#endif    
 }

@@ -45,22 +45,27 @@
 
 //All the spleck that it takes to run sockets in Unix...
 #include <stdio.h>
-#    if HAVE_SYS_SOCKET_H
-#        include <sys/socket.h>
-#        include <netdb.h>
-#        include <netinet/in.h>
-#        include <arpa/inet.h>
-#    endif
+
+#if HAVE_SYS_SOCKET_H
+#   include <sys/socket.h>
+#   include <netdb.h>
+#   include <netinet/in.h>
+#   include <arpa/inet.h>
+#endif
+
 #include <sys/types.h>
-#include <sys/time.h>
 
-#    if HAVE_SYS_UTSNAME_H
-#        include <sys/utsname.h>
-#    endif
+#if HAVE_SYS_TIME_H
+#   include <sys/time.h>
+#endif
 
-#    if HAVE_SYS_SELECT_H
-#        include <sys/select.h>
-#    endif
+#if HAVE_SYS_UTSNAME_H
+#   include <sys/utsname.h>
+#endif
+
+#if HAVE_SYS_SELECT_H
+#   include <sys/select.h>
+#endif
 
 /* Some systems like Solaris and AIX don't define
  * INADDR_NONE, but it's pretty standard.  If not,

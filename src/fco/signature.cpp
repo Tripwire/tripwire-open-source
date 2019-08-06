@@ -520,7 +520,13 @@ void cMD5Signature::Finit()
     MD5_Final(md5_digest, &mMD5Info);
 #else
     MD5Final(&mMD5Info);
+
+#if BCOPY_TAKES_CHAR_PTR
+    bcopy((char*)mMD5Info.digest, (char*)md5_digest, MD5_DIGEST_LENGTH);
+#else    
     bcopy(mMD5Info.digest, md5_digest, MD5_DIGEST_LENGTH);
+#endif
+    
 #endif
 }
 

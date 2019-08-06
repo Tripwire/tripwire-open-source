@@ -23,7 +23,7 @@ libcore_a_HEADERS = archive.h charutil.h cmdlineparser.h codeconvert.h       \
    core.h coreerrors.h corestrings.h crc32.h debug.h displayencoder.h        \
    displayutil.h epoch.h error.h errorbucket.h errorbucketimpl.h errorgeneral.h \
    errortable.h errorutil.h file.h fileerror.h fileheader.h fixedfilebuf.h   \
-   fsservices.h growheap.h hashtable.h haval.h md5.h msystem.h ntdbs.h       \
+   fixups.h fsservices.h growheap.h hashtable.h haval.h md5.h msystem.h ntdbs.h \
    ntmbs.h package.h platform.h refcountobj.h resources.h                    \
    serializable.h serializer.h serializerimpl.h serializerutil.h serstring.h \
    sha.h srefcountobj.h srefcounttbl.h stdcore.h stringutil.h tasktimer.h    \

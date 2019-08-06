@@ -59,7 +59,10 @@ TSTRING cFCOPropFileType::AsString() const
                               fs::STR_FT_SOCK,
                               fs::STR_FT_DOOR,
                               fs::STR_FT_PORT,
-                              fs::STR_FT_NAMED};
+                              fs::STR_FT_NAMED,
+                              fs::STR_FT_MESSAGE_QUEUE,
+                              fs::STR_FT_SEMAPHORE,
+                              fs::STR_FT_SHARED_MEMORY};
 
     int32_t fileType = GetValue();
     if ((fileType > cFSPropSet::FT_INVALID) && (fileType < cFSPropSet::FT_NUMITEMS))

@@ -1197,12 +1197,12 @@ cHashedKey128::cHashedKey128(const TSTRING& data)
     sha.CalculateDigest((uint8_t*)mKey, (uint8_t*)data.data(), data.length() * sizeof(TCHAR));
 }
 
-cHashedKey128::cHashedKey128(void* pData, int dataLen)
+cHashedKey128::cHashedKey128(void* pData, int32_t dataLen)
 {
     SHA sha;
 
     ASSERT(SHA::DIGESTSIZE >= KEYLEN);
-    ASSERT(SHA::DIGESTSIZE <= BUFSIZE);
+    ASSERT(SHA::DIGESTSIZE <= BUFFER_SIZE);
     sha.CalculateDigest((uint8_t*)mKey, (uint8_t*)pData, dataLen);
 }
 
@@ -1227,7 +1227,7 @@ cHashedKey192::cHashedKey192(const TSTRING& data)
     memcpy(mKey, localKey, KEYLEN);
 }
 
-cHashedKey192::cHashedKey192(void* pData, int dataLen)
+cHashedKey192::cHashedKey192(void* pData, int32_t dataLen)
 {
     SHA sha;
 

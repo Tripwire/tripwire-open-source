@@ -48,6 +48,9 @@
 #include <locale.h>
 #endif //HAVE_GCC
 
+#if IS_AROS
+#   undef HAVE_TZSET
+#endif
 
 //=========================================================================
 // STANDARD LIBRARY INCLUDES
@@ -67,10 +70,6 @@ static TSTRING& util_FormatTimeCPlusPlus(struct tm* ptm, TSTRING& strBuf);
 //=========================================================================
 // PUBLIC METHOD CODE
 //=========================================================================
-
-#if IS_AROS
-#    define tzset()
-#endif
 
 void cTWLocale::InitGlobalLocale()
 {
@@ -239,7 +238,9 @@ TSTRING& cTWLocale::FormatTime(int64_t t, TSTRING& strBuf)
 {
     // clear return string
     strBuf.erase();
+#if HAVE_TZSET
     tzset();
+#endif
     time_t     tmpTime = t;
     struct tm* ptm     = localtime(&tmpTime);
     if (ptm)

@@ -52,7 +52,7 @@ struct tGK
 
     enum ReturnValue
     {
-        OK               = 0,
+        OKAY             = 0,
         INVALIDPARAM     = 1,
         GENERATION_ERROR = 2,
         FILE_WRITE_ERROR = 3,
@@ -123,7 +123,7 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
         return;
     }
 
-    pGK->retValue = tGK::OK;
+    pGK->retValue = tGK::OKAY;
     pGK->doneFlag = true;
     return;
 }
@@ -152,7 +152,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
 
     GeneratePublicPrivateKeys(&gk, key_size);
 
-    if (gk.retValue != tGK::OK)
+    if (gk.retValue != tGK::OKAY)
     {
         switch (gk.retValue)
         {

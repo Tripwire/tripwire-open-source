@@ -78,6 +78,9 @@ static bool NeedsStat(const cFCOPropVector& v)
 
 bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t size)
 {
+#if !HAVE_READLINK
+    return false;
+#else  
     std::vector<char> data(size + 1);
     char*             buf = &data[0];
 
@@ -118,6 +121,7 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
     arch.WriteBlob(buf, rtn);
 
     return true;
+#endif    
 }
 
 void cFSPropCalc::AddPropCalcError(const eError& e)
@@ -297,6 +301,15 @@ void cFSPropCalc::HandleStatProperties(const cFCOPropVector& propsToCheck, const
             break;
         case cFSStatArgs::TY_NAMED:
             propSet.SetFileType(cFSPropSet::FT_NAMED);
+            break;
+        case cFSStatArgs::TY_MESSAGE_QUEUE:
+            propSet.SetFileType(cFSPropSet::FT_MESSAGE_QUEUE);
+            break;
+        case cFSStatArgs::TY_SEMAPHORE:
+            propSet.SetFileType(cFSPropSet::FT_SEMAPHORE);
+            break;
+        case cFSStatArgs::TY_SHARED_MEMORY:
+            propSet.SetFileType(cFSPropSet::FT_SHARED_MEMORY);
             break;
         default:
             // set it to invalid

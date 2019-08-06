@@ -3284,6 +3284,8 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 CXXFLAGS=${tmp_cxxflags}
 
+
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -5543,7 +5545,7 @@ fi
 
 done
 
-for ac_header in unistd.h sys/unistd.h
+for ac_header in unistd.h sys/unistd.h pwd.h grp.h termios.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -5556,7 +5558,7 @@ fi
 
 done
 
-for ac_header in syslog.h langinfo.h sys/statfs.h sys/select.h
+for ac_header in syslog.h langinfo.h sys/statfs.h sys/select.h sys/time.h sys/file.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
 ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
@@ -6179,6 +6181,24 @@ _ACEOF
 
 
 fi
+ac_fn_cxx_check_member "$LINENO" "struct stat" "st_flag" "ac_cv_member_struct_stat_st_flag" "$ac_includes_default"
+if test "x$ac_cv_member_struct_stat_st_flag" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_FLAG 1
+_ACEOF
+
+
+fi
+ac_fn_cxx_check_member "$LINENO" "struct stat" "st_attrib" "ac_cv_member_struct_stat_st_attrib" "$ac_includes_default"
+if test "x$ac_cv_member_struct_stat_st_attrib" = xyes; then :
+
+cat >>confdefs.h <<_ACEOF
+#define HAVE_STRUCT_STAT_ST_ATTRIB 1
+_ACEOF
+
+
+fi
 
 
 # Check whether --enable-largefile was given.
@@ -6382,7 +6402,30 @@ rm -rf conftest*
 fi
 
 
-for ac_func in strftime gethostname gethostid
+for ac_func in broken_ac_check_func
+do :
+  ac_fn_cxx_check_func "$LINENO" "broken_ac_check_func" "ac_cv_func_broken_ac_check_func"
+if test "x$ac_cv_func_broken_ac_check_func" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_BROKEN_AC_CHECK_FUNC 1
+_ACEOF
+
+fi
+done
+
+
+for ac_func in strftime
+do :
+  ac_fn_cxx_check_func "$LINENO" "strftime" "ac_cv_func_strftime"
+if test "x$ac_cv_func_strftime" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_STRFTIME 1
+_ACEOF
+
+fi
+done
+
+for ac_func in gethostname gethostbyname gethostid getuid
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6394,7 +6437,7 @@ _ACEOF
 fi
 done
 
-for ac_func in mkstemp mktemp
+for ac_func in mkstemp mktemp tmpnam break
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6402,16 +6445,17 @@ if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
 #define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
 _ACEOF
- break
+
 fi
 done
 
-for ac_func in swab
+for ac_func in swab tzset _exit popen
 do :
-  ac_fn_cxx_check_func "$LINENO" "swab" "ac_cv_func_swab"
-if test "x$ac_cv_func_swab" = xyes; then :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
   cat >>confdefs.h <<_ACEOF
-#define HAVE_SWAB 1
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
 _ACEOF
 
 fi
@@ -6467,6 +6511,43 @@ fi
 done
 
 for ac_func in readlinkat readlink
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+
+for ac_func in chown chmod link symlink
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in openlog syslog closelog
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
+for ac_func in fork exec socket
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
 ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
@@ -6648,7 +6729,8 @@ case $host_os in
   aros*)
     ;;
   *)
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for /dev/random" >&5
+    if test "$cross_compiling" != yes; then
+        { $as_echo "$as_me:${as_lineno-$LINENO}: checking for /dev/random" >&5
 $as_echo_n "checking for /dev/random... " >&6; }
 if ${ac_cv_file__dev_random+:} false; then :
   $as_echo_n "(cached) " >&6
@@ -6715,6 +6797,7 @@ _ACEOF
 
 fi
 
+    fi
     ;;
 esac
 
@@ -7386,6 +7469,7 @@ if test "${enable_openssl+set}" = set; then :
 fi
 
 
+
 # Check whether --with-ssl-dir was given.
 if test "${with_ssl_dir+set}" = set; then :
   withval=$with_ssl_dir;
@@ -7446,7 +7530,7 @@ else
 
 		# Basic test to check for compatible library and
 		# correct linking
-		if test "$cross_compiling" = yes; then
+		if test "x$cross_compiling" = "xyes"; then
                         found_crypto=1
                 else
 		if test "$cross_compiling" = yes; then :

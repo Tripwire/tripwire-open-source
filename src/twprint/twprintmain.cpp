@@ -67,7 +67,11 @@
 void tw_terminate_handler()
 {
     fputs("### Internal Error.\n### Terminate Handler called.\n### Exiting...\n", stderr);
+#if HAVE__EXIT
     _exit(1);
+#else
+    exit(1);
+#endif
 }
 
 // Exception specifications removed as a misfeature in C++17
@@ -75,7 +79,12 @@ void tw_terminate_handler()
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
+
+#if HAVE__EXIT 
     _exit(1);
+#else
+    exit(1);
+#endif
 }
 #endif
 

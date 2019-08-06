@@ -82,7 +82,7 @@
 #include "archive.h"
 #endif
 
-#define BUFSIZE 4096
+#define BUFFER_SIZE 4096
 
 static uint32_t crctab[] = {
     0x0,

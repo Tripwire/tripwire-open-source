@@ -54,20 +54,28 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/stat.h>
+
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
-#ifdef HAVE_SYS_PARAM_H
+#endif
+
+#if HAVE_SYS_PARAM_H
 #include <sys/param.h>
 #endif
-#ifdef HAVE_SYS_MOUNT_H
+
+#if HAVE_SYS_MOUNT_H
 #include <sys/mount.h>
 #endif
-#ifdef HAVE_SYS_USTAT_H
+
+#if HAVE_SYS_USTAT_H
 #include <sys/ustat.h>
 #endif
-#ifdef HAVE_WCHAR_H
+
+#if HAVE_WCHAR_H
 #include <wchar.h>
 #endif
-#ifdef HAVE_SYS_SYSMACROS_H
+
+#if HAVE_SYS_SYSMACROS_H
 #include <sys/sysmacros.h>
 #endif
 
@@ -75,7 +83,9 @@
 #include <sys/utsname.h>
 #endif
 
+#if HAVE_PWD_H
 #include <pwd.h>
+#endif
 
 #if IS_REDOX
 #    define restrict __restrict__
@@ -87,7 +97,10 @@
 #include <netinet/in.h>
 #endif
 
+#if HAVE_GRP_H
 #include <grp.h>
+#endif
+
 #include <fcntl.h>
 #include <errno.h>
 
@@ -173,7 +186,7 @@ void cUnixFSServices::GetHostID(TSTRING& name) const
     TOSTRINGSTREAM ret;
 
     ret.setf(ios_base::hex, ios_base::basefield);
-#ifdef HAVE_GETHOSTID
+#if HAVE_GETHOSTID
     ret << gethostid();
 #else
     ret << 999999;
@@ -264,38 +277,41 @@ void cUnixFSServices::GetCurrentDir(TSTRING& strCurDir) const
 
 TSTRING& cUnixFSServices::MakeTempFilename(TSTRING& strName) const
 {
-    char* pchTempFileName;
     char  szTemplate[iFSServices::TW_MAX_PATH];
-    int   fd;
 
     strncpy(szTemplate, strName.c_str(), iFSServices::TW_MAX_PATH);
 
-#ifdef HAVE_MKSTEMP
+#if HAVE_MKSTEMP
     // create temp filename and check to see if mkstemp failed
-    if ((fd = mkstemp(szTemplate)) == -1)
-    {
+    int fd = mkstemp(szTemplate);
+    if (fd < 0)
         throw eFSServicesGeneric(strName);
-    }
-    else
-    {
-        close(fd);
-    }
-    pchTempFileName = szTemplate;
-#else
-    fd = 0;
+
+    close(fd);
+    char* pchTempFileName = szTemplate;
+
+#elif HAVE_MKTEMP
+
     // create temp filename
-    pchTempFileName = mktemp(szTemplate);
+    char* pchTempFileName = mktemp(szTemplate);
 
     //check to see if mktemp failed
     if (pchTempFileName == NULL || strlen(pchTempFileName) == 0)
     {
         throw eFSServicesGeneric(strName);
     }
+
+#elif HAVE_TMPNAM
+    char* pchTempFileName = tmpnam(szTemplate);
+#else
+    // none of the standard temp fns exist?  should this be an error?
+    #error "No standard tempfile naming functions are available"
 #endif
 
     // change name so that it has the XXXXXX part filled in
     strName = pchTempFileName;
 
+    // TODO: below is a very old comment, is it still accurate?
     // Linux creates the file!!  Doh!
     // So I'll always attempt to delete it -bam
     FileDelete(strName.c_str());
@@ -310,16 +326,15 @@ void cUnixFSServices::GetTempDirName(TSTRING& strName) const
 
 void cUnixFSServices::SetTempDirName(TSTRING& tmpPath)
 {
-
     mTempPath = tmpPath;
 }
 
 
 #if !USES_DEVICE_PATH
-void cUnixFSServices::Stat(const TSTRING& strName, cFSStatArgs& stat) const
+void cUnixFSServices::Stat(const TSTRING& strName, cFSStatArgs& statArgs) const
 {
 #else
-void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& stat) const
+void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& statArgs) const
 {
     TSTRING strName = cDevicePath::AsNative(strNameC);
 #endif
@@ -327,7 +342,11 @@ void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& stat) const
     struct stat statbuf;
 
     int ret;
+#if HAVE_LSTAT
     ret = lstat(strName.c_str(), &statbuf);
+#elif HAVE_STAT
+    ret = stat(strName.c_str(), &statbuf);
+#endif
 
     cDebug d("cUnixFSServices::Stat");
     d.TraceDetail("Executing on file %s (result=%d)\n", strName.c_str(), ret);
@@ -348,66 +367,81 @@ void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& stat) const
 #endif
 
     //copy information returned by lstat call into the structure passed in
-    stat.gid   = statbuf.st_gid;
-    stat.atime = statbuf.st_atime;
-    stat.ctime = statbuf.st_ctime;
-    stat.mtime = statbuf.st_mtime;
-    stat.dev   = statbuf.st_dev;
+    statArgs.gid   = statbuf.st_gid;
+    statArgs.atime = statbuf.st_atime;
+    statArgs.ctime = statbuf.st_ctime;
+    statArgs.mtime = statbuf.st_mtime;
+    statArgs.dev   = statbuf.st_dev;
 
 #if HAVE_STRUCT_STAT_ST_RDEV
-    stat.rdev = statbuf.st_rdev;
+    statArgs.rdev = statbuf.st_rdev;
 #else
-    stat.rdev = 0;
+    statArgs.rdev = 0;
 #endif
 
-    stat.ino     = statbuf.st_ino;
-    stat.mode    = statbuf.st_mode;
-    stat.nlink   = statbuf.st_nlink;
-    stat.size    = statbuf.st_size;
-    stat.uid     = statbuf.st_uid;
-    stat.blksize = statbuf.st_blksize;
+    statArgs.ino     = statbuf.st_ino;
+    statArgs.mode    = statbuf.st_mode;
+    statArgs.nlink   = statbuf.st_nlink;
+    statArgs.size    = statbuf.st_size;
+    statArgs.uid     = statbuf.st_uid;
+    statArgs.blksize = statbuf.st_blksize;
 
 #if HAVE_STRUCT_STAT_ST_BLOCKS
-    stat.blocks = statbuf.st_blocks;
+    statArgs.blocks = statbuf.st_blocks;
 #else
-    stat.blocks = 0;
+    statArgs.blocks = 0;
 #endif
 
     // set the file type
     if (S_ISREG(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_FILE;
+        statArgs.mFileType = cFSStatArgs::TY_FILE;
     else if (S_ISDIR(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_DIR;
+        statArgs.mFileType = cFSStatArgs::TY_DIR;
     else if (S_ISLNK(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_SYMLINK;
+        statArgs.mFileType = cFSStatArgs::TY_SYMLINK;
     else if (S_ISBLK(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_BLOCKDEV;
+        statArgs.mFileType = cFSStatArgs::TY_BLOCKDEV;
     else if (S_ISCHR(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_CHARDEV;
+        statArgs.mFileType = cFSStatArgs::TY_CHARDEV;
     else if (S_ISFIFO(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_FIFO;
+        statArgs.mFileType = cFSStatArgs::TY_FIFO;
 #ifdef S_ISSOCK
     else if (S_ISSOCK(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_SOCK;
+        statArgs.mFileType = cFSStatArgs::TY_SOCK;
 #endif
 
 #if HAVE_DOOR_CREATE
     else if (S_ISDOOR(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_DOOR;
+        statArgs.mFileType = cFSStatArgs::TY_DOOR;
 #endif
 
 #if HAVE_PORT_CREATE
     else if (S_ISPORT(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_PORT;
+        statArgs.mFileType = cFSStatArgs::TY_PORT;
 #endif
 
 #ifdef S_ISNAM
     else if (S_ISNAM(statbuf.st_mode))
-        stat.mFileType = cFSStatArgs::TY_NAMED;
+        statArgs.mFileType = cFSStatArgs::TY_NAMED;
+#endif
+
+#ifdef S_TYPEISMQ
+    else if (S_TYPEISMQ(&statbuf))
+        statArgs.mFileType = cFSStatArgs::TY_MESSAGE_QUEUE;
+#endif
+
+#ifdef S_TYPEISSEM
+    else if (S_TYPEISSEM(&statbuf))
+        statArgs.mFileType = cFSStatArgs::TY_SEMAPHORE;
+#endif
+
+#ifdef S_TYPEISSHM
+    else if (S_TYPEISSHM(&statbuf))
+        statArgs.mFileType = cFSStatArgs::TY_SHARED_MEMORY;
 #endif
 
     else
-        stat.mFileType = cFSStatArgs::TY_INVALID;
+        statArgs.mFileType = cFSStatArgs::TY_INVALID;
 }
 
 void cUnixFSServices::GetMachineName(TSTRING& strName) const
@@ -461,8 +495,8 @@ bool cUnixFSServices::FileDelete(const TSTRING& strName) const
 
 bool cUnixFSServices::GetCurrentUserName(TSTRING& strName) const
 {
+#if HAVE_PWD_H  
     bool fSuccess = false;
-
     uid_t          uid = getuid();
     struct passwd* pp  = getpwuid(uid);
 
@@ -475,6 +509,10 @@ bool cUnixFSServices::GetCurrentUserName(TSTRING& strName) const
         strName = _T("");
 
     return (fSuccess);
+#else
+    strName = _T("");
+    return true;
+#endif
 }
 
 
@@ -537,6 +575,7 @@ bool cUnixFSServices::GetUserName(uid_t user_id, TSTRING& tstrUser) const
 {
     bool fSuccess = true;
 
+#if HAVE_PWD_H    
     if (mResolveNames)
     {
         struct passwd* pp = getpwuid(user_id);
@@ -550,11 +589,13 @@ bool cUnixFSServices::GetUserName(uid_t user_id, TSTRING& tstrUser) const
     }
     else
     {
+#endif      
         std::stringstream sstr;
         sstr << user_id;
         tstrUser = sstr.str();
+#if HAVE_PWD_H	
     }
-
+#endif
     return (fSuccess);
 }
 
@@ -563,7 +604,7 @@ bool cUnixFSServices::GetGroupName(gid_t group_id, TSTRING& tstrGroup) const
 {
     bool fSuccess = true;
 
-#if !IS_REDOX
+#if !IS_REDOX && HAVE_GRP_H
     if (mResolveNames)
     {
         struct group* pg = getgrgid(group_id);
@@ -581,7 +622,7 @@ bool cUnixFSServices::GetGroupName(gid_t group_id, TSTRING& tstrGroup) const
         std::stringstream sstr;
         sstr << group_id;
         tstrGroup = sstr.str();
-#if !IS_REDOX
+#if !IS_REDOX && HAVE_GRP_H
     }
 #endif
 

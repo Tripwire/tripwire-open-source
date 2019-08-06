@@ -244,8 +244,13 @@ void cFile::Open(const TSTRING& sFileNameC, uint32_t flags)
 #if HAVE_POSIX_FADVISE
     if (flags & OPEN_SCANNING && !(flags & OPEN_DIRECT))
     {
+#ifdef POSIX_FADV_SEQUENTIAL
         posix_fadvise(fh, 0, 0, POSIX_FADV_SEQUENTIAL);
+#endif
+
+#ifdef POSIX_FADV_NOREUSE
         posix_fadvise(fh, 0, 0, POSIX_FADV_NOREUSE);
+#endif
     }
 
 #elif HAVE_SYS_FS_VX_IOCTL_H
@@ -267,7 +272,7 @@ void cFile::Close() //throw(eFile)
 {
     if (mpData->mpCurrStream != NULL)
     {
-#ifdef HAVE_POSIX_FADVISE
+#if defined(HAVE_POSIX_FADVISE) && defined(POSIX_FADV_DONTNEED)
         posix_fadvise(fileno(mpData->mpCurrStream), 0, 0, POSIX_FADV_DONTNEED);
 #endif
 
@@ -362,7 +367,11 @@ cFile::File_t cFile::Read(void* buffer, File_t nBytes) const //throw(eFile)
 
     if (mpData->mFlags & OPEN_DIRECT)
     {
+#if READ_TAKES_CHAR_PTR
+        iBytesRead = read(mpData->m_fd, (char*)buffer, nBytes);
+#else
         iBytesRead = read(mpData->m_fd, buffer, nBytes);
+#endif
         if (iBytesRead < 0)
         {
             throw eFileRead(mpData->mFileName, iFSServices::GetInstance()->GetErrString());
