@@ -67,8 +67,11 @@ fi
 if test "x${CXX}" = "xgxlc++"; then
     AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
 
-    CFLAGS=${CFLAGS:-"-O -pipe"}
-    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
+dnl OBJECT_MODE needs to be set while compiling
+    export OBJECT_MODE=64
+    CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
+    CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
+    ARFLAGS=${ARFLAGS:-"-X 64"}
 else
     AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
 fi
@@ -76,8 +79,11 @@ fi
 if test "x${CXX}" = "xxlc++_r"; then
     AC_DEFINE(HAVE_IBM_XLC, 1, [Uses the IBM XL C++ compiler])
 
-    CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
-    CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
+dnl OBJECT_MODE needs to be set while compiling
+    export OBJECT_MODE=64
+    CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all"}
+    CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all"}
+    ARFLAGS=${ARFLAGS:-"-X 64"}
 else
     AC_DEFINE(HAVE_IBM_XLC, 0, [Uses the IBM XL C++ compiler])
 fi
@@ -235,6 +241,10 @@ AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks, struct stat.st_fla
 dnl detect large file support & use it where available
 AC_SYS_LARGEFILE
 
+dnl detect whether C++ compiler supports any variant of 'restrict' keyword
+dnl (the macro says 'C' but works for both C & C++)
+AC_C_RESTRICT
+
 dnl ******************************************
 dnl Check whether AC_CHECK_FUNC(S) lies to us
 dnl ******************************************
@@ -244,7 +254,7 @@ dnl #############################
 dnl Checks for standard functions
 dnl #############################
 AC_CHECK_FUNCS(strftime)
-AC_CHECK_FUNCS(gethostname gethostbyname gethostid getuid)
+AC_CHECK_FUNCS(getaddrinfo gethostname gethostbyname gethostid getuid)
 AC_CHECK_FUNCS(mkstemp mktemp tmpnam break)
 AC_CHECK_FUNCS(swab tzset _exit popen)
 
@@ -263,8 +273,10 @@ dnl posix fns that make filesystem changes
 AC_CHECK_FUNCS(chown chmod link symlink)
 dnl posix syslog fns
 AC_CHECK_FUNCS(openlog syslog closelog)
-dnl assorted other posix fns
-AC_CHECK_FUNCS(fork exec socket)
+dnl posix process & networking stuff
+AC_CHECK_FUNCS(fork execve posix_spawn socket)
+dnl posix user & group stuff
+AC_CHECK_FUNCS(setuid setgid getgrgid)
 
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])

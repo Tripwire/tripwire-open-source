@@ -47,37 +47,37 @@
 // STANDARD LIBRARY INCLUDES
 //=========================================================================
 
-#include <ctype.h>
-#include <iostream>
+//#include <ctype.h>
+//#include <iostream>
 
-#include <sys/types.h>
+//#include <sys/types.h>
 #include <unistd.h>
 #include <dirent.h>
-#include <sys/stat.h>
+//#include <sys/stat.h>
 
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
+//#if HAVE_SYS_TIME_H
+//#include <sys/time.h>
+//#endif
 
-#if HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
+//#if HAVE_SYS_PARAM_H
+//#include <sys/param.h>
+//#endif
 
-#if HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
+//#if HAVE_SYS_MOUNT_H
+//#include <sys/mount.h>
+//#endif
 
-#if HAVE_SYS_USTAT_H
+/*#if HAVE_SYS_USTAT_H
 #include <sys/ustat.h>
-#endif
+#endif*/
 
-#if HAVE_WCHAR_H
-#include <wchar.h>
-#endif
+//#if HAVE_WCHAR_H
+//#include <wchar.h>
+//#endif
 
-#if HAVE_SYS_SYSMACROS_H
-#include <sys/sysmacros.h>
-#endif
+//#if HAVE_SYS_SYSMACROS_H
+//#include <sys/sysmacros.h>
+//#endif
 
 #if HAVE_SYS_UTSNAME_H
 #include <sys/utsname.h>
@@ -101,8 +101,8 @@
 #include <grp.h>
 #endif
 
-#include <fcntl.h>
-#include <errno.h>
+#//include <fcntl.h>
+#//include <errno.h>
 
 //=========================================================================
 // INCLUDES
@@ -116,10 +116,10 @@
 // -jeb 7/26/99
 // reduced to sys/statfs.h.  Linux is OK and doesn't deserve
 // special treatment.  20010317-PH
-#ifdef HAVE_SYS_STATFS_H
+/*#ifdef HAVE_SYS_STATFS_H
 #include <sys/statfs.h>
 #endif //HAVE_SYS_STATFS_H
-
+*/
 
 //=========================================================================
 // DEFINES AND MACROS

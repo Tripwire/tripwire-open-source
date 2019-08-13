@@ -127,7 +127,9 @@ protected:
 //      to be added to the exception class.
 ///////////////////////////////////////////////////////////////////////////////
 
-#if HAVE_GCC || HAVE_IBM_GXLC
+// TODO: make use of 'explicit' more portable here, and/or figure out why
+// this doesn't work on so many compilers
+#if HAVE_GCC || HAVE_IBM_XLC || HAVE_IBM_GXLC || HAVE_ORACLE_SUNCC
 #    define TSS_BEGIN_EXCEPTION_EXPLICIT
 #else
 #    define TSS_BEGIN_EXCEPTION_EXPLICIT explicit
