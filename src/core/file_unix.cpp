@@ -46,12 +46,12 @@
 
 #include "core/file.h"
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
 #include <fcntl.h>
-#include <errno.h>
+//#include <errno.h>
 
 #if HAVE_SYS_FS_VX_IOCTL_H
 #include <sys/fs/vx_ioctl.h>
