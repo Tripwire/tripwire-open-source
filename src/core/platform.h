@@ -351,7 +351,7 @@
 #    define USE_STD_CPP_LOCALE_WORKAROUND \
         (IS_SUNPRO || (IS_KAI && !IS_KAI_3_4)) // TODO:BAM -- name this something more general.
 //#    define USE_CLIB_LOCALE IS_KAI || HAVE_GCC
-#    define USE_CLIB_LOCALE (!HAVE_LOCALE)
+#    define USE_CLIB_LOCALE (!HAVE_LOCALE || (HAVE_GCC && IS_SOLARIS))
 #    define USES_CLIB_DATE_FUNCTION      \
         (USE_CLIB_LOCALE || IS_SUNPRO || \
          IS_MSVC) // if we use clib, can't use C++ time_put, and SUNPRO and MSVC add characters
@@ -408,6 +408,13 @@
 // continue removing them on all other platforms for now.  
 
 #    define USE_DEV_URANDOM (HAVE_DEV_URANDOM && ENABLE_DEV_URANDOM)
+
+#if IS_SOLARIS
+#   define UNAME_SUCCESS_POSIX 1
+#else
+#   define UNAME_SUCCESS_ZERO
+#endif  
+
 
 //=============================================================================
 // Miscellaneous

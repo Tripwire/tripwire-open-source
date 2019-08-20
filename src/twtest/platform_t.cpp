@@ -304,7 +304,11 @@ void TestPlatformDetection()
 {
 #if HAVE_SYS_UTSNAME_H
     struct utsname os_info;
+#if UNAME_SUCCESS_POSIX // Solaris documents uname() as succeding w/ any nonnegative value. This is actually the behavior specified by the POSIX standard, though in practice everyone else seems to return 0 on success.
+    TEST(uname(&os_info) >= 0);
+#else
     TEST(uname(&os_info) == 0);
+#endif
 
     TSTRING observed_os(os_info.sysname);
 
