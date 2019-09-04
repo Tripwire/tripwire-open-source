@@ -103,7 +103,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
             errStr.erase(firstLF);
         }
 
-        ASSERT(errStr.length() + len + 6 < 80); // line too big for terminal?
+        ASSERT(errStr.length() + 6 < 80); // line too big for terminal?
                                                 // Add 6 to account for "### ' and ': '
         TCERR << TSS_GetString(cCore, core::STR_ERROR_COLON) << _T(" ") << errStr;
         TCERR << std::endl;

@@ -147,7 +147,7 @@ private:
     };
 
     static int           mDebugLevel;
-    static uint32        mOutMask;
+    static uint32_t      mOutMask;
     static std::ofstream logfile;
     char                 mLabel[MAX_LABEL];
 

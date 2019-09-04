@@ -45,7 +45,7 @@
 #include <cstdio>
 
 int           cDebug::mDebugLevel(10);
-uint32        cDebug::mOutMask(cDebug::OUT_TRACE);
+uint32_t      cDebug::mOutMask(cDebug::OUT_TRACE);
 std::ofstream cDebug::logfile;
 //mDebugLevel default == 10, mOutMask default == OUT_TRACE.
 

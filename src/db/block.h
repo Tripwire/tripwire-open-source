@@ -184,8 +184,8 @@ template<int SIZE> inline cBlockImpl<SIZE>::cBlockImpl() : cBlock<SIZE>(), mTime
 ///////////////////////////////////////////////////////////////////////////////
 template<int SIZE> inline void cBlockImpl<SIZE>::Write(cBidirArchive& arch) //throw( eArchive )
 {
-    ASSERT(mbDirty);
-    ASSERT((mBlockNum >= 0) && (((mBlockNum + 1) * SIZE) <= arch.Length()));
+    ASSERT(cBlock<SIZE>::mbDirty);
+    ASSERT((cBlock<SIZE>::mBlockNum >= 0) && (((cBlock<SIZE>::mBlockNum + 1) * SIZE) <= arch.Length()));
 
     arch.Seek((cBlock<SIZE>::mBlockNum * SIZE), cBidirArchive::BEGINNING);
     arch.WriteBlob(cBlock<SIZE>::mpData, SIZE);
@@ -201,7 +201,7 @@ template<int SIZE> inline void cBlockImpl<SIZE>::Read(cBidirArchive& arch, int b
     if (blockNum != INVALID_NUM)
         cBlock<SIZE>::mBlockNum = blockNum;
 
-    ASSERT((mBlockNum >= 0) && (((mBlockNum + 1) * SIZE) <= arch.Length()));
+    ASSERT((cBlock<SIZE>::mBlockNum >= 0) && (((cBlock<SIZE>::mBlockNum + 1) * SIZE) <= arch.Length()));
 
     //    std::cout << "cBlockImpl<SIZE>::Read() mBlockNum = " << mBlockNum << " arch.Length() = " << arch.Length() << std::endl;
 

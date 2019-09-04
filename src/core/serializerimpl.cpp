@@ -62,7 +62,7 @@ static uint32_t util_GetCRC(const cType& type)
     const uint8_t* pszType = (const uint8_t*)(type.AsString());
     int            nBytes  = ::strlen((const char*)pszType);
 
-    ASSERT(sizeof(uint8_t) == sizeof(byte));
+    //ASSERT(sizeof(uint8_t) == sizeof(byte));
     ASSERT(pszType && *pszType);
 
     //
