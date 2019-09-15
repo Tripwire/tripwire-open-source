@@ -102,7 +102,7 @@
 #endif
 
 #//include <fcntl.h>
-#//include <errno.h>
+#include <errno.h>
 
 //=========================================================================
 // INCLUDES

@@ -62,20 +62,20 @@ template<class E, class T> bool CanBeRepresentedAs(E e, T t);
 
 // Constructing this class will write to a memory location
 // offset by ALIGN_SIZE.  If it chokes, you'll get a bus error
-template<int ALIGN_SIZE> class AlignMe
+template<class T, int ALIGN_SIZE> class AlignMe
 {
 public:
     AlignMe();
 
 private:
-    uint8_t a[sizeof(int64_t) + ALIGN_SIZE]; // we want to be able to access a int64_t at address [ALIGN_SIZE]
+    uint8_t a[sizeof(T) + ALIGN_SIZE + 1]; // we want to be able to access a T at address [ALIGN_SIZE]
 };
 
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL CLASSES IMPLEMENTATIONS
 /////////////////////////////////////////////////////////
 
-template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
+template<class T, int ALIGN_SIZE> AlignMe<T, ALIGN_SIZE>::AlignMe()
 {
 // HP-UX does not play your silly alignment games, at least unless you
 // first invoke something called "allow_unaligned_data_access()", which
@@ -86,41 +86,37 @@ template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
 #if (!IS_HPUX && !IS_SOLARIS) //Turns out Solaris SPARC is unhappy with this test too, btw
     //TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
-    // access a double in the byte array to see if it is aligned.  if it isn't and the CPU
+    // access a value in the byte array to see if it is aligned.  if it isn't and the CPU
     // can't handle it, you'll get a bus error
 
     // this should choke if the CPU can't
     // handle misaligned memory access
-    int32_t* pi = (int32_t*)&a[ALIGN_SIZE];
-    //TCOUT << _T("Testing alignment of an int32...") << std::endl;
-    //TCOUT << _T("Reading...") << std::endl;
-    int32_t i = *pi; // access memory for read
-    //TCOUT << _T("Read succeeded.") << std::endl;
-    //TCOUT << _T("Writing...") << std::endl;
-    *pi = i; // access memory for write
-    TCOUT << _T("Write succeeded.") << std::endl;
-
-
-    // this should choke if the CPU can't
-    // handle misaligned memory access
-    int64_t* pb = (int64_t*)&a[ALIGN_SIZE];
-    //TCOUT << _T("Testing alignment of an int64...") << std::endl;
-    //TCOUT << _T("Reading...") << std::endl;
-    int64_t I = *pb; // access memory for read
-    //TCOUT << _T("Read succeeded") << std::endl;
-    //TCOUT << _T("Writing...") << std::endl;
-    *pb = I; // access memory for write
-    //TCOUT << _T("Write succeeded.") << std::endl;
-
-
-    /*TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
-          << _T("=========================================\n"); */
-
-    TEST("Aligned"); // The actual test is not bus erroring up above; this just tells the framework we tested something.
-
+    memset(a, 0, sizeof(T) + ALIGN_SIZE + 1);
+  
+    T* valuePtr = (T*)&a[ALIGN_SIZE];
+    TEST(*valuePtr == 0);
+    
+    T value = *valuePtr; // access memory for read
+    TEST(value == 0);
+    
+    *valuePtr = value; // access memory for write
+    TEST(*valuePtr == 0);
 #endif
 }
 
+
+template<class T>
+void testAlignmentForType()
+{
+    AlignMe<T, 128> a128;
+    AlignMe<T, 64>  a64;
+    AlignMe<T, 32>  a32;
+    AlignMe<T, 16>  a16;
+    AlignMe<T, 8>   a8;
+    AlignMe<T, 4>   a4;
+    AlignMe<T, 2>   a2;
+    AlignMe<T, 1>   a1;
+}
 
 /////////////////////////////////////////////////////////
 // UTIL FUNCTIONS
@@ -135,16 +131,18 @@ void TestAlignment()
 
     //    TCOUT << _T("Testing for byte alignment\n")
     //          << _T("=========================================\n");
+    testAlignmentForType<int64_t>();
+    testAlignmentForType<int32_t>();
+    testAlignmentForType<int16_t>();
 
-    AlignMe<128> a128;
-    AlignMe<64>  a64;
-    AlignMe<32>  a32;
-    AlignMe<16>  a16;
-    AlignMe<8>   a8;
-    AlignMe<4>   a4;
-    AlignMe<2>   a2;
-    AlignMe<1>   a1;
+    testAlignmentForType<float>();
+    testAlignmentForType<double>();
+    testAlignmentForType<long double>();
+}
 
+
+void TestAlignment2()
+{
     // - - - - - - - - - - - - - - - - - - - - - -
     // test a misaligned memory access -- if this
     // chokes, your CPU can't handle such accesses
@@ -321,7 +319,8 @@ void TestPlatformDetection()
 
 void RegisterSuite_Platform()
 {
-    RegisterTest("Platform", "Alignment", TestAlignment);
-    RegisterTest("Platform", "Sizes", TestSizes);
+    RegisterTest("Platform", "Alignment",  TestAlignment);
+    RegisterTest("Platform", "Alignment2", TestAlignment2);    
+    RegisterTest("Platform", "Sizes",      TestSizes);
     RegisterTest("Platform", "PlatformDetection", TestPlatformDetection);
 }

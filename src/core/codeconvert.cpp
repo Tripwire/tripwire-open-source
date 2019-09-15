@@ -1243,7 +1243,9 @@ int tss_wcstombs(ntmbs_t pbz, const_ntwcs_t pwz, size_t nCount)
 int tss_mbstowcs(ntwcs_t pwz, const_ntmbs_t pbz, size_t nBytes)
 {
     cDebug d("tss_mbstowcs");
-
+    if (!pbz)
+        return 0;
+    
     size_t        N;
     size_t        nConv;
     const_ntmbs_t end = &pbz[nBytes];

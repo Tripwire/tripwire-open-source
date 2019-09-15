@@ -114,15 +114,19 @@ wc16_string::~wc16_string()
         mpData->Release();
 }
 
-void wc16_string::operator=(const wc16_string& rhs)
+wc16_string& wc16_string::operator=(const wc16_string& rhs)
 {
-    if (mpData)
-        mpData->Release();
+    if (this != &rhs)
+    {
+        if (mpData)
+            mpData->Release();
 
-    mpData = rhs.mpData;
+        mpData = rhs.mpData;
 
-    if (mpData)
-        mpData->AddRef();
+        if (mpData)
+            mpData->AddRef();
+    }
+    return *this;
 }
 
 

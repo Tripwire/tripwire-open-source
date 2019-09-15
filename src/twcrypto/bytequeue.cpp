@@ -307,8 +307,11 @@ unsigned int cByteQueue::Peek(uint8_t& outByte) const
 
 cByteQueue& cByteQueue::operator=(const cByteQueue& rhs)
 {
-    Destroy();
-    CopyFrom(rhs);
+    if (this != &rhs)
+    {
+        Destroy();
+        CopyFrom(rhs);
+    }
     return *this;
 }
 

@@ -329,7 +329,7 @@ void cIntegrityCheck::ProcessDir(cDbDataSourceIter dbIter, iFCODataSourceIter* p
 #ifdef DEBUG
     if (dbIter.Done())
     {
-        d.TraceDebug("Processing directory %s\n", pIter->GetParentName().AsString().c_str());
+        d.TraceDebug("Processing directory %s\n", (pIter ? pIter->GetParentName().AsString().c_str() : _T("[none]")));
     }
     else
     {

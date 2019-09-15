@@ -78,7 +78,7 @@ public:
 
     ~wc16_string();
 
-    void operator=(const wc16_string& rhs);
+    wc16_string& operator=(const wc16_string& rhs);
     int  compare(const wc16_string& rhs) const;
 
     size_type length() const;
