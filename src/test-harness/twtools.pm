@@ -50,8 +50,8 @@ BEGIN {
         LATEPROMPTING                => 'false',
         LOOSEDIRECTORYCHECKING       => 'false',
         MAILNOVIOLATIONS             => 'true',
-        EMAILREPORTLEVEL             => '3',
-        REPORTLEVEL                  => '3',
+        EMAILREPORTLEVEL             => '4',
+        REPORTLEVEL                  => '4',
         MAILMETHOD                   => 'SENDMAIL',
         SYSLOGREPORTING              => 'true',
         MAILPROGRAM                  => 'cat',
@@ -751,6 +751,12 @@ sub RunIntegrityTests(\%) {
     my @twresults = RunReport( { dir => "this"} );
     my ($actualViolations, $actualAdded, $actualRemoved, $actualChanged) = AnalyzeReport(@twresults);
 
+    logStatus("Total expected:   $violations | Total observed:   $actualViolations\n");
+    logStatus("Expected added:   $added | Observed added:   $actualAdded\n");
+    logStatus("Expected removed: $removed | Observed removed: $actualRemoved\n");
+    logStatus("Expected changed: $changed | Observed changed: $actualChanged\n");
+    
+    
     # Actual and expected violations should match if everything went as 
     # planned.
     #
