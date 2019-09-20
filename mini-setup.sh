@@ -6,7 +6,7 @@
 
 cp src/mini-setup/twcfg.txt bin/twcfg.txt
 cp src/mini-setup/twpol.txt bin/twpol.txt
-chdir bin
+cd bin
 
 if [ ! -f "l" ] || [ ! -f "s" ]; then
   echo "***** Generating Keys *****"
