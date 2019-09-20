@@ -99,7 +99,7 @@
 #define setgid(x) sleep(0)
 #endif
 
-#if SUPPORTS_POSIX_FORK_EXEC
+#if USES_MSYSTEM
 /*
  * signal type
  */

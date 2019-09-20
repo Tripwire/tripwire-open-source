@@ -51,7 +51,7 @@
   #if defined(__VXWORKS__) || defined(__vxworks)
     #undef HAVE__EXIT
     #undef HAVE_CHOWN
-    #undef HAVE_EXEC
+    #undef HAVE_EXECVE
     #undef HAVE_FORK
     #undef HAVE_GETHOSTID
     #undef HAVE_GETUID

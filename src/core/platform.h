@@ -370,7 +370,7 @@
 #    define WCHAR_IS_32_BITS IS_UNIX
 #    define WCHAR_REP_IS_UCS2 IS_WIN32
 
-#    define SUPPORTS_POSIX_FORK_EXEC (HAVE_FORK && HAVE_EXEC)
+#    define SUPPORTS_POSIX_FORK_EXEC (HAVE_FORK && HAVE_EXECVE)
 // msystem+mpopen fail on Syllable, so use the libc equivalents until we figure out why.
 // TODO: Figure out why.
 #    define USES_MPOPEN (SUPPORTS_POSIX_FORK_EXEC && !IS_SYLLABLE)
