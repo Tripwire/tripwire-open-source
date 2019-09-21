@@ -88,6 +88,7 @@ typedef unsigned char uint8_t;
 #include <stdint.h>
 #endif
 
+#if __cplusplus < 201103L
 typedef unsigned short word16;
 #if SIZEOF_INT == 4
  typedef unsigned int word32;
@@ -95,6 +96,10 @@ typedef unsigned short word16;
  typedef unsigned long word32;
  #else
  #error "I don't seem to have a 32-bit integer type on this system."
+#endif
+#else
+typedef uint16_t word16;
+typedef uint32_t word32;
 #endif
 
 // word should have the same size as your CPU registers
@@ -146,16 +151,25 @@ typedef unsigned long long word64;
 
 #elif defined(__GNUC__)
 
+#if __cplusplus < 201103L
 typedef word32 word;
 #if SIZEOF_LONG_LONG == 8
  typedef unsigned long long dword;
  #define WORD64_AVAILABLE
  typedef unsigned long long word64;
  #define W64LIT(x) x##LL
- #else
+#else
  #error "I don't seem to have a 64-bit integer type on this system."
 #endif
-#else
+#else // __cplusplus < 201103L
+
+typedef uint32_t word;
+typedef uint64_t dword;
+typedef uint64_t word64;
+
+#endif
+
+#else // compiler type
 
 typedef unsigned int word;
 typedef unsigned long dword;

@@ -353,8 +353,7 @@
 // Used in twlocale
 #    define USE_STD_CPP_LOCALE_WORKAROUND \
         (IS_SUNPRO || (IS_KAI && !IS_KAI_3_4)) // TODO:BAM -- name this something more general.
-//#    define USE_CLIB_LOCALE IS_KAI || HAVE_GCC
-#    define USE_CLIB_LOCALE (!HAVE_LOCALE || (HAVE_GCC && (IS_SOLARIS || IS_AIX)))
+#    define USE_CLIB_LOCALE (!HAVE_LOCALE || HAVE_GCC || IS_KAI)
 #    define USES_CLIB_DATE_FUNCTION      \
         (USE_CLIB_LOCALE || IS_SUNPRO || \
          IS_MSVC) // if we use clib, can't use C++ time_put, and SUNPRO and MSVC add characters
