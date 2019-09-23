@@ -112,9 +112,10 @@ public:
         FT_DOOR,
         FT_PORT,
         FT_NAMED,
-	FT_MESSAGE_QUEUE,
-	FT_SEMAPHORE,
-	FT_SHARED_MEMORY,
+        FT_NATIVE,
+        FT_MESSAGE_QUEUE,
+        FT_SEMAPHORE,
+        FT_SHARED_MEMORY,
         FT_NUMITEMS
     };
 

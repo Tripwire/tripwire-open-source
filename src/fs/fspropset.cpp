@@ -60,6 +60,7 @@ TSTRING cFCOPropFileType::AsString() const
                               fs::STR_FT_DOOR,
                               fs::STR_FT_PORT,
                               fs::STR_FT_NAMED,
+                              fs::STR_FT_NATIVE,
                               fs::STR_FT_MESSAGE_QUEUE,
                               fs::STR_FT_SEMAPHORE,
                               fs::STR_FT_SHARED_MEMORY};

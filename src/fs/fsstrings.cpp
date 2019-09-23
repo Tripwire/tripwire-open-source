@@ -41,19 +41,20 @@
 
 TSS_BeginStringtable(cFS)
 
-    TSS_StringEntry(fs::STR_FT_INVALID, _T("Invalid")),
-    TSS_StringEntry(fs::STR_FT_FILE, _T("Regular File")),
-    TSS_StringEntry(fs::STR_FT_DIR, _T("Directory")),
-    TSS_StringEntry(fs::STR_FT_BLOCKDEV, _T("Block Device")),
-    TSS_StringEntry(fs::STR_FT_CHARDEV, _T("Character Device")),
-    TSS_StringEntry(fs::STR_FT_SYMLINK, _T("Symbolic Link")),
-    TSS_StringEntry(fs::STR_FT_FIFO, _T("FIFO")),
-    TSS_StringEntry(fs::STR_FT_SOCK, _T("Socket")),
-    TSS_StringEntry(fs::STR_FT_DOOR, _T("Door")),
-    TSS_StringEntry(fs::STR_FT_PORT, _T("Event Port")),
-    TSS_StringEntry(fs::STR_FT_NAMED, _T("Named Special File")),
+    TSS_StringEntry(fs::STR_FT_INVALID,       _T("Invalid")),
+    TSS_StringEntry(fs::STR_FT_FILE,          _T("Regular File")),
+    TSS_StringEntry(fs::STR_FT_DIR,           _T("Directory")),
+    TSS_StringEntry(fs::STR_FT_BLOCKDEV,      _T("Block Device")),
+    TSS_StringEntry(fs::STR_FT_CHARDEV,       _T("Character Device")),
+    TSS_StringEntry(fs::STR_FT_SYMLINK,       _T("Symbolic Link")),
+    TSS_StringEntry(fs::STR_FT_FIFO,          _T("FIFO")),
+    TSS_StringEntry(fs::STR_FT_SOCK,          _T("Socket")),
+    TSS_StringEntry(fs::STR_FT_DOOR,          _T("Door")),
+    TSS_StringEntry(fs::STR_FT_PORT,          _T("Event Port")),
+    TSS_StringEntry(fs::STR_FT_NAMED,         _T("Named Special File")),
+    TSS_StringEntry(fs::STR_FT_NATIVE,        _T("Native Object")),
     TSS_StringEntry(fs::STR_FT_MESSAGE_QUEUE, _T("Message Queue")),
-    TSS_StringEntry(fs::STR_FT_SEMAPHORE, _T("Semaphore")),
+    TSS_StringEntry(fs::STR_FT_SEMAPHORE,     _T("Semaphore")),
     TSS_StringEntry(fs::STR_FT_SHARED_MEMORY, _T("Shared Memory")),
   
     // property names

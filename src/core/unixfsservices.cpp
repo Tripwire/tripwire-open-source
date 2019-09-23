@@ -127,6 +127,16 @@
 
 #define TW_SLASH _T('/')
 
+#if (IS_AIX || IS_OS400)
+  #ifndef _S_IFNATIVE
+    #define _S_IFNATIVE 02000000 /* OS/400 native object, of any object type that isn't treated as a directory */
+  #endif
+
+  #ifndef S_ISNATIVE
+    #define S_ISNATIVE(x) (((x) & 0370000) == _S_IFNATIVE)
+  #endif
+#endif
+
 //=========================================================================
 // OTHER DIRECTIVES
 //=========================================================================
@@ -423,6 +433,11 @@ void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& statArgs) const
 #ifdef S_ISNAM
     else if (S_ISNAM(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_NAMED;
+#endif
+
+#ifdef S_ISNATIVE
+    else if (S_ISNATIVE(statbuf.st_mode))
+        statArgs.mFileType = cFSStatArgs::TY_NATIVE;
 #endif
 
 #ifdef S_TYPEISMQ

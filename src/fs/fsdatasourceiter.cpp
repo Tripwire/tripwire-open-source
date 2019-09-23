@@ -274,6 +274,9 @@ bool cFSDataSourceIter::InitializeTypeInfo(iFCO* pFCO)
     case cFSStatArgs::TY_NAMED:
         propSet.SetFileType(cFSPropSet::FT_NAMED);
         break;
+    case cFSStatArgs::TY_NATIVE:
+        propSet.SetFileType(cFSPropSet::FT_NATIVE);
+        break;
     case cFSStatArgs::TY_MESSAGE_QUEUE:
         propSet.SetFileType(cFSPropSet::FT_MESSAGE_QUEUE);
         break;

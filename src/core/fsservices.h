@@ -137,9 +137,10 @@ struct cFSStatArgs
         TY_DOOR,
         TY_PORT,
         TY_NAMED,
-	TY_MESSAGE_QUEUE,
-	TY_SEMAPHORE,
-	TY_SHARED_MEMORY
+        TY_NATIVE,
+        TY_MESSAGE_QUEUE,
+        TY_SEMAPHORE,
+        TY_SHARED_MEMORY
     };
 
     // attr is fs dependent?

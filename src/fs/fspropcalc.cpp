@@ -302,6 +302,9 @@ void cFSPropCalc::HandleStatProperties(const cFCOPropVector& propsToCheck, const
         case cFSStatArgs::TY_NAMED:
             propSet.SetFileType(cFSPropSet::FT_NAMED);
             break;
+        case cFSStatArgs::TY_NATIVE:
+            propSet.SetFileType(cFSPropSet::FT_NATIVE);
+            break;
         case cFSStatArgs::TY_MESSAGE_QUEUE:
             propSet.SetFileType(cFSPropSet::FT_MESSAGE_QUEUE);
             break;
@@ -325,11 +328,17 @@ void cFSPropCalc::HandleHashes(const cFCOPropVector& propsToCheck, const TSTRING
     // if the file type is not a regular file, we will
     // not try to open the file for signature generation
     ASSERT(propSet.GetValidVector().ContainsItem(cFSPropSet::PROP_FILETYPE));
-    if (propSet.GetFileType() == cFSPropSet::FT_FILE || propSet.GetFileType() == cFSPropSet::FT_SYMLINK)
+
+    if (   propSet.GetFileType() == cFSPropSet::FT_FILE
+        || propSet.GetFileType() == cFSPropSet::FT_SYMLINK
+#if (IS_AIX || IS_OS400)
+        || propSet.GetFileType() == cFSPropSet::FT_NATIVE
+#endif
+     )
     {
         if ( // if we need to open the file
             propsToCheck.ContainsItem(cFSPropSet::PROP_CRC32) || propsToCheck.ContainsItem(cFSPropSet::PROP_MD5) ||
-            propsToCheck.ContainsItem(cFSPropSet::PROP_SHA) || propsToCheck.ContainsItem(cFSPropSet::PROP_HAVAL))
+            propsToCheck.ContainsItem(cFSPropSet::PROP_SHA)   || propsToCheck.ContainsItem(cFSPropSet::PROP_HAVAL))
         {
             cFileArchive   arch;
             cMemoryArchive memArch;
