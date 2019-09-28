@@ -72,25 +72,36 @@
 #include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
+
 #if !IS_SORTIX && HAVE_SYS_FILE_H
-# include <sys/file.h>
+#    include <sys/file.h>
 #endif
+
 #include <sys/stat.h>
-#include <sys/wait.h>
-#include <time.h>
-#if HAVE_MALLOC_H && !IS_AROS
-#include <malloc.h>
+
+#if HAVE_SYS_WAIT_H
+#    include <sys/wait.h>
 #endif
+
+#include <time.h>
+
+#if HAVE_MALLOC_H && !IS_AROS
+#    include <malloc.h>
+#endif
+
 #include <string.h>
 //#include <signal.h>
 #include "tw_signal.h"
+
 #ifdef __STDC__
-#       include <unistd.h>
-#       include <stdlib.h>
+#    include <unistd.h>
+#    include <stdlib.h>
 #endif
+
 #ifdef HAVE_SYS_PARAM_H
-# include <sys/param.h>
+#   include <sys/param.h>
 #endif
+
 #include <assert.h>
 #include "msystem.h"
 

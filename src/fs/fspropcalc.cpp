@@ -78,9 +78,7 @@ static bool NeedsStat(const cFCOPropVector& v)
 
 bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t size)
 {
-#if !HAVE_READLINK
-    return false;
-#else  
+#if SUPPORTS_SYMLINKS
     std::vector<char> data(size + 1);
     char*             buf = &data[0];
 
@@ -121,7 +119,9 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
     arch.WriteBlob(buf, rtn);
 
     return true;
-#endif    
+#else
+    return false;
+#endif
 }
 
 void cFSPropCalc::AddPropCalcError(const eError& e)

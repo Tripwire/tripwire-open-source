@@ -39,11 +39,6 @@
 #endif
 
 #include "core/stdcore.h"
-
-#if !IS_UNIX
-#    error Need to be unix to use unixfsservices
-#endif
-
 #include "core/file.h"
 
 //#include <stdio.h>

@@ -239,7 +239,7 @@ const TSTRING expected_os("Linux");
 #elif IS_DARWIN
 const TSTRING expected_os("Darwin");
 #elif IS_CYGWIN
-const TSTRING expected_os("Cygwin");
+const TSTRING expected_os("CYGWIN_NT");
 #elif IS_DOS_DJGPP
 const TSTRING expected_os("FreeDOS"); // This will likely fail for other DOS flavors
 #elif IS_ANDROID
@@ -262,6 +262,8 @@ const TSTRING expected_os("LibertyBSD");
 const TSTRING expected_os("OpenBSD");
 #elif IS_SOLARIS
 const TSTRING expected_os("SunOS");
+#elif (IS_OS400 || IS_PASE)
+const TSTRING expected_os("OS400");
 #elif IS_AIX
 const TSTRING expected_os("AIX");
 #elif IS_HPUX

@@ -521,10 +521,10 @@ void cMD5Signature::Finit()
 #else
     MD5Final(&mMD5Info);
 
-#if BCOPY_TAKES_CHAR_PTR
-    bcopy((char*)mMD5Info.digest, (char*)md5_digest, MD5_DIGEST_LENGTH);
+#if HAVE_MEMCPY_S
+    memcpy_s(mMD5Info.digest, sizeof(mMD5Info.digest), md5_digest, MD5_DIGEST_LENGTH);
 #else    
-    bcopy(mMD5Info.digest, md5_digest, MD5_DIGEST_LENGTH);
+    memcpy(mMD5Info.digest, md5_digest, MD5_DIGEST_LENGTH);
 #endif
     
 #endif

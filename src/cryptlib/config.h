@@ -177,7 +177,7 @@ typedef unsigned long dword;
 #endif
 
 // You may need to tweak this to fit your architecture
-typedef unsigned long ptr_size_type;
+typedef uintptr_t ptr_size_type;
 
 const unsigned int WORD_SIZE = sizeof(word);
 const unsigned int WORD_BITS = WORD_SIZE * 8;

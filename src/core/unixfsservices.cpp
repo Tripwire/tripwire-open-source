@@ -39,10 +39,6 @@
 #include "core/corestrings.h"
 #include "core/file.h"
 
-#if !IS_UNIX //encase this all in an ifdef so it won't cause compile errors
-#    error Must be unix for unixfsservices
-#endif
-
 //=========================================================================
 // STANDARD LIBRARY INCLUDES
 //=========================================================================
@@ -51,8 +47,14 @@
 //#include <iostream>
 
 //#include <sys/types.h>
-#include <unistd.h>
-#include <dirent.h>
+#if HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
+
+#if HAVE_DIRENT_H
+#   include <dirent.h>
+#endif
+
 //#include <sys/stat.h>
 
 //#if HAVE_SYS_TIME_H
@@ -80,25 +82,21 @@
 //#endif
 
 #if HAVE_SYS_UTSNAME_H
-#include <sys/utsname.h>
+#   include <sys/utsname.h>
 #endif
 
 #if HAVE_PWD_H
-#include <pwd.h>
-#endif
-
-#if IS_REDOX
-#    define restrict __restrict__
+#   include <pwd.h>
 #endif
 
 #if HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#include <netdb.h>
-#include <netinet/in.h>
+#   include <sys/socket.h>
+#   include <netdb.h>
+#   include <netinet/in.h>
 #endif
 
 #if HAVE_GRP_H
-#include <grp.h>
+#   include <grp.h>
 #endif
 
 #//include <fcntl.h>
@@ -394,8 +392,13 @@ void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& statArgs) const
     statArgs.nlink   = statbuf.st_nlink;
     statArgs.size    = statbuf.st_size;
     statArgs.uid     = statbuf.st_uid;
-    statArgs.blksize = statbuf.st_blksize;
 
+#if HAVE_STRUCT_STAT_ST_BLKSIZE    
+    statArgs.blksize = statbuf.st_blksize;
+#else
+    statArgs.blksize = 0;
+#endif
+    
 #if HAVE_STRUCT_STAT_ST_BLOCKS
     statArgs.blocks = statbuf.st_blocks;
 #else
@@ -405,56 +408,58 @@ void cUnixFSServices::Stat(const TSTRING& strNameC, cFSStatArgs& statArgs) const
     // set the file type
     if (S_ISREG(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_FILE;
+#ifdef S_ISDIR    
     else if (S_ISDIR(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_DIR;
+#endif    
+#ifdef S_ISLNK    
     else if (S_ISLNK(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_SYMLINK;
+#endif
+#ifdef S_ISBLK
     else if (S_ISBLK(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_BLOCKDEV;
+#endif
+#ifdef S_ISCHR    
     else if (S_ISCHR(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_CHARDEV;
+#endif
+#ifdef S_ISFIFO
     else if (S_ISFIFO(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_FIFO;
+#endif    
 #ifdef S_ISSOCK
     else if (S_ISSOCK(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_SOCK;
 #endif
-
-#if HAVE_DOOR_CREATE
+#ifdef S_ISDOOR
     else if (S_ISDOOR(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_DOOR;
 #endif
-
-#if HAVE_PORT_CREATE
+#ifdef S_ISPORT
     else if (S_ISPORT(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_PORT;
 #endif
-
 #ifdef S_ISNAM
     else if (S_ISNAM(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_NAMED;
 #endif
-
 #ifdef S_ISNATIVE
     else if (S_ISNATIVE(statbuf.st_mode))
         statArgs.mFileType = cFSStatArgs::TY_NATIVE;
 #endif
-
 #ifdef S_TYPEISMQ
     else if (S_TYPEISMQ(&statbuf))
         statArgs.mFileType = cFSStatArgs::TY_MESSAGE_QUEUE;
 #endif
-
 #ifdef S_TYPEISSEM
     else if (S_TYPEISSEM(&statbuf))
         statArgs.mFileType = cFSStatArgs::TY_SEMAPHORE;
 #endif
-
 #ifdef S_TYPEISSHM
     else if (S_TYPEISSHM(&statbuf))
         statArgs.mFileType = cFSStatArgs::TY_SHARED_MEMORY;
 #endif
-
     else
         statArgs.mFileType = cFSStatArgs::TY_INVALID;
 }

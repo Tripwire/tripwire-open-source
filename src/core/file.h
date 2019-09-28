@@ -173,7 +173,7 @@ public:
     static bool    IsAbsolutePath(const TSTRING& in);
 };
 
-#    if IS_DOS_DJGPP
+#    if USES_DOS_DEVICE_PATH
 #        define cDevicePath cDosPath
 #    elif IS_AROS
 #        define cDevicePath cArosPath

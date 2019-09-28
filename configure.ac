@@ -46,13 +46,12 @@ dnl #########################################
 dnl Set up per-compiler constants & base args
 dnl #########################################
 
-if test "x${GXX}" != "x"; then
+dnl if test "x${GXX}" != "x"; then
+if test "x${CXX}" = "xg++"; then
     AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
 
     CFLAGS=${CFLAGS:-"-O -pipe"}
     CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
-else
-    AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
 fi
 
 if test "x${CXX}" = "xclang++"; then
@@ -60,8 +59,6 @@ if test "x${CXX}" = "xclang++"; then
 
     CFLAGS=${CFLAGS:-"-O -pipe"}
     CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
-else
-    AC_DEFINE(HAVE_CLANG, 0, [Uses the Clang compiler])
 fi
 
 if test "x${CXX}" = "xgxlc++"; then
@@ -72,8 +69,6 @@ dnl OBJECT_MODE needs to be set while compiling
     CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
     CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
     ARFLAGS=${ARFLAGS:-"-X 64"}
-else
-    AC_DEFINE(HAVE_IBM_GXLC, 0, [Uses the gxlc++ compiler])
 fi
 
 if test "x${CXX}" = "xxlc++_r"; then
@@ -81,25 +76,19 @@ if test "x${CXX}" = "xxlc++_r"; then
 
 dnl OBJECT_MODE needs to be set while compiling
     export OBJECT_MODE=64
-    CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all"}
-    CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all"}
+    CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
+    CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
     ARFLAGS=${ARFLAGS:-"-X 64"}
-else
-    AC_DEFINE(HAVE_IBM_XLC, 0, [Uses the IBM XL C++ compiler])
 fi
 
 dnl *** TODO these compilers need work on default args ****
 
 if test "x${CXX}" = "xsunCC"; then
     AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
-else
-    AC_DEFINE(HAVE_ORACLE_SUNCC, 0, [Uses the sunCC compiler])
 fi
 
 if test "x${CXX}" = "xaCC"; then
     AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
-else
-    AC_DEFINE(HAVE_HP_ACC, 0, [Uses the aCC compiler])
 fi
 
 dnl ######################
@@ -113,14 +102,9 @@ dnl AX_CHECK_COMPILE_FLAG([-Weverything], [CXXFLAGS="$CXXFLAGS -Weverything"])
 dnl #####################
 dnl Configuration options
 dnl #####################
-
-# This is primarily to support old compilers that don’t understand -Wextra
-#AC_ARG_ENABLE(extrawarnings,  [  —-disable-extrawarnings do not compile with -Wextra warnings enabled])
-#if test "x$enable_extrawarnings" != "xno"
-#then
-#   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
-#   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
-#fi
+dnl
+dnl  These options generally expect a compiler+linker
+dnl  that understand gcc-like command line options.
 
 AC_ARG_ENABLE(static, [  --enable-static         compile static binaries])
 if test "x$enable_static" = xyes
@@ -184,21 +168,40 @@ dnl #######################
 dnl Checks for header files
 dnl #######################
 AC_HEADER_STDC
+AC_HEADER_DIRENT
+
+AC_CHECK_HEADERS(grp.h)
+AC_CHECK_HEADERS(langinfo.h)
+AC_CHECK_HEADERS(memory.h)
+AC_CHECK_HEADERS(pthread.h)
+AC_CHECK_HEADERS(pwd.h)
+AC_CHECK_HEADERS(signum.h bits/signum.h, break)
+AC_CHECK_HEADERS(stdarg.h varargs.h, break)
+AC_CHECK_HEADERS(stdint.h)
+AC_CHECK_HEADERS(syslog.h sys/syslog.h, break)
+AC_CHECK_HEADERS(termios.h)
+AC_CHECK_HEADERS(unistd.h sys/unistd.h, break)
+
+AC_CHECK_HEADERS(sys/file.h)
 AC_CHECK_HEADERS(sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h,,,
 [[#if defined(HAVE_SYS_PARAM_H)
 #include <sys/param.h>
 #endif
 ]])
-AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
-AC_CHECK_HEADERS(unistd.h sys/unistd.h pwd.h grp.h termios.h)
-AC_CHECK_HEADERS(syslog.h langinfo.h sys/statfs.h sys/select.h sys/time.h sys/file.h)
-AC_CHECK_HEADERS(signum.h bits/signum.h, break )
-AC_CHECK_HEADERS(stdarg.h varargs.h, break )
-AC_CHECK_HEADERS(sys/utsname.h memory.h)
+
+AC_CHECK_HEADERS(sys/select.h)
+AC_CHECK_HEADERS(sys/socket.h)
+AC_CHECK_HEADERS(sys/statfs.h)
+AC_CHECK_HEADERS(sys/sysmacros.h)
+AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(sys/ustat.h)
+AC_CHECK_HEADERS(sys/utsname.h)
+AC_CHECK_HEADERS(sys/wait.h)
+
 AC_CHECK_HEADERS(sys/fs/vx_ioctl.h)
 
-dnl # Special case for malloc.h, because it's depreciated on most systems.
+dnl # Special case for malloc.h, because it's deprecated on most systems.
 CPPFLAGS_SAVE="${CPPFLAGS}"
 CPPFLAGS="${CPPFLAGS} -Werror"
 AC_CHECK_HEADERS(malloc.h)
@@ -209,37 +212,45 @@ dnl Checks for typedefs, structures, and compiler characteristics
 dnl #############################################################
 AC_C_CONST
 AC_TYPE_SIZE_T
+AC_TYPE_UID_T
+AC_TYPE_UINTPTR_T
 AC_HEADER_TIME
 AC_C_BIGENDIAN
+AC_C_CHAR_UNSIGNED
+
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
 AC_CHECK_SIZEOF(time_t)
+AC_CHECK_SIZEOF(wchar_t)
 
-dnl All platforms we support use 2's complement, are byte aligned, etc...
+AC_CHECK_ALIGNOF(int)
+AC_CHECK_ALIGNOF(long)
+AC_CHECK_ALIGNOF(long long)
+
+dnl TODO: These could be replaced with actual detection logic, for the few
+dnl   remaining platforms that have non-2s complement signed ints
 AC_DEFINE(USES_1S_COMPLEMENT, 0, [Uses one's complement])
 AC_DEFINE(USES_2S_COMPLEMENT, 1, [Uses two's complement])
 AC_DEFINE(USES_SIGNED_MAGNITUDE, 0, [Uses signed magnitute])
 
-AC_DEFINE(IS_BYTE_ALIGNED, 1, [Is byte aligned])
 AC_DEFINE(EXCEPTION_NAMESPACE, std::, [this is the prefix for STL exception functions])
-
-dnl We used to check for UNIX or Unix-like target platforms,
-dnl but that is a little extreme, so just assume that the
-dnl target is unix.  This can still be changed in config.h
-AC_DEFINE(IS_UNIX, 1, [Is a unix type platform])
 
 dnl whether or not to generate debuging code?
 dnl this gets defined elsewhere based on config args AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
 dnl look for struct stat members that aren't always there:
-dnl   st_rdev & st_blocks are standard but a few platforms don't have them.
+dnl   st_rdev, st_blksize, & st_blocks are standard but a few platforms don't have them.
 dnl   st_flags & st_gen are BSD-isms & are mostly seen there, including macOS
 dnl   st_flag (singular) is AIX-only, while st_attrib holds DOS attribute bits on VxWorks
-AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks, struct stat.st_flags, struct stat.st_gen, struct stat.st_flag, struct stat.st_attrib])
+AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blksize, struct stat.st_blocks, struct stat.st_flags, struct stat.st_gen, struct stat.st_flag, struct stat.st_attrib])
 
 dnl detect large file support & use it where available
 AC_SYS_LARGEFILE
+
+dnl detect whether Posix termios is available.
+dnl we use termios to turn echo off when user is entering a passphrase
+AC_SYS_POSIX_TERMIOS
 
 dnl detect whether C++ compiler supports any variant of 'restrict' keyword
 dnl (the macro says 'C' but works for both C & C++)
@@ -254,9 +265,11 @@ dnl #############################
 dnl Checks for standard functions
 dnl #############################
 AC_CHECK_FUNCS(strftime)
-AC_CHECK_FUNCS(getaddrinfo gethostname gethostbyname gethostid getuid)
-AC_CHECK_FUNCS(mkstemp mktemp tmpnam break)
-AC_CHECK_FUNCS(swab tzset _exit popen)
+AC_CHECK_FUNCS(getaddrinfo gethostname gethostbyname gethostid)
+AC_CHECK_FUNCS(getuid)
+dnl various ways of creating/naming temp files
+AC_CHECK_FUNCS(mkstemp mktemp tmpnam, break)
+AC_CHECK_FUNCS(swab tzset _exit popen memcpy_s)
 
 dnl posix way to read files
 AC_CHECK_FUNCS(openat open read close)
@@ -270,11 +283,13 @@ dnl posix way to get symlink contents
 AC_CHECK_FUNCS(readlinkat readlink)
 
 dnl posix fns that make filesystem changes
-AC_CHECK_FUNCS(chown chmod link symlink)
+AC_CHECK_FUNCS(chown chmod link symlink mknod mkfifo)
 dnl posix syslog fns
 AC_CHECK_FUNCS(openlog syslog closelog)
-dnl posix process & networking stuff
-AC_CHECK_FUNCS(fork execve posix_spawn socket)
+dnl posix process fns
+AC_CHECK_FUNCS(fork execve posix_spawn)
+dnl bsd socket fns
+AC_CHECK_FUNCS(socket connect bind)
 dnl posix user & group stuff
 AC_CHECK_FUNCS(setuid setgid getgrgid)
 
