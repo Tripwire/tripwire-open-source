@@ -28,8 +28,8 @@ AH_BOTTOM([#include "core/fixups.h"])
 dnl ###################
 dnl Checks for programs
 dnl ###################
-AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc xlC_r xlC cl.exe])
-AC_PROG_CXX([g++ c++ clang++ sunCC aCC xlc++_r gxlc++ xlC_r xlC cl.exe])
+AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc cl])
+AC_PROG_CXX([g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icc owcc cl KCC cfront c++])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S

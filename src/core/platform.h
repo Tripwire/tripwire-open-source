@@ -165,7 +165,7 @@
 #        define COMP COMP_SUNPRO
 #        define IS_SUNPRO 1
 
-#    elif defined(HAVE_IBM_XL_C || HAVE_IBM_GXLC)
+#    elif defined(HAVE_IBM_XL_C) || defined(HAVE_IBM_GXLC)
 #        define COMP COMP_XL_C
 #        define IS_XL_C 1
 
