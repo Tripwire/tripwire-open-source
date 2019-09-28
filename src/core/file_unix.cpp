@@ -241,7 +241,7 @@ void cFile::Open(const TSTRING& sFileNameC, uint32_t flags)
         directio(fh, DIRECTIO_ON);
 #endif
 
-#if HAVE_POSIX_FADVISE
+#if SUPPORTS_POSIX_FADVISE
     if (flags & OPEN_SCANNING && !(flags & OPEN_DIRECT))
     {
 #ifdef POSIX_FADV_SEQUENTIAL
@@ -272,7 +272,7 @@ void cFile::Close() //throw(eFile)
 {
     if (mpData->mpCurrStream != NULL)
     {
-#if defined(HAVE_POSIX_FADVISE) && defined(POSIX_FADV_DONTNEED)
+#if (SUPPORTS_POSIX_FADVISE && defined(POSIX_FADV_DONTNEED))
         posix_fadvise(fileno(mpData->mpCurrStream), 0, 0, POSIX_FADV_DONTNEED);
 #endif
 

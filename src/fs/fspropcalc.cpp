@@ -331,7 +331,7 @@ void cFSPropCalc::HandleHashes(const cFCOPropVector& propsToCheck, const TSTRING
 
     if (   propSet.GetFileType() == cFSPropSet::FT_FILE
         || propSet.GetFileType() == cFSPropSet::FT_SYMLINK
-#if (IS_AIX || IS_OS400)
+#if (SUPPORTS_NATIVE_OBJECTS)
         || propSet.GetFileType() == cFSPropSet::FT_NATIVE
 #endif
      )

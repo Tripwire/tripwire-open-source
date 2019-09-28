@@ -127,7 +127,7 @@
 
 #define TW_SLASH _T('/')
 
-#if (IS_AIX || IS_OS400)
+#if (SUPPORTS_NATIVE_OBJECTS)
   #ifndef _S_IFNATIVE
     #define _S_IFNATIVE 02000000 /* OS/400 native object, of any object type that isn't treated as a directory */
   #endif

@@ -360,9 +360,8 @@
 //#define USE_CLIB_LOCALE         (IS_ALPHA || IS_IRIX || (IS_KAI && !IS_KAI_3_4))
 
 // Threading API
-// TODO:mdb -- this is not complete or rigorous on the unix side!!!
 #    define SUPPORTS_WIN32_THREADS IS_WIN32
-#    define SUPPORTS_POSIX_THREADS (!SUPPORTS_WIN32_THREADS)
+#    define SUPPORTS_POSIX_THREADS (HAVE_PTHREAD_GETSPECIFIC)
 
 // Miscellaneous
 #    define SUPPORTS_C_FILE_IO (HAVE_FOPEN && HAVE_FREAD && HAVE_FCLOSE)
@@ -387,9 +386,15 @@
 #    define SUPPORTS_SYSLOG (HAVE_SYSLOG && !IS_SKYOS && !IS_RISCOS)
 #    define NEEDS_SWAB_IMPL (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
 #    define USES_MBLEN (!IS_ANDROID && !IS_AROS)
-#    define USES_DEVICE_PATH (IS_AROS || IS_DOS_DJGPP || IS_RISCOS || IS_REDOX)
+#    define USES_DEVICE_PATH (IS_AROS || IS_DOS_DJGPP || IS_WIN32 || IS_RISCOS || IS_REDOX)
 #    define ICONV_CONST_SOURCE (IS_MINIX)
 #    define SUPPORTS_DIRECT_IO (IS_LINUX)
+
+// HP-UX does have posix_fadvise(), but sys/fcntl.h neglects to wrap it in extern "C" on
+// at least some flavors of the OS. (see https://community.hpe.com/t5/Languages-and-Scripting/Bacula-try-to-compile-on-hpux11-31/m-p/6843389 )
+// The thread indicates this problem can be fixed by editing sys/fcntl.h, and then the !IS_HPUX below
+// can be removed. This is left as an exercise for the reader.
+#    define SUPPORTS_POSIX_FADVISE (HAVE_POSIX_FADVISE && !IS_HPUX)
 
 #    define READ_TAKES_CHAR_PTR  (IS_VXWORKS)
 #    define BCOPY_TAKES_CHAR_PTR (IS_VXWORKS)
@@ -405,12 +410,22 @@
 #    define SUPPORTS_DOUBLE_SLASH_PATH (IS_CYGWIN)
 // POSIX standard says paths beginning with 2 slashes are "implementation defined"
 // (see http://pubs.opengroup.org/onlinepubs/009695399/basedefs/xbd_chap04.html#tag_04_11 )
-// The only platform OST works on (afaik) that actually defines a double-slash behavior is Cygwin
+// The only platform OST is known to work on (afaik) that actually defines a double-slash behavior is Cygwin
 // which uses this syntax for UNC paths.  So we'll allow leading double slashes there, but
 // continue removing them on all other platforms for now.  
+// Other platform known to use this include IBM z/OS and the ancient Apollo Domain/OS.
+//
 
 #    define USE_DEV_URANDOM (HAVE_DEV_URANDOM && ENABLE_DEV_URANDOM)
 
+// Platforms where we might encounter AS/400 native objects,
+// which are only sometimes readable via ordinary file API
+#    define SUPPORTS_NATIVE_OBJECTS (IS_AIX || IS_OS400)
+
+// On most platforms, uname() returns 0 on success, like every other syscall out there.
+// However the POSIX standard merely says uname() returns some nonnegative value on success, probably
+// so certain vendors could be POSIX-compliant without changing anything.  Solaris seems to return 1
+// on success, for example.  If any other examples crop up, add them here.
 #if IS_SOLARIS
 #   define UNAME_SUCCESS_POSIX 1
 #else
