@@ -653,6 +653,12 @@ bool cUnixFSServices::GetGroupName(gid_t group_id, TSTRING& tstrGroup) const
 #ifndef S_ISVTX // DOS/DJGPP doesn't have this
 #    define S_ISVTX 0
 #endif
+#ifndef S_ISUID
+#    define S_ISUID 0
+#endif
+#ifndef S_ISGID
+#    define S_ISGID 0
+#endif
 
 ////////////////////////////////////////////////////////////////////////
 // Function name    : cUnixFSServices::ConvertModeToString
@@ -678,37 +684,49 @@ void cUnixFSServices::ConvertModeToString(uint64_t perm, TSTRING& tstrPerm) cons
     switch ((uint32_t)perm & S_IFMT) //some versions of Unix don't like to switch on
                                    //64 bit values.
     {
+#ifdef S_IFDIR
     case S_IFDIR:
         szPerm[0] = _T('d');
         break;
+#endif
+#ifdef S_IFCHR
     case S_IFCHR:
         szPerm[0] = _T('c');
         break;
+#endif
+#ifdef S_IFBLK
     case S_IFBLK:
         szPerm[0] = _T('b');
         break;
+#endif
+#ifdef S_IFIFO
     case S_IFIFO:
         szPerm[0] = _T('p');
         break;
+#endif
+#ifdef S_IFLNK
     case S_IFLNK:
         szPerm[0] = _T('l');
         break;
-
-#if HAVE_DOOR_CREATE // Solaris doors
+#endif
+#ifdef S_IFDOOR // Solaris doors
     case S_IFDOOR:
         szPerm[0] = _T('D');
         break;
 #endif
-
-#if HAVE_PORT_CREATE // Solaris event ports
+#ifdef S_IFPORT // Solaris event ports
     case S_IFPORT:
         szPerm[0] = _T('P');
         break;
 #endif
-
 #ifdef S_IFNAM
     case S_IFNAM:
         szPerm[0] = _T('n');
+        break;
+#endif
+#ifdef S_IFNATIVE
+    case S_IFNATIVE:
+        szPerm[0] = _T('?'); // TODO: check how this looks in qsh
         break;
 #endif
         break;
