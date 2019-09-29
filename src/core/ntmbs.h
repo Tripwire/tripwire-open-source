@@ -86,9 +86,12 @@ typedef const wchar_t* const_ntwcs_t;
 #    define NTDBS_T_DEFINED
 #    if WCHAR_IS_16_BITS
 typedef wchar_t dbchar_t; // Same size but use NT's type
+#    elif USE_CHAR16_T
+typedef char16_t dbchar_t;
 #    else
-typedef uint16_t        dbchar_t;
+typedef uint16_t dbchar_t;
 #    endif
+
 typedef dbchar_t*       ntdbs_t;
 typedef const dbchar_t* const_ntdbs_t;
 #endif //NTDBS_T_DEFINED

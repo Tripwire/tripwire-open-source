@@ -86,13 +86,13 @@
 
 // Make sure these typedefs are correct for your computer
 
-#if __cplusplus < 201103L
+#if CPLUSPLUS_PRE_2011
 typedef unsigned char uint8_t;
 #else
 #include <stdint.h>
 #endif
 
-#if __cplusplus < 201103L
+#if CPLUSPLUS_PRE_2011
 typedef unsigned short word16;
 #if SIZEOF_INT == 4
  typedef unsigned int word32;
@@ -155,7 +155,7 @@ typedef unsigned long long word64;
 
 #elif defined(__GNUC__)
 
-#if __cplusplus < 201103L
+#if CPLUSPLUS_PRE_2011
 typedef word32 word;
 #if SIZEOF_LONG_LONG == 8
  typedef unsigned long long dword;
@@ -165,7 +165,7 @@ typedef word32 word;
 #else
  #error "I don't seem to have a 64-bit integer type on this system."
 #endif
-#else // __cplusplus < 201103L
+#else // CPLUSPLUS_PRE_2011
 
 typedef uint32_t word;
 typedef uint64_t dword;

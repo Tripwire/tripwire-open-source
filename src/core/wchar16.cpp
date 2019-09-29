@@ -52,6 +52,7 @@ int wchar16len(const WCHAR16* s)
     return i;
 }
 
+#if NEED_DBSTRING_IMPL
 //=============================================================================
 // class wc16_string
 //
@@ -331,3 +332,22 @@ void wc16_string_impl::CopyString(const wc16_string_impl& rhs)
 
     memcpy(this->pString, rhs.pString, newlen * sizeof(WCHAR16));
 }
+#endif
+
+namespace tss
+{
+void swapbytes(wc16_string& str)
+{
+#if NEED_DBSTRING_IMPL
+    str.swapbytes();
+#else
+    size_t len = str.length();
+    for (size_t x=0; x < len; x++)
+    {
+        WCHAR16 current = str[x];
+        str[x] = ((current >> 8) | ((current & 0xFF) << 8));
+    }
+#endif
+}
+}
+

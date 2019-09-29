@@ -38,11 +38,22 @@
 #ifndef __WCHAR16_H
 #define __WCHAR16_H
 
+#include "platform.h"
+
 // TODO: Perhaps WCHAR16 should come out of types.h???
 #ifndef __TYPES_H
 #include "types.h"
 #endif
 
+#if WCHAR_IS_16_BITS
+typedef wchar_t WCHAR16;
+typedef std::wstring wc16_string;
+
+#elif USE_U16STRING
+typedef char16_t WCHAR16;
+typedef std::u16string wc16_string;
+
+#else
 typedef uint16_t WCHAR16; // unix has 4 byte wchar_t, but we want to standardize on 16 bit wide chars
 
 //=============================================================================
@@ -107,5 +118,17 @@ public:
 private:
     wc16_string_impl* mpData;
 };
-
 #endif
+
+namespace tss
+{
+    void swapbytes(wc16_string& str);
+}
+
+#ifndef WORDS_BIGENDIAN
+#define TSS_SwapBytes(x) tss::swapbytes(x)
+#else
+#define TSS_SwapBytes(x)
+#endif
+
+#endif // __WCHAR16_H

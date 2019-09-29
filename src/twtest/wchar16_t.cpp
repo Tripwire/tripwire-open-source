@@ -116,9 +116,9 @@ void TestWchar16()
     }
 #endif
 
-    b.swapbytes();
+    tss::swapbytes(b);
     TEST(memcmp(a.data(), STRING1, 4) == 0);
-    b.swapbytes();
+    tss::swapbytes(b);
     TEST(memcmp(b.data(), STRING1, 4) == 0);
     //#endif // IS_UNIX
 
@@ -129,3 +129,4 @@ void RegisterSuite_Wchar16()
 {
     RegisterTest("Wchar16", "Basic", TestWchar16);
 }
+

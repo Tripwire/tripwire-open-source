@@ -75,7 +75,7 @@ void tw_terminate_handler()
 }
 
 // Exception specifications removed as a misfeature in C++17
-#if __cplusplus < 201703L
+#if USE_UNEXPECTED
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
@@ -105,7 +105,7 @@ int __cdecl _tmain(int argc, const TCHAR* argv[])
         // TODO: move this into the Init() routine
 
         EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
-#if __cplusplus < 201703L
+#if USE_UNEXPECTED
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 #endif
 

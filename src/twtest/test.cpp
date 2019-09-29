@@ -431,7 +431,7 @@ void tw_terminate_handler()
     exit(1);
 }
 
-#if __cplusplus < 201703L
+#if USE_UNEXPECTED
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
@@ -451,7 +451,7 @@ int _tmain(int argc, TCHAR** argv)
     try
     {
         EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
-#if __cplusplus < 201703L
+#if USE_UNEXPECTED
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
 #endif
         if (argc < 2)

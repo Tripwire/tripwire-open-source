@@ -179,7 +179,7 @@ static inline void trim_leading_whitespace(std::string& str)
 {
 // C++17 removes std::ptr_fun and deprecates std::not1,
 // so just use a lambda where available
-#if __cplusplus < 201103L
+#if !USE_LAMBDAS
     str.erase(str.begin(), std::find_if(str.begin(), str.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
 #else
     str.erase(str.begin(), std::find_if(str.begin(), str.end(), [](int c) {return !std::isspace(c);} ));

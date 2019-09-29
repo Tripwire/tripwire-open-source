@@ -130,9 +130,7 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
 
 bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig::KeySize key_size)
 {
-#ifndef WORDS_BIGENDIAN
-    passphrase.swapbytes();
-#endif
+    TSS_SwapBytes(passphrase);
 
 #ifdef DEBUG
     // test reading in the keys

@@ -389,6 +389,11 @@
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#    define CPLUSPLUS_2011_OR_GREATER (__cplusplus >= 201103L)
+#    define CPLUSPLUS_PRE_2011 !CPLUSPLUS_2011_OR_GREATER
+
+#    define CPLUSPLUS_2017_OR_GREATER (__cplusplus >= 201703L)
+#    define CPLUSPLUS_PRE_2017 !CPLUSPLUS_2011_OR_GREATER
 
 // KAI 3.4 uses a much improved stl
 #    define IS_KAI_3_4 (IS_KAI && (COMP == COMP_KAI_IRIX || COMP == COMP_KAI_OSF1ALPHA || COMP == COMP_KAI_GLIBC))
@@ -420,18 +425,27 @@
 #        define WCHAR_IS_32_BITS 1
 #    endif
 
+#    define USE_U16STRING ((!WCHAR_IS_16_BITS) && CPLUSPLUS_2011_OR_GREATER)
+#    define USE_CHAR16_T USE_U16STRING
+#    define NEED_DBSTRING_IMPL (!WCHAR_IS_16_BITS && !USE_U16STRING)
+
+#    define USE_UNIQUE_PTR      CPLUSPLUS_2011_OR_GREATER
+#    define USE_LAMBDAS         CPLUSPLUS_2011_OR_GREATER
+#    define USE_UNICODE_ESCAPES CPLUSPLUS_2011_OR_GREATER
+#    define USE_UNEXPECTED      CPLUSPLUS_PRE_2017
+
 #    define SUPPORTS_POSIX_FORK_EXEC (HAVE_FORK && HAVE_EXECVE)
 // msystem+mpopen fail on Syllable, so use the libc equivalents until we figure out why.
 // TODO: Figure out why.
 #    define USES_MPOPEN (SUPPORTS_POSIX_FORK_EXEC && !IS_SYLLABLE)
 #    define USES_MSYSTEM (SUPPORTS_POSIX_FORK_EXEC && !IS_SYLLABLE)
   
-#    define SUPPORTS_WCHART IS_WIN32 // TODO: Remove after getting new ver of KAI
+//#    define SUPPORTS_WCHART IS_WIN32 // TODO: Remove this?
 #    define USES_GLIBC ((COMP == COMP_KAI_GLIBC) || HAVE_GCC)
 #    define SUPPORTS_MEMBER_TEMPLATES (!IS_SUNPRO)
 #    define SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST (!IS_SUNPRO)
 
-#    define SUPPORTS_POSIX_SIGNALS (!IS_DOS_DJGPP)
+#    define SUPPORTS_POSIX_SIGNALS (!IS_DOS_DJGPP && !IS_MINGW)
 #    define SUPPORTS_NETWORKING (HAVE_SOCKET && !IS_SORTIX && !IS_DOS_DJGPP && !IS_REDOX)
 #    define SUPPORTS_SYSLOG (HAVE_SYSLOG && !IS_SKYOS && !IS_RISCOS)
 #    define NEEDS_SWAB_IMPL (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
@@ -492,9 +506,9 @@
 // Work around single-arg mkdir on MinGW.
 // consider using autoconf AX_FUNC_MKDIR if
 // we need to handle any more cases here
-#if IS_MINGW
+/*#if IS_MINGW
 #   define mkdir(a,b) mkdir(a)
-#endif
+#endif*/
 
 //=============================================================================
 // Miscellaneous

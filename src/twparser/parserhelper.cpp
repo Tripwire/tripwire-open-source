@@ -681,7 +681,7 @@ void cParserUtil::CreatePropVector(const TSTRING& strPropListC, class cFCOPropVe
     TSTRING strPropList = strPropListC;
 
 // C++17 removes std::ptr_fun, so use a lambda where available
-#if __cplusplus < 201103L
+#if !USE_LAMBDAS
     strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(),
         std::ptr_fun<int, int>(std::isspace)), strPropList.end());
 #else

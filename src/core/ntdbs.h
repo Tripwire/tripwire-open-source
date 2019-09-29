@@ -71,6 +71,12 @@ namespace tss
 typedef std::wstring dbstring;
 }
 
+#elif (USE_U16STRING)
+namespace tss
+{
+typedef std::u16string dbstring;
+}
+
 #elif (WCHAR_IS_32_BITS)
 namespace std
 {
@@ -87,7 +93,7 @@ typedef std::basic_string<dbchar_t> dbstring;
 #endif
 
 
-#if WCHAR_IS_32_BITS // We already have a dbstring implicitly in wstring!!!
+#if NEED_DBSTRING_IMPL // We already have a dbstring implicitly in wstring!!!
 
 #if HAVE_LOCALE
 #   include <locale>

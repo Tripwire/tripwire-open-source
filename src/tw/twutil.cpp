@@ -762,9 +762,7 @@ cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyTy
 
         passphrase = usePassphrase;
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
         pPrivateKey = keyFile.GetPrivateKey((int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
@@ -804,9 +802,7 @@ cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyTy
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep(nSecs);
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
         pPrivateKey = keyFile.GetPrivateKey((int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
@@ -840,9 +836,7 @@ void cTWUtil::CreatePrivateKey(
 
         passphrase = usePassphrase;
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
         if (proxy.AquireKey(keyFile, (int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
             return;
@@ -880,9 +874,7 @@ void cTWUtil::CreatePrivateKey(
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep(nSecs);
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
         if (proxy.AquireKey(keyFile, (int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
             return;

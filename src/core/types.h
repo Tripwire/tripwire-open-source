@@ -187,7 +187,7 @@ inline int64_t SWAPBYTES64(int64_t i)
 
 ////////////////////////////////////////////
 
-#    if __cplusplus >= 201103L
+#    if USE_UNIQUE_PTR
 #        define TW_UNIQUE_PTR std::unique_ptr
 #    else
 #        define TW_UNIQUE_PTR std::auto_ptr
