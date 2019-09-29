@@ -1,8 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#if HAVE_CONFIG_H
+#    include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#   include <stdint.h>
 #endif
 
 // define this if you want the library to throw exceptions when things go wrong
