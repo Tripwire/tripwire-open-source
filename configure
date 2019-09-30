@@ -4143,7 +4143,7 @@ if test -z "$CXX"; then
     CXX=$CCC
   else
     if test -n "$ac_tool_prefix"; then
-  for ac_prog in g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icc owcc cl KCC cfront c++
+  for ac_prog in g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icpc owcc cl KCC cfront c++
   do
     # Extract the first word of "$ac_tool_prefix$ac_prog", so it can be a program name with args.
 set dummy $ac_tool_prefix$ac_prog; ac_word=$2
@@ -4187,7 +4187,7 @@ fi
 fi
 if test -z "$CXX"; then
   ac_ct_CXX=$CXX
-  for ac_prog in g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icc owcc cl KCC cfront c++
+  for ac_prog in g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icpc owcc cl KCC cfront c++
 do
   # Extract the first word of "$ac_prog", so it can be a program name with args.
 set dummy $ac_prog; ac_word=$2
@@ -4869,56 +4869,78 @@ fi
 
 
 
-if test "x${CXX}" = "xg++"; then
-
-$as_echo "#define HAVE_GCC 1" >>confdefs.h
-
+if test "x${GXX}" != "x"; then
 
     CFLAGS=${CFLAGS:-"-O -pipe"}
     CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
-fi
 
-if test "x${CXX}" = "xclang++"; then
+
+$as_echo "#define HAVE_GNUC 1" >>confdefs.h
+
+
+    case "${CXX}" in
+        *clang++*)
+
+$as_echo "#define HAVE_CLANG 1" >>confdefs.h
+
+	    ;;
+	icpc)
+
+$as_echo "#define HAVE_INTEL_ICC 1" >>confdefs.h
+
+	    ;;
+	*)
+
+$as_echo "#define HAVE_GCC 1" >>confdefs.h
+
+	    ;;
+    esac
+
+else
+        if test "x${CXX}" = "xclang++"; then
 
 $as_echo "#define HAVE_CLANG 1" >>confdefs.h
 
 
-    CFLAGS=${CFLAGS:-"-O -pipe"}
-    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
-fi
+	CFLAGS=${CFLAGS:-"-O -pipe"}
+	CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
+    fi
 
-if test "x${CXX}" = "xgxlc++"; then
+    if test "x${CXX}" = "xgxlc++"; then
 
 $as_echo "#define HAVE_IBM_GXLC 1" >>confdefs.h
 
 
-    export OBJECT_MODE=64
-    CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
-    CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
-    ARFLAGS=${ARFLAGS:-"-X 64"}
-fi
+                export OBJECT_MODE=64
+        CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
+        CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
+        ARFLAGS=${ARFLAGS:-"-X 64"}
+    fi
 
-if test "x${CXX}" = "xxlc++_r"; then
+    if test "x${CXX}" = "xxlc++_r"; then
 
 $as_echo "#define HAVE_IBM_XLC 1" >>confdefs.h
 
 
-    export OBJECT_MODE=64
-    CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
-    CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
-    ARFLAGS=${ARFLAGS:-"-X 64"}
-fi
+                export OBJECT_MODE=64
+        CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
+        CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
+        ARFLAGS=${ARFLAGS:-"-X 64"}
+    fi
 
 
-if test "x${CXX}" = "xsunCC"; then
+    if test "x${CXX}" = "xsunCC"; then
 
 $as_echo "#define HAVE_ORACLE_SUNCC 1" >>confdefs.h
 
-fi
+    fi
 
-if test "x${CXX}" = "xaCC"; then
+    if test "x${CXX}" = "xaCC"; then
 
 $as_echo "#define HAVE_HP_ACC 1" >>confdefs.h
+
+    fi
+
 
 fi
 

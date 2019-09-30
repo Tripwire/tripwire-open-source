@@ -29,7 +29,7 @@ dnl ###################
 dnl Checks for programs
 dnl ###################
 AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc cl])
-AC_PROG_CXX([g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icc owcc cl KCC cfront c++])
+AC_PROG_CXX([g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icpc owcc cl KCC cfront c++])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
@@ -46,49 +46,68 @@ dnl #########################################
 dnl Set up per-compiler constants & base args
 dnl #########################################
 
-dnl if test "x${GXX}" != "x"; then
-if test "x${CXX}" = "xg++"; then
-    AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
+dnl first look at compilers that define __GNUC__
+dnl since automake is good at that.
+dnl
+if test "x${GXX}" != "x"; then
 
     CFLAGS=${CFLAGS:-"-O -pipe"}
     CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
-fi
 
-if test "x${CXX}" = "xclang++"; then
-    AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
+    AC_DEFINE(HAVE_GNUC, 1, [Compiler supports GNU C++ dialect & args])
+    
+    case "${CXX}" in
+        *clang++*)
+            AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang++ compiler])
+	    ;;
+	icpc)
+            AC_DEFINE(HAVE_INTEL_ICC, 1, [Uses the Intel ICC compiler])
+	    ;;	
+	*)
+            AC_DEFINE(HAVE_GCC, 1, [Uses the GNU g++ compiler])
+	    ;;	
+    esac
 
-    CFLAGS=${CFLAGS:-"-O -pipe"}
-    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
-fi
+else
+    dnl in case Clang stops defining __GNUC__ or user undefines it
+    if test "x${CXX}" = "xclang++"; then
+	AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
 
-if test "x${CXX}" = "xgxlc++"; then
-    AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
+	CFLAGS=${CFLAGS:-"-O -pipe"}
+	CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
+    fi
 
-dnl OBJECT_MODE needs to be set while compiling
-    export OBJECT_MODE=64
-    CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
-    CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
-    ARFLAGS=${ARFLAGS:-"-X 64"}
-fi
+    if test "x${CXX}" = "xgxlc++"; then
+        AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
 
-if test "x${CXX}" = "xxlc++_r"; then
-    AC_DEFINE(HAVE_IBM_XLC, 1, [Uses the IBM XL C++ compiler])
+        dnl OBJECT_MODE needs to be set while compiling
+        export OBJECT_MODE=64
+        CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
+        CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
+        ARFLAGS=${ARFLAGS:-"-X 64"}
+    fi
 
-dnl OBJECT_MODE needs to be set while compiling
-    export OBJECT_MODE=64
-    CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
-    CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
-    ARFLAGS=${ARFLAGS:-"-X 64"}
-fi
+    if test "x${CXX}" = "xxlc++_r"; then
+        AC_DEFINE(HAVE_IBM_XLC, 1, [Uses the IBM XL C++ compiler])
 
-dnl *** TODO these compilers need work on default args ****
+        dnl OBJECT_MODE needs to be set while compiling
+        export OBJECT_MODE=64
+        CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
+        CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
+        ARFLAGS=${ARFLAGS:-"-X 64"}
+    fi
 
-if test "x${CXX}" = "xsunCC"; then
-    AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
-fi
+    dnl *** TODO these compilers need work on default args ****
 
-if test "x${CXX}" = "xaCC"; then
-    AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
+    if test "x${CXX}" = "xsunCC"; then
+        AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
+    fi
+
+    if test "x${CXX}" = "xaCC"; then
+        AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
+    fi
+ 
+
 fi
 
 dnl ######################

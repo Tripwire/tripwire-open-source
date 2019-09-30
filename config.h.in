@@ -88,7 +88,7 @@
 /* Define to 1 if you have the `fstatat' function. */
 #undef HAVE_FSTATAT
 
-/* Uses the GNU gcc compiler */
+/* Uses the GNU g++ compiler */
 #undef HAVE_GCC
 
 /* Define to 1 if you have the `getaddrinfo' function. */
@@ -109,6 +109,9 @@
 /* Define to 1 if you have the `getuid' function. */
 #undef HAVE_GETUID
 
+/* Compiler supports GNU C++ dialect & args */
+#undef HAVE_GNUC
+
 /* Define to 1 if you have the <grp.h> header file. */
 #undef HAVE_GRP_H
 
@@ -123,6 +126,9 @@
 
 /* Define to 1 if you have the <iconv.h> header file. */
 #undef HAVE_ICONV_H
+
+/* Uses the Intel ICC compiler */
+#undef HAVE_INTEL_ICC
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
