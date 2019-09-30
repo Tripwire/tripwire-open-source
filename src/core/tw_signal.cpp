@@ -83,7 +83,7 @@ void util_SignalHandler(int sig)
 
 void tw_psignal(int sig, const TCHAR* str)
 {
-    const TCHAR* siglist[NSIG] = {_T("Unknown Signal"),
+    const TCHAR* siglist[] =    { _T("Unknown Signal"),
                                   _T("Hangup"),
                                   _T("Interrupt"),
                                   _T("Quit"),

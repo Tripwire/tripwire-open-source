@@ -2076,8 +2076,15 @@ static bool ChangePassphrase(const TCHAR* keyPath, wc16_string passphraseOld, wc
     memcpy(passphraseCopyOld, passphraseOld.data(), passphraseLenOld);
     memcpy(passphraseCopy, passphrase.data(), passphraseLen);
 #else
+
+ #if SWAB_TAKES_CHAR_PTRS   
+    swab((char*)passphraseOld.data(), (char*)passphraseCopyOld, passphraseLenOld);
+    swab((char*)passphrase.data(), (char*)passphraseCopy, passphraseLen);
+#else
     swab(passphraseOld.data(), passphraseCopyOld, passphraseLenOld);
     swab(passphrase.data(), passphraseCopy, passphraseLen);
+#endif
+    
 #endif
 
     bool result;

@@ -62,7 +62,7 @@ void TestTWUtil()
     TSTRING tmpFN  = TwTestPath("fileexiststest.tmp");
 
     // make a subdir in the TEMP_DIR
-    mkdir(tmpDir.c_str(), 0700);
+    tw_mkdir(tmpDir.c_str(), 0700);
     chmod(tmpDir.c_str(), 0700);
 
     // make sure file is not there

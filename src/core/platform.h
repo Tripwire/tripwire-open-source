@@ -449,6 +449,7 @@
 #    define SUPPORTS_NETWORKING (HAVE_SOCKET && !IS_SORTIX && !IS_DOS_DJGPP && !IS_REDOX)
 #    define SUPPORTS_SYSLOG (HAVE_SYSLOG && !IS_SKYOS && !IS_RISCOS)
 #    define NEEDS_SWAB_IMPL (IS_CYGWIN || IS_SYLLABLE || IS_ANDROID || IS_SORTIX)
+#    define SWAB_TAKES_CHAR_PTRS (IS_MINGW)
 #    define USES_MBLEN (!IS_ANDROID && !IS_AROS)
 #    define USES_DOS_DEVICE_PATH (IS_DOS_DJGPP || (IS_WIN32 && !IS_CYGWIN) || (IS_OS2 && !IS_EMX))
 #    define USES_DEVICE_PATH (IS_AROS || IS_RISCOS || IS_REDOX || USES_DOS_DEVICE_PATH)
@@ -502,13 +503,6 @@
 #else
 #   define UNAME_SUCCESS_ZERO 1
 #endif  
-
-// Work around single-arg mkdir on MinGW.
-// consider using autoconf AX_FUNC_MKDIR if
-// we need to handle any more cases here
-/*#if IS_MINGW
-#   define mkdir(a,b) mkdir(a)
-#endif*/
 
 //=============================================================================
 // Miscellaneous

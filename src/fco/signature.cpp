@@ -114,8 +114,8 @@ void cArchiveSigGen::CalculateSignatures(cArchive& a)
 
     if (s_direct)
     {
-        unsigned long mod    = (unsigned long)abBuf % iSignature::SUGGESTED_BLOCK_SIZE;
-        unsigned long offset = (iSignature::SUGGESTED_BLOCK_SIZE - mod);
+        uintptr_t mod    = (uintptr_t)abBuf % iSignature::SUGGESTED_BLOCK_SIZE;
+        uintptr_t offset = (iSignature::SUGGESTED_BLOCK_SIZE - mod);
         pBuf                 = abBuf + offset;
     }
 

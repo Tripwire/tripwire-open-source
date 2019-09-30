@@ -385,7 +385,7 @@ std::string TwTestDir()
         iFSServices::GetInstance()->GetCurrentDir(dir);
         dir.append("/TWTestData");
         TCERR << "Using test directory: " << dir << std::endl;
-        mkdir(dir.c_str(), 0777);
+        tw_mkdir(dir.c_str(), 0777);
     }
 
     return dir;

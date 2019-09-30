@@ -151,9 +151,9 @@ void TestTextReportViewer()
         fcoNameSpec1 = fcoNameTempDir += _T("SPEC1/");
         fcoNameSpec2 = fcoNameTempDir += _T("SPEC2/");
         
-        mkdir( fcoNameTempDir.c_str(), 0777 );
-        mkdir( fcoNameSpec1.AsString().c_str(), 0777 );
-        mkdir( fcoNameSpec2.AsString().c_str(), 0777 );
+        tw_mkdir( fcoNameTempDir.c_str(), 0777 );
+        tw_mkdir( fcoNameSpec1.AsString().c_str(), 0777 );
+        tw_mkdir( fcoNameSpec2.AsString().c_str(), 0777 );
         
         fcoNameTempFile = fcoNameTempDir += _T("twtempXXXXXX");
         pFSServices->MakeTempFilename( fcoNameTempFile );
@@ -473,7 +473,7 @@ void MakeFile(TSTRING& strNameMakeMe)
 
 void MakeDir(const TCHAR* const lpszDirName)
 {
-    TEST(0 == mkdir(lpszDirName, 0777))
+    TEST(0 == tw_mkdir(lpszDirName, 0777))
 }
 
 //#endif //FIXED_TRV_TEST_SUITE
