@@ -105,11 +105,6 @@
 #include <assert.h>
 #include "msystem.h"
 
-#if IS_REDOX
-#define setuid(x) sleep(0) 
-#define setgid(x) sleep(0)
-#endif
-
 #if USES_MSYSTEM
 /*
  * signal type
@@ -898,9 +893,12 @@ FILE *fp[];
         return(mfpclose(indx, fp));
 }
 
-#if IS_AROS
- #define fork() vfork()
+#if HAVE_FORK
+#  define tss_fork() fork()
+#elif HAVE_VFORK
+#  define tss_fork() vfork()
 #endif
+
 
 /*
  * signal values
@@ -947,14 +945,26 @@ int mask;
     /*
      * spawn the child and make the pipes the subprocess stdin, stdout
      */
-    if ((ch_pid = fork()) == 0){
+    if ((ch_pid = tss_fork()) == 0){
         /* now reset the uid and gid if desired */
-        if (mresetgid < -1)     (void) setgid(getgid());
-        else if (mresetgid == -1)   (void) setgid(egid);
-        else if (mresetgid > -1)    (void) setgid(mresetgid);
-        if (mresetuid < -1)     (void) setuid(getuid());
-        else if (mresetuid == -1)   (void) setuid(euid);
-        else if (mresetuid > -1)    (void) setuid(mresetuid);
+#if HAVE_SETGID      
+        if (mresetgid < -1)
+            (void) setgid(getgid());
+        else if (mresetgid == -1)
+            (void) setgid(egid);
+        else if (mresetgid > -1)
+            (void) setgid(mresetgid);
+#endif
+
+#if HAVE_SETUID
+        if (mresetuid < -1)
+            (void) setuid(getuid());
+        else if (mresetuid == -1)
+            (void) setuid(euid);
+        else if (mresetuid > -1)
+            (void) setuid(mresetuid);
+#endif
+	
         /* reset the umask */
         (void) umask(mask);
         /* close the unused ends of the pipe  */

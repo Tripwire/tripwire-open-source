@@ -47,7 +47,7 @@
 #include "fileerror.h"
 #endif
 
-#if IS_MINT // for off_t
+#if HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 

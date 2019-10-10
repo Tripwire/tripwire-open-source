@@ -103,7 +103,7 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
 
     //Sadly if buf isn't big enough readlink 'succeeds' by truncating the string, so the only
     // clue your buffer might be too small is if you maxed it out.  So we try again, within reason.
-#if IS_SKYOS
+#if READLINK_NULL_TERMINATES
     if ((size_t)rtn >= size - 1) //SkyOS wants space to null terminate the string it hands back, which is nice, I guess.
 #else
     if ((size_t)rtn == size)

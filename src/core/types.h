@@ -37,13 +37,18 @@
 #include "platform.h"
 
 #if HAVE_STDINT_H
-#include <stdint.h>
+#   include <stdint.h>
 #endif
 
+#if HAVE_LIMITS_H
+#   include <limits.h>
+#endif
 
 //-----------------------------------------------------------------------------
 // standard TSS types
 //-----------------------------------------------------------------------------
+
+// Sensible defaults in case there's no stdint.h
 #if !HAVE_STDINT_H
 typedef unsigned char  uint8_t;
 typedef signed char    int8_t;
@@ -75,71 +80,34 @@ typedef unsigned long long uint64_t;
 #endif
 #endif // !HAVE_STDINT_H
 
-// other Win32 definitions
-//typedef uint16                UINT;
-//typedef uint32_t                DWORD;
 
-//-----------------------------------------------------------------------------
-// Limits -- should be platform independent, right? ( assumes 2's complement numbers )
-//-----------------------------------------------------------------------------
-
-
-#if (!(USES_2S_COMPLEMENT))
-#    error limits.h depends on 2s complement integers.  Check core/types.h
+#if HAVE_STDINT_H
+#   define TSS_INT8_MIN   INT8_MIN
+#   define TSS_INT8_MAX   INT8_MAX
+#   define TSS_UINT8_MAX  UINT8_MAX
+#   define TSS_INT16_MIN  INT16_MIN
+#   define TSS_INT16_MAX  INT16_MAX
+#   define TSS_UINT16_MAX UINT16_MAX
+#   define TSS_INT32_MIN  INT32_MIN
+#   define TSS_INT32_MAX  INT32_MAX
+#   define TSS_UINT32_MAX UINT32_MAX
+#   define TSS_INT64_MIN  INT64_MIN
+#   define TSS_INT64_MAX  INT64_MAX
+#   define TSS_UINT64_MAX UINT64_MAX
+#else
+#   define TSS_INT8_MIN (-127 - 1)
+#   define TSS_INT8_MAX 127
+#   define TSS_UINT8_MAX 0xFFU
+#   define TSS_INT16_MIN (-32767 - 1)
+#   define TSS_INT16_MAX 32767
+#   define TSS_UINT16_MAX 0xFFFFU
+#   define TSS_INT32_MIN (-2147483647 - 1)
+#   define TSS_INT32_MAX 2147483647
+#   define TSS_UINT32_MAX 0xFFFFFFFFU
+#   define TSS_INT64_MIN (-9223372036854775807LL - 1)
+#   define TSS_INT64_MAX 9223372036854775807LL
+#   define TSS_UINT64_MAX 0xFFFFFFFFFFFFFFFFULL
 #endif
-
-#include <limits.h> // defines limits for built-in types
-
-#define TSS_INT8_MIN (-127 - 1)
-#define TSS_INT8_MAX 127
-#define TSS_UINT8_MAX 0xFFU
-#define TSS_INT16_MIN (-32767 - 1)
-#define TSS_INT16_MAX 32767
-#define TSS_UINT16_MAX 0xFFFFU
-#define TSS_INT32_MIN (-2147483647 - 1)
-#define TSS_INT32_MAX 2147483647
-#define TSS_UINT32_MAX 0xFFFFFFFFU
-#define TSS_INT64_MIN (-9223372036854775807LL - 1)
-#define TSS_INT64_MAX 9223372036854775807LL
-#define TSS_UINT64_MAX 0xFFFFFFFFFFFFFFFFULL
-
-/*
-//-----------------------------------------------------------------------------
-// numeric_limits : TODO:BAM eventually I should get around to finishing these....
-//-----------------------------------------------------------------------------
-
-#pragma warning( push )             
-pragma warning( disable: 4663 )    // Use new template specialization syntax: template<>
-#define NOMINMAX  // turn off min() and max() macros
-#include <limits>
-#pragma warning( pop )             
-
-//
-// define numeric_limits for our types
-//
-// NOTE: assumes std::numeric_limits< int > does not depend on signedness of type
-// TODO:BAM -- add members like digits and digits10
-// TODO:BAM -- define floating point numeric_limits
-#define DECLARE_INTEGRAL_NUM_LIMITS( intT, minVal, maxVal, nDigits,  ) \
-    template<> class numeric_limits< intT > : public std::numeric_limits< int > \
-    {\
-        static intT (min)() throw() { return ( minVal ); } \
-        static intT (max)() throw() { return ( maxVal ); } \
-        enum { digits = 0 };
-        enum { digits = 0 };
-    };
-
-// NOTE: assumes ( std::numeric_limits< int >::is_specialized == true )
-namespace std
-{
-#if IS_UNIX
-    DECLARE_INTEGRAL_NUM_LIMITS( int8,  SCHAR_MIN, SCHAR_MAX );
-    DECLARE_INTEGRAL_NUM_LIMITS( int16, SHRT_MIN, SHRT_MAX );
-    DECLARE_INTEGRAL_NUM_LIMITS( int32, LONG_MIN, LONG_MAX );
-
-#endif
-}
-*/
 
 //-----------------------------------------------------------------------------
 // Byte Swapping

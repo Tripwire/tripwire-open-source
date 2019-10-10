@@ -98,7 +98,7 @@ void fail(const std::string& reason);
 
 // Could use AX_FUNC_MKDIR autoconf macro if we need to handle
 // any additional cases besides these
-#if IS_MINGW
+#if MKDIR_TAKES_SINGLE_ARG
 #    define tw_mkdir(a,b) mkdir(a)
 #else
 #    define tw_mkdir(a,b) mkdir(a,b)

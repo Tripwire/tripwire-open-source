@@ -49,11 +49,8 @@
 #include "tw/twerrors.h"
 #include "tw/twstrings.h"
 
-// TODO:  Handle this in a proper autoconf way
-#if IS_AROS
+#if HAVE_PROTO_BSDSOCKET_H
 #   include <proto/bsdsocket.h>
-#   define openlog(a, b, c)
-#   define closelog()
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,8 +67,14 @@ void cSyslog::Log(const TCHAR* programName, cSyslog::LogType logType, const TCHA
     const char* ident = programName;
     const char* msg   = message;
 
+#if HAVE_OPENLOG    
     openlog(ident, LOG_PID, LOG_USER);
+#endif
+    
     syslog(LOG_NOTICE, "%s", msg);
+#if HAVE_CLOSELOG    
     closelog();
+#endif
+    
 #endif
 }

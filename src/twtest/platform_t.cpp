@@ -83,7 +83,8 @@ template<class T, int ALIGN_SIZE> AlignMe<T, ALIGN_SIZE>::AlignMe()
 // to have any need for that behavior, which begs the question of why
 // this test exists in the first place.
 //  -bcox
-#if (!IS_HPUX && !IS_SOLARIS) //Turns out Solaris SPARC is unhappy with this test too, btw
+//Turns out Solaris SPARC is unhappy with this test too, btw
+#if ENABLE_ALIGNMENT_TEST
     //TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
     // access a value in the byte array to see if it is aligned.  if it isn't and the CPU
@@ -233,96 +234,9 @@ template<class E, class T> bool CanBeRepresentedAs(E e, T t)
 
 
 ////////////////////////////
-
-#if IS_LINUX
-const TSTRING expected_os("Linux");
-#elif IS_DARWIN
-const TSTRING expected_os("Darwin");
-#elif IS_CYGWIN
-const TSTRING expected_os("CYGWIN_NT");
-#elif IS_DOS_DJGPP
-const TSTRING expected_os("FreeDOS"); // This will likely fail for other DOS flavors
-#elif IS_ANDROID
-const TSTRING expected_os("Android");
-#elif IS_DRAGONFLYBSD
-const TSTRING expected_os("DragonFly");
-#elif IS_MIDNIGHTBSD
-const TSTRING expected_os("MidnightBSD");
-#elif IS_FREEBSD
-const TSTRING expected_os("FreeBSD");
-#elif IS_NETBSD
-const TSTRING expected_os("NetBSD");
-#elif IS_MIRBSD
-const TSTRING expected_os("MirBSD");
-#elif IS_BITRIG
-const TSTRING expected_os("Bitrig");
-#elif IS_LIBERTYBSD
-const TSTRING expected_os("LibertyBSD");
-#elif IS_OPENBSD
-const TSTRING expected_os("OpenBSD");
-#elif IS_SOLARIS
-const TSTRING expected_os("SunOS");
-#elif (IS_OS400 || IS_PASE)
-const TSTRING expected_os("OS400");
-#elif IS_AIX
-const TSTRING expected_os("AIX");
-#elif IS_HPUX
-const TSTRING expected_os("HP-UX");
-#elif IS_IRIX
-const TSTRING expected_os("IRIX");
-#elif IS_OSF1
-const TSTRING expected_os("Tru64");
-#elif IS_MINIX
-const TSTRING expected_os("Minix");
-#elif IS_HURD
-const TSTRING expected_os("GNU");
-#elif IS_HAIKU
-const TSTRING expected_os("Haiku");
-#elif IS_SYLLABLE
-const TSTRING expected_os("Syllable");
-#elif IS_SKYOS
-const TSTRING expected_os("SkyOS");
-#elif IS_SORTIX
-const TSTRING expected_os("Sortix");
-#elif IS_MINT
-const TSTRING expected_os("MiNT");
-#elif IS_AROS
-const TSTRING expected_os("AROS");
-#elif IS_RTEMS
-const TSTRING expected_os("RTEMS");
-#elif IS_RISCOS
-const TSTRING expected_os("RISC OS");
-#elif IS_RISCOS
-const TSTRING expected_os("Redox");
-#elif IS_QNX
-const TSTRING expected_os("QNX");
-#else
-const TSTRING expected_os("?!?!?");
-#endif
-
-void TestPlatformDetection()
-{
-#if HAVE_SYS_UTSNAME_H
-    struct utsname os_info;
-#if UNAME_SUCCESS_POSIX // Solaris documents uname() as succeding w/ any nonnegative value. This is actually the behavior specified by the POSIX standard, though in practice everyone else seems to return 0 on success.
-    TEST(uname(&os_info) >= 0);
-#else
-    TEST(uname(&os_info) == 0);
-#endif
-
-    TSTRING observed_os(os_info.sysname);
-
-    if (observed_os != expected_os)
-        TCERR << "Expected OS: " << expected_os << " | Observed OS: " << observed_os << std::endl;
-
-    TEST(observed_os == expected_os);
-#endif
-}
-
 void RegisterSuite_Platform()
 {
     RegisterTest("Platform", "Alignment",  TestAlignment);
     RegisterTest("Platform", "Alignment2", TestAlignment2);    
     RegisterTest("Platform", "Sizes",      TestSizes);
-    RegisterTest("Platform", "PlatformDetection", TestPlatformDetection);
 }

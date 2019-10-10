@@ -36,15 +36,13 @@
 #include "core/error.h"
 #endif
 
-#if IS_REDOX
-#    define restrict __restrict__
-#endif
-
 #if SUPPORTS_NETWORKING && HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#define SOCKET int
 
+#ifndef SOCKET
+#define SOCKET int
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //

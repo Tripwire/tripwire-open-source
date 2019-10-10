@@ -137,7 +137,7 @@ private:
     enum Limits
     {
         LIMIT_MIN = -1,
-        LIMIT_MAX = 1000000
+        LIMIT_MAX = INT_MAX
     };
 
     virtual int GetMax()

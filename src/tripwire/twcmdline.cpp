@@ -512,15 +512,11 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 
     if (cf.Lookup(TSTRING(_T("HASH_DIRECT_IO")), str))
     {
-#if SUPPORTS_DIRECT_IO
         if (_tcsicmp(str.c_str(), _T("true")) == 0)
         {
             pModeInfo->mbDirectIO = true;
             cArchiveSigGen::SetUseDirectIO(true);
         }
-#else
-        throw eTWDirectIONotSupported();
-#endif
     }
 
     if (cf.Lookup(TSTRING(_T("RESOLVE_IDS_TO_NAMES")), str))

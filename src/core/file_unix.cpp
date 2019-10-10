@@ -31,13 +31,6 @@
 //
 // file_unix.cpp : Specific implementation of file operations for Unix.
 
-
-/* On GNU/Hurd, need to define _GNU_SOURCE in order to use  O_NOATIME
-   which technically is still a nonstandard extension to open() */
-#if IS_HURD
-#    define _GNU_SOURCE
-#endif
-
 #include "core/stdcore.h"
 #include "core/file.h"
 
@@ -57,7 +50,7 @@
 #include "core/fsservices.h"
 #include "core/errorutil.h"
 
-#if IS_RISCOS
+#if HAVE_UNIXLIB_LOCAL_H
 #include <unixlib/local.h>
 #endif
 
@@ -231,7 +224,7 @@ void cFile::Open(const TSTRING& sFileNameC, uint32_t flags)
         fcntl(fh, F_NOCACHE, 1);
 #endif
 
-#if IS_SOLARIS
+#if HAVE_DIRECTIO // Solaris
     if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
         directio(fh, DIRECTIO_ON);
 #endif
@@ -605,7 +598,7 @@ bool cRiscosPath::IsAbsolutePath(const TSTRING& in)
 // For paths of type SDFS::Volume.$.dir.file
 TSTRING cRiscosPath::AsPosix(const TSTRING& in)
 {
-#if IS_RISCOS
+#if HAVE_UNIXLIB_LOCAL_H
     if (in[0] == '/')
     {
         return in;
@@ -628,7 +621,7 @@ TSTRING cRiscosPath::AsPosix(const TSTRING& in)
 
 TSTRING cRiscosPath::AsNative(const TSTRING& in)
 {
-#if IS_RISCOS
+#if HAVE_UNIXLIB_LOCAL_H
     if (in[0] != '/')
     {
         return in;

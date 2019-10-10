@@ -30,6 +30,9 @@
 /* Define to 1 if you have the `broken_ac_check_func' function. */
 #undef HAVE_BROKEN_AC_CHECK_FUNC
 
+/* Define to 1 if you have the <bsdsocket/socketbasetags.h> header file. */
+#undef HAVE_BSDSOCKET_SOCKETBASETAGS_H
+
 /* Define to 1 if you have the `chmod' function. */
 #undef HAVE_CHMOD
 
@@ -53,6 +56,9 @@
 
 /* Define to 1 if you have the `connect' function. */
 #undef HAVE_CONNECT
+
+/* Define to 1 if you have the `directio' function. */
+#undef HAVE_DIRECTIO
 
 /* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
    */
@@ -93,6 +99,9 @@
 
 /* Define to 1 if you have the `getaddrinfo' function. */
 #undef HAVE_GETADDRINFO
+
+/* Define to 1 if you have the `getgid' function. */
+#undef HAVE_GETGID
 
 /* Define to 1 if you have the `getgrgid' function. */
 #undef HAVE_GETGRGID
@@ -139,6 +148,9 @@
 /* Define to 1 if you have the <limits> header file. */
 #undef HAVE_LIMITS
 
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
+
 /* Define to 1 if you have the `link' function. */
 #undef HAVE_LINK
 
@@ -150,6 +162,12 @@
 
 /* Define to 1 if you have the <malloc.h> header file. */
 #undef HAVE_MALLOC_H
+
+/* Define to 1 if you have the `mblen' function. */
+#undef HAVE_MBLEN
+
+/* Define to 1 if you have the `mbtowc' function. */
+#undef HAVE_MBTOWC
 
 /* Define to 1 if you have the `memcpy_s' function. */
 #undef HAVE_MEMCPY_S
@@ -190,6 +208,9 @@
 /* Define to 1 if you have the <openssl/sha.h> header file. */
 #undef HAVE_OPENSSL_SHA_H
 
+/* Uses the OpenWatcom compiler */
+#undef HAVE_OPENWATCOM
+
 /* Uses the sunCC compiler */
 #undef HAVE_ORACLE_SUNCC
 
@@ -207,6 +228,12 @@
 
 /* Define to 1 if you have the `posix_spawn' function. */
 #undef HAVE_POSIX_SPAWN
+
+/* Define to 1 if you have the <proto/bsdsocket.h> header file. */
+#undef HAVE_PROTO_BSDSOCKET_H
+
+/* Define to 1 if you have the <proto/exec.h> header file. */
+#undef HAVE_PROTO_EXEC_H
 
 /* Define to 1 if you have the <pthread.h> header file. */
 #undef HAVE_PTHREAD_H
@@ -369,8 +396,14 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
+/* Define to 1 if you have the <unixlib/local.h> header file. */
+#undef HAVE_UNIXLIB_LOCAL_H
+
 /* Define to 1 if you have the <varargs.h> header file. */
 #undef HAVE_VARARGS_H
+
+/* Define to 1 if you have the `vfork' function. */
+#undef HAVE_VFORK
 
 /* Define to 1 if you have the <wchar.h> header file. */
 #undef HAVE_WCHAR_H
@@ -447,6 +480,28 @@
 /* Uses signed magnitute */
 #undef USES_SIGNED_MAGNITUDE
 
+/* Enable extensions on AIX 3, Interix.  */
+#ifndef _ALL_SOURCE
+# undef _ALL_SOURCE
+#endif
+/* Enable GNU extensions on systems that have them.  */
+#ifndef _GNU_SOURCE
+# undef _GNU_SOURCE
+#endif
+/* Enable threading extensions on Solaris.  */
+#ifndef _POSIX_PTHREAD_SEMANTICS
+# undef _POSIX_PTHREAD_SEMANTICS
+#endif
+/* Enable extensions on HP NonStop.  */
+#ifndef _TANDEM_SOURCE
+# undef _TANDEM_SOURCE
+#endif
+/* Enable general extensions on Solaris.  */
+#ifndef __EXTENSIONS__
+# undef __EXTENSIONS__
+#endif
+
+
 /* Version number of package */
 #undef VERSION
 
@@ -475,6 +530,16 @@
 
 /* Define for large files, on AIX-style hosts. */
 #undef _LARGE_FILES
+
+/* Define to 1 if on MINIX. */
+#undef _MINIX
+
+/* Define to 2 if the system does not provide POSIX.1 features except with
+   this defined. */
+#undef _POSIX_1_SOURCE
+
+/* Define to 1 if you need to in order for `stat' and other things to work. */
+#undef _POSIX_SOURCE
 
 /* Define to 1 if type `char' is unsigned and you are not using gcc.  */
 #ifndef __CHAR_UNSIGNED__

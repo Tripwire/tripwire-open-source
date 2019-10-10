@@ -199,14 +199,8 @@ TSTRING& cTWLocale::FormatNumber(uint64_t ui, TSTRING& strBuf)
         return (FormatNumber((int64_t)ui, strBuf));
     else
     {
-#if IS_MSVC
-        // MSVC can't convert from uint64_t to a double for some reason
-        strBuf = TSS_GetString(cCore, core::STR_NUMBER_TOO_BIG);
-        return (strBuf);
-#else
         ASSERT(std::numeric_limits<double>::max() >= TSS_UINT64_MAX);
         return (cFormatNumberUtil<double, TCHAR>::Format((double)ui, strBuf));
-#endif
     }
 }
 

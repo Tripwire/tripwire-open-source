@@ -79,9 +79,18 @@
 
 #if IS_AROS
 #include <errno.h>
+
+#if HAVE_PROTO_EXEC_H
 #include <proto/exec.h>
+#endif
+
+#if HAVE_PROTO_BSDSOCKET_H
 #include <proto/bsdsocket.h>
+#endif
+
+#if HAVE_BSDSOCKET_SOCKETBASETAGS_H
 #include <bsdsocket/socketbasetags.h>
+#endif
 
 static bool aros_socketbase_init();
 #endif

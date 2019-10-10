@@ -71,26 +71,29 @@
  * INADDR_NONE, but it's pretty standard.  If not,
  * then the OS _should_ define it for us.
  */
-#    ifndef INADDR_NONE
-#        define INADDR_NONE 0xffffffff
-#    endif
+#ifndef INADDR_NONE
+#   define INADDR_NONE 0xffffffff
+#endif
 
 #include <unistd.h>
 
-#    define INVALID_SOCKET -1
+#ifndef INVALID_SOCKET
+#   define INVALID_SOCKET -1
+#endif
 
-#    if IS_AROS
-#        ifndef HAVE_GETHOSTNAME
-#            define HAVE_GETHOSTNAME 1
-#        endif
-#    endif
+#if IS_AROS
+#   ifndef HAVE_GETHOSTNAME
+#       define HAVE_GETHOSTNAME 1
+#   endif
+#endif
 
-#    ifndef HAVE_GETHOSTNAME
+
+#ifndef HAVE_GETHOSTNAME
 static int gethostname(char* name, int namelen)
 {
     name[0] = '\0';
 
-#        if HAVE_SYS_UTSNAME_H
+#if HAVE_SYS_UTSNAME_H
     struct utsname myname;
     uname(&myname);
 
@@ -105,28 +108,11 @@ static int gethostname(char* name, int namelen)
         return -1;
         // equivalent of SOCKET_ERROR
     }
-#        else
+#else
     strncpy(name, "localhost", namelen);
-#        endif
+#endif
 }
-#    endif //HAVE_GETHOSTNAME
-
-// Unix does not require us to go though any silly DLL hoops, so we'll
-// just #define the pointers to functions needed by Windows to be the
-// berkely functions.
-#    define mPfnSocket socket
-#    define mPfnInetAddr inet_addr
-#    define mPfnGethostname gethostname
-#    define mPfnGethostbyname gethostbyname
-#    define mPfnConnect connect
-#    define mPfnCloseSocket close
-#    define mPfnSend send
-#    define mPfnRecv recv
-#    define mPfnSelect select
-#    define mPfnNtohl ntohl
-#    define mPfnHtonl htonl
-#    define mPfnNtohs ntohs
-#    define mPfnHtons htons
+#endif //HAVE_GETHOSTNAME
 
 //
 // TODO - maybe convert this SMTP code to non-blocking socket calls, or use
@@ -179,28 +165,19 @@ long cSMTPMailMessage::GetServerAddress()
 
     if (bIsNumeric)
     {
-#    ifndef HAVE_SYS_SOCKET_H
-        return 0;
-#    else
         // convert the numberic address to a long
-        return mPfnInetAddr(sNarrowString.c_str());
-#    endif
+        return inet_addr(sNarrowString.c_str());
     }
     else
     {
-#    if IS_SORTIX || !defined(HAVE_SYS_SOCKET_H)
-        return INADDR_NONE;
-#    else
         // do a DNS lookup of the hostname and get the long
-        hostent* ent = mPfnGethostbyname(sNarrowString.c_str());
+        hostent* ent = gethostbyname(sNarrowString.c_str());
         if (!ent)
             return INADDR_NONE;
         else
             return *(long*)ent->h_addr_list[0];
-#    endif
     }
 }
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -208,14 +185,11 @@ long cSMTPMailMessage::GetServerAddress()
 //
 bool cSMTPMailMessage::OpenConnection()
 {
-#    ifndef HAVE_SYS_SOCKET_H
-    return false;
-#    else
     // Initialize the socket structure
     sockaddr_in sockAddrIn;
     memset(&sockAddrIn, 0, sizeof(sockaddr));
     sockAddrIn.sin_family = AF_INET;
-    sockAddrIn.sin_port = mPfnHtons(mPortNumber);
+    sockAddrIn.sin_port   = htons(mPortNumber);
     uint32_t iServerAddress = GetServerAddress();
 
     sockAddrIn.sin_addr.s_addr = iServerAddress;
@@ -232,7 +206,7 @@ bool cSMTPMailMessage::OpenConnection()
     }
 
     // Create the socket
-    mSocket = mPfnSocket(AF_INET, SOCK_STREAM, 0);
+    mSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (mSocket == INVALID_SOCKET)
     {
         DecodeError();
@@ -241,7 +215,7 @@ bool cSMTPMailMessage::OpenConnection()
     }
 
     // Make the connection
-    int connectVal = mPfnConnect(mSocket, (struct sockaddr*)&sockAddrIn, sizeof(sockAddrIn));
+    int connectVal = connect(mSocket, (struct sockaddr*)&sockAddrIn, sizeof(sockAddrIn));
     if (connectVal < 0)
     {
         DecodeError();
@@ -254,7 +228,6 @@ bool cSMTPMailMessage::OpenConnection()
     }
 
     return true;
-#    endif
 }
 
 
@@ -267,7 +240,7 @@ bool cSMTPMailMessage::CloseConnection()
     if (INVALID_SOCKET != mSocket)
     {
         // close the connection
-        int closeVal = mPfnCloseSocket(mSocket);
+        int closeVal = close(mSocket);
         if (closeVal != 0)
         {
             DecodeError();
@@ -341,7 +314,7 @@ bool cSMTPMailMessage::MailMessage()
     ASSERT(strmSend.str().length() == 0); // This bad boy better be empty.
 
     // get our hostname for the HELO message
-    if (mPfnGethostname(sLocalHost, 256) < 0)
+    if (gethostname(sLocalHost, 256) < 0)
     {
         DecodeError();
         return false;
@@ -474,9 +447,6 @@ bool cSMTPMailMessage::MailMessage()
 //
 bool cSMTPMailMessage::GetAcknowledgement()
 {
-#    ifndef HAVE_SYS_SOCKET_H
-    return false;
-#    else
     cDebug d("cSMTPMailMessage::GetAcknowledgement");
 
     const int bufsize = 512;
@@ -498,10 +468,10 @@ bool cSMTPMailMessage::GetAcknowledgement()
     tv.tv_usec = 0;
 
     // Wait up to sixty seconds fot data to show up on the socket to be read
-    if (mPfnSelect(mSocket + 1, &socketSet, NULL, NULL, &tv) == 1)
+    if (select(mSocket + 1, &socketSet, NULL, NULL, &tv) == 1)
     {
         // Get the reply message
-        bytes = mPfnRecv(mSocket, sTempString, 512, 0);
+        bytes = recv(mSocket, sTempString, 512, 0);
 
         // TODO:BAM -- this should be changed to use 'cStringUtil'
         for (int j = 0; j < bytes && i < bufsize; j++, i++)
@@ -532,19 +502,17 @@ bool cSMTPMailMessage::GetAcknowledgement()
         throw eMailSMTPServer(estr.str());
         return false;
     }
-#    endif
 }
 
 void cSMTPMailMessage::SendString(const std::string& str)
 {
     cDebug d("util_SendString()");
-#    if HAVE_SYS_SOCKET_H
+
     if (str.length() < 800)
         d.TraceDebug("Sending \"%s\"\n", str.c_str());
     else
         d.TraceDebug("Sending (truncated in this debug output)\"%s\"\n", std::string(str.c_str(), 800).c_str());
-    mPfnSend(mSocket, str.c_str(), str.length(), 0);
-#    endif
+    send(mSocket, str.c_str(), str.length(), 0);
 }
 
 

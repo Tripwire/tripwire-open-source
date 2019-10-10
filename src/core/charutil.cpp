@@ -41,7 +41,8 @@
 #include "charutil.h"
 #include "ntmbs.h"
 
-#if IS_ANDROID
+#if !HAVE_MBLEN && HAVE_MBTOWC
+// Musl libc & Android NDK implement mblen just like this
 int mblen(const char* s, size_t n)
 {
     return mbtowc(0, s, n);

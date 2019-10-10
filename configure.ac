@@ -12,6 +12,11 @@ AM_CONFIG_HEADER(config.h)
 AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
 AC_REVISION([$Revision: 2.4.3.8 $])
 
+dnl ensure that things like _GNU_SOURCE are enabled, since we use a handful of extended
+dnl things like O_NOATIME when they're available.  autotools wants this to happen early
+dnl before it tries to compile anything
+AC_USE_SYSTEM_EXTENSIONS
+
 dnl AC_LANG_CPLUSPLUS wants to set CXXFLAGS to include '-g -O2', but we probably don't want to
 dnl include debug symbols by default, so save off the previous value & restore it afterward
 tmp_cxxflags=${CXXFLAGS}
@@ -28,7 +33,7 @@ AH_BOTTOM([#include "core/fixups.h"])
 dnl ###################
 dnl Checks for programs
 dnl ###################
-AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc cl])
+dnl AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc cl])
 AC_PROG_CXX([g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icpc owcc cl KCC cfront c++])
 AC_PROG_RANLIB
 AC_PROG_YACC
@@ -51,7 +56,6 @@ dnl since automake is good at that.
 dnl
 if test "x${GXX}" != "x"; then
 
-    CFLAGS=${CFLAGS:-"-O -pipe"}
     CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
 
     AC_DEFINE(HAVE_GNUC, 1, [Compiler supports GNU C++ dialect & args])
@@ -72,8 +76,6 @@ else
     dnl in case Clang stops defining __GNUC__ or user undefines it
     if test "x${CXX}" = "xclang++"; then
 	AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
-
-	CFLAGS=${CFLAGS:-"-O -pipe"}
 	CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
     fi
 
@@ -82,7 +84,6 @@ else
 
         dnl OBJECT_MODE needs to be set while compiling
         export OBJECT_MODE=64
-        CFLAGS=${CFLAGS:-"-O -maix64 -Wx,-qinfo=all" }
         CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
         ARFLAGS=${ARFLAGS:-"-X 64"}
     fi
@@ -92,7 +93,6 @@ else
 
         dnl OBJECT_MODE needs to be set while compiling
         export OBJECT_MODE=64
-        CFLAGS=${CFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
         CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
         ARFLAGS=${ARFLAGS:-"-X 64"}
     fi
@@ -106,6 +106,11 @@ else
     if test "x${CXX}" = "xaCC"; then
         AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
     fi
+
+    if test "x${CXX}" = "xowcc"; then
+        AC_DEFINE(HAVE_OPENWATCOM, 1, [Uses the OpenWatcom compiler])
+        CXXFLAGS=${CXXFLAGS:-"-xs"}
+    fi
  
 
 fi
@@ -115,7 +120,10 @@ dnl Enable various warnings
 dnl #####################
 
 AX_CHECK_COMPILE_FLAG([-Wall],        [CXXFLAGS="$CXXFLAGS -Wall"])
-AX_CHECK_COMPILE_FLAG([-Wextra],      [CXXFLAGS="$CXXFLAGS -Wextra -Wno-unused-parameter"])
+AX_CHECK_COMPILE_FLAG([-Wextra],      [CXXFLAGS="$CXXFLAGS -Wextra"])
+dnl OpenWatcom compiler understands -Wextra but not -Wno-unused-parameter, so detect it separately
+AX_CHECK_COMPILE_FLAG([-Wno-unused-parameter], [CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
+
 dnl AX_CHECK_COMPILE_FLAG([-Weverything], [CXXFLAGS="$CXXFLAGS -Weverything"])
 
 dnl #####################
@@ -133,7 +141,6 @@ fi
 AC_ARG_ENABLE(debug,  [  --enable-debug          compile with debuging enabled])
 if test "x$enable_debug" = xyes
 then
-   CFLAGS="${CFLAGS} -g"
    CXXFLAGS="${CXXFLAGS} -g"
    AC_DEFINE(DEBUG, 1, [Compile with debug code])
 else
@@ -143,7 +150,6 @@ fi
 AC_ARG_ENABLE(coverage, [  --enable-coverage       enable code coverage])
 if test "x$enable_coverage" = xyes
 then
-   CFLAGS="${CFLAGS} --coverage"
    CXXFLAGS="${CXXFLAGS} --coverage"
    LDFLAGS="${LDFLAGS} --coverage"
 fi
@@ -151,7 +157,6 @@ fi
 AC_ARG_ENABLE(profiling, [  --enable-profiling      enable profiling])
 if test "x$enable_profiling" = xyes
 then
-   CFLAGS="${CFLAGS} -pg"
    CXXFLAGS="${CXXFLAGS} -pg"
    LDFLAGS="${LDFLAGS} -pg"
 fi
@@ -172,7 +177,6 @@ AC_ARG_WITH(stlport-dir,
             stlport_paths="-I ${stlport_include} -L ${stlport_lib}"
 
             CPPFLAGS="${CPPFLAGS} ${stlport_paths}"
-            CFLAGS="${CFLAGS} ${stlport_paths}"
             CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
             LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc -lm"
 	    # Append lib dir to LD_LIBRARY_PATH (or set LD_LIBRARY_PATH if unset)
@@ -219,6 +223,10 @@ AC_CHECK_HEADERS(sys/utsname.h)
 AC_CHECK_HEADERS(sys/wait.h)
 
 AC_CHECK_HEADERS(sys/fs/vx_ioctl.h)
+AC_CHECK_HEADERS(unixlib/local.h)
+AC_CHECK_HEADERS(proto/bsdsocket.h)
+AC_CHECK_HEADERS(proto/exec.h)
+AC_CHECK_HEADERS(bsdsocket/socketbasetags.h)
 
 dnl # Special case for malloc.h, because it's deprecated on most systems.
 CPPFLAGS_SAVE="${CPPFLAGS}"
@@ -285,9 +293,12 @@ dnl Checks for standard functions
 dnl #############################
 AC_CHECK_FUNCS(strftime)
 AC_CHECK_FUNCS(getaddrinfo gethostname gethostbyname gethostid)
-AC_CHECK_FUNCS(getuid)
+AC_CHECK_FUNCS(getuid getgid)
 dnl various ways of creating/naming temp files
 AC_CHECK_FUNCS(mkstemp mktemp tmpnam, break)
+dnl i18n string fns
+AC_CHECK_FUNCS(mblen mbtowc)
+dnl misc assorted
 AC_CHECK_FUNCS(swab tzset _exit popen memcpy_s)
 
 dnl posix way to read files
@@ -306,7 +317,7 @@ AC_CHECK_FUNCS(chown chmod link symlink mknod mkfifo)
 dnl posix syslog fns
 AC_CHECK_FUNCS(openlog syslog closelog)
 dnl posix process fns
-AC_CHECK_FUNCS(fork execve posix_spawn)
+AC_CHECK_FUNCS(fork vfork execve posix_spawn)
 dnl bsd socket fns
 AC_CHECK_FUNCS(socket connect bind)
 dnl posix user & group stuff
@@ -329,7 +340,8 @@ dnl check for door support (Solaris)
 AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
 dnl check for event port support (Solaris)
 AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
-
+dnl check for directio syscall (Solaris)
+AC_CHECK_FUNCS(directio)
 
 dnl check for existence of fseeko() as well as ftello()
 AC_FUNC_FSEEKO
@@ -395,7 +407,7 @@ dnl Check for STL support, either native or STLport
 dnl
 dnl Check for STL headers
 dnl
-AC_CHECK_HEADERS(limits)
+AC_CHECK_HEADERS(limits limits.h)
 
 dnl Use <locale> as a proxy for C++98-compliant-ish STL
 dnl and look for STLport if file isn't found immediately

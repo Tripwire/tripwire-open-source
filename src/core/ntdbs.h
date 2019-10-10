@@ -200,11 +200,9 @@ template<> struct std::char_traits<dbchar_t>
         return lhs == rhs;
     }
 
-#    if IS_STDLIB_MODENA
-
+#if IS_STDLIB_MODENA
     // CAUTION:RAD -- Extra members required by Modena!!
-
-#        ifdef MBSTATE_T_DEFINED // This is ANSI-C *not* ANSI-C++!!
+#ifdef MBSTATE_T_DEFINED // This is ANSI-C *not* ANSI-C++!!
     static state_type get_state(pos_type pos)
     {
         return pos.state();
@@ -214,7 +212,7 @@ template<> struct std::char_traits<dbchar_t>
     {
         return pos_type(pos.offset(), state);
     }
-#        endif //MBSTATE_T_DEFINED
+#endif //MBSTATE_T_DEFINED
 
     static char_type newline()
     {
@@ -225,8 +223,7 @@ template<> struct std::char_traits<dbchar_t>
     {
         return 0;
     }
-
-#    endif //IS_STDLIB_MODENA
+#endif //IS_STDLIB_MODENA
 
     static int_type eof()
     {
