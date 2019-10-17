@@ -250,6 +250,8 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
         std::stringstream sstr;
         sstr << "Test " << suiteName << "/" << testName << ": <unknown>";
         error_strings.push_back(sstr.str());
+
+        failed_count++;	
     }
 }
 
@@ -472,7 +474,6 @@ int _tmain(int argc, TCHAR** argv)
         RegisterSuites();
         std::string arg1 = argv[1];
 
-
         if (arg1 == "all" || arg1 == "--all")
         {
             RunAllTests();
@@ -501,22 +502,19 @@ int _tmain(int argc, TCHAR** argv)
     catch (eError& error)
     {
         cTWUtil::PrintErrorMsg(error);
-        ASSERT(false);
-        return 1;
+        failed_count++;
     }
     catch (std::exception& error)
     {
         TCERR << "Caught std::exception: " << error.what() << std::endl;
-        ASSERT(false);
-        return 1;
+        failed_count++;	
     }
     catch (...)
     {
         TCERR << _T("Unhandled exception caught!");
-        ASSERT(false);
-        return 1;
+        failed_count++;	
     }
-
+    
     // make sure all the reference counted objects have been destroyed
     // this test always fails because of the static cFCONameTbl
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);

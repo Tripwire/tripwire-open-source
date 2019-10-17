@@ -483,6 +483,7 @@ cMD5Signature::cMD5Signature()
 #else
     memset(mMD5Info.digest, 0, sizeof(mMD5Info.digest));
 #endif
+
     memset(md5_digest, 0, MD5_DIGEST_LENGTH);
 }
 
@@ -522,9 +523,9 @@ void cMD5Signature::Finit()
     MD5Final(&mMD5Info);
 
 #if HAVE_MEMCPY_S
-    memcpy_s(mMD5Info.digest, sizeof(mMD5Info.digest), md5_digest, MD5_DIGEST_LENGTH);
-#else    
-    memcpy(mMD5Info.digest, md5_digest, MD5_DIGEST_LENGTH);
+    memcpy_s(md5_digest, MD5_DIGEST_LENGTH, mMD5Info.digest, sizeof(mMD5Info.digest));
+#else
+    memcpy(md5_digest, mMD5Info.digest, MD5_DIGEST_LENGTH);
 #endif
     
 #endif
