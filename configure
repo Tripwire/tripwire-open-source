@@ -723,6 +723,7 @@ infodir
 docdir
 oldincludedir
 includedir
+runstatedir
 localstatedir
 sharedstatedir
 sysconfdir
@@ -753,7 +754,6 @@ enable_debug
 enable_coverage
 enable_profiling
 enable_urandom
-with_stlport_dir
 enable_largefile
 enable_commoncrypto
 enable_iconv
@@ -813,6 +813,7 @@ datadir='${datarootdir}'
 sysconfdir='${prefix}/etc'
 sharedstatedir='${prefix}/com'
 localstatedir='${prefix}/var'
+runstatedir='${localstatedir}/run'
 includedir='${prefix}/include'
 oldincludedir='/usr/include'
 docdir='${datarootdir}/doc/${PACKAGE_TARNAME}'
@@ -1065,6 +1066,15 @@ do
   | -silent | --silent | --silen | --sile | --sil)
     silent=yes ;;
 
+  -runstatedir | --runstatedir | --runstatedi | --runstated \
+  | --runstate | --runstat | --runsta | --runst | --runs \
+  | --run | --ru | --r)
+    ac_prev=runstatedir ;;
+  -runstatedir=* | --runstatedir=* | --runstatedi=* | --runstated=* \
+  | --runstate=* | --runstat=* | --runsta=* | --runst=* | --runs=* \
+  | --run=* | --ru=* | --r=*)
+    runstatedir=$ac_optarg ;;
+
   -sbindir | --sbindir | --sbindi | --sbind | --sbin | --sbi | --sb)
     ac_prev=sbindir ;;
   -sbindir=* | --sbindir=* | --sbindi=* | --sbind=* | --sbin=* \
@@ -1202,7 +1212,7 @@ fi
 for ac_var in	exec_prefix prefix bindir sbindir libexecdir datarootdir \
 		datadir sysconfdir sharedstatedir localstatedir includedir \
 		oldincludedir docdir infodir htmldir dvidir pdfdir psdir \
-		libdir localedir mandir
+		libdir localedir mandir runstatedir
 do
   eval ac_val=\$$ac_var
   # Remove trailing slashes.
@@ -1355,6 +1365,7 @@ Fine tuning of the installation directories:
   --sysconfdir=DIR        read-only single-machine data [PREFIX/etc]
   --sharedstatedir=DIR    modifiable architecture-independent data [PREFIX/com]
   --localstatedir=DIR     modifiable single-machine data [PREFIX/var]
+  --runstatedir=DIR       modifiable per-process data [LOCALSTATEDIR/run]
   --libdir=DIR            object code libraries [EPREFIX/lib]
   --includedir=DIR        C header files [PREFIX/include]
   --oldincludedir=DIR     C header files for non-gcc [/usr/include]
@@ -1413,7 +1424,6 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
-  --with-stlport-dir=PATH     Specify path to STLport installation
   --with-ssl-dir=PATH     Specify path to OpenSSL installation
 
 Some influential environment variables:
@@ -5973,27 +5983,6 @@ $as_echo "#define ENABLE_DEV_URANDOM 1" >>confdefs.h
 fi
 
 
-# Check whether --with-stlport-dir was given.
-if test "${with_stlport_dir+set}" = set; then :
-  withval=$with_stlport_dir;
-        if test "x$withval" != "xno" ; then
-            stlport_base=$withval
-            stlport_include="${stlport_base}/stlport"
-            stlport_lib="${stlport_base}/lib"
-            stlport_paths="-I ${stlport_include} -L ${stlport_lib}"
-
-            CPPFLAGS="${CPPFLAGS} ${stlport_paths}"
-            CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
-            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc -lm"
-	    # Append lib dir to LD_LIBRARY_PATH (or set LD_LIBRARY_PATH if unset)
-	    # This is mostly for the benefit of configure-time test programs.
-	    LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${stlport_lib}
-        fi
-
-
-fi
-
-
 
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
@@ -7581,7 +7570,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -7627,7 +7616,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -7651,7 +7640,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -7696,7 +7685,7 @@ else
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -7720,7 +7709,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
     We can't simply define LARGE_OFF_T to be 9223372036854775807,
     since some C++ compilers masquerading as C compilers
     incorrectly reject 9223372036854775807.  */
-#define LARGE_OFF_T (((off_t) 1 << 62) - 1 + ((off_t) 1 << 62))
+#define LARGE_OFF_T ((((off_t) 1 << 31) << 31) - 1 + (((off_t) 1 << 31) << 31))
   int off_t_is_large[(LARGE_OFF_T % 2147483629 == 721
 		       && LARGE_OFF_T % 2147483647 == 1)
 		      ? 1 : -1];
@@ -8632,6 +8621,14 @@ fi
 fi
 
 
+
+if test -z "${STLPORT}"; then
+   STLPORT="."
+fi
+
+stlport_include="${STLPORT}/stlport"
+stlport_lib="${STLPORT}/lib"
+
 for ac_header in limits limits.h
 do :
   as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
@@ -8662,11 +8659,12 @@ if ${ac_cv_stlportdir+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
+    echo "Native <locale> header not found; checking if STLport is available"
     found_locale=""
     for inclpath in ${stlport_include} /usr/local/include /usr/local/include/stlport
     do
       CPPFLAGS_save=${CPPFLAGS}
-      CPPFLAGS="${CPPFLAGS} -I${inclpath}"
+      CPPFLAGS="${CPPFLAGS} -I${inclpath} -nostdinc++"
       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8717,7 +8715,7 @@ done
 
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir}"
+    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir} -nostdinc++"
   fi
 
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -8743,6 +8741,7 @@ else
 
     LDFLAGS_TEMP="${LDFLAGS}"
     LDFLAGS="${LDFLAGS_TEMP} -pthread"
+
     unset ac_cv_func_pthread_getspecific
     ac_fn_cxx_check_func "$LINENO" "pthread_getspecific" "ac_cv_func_pthread_getspecific"
 if test "x$ac_cv_func_pthread_getspecific" = xyes; then :
@@ -8782,8 +8781,12 @@ else
         do
           LDFLAGS_save=${LDFLAGS}
           LIBS_save=${LIBS}
+	  LD_LIBRARY_PATH_save=${LD_LIBRARY_PATH}
+
           LDFLAGS="${LDFLAGS} -L${inclpath}"
           LIBS="${LIBS} -l${stllib}"
+	  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${inclpath}"
+
           cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
@@ -8805,6 +8808,7 @@ rm -f core conftest.err conftest.$ac_objext \
     conftest$ac_exeext conftest.$ac_ext
           LDFLAGS=${LDFLAGS_save}
           LIBS=${LIBS_save}
+	  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH_save}"
           if test "x${found_lib}" = "x1"
           then
             ac_cv_stlportlib=${inclpath}
@@ -8837,6 +8841,8 @@ $as_echo "$ac_cv_stlportlib" >&6; }
   then
     LDFLAGS="${LDFLAGS} -L ${ac_cv_stlportlib}"
     LIBS="${LIBS} -l${stllib}"
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${ac_cv_stlportlib}"
+
 
 $as_echo "#define HAVE_LOCALE 1" >>confdefs.h
 
@@ -8856,6 +8862,19 @@ do :
 if test "x$ac_cv_header_wchar_h" = xyes; then :
   cat >>confdefs.h <<_ACEOF
 #define HAVE_WCHAR_H 1
+_ACEOF
+
+fi
+
+done
+
+for ac_header in sstream strstream
+do :
+  as_ac_Header=`$as_echo "ac_cv_header_$ac_header" | $as_tr_sh`
+ac_fn_cxx_check_header_mongrel "$LINENO" "$ac_header" "$as_ac_Header" "$ac_includes_default"
+if eval test \"x\$"$as_ac_Header"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_header" | $as_tr_cpp` 1
 _ACEOF
 
 fi

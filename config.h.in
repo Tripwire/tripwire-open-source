@@ -265,6 +265,9 @@
 /* Define to 1 if you have the `socket' function. */
 #undef HAVE_SOCKET
 
+/* Define to 1 if you have the <sstream> header file. */
+#undef HAVE_SSTREAM
+
 /* Define to 1 if you have the `stat' function. */
 #undef HAVE_STAT
 
@@ -291,6 +294,9 @@
 
 /* Define to 1 if you have the <string.h> header file. */
 #undef HAVE_STRING_H
+
+/* Define to 1 if you have the <strstream> header file. */
+#undef HAVE_STRSTREAM
 
 /* Define to 1 if `st_attrib' is a member of `struct stat'. */
 #undef HAVE_STRUCT_STAT_ST_ATTRIB

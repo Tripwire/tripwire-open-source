@@ -167,24 +167,6 @@ then
    AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
 fi
 
-AC_ARG_WITH(stlport-dir,
-    [  --with-stlport-dir=PATH     Specify path to STLport installation ],
-    [
-        if test "x$withval" != "xno" ; then
-            stlport_base=$withval
-            stlport_include="${stlport_base}/stlport"
-            stlport_lib="${stlport_base}/lib"
-            stlport_paths="-I ${stlport_include} -L ${stlport_lib}"
-
-            CPPFLAGS="${CPPFLAGS} ${stlport_paths}"
-            CXXFLAGS="${CXXFLAGS} ${stlport_paths}"
-            LDFLAGS="${LDFLAGS} ${stlport_lib} -lstlport_gcc -lm"
-	    # Append lib dir to LD_LIBRARY_PATH (or set LD_LIBRARY_PATH if unset)
-	    # This is mostly for the benefit of configure-time test programs.
-	    LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${stlport_lib}
-        fi
-    ]
-)
 
 
 dnl #######################
@@ -407,6 +389,14 @@ dnl Check for STL support, either native or STLport
 dnl
 dnl Check for STL headers
 dnl
+
+if test -z "${STLPORT}"; then
+   STLPORT="."
+fi
+
+stlport_include="${STLPORT}/stlport"
+stlport_lib="${STLPORT}/lib"
+
 AC_CHECK_HEADERS(limits limits.h)
 
 dnl Use <locale> as a proxy for C++98-compliant-ish STL
@@ -414,11 +404,12 @@ dnl and look for STLport if file isn't found immediately
 AC_CHECK_HEADERS(locale,,[
   dnl Don't have native STL headers, look in other places
   AC_CACHE_CHECK([for STLport directory], ac_cv_stlportdir, [
+    echo "Native <locale> header not found; checking if STLport is available"
     found_locale=""
     for inclpath in ${stlport_include} /usr/local/include /usr/local/include/stlport
     do
       CPPFLAGS_save=${CPPFLAGS}
-      CPPFLAGS="${CPPFLAGS} -I${inclpath}"
+      CPPFLAGS="${CPPFLAGS} -I${inclpath} -nostdinc++"
       AC_TRY_COMPILE([
 #include <locale>
 ]
@@ -443,7 +434,7 @@ AC_CHECK_HEADERS(locale,,[
   
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir}"    
+    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir} -nostdinc++"
   fi
   
   AC_TRY_LINK([#include <locale>],,,[
@@ -453,6 +444,7 @@ AC_CHECK_HEADERS(locale,,[
 
     LDFLAGS_TEMP="${LDFLAGS}"
     LDFLAGS="${LDFLAGS_TEMP} -pthread"
+
     unset ac_cv_func_pthread_getspecific
     AC_CHECK_FUNC(pthread_getspecific, [:], [
 
@@ -472,14 +464,19 @@ AC_CHECK_HEADERS(locale,,[
         do
           LDFLAGS_save=${LDFLAGS}
           LIBS_save=${LIBS}
+	  LD_LIBRARY_PATH_save=${LD_LIBRARY_PATH}
+	  
           LDFLAGS="${LDFLAGS} -L${inclpath}"
           LIBS="${LIBS} -l${stllib}"
+	  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${inclpath}"
+	  
           AC_TRY_LINK([
 #include <locale>
 ]
           , , [ found_lib="1" ], )
           LDFLAGS=${LDFLAGS_save}
           LIBS=${LIBS_save}
+	  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH_save}"
           if test "x${found_lib}" = "x1"
           then
             ac_cv_stlportlib=${inclpath}
@@ -504,6 +501,8 @@ AC_CHECK_HEADERS(locale,,[
   then
     LDFLAGS="${LDFLAGS} -L ${ac_cv_stlportlib}"
     LIBS="${LIBS} -l${stllib}"
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${ac_cv_stlportlib}"
+
     AC_DEFINE(HAVE_LOCALE, 1, [Define to 1 if you have the <locale> header file.])
     AC_DEFINE(HAVE_STLPORT, 1, [Define if STLport library is used])
   fi
@@ -514,6 +513,7 @@ dnl #####################
 dnl STL specific headers
 dnl #####################
 AC_CHECK_HEADERS(wchar.h)
+AC_CHECK_HEADERS(sstream strstream)
 
 dnl #######################################################################
 dnl Local checks/hacks.  The goal is to make this part as short as possible

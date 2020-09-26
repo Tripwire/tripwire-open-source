@@ -39,6 +39,8 @@
 #include "core/errorgeneral.h"
 #include "core/errortable.h"
 
+TSS_EXCEPTION(eTestErrorBucketImpl, eError);
+
 // test option 7
 void TestErrorBucketImpl()
 {
@@ -82,7 +84,7 @@ void TestErrorBucketImpl()
     // TODO -- test the error table
     // TODO -- test the error filter
     // set some errors...
-    TSS_EXCEPTION(eTestErrorBucketImpl, eError);
+
     eTestErrorBucketImpl error1(_T("Error A")), error2(_T("Error B")), error3(_T("Error C"));
 
     er.AddError(error1);

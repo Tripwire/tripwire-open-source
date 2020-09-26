@@ -287,7 +287,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
     }
     else
     {
-        // refrence counted...
+        // reference counted...
         iSerRefCountObj* pObj;
         pObj = mRefCtObjTbl.Lookup(objIdx);
         if (pObj == NULL)
@@ -304,7 +304,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
                 ThrowAndAssert(eSerializerUnknownType(str.str(), mFileName, eSerializer::TY_FILE));
             }
             pObj = ((*rci).second)();
-            d.TraceDetail("Creating Ref-Coutnted object [%d] %s(%p)\n", objIdx, pObj->GetType().AsString(), pObj);
+            d.TraceDetail("Creating Ref-Counted object [%d] %s(%p)\n", objIdx, pObj->GetType().AsString(), pObj);
             pObj->Read(this);
             mRefCtObjTbl.Add(pObj, objIdx);
 
@@ -316,7 +316,7 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
         else
         {
             // already serialized; just return this object.
-            d.TraceDetail("Adding refrence to previously serialized object [%d] %s(%p)\n",
+            d.TraceDetail("Adding reference to previously serialized object [%d] %s(%p)\n",
                           objIdx,
                           pObj->GetType().AsString(),
                           pObj);

@@ -81,33 +81,78 @@ typedef unsigned long long uint64_t;
 #endif // !HAVE_STDINT_H
 
 
-#if HAVE_STDINT_H
+#ifdef INT8_MIN
 #   define TSS_INT8_MIN   INT8_MIN
-#   define TSS_INT8_MAX   INT8_MAX
-#   define TSS_UINT8_MAX  UINT8_MAX
-#   define TSS_INT16_MIN  INT16_MIN
-#   define TSS_INT16_MAX  INT16_MAX
-#   define TSS_UINT16_MAX UINT16_MAX
-#   define TSS_INT32_MIN  INT32_MIN
-#   define TSS_INT32_MAX  INT32_MAX
-#   define TSS_UINT32_MAX UINT32_MAX
-#   define TSS_INT64_MIN  INT64_MIN
-#   define TSS_INT64_MAX  INT64_MAX
-#   define TSS_UINT64_MAX UINT64_MAX
 #else
 #   define TSS_INT8_MIN (-127 - 1)
+#endif
+
+#ifdef INT8_MAX
+#   define TSS_INT8_MAX   INT8_MAX
+#else
 #   define TSS_INT8_MAX 127
+#endif
+
+#ifdef UINT8_MAX
+#   define TSS_UINT8_MAX  UINT8_MAX
+#else
 #   define TSS_UINT8_MAX 0xFFU
+#endif
+
+#ifdef INT16_MIN
+#   define TSS_INT16_MIN  INT16_MIN
+#else
 #   define TSS_INT16_MIN (-32767 - 1)
+#endif
+
+#ifdef INT16_MAX
+#   define TSS_INT16_MAX  INT16_MAX
+#else
 #   define TSS_INT16_MAX 32767
+#endif
+
+#ifdef UINT16_MAX
+#   define TSS_UINT16_MAX UINT16_MAX
+#else
 #   define TSS_UINT16_MAX 0xFFFFU
+#endif
+
+#ifdef INT32_MIN
+#   define TSS_INT32_MIN  INT32_MIN
+#else
 #   define TSS_INT32_MIN (-2147483647 - 1)
+#endif
+
+#ifdef INT32_MAX
+#   define TSS_INT32_MAX  INT32_MAX
+#else
 #   define TSS_INT32_MAX 2147483647
+#endif
+
+#ifdef UINT32_MAX
+#   define TSS_UINT32_MAX UINT32_MAX
+#else
 #   define TSS_UINT32_MAX 0xFFFFFFFFU
+#endif
+
+#ifdef INT64_MIN
+#   define TSS_INT64_MIN  INT64_MIN
+#else
 #   define TSS_INT64_MIN (-9223372036854775807LL - 1)
+#endif
+
+#ifdef INT64_MAX
+#   define TSS_INT64_MAX  INT64_MAX
+#else
 #   define TSS_INT64_MAX 9223372036854775807LL
+#endif
+
+#ifdef UINT64_MAX
+#   define TSS_UINT64_MAX UINT64_MAX
+#else
 #   define TSS_UINT64_MAX 0xFFFFFFFFFFFFFFFFULL
 #endif
+
 
 //-----------------------------------------------------------------------------
 // Byte Swapping
