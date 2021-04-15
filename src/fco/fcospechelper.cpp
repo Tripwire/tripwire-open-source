@@ -113,10 +113,11 @@ void cFCOSpecStopPointSet::SetStartPoint(const cFCOName& startPoint)
             TOSTRINGSTREAM str;
             str << "Bad start point [" << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(startPoint)
                 << "] added to spec with stop point "
-                << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(*i) << std::ends;
-
-            d.TraceError("%s\n", str.str().c_str());
-            throw eSerializerInputStreamFmt(str.str().c_str());
+                << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(*i);
+	    tss_mkstr(errText, str);
+	    
+            d.TraceError("%s\n", errText.c_str());
+            throw eSerializerInputStreamFmt(errText);
         }
     }
 
@@ -178,10 +179,12 @@ void cFCOSpecStopPointSet::Add(const cFCOName& name)
         TOSTRINGSTREAM str;
         str << "Attempt to add stop point that is not below start point!"
             << " start point = " << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(mStartPoint)
-            << " stop point = " << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(name) << std::ends;
+            << " stop point = " << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(name);
 
-        d.TraceError(_T("%s\n"), str.str().c_str());
-        throw eSerializerInputStreamFmt(str.str().c_str());
+	tss_mkstr(errText, str);
+	
+        d.TraceError(_T("%s\n"), errText.c_str());
+        throw eSerializerInputStreamFmt(errText);
     }
 
     std::set<cFCOName>::iterator i;

@@ -342,14 +342,14 @@ TSTRING cChecksumSignature::AsString() const
 TSTRING cChecksumSignature::AsStringHex() const
 {
     TOSTRINGSTREAM ss;
-
-    ss.imbue(std::locale::classic());
-    ss.setf(ios::hex, ios::basefield);
-
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);
+    
     ASSERT(false);
     ss << (size_t)(uint32_t)mChecksum; // TODO:BAM -- this is truncating a 64-bit value to 32 bits!
 
-    return ss.str();
+    tss_mkstr(out, ss);
+    return out;
 }
 
 bool cChecksumSignature::IsEqual(const iSignature& rhs) const
@@ -431,13 +431,13 @@ TSTRING cCRC32Signature::AsString() const
 TSTRING cCRC32Signature::AsStringHex() const
 {
     TOSTRINGSTREAM ss;
-
-    ss.imbue(std::locale::classic());
-    ss.setf(ios::hex, ios::basefield);
-
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);
+    
     ss << (size_t)mCRCInfo.crc;
-
-    return ss.str();
+    tss_mkstr(out, ss);
+    
+    return out;
 }
 
 bool cCRC32Signature::IsEqual(const iSignature& rhs) const

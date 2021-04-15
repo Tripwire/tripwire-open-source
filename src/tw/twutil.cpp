@@ -661,7 +661,11 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
         throw eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE);
 
     // check 8 byte header
+#if !ARCHAIC_STL    
     if (nstring.mString.compare(0, 8 * sizeof(uint8_t), CONFIG_FILE_MAGIC_8BYTE) != 0)
+#else
+    if (_tcsncmp(nstring.mString.c_str(), CONFIG_FILE_MAGIC_8BYTE,  8 * sizeof(uint8_t)) != 0) 
+#endif      
         ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE));
 
     // remove 8 byte header
@@ -716,7 +720,11 @@ void cTWUtil::ReadPolicyText(const TCHAR* filename, std::string& polText, const 
     ReadObject(filename, NULL, nstring, cPolicyFile::GetFileHeaderID(), pPublicKey, bEncrypted);
 
     // check 8 byte header
+#if !ARCHAIC_STL    
     if (nstring.mString.compare(0, 8 * sizeof(uint8_t), POLICY_FILE_MAGIC_8BYTE) != 0)
+#else
+    if (_tcsncmp(nstring.mString.c_str(), POLICY_FILE_MAGIC_8BYTE, 8 * sizeof(uint8_t)) != 0)
+#endif      
         ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE));
 
     // remove 8 byte header
@@ -1213,7 +1221,11 @@ bool cTWUtil::ConfirmYN(const TCHAR* prompt)
         for (x = 0; s[x] && iswctype(s[x], wctype("space")); x++)
             ;
 #else
+#if !ARCHAIC_STL
         for (x = 0; s[x] && std::isspace<TCHAR>(s[x], std::locale()); x++)
+#else
+        for (x = 0; s[x] && isspace(s[x]); x++)
+#endif	  
             ;
 #endif
 

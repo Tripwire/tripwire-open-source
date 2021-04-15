@@ -48,8 +48,10 @@ static void PrintPropVector(const cFCOPropVector& v, cDebug& d)
             stream << i << ","
                    << " ";
     }
-    stream << std::ends;
-    d.TraceDebug("%s\n", stream.str().c_str());
+
+    tss_mkstr(out, stream);
+
+    d.TraceDebug("%s\n", out.c_str());
 }
 
 void TestFSPropSet()

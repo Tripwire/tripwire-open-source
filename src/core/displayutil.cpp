@@ -94,5 +94,5 @@ TSTRING cDisplayUtil::FormatMultiLineString(const TSTRING& str, int nOffset, int
     // now add last string
     sstr << strT;
 
-    return (sstr.str());
+    tss_return_stream(sstr, out);
 }

@@ -78,10 +78,12 @@ typedef std::u16string dbstring;
 }
 
 #elif (WCHAR_IS_32_BITS)
+#if HAVE_LOCALE
 namespace std
 {
 template<> struct char_traits<dbchar_t>;
 }
+#endif
 namespace tss
 {
 typedef std::basic_string<dbchar_t> dbstring;
@@ -97,7 +99,6 @@ typedef std::basic_string<dbchar_t> dbstring;
 
 #if HAVE_LOCALE
 #   include <locale>
-#endif
 
 // specialize *std*::char_traits!!!
 
@@ -230,6 +231,7 @@ template<> struct std::char_traits<dbchar_t>
         return (wint_t)(0xFFFF);
     }
 };
+#endif
 
 #    endif //WCHAR_IS_16_BITS // We already have a dbstring implicitly in wstring!!!
 

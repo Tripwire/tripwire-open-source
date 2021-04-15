@@ -277,7 +277,11 @@ static void util_InitTempDirectory(const cConfigFile& cf)
     //
     if (*temp_directory.rbegin() != '/')
     {
+#if !ARCHAIC_STL      
         temp_directory.push_back('/');
+#else
+        temp_directory.append("/");
+#endif	
     }
 #endif
 
@@ -1140,8 +1144,10 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                 // TODO -- move these strings to the string table
                 TOSTRINGSTREAM str;
                 str << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS1) << dbFile.GetHeader().GetCreator()
-                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName << std::ends;
-                cTWUtil::PrintErrorMsg(eICDifferentUsers(str.str(), eError::NON_FATAL));
+                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName;
+		tss_mkstr(errStr, str);
+		
+                cTWUtil::PrintErrorMsg(eICDifferentUsers(errStr, eError::NON_FATAL));
             }
         }
 
@@ -2142,8 +2148,10 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
                 // TODO -- move these strings to the string table
                 TOSTRINGSTREAM str;
                 str << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS1) << dbFile.GetHeader().GetCreator()
-                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName << std::ends;
-                cTWUtil::PrintErrorMsg(eICDifferentUsers(str.str(), eError::NON_FATAL));
+                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName;
+		tss_mkstr(errStr, str);
+		
+                cTWUtil::PrintErrorMsg(eICDifferentUsers(errStr, eError::NON_FATAL));
             }
         }
 

@@ -6525,6 +6525,17 @@ fi
 
 done
 
+for ac_header in features.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "features.h" "ac_cv_header_features_h" "$ac_includes_default"
+if test "x$ac_cv_header_features_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_FEATURES_H 1
+_ACEOF
+
+fi
+
+done
 
 for ac_header in sys/file.h
 do :
@@ -7982,6 +7993,18 @@ _ACEOF
 fi
 done
 
+for ac_func in unlink rename ftruncate
+do :
+  as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
+ac_fn_cxx_check_func "$LINENO" "$ac_func" "$as_ac_var"
+if eval test \"x\$"$as_ac_var"\" = x"yes"; then :
+  cat >>confdefs.h <<_ACEOF
+#define `$as_echo "HAVE_$ac_func" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+done
+
 for ac_func in openlog syslog closelog
 do :
   as_ac_var=`$as_echo "ac_cv_func_$ac_func" | $as_tr_sh`
@@ -8053,6 +8076,50 @@ fi
 
 done
 
+
+for ac_header in locale.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "locale.h" "ac_cv_header_locale_h" "$ac_includes_default"
+if test "x$ac_cv_header_locale_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LOCALE_H 1
+_ACEOF
+ for ac_func in setlocale
+do :
+  ac_fn_cxx_check_func "$LINENO" "setlocale" "ac_cv_func_setlocale"
+if test "x$ac_cv_func_setlocale" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_SETLOCALE 1
+_ACEOF
+
+fi
+done
+
+fi
+
+done
+
+for ac_header in ctype.h
+do :
+  ac_fn_cxx_check_header_mongrel "$LINENO" "ctype.h" "ac_cv_header_ctype_h" "$ac_includes_default"
+if test "x$ac_cv_header_ctype_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_CTYPE_H 1
+_ACEOF
+ for ac_func in isprint
+do :
+  ac_fn_cxx_check_func "$LINENO" "isprint" "ac_cv_func_isprint"
+if test "x$ac_cv_func_isprint" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_ISPRINT 1
+_ACEOF
+
+fi
+done
+
+fi
+
+done
 
 
 # Check whether --enable-commoncrypto was given.

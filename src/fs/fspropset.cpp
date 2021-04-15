@@ -110,7 +110,9 @@ void cFSPropSet::TraceContents(int dl) const
                  << _T(", ");
         }
     }
-    d.Trace(dl, _T("%s\n"), ostr.str().c_str());
+
+    tss_mkstr(out, ostr);
+    d.Trace(dl, _T("%s\n"), out.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////

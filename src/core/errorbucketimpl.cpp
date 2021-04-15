@@ -79,7 +79,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
         TOSTRINGSTREAM strm;
         ASSERT(sizeof(uint32_t) == sizeof(unsigned int)); // for cast on next line
         strm << _T("Unknown Error ID ") << (unsigned int)error.GetID();
-        errStr = strm.str();
+	tss_stream_to_string(strm, errStr);
     }
 
     //int len = errStr.length(); // save for later

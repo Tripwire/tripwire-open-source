@@ -171,7 +171,10 @@ TSTRING& cFSPropDisplayer::GetDetailsHeader(TSTRING& strBuf, int iMargin) const
     static cFSPropSet set;
     TOSTRINGSTREAM    sstr;
 
+#if !ARCHAIC_STL    
     sstr << std::left;
+#endif
+    
     sstr << _T(" ") << std::setw(PROP_MODE_WIDTH) << set.GetPropName(cFSPropSet::PROP_MODE);
     sstr << _T(" ") << std::setw(PROP_OWNER_WIDTH) << set.GetPropName(cFSPropSet::PROP_UID);
     sstr << _T(" ") << std::setw(PROP_SIZE_WIDTH) << set.GetPropName(cFSPropSet::PROP_SIZE);
@@ -184,7 +187,7 @@ TSTRING& cFSPropDisplayer::GetDetailsHeader(TSTRING& strBuf, int iMargin) const
     sstr << _T(" ") << std::setw(PROP_SIZE_WIDTH) << _T("----------");
     sstr << _T(" ") << std::setw(PROP_MTIME_WIDTH) << _T("----------");
 
-    strBuf = sstr.str();
+    tss_stream_to_string(sstr, strBuf);
     return strBuf;
 }
 
@@ -204,8 +207,10 @@ TSTRING& cFSPropDisplayer::GetDetails(const iFCO* const pfco, TSTRING& strBuf) c
     TOSTRINGSTREAM       sstr;
     const cFCOPropVector pv = pfco->GetPropSet()->GetValidVector();
 
+#if !ARCHAIC_STL    
     sstr << std::left;
-
+#endif
+    
     sstr << _T(" ") << std::setw(PROP_MODE_WIDTH);
     if (pv.ContainsItem(cFSPropSet::PROP_MODE))
         sstr << PropAsString(pfco, cFSPropSet::PROP_MODE).c_str();
@@ -230,7 +235,7 @@ TSTRING& cFSPropDisplayer::GetDetails(const iFCO* const pfco, TSTRING& strBuf) c
     else
         sstr << _T("XXXXXXXXXXXXXXXXX");
 
-    strBuf = sstr.str();
+    tss_stream_to_string(sstr, strBuf);
     return strBuf;
 }
 
@@ -359,10 +364,10 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
             ASSERT(pTypedProp != 0);
             if (GetUsername(pTypedProp->GetValue(), strProp))
             {
-                TSTRINGSTREAM ostr;
+                TOSTRINGSTREAM ostr;
                 //TODO: can we get rid of this cast now?
                 ostr << strProp << _T(" (") << (int32_t)pTypedProp->GetValue() << _T(")");
-                strProp = ostr.str();
+		tss_stream_to_string(ostr, strProp);
             }
             else
                 strProp = pProp->AsString();
@@ -374,10 +379,10 @@ TSTRING cFSPropDisplayer::PropAsString(const iFCO* const pFCO, const int propIdx
             ASSERT(pTypedProp != 0);
             if (GetGroupname(pTypedProp->GetValue(), strProp))
             {
-                TSTRINGSTREAM ostr;
+                TOSTRINGSTREAM ostr;
                 //TODO: can we get rid of this cast now?
                 ostr << strProp << _T(" (") << (int32_t)pTypedProp->GetValue() << _T(")");
-                strProp = ostr.str();
+		tss_stream_to_string(ostr, strProp);
             }
             else
                 strProp = pProp->AsString();

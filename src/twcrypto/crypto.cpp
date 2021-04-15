@@ -488,14 +488,16 @@ void cRSAPublicKey::TraceContents()
     cDebug d("cRSAPublicKey::TraceContents");
 
     {
-        std::ostringstream os;
+        TOSTRINGSTREAM os;
         os << mpData->mpKey->GetTrapdoorFunction().GetModulus();
-        d.TraceDebug("Modulus = %s\n", os.str().c_str());
+	tss_mkstr(msg, os);
+        d.TraceDebug("Modulus = %s\n", msg.c_str());
     }
     {
-        std::ostringstream os;
+        TOSTRINGSTREAM os;
         os << mpData->mpKey->GetTrapdoorFunction().GetExponent();
-        d.TraceDebug("Exponent = %s\n", os.str().c_str());
+	tss_mkstr(msg, os);
+        d.TraceDebug("Exponent = %s\n", msg.c_str());
     }
 }
 #    endif
@@ -968,24 +970,28 @@ void cElGamalSigPublicKey::TraceContents()
     cDebug d("cElGamalSigPublicKey::TraceContents");
 
     {
-        std::ostringstream os;
+        TOSTRINGSTREAM os;
         os << mpData->mpKey->GetPrime();
-        d.TraceDebug("Prime = %s\n", os.str().c_str());
+	tss_mkstr(msg, os);
+        d.TraceDebug("Prime = %s\n", msg.c_str());
     }
     {
-        std::ostringstream os;
+        TOSTRINGSTREAM os;
         os << mpData->mpKey->GetParameterQ();
-        d.TraceDebug("Q = %s\n", os.str().c_str());
+	tss_mkstr(msg, os);
+        d.TraceDebug("Q = %s\n", msg.c_str());
     }
     {
-        std::ostringstream os;
+        TOSTRINGSTREAM os;
         os << mpData->mpKey->GetParameterG();
-        d.TraceDebug("G = %s\n", os.str().c_str());
+	tss_mkstr(msg, os);
+        d.TraceDebug("G = %s\n", msg.c_str());
     }
     {
-        std::ostringstream os;
+        TOSTRINGSTREAM os;
         os << mpData->mpKey->GetParameterY();
-        d.TraceDebug("Y = %s\n", os.str().c_str());
+	tss_mkstr(msg, os);
+        d.TraceDebug("Y = %s\n", msg.c_str());
     }
 }
 #endif

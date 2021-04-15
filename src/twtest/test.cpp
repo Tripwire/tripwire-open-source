@@ -216,7 +216,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     {
         TCERR << "SKIPPED: " << e.what() << std::endl;
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": " << e.what();
         skipped_strings.push_back(sstr.str());
 
@@ -227,7 +227,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
         TCERR << "FAILED: ";
         cTWUtil::PrintErrorMsg(error);
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": " << error.GetMsg();
         error_strings.push_back(sstr.str());
 
@@ -237,7 +237,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     {
         TCERR << "FAILED: " << e.what() << std::endl;
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": " << e.what();
         error_strings.push_back(sstr.str());
 
@@ -247,7 +247,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     {
         TCERR << "FAILED: <unknown>" << std::endl;
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": <unknown>";
         error_strings.push_back(sstr.str());
 
@@ -395,12 +395,13 @@ std::string TwTestDir()
 
 std::string TwTestPath(const std::string& child)
 {
-    std::stringstream sstr;
+    TOSTRINGSTREAM sstr;
     sstr << TwTestDir();
     if (child[0] != '/')
         sstr << '/';
     sstr << child;
-    return sstr.str();
+
+    tss_return_stream(sstr, out);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -176,7 +176,12 @@ bool cMailMessage::GetAttachmentsAsString(std::string& s)
 
 std::string cMailMessage::Create822Header()
 {
+#if !ARCHAIC_STL  
     std::ostringstream ss;
+#else
+    strstream ss;
+#endif
+    
     std::string        strToList;
     for (std::vector<TSTRING>::size_type i = 0; i < mvstrRecipients.size(); i++)
     {
@@ -280,19 +285,23 @@ static bool NeedsEncoding(char ch)
 
 static std::string EncodeChar(char ch)
 {
-    std::ostringstream ss;
-
-    ss.imbue(std::locale::classic());
+    TOSTRINGSTREAM ss;
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);    
+    
     ss.fill('0');
-    ss.setf(std::ios_base::hex, std::ios_base::basefield);
+
     ss.width(2);
 
     ss << (unsigned int)(unsigned char)ch;
-
+    tss_end(ss);
+    
     ASSERT(ss.str().length() == 2);
 
     // Make sure the hex is uppercase
     std::string s = ss.str();
+    tss_free(ss);
+    
     std::transform(s.begin(), s.end(), s.begin(), toupper);
 
     return s;

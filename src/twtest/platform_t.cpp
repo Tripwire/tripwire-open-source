@@ -197,6 +197,7 @@ void TestAlignment2()
     TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up. */
 }
 
+#if !ARCHAIC_STL
 // Not sure this is a super valuable test, since it just verifies that builtin integer types
 // work the way we think they do.
 void TestSizes()
@@ -231,12 +232,14 @@ template<class E, class T> bool CanBeRepresentedAs(E e, T t)
 
     return fReturn;
 }
-
+#endif
 
 ////////////////////////////
 void RegisterSuite_Platform()
 {
     RegisterTest("Platform", "Alignment",  TestAlignment);
-    RegisterTest("Platform", "Alignment2", TestAlignment2);    
+    RegisterTest("Platform", "Alignment2", TestAlignment2);
+#if !ARCHAIC_STL    
     RegisterTest("Platform", "Sizes",      TestSizes);
+#endif    
 }

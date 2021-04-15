@@ -98,8 +98,10 @@ public:
 // INLINE FUNCTIONS
 //=========================================================================
 
+#if !ARCHAIC_STL
 namespace tss
 {
+
 ////////////////////////////////////////////////
 // GetFacet
 //
@@ -116,5 +118,6 @@ template<class FacetT> inline const FacetT& GetFacet(const std::locale& l, const
 #endif
 }
 } // namespace tss
+#endif
 
 #endif //__TWLOCALE_H

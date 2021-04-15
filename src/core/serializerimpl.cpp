@@ -113,7 +113,8 @@ void cSerializerImpl::RegisterSerializable(const cType& type, iTypedSerializable
         ASSERT(false);
         TOSTRINGSTREAM str;
         str << _T("Duplicate entry in type table: ") << type.AsString() << std::endl;
-        throw eInternal(str.str());
+	tss_mkstr(errStr, str);
+        throw eInternal(errStr);
     }
     cSerializerImpl::mSerCreateMap[crc] = pFunc;
 }
@@ -129,7 +130,8 @@ void cSerializerImpl::RegisterSerializableRefCt(const cType& type, iSerRefCountO
         ASSERT(false);
         TOSTRINGSTREAM str;
         str << _T("Duplicate entry in type table: ") << type.AsString() << std::ends;
-        throw eInternal(str.str());
+	tss_mkstr(errStr, str);
+        throw eInternal(errStr);
     }
     cSerializerImpl::mSerRefCountCreateMap[crc] = pFunc;
 }
@@ -269,12 +271,15 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
         {
             // unable to find the creation function...
             d.TraceError("Unable to find creation function for non-ref counted object %d\n", crc);
-            TOSTRINGSTREAM str;
+            TSTRING errStr;
+	    
 #ifdef DEBUG
+            TOSTRINGSTREAM str;	    
             // Let's only report the actual crc in debug mode
             str << (int32_t)crc << std::ends;
+	    tss_mkstr(errStr, str);
 #endif
-            ThrowAndAssert(eSerializerUnknownType(str.str(), mFileName, eSerializer::TY_FILE));
+            ThrowAndAssert(eSerializerUnknownType(errStr, mFileName, eSerializer::TY_FILE));
         }
         iTypedSerializable* pObj = ((*si).second)();
         d.TraceDetail("Created non-ref counted object %s(%p)\n", pObj->GetType().AsString(), pObj);
@@ -300,8 +305,9 @@ iTypedSerializable* cSerializerImpl::ReadObjectDynCreate()
                 // unable to find the creation function...
                 d.TraceError("Unable to find creation function for ref counted object %d\n", crc);
                 TOSTRINGSTREAM str;
-                str << (int32_t)crc << std::ends;
-                ThrowAndAssert(eSerializerUnknownType(str.str(), mFileName, eSerializer::TY_FILE));
+                str << (int32_t)crc;;
+		tss_mkstr(errStr, str);
+                ThrowAndAssert(eSerializerUnknownType(errStr, mFileName, eSerializer::TY_FILE));
             }
             pObj = ((*rci).second)();
             d.TraceDetail("Creating Ref-Counted object [%d] %s(%p)\n", objIdx, pObj->GetType().AsString(), pObj);

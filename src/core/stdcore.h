@@ -55,8 +55,13 @@
 #include <string>
 #include <vector>
 #include <utility>
-#include <sstream>
-#include <iostream>
+
+#if HAVE_SSTREAM
+#   include <sstream>
+#elif HAVE_STRSTREAM
+#   include <iostream>
+#endif
+
 #include <algorithm>
 #include <set>
 #include <stack>

@@ -646,7 +646,13 @@ int cTWAModeCreatePol::Execute(cErrorQueue* pQueue)
     //
     // make sure the policy file parses correctly before we update the old one
     //
+#if !ARCHAIC_STL    
     std::istringstream in(plaintext);
+#else
+    strstream in;
+    in << plaintext;
+#endif
+    
     cPolicyParser      parser(in);
     try
     {

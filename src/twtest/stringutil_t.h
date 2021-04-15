@@ -41,6 +41,9 @@
 #ifndef __STRINGUTIL_T_H
 #    define __STRINGUTIL_T_H
 
+#include "core/platform.h"
+#include "core/tchar.h"
+
 #include "core/ntmbs.h"
 #include "core/ntdbs.h"
 
@@ -81,7 +84,9 @@ inline void TestStringUtil()
     TEST(b.size() == 0);
 
     a.resize(3);
+#if !ARCHAIC_STL    
     TEST(a.c_str() != b.c_str());
+#endif    
     TEST(std::equal(a.begin(), a.end(), NTDBS1));
     TEST(std::equal(b.begin(), b.end(), NTDBS1));
 

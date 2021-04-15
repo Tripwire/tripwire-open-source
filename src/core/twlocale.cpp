@@ -114,8 +114,8 @@ TSTRING cTWLocale::FormatNumberAsHex( int32_t i )
     // convert long to a string
     //
     TOSTRINGSTREAM sstr;
-    sstr.imbue( std::locale::classic() );
-    sstr.setf( std::ios_base::hex, std::ios_base::basefield );
+    tss_classic_locale(sstr);
+    sstr.setf( std::ios::hex, std::ios::basefield );
     const std::num_put< TCHAR > *pnp = 0, &np = tss::GetFacet( sstr.getloc(), pnp );
     np.put( sstr, sstr, sstr.fill(), (long)i ); 
 
@@ -141,21 +141,27 @@ public:
     // EFFECTS: Does all actual formatting for FormatNumber methods
     static numT Format(const std::basic_string<CharT>& s, bool fCStyleFormatting)
     {
+      
+#if !ARCHAIC_STL      
         static const std::num_get<CharT>* png;
-        std::basic_istringstream<CharT>   ss(s);
-        std::ios_base::iostate            state;
+        std::ios::iostate            state;
         numT                              n;
 
+	std::basic_istringstream<CharT>   ss(s);
+
         if (fCStyleFormatting)
-            ss.imbue(std::locale::classic());
+	    tss_classic_locale(ss);
 
         tss::GetFacet(ss.getloc(), png).get(ss, std::istreambuf_iterator<CharT>(), ss, state, n);
 
 
-        if ((state & std::ios_base::failbit) != 0)
+        if ((state & std::ios::failbit) != 0)
             throw eTWLocaleBadNumFormat();
 
         return (n);
+#else
+	return atoi(s.c_str());
+#endif
     }
 
     //=============================================================================
@@ -166,16 +172,22 @@ public:
     //
     static std::basic_string<CharT>& Format(numT n, std::basic_string<CharT>& sBuf, bool fCStyleFormatting = false)
     {
+#if !ARCHAIC_STL      
         static const std::num_put<CharT>* pnp;
+
         std::basic_ostringstream<CharT>   ss;
 
         if (fCStyleFormatting)
-            ss.imbue(std::locale::classic());
+	    tss_classic_locale(ss);
 
         tss::GetFacet(ss.getloc(), pnp).put(ss, ss, ss.fill(), n);
 
+#else
+	strstream ss;
+	ss << n;
+#endif
         sBuf = ss.str();
-        return (sBuf);
+        return (sBuf);	
     }
 };
 
@@ -285,7 +297,7 @@ TSTRING& util_FormatTimeCPlusPlus(struct tm* ptm, TSTRING& strBuf)
     tss::GetFacet(sstr.getloc(), ptp).put(sstr, sstr, sstr.fill(), ptm, 'c');
 #    endif
 
-    strBuf = sstr.str();
+    tss_stream_to_string(sstr, strBuf);
     return strBuf;
 }
 #endif

@@ -80,17 +80,18 @@ iCodeConverter* iCodeConverter::m_pInst = NULL;
 // has a maximum of 512 chars of output
 std::string util_output_bytes(void* p, size_t n)
 {
-    std::ostringstream ss;
-    ss.imbue(std::locale::classic());
-    ss.setf(std::ios_base::hex, std::ios_base::basefield);
-
+    TOSTRINGSTREAM ss;
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);
+    
     for (size_t i = 0; i < n; i++)
     {
         ss.width(2);
         ss << toupper(tss::util::char_to_size(((char*)p)[i])) << " ";
     }
 
-    std::string s = ss.str();
+    tss_mkstr(s, ss);
+    
     if (s.length() > 512)
     {
         s = "truncated output: " + s;

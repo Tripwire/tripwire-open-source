@@ -44,6 +44,10 @@
 #include <stdint.h>
 #endif
 
+#if HAVE_FEATURES_H
+#include <features.h>
+#endif
+
 //NOTE: Autoconf is strongly preferred as the Right Way to detect platform-specific features/behaviors.
 // These macros should really only be used when autoconf can't get the job done.
 
@@ -132,7 +136,7 @@
 #elif defined(_SORTIX_SOURCE)
 #    define IS_SORTIX 1
 
-#elif defined(__AROS__)
+#elif defined(__AROS__) || defined(AMIGA)
 #    define IS_AROS 1
 
 #elif defined(__riscos__)
@@ -175,12 +179,18 @@
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#define CPLUSPLUS_1998_OR_GREATER (__cplusplus >= 199711L)
+#define CPLUSPLUS_PRE_1998 !CPLUSPLUS_1998_OR_GREATER
+
 #define CPLUSPLUS_2011_OR_GREATER (__cplusplus >= 201103L)
 #define CPLUSPLUS_PRE_2011 !CPLUSPLUS_2011_OR_GREATER
 
 #define CPLUSPLUS_2017_OR_GREATER (__cplusplus >= 201703L)
-#define CPLUSPLUS_PRE_2017 !CPLUSPLUS_2011_OR_GREATER
+#define CPLUSPLUS_PRE_2017 !CPLUSPLUS_2017_OR_GREATER
 
+#define CPLUSPLUS_2020_OR_GREATER (__cplusplus >= 202002L)
+#define CPLUSPLUS_PRE_2020 !CPLUSPLUS_2020_OR_GREATER
+  
 // KAI 3.4 uses a much improved stl
 #define IS_KAI_3_4 (IS_KAI && (COMP == COMP_KAI_IRIX || COMP == COMP_KAI_OSF1ALPHA || COMP == COMP_KAI_GLIBC))
 
@@ -194,8 +204,10 @@
         (USE_CLIB_LOCALE || IS_SUNPRO || \
          IS_MSVC) // if we use clib, can't use C++ time_put, and SUNPRO and MSVC add characters
 
+#if defined(__GLIBC__)
+  #define USES_GLIBC 1
+#endif
 
-#define USES_GLIBC ((COMP == COMP_KAI_GLIBC) || HAVE_GCC)
 #define SUPPORTS_MEMBER_TEMPLATES (!IS_SUNPRO)
 #define SUPPORTS_EXPLICIT_TEMPLATE_FUNC_INST (!IS_SUNPRO)
 
@@ -207,6 +219,8 @@
 #define SUPPORTS_C_FILE_IO (HAVE_FOPEN && HAVE_FREAD && HAVE_FCLOSE)
 #define SUPPORTS_POSIX_FILE_IO (HAVE_OPEN && HAVE_READ && HAVE_CLOSE)
 #define SUPPORTS_SYMLINKS (HAVE_READLINK || HAVE_READLINKAT)
+
+#define ARCHAIC_STL (!HAVE_LOCALE && !HAVE_SSTREAM)
 
 #if (SIZEOF_WCHAR_T == 2)  
 #    define WCHAR_IS_16_BITS  1
@@ -262,6 +276,10 @@
 #   define MKDIR_TAKES_SINGLE_ARG 1
 #endif
 
+#if (defined(__QNX__) || defined(__QNXNTO__)) && !defined(BBNDK_VERSION_CURRENT)
+#   define SWAB_TAKES_CHAR_PTRS 1
+#endif
+
 #if (!defined(__ANROID__) && !defined(__AROS__))
 #   define USES_MBLEN (HAVE_MBLEN)
 #endif
@@ -304,7 +322,7 @@
 
 // Unlinking an open file (to make a temporary file nobody else can see) is a Posix-ism
 // that other platforms generally don't support.
-#if (!defined(__DJGPP__) && !defined(__riscos__) && !defined(__redox__) && !IS_AROS)
+#if (!defined(__CYGWIN__) && !defined(__DJGPP__) && !defined(__riscos__) && !defined(__redox__) && !defined(_WIN32) && !defined(__OS2__) && !IS_AROS)
 #   define CAN_UNLINK_WHILE_OPEN 1
 #endif
 

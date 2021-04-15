@@ -552,12 +552,12 @@ std::string FormatSyntaxError( char ch, const char* pszAdditionalMsg = NULL )
     // we do it here as well, I suppose that's OK.  This should be eventually
     // corrected.
 
-    std::ostringstream ssErr; 
+    TOSTRINGSTREAM ssErr; 
     ssErr << "Syntax error: \'" << ch << "\'";
     if( pszAdditionalMsg )
         ssErr << ", " << pszAdditionalMsg;
 
-    return ssErr.str();
+    tss_return_stream(ssErr, out);
 }
 
 // saves typing

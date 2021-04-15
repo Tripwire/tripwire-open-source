@@ -57,6 +57,9 @@
 /* Define to 1 if you have the `connect' function. */
 #undef HAVE_CONNECT
 
+/* Define to 1 if you have the <ctype.h> header file. */
+#undef HAVE_CTYPE_H
+
 /* Define to 1 if you have the `directio' function. */
 #undef HAVE_DIRECTIO
 
@@ -79,6 +82,9 @@
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
 
+/* Define to 1 if you have the <features.h> header file. */
+#undef HAVE_FEATURES_H
+
 /* Define to 1 if you have the `fopen' function. */
 #undef HAVE_FOPEN
 
@@ -93,6 +99,9 @@
 
 /* Define to 1 if you have the `fstatat' function. */
 #undef HAVE_FSTATAT
+
+/* Define to 1 if you have the `ftruncate' function. */
+#undef HAVE_FTRUNCATE
 
 /* Uses the GNU g++ compiler */
 #undef HAVE_GCC
@@ -142,6 +151,9 @@
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
+/* Define to 1 if you have the `isprint' function. */
+#undef HAVE_ISPRINT
+
 /* Define to 1 if you have the <langinfo.h> header file. */
 #undef HAVE_LANGINFO_H
 
@@ -156,6 +168,9 @@
 
 /* Define to 1 if you have the <locale> header file. */
 #undef HAVE_LOCALE
+
+/* Define to 1 if you have the <locale.h> header file. */
+#undef HAVE_LOCALE_H
 
 /* Define to 1 if you have the `lstat' function. */
 #undef HAVE_LSTAT
@@ -253,8 +268,14 @@
 /* Define to 1 if you have the `readlinkat' function. */
 #undef HAVE_READLINKAT
 
+/* Define to 1 if you have the `rename' function. */
+#undef HAVE_RENAME
+
 /* Define to 1 if you have the `setgid' function. */
 #undef HAVE_SETGID
+
+/* Define to 1 if you have the `setlocale' function. */
+#undef HAVE_SETLOCALE
 
 /* Define to 1 if you have the `setuid' function. */
 #undef HAVE_SETUID
@@ -404,6 +425,9 @@
 
 /* Define to 1 if you have the <unixlib/local.h> header file. */
 #undef HAVE_UNIXLIB_LOCAL_H
+
+/* Define to 1 if you have the `unlink' function. */
+#undef HAVE_UNLINK
 
 /* Define to 1 if you have the <varargs.h> header file. */
 #undef HAVE_VARARGS_H

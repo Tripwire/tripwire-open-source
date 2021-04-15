@@ -80,6 +80,7 @@ void TestItoa()
         cTWLocale::FormatNumber(n, str);
         TEST(str == "123456");
 
+#if !ARCHAIC_STL	
         //
         // Try formatting with "" locale
         //
@@ -93,6 +94,7 @@ void TestItoa()
         std::locale::global(std::locale(""));
         cTWLocale::FormatNumber(n, str);
         TEST(str == "123,456");
+#endif	
     }
     catch (const std::runtime_error& e)
     {

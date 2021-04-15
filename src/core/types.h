@@ -80,6 +80,20 @@ typedef unsigned long long uint64_t;
 #endif
 #endif // !HAVE_STDINT_H
 
+#ifdef CHAR_MIN
+#   define TSS_CHAR_MIN   CHAR_MIN
+#else
+#   define TSS_CHAR_MIN   (-127 - 1)
+#endif
+
+#ifdef CHAR_MAX
+#   define TSS_CHAR_MAX   CHAR_MAX
+#else
+#   define TSS_CHAR_MAX   127
+#endif
+
+#define TSS_TCHAR_MIN TSS_CHAR_MIN
+#define TSS_TCHAR_MAX TSS_CHAR_MAX
 
 #ifdef INT8_MIN
 #   define TSS_INT8_MIN   INT8_MIN

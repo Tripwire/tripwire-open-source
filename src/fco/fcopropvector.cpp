@@ -450,6 +450,7 @@ void cFCOPropVector::TraceContents(int dl) const
         if (ContainsItem(i))
             ostr << i << _T(", ");
     }
-    ostr << std::ends;
-    d.Trace(dl, _T("Size = %d Contents = %s\n"), GetSize(), ostr.str().c_str());
+
+    tss_mkstr(contents, ostr);
+    d.Trace(dl, _T("Size = %d Contents = %s\n"), GetSize(), contents.c_str());
 }

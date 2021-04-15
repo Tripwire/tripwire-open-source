@@ -125,9 +125,11 @@ TSTRING cFCOPropInt32::AsString() const
     //TODO:mdb -- implement this through twlocale!
     //
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
+    tss_classic_locale(ostr);
     ostr << mValue;
-    return TSTRING(ostr.str());
+    tss_mkstr(out, ostr);
+    
+    return out;
 }
 
 iFCOProp::CmpResult cFCOPropInt32::Compare(const iFCOProp* rhs, iFCOProp::Op op) const
@@ -165,9 +167,10 @@ TSTRING cFCOPropInt64::AsString() const
     //TODO:mdb -- implement this through twlocale!
     //
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
+    tss_classic_locale(ostr);
     ostr << (int32_t)mValue;  // TODO: remove this cast where possible
-    return TSTRING(ostr.str());
+    tss_mkstr(out, ostr);
+    return out;
 }
 
 iFCOProp::CmpResult cFCOPropInt64::Compare(const iFCOProp* rhs, iFCOProp::Op op) const
@@ -205,9 +208,9 @@ TSTRING cFCOPropUint64::AsString() const
     //TODO:mdb -- implement this through twlocale!
     //
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
+    tss_classic_locale(ostr);
     ostr << (int32_t)mValue; // TODO: remove this cast where possible
-    return TSTRING(ostr.str());
+    tss_return_stream(ostr, out);
 }
 
 iFCOProp::CmpResult cFCOPropUint64::Compare(const iFCOProp* rhs, iFCOProp::Op op) const

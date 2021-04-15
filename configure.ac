@@ -186,7 +186,7 @@ AC_CHECK_HEADERS(stdint.h)
 AC_CHECK_HEADERS(syslog.h sys/syslog.h, break)
 AC_CHECK_HEADERS(termios.h)
 AC_CHECK_HEADERS(unistd.h sys/unistd.h, break)
-
+AC_CHECK_HEADERS(features.h)
 AC_CHECK_HEADERS(sys/file.h)
 AC_CHECK_HEADERS(sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h,,,
@@ -296,6 +296,8 @@ AC_CHECK_FUNCS(readlinkat readlink)
 
 dnl posix fns that make filesystem changes
 AC_CHECK_FUNCS(chown chmod link symlink mknod mkfifo)
+dnl more posix fns that make fs changes
+AC_CHECK_FUNCS(unlink rename ftruncate)
 dnl posix syslog fns
 AC_CHECK_FUNCS(openlog syslog closelog)
 dnl posix process fns
@@ -308,6 +310,10 @@ AC_CHECK_FUNCS(setuid setgid getgrgid)
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
 
+dnl check for setlocale
+AC_CHECK_HEADERS(locale.h, [AC_CHECK_FUNCS(setlocale)])
+dnl check for a C isprint
+AC_CHECK_HEADERS(ctype.h, [AC_CHECK_FUNCS(isprint)])
 
 dnl check for OSX builtin hash algorithms
 AC_ARG_ENABLE(commoncrypto,

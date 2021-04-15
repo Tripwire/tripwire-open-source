@@ -193,12 +193,15 @@ void cUnixFSServices::GetHostID(TSTRING& name) const
 {
     TOSTRINGSTREAM ret;
 
-    ret.setf(ios_base::hex, ios_base::basefield);
+    ret.setf(std::ios::hex, std::ios::basefield);
+ 
 #if HAVE_GETHOSTID
     ret << gethostid();
 #else
     ret << 999999;
 #endif
+
+    tss_stream_to_string(ret, name);
 }
 
 // returns "/" for unix and "\\" for win32
@@ -610,9 +613,10 @@ bool cUnixFSServices::GetUserName(uid_t user_id, TSTRING& tstrUser) const
     else
     {
 #endif      
-        std::stringstream sstr;
+        TOSTRINGSTREAM sstr;
         sstr << user_id;
-        tstrUser = sstr.str();
+        tss_stream_to_string(sstr, tstrUser);
+	
 #if HAVE_PWD_H	
     }
 #endif
@@ -639,9 +643,10 @@ bool cUnixFSServices::GetGroupName(gid_t group_id, TSTRING& tstrGroup) const
     else
     {
 #endif
-        std::stringstream sstr;
+        TOSTRINGSTREAM sstr;
         sstr << group_id;
-        tstrGroup = sstr.str();
+        tss_stream_to_string(sstr, tstrGroup);
+	
 #if !IS_REDOX && HAVE_GRP_H
     }
 #endif

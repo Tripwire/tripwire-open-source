@@ -268,7 +268,7 @@ void cFile::Close() //throw(eFile)
         mpData->mpCurrStream = NULL;
     }
 
-    mpData->mFileName.clear();
+    //mpData->mFileName.clear();
 }
 
 bool cFile::IsOpen(void) const
@@ -485,6 +485,9 @@ bool cDosPath::IsAbsolutePath(const TSTRING& in)
 // For paths of type C:\DOS
 TSTRING cDosPath::AsPosix(const TSTRING& in)
 {
+#if (defined(__MINGW32__) || defined(__OS2__))
+    return in;
+#else  
     if (in[0] == '/')
     {
         return in;
@@ -495,6 +498,7 @@ TSTRING cDosPath::AsPosix(const TSTRING& in)
     out.erase(std::remove(out.begin(), out.end(), ':'), out.end());
 
     return out;
+#endif    
 }
 
 TSTRING cDosPath::AsNative(const TSTRING& in)

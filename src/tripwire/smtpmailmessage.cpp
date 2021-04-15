@@ -36,7 +36,11 @@
 #include "tw/twutil.h"
 #include "tripwirestrings.h"
 #include "core/stringutil.h"
+#if HAVE_SSTREAM
 #include <sstream>
+#elif HAVE_STRSTREAM
+#include <strstream>
+#endif
 #include "core/file.h"
 
 #include <time.h>
@@ -201,8 +205,10 @@ bool cSMTPMailMessage::OpenConnection()
         TOSTRINGSTREAM estr;
         estr << TSS_GetString(cTripwire, tripwire::STR_ERR2_MAIL_MESSAGE_SERVER) << mstrServerName;
 
-        throw eMailSMTPIPUnresolvable(estr.str());
-        return false;
+	tss_mkstr(errStr, estr);
+	
+        throw eMailSMTPIPUnresolvable(errStr);
+        return false; 
     }
 
     // Create the socket
@@ -223,7 +229,9 @@ bool cSMTPMailMessage::OpenConnection()
         TOSTRINGSTREAM estr;
         estr << TSS_GetString(cTripwire, tripwire::STR_ERR2_MAIL_MESSAGE_SERVER) << mstrServerName;
 
-        throw eMailSMTPOpenConnection(estr.str());
+	tss_mkstr(errStr, estr);
+	
+        throw eMailSMTPOpenConnection(errStr);
         return false;
     }
 
@@ -303,7 +311,12 @@ bool cSMTPMailMessage::MailMessage()
                           // mpfnGethostname (see below).  It won't be used
                           // after that.
 
+#if !ARCHAIC_STL    
     std::ostringstream strmSend;
+#else
+    strstream strmSend;
+#endif
+    
     // This should be a stream object, so we don't have
     // to use nasty calls to sprintf that might overflow
     // the buffer.  Before, we used a fixed buffer of 512
@@ -325,21 +338,33 @@ bool cSMTPMailMessage::MailMessage()
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     // Say hello
-    strmSend.str("");                            //Clear the stream buffer.
+#if !ARCHAIC_STL    
+    strmSend.str(""); //Clear the stream buffer.
+#else
+    // TODO
+#endif    
     strmSend << "HELO " << sLocalHost << "\r\n"; //Fill the stream buffer.
     SendString(strmSend.str());
     if (!GetAcknowledgement())
         return false;
 
-
+#if !ARCHAIC_STL
     strmSend.str(""); //Clear the stream buffer.
+#else
+    // TODO
+#endif        
     strmSend << "MAIL FROM:<" << cStringUtil::TstrToStr(mstrFrom) << ">\r\n";
     SendString(strmSend.str());
     if (!GetAcknowledgement())
         return false;
 
     // Say who all we're sending to
+#if !ARCHAIC_STL
     strmSend.str(""); //Clear the stream buffer.
+#else
+    // TODO
+#endif
+    
     for (std::vector<TSTRING>::size_type i = 0; i < mvstrRecipients.size(); i++)
     {
         sNarrowString = cStringUtil::TstrToStr(mvstrRecipients[i]);
@@ -364,8 +389,14 @@ bool cSMTPMailMessage::MailMessage()
     // Send Header
     //- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    
     // set up header
+#if !ARCHAIC_STL    
     strmSend.str("");
+#else
+    // TODO
+#endif
+    
     strmSend << cMailMessage::Create822Header();
     SendString(strmSend.str());
 
@@ -499,7 +530,9 @@ bool cSMTPMailMessage::GetAcknowledgement()
         TOSTRINGSTREAM estr;
         estr << TSS_GetString(cTripwire, tripwire::STR_ERR2_MAIL_MESSAGE_SERVER_RETURNED_ERROR) << sRecvString;
 
-        throw eMailSMTPServer(estr.str());
+	tss_mkstr(errStr, estr);
+	
+        throw eMailSMTPServer(errStr);
         return false;
     }
 }
