@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -76,17 +76,17 @@ void TestGenreSpecList()
     gslVector.push_back(gslPair2);
     gslVector.push_back(gslPair3);
 
-    TEST(gslVector.at(0).GetGenre() == gslPair.GetGenre());
-    TEST(gslVector.at(0).GetSpecList().Lookup(fsSpec) != 0);
-    TEST(gslVector.at(0).GetSpecList().Lookup(fsSpec)->GetName() == gslPair.GetSpecList().Lookup(fsSpec)->GetName());
+    TEST(gslVector[0].GetGenre() == gslPair.GetGenre());
+    TEST(gslVector[0].GetSpecList().Lookup(fsSpec) != 0);
+    TEST(gslVector[0].GetSpecList().Lookup(fsSpec)->GetName() == gslPair.GetSpecList().Lookup(fsSpec)->GetName());
 
-    TEST(gslVector.at(1).GetGenre() == gslPair2.GetGenre());
-    TEST(gslVector.at(1).GetSpecList().Lookup(fsSpec) != 0);
-    TEST(gslVector.at(1).GetSpecList().Lookup(fsSpec)->GetName() == gslPair2.GetSpecList().Lookup(fsSpec)->GetName());
+    TEST(gslVector[1].GetGenre() == gslPair2.GetGenre());
+    TEST(gslVector[1].GetSpecList().Lookup(fsSpec) != 0);
+    TEST(gslVector[1].GetSpecList().Lookup(fsSpec)->GetName() == gslPair2.GetSpecList().Lookup(fsSpec)->GetName());
 
-    TEST(gslVector.at(2).GetGenre() == gslPair3.GetGenre());
-    TEST(gslVector.at(2).GetSpecList().Lookup(fsSpec) != 0);
-    TEST(gslVector.at(2).GetSpecList().Lookup(fsSpec)->GetName() == gslPair3.GetSpecList().Lookup(fsSpec)->GetName());
+    TEST(gslVector[2].GetGenre() == gslPair3.GetGenre());
+    TEST(gslVector[2].GetSpecList().Lookup(fsSpec) != 0);
+    TEST(gslVector[2].GetSpecList().Lookup(fsSpec)->GetName() == gslPair3.GetSpecList().Lookup(fsSpec)->GetName());
 
     d.TraceDebug("All tests passed.\n");
 }

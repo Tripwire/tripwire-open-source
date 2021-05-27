@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -46,9 +46,8 @@ TSS_BeginStringIds(fs)
 
     // file types
     STR_FT_INVALID,
-    STR_FT_FILE, STR_FT_DIR, STR_FT_BLOCKDEV, STR_FT_CHARDEV, STR_FT_SYMLINK, STR_FT_FIFO, STR_FT_SOCK, STR_FT_DOOR,
-    STR_FT_PORT, STR_FT_NAMED,
-
+    STR_FT_FILE, STR_FT_DIR, STR_FT_BLOCKDEV, STR_FT_CHARDEV, STR_FT_SYMLINK, STR_FT_FIFO, STR_FT_SOCK, STR_FT_DOOR, STR_FT_PORT, STR_FT_NAMED, STR_FT_NATIVE,
+  STR_FT_MESSAGE_QUEUE, STR_FT_SEMAPHORE, STR_FT_SHARED_MEMORY,
     // property names
     STR_PROP_DEV, STR_PROP_RDEV, STR_PROP_INODE, STR_PROP_MODE, STR_PROP_NLINK, STR_PROP_UID, STR_PROP_GID,
     STR_PROP_SIZE, STR_PROP_ATIME, STR_PROP_MTIME, STR_PROP_CTIME, STR_PROP_BLOCK_SIZE, STR_PROP_BLOCKS, STR_PROP_CRC32,

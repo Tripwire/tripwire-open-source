@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -57,24 +57,24 @@ public:
         return (head == MaxSize());
     }
 
-    unsigned int Put(byte inByte);
-    unsigned int Put(const byte* inString, unsigned int length);
+    unsigned int Put(uint8_t inByte);
+    unsigned int Put(const uint8_t* inString, unsigned int length);
 
-    unsigned int Get(byte& outByte);
-    unsigned int Get(byte* outString, unsigned int getMax);
+    unsigned int Get(uint8_t& outByte);
+    unsigned int Get(uint8_t* outString, unsigned int getMax);
 
-    unsigned int Peek(byte& outByte) const;
+    unsigned int Peek(uint8_t& outByte) const;
 
     void CopyTo(BufferedTransformation& target) const
     {
         target.Put(buf + head, tail - head);
     }
-    void CopyTo(byte* target) const
+    void CopyTo(uint8_t* target) const
     {
         memcpy(target, buf + head, tail - head);
     }
 
-    byte operator[](unsigned int i) const
+    uint8_t operator[](unsigned int i) const
     {
         return buf[i - head];
     }
@@ -98,7 +98,7 @@ cByteQueueNode::cByteQueueNode(unsigned int maxSize) : buf(maxSize)
     next        = 0;
 }
 
-unsigned int cByteQueueNode::Put(byte inByte)
+unsigned int cByteQueueNode::Put(uint8_t inByte)
 {
     if (MaxSize() == tail)
         return 0;
@@ -107,7 +107,7 @@ unsigned int cByteQueueNode::Put(byte inByte)
     return 1;
 }
 
-unsigned int cByteQueueNode::Put(const byte* inString, unsigned int length)
+unsigned int cByteQueueNode::Put(const uint8_t* inString, unsigned int length)
 {
     unsigned int l = STDMIN(length, MaxSize() - tail);
     memcpy(buf + tail, inString, l);
@@ -115,7 +115,7 @@ unsigned int cByteQueueNode::Put(const byte* inString, unsigned int length)
     return l;
 }
 
-unsigned int cByteQueueNode::Get(byte& outByte)
+unsigned int cByteQueueNode::Get(uint8_t& outByte)
 {
     if (tail == head)
         return 0;
@@ -124,7 +124,7 @@ unsigned int cByteQueueNode::Get(byte& outByte)
     return 1;
 }
 
-unsigned int cByteQueueNode::Get(byte* outString, unsigned int getMax)
+unsigned int cByteQueueNode::Get(uint8_t* outString, unsigned int getMax)
 {
     unsigned int l = STDMIN(getMax, tail - head);
     memcpy(outString, buf + head, l);
@@ -132,7 +132,7 @@ unsigned int cByteQueueNode::Get(byte* outString, unsigned int getMax)
     return l;
 }
 
-unsigned int cByteQueueNode::Peek(byte& outByte) const
+unsigned int cByteQueueNode::Peek(uint8_t& outByte) const
 {
     if (tail == head)
         return 0;
@@ -198,7 +198,7 @@ void cByteQueue::CopyTo(BufferedTransformation& target) const
         current->CopyTo(target);
 }
 
-void cByteQueue::CopyTo(byte* target) const
+void cByteQueue::CopyTo(uint8_t* target) const
 {
     for (cByteQueueNode* current = head; current; current = current->next)
     {
@@ -220,7 +220,7 @@ unsigned long cByteQueue::CurrentSize() const
     */
 }
 
-void cByteQueue::Put(byte inByte)
+void cByteQueue::Put(uint8_t inByte)
 {
     if (!tail->Put(inByte))
     {
@@ -232,7 +232,7 @@ void cByteQueue::Put(byte inByte)
     mCurrentSize++;
 }
 
-void cByteQueue::Put(const byte* inString, unsigned int length)
+void cByteQueue::Put(const uint8_t* inString, unsigned int length)
 {
     unsigned int l;
 
@@ -248,7 +248,7 @@ void cByteQueue::Put(const byte* inString, unsigned int length)
     }
 }
 
-unsigned int cByteQueue::Get(byte& outByte)
+unsigned int cByteQueue::Get(uint8_t& outByte)
 {
     int l = head->Get(outByte);
     if (head->UsedUp())
@@ -265,7 +265,7 @@ unsigned int cByteQueue::Get(byte& outByte)
     return l;
 }
 
-unsigned int cByteQueue::Get(byte* outString, unsigned int getMax)
+unsigned int cByteQueue::Get(uint8_t* outString, unsigned int getMax)
 {
     unsigned int    getMaxSave = getMax;
     cByteQueueNode* current    = head;
@@ -300,15 +300,18 @@ unsigned int cByteQueue::Get(byte* outString, unsigned int getMax)
     return (rtn);
 }
 
-unsigned int cByteQueue::Peek(byte& outByte) const
+unsigned int cByteQueue::Peek(uint8_t& outByte) const
 {
     return head->Peek(outByte);
 }
 
 cByteQueue& cByteQueue::operator=(const cByteQueue& rhs)
 {
-    Destroy();
-    CopyFrom(rhs);
+    if (this != &rhs)
+    {
+        Destroy();
+        CopyFrom(rhs);
+    }
     return *this;
 }
 
@@ -326,7 +329,7 @@ bool cByteQueue::operator==(const cByteQueue& rhs) const
     return true;
 }
 
-byte cByteQueue::operator[](unsigned long i) const
+uint8_t cByteQueue::operator[](unsigned long i) const
 {
     for (cByteQueueNode* current = head; current; current = current->next)
     {

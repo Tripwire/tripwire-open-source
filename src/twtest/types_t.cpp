@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -39,16 +39,14 @@
 // TestTypes() -- this will simply make sure that all the types are defined properly for the current build
 void TestTypes()
 {
-    TEST(sizeof(int8) == 1);
-    TEST(sizeof(uint8) == 1);
-    TEST(sizeof(int16) == 2);
-    TEST(sizeof(uint16) == 2);
-    TEST(sizeof(int32) == 4);
-    TEST(sizeof(uint32) == 4);
-    TEST(sizeof(int64) == 8);
-    TEST(sizeof(uint64) == 8);
-    TEST(sizeof(float32) == 4);
-    TEST(sizeof(float64) == 8);
+    TEST(sizeof(int8_t) == 1);
+    TEST(sizeof(uint8_t) == 1);
+    TEST(sizeof(int16_t) == 2);
+    TEST(sizeof(uint16_t) == 2);
+    TEST(sizeof(int32_t) == 4);
+    TEST(sizeof(uint32_t) == 4);
+    TEST(sizeof(int64_t) == 8);
+    TEST(sizeof(uint64_t) == 8);
 }
 
 void RegisterSuite_Types()

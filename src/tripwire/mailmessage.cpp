@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -176,7 +176,12 @@ bool cMailMessage::GetAttachmentsAsString(std::string& s)
 
 std::string cMailMessage::Create822Header()
 {
+#if !ARCHAIC_STL  
     std::ostringstream ss;
+#else
+    strstream ss;
+#endif
+    
     std::string        strToList;
     for (std::vector<TSTRING>::size_type i = 0; i < mvstrRecipients.size(); i++)
     {
@@ -242,7 +247,7 @@ bool cMailMessageUtil::ReadDate(TSTRING& strDateBuf)
 
 #else
 
-    int64 now  = cSystemInfo::GetExeStartTime();
+    int64_t now  = cSystemInfo::GetExeStartTime();
     strDateBuf = cTimeUtil::GetRFC822Date(cTimeUtil::TimeToDateGMT(now));
     fGotDate   = true;
 
@@ -280,19 +285,23 @@ static bool NeedsEncoding(char ch)
 
 static std::string EncodeChar(char ch)
 {
-    std::ostringstream ss;
-
-    ss.imbue(std::locale::classic());
+    TOSTRINGSTREAM ss;
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);    
+    
     ss.fill('0');
-    ss.setf(std::ios_base::hex, std::ios_base::basefield);
+
     ss.width(2);
 
     ss << (unsigned int)(unsigned char)ch;
-
+    tss_end(ss);
+    
     ASSERT(ss.str().length() == 2);
 
     // Make sure the hex is uppercase
     std::string s = ss.str();
+    tss_free(ss);
+    
     std::transform(s.begin(), s.end(), s.begin(), toupper);
 
     return s;
@@ -526,7 +535,7 @@ std::string& cMailMessageUtil::LFToCRLF(std::string& sIn)
 /*
 static 
 std::string 
-util_Base64Encode( const byte b[3], int size )
+util_Base64Encode( const uint8_t b[3], int size )
 {
     // TODO:BAM -- what about endianness?
     ASSERT( size > 0 && size <= 3 );
@@ -542,18 +551,18 @@ util_Base64Encode( const byte b[3], int size )
     if( size >= 2 )
     {
         // encode B,C
-        s += v64[ ( ( b[0] & (byte)0x3 ) << 4 ) | ( b[1] >> 4 ) ];
+        s += v64[ ( ( b[0] & (uint8_t)0x3 ) << 4 ) | ( b[1] >> 4 ) ];
         
         if( size == 3 )
-            s += v64[ ( ( b[1] & (byte)0xF ) << 2 ) | ( b[2] >> 6 ) ];
+            s += v64[ ( ( b[1] & (uint8_t)0xF ) << 2 ) | ( b[2] >> 6 ) ];
         else
-            s += v64[ ( ( b[1] & (byte)0xF ) << 2 ) ];
+            s += v64[ ( ( b[1] & (uint8_t)0xF ) << 2 ) ];
     }
     
     if( size >= 3 )
     {
         // encode D
-        s += v64[ b[2] & (byte)0x3F ];
+        s += v64[ b[2] & (uint8_t)0x3F ];
     }
 
     // padding
@@ -580,7 +589,7 @@ const T& MS_SUCKS_min( const T& a, const T& b )
 const std::string::value_type*
 cMailMessageUtil::ConvertBase64( 
     std::string&  sEncode,
-    const byte*   pchSrc,
+    const uint8_t*   pchSrc,
     size_t        nchSrc )
 {
     sEncode.assign( ToBase64( pchSrc, nchSrc ) );
@@ -589,9 +598,9 @@ cMailMessageUtil::ConvertBase64(
 
 
 std::string 
-cMailMessageUtil::ToBase64( const byte* p, size_t size )
+cMailMessageUtil::ToBase64( const uint8_t* p, size_t size )
 {
-    ASSERT( sizeof( uint8 ) == sizeof( byte ) ); // everything breaks otherwise
+    ASSERT( sizeof( uint8_t ) == sizeof( uint8_t ) ); // everything breaks otherwise
     std::string s;    
 
     const int MAX_WORKING_BYTES = 3;
@@ -599,8 +608,8 @@ cMailMessageUtil::ToBase64( const byte* p, size_t size )
     const int MAX_CHARS_PER_BYTE = 2; // should be 
     ASSERT( MAX_CHARS_PER_BYTE > CHARS_PER_WORKING_BYTES/MAX_WORKING_BYTES );
     const int NERVOUS_LINE_BUFFER = 10;
-    const byte* at = p;
-    byte buf[ MAX_WORKING_BYTES ];
+    const uint8_t* at = p;
+    uint8_t buf[ MAX_WORKING_BYTES ];
     int nbLeft;
     int nbWorking;
     int nchCurLine;
@@ -653,19 +662,18 @@ cMailMessageUtil::ToBase64( const byte* p, size_t size )
 
 namespace /*Unique*/
 {
-typedef byte byte_t;
 
 #    ifdef TSS_MAKE_EOL_CRLF
-const byte _aszEoL[] = "\r\n";
+const uint8_t _aszEoL[] = "\r\n";
 size_t _EOL_LEN = 2;
 
 #    else
-const byte _aszEoL[] = "\n";
+const uint8_t _aszEoL[] = "\n";
 size_t     _EOL_LEN  = 1;
 
 #    endif
 
-const byte_t _abBase64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+const uint8_t _abBase64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
                            "abcdefghijklmnopqrstuvwxyz"
                            "0123456789+/";
 
@@ -697,7 +705,7 @@ inline size_t tss_encode_base64_size(size_t nchSource)
     return nchOut + nchEol + 2;
 }
 
-void tss_encode_digit_base64(const byte_t*& pchSrc, size_t& nchSrcLeft, byte_t*& pchBuf, size_t& nchBufLeft)
+void tss_encode_digit_base64(const uint8_t*& pchSrc, size_t& nchSrcLeft, uint8_t*& pchBuf, size_t& nchBufLeft)
 {
     // NOTE:RAD -- Redundant and ugly but very fast!!
 
@@ -756,7 +764,7 @@ void tss_encode_digit_base64(const byte_t*& pchSrc, size_t& nchSrcLeft, byte_t*&
 };
 
 
-size_t tss_encode_base64(const byte_t* pchSource, size_t nchSource, byte_t* pchBuffer, size_t nchBuffer)
+size_t tss_encode_base64(const uint8_t* pchSource, size_t nchSource, uint8_t* pchBuffer, size_t nchBuffer)
 {
     const size_t _ERROR = std::string::npos; // -1;
 
@@ -780,8 +788,8 @@ size_t tss_encode_base64(const byte_t* pchSource, size_t nchSource, byte_t* pchB
 
     //--Get three characters at a time and encode them (watching linelen)
 
-    byte_t* pchBuf = (pchBuffer + 0);
-    const byte_t* pchSrc = (pchSource + 0);
+    uint8_t* pchBuf = (pchBuffer + 0);
+    const uint8_t* pchSrc = (pchSource + 0);
 
 
     const size_t _max_linelen = (_MAX_RFC822_LINE_LEN - _EOL_LEN);
@@ -798,7 +806,7 @@ size_t tss_encode_base64(const byte_t* pchSource, size_t nchSource, byte_t* pchB
         {
             nLineLen = 0; // RESET:
 
-            const byte_t* pchEol = &_aszEoL[0];
+            const uint8_t* pchEol = &_aszEoL[0];
             while (*pchEol)
                 *pchBuf++ = *pchEol++;
         }
@@ -812,7 +820,7 @@ size_t tss_encode_base64(const byte_t* pchSource, size_t nchSource, byte_t* pchB
 
 
 const std::string::value_type*
-cMailMessageUtil::ConvertBase64(std::string& sEncode, const byte_t* pchSrc, size_t nchSrc)
+cMailMessageUtil::ConvertBase64(std::string& sEncode, const uint8_t* pchSrc, size_t nchSrc)
 {
     size_t nch = tss_encode_base64(pchSrc, nchSrc, 0, 0); // Like mbstowcs
 
@@ -822,7 +830,7 @@ cMailMessageUtil::ConvertBase64(std::string& sEncode, const byte_t* pchSrc, size
     const char* pch = sEncode.c_str(); // Get Pointer (won't change)
 
     size_t nLength = // Action
-        tss_encode_base64(pchSrc, nchSrc, (byte_t*)pch, nch);
+        tss_encode_base64(pchSrc, nchSrc, (uint8_t*)pch, nch);
 
     if (nLength == std::string::npos)
         throw std::bad_alloc();
@@ -833,7 +841,7 @@ cMailMessageUtil::ConvertBase64(std::string& sEncode, const byte_t* pchSrc, size
 }
 
 
-std::string cMailMessageUtil::ToBase64(const byte_t* pchSrc, size_t nchSrc)
+std::string cMailMessageUtil::ToBase64(const uint8_t* pchSrc, size_t nchSrc)
 {
     // NOTE: It sucks to use std::string this way! Should be
     //       passed in by reference.

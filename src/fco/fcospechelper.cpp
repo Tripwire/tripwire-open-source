@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -46,7 +46,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void iFCOSpecHelper::Read(iSerializer* pSerializer, int32 version)
+void iFCOSpecHelper::Read(iSerializer* pSerializer, int32_t version)
 {
     // read the start point
     pSerializer->ReadObject(&mStartPoint);
@@ -113,10 +113,11 @@ void cFCOSpecStopPointSet::SetStartPoint(const cFCOName& startPoint)
             TOSTRINGSTREAM str;
             str << "Bad start point [" << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(startPoint)
                 << "] added to spec with stop point "
-                << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(*i) << std::ends;
-
-            d.TraceError("%s\n", str.str().c_str());
-            throw eSerializerInputStreamFmt(str.str().c_str());
+                << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(*i);
+	    tss_mkstr(errText, str);
+	    
+            d.TraceError("%s\n", errText.c_str());
+            throw eSerializerInputStreamFmt(errText);
         }
     }
 
@@ -178,10 +179,12 @@ void cFCOSpecStopPointSet::Add(const cFCOName& name)
         TOSTRINGSTREAM str;
         str << "Attempt to add stop point that is not below start point!"
             << " start point = " << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(mStartPoint)
-            << " stop point = " << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(name) << std::ends;
+            << " stop point = " << iTWFactory::GetInstance()->GetNameTranslator()->ToStringDisplay(name);
 
-        d.TraceError(_T("%s\n"), str.str().c_str());
-        throw eSerializerInputStreamFmt(str.str().c_str());
+	tss_mkstr(errText, str);
+	
+        d.TraceError(_T("%s\n"), errText.c_str());
+        throw eSerializerInputStreamFmt(errText);
     }
 
     std::set<cFCOName>::iterator i;
@@ -247,14 +250,14 @@ iFCOSpecHelper* cFCOSpecStopPointSet::Clone() const
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecStopPointSet::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecStopPointSet::Read(iSerializer* pSerializer, int32_t version)
 {
     // read the start point
     //pSerializer->ReadObject(&mStartPoint);
     inherited::Read(pSerializer, version);
 
     // read all the stop points
-    int32 size;
+    int32_t size;
     pSerializer->ReadInt32(size);
     ASSERT(size >= 0);
     for (int i = 0; i < size; ++i)
@@ -346,7 +349,7 @@ bool cFCOSpecNoChildren::ShouldStopDescent(const cFCOName& name) const
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecNoChildren::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecNoChildren::Read(iSerializer* pSerializer, int32_t version)
 {
     inherited::Read(pSerializer, version);
 }

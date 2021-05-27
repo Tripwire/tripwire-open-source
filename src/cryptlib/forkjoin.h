@@ -22,15 +22,15 @@ public:
 //    virtual void InputFinished()
 //        {outPorts[currentPort]->InputFinished();}
 
-    unsigned int Get(byte &outByte)
+    unsigned int Get(uint8_t &outByte)
         {return outPorts[currentPort]->Get(outByte);}
-    unsigned int Get(byte *outString, unsigned int getMax)
+    unsigned int Get(uint8_t *outString, unsigned int getMax)
         {return outPorts[currentPort]->Get(outString, getMax);}
-    unsigned int Peek(byte &outByte) const
+    unsigned int Peek(uint8_t &outByte) const
         {return outPorts[currentPort]->Peek(outByte);}
 
-    virtual void Put(byte inByte);
-    virtual void Put(const byte *inString, unsigned int length);
+    virtual void Put(uint8_t inByte);
+    virtual void Put(const uint8_t *inString, unsigned int length);
 
 protected:
     unsigned int NumberOfPorts() const {return numberOfPorts;}
@@ -57,11 +57,11 @@ public:
     void Detach(BufferedTransformation *bt);
     void Attach(BufferedTransformation *bt);
 
-    void Put(byte inByte);
-    void Put(const byte *inString, unsigned int length);
-    unsigned int Get(byte &outByte);
-    unsigned int Get(byte *outString, unsigned int getMax);
-    unsigned int Peek(byte &outByte) const;
+    void Put(uint8_t inByte);
+    void Put(const uint8_t *inString, unsigned int length);
+    unsigned int Get(uint8_t &outByte);
+    unsigned int Get(uint8_t *outString, unsigned int getMax);
+    unsigned int Peek(uint8_t &outByte) const;
 
 private:
     Join &parent;
@@ -83,8 +83,8 @@ public:
     virtual void NotifyInput(unsigned int interfaceId, unsigned int length);
     virtual void NotifyClose(unsigned int interfaceId);
 
-    void Put(byte inByte) {outQueue->Put(inByte);}
-    void Put(const byte *inString, unsigned int length)
+    void Put(uint8_t inByte) {outQueue->Put(inByte);}
+    void Put(const uint8_t *inString, unsigned int length)
         {outQueue->Put(inString, length);}
 
 protected:

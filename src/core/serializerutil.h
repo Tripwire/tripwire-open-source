@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -44,8 +44,8 @@ class iSerializer;
 class cSerializerUtil
 {
 public:
-    static int64 Copy(iSerializer* pDest, cArchive* pSrc, int64 amt); // throw( eArchvie, eSerilaizer )
-    static int64 Copy(cArchive* pDest, iSerializer* pSrc, int64 amt); // throw( eArchvie, eSerilaizer )
+    static int64_t Copy(iSerializer* pDest, cArchive* pSrc, int64_t amt); // throw( eArchvie, eSerilaizer )
+    static int64_t Copy(cArchive* pDest, iSerializer* pSrc, int64_t amt); // throw( eArchvie, eSerilaizer )
         // these two methods copy data from archives to serializers and vice-versa. They
         // throw exceptions on error; the return value is the amount that was copied.
 };

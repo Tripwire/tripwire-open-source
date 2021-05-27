@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -62,6 +62,7 @@
 void MakeFile(TSTRING& fcoNameMakeMe);
 void MakeDir(const TCHAR* const lpszDirName);
 
+#if 0 // Not used untill this test is fixed
 // we use this instead of TraceContents() so we can test the report iterators.
 static void TraceReport(const cFCOReport& r, cDebug& d)
 {
@@ -105,6 +106,7 @@ static void TraceReport(const cFCOReport& r, cDebug& d)
         }
     }
 }
+#endif
 
 /*
  //
@@ -149,14 +151,14 @@ void TestTextReportViewer()
         fcoNameSpec1 = fcoNameTempDir += _T("SPEC1/");
         fcoNameSpec2 = fcoNameTempDir += _T("SPEC2/");
         
-        mkdir( fcoNameTempDir.c_str(), 0777 );
-        mkdir( fcoNameSpec1.AsString().c_str(), 0777 );
-        mkdir( fcoNameSpec2.AsString().c_str(), 0777 );
+        tw_mkdir( fcoNameTempDir.c_str(), 0777 );
+        tw_mkdir( fcoNameSpec1.AsString().c_str(), 0777 );
+        tw_mkdir( fcoNameSpec2.AsString().c_str(), 0777 );
         
         fcoNameTempFile = fcoNameTempDir += _T("twtempXXXXXX");
         pFSServices->MakeTempFilename( fcoNameTempFile );
     }
-    catch(eFSServices& /* e */)
+    catch(const eFSServices& /* e */)
     {
         // TODO: properly handle error
         TEST( false );
@@ -459,7 +461,7 @@ void MakeFile(TSTRING& strNameMakeMe)
         TEST(file);
         file.close();
     }
-    catch (eFSServices e)
+    catch (const eFSServices& e)
     {
         TEST(false);
     }
@@ -471,7 +473,7 @@ void MakeFile(TSTRING& strNameMakeMe)
 
 void MakeDir(const TCHAR* const lpszDirName)
 {
-    TEST(0 == mkdir(lpszDirName, 0777))
+    TEST(0 == tw_mkdir(lpszDirName, 0777))
 }
 
 //#endif //FIXED_TRV_TEST_SUITE

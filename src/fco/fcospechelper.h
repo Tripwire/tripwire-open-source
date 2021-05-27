@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -75,7 +75,7 @@ public:
     // encountered. Really, ContainsFCO() could be used to reach the same ends, but
     // this might/should be faster.
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0);
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0);
     virtual void Write(iSerializer* pSerializer) const;
     // these just serialize the start point.
 
@@ -154,7 +154,7 @@ public:
 
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0);
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0);
     virtual void Write(iSerializer* pSerializer) const;
 
     virtual CompareResult Compare(const iFCOSpecHelper* pRhs) const;
@@ -209,7 +209,7 @@ public:
     virtual bool            ContainsFCO(const cFCOName& name) const;
     virtual iFCOSpecHelper* Clone() const;
     virtual bool            ShouldStopDescent(const cFCOName& name) const;
-    virtual void            Read(iSerializer* pSerializer, int32 version = 0);
+    virtual void            Read(iSerializer* pSerializer, int32_t version = 0);
     virtual void            Write(iSerializer* pSerializer) const;
     virtual CompareResult   Compare(const iFCOSpecHelper* pRhs) const;
     virtual void            TraceContents(int dl = -1) const;

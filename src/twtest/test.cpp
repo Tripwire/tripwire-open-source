@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -216,7 +216,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     {
         TCERR << "SKIPPED: " << e.what() << std::endl;
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": " << e.what();
         skipped_strings.push_back(sstr.str());
 
@@ -227,7 +227,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
         TCERR << "FAILED: ";
         cTWUtil::PrintErrorMsg(error);
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": " << error.GetMsg();
         error_strings.push_back(sstr.str());
 
@@ -237,7 +237,7 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     {
         TCERR << "FAILED: " << e.what() << std::endl;
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": " << e.what();
         error_strings.push_back(sstr.str());
 
@@ -247,9 +247,11 @@ static void RunTest(const std::string& suiteName, const std::string& testName, T
     {
         TCERR << "FAILED: <unknown>" << std::endl;
 
-        std::stringstream sstr;
+        TSTRINGSTREAM sstr;
         sstr << "Test " << suiteName << "/" << testName << ": <unknown>";
         error_strings.push_back(sstr.str());
+
+        failed_count++;	
     }
 }
 
@@ -385,7 +387,7 @@ std::string TwTestDir()
         iFSServices::GetInstance()->GetCurrentDir(dir);
         dir.append("/TWTestData");
         TCERR << "Using test directory: " << dir << std::endl;
-        mkdir(dir.c_str(), 0777);
+        tw_mkdir(dir.c_str(), 0777);
     }
 
     return dir;
@@ -393,12 +395,13 @@ std::string TwTestDir()
 
 std::string TwTestPath(const std::string& child)
 {
-    std::stringstream sstr;
+    TOSTRINGSTREAM sstr;
     sstr << TwTestDir();
     if (child[0] != '/')
         sstr << '/';
     sstr << child;
-    return sstr.str();
+
+    tss_return_stream(sstr, out);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -431,11 +434,13 @@ void tw_terminate_handler()
     exit(1);
 }
 
+#if USE_UNEXPECTED
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
     exit(1);
 }
+#endif
 
 int _tmain(int argc, TCHAR** argv)
 {
@@ -449,8 +454,9 @@ int _tmain(int argc, TCHAR** argv)
     try
     {
         EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
+#if USE_UNEXPECTED
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
-
+#endif
         if (argc < 2)
         {
             Usage();
@@ -468,7 +474,6 @@ int _tmain(int argc, TCHAR** argv)
 
         RegisterSuites();
         std::string arg1 = argv[1];
-
 
         if (arg1 == "all" || arg1 == "--all")
         {
@@ -498,22 +503,19 @@ int _tmain(int argc, TCHAR** argv)
     catch (eError& error)
     {
         cTWUtil::PrintErrorMsg(error);
-        ASSERT(false);
-        return 1;
+        failed_count++;
     }
     catch (std::exception& error)
     {
         TCERR << "Caught std::exception: " << error.what() << std::endl;
-        ASSERT(false);
-        return 1;
+        failed_count++;	
     }
     catch (...)
     {
         TCERR << _T("Unhandled exception caught!");
-        ASSERT(false);
-        return 1;
+        failed_count++;	
     }
-
+    
     // make sure all the reference counted objects have been destroyed
     // this test always fails because of the static cFCONameTbl
     //TEST(cRefCountObj::AllRefCountObjDestoryed() == true);

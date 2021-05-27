@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -104,7 +104,13 @@ void cTWCmdLineUtil::ParsePolicyFile(cGenreSpecListVector& genreSpecList,
                                        cDisplayEncoder::EncodeInline(fileName).c_str());
 
     // set up parser and parser policy file
+#if !ARCHAIC_STL    
     std::istringstream in(strPolicyText);
+#else
+    strstream in;
+    in << strPolicyText;
+#endif
+    
     cPolicyParser      parser(in);
     parser.Execute(genreSpecList, pQueue);
 }
@@ -549,6 +555,7 @@ static bool EmailReportTo(const TSTRING&          toAddress,
                           const cTWModeCommon*    modeCommon,
                           const bool              bForceFullReport)
 {
+#if !ARCHAIC_STL  
     TW_UNIQUE_PTR<cMailMessage> reportMail;
 
     // allocate the right kind of emailer object based on what came out of the config file.
@@ -556,12 +563,13 @@ static bool EmailReportTo(const TSTRING&          toAddress,
     {
 #if SUPPORTS_NETWORKING
     case cMailMessage::MAIL_BY_SMTP:
-        reportMail = TW_UNIQUE_PTR<cMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
+      reportMail = TW_UNIQUE_PTR<cSMTPMailMessage>(new cSMTPMailMessage(modeCommon->mSmtpHost, modeCommon->mSmtpPort));
         break;
-#endif
+#endif	
     case cMailMessage::MAIL_BY_PIPE:
         reportMail = TW_UNIQUE_PTR<cMailMessage>(new cPipedMailMessage(modeCommon->mMailProgram));
         break;
+	
     default:
         return false;
     }
@@ -629,6 +637,9 @@ static bool EmailReportTo(const TSTRING&          toAddress,
     }
 
     return true;
+#else
+return false;
+#endif
 }
 
 
@@ -707,6 +718,7 @@ bool cTWCmdLineUtil::EmailReport(const cFCOReportHeader& header,
 
 bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING& mAddress, const cTWModeCommon* modeCommon)
 {
+#if !ARCHAIC_STL  
     TW_UNIQUE_PTR<cMailMessage> reportMail;
 
     // allocate the right kind of emailer object based on what came out of the config file.
@@ -760,4 +772,7 @@ bool cTWCmdLineUtil::SendEmailTestMessage(const TSTRING& mAddress, const cTWMode
     }
 
     return true;
+#else
+    return false;
+#endif
 }

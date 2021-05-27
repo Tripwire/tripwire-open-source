@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -552,12 +552,12 @@ std::string FormatSyntaxError( char ch, const char* pszAdditionalMsg = NULL )
     // we do it here as well, I suppose that's OK.  This should be eventually
     // corrected.
 
-    std::ostringstream ssErr; 
+    TOSTRINGSTREAM ssErr; 
     ssErr << "Syntax error: \'" << ch << "\'";
     if( pszAdditionalMsg )
         ssErr << ", " << pszAdditionalMsg;
 
-    return ssErr.str();
+    tss_return_stream(ssErr, out);
 }
 
 // saves typing
@@ -831,8 +831,8 @@ yy_scan::yylex()
         yyst = yy_next[yybase];
       yy_jammed: ;
          state[++i] = (yy_state_t) yyst;
-    } while (!(yyst == (unsigned int)yy_endst || YY_INTERACTIVE &&
-        yy_base[yyst] > yy_nxtmax && yy_default[yyst] == yy_endst));
+    } while (!(yyst == (unsigned int)yy_endst || (YY_INTERACTIVE &&
+        (yy_base[yyst] > yy_nxtmax) && (yy_default[yyst] == yy_endst))));
 
     YY_DEBUG("<stopped %d, i = %d>\n", yyst, i);
     if (yyst != (unsigned int)yy_endst)

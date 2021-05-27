@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -37,11 +37,11 @@
 #include "syslog_trip.h"
 
 #if HAVE_SYSLOG_H
-#include <syslog.h>
+#   include <syslog.h>
 #endif
 
 #if HAVE_SYS_SYSLOG_H
-#include <sys/syslog.h>
+#   include <sys/syslog.h>
 #endif
 
 // next three includes are for error reporting
@@ -49,10 +49,8 @@
 #include "tw/twerrors.h"
 #include "tw/twstrings.h"
 
-#if IS_AROS
-#include <proto/bsdsocket.h>
-#    define openlog(a, b, c)
-#    define closelog()
+#if HAVE_PROTO_BSDSOCKET_H
+#   include <proto/bsdsocket.h>
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -69,8 +67,14 @@ void cSyslog::Log(const TCHAR* programName, cSyslog::LogType logType, const TCHA
     const char* ident = programName;
     const char* msg   = message;
 
+#if HAVE_OPENLOG    
     openlog(ident, LOG_PID, LOG_USER);
+#endif
+    
     syslog(LOG_NOTICE, "%s", msg);
+#if HAVE_CLOSELOG    
     closelog();
+#endif
+    
 #endif
 }

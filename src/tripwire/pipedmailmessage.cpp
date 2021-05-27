@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -153,11 +153,13 @@ void cPipedMailMessage::SendInit() // throw( eMailMessageError )
     TSTRING strHeader;
     strHeader += cStringUtil::StrToTstr(cMailMessage::Create822Header());
 
-#if !USES_MPOPEN
+#if USES_MPOPEN
+    // call mpopen, our safe version popen
+    mpFile = mpopen((char*)mstrSendMailExePath.c_str(), _T("w"));    
+#elif HAVE_POPEN
     mpFile = popen(mstrSendMailExePath.c_str(), _T("w"));
 #else
-    // call mpopen, our safe version popen
-    mpFile = mpopen((char*)mstrSendMailExePath.c_str(), _T("w"));
+    // No pipes for you, sorry.
 #endif
     if (!mpFile)
     {

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -143,8 +143,8 @@ iFCO* cDbDataSourceIter::CreateFCO() //throw (eError)
     try
     {
         ASSERT(mDbIter.HasData());
-        int32 length;
-        int8* pData = mDbIter.GetData(length);
+        int32_t length;
+        int8_t* pData = mDbIter.GetData(length);
         //
         // associate a serializer with this memory and read in the property set...
         //

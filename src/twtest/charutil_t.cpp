@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -43,6 +43,7 @@
 #include "twtest/test.h"
 
 #include <algorithm>
+#include <locale.h>
 
 bool localeIsUtf8()
 {
@@ -82,10 +83,13 @@ void TestCharUtilBasic()
     CheckChars("foo");
     CheckChars("fo\x23 54");
 
+    // Test case requires support for Unicode escape sequences
+#if USE_UNICODE_ESCAPES
     if (localeIsUtf8())
         CheckChars("\U0001F408", 4); //Cat emoji, if UTF-8
     else
         CheckChars("\U0001F408", 1); // just a bag of bytes otherwise
+#endif
 }
 
 void RegisterSuite_CharUtil()

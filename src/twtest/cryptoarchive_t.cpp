@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -49,7 +49,7 @@ void TestCryptoArchive()
 
     d.TraceDetail("Building test memory image of size %dK bytes\n", SIZEOF_CHUNK * NUM_CHUNKS / 1024);
 
-    int8 chunk[7];
+    int8_t chunk[7];
     memcpy(chunk, "1234567", 7);
 
     int i;
@@ -78,7 +78,7 @@ void TestCryptoArchive()
 
         for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
         {
-            int8 buf[SIZEOF_CHUNK];
+            int8_t buf[SIZEOF_CHUNK];
             memory.ReadBlob(buf, SIZEOF_CHUNK);
             outCrypt.WriteBlob(buf, SIZEOF_CHUNK);
         }
@@ -99,7 +99,7 @@ void TestCryptoArchive()
         int index;
         for (index = 0; index < NUM_CHUNKS * SIZEOF_CHUNK; index += TEST_CHUNKSIZE)
         {
-            int8 buf[TEST_CHUNKSIZE];
+            int8_t buf[TEST_CHUNKSIZE];
 
             int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
                                                                             NUM_CHUNKS * SIZEOF_CHUNK - index;
@@ -135,7 +135,7 @@ void TestCryptoArchive()
 
             for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
             {
-                int8 buf[SIZEOF_CHUNK];
+                int8_t buf[SIZEOF_CHUNK];
                 memory.ReadBlob(buf, SIZEOF_CHUNK);
                 outCrypt.WriteBlob(buf, SIZEOF_CHUNK);
             }
@@ -156,7 +156,7 @@ void TestCryptoArchive()
             int index;
             for (index = 0; index < NUM_CHUNKS * SIZEOF_CHUNK; index += TEST_CHUNKSIZE)
             {
-                int8 buf[TEST_CHUNKSIZE];
+                int8_t buf[TEST_CHUNKSIZE];
 
                 int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
                                                                                 NUM_CHUNKS * SIZEOF_CHUNK - index;
@@ -187,7 +187,7 @@ void TestCryptoArchive()
 
     d.TraceDetail("Building test memory image of size %dK bytes\n", SIZEOF_CHUNK * NUM_CHUNKS / 1024);
 
-    int8 chunk[7];
+    int8_t chunk[7];
     memcpy(chunk, "1234567", 7);
 
     int i;
@@ -211,7 +211,7 @@ void TestCryptoArchive()
 
         for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
         {
-            int8 buf[SIZEOF_CHUNK];
+            int8_t buf[SIZEOF_CHUNK];
             memory.ReadBlob(buf, SIZEOF_CHUNK);
             outCrypt.WriteBlob(buf, SIZEOF_CHUNK);
         }
@@ -232,7 +232,7 @@ void TestCryptoArchive()
         int index;
         for (index = 0; index < NUM_CHUNKS * SIZEOF_CHUNK; index += TEST_CHUNKSIZE)
         {
-            int8 buf[TEST_CHUNKSIZE];
+            int8_t buf[TEST_CHUNKSIZE];
 
             int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
                                                                             NUM_CHUNKS * SIZEOF_CHUNK - index;
@@ -256,7 +256,7 @@ void TestCryptoArchive()
 
         for (memory.Seek(0, cBidirArchive::BEGINNING); !memory.EndOfFile();)
         {
-            int8 buf[SIZEOF_CHUNK];
+            int8_t buf[SIZEOF_CHUNK];
             memory.ReadBlob(buf, SIZEOF_CHUNK);
             outCrypt.WriteBlob(buf, SIZEOF_CHUNK);
         }
@@ -277,7 +277,7 @@ void TestCryptoArchive()
         int index;
         for (index = 0; index < NUM_CHUNKS * SIZEOF_CHUNK; index += TEST_CHUNKSIZE)
         {
-            int8 buf[TEST_CHUNKSIZE];
+            int8_t buf[TEST_CHUNKSIZE];
 
             int s = (index + TEST_CHUNKSIZE <= NUM_CHUNKS * SIZEOF_CHUNK) ? TEST_CHUNKSIZE :
                                                                             NUM_CHUNKS * SIZEOF_CHUNK - index;

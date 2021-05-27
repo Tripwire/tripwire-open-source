@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -113,7 +113,7 @@ public:
     // by the FCO and is only guarenteed to be valid through the life of the
     // fco.
 
-    virtual uint32 GetCaps() const = 0;
+    virtual uint32_t GetCaps() const = 0;
     // returns a bitmask that indicates properties that this object has.
     // see the enum below for what the caps can contain
 
@@ -200,8 +200,8 @@ public:
     virtual void Clear() = 0;
     // clears out all the elements from the set
 
-    virtual bool IsEmpty() const = 0;
-    virtual int  Size() const    = 0;
+    virtual bool      IsEmpty() const = 0;
+    virtual int       Size()    const = 0;
 
     virtual void TraceContents(int debugLevel = -1) const
     {

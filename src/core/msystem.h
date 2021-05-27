@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -57,6 +57,8 @@
 
 #include "platform.h"
 
+#if SUPPORTS_POSIX_FORK_EXEC
+
 #ifdef __STDC__
 void le_clobber(void);
 int le_set(const char*);
@@ -66,8 +68,15 @@ int le_openfd(int);
 int le_closefd(int);
 int le_euid(int);
 int le_egid(int);
+
+#if USES_MSYSTEM
 int msystem(const char*);
+#endif
+
+#if USES_MPOPEN
 FILE *mpopen(const char*, const char*);
+#endif
+
 int mpclose(FILE *);
 int mfpopen(const char*, FILE *[]);
 int mfpclose(int, FILE *[]);
@@ -136,3 +145,4 @@ int echild();
 #   define NOSHELL      "/bin/sh"   /* use this if no shell */
 #endif
 
+#endif // SUPPORTS_POSIX_FORK_EXEC

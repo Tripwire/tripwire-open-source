@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -92,5 +92,16 @@ void RegisterTest(const std::string& suite, const std::string testName, TestPtr 
 void skip(const std::string& reason);
 void fail(const std::string& reason);
 
+////////////////////////////////////////////////////////////////////////////
+
+// Misc platform utility stuff available for all tests
+
+// Could use AX_FUNC_MKDIR autoconf macro if we need to handle
+// any additional cases besides these
+#if MKDIR_TAKES_SINGLE_ARG
+#    define tw_mkdir(a,b) mkdir(a)
+#else
+#    define tw_mkdir(a,b) mkdir(a,b)
+#endif
 
 #endif // __TEST_H

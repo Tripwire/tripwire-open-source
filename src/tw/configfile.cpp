@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -193,9 +193,7 @@ void cConfigFile::WriteString(TSTRING& configText) // throw( eFSServices )
         out << sKey << _T("=") << sVal << _T("\n");
     }
 
-    configText = out.str();
-
-    return;
+    tss_stream_to_string(out, configText);
 }
 
 void cConfigFile::ReadString(const TSTRING configText) // throw( eConfigFile );
@@ -660,15 +658,16 @@ TSTRING cConfigFile::MakeErrorString(const TSTRING& strMsg, bool fShowLineNum) c
         strErr << TSS_GetString(cTW, tw::STR_CUR_LINE) << mnLine;
     }
 
-    return strErr.str();
+    tss_mkstr(out, strErr);
+    return out;
 }
 
 TSTRING& util_MakeTripwireDateString(TSTRING& strBuf)
 {
     struct tm*     ptmLocal = cTimeUtil::TimeToDateLocal(cSystemInfo::GetExeStartTime());
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
-
+    tss_classic_locale(ostr);
+    
     // format is YYYYMMDD-HHMMSS
     ostr.fill(_T('0'));
     ostr << std::setw(4) << ptmLocal->tm_year + 1900;
@@ -679,7 +678,6 @@ TSTRING& util_MakeTripwireDateString(TSTRING& strBuf)
     ostr << std::setw(2) << ptmLocal->tm_min;
     ostr << std::setw(2) << ptmLocal->tm_sec;
 
-    strBuf = ostr.str();
-
+    tss_stream_to_string(ostr, strBuf);
     return strBuf;
 }

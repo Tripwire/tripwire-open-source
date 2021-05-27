@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -59,7 +59,7 @@ void TestKeyFile()
 
     d.TraceDebug("Generating keys...\n");
     std::string s = "haybaby";
-    keyfile.GenerateKeys(cElGamalSig::KEY1024, (int8*)s.data(), 7);
+    keyfile.GenerateKeys(cElGamalSig::KEY1024, (int8_t*)s.data(), 7);
 
     char plaintext[9000];
     char ciphertext[9000];
@@ -74,7 +74,7 @@ void TestKeyFile()
         TEST(elGamal.GetBlockSizeCipher() < 9000);
         std::string      s = "haybaby";
         cPrivateKeyProxy key;
-        TEST(key.AquireKey(keyfile, (int8*)s.data(), 7));
+        TEST(key.AquireKey(keyfile, (int8_t*)s.data(), 7));
         elGamal.SetSigning(key.GetKey());
         elGamal.ProcessBlock(plaintext, ciphertext);
     }
@@ -94,7 +94,7 @@ void TestKeyFile()
     // save to and read from memory
     d.TraceDebug("Read/Write to memory...\n");
     {
-        int8* pMem = new int8[keyfile.GetWriteLen()];
+        int8_t* pMem = new int8_t[keyfile.GetWriteLen()];
         keyfile.WriteMem(pMem);
 
         cKeyFile keyfile2;

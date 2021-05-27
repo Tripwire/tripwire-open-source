@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -45,6 +45,7 @@
 #include <fstream>
 #include <unistd.h>
 #include <fcntl.h>
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // PrintProps -- prints out all the valid property names and values as pairs...
@@ -140,6 +141,7 @@ void TestFSPropCalc()
     return;
 }
 
+#if HAVE_SYMLINK
 void TestGetSymLinkStr()
 {
     std::string file = TwTestPath("12345678901234567890123456789012345678901234567890123456789012345678901234567890");
@@ -154,11 +156,14 @@ void TestGetSymLinkStr()
 
     cMemoryArchive arch(1024 * 1024);
     TEST(cFSPropCalc::GetSymLinkStr(link, arch, 8));
-    TEST(arch.Length() == (int64)file.size());
+    TEST(arch.Length() == (int64_t)file.size());
 }
+#endif
 
 void RegisterSuite_FSPropCalc()
 {
     RegisterTest("FSPropCalc", "Basic", TestFSPropCalc);
+#if HAVE_SYMLINK
     RegisterTest("FSPropCalc", "GetSymLinkStr", TestGetSymLinkStr);
+#endif    
 }

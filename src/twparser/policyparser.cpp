@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -85,7 +85,9 @@ void tw_yy_scan::output(int c)
     sz[1] = 0;
     sstr << sz;
 
-    throw eParseFailed(sstr.str());
+    tss_mkstr(errStr, sstr);
+    
+    throw eParseFailed(errStr);
 }
 
 
@@ -99,8 +101,14 @@ void cPolicyParser::Check(cErrorBucket* pError) //throw(eError);
     cParserHelper::Init(pError);
     cParserHelper::SetParseOnly(true);
 
-    std::basic_stringstream<char> in(ConvertMultibyte(mIn));
-    tw_yy_scan                    lexer(in);
+#if !ARCHAIC_STL
+    TISTRINGSTREAM in(ConvertMultibyte(mIn));
+#else    
+    TSTRINGSTREAM in;
+    in << ConvertMultibyte(mIn);
+#endif
+
+    tw_yy_scan     lexer(in);
 
     // start the parsing
     if (mParser.yyparse(&lexer) != 0)
@@ -119,8 +127,14 @@ void cPolicyParser::Execute(cGenreSpecListVector& policy, cErrorBucket* pError) 
 {
     cParserHelper::Init(pError);
 
-    std::basic_stringstream<char> in(ConvertMultibyte(mIn));
-    tw_yy_scan                    lexer(in);
+#if !ARCHAIC_STL    
+    TISTRINGSTREAM in(ConvertMultibyte(mIn));
+#else
+    TSTRINGSTREAM in;
+    in << ConvertMultibyte(mIn);
+#endif
+    
+    tw_yy_scan     lexer(in);
 
     // start the parsing
     if (mParser.yyparse(&lexer) != 0)
@@ -136,17 +150,21 @@ void cPolicyParser::Execute(cGenreSpecListVector& policy, cErrorBucket* pError) 
 // Parser will ALWAYS call the narrow-char version, so special case Unicode compile
 void tw_yy_scan::yyerror(const char* pszErr, ...) //throw( eParserHelper )
 {
+#if 0  
     TOSTRINGSTREAM ssError; // final error string
     ssError << pszErr;
-
-    throw eParseFailed(ssError.str());
+    throw eParseFailed(ssError.str());    
+#endif
+    
+    TSTRING errText = pszErr ? pszErr : "";
+    throw eParseFailed(errText);
 }
 
 // Throw this in the display encoder?
 std::string cPolicyParser::ConvertMultibyte(std::istream& in)
 {
     // get this file as a stringstream
-    std::stringstream ss;
+    TOSTRINGSTREAM ss;
 
     while (true)
     {
@@ -168,6 +186,8 @@ std::string cPolicyParser::ConvertMultibyte(std::istream& in)
             throw eParserBadCharacter();
     }
 
+    tss_end(ss);
+    
 #ifdef DEBUG
     TCERR << _T("*** begin policy text ***") << std::endl;
     std::cerr << ss.str() << std::endl;
@@ -176,7 +196,8 @@ std::string cPolicyParser::ConvertMultibyte(std::istream& in)
 
     // convert it to single byte escaped
     std::string str = util_ConvertMB(ss.str());
-
+    tss_free(ss);
+    
 #ifdef DEBUG
     TCERR << _T("*** begin policy converted to ***") << std::endl;
     std::cerr << str << std::endl;
@@ -188,20 +209,24 @@ std::string cPolicyParser::ConvertMultibyte(std::istream& in)
 
 std::string convert_to_encoded_hex(char ch)
 {
-    std::basic_stringstream<char> sstr;
+    TOSTRINGSTREAM sstr;
 
     // set up stringstream
-    sstr.imbue(std::locale::classic());
-    sstr.setf(std::ios_base::hex, std::ios_base::basefield);
+    tss_classic_locale(sstr);
+    sstr.setf(std::ios::hex, std::ios::basefield);
 
+#if !ARCHAIC_STL        
     // get the num_put facet
     const std::num_put<char>*pnp = 0, &np = tss::GetFacet(sstr.getloc(), pnp);
-
     // output the char
     sstr << "\\x";
+    
     np.put(sstr, sstr, sstr.fill(), (long)(unsigned char)ch);
+#else
+    sstr << "\\x" << ch;
+#endif
 
-    return sstr.str();
+    tss_return_stream(sstr, out);
 }
 
 

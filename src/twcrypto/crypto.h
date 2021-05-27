@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -350,25 +350,25 @@ class cHashedKey128
 {
 public:
     explicit cHashedKey128(const TSTRING& data);
-    cHashedKey128(void* pData, int dataLen);
+    cHashedKey128(void* pData, int32_t dataLen);
     ~cHashedKey128();
 
-    const int8* GetKey() const;
+    const int8_t* GetKey() const;
 
     static int GetWriteLen();
-    void       Write(void* pDataStream);
+    void Write(void* pDataStream);
 
 protected:
     enum
     {
         KEYLEN  = 16,
-        BUFSIZE = 20
+        BUFFER_SIZE = 20
     };
 
-    int8 mKey[BUFSIZE];
+    int8_t mKey[BUFFER_SIZE];
 };
 
-inline const int8* cHashedKey128::GetKey() const
+inline const int8_t* cHashedKey128::GetKey() const
 {
     return mKey;
 }
@@ -390,13 +390,13 @@ class cHashedKey192
 {
 public:
     explicit cHashedKey192(const TSTRING& data);
-    cHashedKey192(void* pData, int dataLen);
+    cHashedKey192(void* pData, int32_t dataLen);
     ~cHashedKey192();
 
-    const int8* GetKey() const;
+    const int8_t* GetKey() const;
 
     static int GetWriteLen();
-    void       Write(void* pDataStream);
+    void Write(void* pDataStream);
 
 protected:
     enum
@@ -404,10 +404,10 @@ protected:
         KEYLEN = 24
     };
 
-    int8 mKey[KEYLEN];
+    int8_t mKey[KEYLEN];
 };
 
-inline const int8* cHashedKey192::GetKey() const
+inline const int8_t* cHashedKey192::GetKey() const
 {
     return mKey;
 }
@@ -425,6 +425,6 @@ inline void cHashedKey192::Write(void* pDataStream)
 ///////////////////////////////////////////////////////////////////////////////
 // void RandomizeBytes(byte* destbuf, int len) -- Fill a buffer with random bytes
 
-void RandomizeBytes(int8* destbuf, int len);
+void RandomizeBytes(int8_t* destbuf, int len);
 
 #endif // __CRYPTO_H

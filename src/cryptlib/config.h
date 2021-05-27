@@ -1,8 +1,12 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#if HAVE_CONFIG_H
+#    include <config.h>
+#endif
+
+#if HAVE_STDINT_H
+#   include <stdint.h>
 #endif
 
 // define this if you want the library to throw exceptions when things go wrong
@@ -82,7 +86,13 @@
 
 // Make sure these typedefs are correct for your computer
 
-typedef unsigned char byte;
+#if CPLUSPLUS_PRE_2011
+typedef unsigned char uint8_t;
+#else
+#include <stdint.h>
+#endif
+
+#if CPLUSPLUS_PRE_2011
 typedef unsigned short word16;
 #if SIZEOF_INT == 4
  typedef unsigned int word32;
@@ -91,16 +101,20 @@ typedef unsigned short word16;
  #else
  #error "I don't seem to have a 32-bit integer type on this system."
 #endif
+#else
+typedef uint16_t word16;
+typedef uint32_t word32;
+#endif
 
 // word should have the same size as your CPU registers
 // dword should be twice as big as word
 
 #if defined(_MSC_VER)
 
-typedef unsigned __int32 word;
-typedef unsigned __int64 dword;
+typedef unsigned __int32_t word;
+typedef unsigned __int64_t dword;
 #define WORD64_AVAILABLE
-typedef unsigned __int64 word64;
+typedef unsigned __int64_t word64;
 #define W64LIT(x) x##i64
 
 #elif defined(_KCC)
@@ -141,16 +155,25 @@ typedef unsigned long long word64;
 
 #elif defined(__GNUC__)
 
+#if CPLUSPLUS_PRE_2011
 typedef word32 word;
 #if SIZEOF_LONG_LONG == 8
  typedef unsigned long long dword;
  #define WORD64_AVAILABLE
  typedef unsigned long long word64;
  #define W64LIT(x) x##LL
- #else
+#else
  #error "I don't seem to have a 64-bit integer type on this system."
 #endif
-#else
+#else // CPLUSPLUS_PRE_2011
+
+typedef uint32_t word;
+typedef uint64_t dword;
+typedef uint64_t word64;
+
+#endif
+
+#else // compiler type
 
 typedef unsigned int word;
 typedef unsigned long dword;
@@ -158,7 +181,7 @@ typedef unsigned long dword;
 #endif
 
 // You may need to tweak this to fit your architecture
-typedef unsigned long ptr_size_type;
+typedef uintptr_t ptr_size_type;
 
 const unsigned int WORD_SIZE = sizeof(word);
 const unsigned int WORD_BITS = WORD_SIZE * 8;

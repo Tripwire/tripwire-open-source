@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -77,9 +77,9 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
     if (errStr.empty())
     {
         TOSTRINGSTREAM strm;
-        ASSERT(sizeof(uint32) == sizeof(unsigned int)); // for cast on next line
+        ASSERT(sizeof(uint32_t) == sizeof(unsigned int)); // for cast on next line
         strm << _T("Unknown Error ID ") << (unsigned int)error.GetID();
-        errStr = strm.str();
+	tss_stream_to_string(strm, errStr);
     }
 
     //int len = errStr.length(); // save for later
@@ -103,7 +103,7 @@ void cErrorReporter::PrintErrorMsg(const eError& error, const TSTRING& strExtra)
             errStr.erase(firstLF);
         }
 
-        ASSERT(errStr.length() + len + 6 < 80); // line too big for terminal?
+        ASSERT(errStr.length() + 6 < 80); // line too big for terminal?
                                                 // Add 6 to account for "### ' and ': '
         TCERR << TSS_GetString(cCore, core::STR_ERROR_COLON) << _T(" ") << errStr;
         TCERR << std::endl;
@@ -189,7 +189,7 @@ void cErrorQueue::Clear()
     mList.clear();
 }
 
-int cErrorQueue::GetNumErrors() const
+cErrorQueue::ListType::size_type cErrorQueue::GetNumErrors() const
 {
     return mList.size();
 }
@@ -234,19 +234,19 @@ const ePoly& cErrorQueueIter::GetError() const
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cErrorQueue::Read(iSerializer* pSerializer, int32 version)
+void cErrorQueue::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("ErrorQueue Read")));
 
-    int32 size;
+    int32_t size;
     mList.clear();
     pSerializer->ReadInt32(size);
     for (int i = 0; i < size; ++i)
     {
-        int32   errorNumber;
+        int32_t   errorNumber;
         TSTRING errorString;
-        int32   flags;
+        int32_t   flags;
 
         pSerializer->ReadInt32(errorNumber);
         pSerializer->ReadString(errorString);

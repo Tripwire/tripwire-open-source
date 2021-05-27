@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -74,10 +74,10 @@ public:
     //-------------------------------------------------------------------------
     struct tAddr
     {
-        int32 mBlockNum;
-        int32 mIndex;
+        int32_t mBlockNum;
+        int32_t mIndex;
 
-        tAddr(int32 block = -1, int32 addr = -1) : mBlockNum(block), mIndex(addr)
+        tAddr(int32_t block = -1, int32_t addr = -1) : mBlockNum(block), mIndex(addr)
         {
         }
     };
@@ -85,7 +85,7 @@ public:
     //-------------------------------------------------------------------------
     // Adding and Removing Data
     //-------------------------------------------------------------------------
-    tAddr AddItem(int8* pData, int dataSize); //throw (eArchive)
+    tAddr AddItem(int8_t* pData, int dataSize); //throw (eArchive)
         // adds the given data to the file, growing it as necessary. Return value
         // can be used in the future to retrieve the data
     void RemoveItem(tAddr dataAddr); //throw (eArchive)
@@ -99,11 +99,11 @@ public:
     //-------------------------------------------------------------------------
     bool IsValidAddr(tAddr addr); //throw (eArchive)
         // returns true if the given address points to valid data
-    int8* GetDataForReading(tAddr dataAddr, int32& dataSize); //throw (eArchive)
+    int8_t* GetDataForReading(tAddr dataAddr, int32_t& dataSize); //throw (eArchive)
         // returns a pointer to the named data. This method will assert that the address is
         // valid. The data pointer returned is guarenteed to be valid only until the next
         // method call into this class.
-    int8* GetDataForWriting(tAddr dataAddr, int32& dataSize); //throw (eArchive)
+    int8_t* GetDataForWriting(tAddr dataAddr, int32_t& dataSize); //throw (eArchive)
         // this is the same as the previous function, except the dirty bit for the page is also set
 
     cBidirArchive* GetArchive()
@@ -130,7 +130,7 @@ protected:
     }
 
 private:
-    int32      mLastAddedTo; // optimization that keeps track of last block added to
+    int32_t      mLastAddedTo; // optimization that keeps track of last block added to
     bool       mbOpen;       // are we currently associated with a file?
     cBlockFile mBlockFile;
     BlockArray mvBlocks;
@@ -138,7 +138,7 @@ private:
     cBlockRecordFile(const cBlockRecordFile& rhs); //not impl
     void operator=(const cBlockRecordFile& rhs);   //not impl
 
-    int FindRoomForData(int32 dataSize); //throw (eArchive)
+    int FindRoomForData(int32_t dataSize); //throw (eArchive)
         // searches through all the blocks, starting with mLastAddedTo, looking
         // for one with dataSize free space. This asserts that the size is valid
         // for storage in a block

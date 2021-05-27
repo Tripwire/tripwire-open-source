@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -70,7 +70,7 @@ void TestItoa()
         //
         // setup
         //
-        int32   n = 123456;
+        int32_t n = 123456;
         TSTRING str;
 
         //
@@ -80,6 +80,7 @@ void TestItoa()
         cTWLocale::FormatNumber(n, str);
         TEST(str == "123456");
 
+#if !ARCHAIC_STL	
         //
         // Try formatting with "" locale
         //
@@ -93,6 +94,7 @@ void TestItoa()
         std::locale::global(std::locale(""));
         cTWLocale::FormatNumber(n, str);
         TEST(str == "123,456");
+#endif	
     }
     catch (const std::runtime_error& e)
     {

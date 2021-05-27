@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -150,7 +150,7 @@ void cBlockRecordFile::Flush() //throw (eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 // AddItem
 ///////////////////////////////////////////////////////////////////////////////
-cBlockRecordFile::tAddr cBlockRecordFile::AddItem(int8* pData, int dataSize) //throw (eArchive)
+cBlockRecordFile::tAddr cBlockRecordFile::AddItem(int8_t* pData, int dataSize) //throw (eArchive)
 {
     ASSERT(mbOpen);
 #ifdef _BLOCKFILE_DEBUG
@@ -224,7 +224,7 @@ bool cBlockRecordFile::IsValidAddr(cBlockRecordFile::tAddr addr) //throw (eArchi
 ///////////////////////////////////////////////////////////////////////////////
 // GetDataForReading
 ///////////////////////////////////////////////////////////////////////////////
-int8* cBlockRecordFile::GetDataForReading(cBlockRecordFile::tAddr dataAddr, int32& dataSize) //throw (eArchive)
+int8_t* cBlockRecordFile::GetDataForReading(cBlockRecordFile::tAddr dataAddr, int32_t& dataSize) //throw (eArchive)
 {
     ASSERT(mbOpen);
     ASSERT(IsValidAddr(dataAddr));
@@ -238,7 +238,7 @@ int8* cBlockRecordFile::GetDataForReading(cBlockRecordFile::tAddr dataAddr, int3
 ///////////////////////////////////////////////////////////////////////////////
 // GetDataForWriting
 ///////////////////////////////////////////////////////////////////////////////
-int8* cBlockRecordFile::GetDataForWriting(cBlockRecordFile::tAddr dataAddr, int32& dataSize) //throw (eArchive)
+int8_t* cBlockRecordFile::GetDataForWriting(cBlockRecordFile::tAddr dataAddr, int32_t& dataSize) //throw (eArchive)
 {
     ASSERT(mbOpen);
     ASSERT(IsValidAddr(dataAddr));
@@ -252,7 +252,7 @@ int8* cBlockRecordFile::GetDataForWriting(cBlockRecordFile::tAddr dataAddr, int3
 ///////////////////////////////////////////////////////////////////////////////
 // FindRoomForData
 ///////////////////////////////////////////////////////////////////////////////
-int cBlockRecordFile::FindRoomForData(int32 dataSize) //throw (eArchive)
+int cBlockRecordFile::FindRoomForData(int32_t dataSize) //throw (eArchive)
 {
     ASSERT((dataSize > 0) && (dataSize <= cBlockRecordArray::MAX_DATA_SIZE));
     ASSERT(mbOpen);

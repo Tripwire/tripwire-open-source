@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -116,9 +116,9 @@ void TestWchar16()
     }
 #endif
 
-    b.swapbytes();
+    tss::swapbytes(b);
     TEST(memcmp(a.data(), STRING1, 4) == 0);
-    b.swapbytes();
+    tss::swapbytes(b);
     TEST(memcmp(b.data(), STRING1, 4) == 0);
     //#endif // IS_UNIX
 
@@ -129,3 +129,4 @@ void RegisterSuite_Wchar16()
 {
     RegisterTest("Wchar16", "Basic", TestWchar16);
 }
+

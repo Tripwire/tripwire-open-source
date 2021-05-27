@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -52,9 +52,9 @@ inline cBlockRecordArray::tIndexArray& util_GetIndexArray(cBlockFile::Block* pBl
 //      is stored in tRecordIndex) return a pointer to memory inside the block
 //      that corresponds to the given offset
 ///////////////////////////////////////////////////////////////////////////////
-inline int8* util_OffsetToAddr(cBlockFile::Block* pBlock, int offset)
+inline int8_t* util_OffsetToAddr(cBlockFile::Block* pBlock, int offset)
 {
-    return (pBlock->GetData() + (cBlockFile::BLOCK_SIZE - offset));
+    return reinterpret_cast<int8_t*>((pBlock->GetData() + (cBlockFile::BLOCK_SIZE - offset)));
 }
 
 
@@ -228,7 +228,7 @@ bool cBlockRecordArray::IsItemValid(int index) const //throw (eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 // AddItem
 ///////////////////////////////////////////////////////////////////////////////
-int cBlockRecordArray::AddItem(int8* pData, int dataSize, int mainIndex) //throw (eArchive)
+int cBlockRecordArray::AddItem(int8_t* pData, int dataSize, int mainIndex) //throw (eArchive)
 {
     // make ourselves initialized, if we are not right now...
     //
@@ -290,7 +290,7 @@ int cBlockRecordArray::AddItem(int8* pData, int dataSize, int mainIndex) //throw
         // we are going to have to shift up the data that is above us...
         //
         int   topOffset = indexArray.maRecordIndex[GetNumItems() - 1].GetOffset();
-        int8* pTop      = util_OffsetToAddr(pBlock, topOffset);
+        int8_t* pTop    = util_OffsetToAddr(pBlock, topOffset);
         int   amtToMove = topOffset - prevOffset;
         ASSERT(amtToMove >= 0);
 
@@ -385,7 +385,7 @@ void cBlockRecordArray::DeleteItem(int index) //throw (eArchive)
         {
             distToShift -= indexArray.maRecordIndex[index - 1].GetOffset();
         }
-        int8* pSrc = util_OffsetToAddr(pBlock, indexArray.maRecordIndex[GetNumItems() - 1].GetOffset());
+        int8_t* pSrc = util_OffsetToAddr(pBlock, indexArray.maRecordIndex[GetNumItems() - 1].GetOffset());
         //
         // copy the data..
         //
@@ -424,7 +424,7 @@ void cBlockRecordArray::DeleteItem(int index) //throw (eArchive)
 ///////////////////////////////////////////////////////////////////////////////
 // GetDataForReading
 ///////////////////////////////////////////////////////////////////////////////
-int8* cBlockRecordArray::GetDataForReading(int index, int32& dataSize) //throw (eArchive)
+int8_t* cBlockRecordArray::GetDataForReading(int index, int32_t& dataSize) //throw (eArchive)
 {
     // make ourselves initialized, if we are not right now...
     //
@@ -457,7 +457,7 @@ int8* cBlockRecordArray::GetDataForReading(int index, int32& dataSize) //throw (
 ///////////////////////////////////////////////////////////////////////////////
 // GetDataForWriting
 ///////////////////////////////////////////////////////////////////////////////
-int8* cBlockRecordArray::GetDataForWriting(int index, int32& dataSize) //throw (eArchive)
+int8_t* cBlockRecordArray::GetDataForWriting(int index, int32_t& dataSize) //throw (eArchive)
 {
     // make ourselves initialized, if we are not right now...
     //
@@ -545,7 +545,7 @@ bool cBlockRecordArray::IsClassValid() const
         //
         // make sure the final offset is less than the highest record index offset.
         //
-        BRA_ASSERT((int8*)&array.maRecordIndex[i] < util_OffsetToAddr(pBlock, prevOff));
+        BRA_ASSERT((int8_t*)&array.maRecordIndex[i] < util_OffsetToAddr(pBlock, prevOff));
         //
         // TODO -- is there anything else that is worth checking?
     }

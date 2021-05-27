@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -64,8 +64,8 @@ static inline void util_ThrowIfNull(const cHierAddr& addr, const TSTRING& contex
 ///////////////////////////////////////////////////////////////////////////////
 static void util_ReadObject(cHierDatabase* pDb, cHierNode* pNode, const cHierAddr& addr)
 {
-    int32 dataSize;
-    int8* pData = pDb->GetDataForReading(cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize);
+    int32_t dataSize;
+    int8_t* pData = pDb->GetDataForReading(cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize);
     //
     // make sure we aren't trying to read a null object
     //
@@ -96,8 +96,8 @@ static cHierAddr util_WriteObject(cHierDatabase* pDb, cHierNode* pNode)
 ///////////////////////////////////////////////////////////////////////////////
 static void util_RewriteObject(cHierDatabase* pDb, cHierNode* pNode, const cHierAddr& addr)
 {
-    int32 dataSize;
-    int8* pData = pDb->GetDataForWriting(cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize);
+    int32_t dataSize;
+    int8_t* pData = pDb->GetDataForWriting(cBlockRecordFile::tAddr(addr.mBlockNum, addr.mIndex), dataSize);
 
     util_ThrowIfNull(addr, _T("util_RewriteObject"));
 
@@ -557,7 +557,7 @@ void cHierDatabaseIter::CreateEntry(const TSTRING& name) //throw (eArchive, eHie
 ///////////////////////////////////////////////////////////////////////////////
 // GetData
 ///////////////////////////////////////////////////////////////////////////////
-int8* cHierDatabaseIter::GetData(int32& length) const //throw (eArchive, eHierDatabase)
+int8_t* cHierDatabaseIter::GetData(int32_t& length) const //throw (eArchive, eHierDatabase)
 {
     ASSERT(HasData());
     if (!HasData())
@@ -587,7 +587,7 @@ bool cHierDatabaseIter::HasData() const
 ///////////////////////////////////////////////////////////////////////////////
 // SetData
 ///////////////////////////////////////////////////////////////////////////////
-void cHierDatabaseIter::SetData(int8* pData, int32 length) //throw (eArchive, eHierDatabase)
+void cHierDatabaseIter::SetData(int8_t* pData, int32_t length) //throw (eArchive, eHierDatabase)
 {
     ASSERT(!Done());
     ASSERT(!HasData());

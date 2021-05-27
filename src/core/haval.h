@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -98,13 +98,13 @@
 #include "core/tchar.h"
 #endif
 
-typedef uint32 haval_word; /* a HAVAL word = 32 bits */
+typedef uint32_t haval_word; /* a HAVAL word = 32 bits */
 
 typedef struct {
   haval_word    count[2];                /* number of bits in a message */
   haval_word    fingerprint[8];          /* current state of fingerprint */    
   haval_word    block[32];               /* buffer for a 32-word block */ 
-  uint8         remainder[32*4];         /* unhashed chars (No.<128) */   
+  uint8_t       remainder[32*4];         /* unhashed chars (No.<128) */
 } haval_state;
 
 /* Do not remove this line.  Protyping depends on it! 
@@ -118,14 +118,14 @@ typedef struct {
 #define P_(s) s
 //Old prototyping stuff... I will ignore it for now.
 #if 0 //unused in OST
-void haval_string P_((char *, uint8 *)); /* hash a string */
-int  haval_file P_((char *, uint8 *));   /* hash a file */
+void haval_string P_((char *, uint8_t *)); /* hash a string */
+int  haval_file P_((char *, uint8_t *));   /* hash a file */
 void haval_stdin P_((void));                     /* filter -- hash input from stdin */
 #endif
 
 void haval_start P_((haval_state *));            /* initialization */
-void haval_hash P_((haval_state* state, uint8* str, int str_len));
-void haval_end P_((haval_state *, uint8 *)); /* finalization */
+void haval_hash P_((haval_state* state, uint8_t* str, int str_len));
+void haval_end P_((haval_state *, uint8_t *)); /* finalization */
 void haval_hash_block P_((haval_state *));       /* hash a 32-word block */
 
 #endif //__HAVAL_H

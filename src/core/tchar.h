@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -60,19 +60,35 @@
 // A little macro that's useful for finding the number of characters in a TCHAR ARRAY
 #define countof(x) (sizeof(x) / sizeof(x[0]))
 
+#include "platform.h"
 
 #include <string.h>
 #include <string>
-#include <sstream>
 #include <iostream>
+#include <fstream>
+
+#if HAVE_SSTREAM
+#   include <sstream>
+#elif HAVE_STRSTREAM
+#   include <strstream>
+#endif
+
 
 #define TCHAR char
 #define _tmain main
 
 typedef std::string        TSTRING;
-typedef std::stringstream  TSTRINGSTREAM;
-typedef std::ostringstream TOSTRINGSTREAM;
-typedef std::istringstream TISTRINGSTREAM;
+
+#if HAVE_SSTREAM
+    typedef std::stringstream  TSTRINGSTREAM;
+    typedef std::ostringstream TOSTRINGSTREAM;
+    typedef std::istringstream TISTRINGSTREAM;
+#elif HAVE_STRSTREAM
+    typedef strstream  TSTRINGSTREAM;
+    typedef ostrstream TOSTRINGSTREAM;
+    typedef istrstream TISTRINGSTREAM;
+#endif
+
 typedef std::ostream       TOSTREAM;
 typedef std::istream       TISTREAM;
 typedef std::ofstream      TOFSTREAM;
@@ -124,5 +140,37 @@ typedef std::ifstream      TIFSTREAM;
 #    ifndef __cdecl
 #        define __cdecl
 #    endif
+
+#if HAVE_LOCALE
+#   define tss_classic_locale(x) x.imbue(std::locale::classic())
+#else
+#   define tss_classic_locale(x)
+#endif
+
+#if ARCHAIC_STL
+#   define tss_end(x)  x << std::ends
+#   define tss_free(x) x.freeze(0)
+#   define tss_mkstr(y,x) \
+      tss_end(x); \
+      TSTRING y = x.str(); \
+      tss_free(x);
+
+#   define tss_stream_to_string(x,y) \
+      tss_end(x); \
+      y = x.str(); \
+      tss_free(x);
+
+#   define tss_return_stream(x,y) \
+      tss_mkstr(y,x) \
+      return y;
+
+#else
+#   define tss_end(x)
+#   define tss_free(x)
+#   define tss_mkstr(y,x) TSTRING y = x.str();
+#   define tss_stream_to_string(x,y) y = x.str();  
+#   define tss_return_stream(x,y) return x.str();
+#endif
+
 
 #endif // __TCHAR_H

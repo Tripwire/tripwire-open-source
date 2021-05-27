@@ -2,75 +2,39 @@ dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl
 
-AC_INIT([tripwire], [2.4.3.7], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
+AC_INIT([tripwire], [2.4.3.8], [https://github.com/Tripwire/tripwire-open-source/issues], [tripwire], [https://github.com/Tripwire/tripwire-open-source])
 AC_CONFIG_SRCDIR([src/tw/tw.cpp])
+AC_CANONICAL_HOST([])
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
-AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2018 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
-AC_REVISION([$Revision: 2.4.3.7 $])
+AC_COPYRIGHT([The developer of the original code and/or files is Tripwire, Inc.  Portions created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.  Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.])
+AC_REVISION([$Revision: 2.4.3.8 $])
 
-dnl ###############
-dnl Setup defaults
-dnl ###############
-CFLAGS=${CFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
-CXXFLAGS=${CXXFLAGS:-"-O -pipe -Wall -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64"}
+dnl ensure that things like _GNU_SOURCE are enabled, since we use a handful of extended
+dnl things like O_NOATIME when they're available.  autotools wants this to happen early
+dnl before it tries to compile anything
+AC_USE_SYSTEM_EXTENSIONS
 
-dnl #####################
-dnl Configuration options
-dnl #####################
+dnl AC_LANG_CPLUSPLUS wants to set CXXFLAGS to include '-g -O2', but we probably don't want to
+dnl include debug symbols by default, so save off the previous value & restore it afterward
+tmp_cxxflags=${CXXFLAGS}
+AC_LANG_CPLUSPLUS
+CXXFLAGS=${tmp_cxxflags}
 
-# This is primarily to support old compilers that don’t understand -Wextra
-AC_ARG_ENABLE(extrawarnings,  [  —-disable-extrawarnings do not compile with -Wextra warnings enabled])
-if test "x$enable_extrawarnings" != "xno"
-then
-   CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
-   CXXFLAGS="${CXXFLAGS} -Wextra -Wno-unused-parameter"
-fi
-
-AC_ARG_ENABLE(static, [  --enable-static         compile static binaries])
-if test "x$enable_static" = xyes
-then LDFLAGS="${LDFLAGS} -static"
-fi
-
-AC_ARG_ENABLE(debug,  [  --enable-debug          compile with debuging enabled])
-if test "x$enable_debug" = xyes
-then
-   CFLAGS="${CFLAGS} -g"
-   CXXFLAGS="${CXXFLAGS} -g"
-   AC_DEFINE(DEBUG, 1, [Compile with debug code])
-else
-   AC_DEFINE(NDEBUG, 1, [Compile without debug code])
-fi
-
-AC_ARG_ENABLE(coverage, [  --enable-coverage       enable code coverage])
-if test "x$enable_coverage" = xyes
-then
-   CFLAGS="${CFLAGS} --coverage"
-   CXXFLAGS="${CXXFLAGS} --coverage"
-   LDFLAGS="${LDFLAGS} --coverage"
-fi
-
-AC_ARG_ENABLE(profiling, [  --enable-profiling      enable profiling])
-if test "x$enable_profiling" = xyes
-then
-   CFLAGS="${CFLAGS} -pg"
-   CXXFLAGS="${CXXFLAGS} -pg"
-   LDFLAGS="${LDFLAGS} -pg"
-fi
-
-AC_ARG_ENABLE(urandom,  [  --enable-urandom        use /dev/urandom])
-if test "x$enable_urandom" = xyes
-then
-   AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
-fi
+dnl *******************************************************
+dnl Append an include to config.h for a handcrafted header
+dnl that sets things back to (hopefully) correct values
+dnl for known cases where autoconf does the Wrong Thing
+dnl *******************************************************
+AH_BOTTOM([#include "core/fixups.h"])
 
 dnl ###################
 dnl Checks for programs
 dnl ###################
-AC_PROG_CC([gcc clang suncc aCC xlC_r xlC cl.exe])
-AC_PROG_CXX([g++ c++ clang++ sunCC aCC xlC_r xlC cl.exe])
+dnl AC_PROG_CC([gcc clang suncc aCC xlc_r gxlc cl])
+AC_PROG_CXX([g++ clang++ sunCC aCC xlc++_r gxlc++ ixlc icpc owcc cl KCC cfront c++])
 AC_PROG_RANLIB
 AC_PROG_YACC
 AC_PROG_LN_S
@@ -82,31 +46,171 @@ AC_PROG_AR
 AC_PATH_PROG(path_to_vi, vi)
 AC_PATH_PROG(path_to_sendmail, sendmail, "", [$PATH:/usr/libexec])
 
+
+dnl #########################################
+dnl Set up per-compiler constants & base args
+dnl #########################################
+
+dnl first look at compilers that define __GNUC__
+dnl since automake is good at that.
+dnl
 if test "x${GXX}" != "x"; then
- AC_DEFINE(HAVE_GCC, 1, [Uses the GNU gcc compiler])
+
+    CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
+
+    AC_DEFINE(HAVE_GNUC, 1, [Compiler supports GNU C++ dialect & args])
+    
+    case "${CXX}" in
+        *clang++*)
+            AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang++ compiler])
+	    ;;
+	icpc)
+            AC_DEFINE(HAVE_INTEL_ICC, 1, [Uses the Intel ICC compiler])
+	    ;;	
+	*)
+            AC_DEFINE(HAVE_GCC, 1, [Uses the GNU g++ compiler])
+	    ;;	
+    esac
+
 else
- AC_DEFINE(HAVE_GCC, 0, [Uses the GNU gcc compiler])
+    dnl in case Clang stops defining __GNUC__ or user undefines it
+    if test "x${CXX}" = "xclang++"; then
+	AC_DEFINE(HAVE_CLANG, 1, [Uses the Clang compiler])
+	CXXFLAGS=${CXXFLAGS:-"-O -pipe"}
+    fi
+
+    if test "x${CXX}" = "xgxlc++"; then
+        AC_DEFINE(HAVE_IBM_GXLC, 1, [Uses the gxlc++ compiler])
+
+        dnl OBJECT_MODE needs to be set while compiling
+        export OBJECT_MODE=64
+        CXXFLAGS=${CXXFLAGS:-"-O -maix64 -Wx,-qinfo=all"}
+        ARFLAGS=${ARFLAGS:-"-X 64"}
+    fi
+
+    if test "x${CXX}" = "xxlc++_r"; then
+        AC_DEFINE(HAVE_IBM_XLC, 1, [Uses the IBM XL C++ compiler])
+
+        dnl OBJECT_MODE needs to be set while compiling
+        export OBJECT_MODE=64
+        CXXFLAGS=${CXXFLAGS:-"-O -q64 -qinfo=all -qsuppress=1540-5311:1540-5337:1540-5341"}
+        ARFLAGS=${ARFLAGS:-"-X 64"}
+    fi
+
+    dnl *** TODO these compilers need work on default args ****
+
+    if test "x${CXX}" = "xsunCC"; then
+        AC_DEFINE(HAVE_ORACLE_SUNCC, 1, [Uses the sunCC compiler])
+    fi
+
+    if test "x${CXX}" = "xaCC"; then
+        AC_DEFINE(HAVE_HP_ACC, 1, [Uses the aCC compiler])
+    fi
+
+    if test "x${CXX}" = "xowcc"; then
+        AC_DEFINE(HAVE_OPENWATCOM, 1, [Uses the OpenWatcom compiler])
+        CXXFLAGS=${CXXFLAGS:-"-xs"}
+    fi
+ 
+
 fi
+
+dnl ######################
+dnl Enable various warnings
+dnl #####################
+
+AX_CHECK_COMPILE_FLAG([-Wall],        [CXXFLAGS="$CXXFLAGS -Wall"])
+AX_CHECK_COMPILE_FLAG([-Wextra],      [CXXFLAGS="$CXXFLAGS -Wextra"])
+dnl OpenWatcom compiler understands -Wextra but not -Wno-unused-parameter, so detect it separately
+AX_CHECK_COMPILE_FLAG([-Wno-unused-parameter], [CXXFLAGS="$CXXFLAGS -Wno-unused-parameter"])
+
+dnl AX_CHECK_COMPILE_FLAG([-Weverything], [CXXFLAGS="$CXXFLAGS -Weverything"])
+
+dnl #####################
+dnl Configuration options
+dnl #####################
+dnl
+dnl  These options generally expect a compiler+linker
+dnl  that understand gcc-like command line options.
+
+AC_ARG_ENABLE(static, [  --enable-static         compile static binaries])
+if test "x$enable_static" = xyes
+then LDFLAGS="${LDFLAGS} -static"
+fi
+
+AC_ARG_ENABLE(debug,  [  --enable-debug          compile with debuging enabled])
+if test "x$enable_debug" = xyes
+then
+   CXXFLAGS="${CXXFLAGS} -g"
+   AC_DEFINE(DEBUG, 1, [Compile with debug code])
+else
+   AC_DEFINE(NDEBUG, 1, [Compile without debug code])
+fi
+
+AC_ARG_ENABLE(coverage, [  --enable-coverage       enable code coverage])
+if test "x$enable_coverage" = xyes
+then
+   CXXFLAGS="${CXXFLAGS} --coverage"
+   LDFLAGS="${LDFLAGS} --coverage"
+fi
+
+AC_ARG_ENABLE(profiling, [  --enable-profiling      enable profiling])
+if test "x$enable_profiling" = xyes
+then
+   CXXFLAGS="${CXXFLAGS} -pg"
+   LDFLAGS="${LDFLAGS} -pg"
+fi
+
+AC_ARG_ENABLE(urandom,  [  --enable-urandom        use /dev/urandom])
+if test "x$enable_urandom" = xyes
+then
+   AC_DEFINE(ENABLE_DEV_URANDOM, 1, [Enable use of /dev/urandom])
+fi
+
+
 
 dnl #######################
 dnl Checks for header files
 dnl #######################
 AC_HEADER_STDC
+AC_HEADER_DIRENT
+
+AC_CHECK_HEADERS(grp.h)
+AC_CHECK_HEADERS(langinfo.h)
+AC_CHECK_HEADERS(memory.h)
+AC_CHECK_HEADERS(pthread.h)
+AC_CHECK_HEADERS(pwd.h)
+AC_CHECK_HEADERS(signum.h bits/signum.h, break)
+AC_CHECK_HEADERS(stdarg.h varargs.h, break)
+AC_CHECK_HEADERS(stdint.h)
+AC_CHECK_HEADERS(syslog.h sys/syslog.h, break)
+AC_CHECK_HEADERS(termios.h)
+AC_CHECK_HEADERS(unistd.h sys/unistd.h, break)
+AC_CHECK_HEADERS(features.h)
+AC_CHECK_HEADERS(sys/file.h)
 AC_CHECK_HEADERS(sys/param.h)
 AC_CHECK_HEADERS(sys/mount.h,,,
 [[#if defined(HAVE_SYS_PARAM_H)
 #include <sys/param.h>
 #endif
 ]])
-AC_CHECK_HEADERS(sys/ustat.h sys/sysmacros.h sys/syslog.h sys/socket.h)
-AC_CHECK_HEADERS(unistd.h sys/unistd.h)
-AC_CHECK_HEADERS(syslog.h langinfo.h sys/statfs.h sys/select.h)
-AC_CHECK_HEADERS(signum.h bits/signum.h, break )
-AC_CHECK_HEADERS(stdarg.h varargs.h, break )
-AC_CHECK_HEADERS(sys/utsname.h memory.h)
-AC_CHECK_HEADERS(sys/fs/vx_ioctl.h)
 
-dnl # Special case for malloc.h, because it's depreciated on most systems.
+AC_CHECK_HEADERS(sys/select.h)
+AC_CHECK_HEADERS(sys/socket.h)
+AC_CHECK_HEADERS(sys/statfs.h)
+AC_CHECK_HEADERS(sys/sysmacros.h)
+AC_CHECK_HEADERS(sys/time.h)
+AC_CHECK_HEADERS(sys/ustat.h)
+AC_CHECK_HEADERS(sys/utsname.h)
+AC_CHECK_HEADERS(sys/wait.h)
+
+AC_CHECK_HEADERS(sys/fs/vx_ioctl.h)
+AC_CHECK_HEADERS(unixlib/local.h)
+AC_CHECK_HEADERS(proto/bsdsocket.h)
+AC_CHECK_HEADERS(proto/exec.h)
+AC_CHECK_HEADERS(bsdsocket/socketbasetags.h)
+
+dnl # Special case for malloc.h, because it's deprecated on most systems.
 CPPFLAGS_SAVE="${CPPFLAGS}"
 CPPFLAGS="${CPPFLAGS} -Werror"
 AC_CHECK_HEADERS(malloc.h)
@@ -117,61 +221,124 @@ dnl Checks for typedefs, structures, and compiler characteristics
 dnl #############################################################
 AC_C_CONST
 AC_TYPE_SIZE_T
+AC_TYPE_UID_T
+AC_TYPE_UINTPTR_T
 AC_HEADER_TIME
 AC_C_BIGENDIAN
+AC_C_CHAR_UNSIGNED
+
 AC_CHECK_SIZEOF(int)
 AC_CHECK_SIZEOF(long)
 AC_CHECK_SIZEOF(long long)
 AC_CHECK_SIZEOF(time_t)
+AC_CHECK_SIZEOF(wchar_t)
 
-dnl All platforms we support use 2's complement, are byte aligned, etc...
+AC_CHECK_ALIGNOF(int)
+AC_CHECK_ALIGNOF(long)
+AC_CHECK_ALIGNOF(long long)
+
+dnl TODO: These could be replaced with actual detection logic, for the few
+dnl   remaining platforms that have non-2s complement signed ints
 AC_DEFINE(USES_1S_COMPLEMENT, 0, [Uses one's complement])
 AC_DEFINE(USES_2S_COMPLEMENT, 1, [Uses two's complement])
 AC_DEFINE(USES_SIGNED_MAGNITUDE, 0, [Uses signed magnitute])
-AC_DEFINE(IS_BYTE_ALIGNED, 1, [Is byte aligned])
+
 AC_DEFINE(EXCEPTION_NAMESPACE, std::, [this is the prefix for STL exception functions])
 
-dnl We used to check for UNIX or Unix-like target platforms,
-dnl but that is a little extreme, so just assume that the
-dnl target is unix.  This can still be changed in config.h
-AC_DEFINE(IS_UNIX, 1, [Is a unix type platform])
-
 dnl whether or not to generate debuging code?
-AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
+dnl this gets defined elsewhere based on config args AC_DEFINE(NDEBUG, 1, [don't generate debuging code])
 
-dnl look for struct stat members that aren't always there
-AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blocks])
+dnl look for struct stat members that aren't always there:
+dnl   st_rdev, st_blksize, & st_blocks are standard but a few platforms don't have them.
+dnl   st_flags & st_gen are BSD-isms & are mostly seen there, including macOS
+dnl   st_flag (singular) is AIX-only, while st_attrib holds DOS attribute bits on VxWorks
+AC_CHECK_MEMBERS([struct stat.st_rdev, struct stat.st_blksize, struct stat.st_blocks, struct stat.st_flags, struct stat.st_gen, struct stat.st_flag, struct stat.st_attrib])
+
+dnl detect large file support & use it where available
+AC_SYS_LARGEFILE
+
+dnl detect whether Posix termios is available.
+dnl we use termios to turn echo off when user is entering a passphrase
+AC_SYS_POSIX_TERMIOS
+
+dnl detect whether C++ compiler supports any variant of 'restrict' keyword
+dnl (the macro says 'C' but works for both C & C++)
+AC_C_RESTRICT
+
+dnl ******************************************
+dnl Check whether AC_CHECK_FUNC(S) lies to us
+dnl ******************************************
+AC_CHECK_FUNCS(broken_ac_check_func)
 
 dnl #############################
 dnl Checks for standard functions
 dnl #############################
-AC_CHECK_FUNCS(strftime gethostname gethostid)
-AC_CHECK_FUNCS(mkstemp mktemp, break)
-AC_CHECK_FUNCS(swab)
+AC_CHECK_FUNCS(strftime)
+AC_CHECK_FUNCS(getaddrinfo gethostname gethostbyname gethostid)
+AC_CHECK_FUNCS(getuid getgid)
+dnl various ways of creating/naming temp files
+AC_CHECK_FUNCS(mkstemp mktemp tmpnam, break)
+dnl i18n string fns
+AC_CHECK_FUNCS(mblen mbtowc)
+dnl misc assorted
+AC_CHECK_FUNCS(swab tzset _exit popen memcpy_s)
+
+dnl posix way to read files
+AC_CHECK_FUNCS(openat open read close)
+dnl standard libc way to read files
+AC_CHECK_FUNCS(fopen fread fclose)
+dnl only standard way to read dir contents
+AC_CHECK_FUNCS(opendir readdir closedir)
+dnl posix (and extended) ways to get file attributes
+AC_CHECK_FUNCS(statx fstatat lstat stat)
+dnl posix way to get symlink contents
+AC_CHECK_FUNCS(readlinkat readlink)
+
+dnl posix fns that make filesystem changes
+AC_CHECK_FUNCS(chown chmod link symlink mknod mkfifo)
+dnl more posix fns that make fs changes
+AC_CHECK_FUNCS(unlink rename ftruncate)
+dnl posix syslog fns
+AC_CHECK_FUNCS(openlog syslog closelog)
+dnl posix process fns
+AC_CHECK_FUNCS(fork vfork execve posix_spawn)
+dnl bsd socket fns
+AC_CHECK_FUNCS(socket connect bind)
+dnl posix user & group stuff
+AC_CHECK_FUNCS(setuid setgid getgrgid)
 
 dnl check for posix_fadvise
 AC_CHECK_HEADERS(fcntl.h, [AC_CHECK_FUNCS(posix_fadvise)])
 
+dnl check for setlocale
+AC_CHECK_HEADERS(locale.h, [AC_CHECK_FUNCS(setlocale)])
+dnl check for a C isprint
+AC_CHECK_HEADERS(ctype.h, [AC_CHECK_FUNCS(isprint)])
+
 dnl check for OSX builtin hash algorithms
 AC_ARG_ENABLE(commoncrypto,
-        [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
+    [  --disable-commoncrypto  Don't use CommonCrypto hash implementations (OSX only)])
 
 if test "x${enable_commoncrypto}" != "xno"
 then
-  AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
+    AC_CHECK_HEADERS(CommonCrypto/CommonDigest.h)
 fi
 
 dnl check for door support (Solaris)
 AC_CHECK_HEADERS(door.h, [AC_CHECK_FUNCS(door_create)])
-
 dnl check for event port support (Solaris)
 AC_CHECK_HEADERS(port.h, [AC_CHECK_FUNCS(port_create)])
+dnl check for directio syscall (Solaris)
+AC_CHECK_FUNCS(directio)
+
+dnl check for existence of fseeko() as well as ftello()
+AC_FUNC_FSEEKO
+
 
 dnl ##############################################  
 dnl check for various RNG/PRNG devices
 dnl ##############################################  
 
-UNAME=`uname`
 
 dnl ############################################## 
 dnl AROS pops up a "Please insert disk" dialog for /dev
@@ -179,21 +346,15 @@ dnl if script looks for devices (which don't exist)
 dnl so don't even try looking.
 dnl ############################################## 
 
-if [[ $UNAME != "AROS" ]]; then
-
-  if test -c "/dev/random"; then
-    AC_DEFINE(HAVE_DEV_RANDOM, [1], [Has /dev/random])
-  fi
-
-  if test -c "/dev/urandom"; then
-    AC_DEFINE(HAVE_DEV_URANDOM, [1], [Has /dev/urandom])
-  fi
-
-  if test -c "/dev/arandom"; then
-    AC_DEFINE(HAVE_DEV_ARANDOM, [1], [Has /dev/arandom])
-  fi
-
-fi
+case $host_os in
+  aros*)
+    ;;
+  *)
+    if test "$cross_compiling" != yes; then
+        AC_CHECK_FILES(/dev/random /dev/urandom /dev/arandom)
+    fi
+    ;;
+esac
 
 dnl ##############################################
 dnl Checks for various platform specific libraries
@@ -229,21 +390,32 @@ then
     ], [:]) ])
 fi
 
-dnl check for stl library
-AC_LANG_SAVE
-AC_LANG_CPLUSPLUS
+dnl Check for STL support, either native or STLport
 
 dnl
 dnl Check for STL headers
 dnl
-AC_CHECK_HEADER(locale,, [
+
+if test -z "${STLPORT}"; then
+   STLPORT="."
+fi
+
+stlport_include="${STLPORT}/stlport"
+stlport_lib="${STLPORT}/lib"
+
+AC_CHECK_HEADERS(limits limits.h)
+
+dnl Use <locale> as a proxy for C++98-compliant-ish STL
+dnl and look for STLport if file isn't found immediately
+AC_CHECK_HEADERS(locale,,[
   dnl Don't have native STL headers, look in other places
   AC_CACHE_CHECK([for STLport directory], ac_cv_stlportdir, [
+    echo "Native <locale> header not found; checking if STLport is available"
     found_locale=""
-    for inclpath in /usr/local/include /usr/local/include/stlport
+    for inclpath in ${stlport_include} /usr/local/include /usr/local/include/stlport
     do
       CPPFLAGS_save=${CPPFLAGS}
-      CPPFLAGS="${CPPFLAGS} -I${inclpath}"
+      CPPFLAGS="${CPPFLAGS} -I${inclpath} -nostdinc++"
       AC_TRY_COMPILE([
 #include <locale>
 ]
@@ -265,10 +437,12 @@ AC_CHECK_HEADER(locale,, [
       fi
     ])
   ])
+  
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    CPPFLAGS="${CPPFLAGS} -I${ac_cv_stlportdir}"
+    CPPFLAGS="${CPPFLAGS} -I ${ac_cv_stlportdir} -nostdinc++"
   fi
+  
   AC_TRY_LINK([#include <locale>],,,[
     dnl Don't have native STL library, look in other places
     dnl First check for POSIX threads if we compile STLport, because it needs it
@@ -276,6 +450,7 @@ AC_CHECK_HEADER(locale,, [
 
     LDFLAGS_TEMP="${LDFLAGS}"
     LDFLAGS="${LDFLAGS_TEMP} -pthread"
+
     unset ac_cv_func_pthread_getspecific
     AC_CHECK_FUNC(pthread_getspecific, [:], [
 
@@ -283,26 +458,31 @@ AC_CHECK_HEADER(locale,, [
       unset ac_cv_func_pthread_getspecific
       AC_CHECK_FUNC(pthread_getspecific, [:], [
         LDFLAGS="${LDFLAGS_TEMP}"
-        AC_MSG_ERROR([No posix threads detected, cannot continue.]) ])
+        AC_MSG_WARN([No posix threads detected; OST may not link.]) ])
         ])
     ])
 
     AC_CACHE_CHECK([for STLport library directory], ac_cv_stlportlib, [
       found_lib=""
-      for inclpath in /usr/local/lib /usr/local/lib/stlport
+      for inclpath in ${stlport_lib} /usr/local/lib /usr/local/lib/stlport
       do
         for stllib in stlport stlport_gcc
         do
           LDFLAGS_save=${LDFLAGS}
           LIBS_save=${LIBS}
+	  LD_LIBRARY_PATH_save=${LD_LIBRARY_PATH}
+	  
           LDFLAGS="${LDFLAGS} -L${inclpath}"
           LIBS="${LIBS} -l${stllib}"
+	  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${inclpath}"
+	  
           AC_TRY_LINK([
 #include <locale>
 ]
           , , [ found_lib="1" ], )
           LDFLAGS=${LDFLAGS_save}
           LIBS=${LIBS_save}
+	  export LD_LIBRARY_PATH="${LD_LIBRARY_PATH_save}"
           if test "x${found_lib}" = "x1"
           then
             ac_cv_stlportlib=${inclpath}
@@ -325,22 +505,27 @@ AC_CHECK_HEADER(locale,, [
     ])
   if test "x${ac_cv_stlportdir}" != "x"
   then
-    LDFLAGS="${LDFLAGS} -L${ac_cv_stlportlib}"
+    LDFLAGS="${LDFLAGS} -L ${ac_cv_stlportlib}"
     LIBS="${LIBS} -l${stllib}"
+    export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+:LD_LIBRARY_PATH}${ac_cv_stlportlib}"
+
+    AC_DEFINE(HAVE_LOCALE, 1, [Define to 1 if you have the <locale> header file.])
+    AC_DEFINE(HAVE_STLPORT, 1, [Define if STLport library is used])
   fi
   ])
-AC_LANG_RESTORE
+
 
 dnl #####################
 dnl STL specific headers
 dnl #####################
 AC_CHECK_HEADERS(wchar.h)
+AC_CHECK_HEADERS(sstream strstream)
 
 dnl #######################################################################
 dnl Local checks/hacks.  The goal is to make this part as short as possible
 dnl #######################################################################
-AC_DEFINE_UNQUOTED(TARGET_OS, "${target}", [Target OS])
-case $target in
+AC_DEFINE_UNQUOTED(TARGET_OS, "${host}", [Target OS])
+case $host in
 	i386-*-freebsd*)
 		;;
 	alpha-*-freebsd*)
@@ -361,7 +546,7 @@ case $target in
 		 then
 		 AC_MSG_WARN( [
 
-Sorry, tripwire will not properly link staticaly under Solaris.
+Sorry, tripwire will not properly link statically under Solaris.
 This is due to tripwire's extensive use of gethostbyname(),
 which can only be linked dynamicaly.  Please rerun configure
 without the --enable-static option.
@@ -391,6 +576,7 @@ if you are trying to compile a static binary.
 dnl Check for OpenSSL, now that we have a working compiler
 AC_ARG_ENABLE(openssl,
         [  --disable-openssl       Don't link against OpenSSL libraries])
+
 AC_ARG_WITH(ssl-dir,
 	[  --with-ssl-dir=PATH     Specify path to OpenSSL installation ],
 	[
@@ -447,7 +633,7 @@ then
 
 		# Basic test to check for compatible library and
 		# correct linking
-		if test "$cross_compiling" = yes; then
+		if test "x$cross_compiling" = "xyes"; then
                         found_crypto=1
                 else       
 		AC_TRY_RUN(

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -32,11 +32,11 @@
 // hashtable.h  : a template class for mapping tuples using TCHAR*'s
 //
 // implements cHashTable, which maps a key of arbitrary type to a value
-// of arbitrary type.  The key data type MUST have the const byte*()
+// of arbitrary type.  The key data type MUST have the const uint8_t*()
 // operator overloaded in order for this to work.  TSTRINGS will always
 // work as the key value because of the overloaded-template-function
 //
-//      Note: Any overloaded const byte*() operator must return an
+//      Note: Any overloaded const uint8_t*() operator must return an
 // length of key as well.  see cDefaultConvert
 //
 // IMPORTANT -- cDefaultConvert only works for pointers to objects
@@ -85,26 +85,26 @@ template<> inline bool cDefaultCompare<TSTRING>::operator()(const TSTRING& lhs, 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Conversion function objects ... used by the hash table to locate the key in KEY_TYPE
-//      into a byte* and a key length (for hashing purposes). The default implementation
+//      into a uint8_t* and a key length (for hashing purposes). The default implementation
 //      just does a cast. A specialization is also provided for TSTRINGs.
 ///////////////////////////////////////////////////////////////////////////////
 template<class T> class cDefaultConvert
 {
 public:
-    const byte* operator()(const T& obj, int* const pcbKeyLen)
+    const uint8_t* operator()(const T& obj, int* const pcbKeyLen)
     {
         // HACK!  TODO: in the interest of time, I've left this as it is.....
         *pcbKeyLen = sizeof(TCHAR) * _tcslen(obj);
-        return (byte*)obj;
+        return (uint8_t*)obj;
     }
 };
 /////////////////////////////////////////////////////////
 // specialization for TSTRINGS
 /////////////////////////////////////////////////////////
-template<> inline const byte* cDefaultConvert<TSTRING>::operator()(const TSTRING& obj, int* const pcbKeyLen)
+template<> inline const uint8_t* cDefaultConvert<TSTRING>::operator()(const TSTRING& obj, int* const pcbKeyLen)
 {
     *pcbKeyLen = sizeof(TCHAR) * obj.length();
-    return (byte*)obj.c_str();
+    return (uint8_t*)obj.c_str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -113,8 +113,8 @@ template<> inline const byte* cDefaultConvert<TSTRING>::operator()(const TSTRING
 //      VAL -- the value you want associated with that key
 //      CMP -- a function object that takes (KEY, KEY) and returns true if they
 //              are equal.
-//      CONVERTER -- function object that takes (KEY, int* pcbKeyLen) and returns a const byte*
-//              ( points to start of key ) and a byte length (in pcbKeyLen) that tells the hashtable
+//      CONVERTER -- function object that takes (KEY, int* pcbKeyLen) and returns a const uint8_t*
+//              ( points to start of key ) and a uint8_t length (in pcbKeyLen) that tells the hashtable
 //              how long the key is
 ///////////////////////////////////////////////////////////////////////////////
 // these were moved outside of the class because it sucks to have to name the class with template parameters
@@ -172,9 +172,9 @@ public:
     bool Clear(void);
     //Clears the entire table and sets all node pointers to NULL
     bool   IsEmpty(void) const;
-    uint32 Hash(const KEY_TYPE& key) const;
+    uint32_t Hash(const KEY_TYPE& key) const;
     //The hashing function, taken from old Tripwire
-    int32 GetNumValues() const
+    int32_t GetNumValues() const
     {
         return mValuesInTable;
     };
@@ -189,9 +189,9 @@ private:
     cHashTable(const cHashTable& rhs);     // not impl
     void operator=(const cHashTable& rhs); // not impl
 
-    node** mTable;
-    int    mTableSize;
-    int32  mValuesInTable;
+    node**   mTable;
+    int      mTableSize;
+    int32_t  mValuesInTable;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -506,12 +506,12 @@ bool cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::IsEmpty(void) const
 // Hash -- performs hashing on key, returns an integer index val.
 ////////////////////////////////////////////////////////////////////////////////
 template<class KEY_TYPE, class VAL_TYPE, class COMPARE_OP, class CONVERTER>
-uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash(const KEY_TYPE& key) const
+uint32_t cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash(const KEY_TYPE& key) const
 {
     CONVERTER   converter;
     int         len;
-    const byte* pb = converter(key, &len); //locates key
-    uint32      hindex;
+    const uint8_t* pb = converter(key, &len); //locates key
+    uint32_t    hindex;
 
     hindex = *pb;
     while (len-- > 0)

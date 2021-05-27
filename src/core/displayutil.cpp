@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -94,5 +94,5 @@ TSTRING cDisplayUtil::FormatMultiLineString(const TSTRING& str, int nOffset, int
     // now add last string
     sstr << strT;
 
-    return (sstr.str());
+    tss_return_stream(sstr, out);
 }

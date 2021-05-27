@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -48,14 +48,14 @@
 
 /* Data structure for MD5 (Message-Digest) computation */
 typedef struct {
-  uint32 i[2];                   /* number of _bits_ handled mod 2^64 */
-  uint32 buf[4];                                    /* scratch buffer */
-  uint8 in[64];                              /* input buffer */
-  uint8 digest[16];     /* actual digest after MD5Final call */
+  uint32_t i[2];                   /* number of _bits_ handled mod 2^64 */
+  uint32_t buf[4];                                    /* scratch buffer */
+  uint8_t in[64];                              /* input buffer */
+  uint8_t digest[16];     /* actual digest after MD5Final call */
 } MD5_CTX;
 
 void MD5Init(MD5_CTX*);
-void MD5Update(MD5_CTX*, uint8*, unsigned int);
+void MD5Update(MD5_CTX*, uint8_t*, unsigned int);
 void MD5Final(MD5_CTX*);
 
 #endif //__MD5_H

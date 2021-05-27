@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -142,7 +142,7 @@ cPolicyUpdate::cPolicyUpdate(cGenre::Genre       genreNum,
 ///////////////////////////////////////////////////////////////////////////////
 // Execute
 ///////////////////////////////////////////////////////////////////////////////
-bool cPolicyUpdate::Execute(uint32 flags) // throw (eError)
+bool cPolicyUpdate::Execute(uint32_t flags) // throw (eError)
 {
     // here is my current idea for the algorithm: first, do an integrity check with the new policy on the database and
     // a special flag passed to Execute() to modify what properties are checked. Then, take the resulting
@@ -166,7 +166,7 @@ bool cPolicyUpdate::Execute(uint32 flags) // throw (eError)
     //
     // set up flags for the property calculator and iterators
     //
-    uint32 icFlags = cIntegrityCheck::FLAG_COMPARE_VALID_PROPS_ONLY | cIntegrityCheck::FLAG_INVALIDATE_EXTRA_DB_PROPS |
+    uint32_t icFlags = cIntegrityCheck::FLAG_COMPARE_VALID_PROPS_ONLY | cIntegrityCheck::FLAG_INVALIDATE_EXTRA_DB_PROPS |
                      cIntegrityCheck::FLAG_SET_NEW_PROPS;
 
     if (flags & FLAG_ERASE_FOOTPRINTS_PU)
@@ -279,7 +279,7 @@ bool cPolicyUpdate::Execute(uint32 flags) // throw (eError)
     //
     cUpdateDb update(mDb, report, mpBucket);
 
-    uint32 updateDBFlags = cUpdateDb::FLAG_REPLACE_PROPS;
+    uint32_t updateDBFlags = cUpdateDb::FLAG_REPLACE_PROPS;
     if (flags & FLAG_ERASE_FOOTPRINTS_PU)
     {
         updateDBFlags |= cUpdateDb::FLAG_ERASE_FOOTPRINTS_UD;

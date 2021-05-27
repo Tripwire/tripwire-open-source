@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -65,7 +65,7 @@ public:                           \
 class cFCOPropInt32 : public iFCOProp
 {
 public:
-    PROP_DATA(int32)            // see macro above
+    PROP_DATA(int32_t)            // see macro above
     DECLARE_TYPEDSERIALIZABLE() // type information
 
     cFCOPropInt32() : mValue(0)
@@ -81,14 +81,14 @@ public:
     virtual void      Copy(const iFCOProp* rhs);
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 };
 
 class cFCOPropInt64 : public iFCOProp
 {
 public:
-    PROP_DATA(int64)            // see macro above
+    PROP_DATA(int64_t)            // see macro above
     DECLARE_TYPEDSERIALIZABLE() // type information
 
     cFCOPropInt64() : mValue(0)
@@ -104,14 +104,14 @@ public:
     virtual void      Copy(const iFCOProp* rhs);
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 };
 
 class cFCOPropUint64 : public iFCOProp
 {
 public:
-    PROP_DATA(uint64)           // see macro above
+    PROP_DATA(uint64_t)           // see macro above
     DECLARE_TYPEDSERIALIZABLE() // type information
 
     cFCOPropUint64() : mValue(0)
@@ -127,7 +127,7 @@ public:
     virtual void      Copy(const iFCOProp* rhs);
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 };
 
@@ -151,7 +151,7 @@ public:
     virtual void      Copy(const iFCOProp* rhs);
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 };
 

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -382,7 +382,7 @@ cFCOName::Relationship cFCOName::GetRelationship(const cFCOName& rhs) const
 // TODO -- serialize the hash table and nodes instead of reading and writing
 //      as a string
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOName::Read(iSerializer* pSerializer, int32 version)
+void cFCOName::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Name Read")));
@@ -390,7 +390,7 @@ void cFCOName::Read(iSerializer* pSerializer, int32 version)
     TSTRING str;
     pSerializer->ReadString(str);
 
-    int16 dummy = 0;
+    int16_t dummy = 0;
 
     // serialize the delimiter
     pSerializer->ReadInt16(dummy); // delimiter, but it's always '/' anyway in OST.
@@ -421,7 +421,7 @@ void cFCOName::Write(iSerializer* pSerializer) const
     // serialize the delimiter
     unsigned short wc = (unsigned short)'/';
     pSerializer->WriteInt16(wc);
-    pSerializer->WriteInt16(mbCaseSensitive ? (int16)1 : (int16)0);
+    pSerializer->WriteInt16(mbCaseSensitive ? (int16_t)1 : (int16_t)0);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

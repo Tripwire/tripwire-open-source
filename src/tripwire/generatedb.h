@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -53,7 +53,7 @@ public:
                         cHierDatabase&      db,
                         iFCOPropDisplayer*  pPD,
                         cErrorBucket*       pBucket,
-                        uint32              flags = 0);
+                        uint32_t            flags = 0);
     // generates a tripwire database; this asserts that the database is open
 
     enum Flags

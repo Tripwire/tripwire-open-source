@@ -31,7 +31,7 @@ void SHA::HashBlock(const word32 *input)
 #endif
 }
 
-void SHA::Final(byte *hash)
+void SHA::Final(uint8_t *hash)
 {
     PadLastBlock(56);
     CorrectEndianess(data, data, 56);
@@ -115,7 +115,7 @@ void SHA::Transform( word32 *digest, const word32 *data )
     word32 eData[16];
     memcpy( eData, data, DATASIZE );
 
-    register word32 A, B, C, D, E;
+    word32 A, B, C, D, E;
     A = digest[0];
     B = digest[1];
     C = digest[2];

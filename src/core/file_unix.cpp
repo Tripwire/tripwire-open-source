@@ -1,6 +1,6 @@
 
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -31,27 +31,15 @@
 //
 // file_unix.cpp : Specific implementation of file operations for Unix.
 
-
-/* On GNU/Hurd, need to define _GNU_SOURCE in order to use  O_NOATIME
-   which technically is still a nonstandard extension to open() */
-#if IS_HURD
-#    define _GNU_SOURCE
-#endif
-
 #include "core/stdcore.h"
-
-#if !IS_UNIX
-#    error Need to be unix to use unixfsservices
-#endif
-
 #include "core/file.h"
 
-#include <stdio.h>
+//#include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+//#include <sys/types.h>
+//#include <sys/stat.h>
 #include <fcntl.h>
-#include <errno.h>
+//#include <errno.h>
 
 #if HAVE_SYS_FS_VX_IOCTL_H
 #include <sys/fs/vx_ioctl.h>
@@ -62,7 +50,7 @@
 #include "core/fsservices.h"
 #include "core/errorutil.h"
 
-#if IS_RISCOS
+#if HAVE_UNIXLIB_LOCAL_H
 #include <unixlib/local.h>
 #endif
 
@@ -78,7 +66,7 @@ struct cFile_i
     int     m_fd;         //underlying file descriptor
     FILE*   mpCurrStream; //currently defined file stream
     TSTRING mFileName;    //the name of the file we are currently referencing.
-    uint32  mFlags;       //Flags used to open the file
+    uint32_t  mFlags;       //Flags used to open the file
 };
 
 //Ctor
@@ -132,10 +120,10 @@ cFile::~cFile()
 ///////////////////////////////////////////////////////////////////////////////
 
 #if !USES_DEVICE_PATH
-void cFile::Open(const TSTRING& sFileName, uint32 flags)
+void cFile::Open(const TSTRING& sFileName, uint32_t flags)
 {
 #else
-void cFile::Open(const TSTRING& sFileNameC, uint32 flags)
+void cFile::Open(const TSTRING& sFileNameC, uint32_t flags)
 {
     TSTRING sFileName = cDevicePath::AsNative(sFileNameC);
 #endif
@@ -236,16 +224,21 @@ void cFile::Open(const TSTRING& sFileNameC, uint32 flags)
         fcntl(fh, F_NOCACHE, 1);
 #endif
 
-#if IS_SOLARIS
+#if HAVE_DIRECTIO // Solaris
     if ((flags & OPEN_DIRECT) && (flags & OPEN_SCANNING))
         directio(fh, DIRECTIO_ON);
 #endif
 
-#if HAVE_POSIX_FADVISE
+#if SUPPORTS_POSIX_FADVISE
     if (flags & OPEN_SCANNING && !(flags & OPEN_DIRECT))
     {
+#ifdef POSIX_FADV_SEQUENTIAL
         posix_fadvise(fh, 0, 0, POSIX_FADV_SEQUENTIAL);
+#endif
+
+#ifdef POSIX_FADV_NOREUSE
         posix_fadvise(fh, 0, 0, POSIX_FADV_NOREUSE);
+#endif
     }
 
 #elif HAVE_SYS_FS_VX_IOCTL_H
@@ -267,7 +260,7 @@ void cFile::Close() //throw(eFile)
 {
     if (mpData->mpCurrStream != NULL)
     {
-#ifdef HAVE_POSIX_FADVISE
+#if (SUPPORTS_POSIX_FADVISE && defined(POSIX_FADV_DONTNEED))
         posix_fadvise(fileno(mpData->mpCurrStream), 0, 0, POSIX_FADV_DONTNEED);
 #endif
 
@@ -275,14 +268,22 @@ void cFile::Close() //throw(eFile)
         mpData->mpCurrStream = NULL;
     }
 
-
-    mpData->mFileName.empty();
+    //mpData->mFileName.clear();
 }
 
 bool cFile::IsOpen(void) const
 {
     return (mpData->mpCurrStream != NULL);
 }
+
+// Autoconf docs say HAVE_FSEEKO applies to both fseeko & ftello
+#if HAVE_FSEEKO
+    #define tss_fseek fseeko
+    #define tss_ftell ftello
+#else
+    #define tss_fseek fseek
+    #define tss_ftell ftell
+#endif
 
 ///////////////////////////////////////////////////////////////////////////
 // Seek -- Positions the read/write offset in mpCurrStream.  Returns the
@@ -323,7 +324,9 @@ cFile::File_t cFile::Seek(File_t offset, SeekFrom From) const //throw(eFile)
     fprintf(stderr, "%d\n", blowupCount);
 #endif
 
-    if (fseeko(mpData->mpCurrStream, offset, apiFrom) != 0)
+
+    
+    if (tss_fseek(mpData->mpCurrStream, offset, apiFrom) != 0)
     {
 #ifdef DEBUG
         cDebug d("cFile::Seek");
@@ -332,7 +335,7 @@ cFile::File_t cFile::Seek(File_t offset, SeekFrom From) const //throw(eFile)
         throw eFileSeek();
     }
 
-    return ftello(mpData->mpCurrStream);
+    return tss_ftell(mpData->mpCurrStream);
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -352,7 +355,11 @@ cFile::File_t cFile::Read(void* buffer, File_t nBytes) const //throw(eFile)
 
     if (mpData->mFlags & OPEN_DIRECT)
     {
+#if READ_TAKES_CHAR_PTR
+        iBytesRead = read(mpData->m_fd, (char*)buffer, nBytes);
+#else
         iBytesRead = read(mpData->m_fd, buffer, nBytes);
+#endif
         if (iBytesRead < 0)
         {
             throw eFileRead(mpData->mFileName, iFSServices::GetInstance()->GetErrString());
@@ -360,7 +367,7 @@ cFile::File_t cFile::Read(void* buffer, File_t nBytes) const //throw(eFile)
     }
     else
     {
-        iBytesRead = fread(buffer, sizeof(byte), nBytes, mpData->mpCurrStream);
+        iBytesRead = fread(buffer, sizeof(uint8_t), nBytes, mpData->mpCurrStream);
         if (ferror(mpData->mpCurrStream) != 0)
         {
             throw eFileRead(mpData->mFileName, iFSServices::GetInstance()->GetErrString());
@@ -382,7 +389,7 @@ cFile::File_t cFile::Write(const void* buffer, File_t nBytes) //throw(eFile)
     ASSERT(mpData->mpCurrStream != NULL);
     ASSERT(isWritable);
 
-    if ((actual_count = fwrite(buffer, sizeof(byte), nBytes, mpData->mpCurrStream)) < nBytes)
+    if ((actual_count = fwrite(buffer, sizeof(uint8_t), nBytes, mpData->mpCurrStream)) < nBytes)
         throw eFileWrite(mpData->mFileName, iFSServices::GetInstance()->GetErrString());
     else
         return actual_count;
@@ -478,6 +485,9 @@ bool cDosPath::IsAbsolutePath(const TSTRING& in)
 // For paths of type C:\DOS
 TSTRING cDosPath::AsPosix(const TSTRING& in)
 {
+#if (defined(__MINGW32__) || defined(__OS2__))
+    return in;
+#else  
     if (in[0] == '/')
     {
         return in;
@@ -488,6 +498,7 @@ TSTRING cDosPath::AsPosix(const TSTRING& in)
     out.erase(std::remove(out.begin(), out.end(), ':'), out.end());
 
     return out;
+#endif    
 }
 
 TSTRING cDosPath::AsNative(const TSTRING& in)
@@ -591,7 +602,7 @@ bool cRiscosPath::IsAbsolutePath(const TSTRING& in)
 // For paths of type SDFS::Volume.$.dir.file
 TSTRING cRiscosPath::AsPosix(const TSTRING& in)
 {
-#if IS_RISCOS
+#if HAVE_UNIXLIB_LOCAL_H
     if (in[0] == '/')
     {
         return in;
@@ -614,7 +625,7 @@ TSTRING cRiscosPath::AsPosix(const TSTRING& in)
 
 TSTRING cRiscosPath::AsNative(const TSTRING& in)
 {
-#if IS_RISCOS
+#if HAVE_UNIXLIB_LOCAL_H
     if (in[0] != '/')
     {
         return in;

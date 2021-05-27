@@ -1037,7 +1037,7 @@ SIG_HI        = 100 ;                    # Critical files that are significant p
 
 #=============================================================================
 #
-# Copyright 2000-2018 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
+# Copyright 2000-2019 Tripwire, Inc. Tripwire is a registered trademark of Tripwire,
 # Inc. in the United States and other countries. All rights reserved.
 #
 # Linux is a registered trademark of Linus Torvalds.

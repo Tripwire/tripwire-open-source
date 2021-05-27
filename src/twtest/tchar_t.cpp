@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -74,9 +74,19 @@ void TestTCHAR()
     TSTRING test1 = _T("word");
 
     d.TraceDetail("Testing TOSTRINGSTREAM with TSTRING:\n");
+
+#if !ARCHAIC_STL
     TOSTRINGSTREAM ost(_T("test up"));
+#else
+    TOSTRINGSTREAM ost;
+    ost << _T("test up");
+#endif
     ost << test1;
-    d.TraceDetail("%s \n", ost.str().c_str());
+
+    tss_mkstr(out, ost);
+    
+    d.TraceDetail("%s \n", out.c_str());
+
     //if this gives output, then I'm really baffled...
     //test gets overwritten, yielding "word up"
 
@@ -89,7 +99,10 @@ void TestTCHAR()
     TSTRING send = _T("These should appear on separate lines");
     test_wist(send, d);
     //Did they?
+}
 
+void TestFstreams()
+{
     //Testing file streams
 
     //explict constructors of 'TIFSTREAM' and "TOFSTREAM' take char*
@@ -98,16 +111,16 @@ void TestTCHAR()
 
     //Set up the input file.
     TOFSTREAM out;
-    out.open(inputfile.c_str(), std::ios_base::out);
+    out.open(inputfile.c_str(), std::ios::out);
     out << "Unicode is fun\n";
     out.close();
 
     TIFSTREAM from;
-    from.open(inputfile.c_str(), std::ios_base::in);
+    from.open(inputfile.c_str(), std::ios::in);
     TEST(from);
 
 
-    TOFSTREAM to(outputfile.c_str(), std::ios_base::trunc);
+    TOFSTREAM to(outputfile.c_str(), std::ios::trunc);
     TEST(to);
 
     //Copy contents of input file to output file.
@@ -120,9 +133,15 @@ void TestTCHAR()
     return;
 }
 
+
 TSTRING test_wost(int n, const TSTRING& inject)
 {
+#if !ARCHAIC_STL  
     TOSTRINGSTREAM wost(_T("Weird how this doesn't show up! "));
+#else
+    TOSTRINGSTREAM wost;
+    wost << _T("Weird how this doesn't show up! ");
+#endif    
     //It's getting overwritten, why?
     wost << _T("One out of every ") << n << _T(" children loves ") << inject << _T("!\n");
     return wost.str();
@@ -130,7 +149,12 @@ TSTRING test_wost(int n, const TSTRING& inject)
 
 void test_wist(const TSTRING& input, cDebug& d)
 {
+#if !ARCHAIC_STL  
     TISTRINGSTREAM wist(input);
+#else
+    TSTRINGSTREAM wist;
+    wist << input;
+#endif    
     TSTRING        parse;
     while (wist >> parse)
         d.TraceDetail("%s \n", parse.c_str());
@@ -139,4 +163,7 @@ void test_wist(const TSTRING& input, cDebug& d)
 void RegisterSuite_TCHAR()
 {
     RegisterTest("TCHAR", "Basic", TestTCHAR);
+#if !ARCHAIC_STL
+    RegisterTest("TCHAR", "FStreams", TestFstreams);
+#endif    
 }

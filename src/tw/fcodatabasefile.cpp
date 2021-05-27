@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -81,7 +81,7 @@ cFCODatabaseFile::~cFCODatabaseFile()
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCODatabaseFile::Read(iSerializer* pSerializer, int32 version)
+void cFCODatabaseFile::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("Database Read")));
@@ -91,13 +91,13 @@ void cFCODatabaseFile::Read(iSerializer* pSerializer, int32 version)
     //
     pSerializer->ReadObject(&mHeader);
 
-    int32 numGenre;
+    int32_t numGenre;
     pSerializer->ReadInt32(numGenre);
     for (int i = 0; i < numGenre; i++)
     {
         // read the genre number and throw if it is incorrect
         //
-        int32 iGenre;
+        int32_t iGenre;
         pSerializer->ReadInt32(iGenre);
         cGenre::Genre genre = (cGenre::Genre)iGenre;
 
@@ -121,7 +121,7 @@ void cFCODatabaseFile::Read(iSerializer* pSerializer, int32 version)
         //
         // get the database data
         //
-        int32 fileSize;
+        int32_t fileSize;
         pSerializer->ReadInt32(fileSize);
         //
         // write the hier database into a temp file...
@@ -170,7 +170,7 @@ void cFCODatabaseFile::Write(iSerializer* pSerializer) const //throw( eFCODbFile
         if (pDbArch->Length() > TSS_INT32_MAX)
             throw eFCODbFileTooBig();
 
-        pSerializer->WriteInt32(static_cast<int32>(pDbArch->Length()));
+        pSerializer->WriteInt32(static_cast<int32_t>(pDbArch->Length()));
         cSerializerUtil::Copy(pSerializer, pDbArch, pDbArch->Length());
     }
 }

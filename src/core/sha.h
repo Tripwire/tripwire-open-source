@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -46,16 +46,16 @@
 /* The structure for storing SHS info */
 
 typedef struct {
-           uint32 digest[ 5 ];            /* Message digest */
-           uint32 countLo, countHi;       /* 64-bit bit count */
-           uint32 data[ 16 ];             /* SHS data buffer */
+           uint32_t digest[ 5 ];            /* Message digest */
+           uint32_t countLo, countHi;       /* 64-bit bit count */
+           uint32_t data[ 16 ];             /* SHS data buffer */
            } SHS_INFO;
 
 /* Whether the machine is little-endian or not */
 
 //int sig_sha_get();
 void shsInit(SHS_INFO *shsInfo);
-void shsUpdate(SHS_INFO* shsInfo, uint8* buffer, int count);
+void shsUpdate(SHS_INFO* shsInfo, uint8_t* buffer, int count);
 void shsFinal(SHS_INFO* shsInfo);
 
 /* The next def turns on the change to the algorithm introduced by NIST at

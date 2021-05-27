@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -99,17 +99,17 @@
 #define P_(s) ()
 #endif
 
-void haval_string P_((char *, uint8 *)); /* hash a string */
-int  haval_file P_((char *, uint8 *));   /* hash a file */
+void haval_string P_((char *, uint8_t *)); /* hash a string */
+int  haval_file P_((char *, uint8_t *));   /* hash a file */
 void haval_stdin P_((void));                     /* hash input from stdin */
 void haval_start P_((haval_state *));            /* initialization */
 void haval_hash P_((haval_state *,
-        uint8 *, int));      /* updating routine */
-void haval_end P_((haval_state *, uint8 *)); /* finalization */
+        uint8_t *, int));      /* updating routine */
+void haval_end P_((haval_state *, uint8_t *)); /* finalization */
 void haval_hash_block P_((haval_state *));       /* hash a 32-word block */
 static void haval_tailor P_((haval_state *));    /* folding the last output */
 
-static uint8 padding[128] = {        /* constants for padding */
+static uint8_t padding[128] = {        /* constants for padding */
 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -222,27 +222,27 @@ static uint8 padding[128] = {        /* constants for padding */
 #define rotate_right(x, n) (((x) >> (n)) | ((x) << (32-(n))))
 
 #define FF_1(x7, x6, x5, x4, x3, x2, x1, x0, w) {                        \
-      register haval_word temp = Fphi_1(x6, x5, x4, x3, x2, x1, x0);     \
+      haval_word temp = Fphi_1(x6, x5, x4, x3, x2, x1, x0);     \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w);       \
       }
 
 #define FF_2(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_2(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_2(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
 #define FF_3(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_3(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_3(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
 #define FF_4(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_4(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_4(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
 #define FF_5(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {                      \
-      register haval_word temp = Fphi_5(x6, x5, x4, x3, x2, x1, x0);      \
+      haval_word temp = Fphi_5(x6, x5, x4, x3, x2, x1, x0);      \
       (x7) = rotate_right(temp, 7) + rotate_right((x7), 11) + (w) + (c);  \
       }
 
@@ -251,7 +251,7 @@ static uint8 padding[128] = {        /* constants for padding */
  * assume the number of characters is a multiple of four.
  */
 #define ch2uint(string, word, slen) {      \
-  uint8 *sp = string;              \
+  uint8_t *sp = string;              \
   haval_word    *wp = word;                \
   while (sp < (string) + (slen)) {         \
     *wp++ =  (haval_word)*sp            |  \
@@ -265,12 +265,12 @@ static uint8 padding[128] = {        /* constants for padding */
 /* translate each word into four characters */
 #define uint2ch(word, string, wlen) {              \
   haval_word    *wp = word;                        \
-  uint8 *sp = string;                      \
+  uint8_t *sp = string;                      \
   while (wp < (word) + (wlen)) {                   \
-    *(sp++) = (uint8)( *wp        & 0xFF); \
-    *(sp++) = (uint8)((*wp >>  8) & 0xFF); \
-    *(sp++) = (uint8)((*wp >> 16) & 0xFF); \
-    *(sp++) = (uint8)((*wp >> 24) & 0xFF); \
+    *(sp++) = (uint8_t)( *wp        & 0xFF); \
+    *(sp++) = (uint8_t)((*wp >>  8) & 0xFF); \
+    *(sp++) = (uint8_t)((*wp >> 16) & 0xFF); \
+    *(sp++) = (uint8_t)((*wp >> 24) & 0xFF); \
     wp++;                                          \
   }                                                \
 }
@@ -278,23 +278,23 @@ static uint8 padding[128] = {        /* constants for padding */
 #if 0 //unused in OST
 
 /* hash a string */
-void haval_string (char *string, uint8 fingerprint[FPTLEN >> 3])
+void haval_string (char *string, uint8_t fingerprint[FPTLEN >> 3])
 {
   haval_state   state;
   unsigned int  len = strlen (string);
 
   haval_start (&state);
-  haval_hash (&state, (uint8 *)string, len);
+  haval_hash (&state, (uint8_t *)string, len);
   haval_end (&state, fingerprint);
 }
 
 /* hash a file */
-int haval_file (char* file_name, uint8 fingerprint[FPTLEN >> 3])
+int haval_file (char* file_name, uint8_t fingerprint[FPTLEN >> 3])
 {
     FILE          *file;
     haval_state   state;
     int           len;
-    uint8 buffer[1024];
+    uint8_t buffer[1024];
 
     if ((file = fopen (file_name, "rb")) == NULL)
     {
@@ -318,7 +318,7 @@ void haval_stdin ()
 {
   haval_state   state;
   int           i, len;
-  uint8 buffer[32],
+  uint8_t buffer[32],
                 fingerprint[FPTLEN >> 3];
 
   haval_start (&state);
@@ -351,7 +351,7 @@ void haval_start (haval_state *state)
  * hash a string of specified length.
  * to be used in conjunction with haval_start and haval_end.
  */
-void haval_hash (haval_state* state, uint8* str, int str_len)
+void haval_hash (haval_state* state, uint8_t* str, int str_len)
 {
   ASSERT(str_len >= 0);
 
@@ -374,17 +374,17 @@ void haval_hash (haval_state* state, uint8* str, int str_len)
 
   /* hash as many blocks as possible */
   if (rmd_len + str_len >= 128) {
-    memcpy (((uint8 *)state->block)+rmd_len, str, fill_len);
+    memcpy (((uint8_t *)state->block)+rmd_len, str, fill_len);
     haval_hash_block (state);
     for (i = fill_len; i + 127 < str_len; i += 128){
-      memcpy ((uint8 *)state->block, str+i, 128);
+      memcpy ((uint8_t *)state->block, str+i, 128);
       haval_hash_block (state);
     }
     rmd_len = 0;
   } else {
     i = 0;
   }
-  memcpy (((uint8 *)state->block)+rmd_len, str+i, str_len-i);
+  memcpy (((uint8_t *)state->block)+rmd_len, str+i, str_len-i);
 
 #else
 
@@ -409,19 +409,19 @@ void haval_hash (haval_state* state, uint8* str, int str_len)
 }
 
 /* finalization */
-void haval_end (haval_state* state, uint8 final_fpt[FPTLEN >> 3])
+void haval_end (haval_state* state, uint8_t final_fpt[FPTLEN >> 3])
 {
-  uint8 tail[10];
+  uint8_t tail[10];
   unsigned int  rmd_len, pad_len;
 
   /*
    * save the version number, the number of passes, the fingerprint 
    * length and the number of bits in the unpadded message.
    */
-  tail[0] = (uint8)(((FPTLEN  & 0x3) << 6) |
+  tail[0] = (uint8_t)(((FPTLEN  & 0x3) << 6) |
                             ((PASS    & 0x7) << 3) |
                              (HAVAL_VERSION & 0x7));
-  tail[1] = (uint8)((FPTLEN >> 2) & 0xFF);
+  tail[1] = (uint8_t)((FPTLEN >> 2) & 0xFF);
   uint2ch (state->count, &tail[2], 2);
 
   /* pad out to 118 mod 128 */
@@ -448,7 +448,7 @@ void haval_end (haval_state* state, uint8 final_fpt[FPTLEN >> 3])
 /* hash a 32-word block */
 void haval_hash_block (haval_state* state)
 {
-  register haval_word t0 = state->fingerprint[0],    /* make use of */
+  haval_word t0 = state->fingerprint[0],    /* make use of */
                       t1 = state->fingerprint[1],    /* internal registers */
                       t2 = state->fingerprint[2],
                       t3 = state->fingerprint[3],

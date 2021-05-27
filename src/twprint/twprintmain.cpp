@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -67,14 +67,26 @@
 void tw_terminate_handler()
 {
     fputs("### Internal Error.\n### Terminate Handler called.\n### Exiting...\n", stderr);
+#if HAVE__EXIT
     _exit(1);
+#else
+    exit(1);
+#endif
 }
 
+// Exception specifications removed as a misfeature in C++17
+#if USE_UNEXPECTED
 void tw_unexpected_handler()
 {
     fputs("### Internal Error.\n### Unexpected Exception Handler called.\n### Exiting...\n", stderr);
+
+#if HAVE__EXIT 
     _exit(1);
+#else
+    exit(1);
+#endif
 }
+#endif
 
 int __cdecl _tmain(int argc, const TCHAR* argv[])
 {
@@ -93,16 +105,15 @@ int __cdecl _tmain(int argc, const TCHAR* argv[])
         // TODO: move this into the Init() routine
 
         EXCEPTION_NAMESPACE set_terminate(tw_terminate_handler);
+#if USE_UNEXPECTED
         EXCEPTION_NAMESPACE set_unexpected(tw_unexpected_handler);
+#endif
 
         twInit.Init(argv[0]);
         TSS_Dependency(cTWPrint);
-
         // init twprint strings
-        //
 
         cDebug::SetDebugLevel(cDebug::D_DEBUG);
-
 
         // **** let's try a new way of doing things!
         // first, process the command line

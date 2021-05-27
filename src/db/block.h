@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -67,14 +67,14 @@ public:
     {
         return mBlockNum;
     }
-    int8* GetData()
+    int8_t* GetData()
     {
         return mpData;
     }
 
     bool AssertValid() const;
     // this asserts and returns false if the guard bytes have been corrupted
-    bool IsValidAddr(int8* pAddr) const;
+    bool IsValidAddr(int8_t* pAddr) const;
     // returns true if pAddr falls within mpData
 protected:
     enum
@@ -84,9 +84,9 @@ protected:
     }; // odd, non-zero value for debugging
 
     // guardMin and guardMax are used to detect bad writes
-    uint8 mGuardMin[NUM_GUARD_BLOCKS];
-    int8  mpData[SIZE];
-    uint8 mGuardMax[NUM_GUARD_BLOCKS];
+    uint8_t mGuardMin[NUM_GUARD_BLOCKS];
+    int8_t  mpData[SIZE];
+    uint8_t mGuardMax[NUM_GUARD_BLOCKS];
     bool  mbDirty;
     int   mBlockNum;
 };
@@ -107,8 +107,8 @@ template<int SIZE> inline cBlock<SIZE>::cBlock() : mbDirty(false), mBlockNum(cBl
     // init guard blocks to dummy value
     for (int i = 0; i < NUM_GUARD_BLOCKS; i++)
     {
-        mGuardMin[i] = (uint8)GUARD_BLOCK_VAL;
-        mGuardMax[i] = (uint8)GUARD_BLOCK_VAL;
+        mGuardMin[i] = (uint8_t)GUARD_BLOCK_VAL;
+        mGuardMax[i] = (uint8_t)GUARD_BLOCK_VAL;
     }
 
     // zero out memory
@@ -123,7 +123,7 @@ template<int SIZE> inline bool cBlock<SIZE>::AssertValid() const
     // determine if guard bites have been accidentally overwritten
     for (int i = 0; i < NUM_GUARD_BLOCKS; i++)
     {
-        if ((mGuardMin[i] != (uint8)GUARD_BLOCK_VAL) || (mGuardMax[i] != (uint8)GUARD_BLOCK_VAL))
+        if ((mGuardMin[i] != (uint8_t)GUARD_BLOCK_VAL) || (mGuardMax[i] != (uint8_t)GUARD_BLOCK_VAL))
         {
             ASSERT(false);
             return false;
@@ -133,7 +133,7 @@ template<int SIZE> inline bool cBlock<SIZE>::AssertValid() const
     return true;
 }
 
-template<int SIZE> inline bool cBlock<SIZE>::IsValidAddr(int8* pAddr) const
+template<int SIZE> inline bool cBlock<SIZE>::IsValidAddr(int8_t* pAddr) const
 {
     return ((pAddr >= &mpData[0]) && (pAddr <= &mpData[SIZE - 1]));
 }
@@ -156,11 +156,11 @@ public:
     {
         cBlock<SIZE>::mBlockNum = blockNum;
     }
-    void SetTimestamp(uint32 timestamp)
+    void SetTimestamp(uint32_t timestamp)
     {
         mTimestamp = timestamp;
     }
-    uint32 GetTimestamp() const
+    uint32_t GetTimestamp() const
     {
         return mTimestamp;
     }
@@ -169,7 +169,7 @@ public:
     void Read(cBidirArchive& arch, int blockNum = INVALID_NUM); //throw( eArchive )
         // if blockNum is INVALID_NUM, then it reads in the current block number
 protected:
-    uint32 mTimestamp;
+    uint32_t mTimestamp;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -184,8 +184,8 @@ template<int SIZE> inline cBlockImpl<SIZE>::cBlockImpl() : cBlock<SIZE>(), mTime
 ///////////////////////////////////////////////////////////////////////////////
 template<int SIZE> inline void cBlockImpl<SIZE>::Write(cBidirArchive& arch) //throw( eArchive )
 {
-    ASSERT(mbDirty);
-    ASSERT((mBlockNum >= 0) && (((mBlockNum + 1) * SIZE) <= arch.Length()));
+    ASSERT(cBlock<SIZE>::mbDirty);
+    ASSERT((cBlock<SIZE>::mBlockNum >= 0) && (((cBlock<SIZE>::mBlockNum + 1) * SIZE) <= arch.Length()));
 
     arch.Seek((cBlock<SIZE>::mBlockNum * SIZE), cBidirArchive::BEGINNING);
     arch.WriteBlob(cBlock<SIZE>::mpData, SIZE);
@@ -201,7 +201,7 @@ template<int SIZE> inline void cBlockImpl<SIZE>::Read(cBidirArchive& arch, int b
     if (blockNum != INVALID_NUM)
         cBlock<SIZE>::mBlockNum = blockNum;
 
-    ASSERT((mBlockNum >= 0) && (((mBlockNum + 1) * SIZE) <= arch.Length()));
+    ASSERT((cBlock<SIZE>::mBlockNum >= 0) && (((cBlock<SIZE>::mBlockNum + 1) * SIZE) <= arch.Length()));
 
     //    std::cout << "cBlockImpl<SIZE>::Read() mBlockNum = " << mBlockNum << " arch.Length() = " << arch.Length() << std::endl;
 

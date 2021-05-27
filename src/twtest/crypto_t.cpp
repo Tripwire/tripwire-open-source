@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -42,10 +42,10 @@ void TestCrypto()
 {
     const int COUNT = 4000;
 
-    const int BUFSIZE = 9000;
+    const int BUFFER_SIZE = 9000;
 
-    std::vector<char> source_buf(BUFSIZE);
-    std::vector<char> crypt_buf(COUNT + BUFSIZE); // needs to be able to hold even number of blocks
+    std::vector<char> source_buf(BUFFER_SIZE);
+    std::vector<char> crypt_buf(COUNT + BUFFER_SIZE); // needs to be able to hold even number of blocks
     std::vector<char> dest_buf(COUNT);
 
     char* source = &source_buf[0];
@@ -119,9 +119,9 @@ void TestCrypto()
 
         // we use buf for when the end of the source doesn't fall on a
         // blocksize boundry.
-        TEST(crypter.GetBlockSizePlain() < BUFSIZE);
-        TEST(crypter.GetBlockSizeCipher() < BUFSIZE);
-        char buf[BUFSIZE];
+        TEST(crypter.GetBlockSizePlain() < BUFFER_SIZE);
+        TEST(crypter.GetBlockSizeCipher() < BUFFER_SIZE);
+        char buf[BUFFER_SIZE];
 
         cRSAPublicKey*  pPublic;
         cRSAPrivateKey* pPrivate;
@@ -132,16 +132,16 @@ void TestCrypto()
         cRSAPublicKey*  pPublic2;
         cRSAPrivateKey* pPrivate2;
 
-        TEST(pPublic->GetWriteLen() < BUFSIZE);
+        TEST(pPublic->GetWriteLen() < BUFFER_SIZE);
         pPublic->Write(buf);
         pPublic2 = new cRSAPublicKey(buf);
 
-        TEST(pPrivate->GetWriteLen() < BUFSIZE);
+        TEST(pPrivate->GetWriteLen() < BUFFER_SIZE);
         pPrivate->Write(buf);
         pPrivate2 = new cRSAPrivateKey(buf);
 
         // we will try encrypting to a second pair of buffers and see if all goes well
-        char crypt2[COUNT + BUFSIZE];
+        char crypt2[COUNT + BUFFER_SIZE];
         char dest2[COUNT];
 
         // encrypt the phrase
@@ -289,9 +289,9 @@ void TestCrypto()
 
         // we use buf for when the end of the source doesn't fall on a
         // blocksize boundry.
-        TEST(crypter.GetBlockSizePlain() < BUFSIZE);
-        TEST(crypter.GetBlockSizeCipher() < BUFSIZE);
-        char buf[BUFSIZE];
+        TEST(crypter.GetBlockSizePlain() < BUFFER_SIZE);
+        TEST(crypter.GetBlockSizeCipher() < BUFFER_SIZE);
+        char buf[BUFFER_SIZE];
 
         cElGamalSigPublicKey*  pPublic;
         cElGamalSigPrivateKey* pPrivate;
@@ -302,16 +302,16 @@ void TestCrypto()
         cElGamalSigPublicKey*  pPublic2;
         cElGamalSigPrivateKey* pPrivate2;
 
-        TEST(pPublic->GetWriteLen() < BUFSIZE);
+        TEST(pPublic->GetWriteLen() < BUFFER_SIZE);
         pPublic->Write(buf);
         pPublic2 = new cElGamalSigPublicKey(buf);
 
-        TEST(pPrivate->GetWriteLen() < BUFSIZE);
+        TEST(pPrivate->GetWriteLen() < BUFFER_SIZE);
         pPrivate->Write(buf);
         pPrivate2 = new cElGamalSigPrivateKey(buf);
 
         // we will try encrypting to a second pair of buffers and see if all goes well
-        //char crypt2[COUNT + BUFSIZE];
+        //char crypt2[COUNT + BUFFER_SIZE];
         //char dest2[COUNT];
 
         // zero out things and try signing and verifying

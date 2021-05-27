@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -37,18 +37,18 @@
 
 namespace
 {
-template<class FROM, class TO> int64 CopyImpl(TO* pTo, FROM* pFrom, int64 amt)
+template<class FROM, class TO> int64_t CopyImpl(TO* pTo, FROM* pFrom, int64_t amt)
 {
     enum
     {
         BUF_SIZE = 8192
     };
-    int8  buf[BUF_SIZE];
-    int64 amtLeft = amt;
+    int8_t  buf[BUF_SIZE];
+    int64_t amtLeft = amt;
 
     while (amtLeft > 0)
     {
-        // NOTE: We use int's here rather than int64 because iSerializer and cArchive
+        // NOTE: We use int's here rather than int64_t because iSerializer and cArchive
         // only take int's as their size parameter - dmb
         int amtToRead = amtLeft > BUF_SIZE ? BUF_SIZE : (int)amtLeft;
         int amtRead   = pFrom->ReadBlob(buf, amtToRead);
@@ -64,12 +64,12 @@ template<class FROM, class TO> int64 CopyImpl(TO* pTo, FROM* pFrom, int64 amt)
 } // namespace
 
 
-int64 cSerializerUtil::Copy(iSerializer* pDest, cArchive* pSrc, int64 amt)
+int64_t cSerializerUtil::Copy(iSerializer* pDest, cArchive* pSrc, int64_t amt)
 {
     return CopyImpl(pDest, pSrc, amt);
 }
 
-int64 cSerializerUtil::Copy(cArchive* pDest, iSerializer* pSrc, int64 amt)
+int64_t cSerializerUtil::Copy(cArchive* pDest, iSerializer* pSrc, int64_t amt)
 {
     return CopyImpl(pDest, pSrc, amt);
 }

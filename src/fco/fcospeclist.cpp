@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -103,6 +103,7 @@ void cFCOSpecList::Add(iFCOSpec* pSpec, cFCOSpecAttr* pAttr)
         pAttr = new cFCOSpecAttr;
     else
         pAttr->AddRef();
+        
     for (itr = mCanonicalList.begin();; ++itr)
     {
         if (itr == mCanonicalList.end() || iFCOSpecUtil::FCOSpecLessThan(*pSpec, *itr->first))
@@ -118,34 +119,37 @@ iFCOSpec* cFCOSpecList::Lookup(iFCOSpec* pSpec) const
 {
     std::list<PairType>::iterator itr;
     for (itr = mCanonicalList.begin(); itr != mCanonicalList.end(); ++itr)
+    {
         if (itr->first == pSpec)
         {
             pSpec->AddRef();
             return itr->first;
         }
+    }
 
     for (itr = mCanonicalList.begin(); itr != mCanonicalList.end(); ++itr)
+    {
         if (iFCOSpecUtil::FCOSpecEqual(*pSpec, *itr->first))
         {
             itr->first->AddRef();
             return itr->first;
         }
+    }
 
     return NULL;
 }
 
-void cFCOSpecList::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecList::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Spec List")));
 
     Clear();
 
-    int   i;
-    int32 size;
+    int32_t size;
     pSerializer->ReadInt32(size);
 
-    for (i = 0; i < size; ++i)
+    for (int i = 0; i < size; ++i)
     {
         iFCOSpec*     pReadInSpec = static_cast<iFCOSpec*>(pSerializer->ReadObjectDynCreate());
         cFCOSpecAttr* pSpecAttr   = static_cast<cFCOSpecAttr*>(pSerializer->ReadObjectDynCreate());

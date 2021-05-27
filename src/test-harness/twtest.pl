@@ -119,7 +119,7 @@ sub runTests {
 
         }
         else {
-            print "no test '$module' found...\n";
+            print "Could not find or load test module '$module', error = $@ \n";
         }
     }
 }

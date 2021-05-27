@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -71,11 +71,19 @@ namespace tss
 typedef std::wstring dbstring;
 }
 
+#elif (USE_U16STRING)
+namespace tss
+{
+typedef std::u16string dbstring;
+}
+
 #elif (WCHAR_IS_32_BITS)
+#if HAVE_LOCALE
 namespace std
 {
 template<> struct char_traits<dbchar_t>;
 }
+#endif
 namespace tss
 {
 typedef std::basic_string<dbchar_t> dbstring;
@@ -87,9 +95,10 @@ typedef std::basic_string<dbchar_t> dbstring;
 #endif
 
 
-#if WCHAR_IS_32_BITS // We already have a dbstring implicitly in wstring!!!
+#if NEED_DBSTRING_IMPL // We already have a dbstring implicitly in wstring!!!
 
-#include <locale>
+#if HAVE_LOCALE
+#   include <locale>
 
 // specialize *std*::char_traits!!!
 
@@ -192,11 +201,9 @@ template<> struct std::char_traits<dbchar_t>
         return lhs == rhs;
     }
 
-#    if IS_STDLIB_MODENA
-
+#if IS_STDLIB_MODENA
     // CAUTION:RAD -- Extra members required by Modena!!
-
-#        ifdef MBSTATE_T_DEFINED // This is ANSI-C *not* ANSI-C++!!
+#ifdef MBSTATE_T_DEFINED // This is ANSI-C *not* ANSI-C++!!
     static state_type get_state(pos_type pos)
     {
         return pos.state();
@@ -206,7 +213,7 @@ template<> struct std::char_traits<dbchar_t>
     {
         return pos_type(pos.offset(), state);
     }
-#        endif //MBSTATE_T_DEFINED
+#endif //MBSTATE_T_DEFINED
 
     static char_type newline()
     {
@@ -217,14 +224,14 @@ template<> struct std::char_traits<dbchar_t>
     {
         return 0;
     }
-
-#    endif //IS_STDLIB_MODENA
+#endif //IS_STDLIB_MODENA
 
     static int_type eof()
     {
         return (wint_t)(0xFFFF);
     }
 };
+#endif
 
 #    endif //WCHAR_IS_16_BITS // We already have a dbstring implicitly in wstring!!!
 

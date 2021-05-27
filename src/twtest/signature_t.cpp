@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -76,10 +76,10 @@ void TestSignatureBasic()
     cCRC32Signature crcSig;
     cDebug          d("TestSignature1");
 
-    byte abData[64];
+    uint8_t abData[64];
     int  i;
     for (i = 0; i < 64; i++)
-        abData[i] = static_cast<byte>(rand());
+        abData[i] = static_cast<uint8_t>(rand());
 
     crcSig.Init();
     crcSig.Update(&abData[0], 32);
@@ -103,275 +103,95 @@ void TestSignatureBasic()
 //    TEST(nullSig.Compare(&checksumSig, iFCOProp::OP_EQ) == iFCOProp::CMP_WRONG_PROP_TYPE);
 
 
-void TestChecksum()
+template<class T>
+void testSignature(const TSTRING& sigFileName, const TSTRING& expectedBase64, const TSTRING& expectedHex)
 {
-    TSTRING      sigFileName = getTestFile();
     cFileArchive fileArc;
-    cDebug       d("TestChecksum");
-    // test begins here
+    cDebug       d("testSignature");
 
     // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
+    uint8_t      abBuf[iSignature::SUGGESTED_BLOCK_SIZE] = {0};
     const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
-    int       cbRead;
-
+    int       cbRead   =0;
 
     // test checksum
-    cChecksumSignature check1, check2;
-    d.TraceDetail("Testing checksum.\n");
+    T sig1, sig2;
+    d.TraceDetail("Testing signature...\n");
 
-    // check1
+    // sig1
     fileArc.OpenRead(sigFileName.c_str());
-    check1.Init();
+    sig1.Init();
     do
     {
         cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        check1.Update(abBuf, cbRead);
+        sig1.Update(abBuf, cbRead);
     } while (cbRead == cbToRead);
-    check1.Finit();
+    sig1.Finit();
     fileArc.Close();
 
-    // check2
+    // sig2
     fileArc.OpenRead(sigFileName.c_str());
-    check2.Init();
+    sig2.Init();
     do
     {
         cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        check2.Update(abBuf, cbRead);
+        sig2.Update(abBuf, cbRead);
     } while (cbRead == cbToRead);
-    check2.Finit();
+    sig2.Finit();
     fileArc.Close();
 
     // compare to each other and the known values
-    TEST(check1.Compare(&check2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    TEST(check1.AsString().compare(_T("AAAAAAAAAAt")) == 0);
+    TEST(sig1.Compare(&sig2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
+    if (!expectedBase64.empty())
+    {
+        TEST(sig1.AsString().compare(expectedBase64) == 0);
+    }
+    if (!expectedHex.empty())
+    {
+        TEST(sig1.AsStringHex().compare(expectedHex) == 0);
+    }
 
     // test write capabilities
     {
         cMemoryArchive  sigArchive;
         cSerializerImpl writeSer(sigArchive, cSerializerImpl::S_WRITE);
-        check1.Write(&writeSer);
+        sig1.Write(&writeSer);
         sigArchive.Seek(0, cBidirArchive::BEGINNING);
         cSerializerImpl readSer(sigArchive, cSerializerImpl::S_READ);
-        check2.Read(&readSer);
-        TEST(check1.Compare(&check2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
+        sig2.Read(&readSer);
+        TEST(sig1.Compare(&sig2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
     }
 }
 
+void TestChecksum()
+{
+    testSignature<cChecksumSignature>(getTestFile(), _T("AAAAAAAAAAt"), _T(""));
+}
+		       
 void TestCRC32()
 {
-    TSTRING      sigFileName = getTestFile();
-    cFileArchive fileArc;
-    cDebug       d("TestCRC32");
-
-    // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
-    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
-    int       cbRead;
-
-    // test CRC32
-    cCRC32Signature crc1, crc2;
-    d.TraceDetail("Testing CRC32.\n");
-
-    // crc1
-    fileArc.OpenRead(sigFileName.c_str());
-    crc1.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        crc1.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    crc1.Finit();
-    fileArc.Close();
-
-    // crc2
-    fileArc.OpenRead(sigFileName.c_str());
-    crc2.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        crc2.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    crc2.Finit();
-    fileArc.Close();
-
-    // compare to each other and the known values
-    TEST(crc1.Compare(&crc2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    TEST(crc1.AsString().compare(_T("B1kP9v")) == 0);
-    TEST(crc1.AsStringHex().compare(_T("7590ff6f")) == 0);
-
-    // test write capabilities
-    {
-        cMemoryArchive  sigArchive;
-        cSerializerImpl writeSer(sigArchive, cSerializerImpl::S_WRITE);
-        crc1.Write(&writeSer);
-        sigArchive.Seek(0, cBidirArchive::BEGINNING);
-        cSerializerImpl readSer(sigArchive, cSerializerImpl::S_READ);
-        crc2.Read(&readSer);
-        TEST(crc1.Compare(&crc2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    }
+    testSignature<cCRC32Signature>(getTestFile(), _T("B1kP9v"), _T("7590ff6f"));
 }
 
 void TestMD5()
 {
-    TSTRING      sigFileName = getTestFile();
-    cFileArchive fileArc;
-    cDebug       d("TestMD5");
-
-    // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
-    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
-    int       cbRead;
-
-    // test MD5
-    cMD5Signature md51, md52;
-    d.TraceDetail("Testing MD5.\n");
-
-    // md51
-    fileArc.OpenRead(sigFileName.c_str());
-    md51.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        md51.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    md51.Finit();
-    fileArc.Close();
-
-    // md52
-    fileArc.OpenRead(sigFileName.c_str());
-    md52.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        md52.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    md52.Finit();
-    fileArc.Close();
-
-    // compare to each other and the known values
-    TEST(md51.Compare(&md52, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    TEST(md51.AsString().compare(_T("B/Y8ttBnlyw/NPCUu353ao")) == 0);
-    TEST(md51.AsStringHex().compare(_T("7f63cb6d067972c3f34f094bb7e776a8")) == 0);
-
-    // test write capabilities
-    {
-        cMemoryArchive  sigArchive;
-        cSerializerImpl writeSer(sigArchive, cSerializerImpl::S_WRITE);
-        md51.Write(&writeSer);
-        sigArchive.Seek(0, cBidirArchive::BEGINNING);
-        cSerializerImpl readSer(sigArchive, cSerializerImpl::S_READ);
-        md52.Read(&readSer);
-        TEST(md51.Compare(&md52, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    }
+    testSignature<cMD5Signature>(getTestFile(),
+				 _T("B/Y8ttBnlyw/NPCUu353ao"),
+				 _T("7f63cb6d067972c3f34f094bb7e776a8"));
 }
 
 void TestSHA1()
 {
-    TSTRING      sigFileName = getTestFile();
-    cFileArchive fileArc;
-    cDebug       d("TestSHA1");
-
-    // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
-    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
-    int       cbRead;
-
-    // test SHA
-    cSHASignature sha1, sha2;
-    d.TraceDetail("Testing SHA.\n");
-
-    // sha1
-    fileArc.OpenRead(sigFileName.c_str());
-    sha1.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        sha1.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    sha1.Finit();
-    fileArc.Close();
-
-    // sha2
-    fileArc.OpenRead(sigFileName.c_str());
-    sha2.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        sha2.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    sha2.Finit();
-    fileArc.Close();
-
-    // compare to each other and the known values
-    TEST(sha1.Compare(&sha2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    TEST(sha1.AsString().compare(_T("Oia1aljHD793tfj7M55tND+3OG/")) == 0);
-    TEST(sha1.AsStringHex().compare(_T("e89ad5a9631c3efdded7e3ecce79b4d0fedce1bf")) == 0);
-
-    // test write capabilities
-    {
-        cMemoryArchive  sigArchive;
-        cSerializerImpl writeSer(sigArchive, cSerializerImpl::S_WRITE);
-        sha1.Write(&writeSer);
-        sigArchive.Seek(0, cBidirArchive::BEGINNING);
-        cSerializerImpl readSer(sigArchive, cSerializerImpl::S_READ);
-        sha2.Read(&readSer);
-        TEST(sha1.Compare(&sha2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    }
+    testSignature<cSHASignature>(getTestFile(),
+				 _T("Oia1aljHD793tfj7M55tND+3OG/"),
+				 _T("e89ad5a9631c3efdded7e3ecce79b4d0fedce1bf"));
 }
 
 void TestHAVAL()
 {
-    TSTRING      sigFileName = getTestFile();
-    cFileArchive fileArc;
-    cDebug       d("TestHAVAL");
-
-    // general signature & archive variables
-    byte      abBuf[iSignature::SUGGESTED_BLOCK_SIZE];
-    const int cbToRead = iSignature::SUGGESTED_BLOCK_SIZE;
-    int       cbRead;
-
-    // test HAVAL
-    cHAVALSignature haval1, haval2;
-    d.TraceDetail("Testing HAVAL.\n");
-
-    // haval1
-    fileArc.OpenRead(sigFileName.c_str());
-    haval1.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        haval1.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    haval1.Finit();
-    fileArc.Close();
-
-    // haval2
-    fileArc.OpenRead(sigFileName.c_str());
-    haval2.Init();
-    do
-    {
-        cbRead = fileArc.ReadBlob(abBuf, cbToRead);
-        haval2.Update(abBuf, cbRead);
-    } while (cbRead == cbToRead);
-    haval2.Finit();
-    fileArc.Close();
-
-    // compare to each other and the known values
-    TEST(haval1.Compare(&haval2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    TEST(haval1.AsString().compare(_T("BL6bFSo0EP5zf8lGSueeed")) == 0);
-    TEST(haval1.AsStringHex().compare(_T("4be9b152a3410fe737fc9464ae79e79d")) == 0);
-
-    // test write capabilities
-    {
-        cMemoryArchive  sigArchive;
-        cSerializerImpl writeSer(sigArchive, cSerializerImpl::S_WRITE);
-        haval1.Write(&writeSer);
-        sigArchive.Seek(0, cBidirArchive::BEGINNING);
-        cSerializerImpl readSer(sigArchive, cSerializerImpl::S_READ);
-        haval2.Read(&readSer);
-        TEST(haval1.Compare(&haval2, iFCOProp::OP_EQ) == iFCOProp::CMP_TRUE);
-    }
+    testSignature<cHAVALSignature>(getTestFile(),
+				  _T("BL6bFSo0EP5zf8lGSueeed"),
+				  _T("4be9b152a3410fe737fc9464ae79e79d"));
 }
 
 void TestArchiveSigGen()
@@ -412,28 +232,27 @@ void TestArchiveSigGen()
     fileArc.Close();
 }
 
-void assertMD5(const std::string& source, const std::string& expectedHex)
+template<class T>
+void assertSignature(const std::string& source, const std::string& expectedHex)
 {
     // Signature usage example (?)
-    cMD5Signature md5Sig;
+    T signature;
 
-    md5Sig.Init();
-    md5Sig.Update((const byte*)source.c_str(), source.length());
-    md5Sig.Finit();
+    signature.Init();
+    signature.Update((const uint8_t*)source.c_str(), source.length());
+    signature.Finit();
 
-    TEST(md5Sig.AsStringHex() == expectedHex);
+    TEST(signature.AsStringHex() == expectedHex);
+}
+
+void assertMD5(const std::string& source, const std::string& expectedHex)
+{
+    assertSignature<cMD5Signature>(source, expectedHex);
 }
 
 void assertSHA1(const std::string& source, const std::string& expectedHex)
 {
-    // Signature usage example (?)
-    cSHASignature shaSig;
-
-    shaSig.Init();
-    shaSig.Update((const byte*)source.c_str(), source.length());
-    shaSig.Finit();
-
-    TEST(shaSig.AsStringHex() == expectedHex);
+    assertSignature<cSHASignature>(source, expectedHex);  
 }
 
 

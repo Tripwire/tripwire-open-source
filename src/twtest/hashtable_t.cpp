@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -51,10 +51,7 @@ void HashTest1()
     cDebug                     d("TestHashTable()::Test1");
     d.TraceDetail("Entering ...\n");
 
-    //return val for all function calls.
-    bool ret = true;
-
-    //test data
+     //test data
     TSTRING string      = _T("test string");
     TSTRING string2     = _T("another test string");
     TSTRING string3     = _T("yet another test string");
@@ -73,18 +70,16 @@ void HashTest1()
 
     //Test insert and lookup.
     htable.Insert(string, data_ptr);
-    ret &= htable.Lookup(string, test_lookup);
-    TEST(ret);
+    TEST(htable.Lookup(string, test_lookup));
 
     //Make sure value is being stored and returned correctly
     d.TraceDetail("Value returned from table is %i, and should be %i.\n", *((int*)test_lookup), var);
     TEST(*((int*)test_lookup) == var);
 
     //Check remove and lookup (lookup should fail)
-    ret &= htable.Remove(string);
-    TEST(ret);
-    ret &= !htable.Lookup(string, test_lookup);
-    TEST(ret);
+    TEST(htable.Remove(string));
+    TEST(!htable.Lookup(string, test_lookup));
+
     //Has test_lookup's value changed?  It shouldn't have...
     TEST(*((int*)test_lookup) == var);
 
@@ -106,14 +101,17 @@ void HashTest1()
 #endif
 
     //Test IsEmpty()
-    ret &= !htable.IsEmpty();
     TEST(!htable.IsEmpty());
 
     //Test Clear(), IsEmpty()
-    ret &= htable.Clear();
     TEST(htable.Clear());
-    ret &= htable.IsEmpty();
     TEST(htable.IsEmpty());
+}
+
+
+// TODO: Turn this into a working, useful test, or remove it.
+void HashTest3()
+{
     /*
     //Test the Hash table with arbitrary key
     
@@ -157,6 +155,7 @@ void HashTest1()
 */
     return;
 }
+
 
 void HashTest2()
 {

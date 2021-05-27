@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -38,16 +38,23 @@
 #ifndef __WCHAR16_H
 #define __WCHAR16_H
 
+#include "platform.h"
+
 // TODO: Perhaps WCHAR16 should come out of types.h???
 #ifndef __TYPES_H
 #include "types.h"
 #endif
 
 #if WCHAR_IS_16_BITS
-typedef unsigned short WCHAR16;
+typedef wchar_t WCHAR16;
+typedef std::wstring wc16_string;
+
+#elif USE_U16STRING
+typedef char16_t WCHAR16;
+typedef std::u16string wc16_string;
+
 #else
-typedef uint16 WCHAR16; // unix has 4 byte wchar_t, but we want to standardize on 16 bit wide chars
-#endif
+typedef uint16_t WCHAR16; // unix has 4 byte wchar_t, but we want to standardize on 16 bit wide chars
 
 //=============================================================================
 // class wc16_string
@@ -82,7 +89,7 @@ public:
 
     ~wc16_string();
 
-    void operator=(const wc16_string& rhs);
+    wc16_string& operator=(const wc16_string& rhs);
     int  compare(const wc16_string& rhs) const;
 
     size_type length() const;
@@ -111,5 +118,17 @@ public:
 private:
     wc16_string_impl* mpData;
 };
-
 #endif
+
+namespace tss
+{
+    void swapbytes(wc16_string& str);
+}
+
+#ifndef WORDS_BIGENDIAN
+#define TSS_SwapBytes(x) tss::swapbytes(x)
+#else
+#define TSS_SwapBytes(x)
+#endif
+
+#endif // __WCHAR16_H

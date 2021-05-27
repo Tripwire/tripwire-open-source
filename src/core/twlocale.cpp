@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -48,6 +48,9 @@
 #include <locale.h>
 #endif //HAVE_GCC
 
+#if IS_AROS
+#   undef HAVE_TZSET
+#endif
 
 //=========================================================================
 // STANDARD LIBRARY INCLUDES
@@ -67,10 +70,6 @@ static TSTRING& util_FormatTimeCPlusPlus(struct tm* ptm, TSTRING& strBuf);
 //=========================================================================
 // PUBLIC METHOD CODE
 //=========================================================================
-
-#if IS_AROS
-#    define tzset()
-#endif
 
 void cTWLocale::InitGlobalLocale()
 {
@@ -104,19 +103,19 @@ void cTWLocale::InitGlobalLocale()
 }
 
 /*
-TSTRING cTWLocale::FormatNumberAsHex( int32 i )
+TSTRING cTWLocale::FormatNumberAsHex( int32_t i )
 {
     //
     // preconditions
     //
-    ASSERT( sizeof( long ) >= sizeof( int32 ) ); // must be able to cast to 'long'
+    ASSERT( sizeof( long ) >= sizeof( int32_t ) ); // must be able to cast to 'long'
 
     //
     // convert long to a string
     //
     TOSTRINGSTREAM sstr;
-    sstr.imbue( std::locale::classic() );
-    sstr.setf( std::ios_base::hex, std::ios_base::basefield );
+    tss_classic_locale(sstr);
+    sstr.setf( std::ios::hex, std::ios::basefield );
     const std::num_put< TCHAR > *pnp = 0, &np = tss::GetFacet( sstr.getloc(), pnp );
     np.put( sstr, sstr, sstr.fill(), (long)i ); 
 
@@ -142,21 +141,27 @@ public:
     // EFFECTS: Does all actual formatting for FormatNumber methods
     static numT Format(const std::basic_string<CharT>& s, bool fCStyleFormatting)
     {
+      
+#if !ARCHAIC_STL      
         static const std::num_get<CharT>* png;
-        std::basic_istringstream<CharT>   ss(s);
-        std::ios_base::iostate            state;
+        std::ios::iostate            state;
         numT                              n;
 
+	std::basic_istringstream<CharT>   ss(s);
+
         if (fCStyleFormatting)
-            ss.imbue(std::locale::classic());
+	    tss_classic_locale(ss);
 
         tss::GetFacet(ss.getloc(), png).get(ss, std::istreambuf_iterator<CharT>(), ss, state, n);
 
 
-        if ((state & std::ios_base::failbit) != 0)
+        if ((state & std::ios::failbit) != 0)
             throw eTWLocaleBadNumFormat();
 
         return (n);
+#else
+	return atoi(s.c_str());
+#endif
     }
 
     //=============================================================================
@@ -167,55 +172,55 @@ public:
     //
     static std::basic_string<CharT>& Format(numT n, std::basic_string<CharT>& sBuf, bool fCStyleFormatting = false)
     {
+#if !ARCHAIC_STL      
         static const std::num_put<CharT>* pnp;
+
         std::basic_ostringstream<CharT>   ss;
 
         if (fCStyleFormatting)
-            ss.imbue(std::locale::classic());
+	    tss_classic_locale(ss);
 
         tss::GetFacet(ss.getloc(), pnp).put(ss, ss, ss.fill(), n);
 
+#else
+	strstream ss;
+	ss << n;
+#endif
         sBuf = ss.str();
-        return (sBuf);
+        return (sBuf);	
     }
 };
 
 /*
-TSTRING cTWLocale::FormatNumberClassic( int32 i )
+TSTRING cTWLocale::FormatNumberClassic( int32_t i )
 {
     TSTRING s;
     return cFormatNumberUtil< long, TCHAR >::Format( i, s, true );
 }
 
-int32 cTWLocale::FormatNumberClassic( const TSTRING& s )
+int32_t cTWLocale::FormatNumberClassic( const TSTRING& s )
 {
     return cFormatNumberUtil< long, TCHAR >::Format( s, true );
 }
 */
 
-TSTRING& cTWLocale::FormatNumber(uint64 ui, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(uint64_t ui, TSTRING& strBuf)
 {
-    // try to use the int64 version
-    if (ui <= (uint64)TSS_INT64_MAX)
-        return (FormatNumber((int64)ui, strBuf));
+    // try to use the int64_t version
+    if (ui <= (uint64_t)TSS_INT64_MAX)
+        return (FormatNumber((int64_t)ui, strBuf));
     else
     {
-#if IS_MSVC
-        // MSVC can't convert from uint64 to a double for some reason
-        strBuf = TSS_GetString(cCore, core::STR_NUMBER_TOO_BIG);
-        return (strBuf);
-#else
         ASSERT(std::numeric_limits<double>::max() >= TSS_UINT64_MAX);
         return (cFormatNumberUtil<double, TCHAR>::Format((double)ui, strBuf));
-#endif
     }
 }
 
-TSTRING& cTWLocale::FormatNumber(int64 i, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(int64_t i, TSTRING& strBuf)
 {
-    // try to use the int32 version
-    if (i <= (int64)TSS_INT32_MAX)
-        return (FormatNumber((int32)i, strBuf));
+    // try to use the int32_t version
+    if (i <= (int64_t)TSS_INT32_MAX)
+        return (FormatNumber((int32_t)i, strBuf));
     else
     {
         ASSERT(std::numeric_limits<double>::max() >= TSS_INT64_MAX);
@@ -223,23 +228,25 @@ TSTRING& cTWLocale::FormatNumber(int64 i, TSTRING& strBuf)
     }
 }
 
-TSTRING& cTWLocale::FormatNumber(uint32 ui, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(uint32_t ui, TSTRING& strBuf)
 {
-    ASSERT(sizeof(unsigned long) >= sizeof(uint32)); // must be able to cast to 'ulong'
+    ASSERT(sizeof(unsigned long) >= sizeof(uint32_t)); // must be able to cast to 'ulong'
     return (cFormatNumberUtil<unsigned long, TCHAR>::Format((unsigned long)ui, strBuf));
 }
 
-TSTRING& cTWLocale::FormatNumber(int32 i, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatNumber(int32_t i, TSTRING& strBuf)
 {
-    ASSERT(sizeof(long) >= sizeof(int32)); // must be able to cast to 'long'
+    ASSERT(sizeof(long) >= sizeof(int32_t)); // must be able to cast to 'long'
     return (cFormatNumberUtil<long, TCHAR>::Format((long)i, strBuf));
 }
 
-TSTRING& cTWLocale::FormatTime(int64 t, TSTRING& strBuf)
+TSTRING& cTWLocale::FormatTime(int64_t t, TSTRING& strBuf)
 {
     // clear return string
     strBuf.erase();
+#if HAVE_TZSET
     tzset();
+#endif
     time_t     tmpTime = t;
     struct tm* ptm     = localtime(&tmpTime);
     if (ptm)
@@ -290,7 +297,7 @@ TSTRING& util_FormatTimeCPlusPlus(struct tm* ptm, TSTRING& strBuf)
     tss::GetFacet(sstr.getloc(), ptp).put(sstr, sstr, sstr.fill(), ptm, 'c');
 #    endif
 
-    strBuf = sstr.str();
+    tss_stream_to_string(sstr, strBuf);
     return strBuf;
 }
 #endif

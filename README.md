@@ -159,7 +159,7 @@ The ```make install``` target installs OST to the configured location, and ```ma
 ## License
 
 The developer of the original code and/or files is Tripwire, Inc.
-Portions created by Tripwire, Inc. are copyright 2000-2018 Tripwire, Inc.
+Portions created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.
 Tripwire is a registered trademark of Tripwire, Inc.  All rights reserved.
 
 This program is free software.  The contents of this file are subject to the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.  You may redistribute it and/or modify it only in compliance with the GNU General Public License.

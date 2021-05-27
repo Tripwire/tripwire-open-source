@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -56,21 +56,21 @@ public:
         return CurrentSize();
     }
 
-    void Put(byte inByte);
-    void Put(const byte* inString, unsigned int length);
+    void Put(uint8_t inByte);
+    void Put(const uint8_t* inString, unsigned int length);
 
     // both functions returns the number of bytes actually retrived
-    unsigned int Get(byte& outByte);
-    unsigned int Get(byte* outString, unsigned int getMax);
+    unsigned int Get(uint8_t& outByte);
+    unsigned int Get(uint8_t* outString, unsigned int getMax);
 
-    unsigned int Peek(byte& outByte) const;
+    unsigned int Peek(uint8_t& outByte) const;
 
     void CopyTo(BufferedTransformation& target) const;
-    void CopyTo(byte* target) const;
+    void CopyTo(uint8_t* target) const;
 
     cByteQueue& operator=(const cByteQueue& rhs);
     bool        operator==(const cByteQueue& rhs) const;
-    byte        operator[](unsigned long i) const;
+    uint8_t        operator[](unsigned long i) const;
 
 private:
     void CopyFrom(const cByteQueue& copy);

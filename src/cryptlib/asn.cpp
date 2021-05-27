@@ -6,19 +6,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-unsigned int DERLengthEncode(unsigned int length, byte *output)
+unsigned int DERLengthEncode(unsigned int length, uint8_t *output)
 {
     unsigned int i=0;
     if (length <= 0x7f)
     {
-        output[i++] = byte(length);
+        output[i++] = uint8_t(length);
     }
     else
     {
-        output[i++] = byte(BytePrecision(length) | 0x80);
+        output[i++] = uint8_t(BytePrecision(length) | 0x80);
         for (int j=BytePrecision(length); j; --j)
         {
-            output[i++] = byte (length >> (j-1)*8);
+            output[i++] = uint8_t (length >> (j-1)*8);
         }
     }
     return i;
@@ -26,7 +26,7 @@ unsigned int DERLengthEncode(unsigned int length, byte *output)
 
 unsigned int DERLengthEncode(unsigned int length, BufferedTransformation &bt)
 {
-    byte buf[10];   // should be more than enough
+    uint8_t buf[10];   // should be more than enough
     unsigned int i = DERLengthEncode(length, buf);
     assert(i <= 10);
     bt.Put(buf, i);
@@ -35,7 +35,7 @@ unsigned int DERLengthEncode(unsigned int length, BufferedTransformation &bt)
 
 bool BERLengthDecode(BufferedTransformation &bt, unsigned int &length)
 {
-    byte b;
+    uint8_t b;
 
     if (!bt.Get(b))
         BERDecodeError();
@@ -76,7 +76,7 @@ bool BERLengthDecode(BufferedTransformation &bt, unsigned int &length)
 BERSequenceDecoder::BERSequenceDecoder(BufferedTransformation &inQueue)
     : inQueue(inQueue)
 {
-    byte b;
+    uint8_t b;
     if (!inQueue.Get(b) || b != (SEQUENCE | CONSTRUCTED))
         BERDecodeError();
 

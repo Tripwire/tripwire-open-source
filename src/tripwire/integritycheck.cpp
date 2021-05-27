@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -271,7 +271,7 @@ void cIntegrityCheck::CompareFCOs(iFCO* pOldFCO, iFCO* pNewFCO)
     // construct the compare object and actually do the compare
     //
     cFCOCompare compareObj(propsToCheck);
-    uint32      result = compareObj.Compare(pOldFCO, pNewFCO);
+    uint32_t    result = compareObj.Compare(pOldFCO, pNewFCO);
 
     if ((result & cFCOCompare::PROPS_UNEQUAL) || (result & cFCOCompare::PROPS_NOT_ALL_VALID))
     {
@@ -329,7 +329,7 @@ void cIntegrityCheck::ProcessDir(cDbDataSourceIter dbIter, iFCODataSourceIter* p
 #ifdef DEBUG
     if (dbIter.Done())
     {
-        d.TraceDebug("Processing directory %s\n", pIter->GetParentName().AsString().c_str());
+        d.TraceDebug("Processing directory %s\n", (pIter ? pIter->GetParentName().AsString().c_str() : _T("[none]")));
     }
     else
     {
@@ -451,7 +451,7 @@ cIntegrityCheck::~cIntegrityCheck()
 ///////////////////////////////////////////////////////////////////////////////
 // Execute
 ///////////////////////////////////////////////////////////////////////////////
-void cIntegrityCheck::Execute(uint32 flags)
+void cIntegrityCheck::Execute(uint32_t flags)
 {
     mFlags = flags;
     // create the data source iterator
@@ -557,7 +557,7 @@ void cIntegrityCheck::Execute(uint32 flags)
 ///////////////////////////////////////////////////////////////////////////////
 // ExecuteOnObjectList
 ///////////////////////////////////////////////////////////////////////////////
-void cIntegrityCheck::ExecuteOnObjectList(const std::list<cFCOName>& fcoNames, uint32 flags)
+void cIntegrityCheck::ExecuteOnObjectList(const std::list<cFCOName>& fcoNames, uint32_t flags)
 {
     iFCONameTranslator* pTrans = iTWFactory::GetInstance()->GetNameTranslator();
     //

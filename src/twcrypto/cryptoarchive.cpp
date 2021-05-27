@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -66,10 +66,10 @@ public:
     cCryptoSink(cArchive* pDestArchive, iCipher* pCipher);
     ~cCryptoSink();
 
-    virtual void Put(const byte* inString, unsigned int length);
+    virtual void Put(const uint8_t* inString, unsigned int length);
     virtual void InputFinished();
 
-    virtual void Put(byte inByte)
+    virtual void Put(uint8_t inByte)
     {
         Put(&inByte, 1);
     }
@@ -79,7 +79,7 @@ private:
     iCipher*  mpCipher;
 
     // buffer to cache bytes in
-    int8* mpBuffer;
+    int8_t* mpBuffer;
     int   mBufferLen;
     int   mBufferUsed;
 };
@@ -98,7 +98,7 @@ private:
     iCipher*  mpCipher;
 
     // buffer to cache bytes in
-    int8* mpBuffer;
+    int8_t* mpBuffer;
     int   mBufferLen;
     int   mBufferUsed;
 };
@@ -171,7 +171,7 @@ int cCryptoArchive::Write(const void* pSrc, int count)
         throw eArchiveInvalidOp();
     }
 
-    mpDeflator->Put((byte*)pSrc, count);
+    mpDeflator->Put((uint8_t*)pSrc, count);
 
     return count;
 }
@@ -210,13 +210,13 @@ int cCryptoArchive::Read(void* pDest, int count)
             if ((int)mpInflatedBytes->CurrentSize() < count) // RAD: Cast to int
             {
                 len = mpInflatedBytes->CurrentSize();
-                mpInflatedBytes->Get((byte*)pDest, len);
+                mpInflatedBytes->Get((uint8_t*)pDest, len);
                 return len;
             }
         }
     }
 
-    len = mpInflatedBytes->Get((byte*)pDest, count);
+    len = mpInflatedBytes->Get((uint8_t*)pDest, count);
     ASSERT(len == count);
 
     return len;
@@ -278,13 +278,13 @@ cCryptoSink::~cCryptoSink()
     delete [] mpBuffer;
 }
 
-void cCryptoSink::Put(const byte* inString, unsigned int length)
+void cCryptoSink::Put(const uint8_t* inString, unsigned int length)
 {
     if (mpBuffer == 0)
     {
         // this is the first write
         mBufferLen  = mpCipher->GetBlockSizePlain();
-        mpBuffer    = new int8[mBufferLen];
+        mpBuffer    = new int8_t[mBufferLen];
         mBufferUsed = 0;
     }
 
@@ -299,14 +299,14 @@ void cCryptoSink::Put(const byte* inString, unsigned int length)
         if (bytesToCopy > nLength - i)
             bytesToCopy = nLength - i;
 
-        memcpy(mpBuffer + mBufferUsed, (int8*)inString + i, bytesToCopy);
+        memcpy(mpBuffer + mBufferUsed, (int8_t*)inString + i, bytesToCopy);
         mBufferUsed += bytesToCopy;
 
         if (mBufferUsed >= mBufferLen)
         {
             ASSERT(mBufferUsed == mBufferLen); // should be if our math is right
 
-            int8* pTmp = new int8[mpCipher->GetBlockSizeCipher()];
+            int8_t* pTmp = new int8_t[mpCipher->GetBlockSizeCipher()];
             mpCipher->ProcessBlock(mpBuffer, pTmp);
 
             mpDestArchive->WriteBlob(pTmp, mpCipher->GetBlockSizeCipher());
@@ -328,7 +328,7 @@ void cCryptoSink::InputFinished()
         ASSERT(mBufferLen - mBufferUsed > 0); // should be, or the buffer should have already been written
         RandomizeBytes(mpBuffer + mBufferUsed, mBufferLen - mBufferUsed);
 
-        int8* pTmp = new int8[mpCipher->GetBlockSizeCipher()];
+        int8_t* pTmp = new int8_t[mpCipher->GetBlockSizeCipher()];
         mpCipher->ProcessBlock(mpBuffer, pTmp);
 
         mpDestArchive->WriteBlob(pTmp, mpCipher->GetBlockSizeCipher());
@@ -366,7 +366,7 @@ unsigned int cCryptoSource::Pump(unsigned int size)
     {
         // first time this has been called
         mBufferLen  = mpCipher->GetBlockSizePlain();
-        mpBuffer    = new int8[mBufferLen];
+        mpBuffer    = new int8_t[mBufferLen];
         mBufferUsed = mBufferLen;
     }
 
@@ -381,7 +381,7 @@ unsigned int cCryptoSource::Pump(unsigned int size)
         {
             ASSERT(mBufferUsed == mBufferLen); // should be if our math is right
 
-            int8* pTmp = new int8[mpCipher->GetBlockSizeCipher()];
+            int8_t* pTmp = new int8_t[mpCipher->GetBlockSizeCipher()];
 
             int l = mpSrcArchive->ReadBlob(pTmp, mpCipher->GetBlockSizeCipher());
             if (l != mpCipher->GetBlockSizeCipher())
@@ -400,7 +400,7 @@ unsigned int cCryptoSource::Pump(unsigned int size)
         if (bytesToCopy > nSize - i)
             bytesToCopy = nSize - i;
 
-        outQueue->Put((byte*)(mpBuffer + mBufferUsed), bytesToCopy);
+        outQueue->Put((uint8_t*)(mpBuffer + mBufferUsed), bytesToCopy);
 
         mBufferUsed += bytesToCopy;
         i += bytesToCopy;
@@ -503,8 +503,8 @@ void cRSAArchive::SetWrite(cArchive* pDestArchive, const cRSAPublicKey* pPublicK
 
     // Create a random number and encode using public key
     cRSA  rsa(*mpPublicKey);
-    int8* key          = new int8[rsa.GetBlockSizePlain()];
-    int8* encryptedKey = new int8[rsa.GetBlockSizeCipher()];
+    int8_t* key          = new int8_t[rsa.GetBlockSizePlain()];
+    int8_t* encryptedKey = new int8_t[rsa.GetBlockSizeCipher()];
 
     RandomizeBytes(key, rsa.GetBlockSizePlain());
     rsa.SetEncrypting(mpPublicKey);
@@ -535,8 +535,8 @@ void cRSAArchive::SetWrite(cArchive* pDestArchive, const cRSAPrivateKey* pPrivat
 
     // Create a random number and encode using public key
     cRSA  rsa(*mpPrivateKey);
-    int8* key          = new int8[rsa.GetBlockSizePlain()];
-    int8* encryptedKey = new int8[rsa.GetBlockSizeCipher()];
+    int8_t* key          = new int8_t[rsa.GetBlockSizePlain()];
+    int8_t* encryptedKey = new int8_t[rsa.GetBlockSizeCipher()];
 
     RandomizeBytes(key, rsa.GetBlockSizePlain());
     rsa.SetSigning(mpPrivateKey);
@@ -578,8 +578,8 @@ void cRSAArchive::SetRead(cArchive* pSrcArchive, const cRSAPublicKey* pPublicKey
     mpPrivateKey = 0;
 
     cRSA  rsa(*mpPublicKey);
-    int8* key          = new int8[rsa.GetBlockSizePlain()];
-    int8* encryptedKey = new int8[rsa.GetBlockSizeCipher()];
+    int8_t* key          = new int8_t[rsa.GetBlockSizePlain()];
+    int8_t* encryptedKey = new int8_t[rsa.GetBlockSizeCipher()];
 
     mpArchive->ReadBlob(encryptedKey, rsa.GetBlockSizeCipher());
     rsa.SetVerifying(mpPublicKey);
@@ -608,8 +608,8 @@ void cRSAArchive::SetRead(cArchive* pSrcArchive, const cRSAPrivateKey* pPrivateK
     mpPublicKey  = 0;
 
     cRSA  rsa(*mpPrivateKey);
-    int8* key          = new int8[rsa.GetBlockSizePlain()];
-    int8* encryptedKey = new int8[rsa.GetBlockSizeCipher()];
+    int8_t* key          = new int8_t[rsa.GetBlockSizePlain()];
+    int8_t* encryptedKey = new int8_t[rsa.GetBlockSizeCipher()];
 
     mpArchive->ReadBlob(encryptedKey, rsa.GetBlockSizeCipher());
     rsa.SetDecrypting(mpPrivateKey);

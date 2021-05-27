@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -38,6 +38,8 @@
 #include "core/archive.h"
 #include "core/errorgeneral.h"
 #include "core/errortable.h"
+
+TSS_EXCEPTION(eTestErrorBucketImpl, eError);
 
 // test option 7
 void TestErrorBucketImpl()
@@ -82,7 +84,7 @@ void TestErrorBucketImpl()
     // TODO -- test the error table
     // TODO -- test the error filter
     // set some errors...
-    TSS_EXCEPTION(eTestErrorBucketImpl, eError);
+
     eTestErrorBucketImpl error1(_T("Error A")), error2(_T("Error B")), error3(_T("Error C"));
 
     er.AddError(error1);

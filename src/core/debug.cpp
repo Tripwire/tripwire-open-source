@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -45,7 +45,7 @@
 #include <cstdio>
 
 int           cDebug::mDebugLevel(10);
-uint32        cDebug::mOutMask(cDebug::OUT_TRACE);
+uint32_t      cDebug::mOutMask(cDebug::OUT_TRACE);
 std::ofstream cDebug::logfile;
 //mDebugLevel default == 10, mOutMask default == OUT_TRACE.
 
@@ -106,19 +106,21 @@ void cDebug::DoTrace(const char* format, va_list& args)
     ASSERT(guard1 == 0xBABABABA && guard2 == 0xBABABABA); // string was too long
     ASSERT(strlen(out) < 1024);
 
-    std::ostringstream ostr;
+    TOSTRINGSTREAM ostr;
     ostr.setf(std::ios::left);
     ostr.width(40);
     ostr << mLabel;
     ostr.width(0);
     ostr << out;
-
+    tss_end(ostr);
 
     if ((mOutMask & OUT_STDOUT) != 0)
     {
         std::cout << ostr.str().c_str();
         std::cout.flush();
     }
+
+    tss_free(ostr);
 
     //
     //make it output to log file!
@@ -280,9 +282,9 @@ bool cDebug::SetOutputFile(const char* filename)
     // already open!
     // TODO -- make this work with wide chars
     if (!logfile)
-        logfile.open(filename, std::ios_base::out | std::ios_base::ate | std::ios_base::app);
+        logfile.open(filename, std::ios::out | std::ios::ate | std::ios::app);
     else
-        logfile.setf(std::ios_base::hex, std::ios_base::basefield);
+        logfile.setf(std::ios::hex, std::ios::basefield);
     //make sure info. will not be clobbered.
 
     //Should be open now- if not, abort.

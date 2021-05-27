@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -48,7 +48,7 @@ private:
     virtual ~cRefCountTestObj();
 
     std::list<cRefCountTestObj*> mChildren;
-    int8*                        mpSomeMem;
+    int8_t*                      mpSomeMem;
 };
 
 cRefCountTestObj::cRefCountTestObj()
@@ -56,7 +56,7 @@ cRefCountTestObj::cRefCountTestObj()
     // allocate some mem that should be caught
     // by the memory manager if this object does not
     // get destructed.
-    mpSomeMem = new int8[10];
+    mpSomeMem = new int8_t[10];
 }
 
 cRefCountTestObj::~cRefCountTestObj()

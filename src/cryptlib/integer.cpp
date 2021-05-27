@@ -20,7 +20,7 @@
 union dword_union
 {
     dword dw;
-    struct {
+    struct _w {
 #ifdef WORDS_BIGENDIAN
       word high;
       word low;
@@ -28,7 +28,7 @@ union dword_union
       word low;
       word high;
 #endif
-    };
+    } w;
 };
 
 #if defined(_MSC_VER) && defined(_M_IX86) && (_M_IX86<=500)
@@ -145,10 +145,10 @@ static word Add(word *C, const word *A, const word *B, unsigned int N)
     {
         dword_union u;
         u.dw = (dword) carry + A[i] + B[i];
-        C[i] = u.low;
-        u.dw = (dword) u.high + A[i+1] + B[i+1];
-        C[i+1] = u.low;
-        carry = u.high;
+        C[i] = u.w.low;
+        u.dw = (dword) u.w.high + A[i+1] + B[i+1];
+        C[i+1] = u.w.low;
+        carry = u.w.high;
     }
     return carry;
 }
@@ -162,10 +162,10 @@ static word Subtract(word *C, const word *A, const word *B, unsigned int N)
     {
         dword_union u;
                 u.dw = (dword) A[i] - B[i] - borrow;
-        C[i] = u.low;
-        u.dw = (dword) A[i+1] - B[i+1] - (word)(0-u.high);
-        C[i+1] = u.low;
-        borrow = 0-u.high;
+        C[i] = u.w.low;
+        u.dw = (dword) A[i+1] - B[i+1] - (word)(0-u.w.high);
+        C[i+1] = u.w.low;
+        borrow = 0-u.w.high;
     }
     return borrow;
 }
@@ -223,8 +223,8 @@ static word LinearMultiply(word *C, const word *A, word B, unsigned int N)
     {
         dword_union p;
                 p.dw = (dword)A[i] * B + carry;
-        C[i] = p.low;
-        carry = p.high;
+        C[i] = p.w.low;
+        carry = p.w.high;
     }
     return carry;
 }
@@ -259,17 +259,17 @@ static void AtomicMultiply(word *C, word A0, word A1, word B0, word B1)
 
     dword_union A0B0;
     A0B0.dw = (dword)A0*B0;
-    C[0] = A0B0.low;
+    C[0] = A0B0.w.low;
 
     dword_union A1B1;
     A1B1.dw = (dword)A1*B1;
     dword_union t;
-    t.dw = (dword)A0B0.high + A0B0.low + d.low + A1B1.low;
-    C[1] = t.low;
+    t.dw = (dword)A0B0.w.high + A0B0.w.low + d.w.low + A1B1.w.low;
+    C[1] = t.w.low;
 
-    t.dw = A1B1.dw + t.high + A0B0.high + d.high + A1B1.high - s;
-    C[2] = t.low;
-    C[3] = t.high;
+    t.dw = A1B1.dw + t.w.high + A0B0.w.high + d.w.high + A1B1.w.high - s;
+    C[2] = t.w.low;
+    C[3] = t.w.high;
 }
 
 static word AtomicMultiplyAdd(word *C, word A0, word A1, word B0, word B1)
@@ -304,19 +304,19 @@ static word AtomicMultiplyAdd(word *C, word A0, word A1, word B0, word B1)
     A0B0.dw = (dword)A0*B0;
     dword_union t;
     t.dw = A0B0.dw + C[0];
-    C[0] = t.low;
+    C[0] = t.w.low;
 
     dword_union A1B1;
         A1B1.dw = (dword)A1*B1;
-    t.dw = (dword) t.high + A0B0.low + d.low + A1B1.low + C[1];
-    C[1] = t.low;
+    t.dw = (dword) t.w.high + A0B0.w.low + d.w.low + A1B1.w.low + C[1];
+    C[1] = t.w.low;
 
-    t.dw = (dword) t.high + A1B1.low + A0B0.high + d.high + A1B1.high - s + C[2];
-    C[2] = t.low;
+    t.dw = (dword) t.w.high + A1B1.w.low + A0B0.w.high + d.w.high + A1B1.w.high - s + C[2];
+    C[2] = t.w.low;
 
-    t.dw = (dword) t.high + A1B1.high + C[3];
-    C[3] = t.low;
-    return t.high;
+    t.dw = (dword) t.w.high + A1B1.w.high + C[3];
+    C[3] = t.w.low;
+    return t.w.high;
 }
 
 static inline void AtomicSquare(word *C, word A, word B)
@@ -327,16 +327,16 @@ static inline void AtomicSquare(word *C, word A, word B)
 #else
     dword_union t1;
     t1.dw = (dword) A*A;
-    C[0] = t1.low;
+    C[0] = t1.w.low;
 
     dword_union t2;
         t2.dw = (dword) A*B;
-    t1.dw = (dword) t1.high + t2.low + t2.low;
-    C[1] = t1.low;
+    t1.dw = (dword) t1.w.high + t2.w.low + t2.w.low;
+    C[1] = t1.w.low;
 
-    t1.dw = (dword) B*B + t1.high + t2.high + t2.high;
-    C[2] = t1.low;
-    C[3] = t1.high;
+    t1.dw = (dword) B*B + t1.w.high + t2.w.high + t2.w.high;
+    C[2] = t1.w.low;
+    C[3] = t1.w.high;
 #endif
 }
 
@@ -344,16 +344,16 @@ static inline void AtomicMultiplyBottom(word *C, word A0, word A1, word B0, word
 {
     dword_union t;
     t.dw = (dword)A0*B0;
-    C[0] = t.low;
-    C[1] = t.high + A0*B1 + A1*B0;
+    C[0] = t.w.low;
+    C[1] = t.w.high + A0*B1 + A1*B0;
 }
 
 static inline void AtomicMultiplyBottomAdd(word *C, word A0, word A1, word B0, word B1)
 {
     dword_union t;
     t.dw = (dword)A0*B0 + C[0];
-    C[0] = t.low;
-    C[1] += t.high + A0*B1 + A1*B0;
+    C[0] = t.w.low;
+    C[1] += t.w.high + A0*B1 + A1*B0;
 }
 
 static void CombaMultiply(word *R, const word *A, const word *B)
@@ -363,22 +363,22 @@ static void CombaMultiply(word *R, const word *A, const word *B)
 
 #define MulAcc(x, y)                                \
     p.dw = (dword)A[x] * B[y] + c;                      \
-    c = p.low;                              \
-    p.dw = (dword)d + p.high;                   \
-    d = p.low;                              \
-    e += p.high;
+    c = p.w.low;                              \
+    p.dw = (dword)d + p.w.high;                   \
+    d = p.w.low;                              \
+    e += p.w.high;
 
 #define SaveMulAcc(s, x, y)                         \
     R[s] = c;                                       \
     p.dw = (dword)A[x] * B[y] + d;                      \
-    c = p.low;                              \
-    p.dw = (dword)e + p.high;                   \
-    d = p.low;                              \
-    e = p.high;
+    c = p.w.low;                              \
+    p.dw = (dword)e + p.w.high;                   \
+    d = p.w.low;                              \
+    e = p.w.high;
 
     p.dw = (dword)A[0] * B[0];
-    R[0] = p.low;
-    c = p.high;
+    R[0] = p.w.low;
+    c = p.w.high;
     d = e = 0;
 
     MulAcc(0, 1);
@@ -402,8 +402,8 @@ static void CombaMultiply(word *R, const word *A, const word *B)
 
     R[5] = c;
     p.dw = (dword)A[3] * B[3] + d;
-    R[6] = p.low;
-    R[7] = e + p.high;
+    R[6] = p.w.low;
+    R[7] = e + p.w.high;
 
 #undef MulAcc
 #undef SaveMulAcc
@@ -422,8 +422,8 @@ static void AtomicInverseModPower2(word *C, word A0, word A1)
 
     assert(R.dw*A==1);
 
-    C[0] = R.low;
-    C[1] = R.high;
+    C[0] = R.w.low;
+    C[1] = R.w.high;
 }
 
 // ********************************************************
@@ -834,20 +834,20 @@ static word SubatomicDivide(word *A, word B0, word B1)
 
     // now subtract Q*B from A
     p.dw = (dword) B0*Q;
-    u.dw = (dword) A[0] - p.low;
-    A[0] = u.low;
-    u.dw = (dword) A[1] - p.high - (word)(0-u.high) - (dword)B1*Q;
-    A[1] = u.low;
-    A[2] += u.high;
+    u.dw = (dword) A[0] - p.w.low;
+    A[0] = u.w.low;
+    u.dw = (dword) A[1] - p.w.high - (word)(0-u.w.high) - (dword)B1*Q;
+    A[1] = u.w.low;
+    A[2] += u.w.high;
 
     // Q <= actual quotient, so fix it
     while (A[2] || A[1] > B1 || (A[1]==B1 && A[0]>=B0))
     {
         u.dw = (dword) A[0] - B0;
-        A[0] = u.low;
-        u.dw = (dword) A[1] - B1 - (word)(0-u.high);
-        A[1] = u.low;
-        A[2] += u.high;
+        A[0] = u.w.low;
+        u.dw = (dword) A[1] - B1 - (word)(0-u.w.high);
+        A[1] = u.w.low;
+        A[2] += u.w.high;
         Q++;
         assert(Q);  // shouldn't overflow
     }
@@ -1153,18 +1153,18 @@ long Integer::ConvertToLong() const
 {
     unsigned long value = reg[(unsigned int)0];
 #ifndef __GNUC__
-    value += sizeof(value)>WORD_SIZE ? ((unsigned long)reg[1]<<WORD_BITS) : 0;
+    value += (sizeof(value) > WORD_SIZE) ? (((unsigned long)(reg[(unsigned int)1])) << WORD_BITS) : 0;
 #endif
     value = Crop(value, 8*sizeof(value)-1);
     return sign==POSITIVE ? value : -long(value);
 }
 
-Integer::Integer(const byte *encodedInteger, unsigned int byteCount, Signedness s)
+Integer::Integer(const uint8_t *encodedInteger, unsigned int byteCount, Signedness s)
 {
     Decode(encodedInteger, byteCount, s);
 }
 
-Integer::Integer(const byte *BEREncodedInteger)
+Integer::Integer(const uint8_t *BEREncodedInteger)
 {
     BERDecode(BEREncodedInteger);
 }
@@ -1241,15 +1241,15 @@ void Integer::SetBit(unsigned int n, bool value)
     }
 }
 
-byte Integer::GetByte(unsigned int n) const
+uint8_t Integer::GetByte(unsigned int n) const
 {
     if (n/WORD_SIZE >= reg.size)
         return 0;
     else
-        return byte(reg[n/WORD_SIZE] >> ((n%WORD_SIZE)*8));
+        return uint8_t(reg[n/WORD_SIZE] >> ((n%WORD_SIZE)*8));
 }
 
-void Integer::SetByte(unsigned int n, byte value)
+void Integer::SetByte(unsigned int n, uint8_t value)
 {
     reg.CleanGrow(RoundupSize(bytesToWords(n+1)));
     reg[n/WORD_SIZE] &= ~(word(0xff) << 8*(n%WORD_SIZE));
@@ -1360,7 +1360,7 @@ unsigned int Integer::BitCount() const
         return 0;
 }
 
-void Integer::Decode(const byte *input, unsigned int inputLen, Signedness s)
+void Integer::Decode(const uint8_t *input, unsigned int inputLen, Signedness s)
 {
     sign = ((s==SIGNED) && (input[0] & 0x80)) ? NEGATIVE : POSITIVE;
 
@@ -1395,7 +1395,7 @@ unsigned int Integer::MinEncodedSize(Signedness signedness) const
     return outputLen;
 }
 
-unsigned int Integer::Encode(byte *output, unsigned int outputLen, Signedness signedness) const
+unsigned int Integer::Encode(uint8_t *output, unsigned int outputLen, Signedness signedness) const
 {
     if (signedness == UNSIGNED || NotNegative())
     {
@@ -1412,7 +1412,7 @@ unsigned int Integer::Encode(byte *output, unsigned int outputLen, Signedness si
     return outputLen;
 }
 
-unsigned int Integer::DEREncode(byte *output) const
+unsigned int Integer::DEREncode(uint8_t *output) const
 {
     unsigned int i=0;
     output[i++] = INTEGER;
@@ -1435,7 +1435,7 @@ unsigned int Integer::DEREncode(BufferedTransformation &bt) const
     return 1+lengthBytes+bc;
 }
 
-void Integer::BERDecode(const byte *input)
+void Integer::BERDecode(const uint8_t *input)
 {
     if (*input++ != INTEGER)
         BERDecodeError();
@@ -1456,7 +1456,7 @@ void Integer::BERDecode(const byte *input)
 
 void Integer::BERDecode(BufferedTransformation &bt)
 {
-    byte b;
+    uint8_t b;
     if (!bt.Get(b) || b != INTEGER)
         BERDecodeError();
 
@@ -1475,7 +1475,7 @@ void Integer::Randomize(RandomNumberGenerator &rng, unsigned int nbits)
     const unsigned int nbytes = nbits/8 + 1;
     SecByteBlock buf(nbytes);
     rng.GetBlock(buf, nbytes);
-    buf[(unsigned int)0] = (byte)Crop(buf[(unsigned int)0], nbits % 8);
+    buf[(unsigned int)0] = (uint8_t)Crop(buf[(unsigned int)0], nbits % 8);
     Decode(buf, nbytes, UNSIGNED);
 }
 

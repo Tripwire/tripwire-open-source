@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -184,12 +184,12 @@ public:
     //
     // getting and setting the data associated with a given entry
     //
-    int8* GetData(int32& length) const; //throw (eArchive, eHierDatabase)
+    int8_t* GetData(int32_t& length) const; //throw (eArchive, eHierDatabase)
         // returns the data associated with the current entry; this asserts that the iterator is
         // not done and the current entry has data associated with it
     bool HasData() const;
     // returns true if the current entry has data
-    void SetData(int8* pData, int32 length); //throw (eArchive, eHierDatabase)
+    void SetData(int8_t* pData, int32_t length); //throw (eArchive, eHierDatabase)
     void RemoveData();                       //throw (eArchive, eHierDatabase)
         // removes the data associated with the current entry; this asserts that the current
         // entry actually _has_ data

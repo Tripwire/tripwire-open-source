@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -78,6 +78,7 @@ static bool NeedsStat(const cFCOPropVector& v)
 
 bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t size)
 {
+#if SUPPORTS_SYMLINKS
     std::vector<char> data(size + 1);
     char*             buf = &data[0];
 
@@ -102,7 +103,7 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
 
     //Sadly if buf isn't big enough readlink 'succeeds' by truncating the string, so the only
     // clue your buffer might be too small is if you maxed it out.  So we try again, within reason.
-#if IS_SKYOS
+#if READLINK_NULL_TERMINATES
     if ((size_t)rtn >= size - 1) //SkyOS wants space to null terminate the string it hands back, which is nice, I guess.
 #else
     if ((size_t)rtn == size)
@@ -118,6 +119,9 @@ bool cFSPropCalc::GetSymLinkStr(const TSTRING& strName, cArchive& arch, size_t s
     arch.WriteBlob(buf, rtn);
 
     return true;
+#else
+    return false;
+#endif
 }
 
 void cFSPropCalc::AddPropCalcError(const eError& e)
@@ -298,6 +302,18 @@ void cFSPropCalc::HandleStatProperties(const cFCOPropVector& propsToCheck, const
         case cFSStatArgs::TY_NAMED:
             propSet.SetFileType(cFSPropSet::FT_NAMED);
             break;
+        case cFSStatArgs::TY_NATIVE:
+            propSet.SetFileType(cFSPropSet::FT_NATIVE);
+            break;
+        case cFSStatArgs::TY_MESSAGE_QUEUE:
+            propSet.SetFileType(cFSPropSet::FT_MESSAGE_QUEUE);
+            break;
+        case cFSStatArgs::TY_SEMAPHORE:
+            propSet.SetFileType(cFSPropSet::FT_SEMAPHORE);
+            break;
+        case cFSStatArgs::TY_SHARED_MEMORY:
+            propSet.SetFileType(cFSPropSet::FT_SHARED_MEMORY);
+            break;
         default:
             // set it to invalid
             propSet.SetFileType(cFSPropSet::FT_INVALID);
@@ -312,11 +328,17 @@ void cFSPropCalc::HandleHashes(const cFCOPropVector& propsToCheck, const TSTRING
     // if the file type is not a regular file, we will
     // not try to open the file for signature generation
     ASSERT(propSet.GetValidVector().ContainsItem(cFSPropSet::PROP_FILETYPE));
-    if (propSet.GetFileType() == cFSPropSet::FT_FILE || propSet.GetFileType() == cFSPropSet::FT_SYMLINK)
+
+    if (   propSet.GetFileType() == cFSPropSet::FT_FILE
+        || propSet.GetFileType() == cFSPropSet::FT_SYMLINK
+#if (SUPPORTS_NATIVE_OBJECTS)
+        || propSet.GetFileType() == cFSPropSet::FT_NATIVE
+#endif
+     )
     {
         if ( // if we need to open the file
             propsToCheck.ContainsItem(cFSPropSet::PROP_CRC32) || propsToCheck.ContainsItem(cFSPropSet::PROP_MD5) ||
-            propsToCheck.ContainsItem(cFSPropSet::PROP_SHA) || propsToCheck.ContainsItem(cFSPropSet::PROP_HAVAL))
+            propsToCheck.ContainsItem(cFSPropSet::PROP_SHA)   || propsToCheck.ContainsItem(cFSPropSet::PROP_HAVAL))
         {
             cFileArchive   arch;
             cMemoryArchive memArch;

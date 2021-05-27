@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -72,35 +72,40 @@
 #include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
-#if !IS_SORTIX
-# include <sys/file.h>
+
+#if !IS_SORTIX && HAVE_SYS_FILE_H
+#    include <sys/file.h>
 #endif
+
 #include <sys/stat.h>
-#include <sys/wait.h>
-#include <time.h>
-#if HAVE_MALLOC_H && !IS_AROS
-#include <malloc.h>
+
+#if HAVE_SYS_WAIT_H
+#    include <sys/wait.h>
 #endif
+
+#include <time.h>
+
+#if HAVE_MALLOC_H && !IS_AROS
+#    include <malloc.h>
+#endif
+
 #include <string.h>
 //#include <signal.h>
 #include "tw_signal.h"
+
 #ifdef __STDC__
-#       include <unistd.h>
-#       include <stdlib.h>
+#    include <unistd.h>
+#    include <stdlib.h>
 #endif
+
 #ifdef HAVE_SYS_PARAM_H
-# include <sys/param.h>
+#   include <sys/param.h>
 #endif
+
 #include <assert.h>
 #include "msystem.h"
 
-#if IS_REDOX
-#define setuid(x) sleep(0) 
-#define setgid(x) sleep(0)
-#endif
- 
-
-
+#if USES_MSYSTEM
 /*
  * signal type
  */
@@ -227,7 +232,7 @@ char *getenv();             /* get variable from environment */
     char *str;
 #   endif
     {
-        register char *p;   /* temp pointer */
+        char *p;   /* temp pointer */
 
         /*
          * allocate space for the string, and copy if successful
@@ -253,7 +258,7 @@ char **old;
 int *sz_alloc;
 #endif
 {
-    register int i;     /* counter in a for loop */
+    int i;     /* counter in a for loop */
     union xyzzy x;      /* used to cast malloc properly */
 
     /*
@@ -284,8 +289,8 @@ static int initenv(void)
 static int initenv()
 #endif
 {
-    register int i;
-    register int rval;
+    int i;
+    int rval;
 
     if (envp != NULL)
         le_clobber();
@@ -306,7 +311,7 @@ void le_clobber(void)
 void le_clobber()
 #endif
 {
-    register int i;     /* counter in a for loop */
+    int i;     /* counter in a for loop */
     union {
         char **ep;
         char *p;
@@ -344,8 +349,8 @@ static int le_getenv(var)
 char *var;
 #endif
 {
-    register int i;         /* counter in a for loop */
-    register char *p, *q;       /* used to compare two strings */
+    int i;         /* counter in a for loop */
+    char *p, *q;       /* used to compare two strings */
 
     /*
      * check for no environment
@@ -385,8 +390,8 @@ int le_set(env)
 char *env;
 #endif
 {
-    register char *p, *q;       /* what is to be put into env */
-    register int n;         /* where a previous definition is */
+    char *p, *q;       /* what is to be put into env */
+    int n;         /* where a previous definition is */
 
     /*
      * see if you need to create the environment list
@@ -475,7 +480,7 @@ int le_unset(env)
 char *env;
 #endif
 {
-    register int i;     /* counter in a for loop */
+    int i;     /* counter in a for loop */
 
     /*
      * delete it from the environment
@@ -595,8 +600,8 @@ static const char *shellenv(void)
 static const char *shellenv()
 #endif
 {
-    register int i;     /* counter in a for loop */
-    register const char *shptr; /* points to shell name */
+    int i;     /* counter in a for loop */
+    const char *shptr; /* points to shell name */
 
     /*
      * error check; should never happen
@@ -620,6 +625,8 @@ static const char *shellenv()
     return(shptr);
 }
 
+
+#if USES_MSYSTEM
 /*
  * like system but A LOT safer
  */ 
@@ -631,9 +638,9 @@ char *cmd;
 #endif
 {
     const char *argv[5];            /* argument list */
-    register const char *p;     /* temoporary pointers */
-    register const char* shptr;     /* the program to be run */
-    register int i;         /* index number of child */
+    const char *p;     /* temoporary pointers */
+    const char* shptr;     /* the program to be run */
+    int i;         /* index number of child */
 
     /*
      * if it's NULL, initialize it
@@ -661,6 +668,7 @@ char *cmd;
                 return(127);
     return(echild(i));
 }
+#endif // USES_MSYSTEM
 
 /*
  * this structure holds the information associating
@@ -672,6 +680,7 @@ static struct popenfunc {   /* association of pid, file pointer */
     FILE *fp;           /* the file pointer */
 } pfunc[MAX_MPOPEN];
 
+#if USES_MPOPEN
 /*
  * like popen but A LOT safer
  */ 
@@ -684,10 +693,10 @@ char *mode;
 #endif
 {
     const char *argv[5];            /* argument list */
-    register const char *p;     /* temoporary pointers */
-    register const char *shptr;     /* the program to be run */
+    const char *p;     /* temoporary pointers */
+    const char *shptr;     /* the program to be run */
     FILE *fpa[3];           /* process communication descriptors */
-    register int indx;      /* index number of child */
+    int indx;      /* index number of child */
 
     /*
      * see if anything is available
@@ -722,6 +731,7 @@ char *mode;
                 return(NULL);
     return(pfunc[indx].fp = ((*mode == 'w') ? fpa[0] : fpa[1]));
 }
+#endif
 
 /*
  * close the pipe
@@ -733,8 +743,8 @@ int mpclose(fp)
 FILE *fp;
 #endif
 {
-    register int indx;  /* used to look for corresponding pid */
-    register int rstatus;   /* return status of command */
+    int indx;  /* used to look for corresponding pid */
+    int rstatus;   /* return status of command */
 
     /*
      * loop until you find the right process
@@ -771,9 +781,9 @@ FILE *fpa[];
 #endif
 {
     const char *argv[5];            /* argument list */
-    register const char *p;     /* temoporary pointers */
-    register const char *shptr;     /* the program to be run */
-    register int indx;      /* index number of child */
+    const char *p;     /* temoporary pointers */
+    const char *shptr;     /* the program to be run */
+    int indx;      /* index number of child */
 
     /*
      * see if anything is available
@@ -816,7 +826,7 @@ int indx;
 FILE *fp[];
 #endif
 {
-    register int rstatus;   /* return status of command */
+    int rstatus;   /* return status of command */
 
     /*
      * loop until you find the right process
@@ -850,7 +860,7 @@ char *argv[];
 FILE *fpa[];
 #endif
 {
-        register int indx;              /* index number of child */
+        int indx;              /* index number of child */
 
         /*
          * see if anything is available
@@ -883,9 +893,12 @@ FILE *fp[];
         return(mfpclose(indx, fp));
 }
 
-#if IS_AROS
- #define fork() vfork()
+#if HAVE_FORK
+#  define tss_fork() fork()
+#elif HAVE_VFORK
+#  define tss_fork() vfork()
 #endif
+
 
 /*
  * signal values
@@ -910,9 +923,9 @@ int mask;
 #endif
 {
     int p[3][2];            /* pipes to/from child */
-    register int i;         /* counter in for loop */
-    register int ch_pid;        /* child PID */
-    register int euid, egid;    /* in case reset[gu]id is -1 */
+    int i;         /* counter in for loop */
+    int ch_pid;        /* child PID */
+    int euid, egid;    /* in case reset[gu]id is -1 */
     /*
      * create 1 pipe for each of standard input, output, error
      */
@@ -932,14 +945,26 @@ int mask;
     /*
      * spawn the child and make the pipes the subprocess stdin, stdout
      */
-    if ((ch_pid = fork()) == 0){
+    if ((ch_pid = tss_fork()) == 0){
         /* now reset the uid and gid if desired */
-        if (mresetgid < -1)     (void) setgid(getgid());
-        else if (mresetgid == -1)   (void) setgid(egid);
-        else if (mresetgid > -1)    (void) setgid(mresetgid);
-        if (mresetuid < -1)     (void) setuid(getuid());
-        else if (mresetuid == -1)   (void) setuid(euid);
-        else if (mresetuid > -1)    (void) setuid(mresetuid);
+#if HAVE_SETGID      
+        if (mresetgid < -1)
+            (void) setgid(getgid());
+        else if (mresetgid == -1)
+            (void) setgid(egid);
+        else if (mresetgid > -1)
+            (void) setgid(mresetgid);
+#endif
+
+#if HAVE_SETUID
+        if (mresetuid < -1)
+            (void) setuid(getuid());
+        else if (mresetuid == -1)
+            (void) setuid(euid);
+        else if (mresetuid > -1)
+            (void) setuid(mresetuid);
+#endif
+	
         /* reset the umask */
         (void) umask(mask);
         /* close the unused ends of the pipe  */
@@ -1028,8 +1053,7 @@ int echild(pid)
 int pid;
 #endif
 {
-
-    register int r;     /* PID of process just exited */
+    int r;     /* PID of process just exited */
     int status;     /* status of wait call */
 
     /*
@@ -1050,3 +1074,5 @@ int pid;
      */
     return(status);
 }
+
+#endif // SUPPORTS_POSIX_FORK_EXEC

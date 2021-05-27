@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -48,38 +48,42 @@
 
 #include <time.h>
 
+#if IS_AROS
+#   undef HAVE_TZSET
+#endif
+
 //=========================================================================
 // METHOD CODE
 //=========================================================================
 
 #define TIME_MAX 2147483647L // largest signed 32 bit number
 
-#if IS_AROS
-#    define tzset()
-#endif
-
-struct tm* cTimeUtil::TimeToDateGMT(const int64& seconds)
+struct tm* cTimeUtil::TimeToDateGMT(const int64_t& seconds)
 {
     ASSERT(seconds < TIME_MAX); // this assumes time_t size is 32 bit.  Yikes!
     time_t t = static_cast<time_t>(seconds);
     return gmtime(&t);
 }
 
-struct tm* cTimeUtil::TimeToDateLocal(const int64& seconds)
+struct tm* cTimeUtil::TimeToDateLocal(const int64_t& seconds)
 {
     ASSERT(seconds < TIME_MAX); // this assumes time_t size is 32 bit.  Yikes!
     time_t t = static_cast<time_t>(seconds);
+#if HAVE_TZSET
     tzset();
+#endif
     return localtime(&t);
 }
 
-int64 cTimeUtil::DateToTime(struct tm* ptm)
+int64_t cTimeUtil::DateToTime(struct tm* ptm)
 {
+#if HAVE_TZSET
     tzset();
+#endif
     return mktime(ptm);
 }
 
-int64 cTimeUtil::GetTime()
+int64_t cTimeUtil::GetTime()
 {
     return time(NULL);
 }

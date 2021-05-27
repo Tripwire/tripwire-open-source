@@ -32,7 +32,7 @@ const word16 LC_RNG::a=16807;
 const word16 LC_RNG::r=2836;
 #endif
 
-byte LC_RNG::GetByte()
+uint8_t LC_RNG::GetByte()
 {
     word32 hi = seed/q;
     word32 lo = seed%q;
@@ -49,7 +49,7 @@ byte LC_RNG::GetByte()
 
 // ********************************************************
 
-X917RNG::X917RNG(BlockTransformation *c, const byte *seed)
+X917RNG::X917RNG(BlockTransformation *c, const uint8_t *seed)
     : cipher(c),
       S(cipher->BlockSize()),
       dtbuf(S),
@@ -58,20 +58,20 @@ X917RNG::X917RNG(BlockTransformation *c, const byte *seed)
       randbuf_counter(0)
 {
     time_t tstamp1 = time(0);
-    xorbuf(dtbuf, (byte *)&tstamp1, STDMIN((int)sizeof(tstamp1), S));
+    xorbuf(dtbuf, (uint8_t *)&tstamp1, STDMIN((int)sizeof(tstamp1), S));
     cipher->ProcessBlock(dtbuf);
     clock_t tstamp2 = clock();
-    xorbuf(dtbuf, (byte *)&tstamp2, STDMIN((int)sizeof(tstamp2), S));
+    xorbuf(dtbuf, (uint8_t *)&tstamp2, STDMIN((int)sizeof(tstamp2), S));
     cipher->ProcessBlock(dtbuf);
 }
 
-byte X917RNG::GetByte()
+uint8_t X917RNG::GetByte()
 {
     if (randbuf_counter==0)
     {
         // calculate new enciphered timestamp
         clock_t tstamp = clock();
-        xorbuf(dtbuf, (byte *)&tstamp, STDMIN((int)sizeof(tstamp), S));
+        xorbuf(dtbuf, (uint8_t *)&tstamp, STDMIN((int)sizeof(tstamp), S));
         cipher->ProcessBlock(dtbuf);
 
         // combine enciphered timestamp with seed
@@ -97,7 +97,7 @@ MaurerRandomnessTest::MaurerRandomnessTest()
         tab[i] = 0;
 }
 
-inline void MaurerRandomnessTest::Put(byte inByte)
+inline void MaurerRandomnessTest::Put(uint8_t inByte)
 {
     if (n >= Q)
         sum += log(double(n - tab[inByte]));
@@ -105,7 +105,7 @@ inline void MaurerRandomnessTest::Put(byte inByte)
     n++;
 }
 
-void MaurerRandomnessTest::Put(const byte *inString, unsigned int length)
+void MaurerRandomnessTest::Put(const uint8_t *inString, unsigned int length)
 {
     while (length--)
         Put(*inString++);

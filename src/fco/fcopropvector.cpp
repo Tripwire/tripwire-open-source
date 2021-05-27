@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -39,7 +39,7 @@
 #include "core/debug.h"
 #include "core/errorutil.h"
 
-int cFCOPropVector::msBitlength(sizeof(uint32) * 8);
+int cFCOPropVector::msBitlength(sizeof(uint32_t) * 8);
 //msBitlength is common to all objects of class.
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -71,7 +71,7 @@ cFCOPropVector::cFCOPropVector(const cFCOPropVector& rhs) : iSerializable()
     mMask = rhs.mMask;
     if (rhs.mpBuf != NULL)
     {
-        mpBuf  = new std::vector<uint32>;
+        mpBuf  = new std::vector<uint32_t>;
         *mpBuf = *(rhs.mpBuf);
     }
     else
@@ -122,7 +122,7 @@ cFCOPropVector& cFCOPropVector::operator=(const cFCOPropVector& rhs)
             *mpBuf = *(rhs.mpBuf);
         else if ((rhs.mpBuf != NULL) && (mpBuf == NULL))
         {
-            mpBuf  = new std::vector<uint32>;
+            mpBuf  = new std::vector<uint32_t>;
             *mpBuf = *(rhs.mpBuf);
         }
         else if ((rhs.mpBuf == NULL) && (mpBuf != NULL))
@@ -254,7 +254,7 @@ int cFCOPropVector::SetSize(int max)
     }
     else if ((mpBuf == NULL) && (max > msBitlength))
     {
-        mpBuf = new std::vector<uint32>;
+        mpBuf = new std::vector<uint32_t>;
         (*mpBuf).resize(((max / msBitlength) + 1), 0);
         (*mpBuf)[0]  = mMask;
         return mSize = ((*mpBuf).capacity() * msBitlength);
@@ -367,8 +367,8 @@ bool cFCOPropVector::isExtended(void) const
             return false;
         else
         {
-            uint32 sum = 0;
-            for (uint32 i = (*mpBuf).size() - 1; i >= 2; i--)
+            uint32_t sum = 0;
+            for (uint32_t i = (*mpBuf).size() - 1; i >= 2; i--)
                 sum += ((*mpBuf)[i]);
             return (sum != 0);
         }
@@ -391,12 +391,12 @@ void cFCOPropVector::check(cDebug& d) const
 } //end check
 
 
-void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropVector::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
         ThrowAndAssert(eSerializerVersionMismatch(_T("Property Vector Read")));
 
-    int32 newSize;
+    int32_t newSize;
     pSerializer->ReadInt32(newSize);
     ASSERT(newSize > 0);
 
@@ -404,7 +404,7 @@ void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
 
     if (mpBuf == NULL)
     {
-        int32 mask;
+        int32_t mask;
         pSerializer->ReadInt32(mask);
         mMask = mask;
     }
@@ -412,7 +412,7 @@ void cFCOPropVector::Read(iSerializer* pSerializer, int32 version)
     {
         for (int i = 0; i <= mSize / msBitlength; ++i)
         {
-            int32 mask;
+            int32_t mask;
             pSerializer->ReadInt32(mask);
             (*mpBuf)[i] = mask;
         }
@@ -450,6 +450,7 @@ void cFCOPropVector::TraceContents(int dl) const
         if (ContainsItem(i))
             ostr << i << _T(", ");
     }
-    ostr << std::ends;
-    d.Trace(dl, _T("Size = %d Contents = %s\n"), GetSize(), ostr.str().c_str());
+
+    tss_mkstr(contents, ostr);
+    d.Trace(dl, _T("Size = %d Contents = %s\n"), GetSize(), contents.c_str());
 }

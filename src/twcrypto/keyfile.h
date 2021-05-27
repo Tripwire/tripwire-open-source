@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -72,26 +72,26 @@ public:
     void WriteFile(const TCHAR* filename) const; // throw eKeyFile()
         // Read and write keys to a keyfile
 
-    void ReadMem(const int8* pMem);  // throw eKeyFile()
-    void WriteMem(int8* pMem) const; // throw eKeyFile()
+    void ReadMem(const int8_t* pMem);  // throw eKeyFile()
+    void WriteMem(int8_t* pMem) const; // throw eKeyFile()
     int  GetWriteLen();              // throw eKeyFile()
         // Functions to read and write the key to memory.  GetWriteLen() will throw an
         // exception if keys are not currently loaded.
 
     bool KeysLoaded() const;
 
-    void GenerateKeys(int keySize, int8* passphrase, int passphraseLen); // throw eKeyFile()
+    void GenerateKeys(int keySize, int8_t* passphrase, int passphraseLen); // throw eKeyFile()
         // Generate new keys
         // Note: Bytes in passphrase will be cleared after keys are generated for safety
 
-    void ChangePassphrase(int8* passphraseOld,
-                          int   passphraseOldLen,
-                          int8* passphrase,
-                          int   passphraseLen); // throw eKeyFile()
+    void ChangePassphrase(int8_t* passphraseOld,
+                          int     passphraseOldLen,
+                          int8_t* passphrase,
+                          int     passphraseLen); // throw eKeyFile()
     // Change passphrase
     // Note: Bytes in passphrases will be cleared after change for safety
 
-    const cElGamalSigPrivateKey* GetPrivateKey(int8* passphrase, int passphraseLen);
+    const cElGamalSigPrivateKey* GetPrivateKey(int8_t* passphrase, int passphraseLen);
     void                         ReleasePrivateKey();
     // Access to the private key.  Key is normally stored encrypted for safety.  Call
     // ReleasePrivateKey() to destory the plaintext version of the key as soon as you
@@ -103,8 +103,8 @@ public:
     static const cFileHeaderID& GetFileHeaderID();
 
 protected:
-    int8* mpPrivateKeyMem; // encrypted version of private key
-    int   mPrivateKeyMemLen;
+    int8_t* mpPrivateKeyMem; // encrypted version of private key
+    int     mPrivateKeyMemLen;
 
     cElGamalSigPrivateKey* mpPrivateKey; // only valid between calls to GetPrivateKey() and ReleasePrivateKey()
     cElGamalSigPublicKey*  mpPublicKey;
@@ -112,7 +112,7 @@ protected:
     int mPrivateKeyUseCount;
 
 private:
-    void ProtectKeys(int8* passphrase, int passphraseLen); // throw eKeyFile()
+    void ProtectKeys(int8_t* passphrase, int passphraseLen); // throw eKeyFile()
     void ReleaseMem();
 };
 
@@ -129,7 +129,7 @@ public:
     cPrivateKeyProxy();
     ~cPrivateKeyProxy();
 
-    bool AquireKey(cKeyFile& keyFile, int8* passphrase, int passphraseLen);
+    bool AquireKey(cKeyFile& keyFile, int8_t* passphrase, int passphraseLen);
     // note: be sure to check return value for failure!!!
 
     bool Valid() const

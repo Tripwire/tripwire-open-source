@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -79,9 +79,18 @@
 
 #if IS_AROS
 #include <errno.h>
+
+#if HAVE_PROTO_EXEC_H
 #include <proto/exec.h>
+#endif
+
+#if HAVE_PROTO_BSDSOCKET_H
 #include <proto/bsdsocket.h>
+#endif
+
+#if HAVE_BSDSOCKET_SOCKETBASETAGS_H
 #include <bsdsocket/socketbasetags.h>
+#endif
 
 static bool aros_socketbase_init();
 #endif
@@ -211,7 +220,7 @@ void cTWInit::Init(const TSTRING& strArgv0)
                          // should call this function (cTWInit::Init) on startup
 
     // we require 8-bit bytes for some functionality
-    ASSERT(sizeof(byte) == sizeof(uint8));
+    //ASSERT(sizeof(byte) == sizeof(uint8_t));
 
     //
     // set debug level

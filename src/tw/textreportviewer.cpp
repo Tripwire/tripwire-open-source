@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -112,7 +112,12 @@ static const TCHAR* g_sz79Equals =
 // UTIL FUNCTION PROTOTYES
 //=========================================================================
 
+#if !ARCHAIC_STL
 static void OpenOutputFile(fixed_basic_ofstream<TCHAR>& out, const TSTRING& strFile); // throw( eTextReportViewer )
+#else
+static void OpenOutputFile(ofstream& out, const TSTRING& strFile); // throw( eTextReportViewer )
+#endif
+
 static void OpenInputFile(std::ifstream& out, const TSTRING& strFile);                // throw( eTextReportViewer )
 static bool PrintableProp(const iFCO* pfcoOld, const iFCO* pfcoNew, int j);
 
@@ -277,7 +282,11 @@ void cTextReportViewer::PrintTextReport(const TSTRING& strFilename, ReportingLev
     }
     else
     {
+#if !ARCHAIC_STL      
         fixed_basic_ofstream<TCHAR> out;
+#else
+	ofstream out;
+#endif
         OpenOutputFile(out, strFilename);
         mpOut = &out;
         OutputTextReport();
@@ -738,8 +747,10 @@ void cTextReportViewer::ReportError(const cErrorQueueIter& eqIter)
     // output error number
     TOSTRINGSTREAM ostr;
     ostr << mErrorNum << _T(".");
+    tss_mkstr(numStr, ostr);
+    
     (*mpOut).width(nWidth);
-    (*mpOut) << ostr.str();
+    (*mpOut) << numStr;
 
     // output general error
     (*mpOut) << cErrorTable::GetInstance()->Get(eqIter.GetError().GetID()) << endl;
@@ -923,7 +934,11 @@ TSTRING cTextReportViewer::GetGenre()
 
 bool cTextReportViewer::PeekIsEOF()
 {
+#if !ARCHAIC_STL  
     return (mpIn->peek() == char_traits<char>::eof());
+#else
+    return (mpIn->peek() == EOF);    
+#endif    
 }
 
 // if the next character in the stream is ('X' or 'x'), it eats the x, else it returns false
@@ -1133,7 +1148,7 @@ void cTextReportViewer::OutputReportHeader()
 
     // TODO: ( start / end / elapsed ) time
     TSTRING tstrDummy;
-    int64   i64CreateTime = mpHeader->GetCreationTime();
+    int64_t i64CreateTime = mpHeader->GetCreationTime();
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString(cTW, tw::STR_R_CREATED_ON) << cTWLocale::FormatTime(i64CreateTime, tstrDummy).c_str()
              << endl;
@@ -1141,7 +1156,7 @@ void cTextReportViewer::OutputReportHeader()
     (*mpOut).width(headerColumnWidth);
     (*mpOut) << TSS_GetString(cTW, tw::STR_DB_LAST_UPDATE);
 
-    int64 i64LastDBUTime = mpHeader->GetLastDBUpdateTime();
+    int64_t i64LastDBUTime = mpHeader->GetLastDBUpdateTime();
     if (i64LastDBUTime == 0)
     {
         (*mpOut) << TSS_GetString(cTW, tw::STR_NEVER) << endl << endl;
@@ -1327,7 +1342,7 @@ void cTextReportViewer::CollateRulesSummary(const cFCOReportGenreIter& genreIter
                 break;
             }
 
-            if (si->mSpecName.compare(newLine.mSpecName) == 0 && si->mSeverity == newLine.mSeverity)
+            if (si->mSpecName == newLine.mSpecName && si->mSeverity == newLine.mSeverity)
             {
                 si->mAddedObjects += newLine.mAddedObjects;
                 si->mRemovedObjects += newLine.mRemovedObjects;
@@ -1335,16 +1350,36 @@ void cTextReportViewer::CollateRulesSummary(const cFCOReportGenreIter& genreIter
 
                 // if one of the start points is a subset of the other, then we take the shorter one.
                 // otherwise we set the startpoint to empty.
+		// TODO this logic is not aware of strings as paths and may do the wrong thing in some cases.
+		// 
                 if (newLine.mStartPoint.length() <= si->mStartPoint.length())
+		{
+#if !ARCHAIC_STL
                     if (newLine.mStartPoint.compare(0, newLine.mStartPoint.length(), si->mStartPoint) == 0)
-                        si->mStartPoint = newLine.mStartPoint;
-                    else
+#else
+		    if (_tcsncmp(newLine.mStartPoint.c_str(), si->mStartPoint.c_str(), newLine.mStartPoint.length()) == 0)
+#endif		      
+		    {
+		        si->mStartPoint = newLine.mStartPoint;
+                    }
+		    else
+		    {
                         si->mStartPoint.erase();
+		    }
+		}
+#if !ARCHAIC_STL		
                 else if (si->mStartPoint.compare(0, si->mStartPoint.length(), newLine.mStartPoint) == 0)
+#else
+                else if (_tcsncmp(si->mStartPoint.c_str(), newLine.mStartPoint.c_str(), si->mStartPoint.length()) == 0)
+#endif		  
+		{
                     ;
+		}
                 else
+		{
                     si->mStartPoint.erase();
-
+                }
+		
                 break;
             }
         }
@@ -1725,7 +1760,11 @@ void OpenInputFile(std::ifstream& in, const TSTRING& strFile) // throw( eTextRep
     }
 }
 
+#if !ARCHAIC_STL
 void OpenOutputFile(fixed_basic_ofstream<TCHAR>& out, const TSTRING& strFile) // throw( eTextReportViewer )
+#else
+void OpenOutputFile(ofstream& out, const TSTRING& strFile) // throw( eTextReportViewer )
+#endif  
 {
     std::string narrowFilename = cStringUtil::TstrToStr(strFile);
 
@@ -1924,7 +1963,7 @@ TSTRING cTextReportViewer::SingleLineReport()
     sstrReport << _T(" ") << TSS_GetString(cTW, tw::STR_REMOVED_SHORT) << _T(":") << nRemovedTotal;
     sstrReport << _T(" ") << TSS_GetString(cTW, tw::STR_CHANGED_SHORT) << _T(":") << nChangedTotal;
 
-    return sstrReport.str();
+    tss_return_stream(sstrReport, out);
 }
 
 
@@ -1978,7 +2017,11 @@ void cTextReportViewer::OutputParseableReport()
 
 char cTextReportViewer::PeekChar()
 {
+#if !ARCHAIC_STL    
     return char_traits<char>::to_char_type(mpIn->peek());
+#else
+    return (char)mpIn->peek();
+#endif    
 }
 
 
@@ -1993,11 +2036,13 @@ void cTextReportViewer::GetChar()
 
     // initialize mCurrentChar
     mCurrentCharSize = 0;
-    for (uint32 i = 0; i < sizeof(mCurrentChar); i++)
+    for (uint32_t i = 0; i < sizeof(mCurrentChar); i++)
         mCurrentChar[i] = 0;
 
+#if !ARCHAIC_STL    
     static const std::istream::char_type eof = std::char_traits<char>::to_char_type(std::char_traits<char>::eof());
-
+#endif
+    
     std::streampos pos = mpIn->tellg();
 
     for (size_t nch = 0; nch < (size_t)MB_CUR_MAX; nch++)
@@ -2016,7 +2061,11 @@ void cTextReportViewer::GetChar()
 
             d.TraceDebug(_T("Found EOF\n"));
 
+#if !ARCHAIC_STL	    
             mCurrentChar[0]  = eof;
+#else
+            mCurrentChar[0]  = EOF;
+#endif	    
             mCurrentCharSize = 1;
 
             return;
@@ -2030,8 +2079,11 @@ void cTextReportViewer::GetChar()
             }
 
             // get character from input stream
+#if !ARCHAIC_STL	    
             std::istream::char_type ch = std::char_traits<char>::to_char_type(mpIn->get());
-
+#else
+	    char ch = mpIn->get();
+#endif	    
             // add character to mb buffer
             mCurrentChar[nch] = ch;
             mCurrentCharSize++;
@@ -2050,7 +2102,13 @@ void cTextReportViewer::GetChar()
     }
 
     mpIn->seekg(pos);
+
+#if !ARCHAIC_STL    
     std::istream::char_type c = std::char_traits<char>::to_char_type(mpIn->get());
+#else
+    char c = mpIn->get();
+#endif
+    
     if ((unsigned char)c > 0x7f)
     {
         mCurrentChar[0]  = c;

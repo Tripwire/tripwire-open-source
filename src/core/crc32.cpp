@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -82,9 +82,9 @@
 #include "archive.h"
 #endif
 
-#define BUFSIZE 4096
+#define BUFFER_SIZE 4096
 
-static uint32 crctab[] = {
+static uint32_t crctab[] = {
     0x0,
     0x04c11db7, 0x09823b6e, 0x0d4326d9, 0x130476dc, 0x17c56b6b,
     0x1a864db2, 0x1e475005, 0x2608edb8, 0x22c9f00f, 0x2f8ad6d6,
@@ -154,7 +154,7 @@ void crcInit( CRC_INFO& crcInfo )
     crcInfo.crc         = 0;
 }
 
-void crcUpdate( CRC_INFO& crcInfo, const uint8* pbData, int cbDataLen )
+void crcUpdate( CRC_INFO& crcInfo, const uint8_t* pbData, int cbDataLen )
 {    
     for( int i = 0; i < cbDataLen; i++, pbData++ )
     {
@@ -168,7 +168,7 @@ void crcFinit( CRC_INFO& crcInfo )
 {
     // include the length
     //
-    uint32 len = crcInfo.cbTotalLen;
+    uint32_t len = crcInfo.cbTotalLen;
     for(; len != 0; len >>= 8)
         COMPUTE( crcInfo.crc, len & 0xff );
     

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -59,7 +59,7 @@ public:
     int  operator==(const cFileHeaderID& rhs) const;
     int  operator!=(const cFileHeaderID& rhs) const;
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 private:
@@ -68,7 +68,7 @@ private:
     // the way we implemented cFCONames.
     // Note: We store the string as narrow chars, since
     // the program is the only person who will see them.
-    int16 mIDLen;
+    int16_t mIDLen;
 
     enum
     {
@@ -119,8 +119,8 @@ public:
     void                 SetID(const cFileHeaderID& id);
     const cFileHeaderID& GetID() const;
 
-    void   SetVersion(uint32 v);
-    uint32 GetVersion() const;
+    void     SetVersion(uint32_t v);
+    uint32_t GetVersion() const;
 
     void     SetEncoding(Encoding e);
     Encoding GetEncoding() const;
@@ -128,12 +128,12 @@ public:
     cMemoryArchive&       GetBaggage();
     const cMemoryArchive& GetBaggage() const;
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
-    virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
+    virtual void Write(iSerializer* pSerializer) const;               // throw (eSerializer, eArchive)
 
 protected:
     cFileHeaderID  mID;
-    uint32         mVersion;
+    uint32_t       mVersion;
     Encoding       mEncoding;
     cMemoryArchive mBaggage; // items that have been serialized to this object
 };
@@ -143,7 +143,7 @@ inline const cFileHeaderID& cFileHeader::GetID() const
     return mID;
 }
 
-inline uint32 cFileHeader::GetVersion() const
+inline uint32_t cFileHeader::GetVersion() const
 {
     return mVersion;
 }

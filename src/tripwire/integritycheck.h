@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -87,10 +87,10 @@ public:
 
     ~cIntegrityCheck();
 
-    void Execute(uint32 flags = 0);
+    void Execute(uint32_t flags = 0);
     // flags should be 0, or some combination of the below enumeration
     // TODO -- specify what kinds of exception can come up from here....
-    void ExecuteOnObjectList(const std::list<cFCOName>& fcoNames, uint32 flags = 0);
+    void ExecuteOnObjectList(const std::list<cFCOName>& fcoNames, uint32_t flags = 0);
     // executes an integrity check on the objects named in the list. The specList passed in
     // as the first parameter to the ctor is interprited as the db's spec list.
     int ObjectsScanned()
@@ -133,7 +133,7 @@ private:
     iFCOSpec*            mpCurSpec;        // the spec we are currently operating on
     cFCOReportSpecIter   mReportIter;      // the current iterator into the report
     cFCOPropVector       mLooseDirProps;   // properties that should be ignored in loose directories
-    uint32               mFlags;           // flags passed in to execute()
+    uint32_t             mFlags;           // flags passed in to execute()
     int                  mnObjectsScanned; // number of objects scanned in system ( scanning includes
                                            // discovering that an FCO does not exist )
 

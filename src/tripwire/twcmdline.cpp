@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -277,7 +277,11 @@ static void util_InitTempDirectory(const cConfigFile& cf)
     //
     if (*temp_directory.rbegin() != '/')
     {
+#if !ARCHAIC_STL      
         temp_directory.push_back('/');
+#else
+        temp_directory.append("/");
+#endif	
     }
 #endif
 
@@ -512,15 +516,11 @@ static void FillOutConfigInfo(cTWModeCommon* pModeInfo, const cConfigFile& cf)
 
     if (cf.Lookup(TSTRING(_T("HASH_DIRECT_IO")), str))
     {
-#if SUPPORTS_DIRECT_IO
         if (_tcsicmp(str.c_str(), _T("true")) == 0)
         {
             pModeInfo->mbDirectIO = true;
             cArchiveSigGen::SetUseDirectIO(true);
         }
-#else
-        throw eTWDirectIONotSupported();
-#endif
     }
 
     if (cf.Lookup(TSTRING(_T("RESOLVE_IDS_TO_NAMES")), str))
@@ -759,7 +759,7 @@ int cTWModeDbInit::Execute(cErrorQueue* pQueue)
 
         iUserNotify::GetInstance()->Notify(1, TSS_GetString(cTripwire, tripwire::STR_GENERATING_DB).c_str());
 
-        uint32 gdbFlags = 0;
+        uint32_t gdbFlags = 0;
         gdbFlags |= (mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0);
         gdbFlags |= (mpData->mbDirectIO ? cGenerateDb::FLAG_DIRECT_IO : 0);
 
@@ -1144,8 +1144,10 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                 // TODO -- move these strings to the string table
                 TOSTRINGSTREAM str;
                 str << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS1) << dbFile.GetHeader().GetCreator()
-                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName << std::ends;
-                cTWUtil::PrintErrorMsg(eICDifferentUsers(str.str(), eError::NON_FATAL));
+                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName;
+		tss_mkstr(errStr, str);
+		
+                cTWUtil::PrintErrorMsg(eICDifferentUsers(errStr, eError::NON_FATAL));
             }
         }
 
@@ -1255,7 +1257,7 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                     //If any sort of exception escapes the IC, make sure it goes in the report.
                     try
                     {
-                        uint32 icFlags = 0;
+                        uint32_t icFlags = 0;
                         icFlags |= (mpData->mfLooseDirs ? cIntegrityCheck::FLAG_LOOSE_DIR : 0);
                         icFlags |= (mpData->mbResetAccessTime ? cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0);
                         icFlags |= (mpData->mbDirectIO ? cIntegrityCheck::FLAG_DIRECT_IO : 0);
@@ -1408,7 +1410,7 @@ int cTWModeIC::Execute(cErrorQueue* pQueue)
                     //If any sort of exception escapes the IC, make sure it goes in the report.
                     try
                     {
-                        uint32 icFlags = 0;
+                        uint32_t icFlags = 0;
                         icFlags |= (mpData->mfLooseDirs ? cIntegrityCheck::FLAG_LOOSE_DIR : 0);
                         icFlags |= (mpData->mbResetAccessTime ? cIntegrityCheck::FLAG_ERASE_FOOTPRINTS_IC : 0);
                         icFlags |= (mpData->mbDirectIO ? cIntegrityCheck::FLAG_DIRECT_IO : 0);
@@ -1886,7 +1888,7 @@ int cTWModeDbUpdate::Execute(cErrorQueue* pQueue)
             //
             // actually do the integrity check...
             //
-            uint32 udFlags = 0;
+            uint32_t udFlags = 0;
             udFlags |= (mpData->mbResetAccessTime ? cUpdateDb::FLAG_ERASE_FOOTPRINTS_UD : 0);
 
             cUpdateDb update(dbIter.GetDb(), *mpData->mpReport, pQueue);
@@ -2146,8 +2148,10 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
                 // TODO -- move these strings to the string table
                 TOSTRINGSTREAM str;
                 str << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS1) << dbFile.GetHeader().GetCreator()
-                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName << std::ends;
-                cTWUtil::PrintErrorMsg(eICDifferentUsers(str.str(), eError::NON_FATAL));
+                    << TSS_GetString(cTripwire, tripwire::STR_ERR2_DIFFERENT_USERS2) << userName;
+		tss_mkstr(errStr, str);
+		
+                cTWUtil::PrintErrorMsg(eICDifferentUsers(errStr, eError::NON_FATAL));
             }
         }
 
@@ -2213,7 +2217,7 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
                 //
                 cPolicyUpdate pu(
                     genreIter->GetGenre(), dbIter.GetSpecList(), genreIter->GetSpecList(), dbIter.GetDb(), pQueue);
-                uint32 puFlags = 0;
+                uint32_t puFlags = 0;
                 puFlags |= mpData->mbSecureMode ? cPolicyUpdate::FLAG_SECURE_MODE : 0;
                 puFlags |= (mpData->mbResetAccessTime ? cPolicyUpdate::FLAG_ERASE_FOOTPRINTS_PU : 0);
                 puFlags |= (mpData->mbDirectIO ? cPolicyUpdate::FLAG_DIRECT_IO : 0);
@@ -2245,7 +2249,7 @@ int cTWModePolUpdate::Execute(cErrorQueue* pQueue)
                 // generate the database...
                 // TODO -- turn pQueue into an error bucket
 
-                uint32 gdbFlags = 0;
+                uint32_t gdbFlags = 0;
                 gdbFlags |= (mpData->mbResetAccessTime ? cGenerateDb::FLAG_ERASE_FOOTPRINTS_GD : 0);
                 gdbFlags |= (mpData->mbDirectIO ? cGenerateDb::FLAG_DIRECT_IO : 0);
 

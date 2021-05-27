@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -40,6 +40,9 @@
 
 #ifndef __STRINGUTIL_T_H
 #    define __STRINGUTIL_T_H
+
+#include "core/platform.h"
+#include "core/tchar.h"
 
 #include "core/ntmbs.h"
 #include "core/ntdbs.h"
@@ -81,7 +84,9 @@ inline void TestStringUtil()
     TEST(b.size() == 0);
 
     a.resize(3);
+#if !ARCHAIC_STL    
     TEST(a.c_str() != b.c_str());
+#endif    
     TEST(std::equal(a.begin(), a.end(), NTDBS1));
     TEST(std::equal(b.begin(), b.end(), NTDBS1));
 

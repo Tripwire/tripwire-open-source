@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -100,14 +100,14 @@ public:
     // I think the best thing might be to have iSerializable only know about the archive
     // Standard data read/write
     // (All functions can throw eArchave exceptions).
-    virtual void ReadInt16(int16& ret);
-    virtual void ReadInt32(int32& ret);
-    virtual void ReadInt64(int64& ret);
+    virtual void ReadInt16(int16_t& ret);
+    virtual void ReadInt32(int32_t& ret);
+    virtual void ReadInt64(int64_t& ret);
     virtual void ReadString(TSTRING& ret);
     virtual int  ReadBlob(void* pBlob, int count);
-    virtual void WriteInt16(int16 i);
-    virtual void WriteInt32(int32 i);
-    virtual void WriteInt64(int64 i);
+    virtual void WriteInt16(int16_t i);
+    virtual void WriteInt32(int32_t i);
+    virtual void WriteInt64(int64_t i);
     virtual void WriteString(const TSTRING& s);
     virtual void WriteBlob(const void* pBlob, int count);
 
@@ -122,8 +122,8 @@ private:
     TSTRING mFileName;
 
     // creation function maps
-    typedef std::map<uint32, iTypedSerializable::CreateFunc> SerMap;
-    typedef std::map<uint32, iSerRefCountObj::CreateFunc>    SerRefCountMap;
+    typedef std::map<uint32_t, iTypedSerializable::CreateFunc> SerMap;
+    typedef std::map<uint32_t, iSerRefCountObj::CreateFunc>    SerRefCountMap;
     static SerMap                                            mSerCreateMap;
     static SerRefCountMap                                    mSerRefCountCreateMap;
 

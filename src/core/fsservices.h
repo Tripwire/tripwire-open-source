@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -98,8 +98,8 @@
 // TYPEDEFS
 //=========================================================================
 
-typedef int64 cFSTime;
-typedef int64 cFSType;
+typedef int64_t cFSTime;
+typedef int64_t cFSType;
 
 //=========================================================================
 // GLOBALS
@@ -117,7 +117,7 @@ typedef int64 cFSType;
 //     it is the union of MAX(elem) for all the file systems that we support
 /*class cACLElem {
    // TODO this is just a place holder
-   // uint32   mUid;
+   // uint32_t   mUid;
 };*/
 
 // this class is used only to pass arguments to iFSServices
@@ -136,27 +136,31 @@ struct cFSStatArgs
         TY_SOCK,
         TY_DOOR,
         TY_PORT,
-        TY_NAMED
+        TY_NAMED,
+        TY_NATIVE,
+        TY_MESSAGE_QUEUE,
+        TY_SEMAPHORE,
+        TY_SHARED_MEMORY
     };
 
     // attr is fs dependent?
-    uint64  dev;     // dep
-    int64   ino;     // dep
-    int64   mode;    // dep
-    int64   nlink;   // indep
-    int64   uid;     // dep
-    int64   gid;     // dep
-    uint64  rdev;    // dep
-    int64   size;    // indep
-    cFSTime atime;   // indep
-    cFSTime mtime;   // indep
-    cFSTime ctime;   // indep
-    int64   blksize; // indep
-    int64   blocks;  // dep
-    int64   fstype;  // dep
-    TSTRING usid;    // dep
-    TSTRING gsid;    // dep
-                     // int64 mFileType;     // Matt's addition...
+    uint64_t  dev;     // dep
+    int64_t   ino;     // dep
+    int64_t   mode;    // dep
+    int64_t   nlink;   // indep
+    int64_t   uid;     // dep
+    int64_t   gid;     // dep
+    uint64_t  rdev;    // dep
+    int64_t   size;    // indep
+    cFSTime   atime;   // indep
+    cFSTime   mtime;   // indep
+    cFSTime   ctime;   // indep
+    int64_t   blksize; // indep
+    int64_t   blocks;  // dep
+    int64_t   fstype;  // dep
+    TSTRING   usid;    // dep
+    TSTRING   gsid;    // dep
+                     // int64_t mFileType;     // Matt's addition...
 
     FileType mFileType; // redundant with other information in this struct, but
                         // broken out for convenience
@@ -269,7 +273,7 @@ public:
 
     virtual bool GetCurrentUserName(TSTRING& tstrName) const = 0;
 
-    virtual bool GetIPAddress(uint32& uiIPAddress) = 0;
+    virtual bool GetIPAddress(uint32_t& uiIPAddress) = 0;
 
 
     ////////////////////////////////////////
@@ -305,8 +309,8 @@ public:
     ////////////////////////////////////////
     // miscellaneous utility functions
     ////////////////////////////////////////
-    virtual void ConvertModeToString(uint64 perm, TSTRING& tstrPerm) const = 0;
-    // takes a int64 permission (from stat) and changes it to look like UNIX's 'ls -l' (e.g. drwxrwxrwx)
+    virtual void ConvertModeToString(uint64_t perm, TSTRING& tstrPerm) const = 0;
+    // takes a int64_t permission (from stat) and changes it to look like UNIX's 'ls -l' (e.g. drwxrwxrwx)
     virtual bool FullPath(TSTRING& fullPath, const TSTRING& relPath, const TSTRING& pathRelFrom = _T("")) const = 0;
     // converts relPath into a fully qualified path, storing it in FullPath. If this
     // fails, false is returned.  if the path to which relPath is relative is not CWD, put it in pathRelFrom.

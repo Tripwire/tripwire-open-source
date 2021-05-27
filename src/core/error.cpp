@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -39,11 +39,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 // CalcHash
 ///////////////////////////////////////////////////////////////////////////////
-uint32 eError::CalcHash(const char* name)
+uint32_t eError::CalcHash(const char* name)
 {
     CRC_INFO crc;
     crcInit(crc);
-    crcUpdate(crc, (const uint8*)name, strlen(name));
+    crcUpdate(crc, (const uint8_t*)name, strlen(name));
     crcFinit(crc);
     return crc.crc;
 }

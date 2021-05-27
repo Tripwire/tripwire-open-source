@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -59,9 +59,13 @@ TSTRING cFCOPropFileType::AsString() const
                               fs::STR_FT_SOCK,
                               fs::STR_FT_DOOR,
                               fs::STR_FT_PORT,
-                              fs::STR_FT_NAMED};
+                              fs::STR_FT_NAMED,
+                              fs::STR_FT_NATIVE,
+                              fs::STR_FT_MESSAGE_QUEUE,
+                              fs::STR_FT_SEMAPHORE,
+                              fs::STR_FT_SHARED_MEMORY};
 
-    int32 fileType = GetValue();
+    int32_t fileType = GetValue();
     if ((fileType > cFSPropSet::FT_INVALID) && (fileType < cFSPropSet::FT_NUMITEMS))
         return TSS_GetString(cFS, fileTypes[fileType]);
     else
@@ -106,7 +110,9 @@ void cFSPropSet::TraceContents(int dl) const
                  << _T(", ");
         }
     }
-    d.Trace(dl, _T("%s\n"), ostr.str().c_str());
+
+    tss_mkstr(out, ostr);
+    d.Trace(dl, _T("%s\n"), out.c_str());
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -358,7 +364,7 @@ iFCOProp* cFSPropSet::GetPropAt(int index)
     return NULL;
 }
 
-void cFSPropSet::Read(iSerializer* pSerializer, int32 version)
+void cFSPropSet::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FS Property Set Read")));

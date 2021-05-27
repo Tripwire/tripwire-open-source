@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -42,12 +42,12 @@ IMPLEMENT_SERREFCOUNT(cFCOSpecAttr, _T("cFCOSpecAttr"), 0, 1)
 ///////////////////////////////////////////////////////////////////////////////
 // Read
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSpecAttr::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecAttr::Read(iSerializer* pSerializer, int32_t version)
 {
     pSerializer->ReadString(mName);
     pSerializer->ReadInt32(mSeverity);
 
-    int32   size;
+    int32_t size;
     TSTRING str;
     pSerializer->ReadInt32(size);
     mEmailAddrs.clear();

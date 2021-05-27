@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -75,12 +75,12 @@ public:
     {
     }
 
-    int32 mType;
+    int32_t mType;
 
     /////////////////////////////////////////
     // methods to override
     /////////////////////////////////////////
-    virtual int32 CalcArchiveSize() const
+    virtual int32_t CalcArchiveSize() const
     {
         return (sizeof(mType));
     }
@@ -113,10 +113,10 @@ public:
 class cHierAddr
 {
 public:
-    int32 mBlockNum;
-    int32 mIndex;
+    int32_t mBlockNum;
+    int32_t mIndex;
 
-    cHierAddr(int32 block = -1, int32 index = -1) : mBlockNum(block), mIndex(index)
+    cHierAddr(int32_t block = -1, int32_t index = -1) : mBlockNum(block), mIndex(index)
     {
     }
 
@@ -134,7 +134,7 @@ public:
     /////////////////////////////////////////////////
     // serialization methods
     /////////////////////////////////////////////////
-    int32 CalcArchiveSize() const
+    int32_t CalcArchiveSize() const
     {
         return (sizeof(mBlockNum) + sizeof(mIndex));
     }
@@ -169,7 +169,7 @@ public:
     /////////////////////////////////////////////////
     // serialization methods
     /////////////////////////////////////////////////
-    virtual int32 CalcArchiveSize() const
+    virtual int32_t CalcArchiveSize() const
     {
         return (cHierNode::CalcArchiveSize() + mChild.CalcArchiveSize());
     }
@@ -193,7 +193,7 @@ public:
             throw eArchiveFormat(_T("Invalid type encountered; expected ROOT node"));
         }
         mChild.Read(arch);
-        int32 cs;
+        int32_t cs;
         arch.ReadInt32(cs);
         mbCaseSensitive = cs ? true : false;
         TSTRING dc;
@@ -226,7 +226,7 @@ public:
     /////////////////////////////////////////////////
     // serialization methods
     /////////////////////////////////////////////////
-    virtual int32 CalcArchiveSize() const
+    virtual int32_t CalcArchiveSize() const
     {
         return (cHierNode::CalcArchiveSize() + mChild.CalcArchiveSize() + mData.CalcArchiveSize() +
                 cArchive::GetStorageSize(mName) + mNext.CalcArchiveSize());
@@ -274,7 +274,7 @@ public:
     /////////////////////////////////////////////////
     // serialization methods
     /////////////////////////////////////////////////
-    virtual int32 CalcArchiveSize() const
+    virtual int32_t CalcArchiveSize() const
     {
         return (cHierNode::CalcArchiveSize() + mParent.CalcArchiveSize() + mArray.CalcArchiveSize());
     }

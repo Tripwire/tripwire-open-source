@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -103,24 +103,24 @@ public:
     // All write functions throw exceptions for unexpected events like
     // running out of memory or disk space.
     //
-    void ReadInt16(int16& ret);    // throw(eArchive)
-    void ReadInt32(int32& ret);    // throw(eArchive)
-    void ReadInt64(int64& ret);    // throw(eArchive)
+    void ReadInt16(int16_t& ret);    // throw(eArchive)
+    void ReadInt32(int32_t& ret);    // throw(eArchive)
+    void ReadInt64(int64_t& ret);    // throw(eArchive)
     void ReadString(TSTRING& ret); // throw(eArchive)
     int  ReadBlob(void* pBlob, int count);
-    void WriteInt16(int16 i);                     // throw(eArchive)
-    void WriteInt32(int32 i);                     // throw(eArchive)
-    void WriteInt64(int64 i);                     // throw(eArchive)
-    void WriteString(TSTRING s);                  // throw(eArchive)
+    void WriteInt16(int16_t i);                     // throw(eArchive)
+    void WriteInt32(int32_t i);                     // throw(eArchive)
+    void WriteInt64(int64_t i);                     // throw(eArchive)
+    void WriteString(const TSTRING& s);                  // throw(eArchive)
     void WriteBlob(const void* pBlob, int count); // throw(eArchive)
 
-    static int32 GetStorageSize(const TSTRING& str);
+    static int32_t GetStorageSize(const TSTRING& str);
     // this method calculates how many bytes the given string will take up in the archive and returns
     // that value
     // NOTE -- if the implementation of ReadString() or WriteString() ever changes, this method will also
     //          need to change.
 
-    int64 Copy(cArchive* pFrom, int64 amt); // throw(eArchive)
+    int64_t Copy(cArchive* pFrom, int64_t amt); // throw(eArchive)
         // this method copies amt bytes from pFrom to itself, throwing an eArchive if anything goes wrong.
 
     // only makes sense to call for reading archives
@@ -146,9 +146,9 @@ public:
         END       = -1
     };
 
-    virtual void  Seek(int64 offset, SeekFrom from) = 0; // throw(eArchive);
-    virtual int64 CurrentPos() const                = 0;
-    virtual int64 Length() const                    = 0;
+    virtual void  Seek(int64_t offset, SeekFrom from) = 0; // throw(eArchive);
+    virtual int64_t CurrentPos() const                = 0;
+    virtual int64_t Length() const                    = 0;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -166,22 +166,22 @@ public:
     cMemMappedArchive();
     virtual ~cMemMappedArchive();
 
-    virtual void MapArchive(int64 offset, int64 len)       = 0; // throw(eArchive);
-    virtual void MapArchive(int64 offset, int64 len) const = 0; // throw(eArchive);
+    virtual void MapArchive(int64_t offset, int64_t len)       = 0; // throw(eArchive);
+    virtual void MapArchive(int64_t offset, int64_t len) const = 0; // throw(eArchive);
         // the const version of MapArchive() does not allow the archive to grow in size
 
-    int64       GetMappedOffset() const; // throw(eArchive)
-    int64       GetMappedLength() const; // throw(eArchive)
+    int64_t     GetMappedOffset() const; // throw(eArchive)
+    int64_t     GetMappedLength() const; // throw(eArchive)
     void*       GetMap();                // throw(eArchive)
     const void* GetMap() const;
 
 protected:
-    mutable void* mpMappedMem;
-    mutable int64 mMappedOffset;
-    mutable int64 mMappedLength;
+    mutable void*   mpMappedMem;
+    mutable int64_t mMappedOffset;
+    mutable int64_t mMappedLength;
 
     // call in derived class to set above vars
-    void SetNewMap(void* pMap, int64 offset, int64 length) const;
+    void SetNewMap(void* pMap, int64_t offset, int64_t length) const;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -198,25 +198,25 @@ public:
     ~cMemoryArchive();
 
     virtual bool  EndOfFile();
-    virtual void  Seek(int64 offset, SeekFrom from); // throw(eArchive)
-    virtual int64 CurrentPos() const;
-    virtual int64 Length() const;
-    virtual void  MapArchive(int64 offset, int64 len);       // throw(eArchive)
-    virtual void  MapArchive(int64 offset, int64 len) const; // throw(eArchive)
+    virtual void  Seek(int64_t offset, SeekFrom from); // throw(eArchive)
+    virtual int64_t CurrentPos() const;
+    virtual int64_t Length() const;
+    virtual void  MapArchive(int64_t offset, int64_t len);       // throw(eArchive)
+    virtual void  MapArchive(int64_t offset, int64_t len) const; // throw(eArchive)
 
     void Truncate(); // set the length to the current pos
 
-    int8* GetMemory() const
+    int8_t* GetMemory() const
     {
         return mpMemory;
     }
 
 protected:
-    int8* mpMemory;
-    int   mAllocatedLen;
-    int   mMaxAllocatedLen;
-    int   mLogicalSize;
-    int   mReadHead;
+    int8_t* mpMemory;
+    int     mAllocatedLen;
+    int     mMaxAllocatedLen;
+    int     mLogicalSize;
+    int     mReadHead;
 
     virtual int  Read(void* pDest, int count);
     virtual int  Write(const void* pDest, int count); // throw(eArchive)
@@ -231,19 +231,19 @@ class cFixedMemArchive : public cBidirArchive
 {
 public:
     cFixedMemArchive();
-    cFixedMemArchive(int8* pMem, int32 size);
+    cFixedMemArchive(int8_t* pMem, int32_t size);
     virtual ~cFixedMemArchive();
 
-    void Attach(int8* pMem, int32 size);
+    void Attach(int8_t* pMem, int32_t size);
     // this method associates the archive with pMem and sets the size of the
     // archive. Unlike cMemoryArchive, this may never grow or shrink in size.
 
     //-----------------------------------
     // cBidirArchive interface
     //-----------------------------------
-    virtual void  Seek(int64 offset, SeekFrom from); // throw(eArchive);
-    virtual int64 CurrentPos() const;
-    virtual int64 Length() const;
+    virtual void  Seek(int64_t offset, SeekFrom from); // throw(eArchive);
+    virtual int64_t CurrentPos() const;
+    virtual int64_t Length() const;
     virtual bool  EndOfFile();
 
 protected:
@@ -253,9 +253,9 @@ protected:
     virtual int Read(void* pDest, int count);        // throw(eArchive)
     virtual int Write(const void* pDest, int count); // throw(eArchive)
 
-    int8* mpMemory;
-    int32 mSize;
-    int32 mReadHead;
+    int8_t* mpMemory;
+    int32_t mSize;
+    int32_t mReadHead;
 };
 
 class cFileArchive : public cBidirArchive
@@ -273,8 +273,8 @@ public:
     };
 
     // TODO: Open should throw
-    virtual void OpenRead(const TCHAR* filename, uint32 openFlags = 0);
-    virtual void OpenReadWrite(const TCHAR* filename, uint32 openFlags = FA_OPEN_TRUNCATE);
+    virtual void OpenRead(const TCHAR* filename, uint32_t openFlags = 0);
+    virtual void OpenReadWrite(const TCHAR* filename, uint32_t openFlags = FA_OPEN_TRUNCATE);
     // opens a file for reading or writing; the file is always created if it doesn't exist,
     // and is truncated to zero length if truncateFile is set to true;
     TSTRING      GetCurrentFilename(void) const;
@@ -285,14 +285,14 @@ public:
     // cBidirArchive interface
     //-----------------------------------
     virtual bool  EndOfFile();
-    virtual void  Seek(int64 offset, SeekFrom from); // throw(eArchive)
-    virtual int64 CurrentPos() const;
-    virtual int64 Length() const;
+    virtual void  Seek(int64_t offset, SeekFrom from); // throw(eArchive)
+    virtual int64_t CurrentPos() const;
+    virtual int64_t Length() const;
 
 
 protected:
-    int64 mFileSize; //Size of FileArchive
-    int64 mReadHead; //Current position of read/write head
+    int64_t mFileSize; //Size of FileArchive
+    int64_t mReadHead; //Current position of read/write head
     //-----------------------------------
     // cArchive interface
     //-----------------------------------
@@ -301,7 +301,7 @@ protected:
     bool        isWritable;
     cFile       mCurrentFile;
     TSTRING     mCurrentFilename; //current file
-    uint32      mOpenFlags;
+    uint32_t    mOpenFlags;
 };
 
 ///////////////////////////////////////////////////////////////
@@ -315,7 +315,7 @@ protected:
 class cLockedTemporaryFileArchive : public cFileArchive
 {
 public:
-    virtual void OpenReadWrite(const TCHAR* filename = NULL, uint32 openFlags = FA_OPEN_TRUNCATE);
+    virtual void OpenReadWrite(const TCHAR* filename = NULL, uint32_t openFlags = FA_OPEN_TRUNCATE);
     // creates the file.  filename must not exist on the file system.
     // if filename is NULL, the class will create and use a temporary file.
     // truncateFile has no meaning
@@ -328,7 +328,7 @@ public:
 private:
     // open for read only makes no sense if we're always creating the file,
     // so disallow read only file opens
-    virtual void OpenRead(const TCHAR*, uint32 openFlags = 0)
+    virtual void OpenRead(const TCHAR*, uint32_t openFlags = 0)
     {
         ASSERT(false);
         THROW_INTERNAL("archive.h");

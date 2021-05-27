@@ -13,15 +13,15 @@ class LC_RNG : public RandomNumberGenerator
 {
 public:
     LC_RNG(word32 init_seed)
-        : seedBytes((byte *)&seed) {seed=init_seed;}
+        : seedBytes((uint8_t *)&seed) {seed=init_seed;}
 
-    byte GetByte();
+    uint8_t GetByte();
 
     word32 GetSeed() {return seed;}
 
 private:
     word32 seed;
-    byte *const seedBytes;
+    uint8_t *const seedBytes;
 
     static const word32 m;
     static const word32 q;
@@ -35,9 +35,9 @@ class X917RNG : public RandomNumberGenerator
 {
 public:
     // cipher will be deleted by destructor
-    X917RNG(BlockTransformation *cipher, const byte *seed);
+    X917RNG(BlockTransformation *cipher, const uint8_t *seed);
 
-    byte GetByte();
+    uint8_t GetByte();
 
 private:
     member_ptr<BlockTransformation> cipher;
@@ -56,8 +56,8 @@ class MaurerRandomnessTest : public Sink
 public:
     MaurerRandomnessTest();
 
-    void Put(byte inByte);
-    void Put(const byte *inString, unsigned int length);
+    void Put(uint8_t inByte);
+    void Put(const uint8_t *inString, unsigned int length);
 
     // BytesNeeded() returns how many more bytes of input is needed by the test
     // GetTestValue() should not be called before BytesNeeded()==0

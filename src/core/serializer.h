@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -127,14 +127,14 @@ public:
 
     // writing interface
     // all of these can throw eArchive
-    virtual void ReadInt16(int16& ret)                   = 0;
-    virtual void ReadInt32(int32& ret)                   = 0;
-    virtual void ReadInt64(int64& ret)                   = 0;
+    virtual void ReadInt16(int16_t& ret)                   = 0;
+    virtual void ReadInt32(int32_t& ret)                   = 0;
+    virtual void ReadInt64(int64_t& ret)                   = 0;
     virtual void ReadString(TSTRING& ret)                = 0;
     virtual int  ReadBlob(void* pBlob, int count)        = 0;
-    virtual void WriteInt16(int16 i)                     = 0;
-    virtual void WriteInt32(int32 i)                     = 0;
-    virtual void WriteInt64(int64 i)                     = 0;
+    virtual void WriteInt16(int16_t i)                     = 0;
+    virtual void WriteInt32(int32_t i)                     = 0;
+    virtual void WriteInt64(int64_t i)                     = 0;
     virtual void WriteString(const TSTRING& s)           = 0;
     virtual void WriteBlob(const void* pBlob, int count) = 0;
 

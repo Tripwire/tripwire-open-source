@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -41,7 +41,7 @@
 // I changed this magic number in 2.1 since we now support versioning in the file header.
 // (the old magic number was 0x00202039)
 // I generated the random number using the random.org web site.
-const uint32 FILE_HEADER_MAGIC_NUMBER = 0x78f9beb3;
+const uint32_t FILE_HEADER_MAGIC_NUMBER = 0x78f9beb3;
 
 ///////////////////////////////////////////////////////////////////////////////
 // class cFileHeaderID
@@ -66,7 +66,7 @@ void cFileHeaderID::operator=(const TCHAR* pszId)
     if (!(N < cFileHeaderID::MAXBYTES))
         throw eCharacter(TSS_GetString(cCore, core::STR_ERR_OVERFLOW));
 
-    mIDLen = static_cast<int16>(N); // know len is less than MAXBYTES
+    mIDLen = static_cast<int16_t>(N); // know len is less than MAXBYTES
     ::memcpy(mID, pszId, N * sizeof(char));
 }
 
@@ -82,9 +82,9 @@ int cFileHeaderID::operator==(const cFileHeaderID& rhs) const
     return (mIDLen == rhs.mIDLen) && (::memcmp(mID, rhs.mID, mIDLen * sizeof(char)) == 0);
 }
 
-void cFileHeaderID::Read(iSerializer* pSerializer, int32 /*version*/) // throw (eSerializer, eArchive)
+void cFileHeaderID::Read(iSerializer* pSerializer, int32_t /*version*/) // throw (eSerializer, eArchive)
 {
-    int16 len;
+    int16_t len;
     pSerializer->ReadInt16(len);
     if ((len < 0) || (len >= cFileHeaderID::MAXBYTES))
     {
@@ -139,7 +139,7 @@ void cFileHeader::SetID(const cFileHeaderID& id)
     mID = id;
 }
 
-void cFileHeader::SetVersion(uint32 v)
+void cFileHeader::SetVersion(uint32_t v)
 {
     mVersion = v;
 }
@@ -149,12 +149,12 @@ void cFileHeader::SetEncoding(Encoding e)
     mEncoding = e;
 }
 
-void cFileHeader::Read(iSerializer* pSerializer, int32 /*version*/) // throw (eSerializer, eArchive)
+void cFileHeader::Read(iSerializer* pSerializer, int32_t /*version*/) // throw (eSerializer, eArchive)
 {
-    int16 e;
-    int32 len;
-    int32 magicNumber;
-    int32 version;
+    int16_t e;
+    int32_t len;
+    int32_t magicNumber;
+    int32_t version;
 
     cDebug d("cFileHeader::Read");
 
@@ -224,9 +224,9 @@ void cFileHeader::Write(iSerializer* pSerializer) const // throw (eSerializer, e
 
     pSerializer->WriteInt32(mVersion);
 
-    pSerializer->WriteInt16(static_cast<int16>(mEncoding));
+    pSerializer->WriteInt16(static_cast<int16_t>(mEncoding));
 
-    int32 len = static_cast<int32>(mBaggage.Length());
+    int32_t len = static_cast<int32_t>(mBaggage.Length());
 
     ASSERT(len >= 0);
     ASSERT(len <= 0xFFFF);

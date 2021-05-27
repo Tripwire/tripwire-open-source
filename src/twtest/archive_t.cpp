@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -62,8 +62,8 @@ void TestMemoryArchive()
 
     memarch.Seek(0, cBidirArchive::BEGINNING);
 
-    int32 i;
-    int64 l;
+    int32_t i;
+    int64_t l;
     memarch.ReadInt32(i);
     TEST(i == 1);
     memarch.ReadInt32(i);
@@ -80,7 +80,7 @@ void TestMemoryArchive()
     memarch.ReadInt64(l);
     TEST(l == 1234567L);
 
-    TEST(memarch.ReadBlob(NULL, sizeof(int16)) == sizeof(int16));
+    TEST(memarch.ReadBlob(NULL, sizeof(int16_t)) == sizeof(int16_t));
     TEST(memarch.ReadBlob(NULL, 1024) == 0);
 
     try
@@ -99,10 +99,10 @@ void TestMemoryArchive()
         (void)e;
     }
 
-    memarch.MapArchive(4 * sizeof(int32) + sizeof(int32) + 6, sizeof(int64));
-    TEST(memarch.GetMappedOffset() == 4 * sizeof(int32) + sizeof(int32) + 6);
-    TEST(memarch.GetMappedLength() == sizeof(int64));
-    //    TEST(tw_ntohll(*(int64*)memarch.GetMap()) == 1234567L);
+    memarch.MapArchive(4 * sizeof(int32_t) + sizeof(int32_t) + 6, sizeof(int64_t));
+    TEST(memarch.GetMappedOffset() == 4 * sizeof(int32_t) + sizeof(int32_t) + 6);
+    TEST(memarch.GetMappedLength() == sizeof(int64_t));
+    //    TEST(tw_ntohll(*(int64_t*)memarch.GetMap()) == 1234567L);
 }
 
 void TestLockedTemporaryArchive()
@@ -186,8 +186,8 @@ void TestFileArchive()
     filearch.WriteInt16(42);
     filearch.Close();
 
-    int32 j;
-    int64 k;
+    int32_t j;
+    int64_t k;
     filearch.OpenRead(fileName.c_str());
     filearch.Seek(0, cBidirArchive::BEGINNING);
     filearch.ReadInt32(j);
@@ -205,7 +205,7 @@ void TestFileArchive()
     filearch.ReadInt64(k);
     TEST(k == 1234567L);
 
-    TEST(filearch.ReadBlob(NULL, sizeof(int16)) == sizeof(int16));
+    TEST(filearch.ReadBlob(NULL, sizeof(int16_t)) == sizeof(int16_t));
     TEST(filearch.ReadBlob(NULL, 1024) == 0); // should be EOF
 
     try

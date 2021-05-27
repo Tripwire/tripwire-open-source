@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -178,7 +178,7 @@ void cFCOSetImpl::Insert(iFCO* pFCO)
 ///////////////////////////////////////////////////////////////////////////////
 // AcceptSerializer
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOSetImpl::Read(iSerializer* pSerializer, int32 version)
+void cFCOSetImpl::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FCO Set Read")));
@@ -186,7 +186,7 @@ void cFCOSetImpl::Read(iSerializer* pSerializer, int32 version)
     Clear();
 
     int   i;
-    int32 size;
+    int32_t size;
     pSerializer->ReadInt32(size);
 
     // TODO -- don't assert; throw an exception or noop -- mdb

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -113,7 +113,9 @@ eParserHelper::eParserHelper(const TSTRING& strMsg, int nLine /*= CURRENT_LINE *
             strErr << nLine;
     }
 
+    tss_end(strErr);
     mMsg = strErr.str();
+    tss_free(strErr);
 }
 
 
@@ -455,9 +457,13 @@ void cParserUtil::InterpretEscapedString(const std::string& strEscapedString, TS
                 pchCur++; // go to char past '\'
 
                 if (*pchCur == 'x' &&
+#if !ARCHAIC_STL		    
                     std::isxdigit<TCHAR>(
                         *(pchCur + 1),
                         std::locale())) // deal with \xXXXX where 'x' is the character 'x', and 'X' is a hex number
+#else
+		    isxdigit(*(pchCur + 1)))
+#endif		  		  
                 {
                     pchCur++; // go to char past 'x'
                     char cEscapedChar = static_cast<char>(util_ConvertHex(pchCur, &nCharsRead));
@@ -679,8 +685,15 @@ void cParserUtil::CreatePropVector(const TSTRING& strPropListC, class cFCOPropVe
 
     // clear out all spaces in the string
     TSTRING strPropList = strPropListC;
-    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(), std::ptr_fun<int, int>(std::isspace)),
-                      strPropList.end());
+
+// C++17 removes std::ptr_fun, so use a lambda where available
+#if !USE_LAMBDAS
+    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(),
+        std::ptr_fun<int, int>(std::isspace)), strPropList.end());
+#else
+    strPropList.erase(std::remove_if(strPropList.begin(), strPropList.end(),
+        [](int c) {return std::isspace(c);}), strPropList.end());
+#endif
 
     // zero it out
     v.Clear();
@@ -876,23 +889,42 @@ int util_ConvertHex(const char* const cpsz, int* const pnCharsRead)
     ASSERT(util_AsciiCharsActLikeTheyShould());
     ASSERT(cpsz && pnCharsRead);
 
+#if !ARCHAIC_STL    
     if (*cpsz == 0 || !std::isxdigit<TCHAR>(*cpsz, std::locale()))
+#else
+    if (*cpsz == 0 || !isxdigit(*cpsz))
+#endif
+      
         throw eParserBadHex(cStringUtil::StrToTstr(cpsz));
 
     int         iValue;
     const char* psz = cpsz;
+    
+#if !ARCHAIC_STL    
     for (*pnCharsRead = 0, iValue = 0; *psz && std::isxdigit<TCHAR>(*psz, std::locale()) && (*pnCharsRead < 2);
          psz++, (*pnCharsRead)++)
+#else
+    for (*pnCharsRead = 0, iValue = 0; *psz && isxdigit(*psz) && (*pnCharsRead < 2);
+         psz++, (*pnCharsRead)++)
+#endif      
     {
         iValue *= 0x10;
 
+#if !ARCHAIC_STL	
         if (std::isdigit<TCHAR>(*psz, std::locale()))
+#else
+	if (isdigit(*psz))
+#endif	  
         {
             iValue += (*psz - '0');
         }
         else
         {
+#if !ARCHAIC_STL	  
             if (std::islower<TCHAR>(*psz, std::locale()))
+#else
+            if (islower(*psz))
+#endif	      
                 iValue += (*psz - 'a' + 10); // so that A=10, B=11, ..., F=15
             else                             // is uppercase
                 iValue += (*psz - 'A' + 10); // so that a=10, a=11, ..., f=15
@@ -907,26 +939,43 @@ int util_ConvertUnicode(const char* const cpsz, int* const pnCharsRead)
     ASSERT(util_AsciiCharsActLikeTheyShould());
     ASSERT(cpsz && pnCharsRead);
 
+#if !ARCHAIC_STL    
     if (*cpsz == 0 || !std::isxdigit<TCHAR>(*cpsz, std::locale()))
+#else
+    if (*cpsz == 0 || !isxdigit(*cpsz))
+#endif      
         throw eParserBadHex(cStringUtil::StrToTstr(cpsz));
 
     int         iValue;
     const char* psz = cpsz;
     for (*pnCharsRead = 0, iValue = 0; *pnCharsRead < 4; psz++, (*pnCharsRead)++)
     {
+      
         // we require 4 chars for unicode escapes
+#if !ARCHAIC_STL      
         if (*psz == 0 || !std::isxdigit<TCHAR>(*psz, std::locale()))
+#else
+	if (*psz == 0 || !isxdigit(*psz))
+#endif	  
             throw eParserBadHex(cStringUtil::StrToTstr(cpsz));
 
         iValue *= 0x10;
 
+#if !ARCHAIC_STL	
         if (std::isdigit<TCHAR>(*psz, std::locale()))
+#else
+        if (isdigit(*psz))
+#endif	  
         {
             iValue += (*psz - '0');
         }
         else
         {
+#if !ARCHAIC_STL	  
             if (std::islower<TCHAR>(*psz, std::locale()))
+#else
+            if (islower(*psz))
+#endif	      
                 iValue += (*psz - 'a' + 10); // so that A=10, B=11, ..., F=15
             else                             // is uppercase
                 iValue += (*psz - 'A' + 10); // so that a=10, a=11, ..., f=15

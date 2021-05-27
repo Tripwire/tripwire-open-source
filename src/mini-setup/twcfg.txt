@@ -1,0 +1,6 @@
+SITEKEYFILE=s
+LOCALKEYFILE=l
+POLFILE=test.pol
+DBFILE=test.twd
+REPORTFILE=test.twr
+

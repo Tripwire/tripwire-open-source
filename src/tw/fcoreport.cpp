@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -85,7 +85,7 @@ public:
         cFCOSetWS              mRemoved;
         std::list<cChangeNode> mChanged;
         cErrorQueue            mErrorQueue;
-        int32                  mnObjectsScanned;
+        int32_t               mnObjectsScanned;
 
         cNode();
         cNode(const cNode& rhs);
@@ -753,7 +753,7 @@ void cFCOReport::AddChangedFCO(const cFCOReportSpecIter& iter,
 ///////////////////////////////////////////////////////////////////////////////
 // iSerializable interface
 ///////////////////////////////////////////////////////////////////////////////
-void cFCOReport::Read(iSerializer* pSerializer, int32 version)
+void cFCOReport::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("Report Read")));
@@ -764,14 +764,14 @@ void cFCOReport::Read(iSerializer* pSerializer, int32 version)
     pSerializer->ReadObject(&mpData->mErrorQueue);
 
     // read in the genres
-    int32 genreIter, genreCount;
-    int32 specIter, specCount;
+    int32_t genreIter, genreCount;
+    int32_t specIter, specCount;
 
     pSerializer->ReadInt32(genreCount);
     for (genreIter = 0; genreIter < genreCount; genreIter++)
     {
         cFCOReport_i::cGenreNode newGenre;
-        int32                    genre;
+        int32_t                  genre;
 
         // TODO:BAM -- this used to be int16, so take care of backwards compatability
         pSerializer->ReadInt32(genre);
@@ -791,12 +791,12 @@ void cFCOReport::Read(iSerializer* pSerializer, int32 version)
             pSerializer->ReadObject(&node.mErrorQueue);
             pSerializer->ReadObject(&node.mAdded);
             pSerializer->ReadObject(&node.mRemoved);
-            pSerializer->ReadInt32(node.mnObjectsScanned);
+            pSerializer->ReadInt32((int32_t&)node.mnObjectsScanned);
 
             node.mAdded.SetSpec(node.mpSpec);
             node.mRemoved.SetSpec(node.mpSpec);
 
-            int32 changeSize;
+            int32_t changeSize;
             pSerializer->ReadInt32(changeSize);
             for (int j = 0; j < changeSize; j++)
             {

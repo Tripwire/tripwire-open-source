@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -178,7 +178,7 @@ const iFCOSpecMask* cFCOSpecImpl::GetSpecMask(const iFCO* pFCO) const
 }
 
 
-void cFCOSpecImpl::Read(iSerializer* pSerializer, int32 version)
+void cFCOSpecImpl::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("FS Spec Read")));

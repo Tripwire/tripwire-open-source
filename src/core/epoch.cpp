@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -51,7 +51,7 @@ bool CheckEpoch()
     time_struct.tm_mday = 1;
     time_struct.tm_mon  = 0;
     time_struct.tm_year = 138;
-    int64 endoftime     = cTimeUtil::DateToTime(&time_struct);
+    int64_t endoftime     = cTimeUtil::DateToTime(&time_struct);
 
     if (time(0) > endoftime)
     {

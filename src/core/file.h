@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -47,7 +47,7 @@
 #include "fileerror.h"
 #endif
 
-#if IS_MINT // for off_t
+#if HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 
@@ -106,7 +106,7 @@ public:
     /************ User Interface **************************/
 
     // Both Open methods ALWAYS open files in BINARY mode!
-    void Open(const TSTRING& sFileName, uint32 flags = OPEN_READ); //throw(eFile)
+    void Open(const TSTRING& sFileName, uint32_t flags = OPEN_READ); //throw(eFile)
     void Close(void);                                              //throw(eFile)
     bool IsOpen(void) const;
 
@@ -173,7 +173,7 @@ public:
     static bool    IsAbsolutePath(const TSTRING& in);
 };
 
-#    if IS_DOS_DJGPP
+#    if USES_DOS_DEVICE_PATH
 #        define cDevicePath cDosPath
 #    elif IS_AROS
 #        define cDevicePath cArosPath

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -37,10 +37,6 @@
 
 #ifndef __UNIXFSSERVICES_H
 #define __UNIXFSSERVICES_H
-
-#if !IS_UNIX
-#error unixfsservices.h should only be included for instantiating cUnixFSServices objects.  If you just want to use iFSServices methods, include fsservices.h.
-#endif
 
 //=========================================================================
 // INCLUDES
@@ -109,7 +105,7 @@ public:
 
     virtual bool GetCurrentUserName(TSTRING& tstrName) const;
 
-    virtual bool GetIPAddress(uint32& uiIPAddress);
+    virtual bool GetIPAddress(uint32_t& uiIPAddress);
 
 
     ////////////////////////////////////////
@@ -143,8 +139,8 @@ public:
     ////////////////////////////////////////
     // miscellaneous utility functions
     ////////////////////////////////////////
-    virtual void ConvertModeToString(uint64 perm, TSTRING& tstrPerm) const;
-    // takes a int64 permission (from stat) and changes it to look like UNIX's 'ls -l' (e.g. drwxrwxrwx)
+    virtual void ConvertModeToString(uint64_t perm, TSTRING& tstrPerm) const;
+    // takes a int64_t permission (from stat) and changes it to look like UNIX's 'ls -l' (e.g. drwxrwxrwx)
     virtual bool FullPath(TSTRING& fullPath, const TSTRING& relPath, const TSTRING& pathRelFrom = _T("")) const;
     // converts relPath into a fully qualified path, storing it in FullPath. If this
     // fails, false is returned.  if the path to which relPath is relative is not CWD, put it in pathRelFrom.

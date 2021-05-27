@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -125,9 +125,11 @@ TSTRING cFCOPropInt32::AsString() const
     //TODO:mdb -- implement this through twlocale!
     //
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
+    tss_classic_locale(ostr);
     ostr << mValue;
-    return TSTRING(ostr.str());
+    tss_mkstr(out, ostr);
+    
+    return out;
 }
 
 iFCOProp::CmpResult cFCOPropInt32::Compare(const iFCOProp* rhs, iFCOProp::Op op) const
@@ -135,10 +137,10 @@ iFCOProp::CmpResult cFCOPropInt32::Compare(const iFCOProp* rhs, iFCOProp::Op op)
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropInt32::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropInt32::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
-        ThrowAndAssert(eSerializerVersionMismatch(_T("Int32 Property Read")));
+        ThrowAndAssert(eSerializerVersionMismatch(_T("int32_t Property Read")));
 
     pSerializer->ReadInt32(mValue);
 }
@@ -165,9 +167,10 @@ TSTRING cFCOPropInt64::AsString() const
     //TODO:mdb -- implement this through twlocale!
     //
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
-    ostr << (int32)mValue;
-    return TSTRING(ostr.str());
+    tss_classic_locale(ostr);
+    ostr << (int32_t)mValue;  // TODO: remove this cast where possible
+    tss_mkstr(out, ostr);
+    return out;
 }
 
 iFCOProp::CmpResult cFCOPropInt64::Compare(const iFCOProp* rhs, iFCOProp::Op op) const
@@ -175,10 +178,10 @@ iFCOProp::CmpResult cFCOPropInt64::Compare(const iFCOProp* rhs, iFCOProp::Op op)
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropInt64::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropInt64::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
-        ThrowAndAssert(eSerializerVersionMismatch(_T("Int64 Property Read")));
+        ThrowAndAssert(eSerializerVersionMismatch(_T("int64_t Property Read")));
 
     pSerializer->ReadInt64(mValue);
 }
@@ -205,9 +208,9 @@ TSTRING cFCOPropUint64::AsString() const
     //TODO:mdb -- implement this through twlocale!
     //
     TOSTRINGSTREAM ostr;
-    ostr.imbue(std::locale::classic());
-    ostr << (int32)mValue;
-    return TSTRING(ostr.str());
+    tss_classic_locale(ostr);
+    ostr << (int32_t)mValue; // TODO: remove this cast where possible
+    tss_return_stream(ostr, out);
 }
 
 iFCOProp::CmpResult cFCOPropUint64::Compare(const iFCOProp* rhs, iFCOProp::Op op) const
@@ -215,12 +218,12 @@ iFCOProp::CmpResult cFCOPropUint64::Compare(const iFCOProp* rhs, iFCOProp::Op op
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropUint64::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropUint64::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
-        ThrowAndAssert(eSerializerVersionMismatch(_T("uint64 Property Read")));
+        ThrowAndAssert(eSerializerVersionMismatch(_T("uint64_t Property Read")));
 
-    pSerializer->ReadInt64((int64&)mValue);
+    pSerializer->ReadInt64((int64_t&)mValue);
 }
 
 void cFCOPropUint64::Write(iSerializer* pSerializer) const
@@ -250,7 +253,7 @@ iFCOProp::CmpResult cFCOPropTSTRING::Compare(const iFCOProp* rhs, iFCOProp::Op o
     return DefaultCompare(this, rhs, op);
 }
 
-void cFCOPropTSTRING::Read(iSerializer* pSerializer, int32 version)
+void cFCOPropTSTRING::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > 0)
         ThrowAndAssert(eSerializerVersionMismatch(_T("String Property Read")));

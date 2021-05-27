@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -58,7 +58,7 @@ public:
     //-------------------------------------------------------------------------
     // Construction and Assignment
     //-------------------------------------------------------------------------
-    ePoly(uint32 id, const TSTRING& msg, uint32 flags = 0);
+    ePoly(uint32_t id, const TSTRING& msg, uint32_t flags = 0);
     explicit ePoly(const eError& rhs);
     explicit ePoly();
     void operator=(const eError& rhs);
@@ -66,11 +66,11 @@ public:
     //-------------------------------------------------------------------------
     // ID manipulation
     //-------------------------------------------------------------------------
-    virtual uint32 GetID() const;
-    void           SetID(uint32 id);
+    virtual uint32_t GetID() const;
+    void             SetID(uint32_t id);
 
 private:
-    uint32 mID;
+    uint32_t mID;
 };
 
 //-----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 // ePoly
 ///////////////////////////////////////////////////////////////////////////////
-inline ePoly::ePoly(uint32 id, const TSTRING& msg, uint32 flags) : eError(msg, flags), mID(id)
+inline ePoly::ePoly(uint32_t id, const TSTRING& msg, uint32_t flags) : eError(msg, flags), mID(id)
 {
 }
 
@@ -154,7 +154,7 @@ inline void ePoly::operator=(const eError& rhs)
 ///////////////////////////////////////////////////////////////////////////////
 // GetID
 ///////////////////////////////////////////////////////////////////////////////
-inline uint32 ePoly::GetID() const
+inline uint32_t ePoly::GetID() const
 {
     return mID;
 }
@@ -162,7 +162,7 @@ inline uint32 ePoly::GetID() const
 ///////////////////////////////////////////////////////////////////////////////
 // SetID
 ///////////////////////////////////////////////////////////////////////////////
-inline void ePoly::SetID(uint32 id)
+inline void ePoly::SetID(uint32_t id)
 {
     mID = id;
 }

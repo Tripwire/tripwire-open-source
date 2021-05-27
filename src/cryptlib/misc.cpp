@@ -4,7 +4,7 @@
 #include "misc.h"
 #include "words.h"
 
-void xorbuf(byte *buf, const byte *mask, unsigned int count)
+void xorbuf(uint8_t *buf, const uint8_t *mask, unsigned int count)
 {
     if (((ptr_size_type)buf | (ptr_size_type)mask | count) % WORD_SIZE == 0)
         XorWords((word *)buf, (const word *)mask, count/WORD_SIZE);
@@ -15,7 +15,7 @@ void xorbuf(byte *buf, const byte *mask, unsigned int count)
     }
 }
 
-void xorbuf(byte *output, const byte *input, const byte *mask, unsigned int count)
+void xorbuf(uint8_t *output, const uint8_t *input, const uint8_t *mask, unsigned int count)
 {
     if (((ptr_size_type)output | (ptr_size_type)input | (ptr_size_type)mask | count) % WORD_SIZE == 0)
         XorWords((word *)output, (const word *)input, (const word *)mask, count/WORD_SIZE);

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -78,7 +78,7 @@ class iSerializer;
 class iSerializable
 {
 public:
-    virtual void Read(iSerializer* pSerializer, int32 version = 0) = 0; // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0) = 0; // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const             = 0; // throw (eSerializer, eArchive)
         // objects implement these methods to read and write themselves to a serializer.
 
@@ -93,21 +93,21 @@ public:
     typedef iTypedSerializable* (*CreateFunc)();
     // Pointer to a function that creates an empty version of each typed serializable object
 
-    virtual int32 Version() const = 0;
+    virtual int32_t Version() const = 0;
     // Return the current version of that this serializable object writes.
     // As a convention version number should be (major_version << 16) | minor_version.
 
-    static int32 MkVersion(int16 major, int16 minor)
+    static int32_t MkVersion(int16_t major, int16_t minor)
     {
-        return (int32)(((uint32)major << 16) | (uint32)minor);
+        return (int32_t)(((uint32_t)major << 16) | (uint32_t)minor);
     }
-    static int16 MajorVersion(int32 version)
+    static int16_t MajorVersion(int32_t version)
     {
-        return (int16)((uint32)version >> 16);
+        return (int16_t)((uint32_t)version >> 16);
     }
-    static int16 MinorVersion(int32 version)
+    static int16_t MinorVersion(int32_t version)
     {
-        return (int16)version;
+        return (int16_t)version;
     }
 
     virtual ~iTypedSerializable()
@@ -121,7 +121,7 @@ public:
         DECLARE_TYPED()                      \
     public:                                  \
         static iTypedSerializable* Create(); \
-        virtual int32              Version() const;
+        virtual int32_t            Version() const;
 
 #    define IMPLEMENT_TYPEDSERIALIZABLE(CLASS, TYPEDSTRING, VERSION_MAJOR, VERSION_MINOR) \
         IMPLEMENT_TYPED(CLASS, TYPEDSTRING)                                               \
@@ -129,7 +129,7 @@ public:
         {                                                                                 \
             return new CLASS;                                                             \
         }                                                                                 \
-        int32 CLASS::Version() const                                                      \
+        int32_t CLASS::Version() const                                                      \
         {                                                                                 \
             return iTypedSerializable::MkVersion(VERSION_MAJOR, VERSION_MINOR);           \
         }

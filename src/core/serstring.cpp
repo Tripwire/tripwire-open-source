@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -37,9 +37,9 @@
 
 IMPLEMENT_TYPEDSERIALIZABLE(cSerializableNString, _T("cSerializableNString"), 0, 1)
 
-void cSerializableNString::Read(iSerializer* pSerializer, int32 version)
+void cSerializableNString::Read(iSerializer* pSerializer, int32_t version)
 {
-    int32 len;
+    int32_t len;
     pSerializer->ReadInt32(len);
     mString.resize(len);
     pSerializer->ReadBlob((void*)mString.data(), len); // note len is the bytelen of the data
@@ -47,7 +47,7 @@ void cSerializableNString::Read(iSerializer* pSerializer, int32 version)
 
 void cSerializableNString::Write(iSerializer* pSerializer) const
 {
-    int32 len = mString.length() * sizeof(char);
+    int32_t len = mString.length() * sizeof(char);
     pSerializer->WriteInt32(len);
     pSerializer->WriteBlob(mString.data(), len);
 }
@@ -55,9 +55,9 @@ void cSerializableNString::Write(iSerializer* pSerializer) const
 
 IMPLEMENT_TYPEDSERIALIZABLE(cSerializableWString, _T("cSerializableWString"), 0, 1)
 
-void cSerializableWString::Read(iSerializer* pSerializer, int32 version)
+void cSerializableWString::Read(iSerializer* pSerializer, int32_t version)
 {
-    int32 len;
+    int32_t len;
     pSerializer->ReadInt32(len);
     mString.resize(len);
     pSerializer->ReadBlob((void*)mString.data(), len); // note len is the bytelen of the data
@@ -65,7 +65,7 @@ void cSerializableWString::Read(iSerializer* pSerializer, int32 version)
 
 void cSerializableWString::Write(iSerializer* pSerializer) const
 {
-    int32 len = mString.length() * sizeof(wchar_t);
+    int32_t len = mString.length() * sizeof(wchar_t);
     pSerializer->WriteInt32(len);
     pSerializer->WriteBlob(mString.data(), len);
 }

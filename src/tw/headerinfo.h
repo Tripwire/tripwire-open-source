@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -67,8 +67,8 @@ public:
     const TSTRING& GetIPAddress() const;
     const TSTRING& GetCreator() const;
     const TSTRING& GetHostID() const;
-    int64          GetCreationTime() const;
-    int64          GetLastDBUpdateTime() const;
+    int64_t        GetCreationTime() const;
+    int64_t        GetLastDBUpdateTime() const;
     //Set:
     void SetPolicyFilename(const TSTRING&);
     void SetConfigFilename(const TSTRING&);
@@ -78,27 +78,27 @@ public:
     void SetIPAddress(const TSTRING&);
     void SetCreator(const TSTRING&);
     void SetHostID(const TSTRING&);
-    void SetCreationTime(int64);
-    void SetLastDBUpdateTime(int64);
+    void SetCreationTime(int64_t);
+    void SetLastDBUpdateTime(int64_t);
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
 private:
     cHeaderInfo& operator=(cHeaderInfo&);
 
     //Header Data:
-    TSTRING       tstr_PolicyFilename;
-    TSTRING       tstr_ConfigFilename;
-    TSTRING       tstr_DBFilename;
-    TSTRING       tstr_SystemName;
-    TSTRING       tstr_CommandLineParams;
-    TSTRING       tstr_IPAddress;
-    TSTRING       tstr_CreatedBy;
-    TSTRING       tstr_HostID;
-    int64         i64_CreationTime;
-    mutable int64 i64_LastDBUpdateTime;
+    TSTRING         tstr_PolicyFilename;
+    TSTRING         tstr_ConfigFilename;
+    TSTRING         tstr_DBFilename;
+    TSTRING         tstr_SystemName;
+    TSTRING         tstr_CommandLineParams;
+    TSTRING         tstr_IPAddress;
+    TSTRING         tstr_CreatedBy;
+    TSTRING         tstr_HostID;
+    int64_t         i64_CreationTime;
+    mutable int64_t i64_LastDBUpdateTime;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -120,17 +120,17 @@ public:
     iFCOPropDisplayer*       GetPropDisplayer();
     const iFCOPropDisplayer* GetPropDisplayer() const;
 
-    void  SetObjectsScanned(int32);
-    int32 GetObjectsScanned() const;
+    void                     SetObjectsScanned(int32_t);
+    int32_t                  GetObjectsScanned() const;
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 private:
     cGenreHeaderInfo& operator=(cGenreHeaderInfo&);
 
     iFCOPropDisplayer* mpPropDisplayer;
-    int32              i32_ObjectsScanned;
+    int32_t            i32_ObjectsScanned;
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -226,11 +226,11 @@ inline const TSTRING& cHeaderInfo::GetHostID() const
 {
     return tstr_HostID;
 };
-inline int64 cHeaderInfo::GetCreationTime() const
+inline int64_t cHeaderInfo::GetCreationTime() const
 {
     return i64_CreationTime;
 };
-inline int64 cHeaderInfo::GetLastDBUpdateTime() const
+inline int64_t cHeaderInfo::GetLastDBUpdateTime() const
 {
     return i64_LastDBUpdateTime;
 };
@@ -267,11 +267,11 @@ inline void cHeaderInfo::SetIPAddress(const TSTRING& tstr)
 {
     tstr_IPAddress = tstr;
 };
-inline void cHeaderInfo::SetCreationTime(int64 i)
+inline void cHeaderInfo::SetCreationTime(int64_t i)
 {
     i64_CreationTime = i;
 };
-inline void cHeaderInfo::SetLastDBUpdateTime(int64 i)
+inline void cHeaderInfo::SetLastDBUpdateTime(int64_t i)
 {
     i64_LastDBUpdateTime = i;
 };
@@ -288,11 +288,11 @@ inline const iFCOPropDisplayer* cGenreHeaderInfo::GetPropDisplayer() const
 {
     return mpPropDisplayer;
 }
-inline void cGenreHeaderInfo::SetObjectsScanned(int32 i)
+inline void cGenreHeaderInfo::SetObjectsScanned(int32_t i)
 {
     i32_ObjectsScanned = i;
 };
-inline int32 cGenreHeaderInfo::GetObjectsScanned() const
+inline int32_t cGenreHeaderInfo::GetObjectsScanned() const
 {
     return i32_ObjectsScanned;
 };

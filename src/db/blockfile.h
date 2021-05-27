@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -113,7 +113,7 @@ private:
 
     int            mNumPages;
     int            mNumBlocks; // the total number of blocks in the archive.
-    uint32         mTimer;     // keeps track of the current "time"
+    uint32_t       mTimer;     // keeps track of the current "time"
     cBidirArchive* mpArchive;  // note: I always own the deletion of the archive
     BlockVector    mvPagedBlocks;
 

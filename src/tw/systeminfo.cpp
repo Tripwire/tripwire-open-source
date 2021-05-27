@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -36,8 +36,8 @@
 #include "stdtw.h"
 #include "systeminfo.h"
 
-TSTRING cSystemInfo::mExePath(_T(""));
-bool    cSystemInfo::mbExePathSet(false);
-TSTRING cSystemInfo::mExeDir(_T(""));
-bool    cSystemInfo::mbExeDirSet(false);
-int64   cSystemInfo::mExecuteStartTime(0);
+TSTRING  cSystemInfo::mExePath(_T(""));
+bool     cSystemInfo::mbExePathSet(false);
+TSTRING  cSystemInfo::mExeDir(_T(""));
+bool     cSystemInfo::mbExeDirSet(false);
+int64_t cSystemInfo::mExecuteStartTime(0);

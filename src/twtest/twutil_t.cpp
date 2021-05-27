@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -62,7 +62,7 @@ void TestTWUtil()
     TSTRING tmpFN  = TwTestPath("fileexiststest.tmp");
 
     // make a subdir in the TEMP_DIR
-    mkdir(tmpDir.c_str(), 0700);
+    tw_mkdir(tmpDir.c_str(), 0700);
     chmod(tmpDir.c_str(), 0700);
 
     // make sure file is not there
@@ -75,12 +75,17 @@ void TestTWUtil()
     TEST(cFileUtil::FileWritable(tmpFN) == true)
     TEST(cFileUtil::FileExists(tmpFN) == false);
 
+#if !HAVE_GETUID
+    bool is_root = true;
+#else
+    
 #if IS_AROS
     bool is_root = (65534 == getuid()); //AROS doesn't really have users, & posixy fns use this pseudo value.
 #else
     bool is_root = (0 == getuid());
 #endif
-
+    
+#endif
     // make the dir read only and make sure write tests false
     // windows fails this test, perhaps because I am an administrator?
     //  chmod(tmpDir.c_str(), 0500);

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -63,15 +63,15 @@ public:
     const TSTRING& GetName() const;
     void           SetName(const TSTRING& name);
 
-    int32 GetSeverity() const;
-    void  SetSeverity(int32 s);
+    int32_t GetSeverity() const;
+    void    SetSeverity(int32_t s);
 
     int  GetNumEmail() const;
     void AddEmail(const TSTRING& str);
     // adds an email address for report notification. This class makes no attempt
     // to catch and prune identical entries in the email list.
 
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     void TraceContents(int dl = -1) const;
@@ -85,7 +85,7 @@ private:
 
     std::list<TSTRING> mEmailAddrs; // the email addresses of people to be notified
     TSTRING            mName;       // the name of the spec
-    int32              mSeverity;   // the severity level
+    int32_t            mSeverity;   // the severity level
 
     friend class cFCOSpecAttrEmailIter;
 };
@@ -128,11 +128,11 @@ inline void cFCOSpecAttr::SetName(const TSTRING& name)
 {
     mName = name;
 }
-inline int32 cFCOSpecAttr::GetSeverity() const
+inline int32_t cFCOSpecAttr::GetSeverity() const
 {
     return mSeverity;
 }
-inline void cFCOSpecAttr::SetSeverity(int32 s)
+inline void cFCOSpecAttr::SetSeverity(int32_t s)
 {
     mSeverity = s;
 }

@@ -37,7 +37,7 @@ sub run() {
   # lets see if the system 'md5sum' agree's with siggen's md5 hash
   #
   my ($md5sum, undef) = split(/ /, `md5sum $twtools::twrootdir/test`);
-  if ($mf5sum eq "") {
+  if ($md5sum eq "") {
       twtools::logStatus("md5sum not found, trying openssl instead\n");
       (undef, $md5sum) = split(/=/, `openssl md5 $twtools::twrootdir/test`);
   }

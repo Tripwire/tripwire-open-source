@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -293,7 +293,7 @@ static void OutputDatabaseHeader(const cFCODbHeader& dbHeader, TOSTREAM* pOut)
     (*pOut) << TSS_GetString(cTW, tw::STR_DB_GENERATED_BY) << util_Encode(dbHeader.GetCreator()) << endl;
 
     TSTRING tstrDummy;
-    int64   i64CreateTime = dbHeader.GetCreationTime();
+    int64_t i64CreateTime = dbHeader.GetCreationTime();
     (*pOut).width(headerColumnWidth);
     (*pOut) << TSS_GetString(cTW, tw::STR_DB_CREATED_ON) << cTWLocale::FormatTime(i64CreateTime, tstrDummy).c_str()
             << endl;
@@ -301,7 +301,7 @@ static void OutputDatabaseHeader(const cFCODbHeader& dbHeader, TOSTREAM* pOut)
     (*pOut).width(headerColumnWidth);
     (*pOut) << TSS_GetString(cTW, tw::STR_DB_LAST_UPDATE);
 
-    int64 i64LastDBUTime = dbHeader.GetLastDBUpdateTime();
+    int64_t i64LastDBUTime = dbHeader.GetLastDBUpdateTime();
     if (i64LastDBUTime == 0)
     {
         (*pOut) << TSS_GetString(cTW, tw::STR_NEVER) << endl << endl;

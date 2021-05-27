@@ -1,6 +1,6 @@
 
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -80,17 +80,18 @@ iCodeConverter* iCodeConverter::m_pInst = NULL;
 // has a maximum of 512 chars of output
 std::string util_output_bytes(void* p, size_t n)
 {
-    std::ostringstream ss;
-    ss.imbue(std::locale::classic());
-    ss.setf(std::ios_base::hex, std::ios_base::basefield);
-
+    TOSTRINGSTREAM ss;
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);
+    
     for (size_t i = 0; i < n; i++)
     {
         ss.width(2);
         ss << toupper(tss::util::char_to_size(((char*)p)[i])) << " ";
     }
 
-    std::string s = ss.str();
+    tss_mkstr(s, ss);
+    
     if (s.length() > 512)
     {
         s = "truncated output: " + s;
@@ -1243,7 +1244,9 @@ int tss_wcstombs(ntmbs_t pbz, const_ntwcs_t pwz, size_t nCount)
 int tss_mbstowcs(ntwcs_t pwz, const_ntmbs_t pbz, size_t nBytes)
 {
     cDebug d("tss_mbstowcs");
-
+    if (!pbz)
+        return 0;
+    
     size_t        N;
     size_t        nConv;
     const_ntmbs_t end = &pbz[nBytes];
@@ -1433,7 +1436,7 @@ int cGoodEnoughConverterer::Convert(ntdbs_t pwz, size_t nCount, const_ntmbs_t pb
             }
             else
             {
-                *dat = (uint16)(unsigned char)*at;
+                *dat = (uint16_t)(unsigned char)*at;
             }
 
             dat++;

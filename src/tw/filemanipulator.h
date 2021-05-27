@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -100,7 +100,7 @@ public:
     // information for this file
     TSTRING               GetFileName() const;
     const cFileHeaderID*  GetHeaderID();    // returns NULL if error code is non-zero
-    uint32                GetFileVersion(); // throws eFileManipulator if error code is non-zero
+    uint32_t              GetFileVersion(); // throws eFileManipulator if error code is non-zero
     cFileHeader::Encoding GetEncoding();    // throws eFileManipulator if error code is non-zero
 
     // things you can do to this file

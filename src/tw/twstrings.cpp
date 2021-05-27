@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -51,7 +51,7 @@
 #define TSS_PRODUCT_NAME _T("Open Source Tripwire(R) " PACKAGE_VERSION ".")
 
 #define TSS_COPYRIGHT_NOTICE \
-    _T("Open Source Tripwire 2.4 Portions copyright 2000-2018 Tripwire, Inc.  Tripwire is a registered\n\
+    _T("Open Source Tripwire 2.4 Portions copyright 2000-2019 Tripwire, Inc.  Tripwire is a registered\n\
 trademark of Tripwire, Inc. This software comes with ABSOLUTELY NO WARRANTY;\n\
 for details use --version. This is free software which may be redistributed\n\
 or modified only under certain conditions; see COPYING for details.\n\
@@ -60,7 +60,7 @@ All rights reserved.")
 
 #define TSS_COPYRIGHT_NOTICE_LONG \
     _T("The developer of the original code and/or files is Tripwire, Inc.  Portions \n\
-created by Tripwire, Inc. are copyright 2000-2018 Tripwire, Inc.  Tripwire is a \n\
+created by Tripwire, Inc. are copyright 2000-2019 Tripwire, Inc.  Tripwire is a \n\
 registered trademark of Tripwire, Inc.  All rights reserved.\n\
 \n\
 This program is free software.  The contents of this file are subject to the \n\

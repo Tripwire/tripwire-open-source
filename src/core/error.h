@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -45,7 +45,7 @@ public:
     //-------------------------------------------------------------------------
     // Construction and Assignment
     //-------------------------------------------------------------------------
-    eError(const TSTRING& msg, uint32 flags = 0);
+    eError(const TSTRING& msg, uint32_t flags = 0);
     explicit eError(const eError& rhs);
     explicit eError();
     void operator=(const eError& rhs);
@@ -58,7 +58,7 @@ public:
     //-------------------------------------------------------------------------
     // Data Access
     //-------------------------------------------------------------------------
-    virtual uint32 GetID() const = 0;
+    virtual uint32_t GetID() const = 0;
     // returns a system wide unique identifier for this exception. See the
     // macro below for the typical implementation of this method.
     // This is used to associate the error with a string description of the
@@ -73,7 +73,7 @@ public:
     // be displayed as the "Second" part of an error message, or the derived
     // class should override GetMsg() and return a string appropriate for display.
 
-    uint32 GetFlags() const;
+    uint32_t GetFlags() const;
     // Flags are defined below. Currently, these only have an impact on how errors are
     // displayed.
 
@@ -86,7 +86,7 @@ public:
         SUPRESS_THIRD_MSG = 0x00000002  // supresses the "continuing" or "exiting" message
     };
 
-    void SetFlags(uint32 flags);
+    void SetFlags(uint32_t flags);
 
     //-------------------------------------------------------------------------
     // Flag Convenience Methods
@@ -103,7 +103,7 @@ public:
     //-------------------------------------------------------------------------
     // Utility Methods
     //-------------------------------------------------------------------------
-    static uint32 CalcHash(const char* name);
+    static uint32_t CalcHash(const char* name);
     // calculates the CRC32 of the string passed in as name. This methods
     // asserts that name is non null. This is used to generate unique IDs
     // for errors.
@@ -112,8 +112,8 @@ public:
     // Private Implementation
     //-------------------------------------------------------------------------
 protected:
-    TSTRING mMsg;
-    uint32  mFlags;
+    TSTRING   mMsg;
+    uint32_t  mFlags;
 };
 
 //-----------------------------------------------------------------------------
@@ -127,7 +127,9 @@ protected:
 //      to be added to the exception class.
 ///////////////////////////////////////////////////////////////////////////////
 
-#if HAVE_GCC
+// TODO: make use of 'explicit' more portable here, and/or figure out why
+// this doesn't work on so many compilers
+#if 1 //HAVE_GCC || HAVE_CLANG || HAVE_IBM_XLC || HAVE_IBM_GXLC || HAVE_ORACLE_SUNCC
 #    define TSS_BEGIN_EXCEPTION_EXPLICIT
 #else
 #    define TSS_BEGIN_EXCEPTION_EXPLICIT explicit
@@ -137,7 +139,7 @@ protected:
     class except : public base                                             \
     {                                                                      \
     public:                                                                \
-        except(const TSTRING& msg, uint32 flags = 0) : base(msg, flags)    \
+        except(const TSTRING& msg, uint32_t flags = 0) : base(msg, flags)    \
         {                                                                  \
         }                                                                  \
         TSS_BEGIN_EXCEPTION_EXPLICIT except(const except& rhs) : base(rhs) \
@@ -147,7 +149,7 @@ protected:
         {                                                                  \
         }                                                                  \
                                                                            \
-        virtual uint32 GetID() const                                       \
+        virtual uint32_t GetID() const                                       \
         {                                                                  \
             return CalcHash(#except);                                      \
         }
@@ -169,7 +171,7 @@ protected:
         {                                         \
         }                                         \
                                                   \
-        virtual uint32 GetID() const              \
+        virtual uint32_t GetID() const              \
         {                                         \
             return CalcHash(#except);             \
         }
@@ -195,7 +197,7 @@ protected:
 ///////////////////////////////////////////////////////////////////////////////
 // eError
 ///////////////////////////////////////////////////////////////////////////////
-inline eError::eError(const TSTRING& msg, uint32 flags) : mMsg(msg), mFlags(flags)
+inline eError::eError(const TSTRING& msg, uint32_t flags) : mMsg(msg), mFlags(flags)
 {
 }
 
@@ -241,7 +243,7 @@ inline TSTRING eError::GetMsg() const
 ///////////////////////////////////////////////////////////////////////////////
 // GetFlags
 ///////////////////////////////////////////////////////////////////////////////
-inline uint32 eError::GetFlags() const
+inline uint32_t eError::GetFlags() const
 {
     return mFlags;
 }
@@ -249,7 +251,7 @@ inline uint32 eError::GetFlags() const
 ///////////////////////////////////////////////////////////////////////////////
 // SetFlags
 ///////////////////////////////////////////////////////////////////////////////
-inline void eError::SetFlags(uint32 flags)
+inline void eError::SetFlags(uint32_t flags)
 {
     mFlags = flags;
 }
@@ -260,9 +262,9 @@ inline void eError::SetFlags(uint32 flags)
 inline void eError::SetFatality(bool fatal)
 {
     if (fatal)
-        mFlags &= ~(uint32)NON_FATAL;
+        mFlags &= ~(uint32_t)NON_FATAL;
     else
-        mFlags |= (uint32)NON_FATAL;
+        mFlags |= (uint32_t)NON_FATAL;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -270,7 +272,7 @@ inline void eError::SetFatality(bool fatal)
 ///////////////////////////////////////////////////////////////////////////////
 inline bool eError::IsFatal() const
 {
-    return (mFlags & (uint32)NON_FATAL) == 0;
+    return (mFlags & (uint32_t)NON_FATAL) == 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -279,9 +281,9 @@ inline bool eError::IsFatal() const
 inline void eError::SetSupressThird(bool supressThird)
 {
     if (supressThird)
-        mFlags |= (uint32)SUPRESS_THIRD_MSG;
+        mFlags |= (uint32_t)SUPRESS_THIRD_MSG;
     else
-        mFlags &= ~(uint32)SUPRESS_THIRD_MSG;
+        mFlags &= ~(uint32_t)SUPRESS_THIRD_MSG;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -289,7 +291,7 @@ inline void eError::SetSupressThird(bool supressThird)
 ///////////////////////////////////////////////////////////////////////////////
 inline bool eError::SupressThird() const
 {
-    return (mFlags & (uint32)SUPRESS_THIRD_MSG) == 0;
+    return (mFlags & (uint32_t)SUPRESS_THIRD_MSG) == 0;
 }
 
 

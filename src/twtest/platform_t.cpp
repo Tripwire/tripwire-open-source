@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -62,20 +62,20 @@ template<class E, class T> bool CanBeRepresentedAs(E e, T t);
 
 // Constructing this class will write to a memory location
 // offset by ALIGN_SIZE.  If it chokes, you'll get a bus error
-template<int ALIGN_SIZE> class AlignMe
+template<class T, int ALIGN_SIZE> class AlignMe
 {
 public:
     AlignMe();
 
 private:
-    byte a[sizeof(int64) + ALIGN_SIZE]; // we want to be able to access a int64 at address [ALIGN_SIZE]
+    uint8_t a[sizeof(T) + ALIGN_SIZE + 1]; // we want to be able to access a T at address [ALIGN_SIZE]
 };
 
 /////////////////////////////////////////////////////////
 // TEMPLATIZED UTIL CLASSES IMPLEMENTATIONS
 /////////////////////////////////////////////////////////
 
-template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
+template<class T, int ALIGN_SIZE> AlignMe<T, ALIGN_SIZE>::AlignMe()
 {
 // HP-UX does not play your silly alignment games, at least unless you
 // first invoke something called "allow_unaligned_data_access()", which
@@ -83,44 +83,41 @@ template<int ALIGN_SIZE> AlignMe<ALIGN_SIZE>::AlignMe()
 // to have any need for that behavior, which begs the question of why
 // this test exists in the first place.
 //  -bcox
-#if (!IS_HPUX && !IS_SOLARIS) //Turns out Solaris SPARC is unhappy with this test too, btw
+//Turns out Solaris SPARC is unhappy with this test too, btw
+#if ENABLE_ALIGNMENT_TEST
     //TCOUT << _T("Testing alignment of size ") << ALIGN_SIZE << std::endl;
 
-    // access a double in the byte array to see if it is aligned.  if it isn't and the CPU
+    // access a value in the byte array to see if it is aligned.  if it isn't and the CPU
     // can't handle it, you'll get a bus error
 
     // this should choke if the CPU can't
     // handle misaligned memory access
-    int32* pi = (int32*)&a[ALIGN_SIZE];
-    //TCOUT << _T("Testing alignment of an int32...") << std::endl;
-    //TCOUT << _T("Reading...") << std::endl;
-    int32 i = *pi; // access memory for read
-    //TCOUT << _T("Read succeeded.") << std::endl;
-    //TCOUT << _T("Writing...") << std::endl;
-    *pi = i; // access memory for write
-    TCOUT << _T("Write succeeded.") << std::endl;
-
-
-    // this should choke if the CPU can't
-    // handle misaligned memory access
-    int64* pb = (int64*)&a[ALIGN_SIZE];
-    //TCOUT << _T("Testing alignment of an int64...") << std::endl;
-    //TCOUT << _T("Reading...") << std::endl;
-    int64 I = *pb; // access memory for read
-    //TCOUT << _T("Read succeeded") << std::endl;
-    //TCOUT << _T("Writing...") << std::endl;
-    *pb = I; // access memory for write
-    //TCOUT << _T("Write succeeded.") << std::endl;
-
-
-    /*TCOUT << _T("Alignment of ") << ALIGN_SIZE << _T(" ") << ( ALIGN_SIZE == 1 ? _T("byte") : _T("bytes") ) << _T(" is OK") << std::endl
-          << _T("=========================================\n"); */
-
-    TEST("Aligned"); // The actual test is not bus erroring up above; this just tells the framework we tested something.
-
+    memset(a, 0, sizeof(T) + ALIGN_SIZE + 1);
+  
+    T* valuePtr = (T*)&a[ALIGN_SIZE];
+    TEST(*valuePtr == 0);
+    
+    T value = *valuePtr; // access memory for read
+    TEST(value == 0);
+    
+    *valuePtr = value; // access memory for write
+    TEST(*valuePtr == 0);
 #endif
 }
 
+
+template<class T>
+void testAlignmentForType()
+{
+    AlignMe<T, 128> a128;
+    AlignMe<T, 64>  a64;
+    AlignMe<T, 32>  a32;
+    AlignMe<T, 16>  a16;
+    AlignMe<T, 8>   a8;
+    AlignMe<T, 4>   a4;
+    AlignMe<T, 2>   a2;
+    AlignMe<T, 1>   a1;
+}
 
 /////////////////////////////////////////////////////////
 // UTIL FUNCTIONS
@@ -135,16 +132,18 @@ void TestAlignment()
 
     //    TCOUT << _T("Testing for byte alignment\n")
     //          << _T("=========================================\n");
+    testAlignmentForType<int64_t>();
+    testAlignmentForType<int32_t>();
+    testAlignmentForType<int16_t>();
 
-    AlignMe<128> a128;
-    AlignMe<64>  a64;
-    AlignMe<32>  a32;
-    AlignMe<16>  a16;
-    AlignMe<8>   a8;
-    AlignMe<4>   a4;
-    AlignMe<2>   a2;
-    AlignMe<1>   a1;
+    testAlignmentForType<float>();
+    testAlignmentForType<double>();
+    testAlignmentForType<long double>();
+}
 
+
+void TestAlignment2()
+{
     // - - - - - - - - - - - - - - - - - - - - - -
     // test a misaligned memory access -- if this
     // chokes, your CPU can't handle such accesses
@@ -152,7 +151,7 @@ void TestAlignment()
     // such accesses: it may have handled the
     // hardware interrupt that might have occured.
     // - - - - - - - - - - - - - - - - - - - - - -
-    byte a[sizeof(int32) + sizeof(byte)];
+    uint8_t a[sizeof(int32_t) + sizeof(uint8_t)];
 
     // this should be fine
     a[0] = 0xAB;
@@ -165,7 +164,7 @@ void TestAlignment()
 
     // this should choke if the CPU can't
     // handle misaligned memory access
-    int32* pi = (int32*)&a[1];
+    int32_t* pi = (int32_t*)&a[1];
     *pi       = *pi; // misaligned access (read and write)
 
     TCOUT << _T("Misaligned access OK.") << std::endl;
@@ -177,7 +176,7 @@ void TestAlignment()
     // if it works, then our BYTE_ALIGN value is large enough
     // - - - - - - - - - - - - - - - - - - - - - -
 
-    byte b[2 * sizeof(BYTE_ALIGN)];
+    uint8_t b[2 * sizeof(BYTE_ALIGN)];
 
     // this should be fine
     b[0] = 0xAB;
@@ -190,7 +189,7 @@ void TestAlignment()
 */
     // this should choke if the CPU can't
     // handle misaligned memory access
-    pi  = (int32*)&b[BYTE_ALIGN];
+    pi  = (int32_t*)&b[BYTE_ALIGN];
     *pi = *pi; // aligned (hopefully) access (read and write)
 
     /*    TCOUT << _T("Aligned access OK.  BYTE_ALIGN value of ") << BYTE_ALIGN << _T(" is good.") << std::endl;
@@ -198,22 +197,23 @@ void TestAlignment()
     TEST("BYTE_ALIGN ok"); // yet again, the test is not falling over a couple of lines up. */
 }
 
+#if !ARCHAIC_STL
 // Not sure this is a super valuable test, since it just verifies that builtin integer types
 // work the way we think they do.
 void TestSizes()
 {
-    TEST(CanBeRepresentedAs(int8(), int8()));
-    TEST(!CanBeRepresentedAs(int8(), uint8()));
-    TEST(!CanBeRepresentedAs(uint8(), int8()));
-    TEST(CanBeRepresentedAs(uint8(), uint8()));
+    TEST(CanBeRepresentedAs(int8_t(),   int8_t()));
+    TEST(!CanBeRepresentedAs(int8_t(),  uint8_t()));
+    TEST(!CanBeRepresentedAs(uint8_t(), int8_t()));
+    TEST(CanBeRepresentedAs(uint8_t(),  uint8_t()));
 
-    TEST(CanBeRepresentedAs(int8(), int16()));
-    TEST(CanBeRepresentedAs(int16(), int32()));
-    TEST(CanBeRepresentedAs(int32(), int64()));
+    TEST(CanBeRepresentedAs(int8_t(),   int16_t()));
+    TEST(CanBeRepresentedAs(int16_t(),  int32_t()));
+    TEST(CanBeRepresentedAs(int32_t(),  int64_t()));
 
-    TEST(CanBeRepresentedAs(uint8(), uint16()));
-    TEST(CanBeRepresentedAs(uint16(), uint32()));
-    TEST(CanBeRepresentedAs(uint32(), uint64()));
+    TEST(CanBeRepresentedAs(uint8_t(),  uint16_t()));
+    TEST(CanBeRepresentedAs(uint16_t(), uint32_t()));
+    TEST(CanBeRepresentedAs(uint32_t(), uint64_t()));
 }
 
 /////////////////////////////////////////////////////////
@@ -232,92 +232,14 @@ template<class E, class T> bool CanBeRepresentedAs(E e, T t)
 
     return fReturn;
 }
-
+#endif
 
 ////////////////////////////
-
-#if IS_LINUX
-const TSTRING expected_os("Linux");
-#elif IS_DARWIN
-const TSTRING expected_os("Darwin");
-#elif IS_CYGWIN
-const TSTRING expected_os("Cygwin");
-#elif IS_DOS_DJGPP
-const TSTRING expected_os("FreeDOS"); // This will likely fail for other DOS flavors
-#elif IS_ANDROID
-const TSTRING expected_os("Android");
-#elif IS_DRAGONFLYBSD
-const TSTRING expected_os("DragonFly");
-#elif IS_MIDNIGHTBSD
-const TSTRING expected_os("MidnightBSD");
-#elif IS_FREEBSD
-const TSTRING expected_os("FreeBSD");
-#elif IS_NETBSD
-const TSTRING expected_os("NetBSD");
-#elif IS_MIRBSD
-const TSTRING expected_os("MirBSD");
-#elif IS_BITRIG
-const TSTRING expected_os("Bitrig");
-#elif IS_LIBERTYBSD
-const TSTRING expected_os("LibertyBSD");
-#elif IS_OPENBSD
-const TSTRING expected_os("OpenBSD");
-#elif IS_SOLARIS
-const TSTRING expected_os("SunOS");
-#elif IS_AIX
-const TSTRING expected_os("AIX");
-#elif IS_HPUX
-const TSTRING expected_os("HP-UX");
-#elif IS_IRIX
-const TSTRING expected_os("IRIX");
-#elif IS_OSF1
-const TSTRING expected_os("Tru64");
-#elif IS_MINIX
-const TSTRING expected_os("Minix");
-#elif IS_HURD
-const TSTRING expected_os("GNU");
-#elif IS_HAIKU
-const TSTRING expected_os("Haiku");
-#elif IS_SYLLABLE
-const TSTRING expected_os("Syllable");
-#elif IS_SKYOS
-const TSTRING expected_os("SkyOS");
-#elif IS_SORTIX
-const TSTRING expected_os("Sortix");
-#elif IS_MINT
-const TSTRING expected_os("MiNT");
-#elif IS_AROS
-const TSTRING expected_os("AROS");
-#elif IS_RTEMS
-const TSTRING expected_os("RTEMS");
-#elif IS_RISCOS
-const TSTRING expected_os("RISC OS");
-#elif IS_RISCOS
-const TSTRING expected_os("Redox");
-#elif IS_QNX
-const TSTRING expected_os("QNX");
-#else
-const TSTRING expected_os("?!?!?");
-#endif
-
-void TestPlatformDetection()
-{
-#if HAVE_SYS_UTSNAME_H
-    struct utsname os_info;
-    TEST(uname(&os_info) == 0);
-
-    TSTRING observed_os(os_info.sysname);
-
-    if (observed_os != expected_os)
-        TCERR << "Expected OS: " << expected_os << " | Observed OS: " << observed_os << std::endl;
-
-    TEST(observed_os == expected_os);
-#endif
-}
-
 void RegisterSuite_Platform()
 {
-    RegisterTest("Platform", "Alignment", TestAlignment);
-    RegisterTest("Platform", "Sizes", TestSizes);
-    RegisterTest("Platform", "PlatformDetection", TestPlatformDetection);
+    RegisterTest("Platform", "Alignment",  TestAlignment);
+    RegisterTest("Platform", "Alignment2", TestAlignment2);
+#if !ARCHAIC_STL    
+    RegisterTest("Platform", "Sizes",      TestSizes);
+#endif    
 }

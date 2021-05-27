@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -47,14 +47,14 @@ public:
     cSerializerTestObject();
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     bool CheckValid();
 
 private:
     int     mNumber;
-    byte    mData[20];
+    uint8_t mData[20];
     TSTRING mString;
 };
 
@@ -83,7 +83,7 @@ bool cSerializerTestObject::CheckValid()
     return true;
 }
 
-void cSerializerTestObject::Read(iSerializer* pSerializer, int32 version)
+void cSerializerTestObject::Read(iSerializer* pSerializer, int32_t version)
 {
     if (version > Version())
         ThrowAndAssert(eSerializerVersionMismatch(_T("cSerializerTestObject::Read()")));
@@ -92,7 +92,7 @@ void cSerializerTestObject::Read(iSerializer* pSerializer, int32 version)
     mNumber = 0;
     memset(mData, 0, 20);
     mString.erase();
-    int32 number;
+    int32_t number;
     pSerializer->ReadInt32(number);
     pSerializer->ReadBlob(mData, 20);
     pSerializer->ReadString(mString);

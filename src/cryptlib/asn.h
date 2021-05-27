@@ -8,7 +8,7 @@
 enum ASNTag {INTEGER=0x02, BIT_STRING=0x03, SEQUENCE=0x10};
 enum ASNIdFlag {CONSTRUCTED = 0x20};
 
-unsigned int DERLengthEncode(unsigned int length, byte *output);
+unsigned int DERLengthEncode(unsigned int length, uint8_t *output);
 unsigned int DERLengthEncode(unsigned int length, BufferedTransformation &);
 
 #ifdef THROW_EXCEPTIONS
@@ -27,16 +27,16 @@ public:
     BERSequenceDecoder(BufferedTransformation &inQueue);
     ~BERSequenceDecoder();
 
-    void Put(byte) {}
-    void Put(const byte *, unsigned int) {}
+    void Put(uint8_t) {}
+    void Put(const uint8_t *, unsigned int) {}
 
     unsigned long MaxRetrieveable()
         {return inQueue.MaxRetrieveable();}
-    unsigned int Get(byte &outByte)
+    unsigned int Get(uint8_t &outByte)
         {return inQueue.Get(outByte);}
-    unsigned int Get(byte *outString, unsigned int getMax)
+    unsigned int Get(uint8_t *outString, unsigned int getMax)
         {return inQueue.Get(outString, getMax);}
-    unsigned int Peek(byte &outByte) const
+    unsigned int Peek(uint8_t &outByte) const
         {return inQueue.Peek(outByte);}
 
 private:

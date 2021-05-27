@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -59,8 +59,8 @@ public:
                                 const TSTRING& configFilename,
                                 const TSTRING& dbFilename,
                                 const TSTRING& commandLineParams,
-                                int64          createTime,
-                                int64          lastDBUpdateTime);
+                                int64_t        createTime,
+                                int64_t        lastDBUpdateTime);
     //Calculates and gathers header data, stores results in header.
 private:
 };

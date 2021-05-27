@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -52,18 +52,18 @@ TSS_EXCEPTION(eTWADecrypt, eTWA)
 TSS_EXCEPTION(eTWADecryptCorrupt, eTWA)
 
 TSS_BEGIN_EXCEPTION_NO_CTOR(eTWAEncryptionChange, eTWA)
-eTWAEncryptionChange(const TSTRING& strMsg1, const TSTRING& strMsg2 = _T(""), uint32 flags = 0)
+eTWAEncryptionChange(const TSTRING& strMsg1, const TSTRING& strMsg2 = _T(""), uint32_t flags = 0)
     : eTWA(strMsg1 + strMsg2, flags)
 {
 }
 TSS_END_EXCEPTION();
 
 TSS_BEGIN_EXCEPTION_NO_CTOR(eTWACreateCfgMissingSitekey, eTWA)
-eTWACreateCfgMissingSitekey(const TSTRING& msg, uint32 flags = 0);
+eTWACreateCfgMissingSitekey(const TSTRING& msg, uint32_t flags = 0);
 TSS_END_EXCEPTION();
 
 TSS_BEGIN_EXCEPTION_NO_CTOR(eTWACreateCfgSitekeyMismatch, eTWA)
-eTWACreateCfgSitekeyMismatch(const TSTRING& specifiedKeyfile, const TSTRING& configKeyfile, uint32 flags = 0);
+eTWACreateCfgSitekeyMismatch(const TSTRING& specifiedKeyfile, const TSTRING& configKeyfile, uint32_t flags = 0);
 TSS_END_EXCEPTION();
 
 

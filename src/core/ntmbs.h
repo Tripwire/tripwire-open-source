@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -86,9 +86,12 @@ typedef const wchar_t* const_ntwcs_t;
 #    define NTDBS_T_DEFINED
 #    if WCHAR_IS_16_BITS
 typedef wchar_t dbchar_t; // Same size but use NT's type
+#    elif USE_CHAR16_T
+typedef char16_t dbchar_t;
 #    else
-typedef uint16      dbchar_t;
+typedef uint16_t dbchar_t;
 #    endif
+
 typedef dbchar_t*       ntdbs_t;
 typedef const dbchar_t* const_ntdbs_t;
 #endif //NTDBS_T_DEFINED
@@ -101,7 +104,7 @@ typedef const dbchar_t* const_ntdbs_t;
 #    if WCHAR_IS_32_BITS
 typedef wchar_t qbchar_t; // Same size but use NT's type
 #    else
-typedef uint32      qbchar_t;
+typedef uint32_t        qbchar_t;
 #    endif
 typedef qbchar_t*       ntqbs_t;
 typedef const qbchar_t* const_ntqbs_t;

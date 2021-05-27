@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -80,18 +80,18 @@ public:
     //-------------------------------------------------------------------------------------
     // Data Manipulation
     //-------------------------------------------------------------------------------------
-    int AddItem(int8* pData, int dataSize, int mainIndex); //throw (eArchive)
+    int AddItem(int8_t* pData, int dataSize, int mainIndex); //throw (eArchive)
         // inserts the given item into the array; returns the index that it was inserted into.
         // this asserts that there is room for the new element, and updates the avail. space and
         // max index as necessary.
     void DeleteItem(int index); //throw (eArchive)
         // deletes the specified item; this asserts that the index is valid, and updates the avail.
         // space and max index as necessary.
-    int8* GetDataForReading(int index, int32& dataSize); //throw (eArchive)
+    int8_t* GetDataForReading(int index, int32_t& dataSize); //throw (eArchive)
         // returns a pointer to the named data. This method will assert that the address is
         // valid. The data pointer returned is guarenteed to be valid only until the next
         // method call into this class.
-    int8* GetDataForWriting(int index, int32& dataSize); //throw (eArchive)
+    int8_t* GetDataForWriting(int index, int32_t& dataSize); //throw (eArchive)
         // this is the same as the previous function, except the dirty bit for the page is also set
     bool IsItemValid(int index) const; //throw (eArchive)
         // returns true if the given index has a valid value.
@@ -125,24 +125,24 @@ public:
     struct tRecordIndex
     {
     private:
-        int32 mOffset;    // offset from the end of the block that my data is at; offset 1 is the last byte in the block
-        int32 mMainIndex; // my main array index
+        int32_t mOffset;    // offset from the end of the block that my data is at; offset 1 is the last byte in the block
+        int32_t mMainIndex; // my main array index
     public:
         // byte order safe access methods...
         //
-        void SetOffset(int32 off)
+        void SetOffset(int32_t off)
         {
             mOffset = tw_htonl(off);
         }
-        int32 GetOffset()
+        int32_t GetOffset()
         {
             return tw_ntohl(mOffset);
         }
-        void SetMainIndex(int32 idx)
+        void SetMainIndex(int32_t idx)
         {
             mMainIndex = tw_htonl(idx);
         }
-        int32 GetMainIndex()
+        int32_t GetMainIndex()
         {
             return tw_ntohl(mMainIndex);
         }
@@ -153,25 +153,25 @@ public:
     struct tHeader
     {
     private:
-        int32 mSpaceAvailable;
-        int32 mNumItems;
+        int32_t mSpaceAvailable;
+        int32_t mNumItems;
 
     public:
         // byte order safe access methods...
         //
-        void SetSpaceAvail(int32 sa)
+        void SetSpaceAvail(int32_t sa)
         {
             mSpaceAvailable = tw_htonl(sa);
         }
-        int32 GetSpaceAvail()
+        int32_t GetSpaceAvail()
         {
             return tw_ntohl(mSpaceAvailable);
         }
-        void SetNumItems(int32 ni)
+        void SetNumItems(int32_t ni)
         {
             mNumItems = tw_htonl(ni);
         }
-        int32 GetNumItems()
+        int32_t GetNumItems()
         {
             return tw_ntohl(mNumItems);
         }
@@ -179,7 +179,7 @@ public:
 
     enum
     {
-        MAX_RECORDS = cBlockFile::BLOCK_SIZE / (sizeof(tRecordIndex) + sizeof(uint32)),
+        MAX_RECORDS = cBlockFile::BLOCK_SIZE / (sizeof(tRecordIndex) + sizeof(uint32_t)),
         // MAX_RECORDS signifies the maximum number of records that can be stored in a single block.
         // It is rationalized like this: each used record needs a tRecordIndex plus an extra uint32
         // as a minimum storage requirement (even though it is ok to have a record that is filled in

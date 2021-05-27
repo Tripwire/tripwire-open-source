@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -61,6 +61,12 @@
 #include "twcrypto/crypto.h"
 #include "core/displayencoder.h"
 
+#if HAVE_SWAB && (__cplusplus <= 1)
+  #ifndef __USE_XOPEN
+    #define _USE_XOPEN 1
+  #endif
+#endif
+
 #include <unistd.h>
 
 //Provide a swab() impl. from glibc, for platforms that don't have one
@@ -81,7 +87,7 @@ void swab(const void* bfrom, void* bto, ssize_t n)
 #endif
 
 // forwards
-static bool NotifyFileType(const cFileHeaderID& id, uint32 version, iUserNotify::VerboseLevel vl);
+static bool NotifyFileType(const cFileHeaderID& id, uint32_t version, iUserNotify::VerboseLevel vl);
 // Calls UserNotify(V_VERBOSE, ...) to print out type of file specified in cFileHeaderID.
 // Returns false if cFileHeaderID not recognized.
 // Used in changing and removing encryption algorithms
@@ -93,14 +99,14 @@ static bool NotifyEncryptionType(cFileHeader::Encoding encoding, iUserNotify::Ve
 
 // error implementations
 
-eTWACreateCfgMissingSitekey::eTWACreateCfgMissingSitekey(const TSTRING& msg, uint32 flags) : eTWA(TSTRING(), flags)
+eTWACreateCfgMissingSitekey::eTWACreateCfgMissingSitekey(const TSTRING& msg, uint32_t flags) : eTWA(TSTRING(), flags)
 {
     mMsg = TSS_GetString(cTWAdmin, twadmin::STR_ERR2_CREATE_CFG_MISSING_KEYFILE) + msg;
 }
 
 eTWACreateCfgSitekeyMismatch::eTWACreateCfgSitekeyMismatch(const TSTRING& specifiedKeyfile,
                                                            const TSTRING& configKeyfile,
-                                                           uint32         flags)
+                                                           uint32_t       flags)
     : eTWA(TSTRING(), flags)
 {
     mMsg = TSS_GetString(cTWAdmin, twadmin::STR_ERR2_CREATE_CFG_SITEKEY_MISMATCH1);
@@ -640,7 +646,13 @@ int cTWAModeCreatePol::Execute(cErrorQueue* pQueue)
     //
     // make sure the policy file parses correctly before we update the old one
     //
+#if !ARCHAIC_STL    
     std::istringstream in(plaintext);
+#else
+    strstream in;
+    in << plaintext;
+#endif
+    
     cPolicyParser      parser(in);
     try
     {
@@ -2062,16 +2074,23 @@ static bool ChangePassphrase(const TCHAR* keyPath, wc16_string passphraseOld, wc
     // we must allocate a BIGENDIAN copy
     // and delete it before we return.
     // auto_ptr does not help (won't work with arrays).
-    size_t passphraseLenOld  = passphraseOld.length() * sizeof(WCHAR16);
-    size_t passphraseLen     = passphrase.length() * sizeof(WCHAR16);
-    int8*  passphraseCopyOld = new int8[passphraseLenOld];
-    int8*  passphraseCopy    = new int8[passphraseLen];
+    size_t  passphraseLenOld  = passphraseOld.length() * sizeof(WCHAR16);
+    size_t  passphraseLen     = passphrase.length() * sizeof(WCHAR16);
+    int8_t* passphraseCopyOld = new int8_t[passphraseLenOld];
+    int8_t* passphraseCopy    = new int8_t[passphraseLen];
 #ifdef WORDS_BIGENDIAN
     memcpy(passphraseCopyOld, passphraseOld.data(), passphraseLenOld);
     memcpy(passphraseCopy, passphrase.data(), passphraseLen);
 #else
+
+ #if SWAB_TAKES_CHAR_PTRS   
+    swab((char*)passphraseOld.data(), (char*)passphraseCopyOld, passphraseLenOld);
+    swab((char*)passphrase.data(), (char*)passphraseCopy, passphraseLen);
+#else
     swab(passphraseOld.data(), passphraseCopyOld, passphraseLenOld);
     swab(passphrase.data(), passphraseCopy, passphraseLen);
+#endif
+    
 #endif
 
     bool result;
@@ -2878,7 +2897,7 @@ iTWAMode* cTWAdminCmdLine::GetMode(int argc, const TCHAR* const* argv)
 // Calls UserNotify(V_VERBOSE, ...) to print out type of file specified in cFileHeaderID.
 // Returns false if cFileHeaderID not recognized.
 // Used in changing and removing encryption algorithms
-static bool NotifyFileType(const cFileHeaderID& id, uint32 version, iUserNotify::VerboseLevel vl)
+static bool NotifyFileType(const cFileHeaderID& id, uint32_t version, iUserNotify::VerboseLevel vl)
 {
     if (id == cFCODatabaseFile::GetFileHeaderID())
     {

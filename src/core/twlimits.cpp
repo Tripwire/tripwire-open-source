@@ -1,6 +1,5 @@
-//
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -44,12 +43,23 @@
 // METHOD CODE
 //=========================================================================
 
+bool tss_isdigit(const TCHAR in)
+{
+#if ARCHAIC_STL
+  return isdigit(in);
+#else
+  return std::isdigit<TCHAR>(in, std::locale());
+#endif
+}
+  
+
 bool cInterpretInt::InterpretInt(const TSTRING& str, int* pi)
 {
     ASSERT(pi != 0);
 
     bool fFormatOK = true;
 
+#if !ARCHAIC_STL    
     //
     // make sure string is not longer than a string representation of LIMIT_MAX
     //
@@ -57,7 +67,8 @@ bool cInterpretInt::InterpretInt(const TSTRING& str, int* pi)
     sstr << cInterpretInt::LIMIT_MAX;
     if (str.length() > sstr.str().length())
         fFormatOK = false;
-
+#endif
+    
     //
     // make sure string is not too short
     //
@@ -69,7 +80,7 @@ bool cInterpretInt::InterpretInt(const TSTRING& str, int* pi)
     //
     if (fFormatOK)
     {
-        if (!(_T('-') == str[0] || std::isdigit<TCHAR>(str[0], std::locale())))
+        if (!(_T('-') == str[0] || tss_isdigit(str[0])))
             fFormatOK = false;
     }
 
@@ -79,7 +90,7 @@ bool cInterpretInt::InterpretInt(const TSTRING& str, int* pi)
     // TODO:BAM -- check this...
     for (TSTRING::size_type j = 1; fFormatOK && j < str.length(); j++)
     {
-        if (!std::isdigit<TCHAR>(str[j], std::locale()))
+        if (!tss_isdigit(str[j]))
             fFormatOK = false;
     }
 

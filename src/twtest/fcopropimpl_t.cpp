@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -54,7 +54,7 @@ void TestNumeric()
     pi64.SetValue(-456);
     pui64.SetValue(456);
     pui64b.SetValue(333);
-    d.TraceDebug(_T("property int64 = (should be -456) %s\n"), pi64.AsString().c_str());
+    d.TraceDebug(_T("property int64_t = (should be -456) %s\n"), pi64.AsString().c_str());
     TEST(pi64.AsString() == "-456");
 
     // test a few operators

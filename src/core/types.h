@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -37,138 +37,158 @@
 #include "platform.h"
 
 #if HAVE_STDINT_H
-#include <stdint.h>
+#   include <stdint.h>
 #endif
 
+#if HAVE_LIMITS_H
+#   include <limits.h>
+#endif
 
 //-----------------------------------------------------------------------------
 // standard TSS types
 //-----------------------------------------------------------------------------
 
-typedef unsigned char byte; // platform-independent
+// Sensible defaults in case there's no stdint.h
+#if !HAVE_STDINT_H
+typedef unsigned char  uint8_t;
+typedef signed char    int8_t;
+typedef short          int16_t;
+typedef unsigned short uint16_t;
 
-typedef signed char    int8;
-typedef short          int16;
-typedef float          float32;
-typedef double         float64;
-typedef unsigned char  uint8;
-typedef unsigned short uint16;
+//typedef float          float32_t;
+//typedef double         float64_t;
 
-#if HAVE_STDINT_H
-typedef int32_t  int32;
-typedef uint32_t uint32;
-
-#elif SIZEOF_INT == 4
-typedef int           int32;
-typedef unsigned int  uint32;
+#if SIZEOF_INT == 4
+typedef int           int32_t;
+typedef unsigned int  uint32_t;
 
 #elif SIZEOF_LONG == 4
-typedef long               int32;
-typedef unsigned long      uint32;
+typedef long               int32_t;
+typedef unsigned long      uint32_t;
 #else
 #    error "I don't seem to have a 32-bit integer type on this system."
 #endif
 
-#if HAVE_STDINT_H
-typedef int64_t  int64;
-typedef uint64_t uint64;
-#elif SIZEOF_LONG == 8
-typedef long          int64;
-typedef unsigned long uint64;
+#if SIZEOF_LONG == 8
+typedef long          int64_t;
+typedef unsigned long uint64_t;
 #elif SIZEOF_LONG_LONG == 8
-typedef long long          int64;
-typedef unsigned long long uint64;
+typedef long long          int64_t;
+typedef unsigned long long uint64_t;
 #else
 #    error "I don't seem to have a 64-bit integer type on this system."
 #endif
+#endif // !HAVE_STDINT_H
 
-// other Win32 definitions
-//typedef uint16                UINT;
-//typedef uint32                DWORD;
-
-//-----------------------------------------------------------------------------
-// Limits -- should be platform independent, right? ( assumes 2's complement numbers )
-//-----------------------------------------------------------------------------
-
-
-#if (!(USES_2S_COMPLEMENT))
-#    error limits.h depends on 2s complement integers.  Check core/types.h
+#ifdef CHAR_MIN
+#   define TSS_CHAR_MIN   CHAR_MIN
+#else
+#   define TSS_CHAR_MIN   (-127 - 1)
 #endif
 
-#include <limits.h> // defines limits for built-in types
-
-#define TSS_INT8_MIN (-127 - 1)
-#define TSS_INT8_MAX 127
-#define TSS_UINT8_MAX 0xFFU
-#define TSS_INT16_MIN (-32767 - 1)
-#define TSS_INT16_MAX 32767
-#define TSS_UINT16_MAX 0xFFFFU
-#define TSS_INT32_MIN (-2147483647 - 1)
-#define TSS_INT32_MAX 2147483647
-#define TSS_UINT32_MAX 0xFFFFFFFFU
-#define TSS_INT64_MIN (-9223372036854775807LL - 1)
-#define TSS_INT64_MAX 9223372036854775807LL
-#define TSS_UINT64_MAX 0xFFFFFFFFFFFFFFFFULL
-
-/*
-//-----------------------------------------------------------------------------
-// numeric_limits : TODO:BAM eventually I should get around to finishing these....
-//-----------------------------------------------------------------------------
-
-#pragma warning( push )             
-pragma warning( disable: 4663 )    // Use new template specialization syntax: template<>
-#define NOMINMAX  // turn off min() and max() macros
-#include <limits>
-#pragma warning( pop )             
-
-//
-// define numeric_limits for our types
-//
-// NOTE: assumes std::numeric_limits< int > does not depend on signedness of type
-// TODO:BAM -- add members like digits and digits10
-// TODO:BAM -- define floating point numeric_limits
-#define DECLARE_INTEGRAL_NUM_LIMITS( intT, minVal, maxVal, nDigits,  ) \
-    template<> class numeric_limits< intT > : public std::numeric_limits< int > \
-    {\
-        static intT (min)() throw() { return ( minVal ); } \
-        static intT (max)() throw() { return ( maxVal ); } \
-        enum { digits = 0 };
-        enum { digits = 0 };
-    };
-
-// NOTE: assumes ( std::numeric_limits< int >::is_specialized == true )
-namespace std
-{
-#if IS_UNIX
-    DECLARE_INTEGRAL_NUM_LIMITS( int8,  SCHAR_MIN, SCHAR_MAX );
-    DECLARE_INTEGRAL_NUM_LIMITS( int16, SHRT_MIN, SHRT_MAX );
-    DECLARE_INTEGRAL_NUM_LIMITS( int32, LONG_MIN, LONG_MAX );
-
+#ifdef CHAR_MAX
+#   define TSS_CHAR_MAX   CHAR_MAX
+#else
+#   define TSS_CHAR_MAX   127
 #endif
-}
-*/
+
+#define TSS_TCHAR_MIN TSS_CHAR_MIN
+#define TSS_TCHAR_MAX TSS_CHAR_MAX
+
+#ifdef INT8_MIN
+#   define TSS_INT8_MIN   INT8_MIN
+#else
+#   define TSS_INT8_MIN (-127 - 1)
+#endif
+
+#ifdef INT8_MAX
+#   define TSS_INT8_MAX   INT8_MAX
+#else
+#   define TSS_INT8_MAX 127
+#endif
+
+#ifdef UINT8_MAX
+#   define TSS_UINT8_MAX  UINT8_MAX
+#else
+#   define TSS_UINT8_MAX 0xFFU
+#endif
+
+#ifdef INT16_MIN
+#   define TSS_INT16_MIN  INT16_MIN
+#else
+#   define TSS_INT16_MIN (-32767 - 1)
+#endif
+
+#ifdef INT16_MAX
+#   define TSS_INT16_MAX  INT16_MAX
+#else
+#   define TSS_INT16_MAX 32767
+#endif
+
+#ifdef UINT16_MAX
+#   define TSS_UINT16_MAX UINT16_MAX
+#else
+#   define TSS_UINT16_MAX 0xFFFFU
+#endif
+
+#ifdef INT32_MIN
+#   define TSS_INT32_MIN  INT32_MIN
+#else
+#   define TSS_INT32_MIN (-2147483647 - 1)
+#endif
+
+#ifdef INT32_MAX
+#   define TSS_INT32_MAX  INT32_MAX
+#else
+#   define TSS_INT32_MAX 2147483647
+#endif
+
+#ifdef UINT32_MAX
+#   define TSS_UINT32_MAX UINT32_MAX
+#else
+#   define TSS_UINT32_MAX 0xFFFFFFFFU
+#endif
+
+#ifdef INT64_MIN
+#   define TSS_INT64_MIN  INT64_MIN
+#else
+#   define TSS_INT64_MIN (-9223372036854775807LL - 1)
+#endif
+
+#ifdef INT64_MAX
+#   define TSS_INT64_MAX  INT64_MAX
+#else
+#   define TSS_INT64_MAX 9223372036854775807LL
+#endif
+
+#ifdef UINT64_MAX
+#   define TSS_UINT64_MAX UINT64_MAX
+#else
+#   define TSS_UINT64_MAX 0xFFFFFFFFFFFFFFFFULL
+#endif
+
 
 //-----------------------------------------------------------------------------
 // Byte Swapping
 //-----------------------------------------------------------------------------
 
-inline int16 SWAPBYTES16(int16 i)
+inline int16_t SWAPBYTES16(int16_t i)
 {
 
-    return ((uint16)i >> 8) | ((uint16)i << 8);
+    return ((uint16_t)i >> 8) | ((uint16_t)i << 8);
 }
 
-inline int32 SWAPBYTES32(int32 i)
+inline int32_t SWAPBYTES32(int32_t i)
 {
-    return ((uint32)i >> 24) | (((uint32)i & 0x00ff0000) >> 8) | (((uint32)i & 0x0000ff00) << 8) | ((uint32)i << 24);
+    return ((uint32_t)i >> 24) | (((uint32_t)i & 0x00ff0000) >> 8) | (((uint32_t)i & 0x0000ff00) << 8) | ((uint32_t)i << 24);
 }
 
-inline int64 SWAPBYTES64(int64 i)
+inline int64_t SWAPBYTES64(int64_t i)
 {
-    return ((uint64)i >> 56) | (((uint64)i & 0x00ff000000000000ULL) >> 40) |
-           (((uint64)i & 0x0000ff0000000000ULL) >> 24) | (((uint64)i & 0x000000ff00000000ULL) >> 8) |
-           (((uint64)i & 0x00000000ff000000ULL) << 8) | (((uint64)i & 0x0000000000ff0000ULL) << 24) |
-           (((uint64)i & 0x000000000000ff00ULL) << 40) | ((uint64)i << 56);
+    return ((uint64_t)i >> 56) | (((uint64_t)i & 0x00ff000000000000ULL) >> 40) |
+           (((uint64_t)i & 0x0000ff0000000000ULL) >> 24) | (((uint64_t)i & 0x000000ff00000000ULL) >> 8) |
+           (((uint64_t)i & 0x00000000ff000000ULL) << 8) | (((uint64_t)i & 0x0000000000ff0000ULL) << 24) |
+           (((uint64_t)i & 0x000000000000ff00ULL) << 40) | ((uint64_t)i << 56);
 }
 
 
@@ -178,7 +198,7 @@ inline int64 SWAPBYTES64(int64 i)
 #        define tw_ntohl(x) (x)
 #        define tw_htons(x) (x)
 #        define tw_ntohs(x) (x)
-#        define tw_htonll(x) (x) // int64 versions
+#        define tw_htonll(x) (x) // int64_t versions
 #        define tw_ntohll(x) (x)
 
 #    else //!WORDS_BIGENDIAN
@@ -187,14 +207,14 @@ inline int64 SWAPBYTES64(int64 i)
 #        define tw_ntohl(x) SWAPBYTES32((x))
 #        define tw_htons(x) SWAPBYTES16((x))
 #        define tw_ntohs(x) SWAPBYTES16((x))
-#        define tw_htonll(x) SWAPBYTES64((x)) // int64 versions
+#        define tw_htonll(x) SWAPBYTES64((x)) // int64_t versions
 #        define tw_ntohll(x) SWAPBYTES64((x))
 
 #    endif //WORDS_BIGENDIAN
 
 ////////////////////////////////////////////
 
-#    if __cplusplus >= 201103L
+#    if USE_UNIQUE_PTR
 #        define TW_UNIQUE_PTR std::unique_ptr
 #    else
 #        define TW_UNIQUE_PTR std::auto_ptr

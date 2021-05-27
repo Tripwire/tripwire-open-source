@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -86,7 +86,7 @@ public:
     void check(cDebug& d) const;
     // Temp function for testing purposes.  Outputs vector info. TO DO:
     // Get rid of this when it's no longer useful! DA
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
         // iSerializable interface
     void TraceContents(int dl = -1) const;
@@ -96,10 +96,10 @@ private:
     bool isExtended(void) const;
     // Helper function that discerns if an object is using mpBuf beyond [0]
 
-    int                  mSize;
-    static int           msBitlength;
-    uint32               mMask;
-    std::vector<uint32>* mpBuf;
+    int                    mSize;
+    static int             msBitlength;
+    uint32_t               mMask;
+    std::vector<uint32_t>* mpBuf;
 };
 
 #endif //__FCOPROPVECTOR_H

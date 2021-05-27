@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -36,15 +36,13 @@
 #include "core/error.h"
 #endif
 
-#if IS_REDOX
-#    define restrict __restrict__
-#endif
-
 #if SUPPORTS_NETWORKING && HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
 #endif
-#define SOCKET int
 
+#ifndef SOCKET
+#define SOCKET int
+#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -128,7 +126,7 @@ public:
         _EOL_LEN               = 2
     };
 
-    static const std::string::value_type* ConvertBase64(std::string&, const byte*, size_t);
+    static const std::string::value_type* ConvertBase64(std::string&, const uint8_t*, size_t);
 
     static bool        HasNonAsciiChars(const std::string& s);
     static std::string CreateEncodedText(const std::string& text);

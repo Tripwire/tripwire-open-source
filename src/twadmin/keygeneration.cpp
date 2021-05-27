@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -46,13 +46,13 @@ struct tGK
 {
     bool         doneFlag;
     int          retValue;
-    int8*        passphrase;
-    int          passphraseLen;
+    int8_t*      passphrase;
+    int32_t      passphraseLen;
     const TCHAR* keyPath;
 
     enum ReturnValue
     {
-        OK               = 0,
+        OKAY             = 0,
         INVALIDPARAM     = 1,
         GENERATION_ERROR = 2,
         FILE_WRITE_ERROR = 3,
@@ -123,16 +123,14 @@ static void GeneratePublicPrivateKeys(void* pParams, const cElGamalSig::KeySize 
         return;
     }
 
-    pGK->retValue = tGK::OK;
+    pGK->retValue = tGK::OKAY;
     pGK->doneFlag = true;
     return;
 }
 
 bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig::KeySize key_size)
 {
-#ifndef WORDS_BIGENDIAN
-    passphrase.swapbytes();
-#endif
+    TSS_SwapBytes(passphrase);
 
 #ifdef DEBUG
     // test reading in the keys
@@ -146,13 +144,13 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     fflush(stdout);
 
     tGK gk;
-    gk.passphrase    = (int8*)passphrase.data();
+    gk.passphrase    = (int8_t*)passphrase.data();
     gk.passphraseLen = passphrase.length() * sizeof(WCHAR16);
     gk.keyPath       = keyPath;
 
     GeneratePublicPrivateKeys(&gk, key_size);
 
-    if (gk.retValue != tGK::OK)
+    if (gk.retValue != tGK::OKAY)
     {
         switch (gk.retValue)
         {
@@ -177,13 +175,13 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
 
     keyfile.ReadFile(keyPath);
 
-    ASSERT(keyfile.GetPrivateKey((int8*)passphrase_copy.data(), passphrase_copy.length() * sizeof(WCHAR16)) != 0);
+    ASSERT(keyfile.GetPrivateKey((int8_t*)passphrase_copy.data(), passphrase_copy.length() * sizeof(WCHAR16)) != 0);
     keyfile.ReleasePrivateKey();
 
     //keyfile.WriteFile(_T("tripwire2.key"));
 
     // test memory writing
-    int8 mem[4000];
+    int8_t mem[4000];
     ASSERT(4000 > keyfile.GetWriteLen());
 
     keyfile.WriteMem(mem);
@@ -191,7 +189,7 @@ bool GenerateKey(const TCHAR* keyPath, wc16_string passphrase, const cElGamalSig
     cKeyFile k2;
     k2.ReadMem(mem);
 
-    k2.GetPrivateKey((int8*)passphrase_copy2.data(), passphrase_copy2.length() * sizeof(WCHAR16));
+    k2.GetPrivateKey((int8_t*)passphrase_copy2.data(), passphrase_copy2.length() * sizeof(WCHAR16));
     k2.ReleasePrivateKey();
 #endif
 

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -66,8 +66,8 @@ protected:
 #    define DECLARE_SERREFCOUNT()         \
         DECLARE_TYPED()                   \
     public:                               \
-        static iSerRefCountObj* Create(); \
-        virtual int32           Version() const;
+        static iSerRefCountObj*   Create(); \
+        virtual int32_t           Version() const;
 
 #    define IMPLEMENT_SERREFCOUNT(CLASS, TYPEDSTRING, VERSION_MAJOR, VERSION_MINOR) \
         IMPLEMENT_TYPED(CLASS, TYPEDSTRING)                                         \
@@ -75,7 +75,7 @@ protected:
         {                                                                           \
             return new CLASS;                                                       \
         }                                                                           \
-        int32 CLASS::Version() const                                                \
+        int32_t CLASS::Version() const                                                \
         {                                                                           \
             return iTypedSerializable::MkVersion(VERSION_MAJOR, VERSION_MINOR);     \
         }

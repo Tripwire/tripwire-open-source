@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -83,7 +83,7 @@ void util_SignalHandler(int sig)
 
 void tw_psignal(int sig, const TCHAR* str)
 {
-    const TCHAR* siglist[NSIG] = {_T("Unknown Signal"),
+    const TCHAR* siglist[] =    { _T("Unknown Signal"),
                                   _T("Hangup"),
                                   _T("Interrupt"),
                                   _T("Quit"),

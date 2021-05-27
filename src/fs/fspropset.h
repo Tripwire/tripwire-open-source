@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -55,7 +55,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // cFCOPropFileType -- a property that represents a file type. Is is really just
-//      an int32 that overrides the AsString() method to display the file type
+//      an int32_t that overrides the AsString() method to display the file type
 ///////////////////////////////////////////////////////////////////////////////
 class cFCOPropFileType : public cFCOPropInt32
 {
@@ -112,6 +112,10 @@ public:
         FT_DOOR,
         FT_PORT,
         FT_NAMED,
+        FT_NATIVE,
+        FT_MESSAGE_QUEUE,
+        FT_SEMAPHORE,
+        FT_SHARED_MEMORY,
         FT_NUMITEMS
     };
 
@@ -166,7 +170,7 @@ public:
     //PROPERTY_OBJ(cUnixACL,        ACL,            PROP_ACL)  // will eventually be implememented
 
     // iSerializable interface
-    virtual void Read(iSerializer* pSerializer, int32 version = 0); // throw (eSerializer, eArchive)
+    virtual void Read(iSerializer* pSerializer, int32_t version = 0); // throw (eSerializer, eArchive)
     virtual void Write(iSerializer* pSerializer) const;             // throw (eSerializer, eArchive)
 
     // debugging method

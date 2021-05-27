@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -149,8 +149,8 @@
 
 /* The two buffers of 5 32-bit words */
 
-uint32 h0, h1, h2, h3, h4;
-uint32 A, B, C, D, E;
+uint32_t h0, h1, h2, h3, h4;
+uint32_t A, B, C, D, E;
 
 /* Initialize the SHS values */
 
@@ -173,7 +173,7 @@ void shsInit(SHS_INFO* shsInfo)
 
 void shsTransform(SHS_INFO *shsInfo)
 {
-    uint32 W[ 80 ], temp;
+    uint32_t W[ 80 ], temp;
     int i;
 
     /* Step A.  Copy the data buffer into the local work buffer */
@@ -240,12 +240,12 @@ void shsTransform(SHS_INFO *shsInfo)
    makes for very slow code, so we rely on the user to sort out endianness
    at compile time */
 
-static void byteReverse(uint32* buffer, int byteCount)
+static void byteReverse(uint32_t* buffer, int byteCount)
     {
-    uint32 value;
+    uint32_t value;
     int count;
 
-    byteCount /= sizeof( uint32 );
+    byteCount /= sizeof( uint32_t );
     for( count = 0; count < byteCount; count++ )
     {
     value = ( buffer[ count ] << 16 ) | ( buffer[ count ] >> 16 );
@@ -259,13 +259,13 @@ static void byteReverse(uint32* buffer, int byteCount)
    more efficient since it does away with the need to handle partial blocks
    between calls to shsUpdate() */
 
-void shsUpdate(SHS_INFO* shsInfo, uint8* buffer, int count)
+void shsUpdate(SHS_INFO* shsInfo, uint8_t* buffer, int count)
     {
     /* Update bitcount */
-    if( ( shsInfo->countLo + ( ( uint32 ) count << 3 ) ) < shsInfo->countLo )
+    if( ( shsInfo->countLo + ( ( uint32_t ) count << 3 ) ) < shsInfo->countLo )
     shsInfo->countHi++; /* Carry from low to high bitCount */
-    shsInfo->countLo += ( ( uint32 ) count << 3 );
-    shsInfo->countHi += ( ( uint32 ) count >> 29 );
+    shsInfo->countLo += ( ( uint32_t ) count << 3 );
+    shsInfo->countHi += ( ( uint32_t ) count >> 29 );
 
     /* Process data in SHS_BLOCKSIZE chunks */
     while( count >= SHS_BLOCKSIZE )
@@ -287,14 +287,14 @@ void shsUpdate(SHS_INFO* shsInfo, uint8* buffer, int count)
 void shsFinal(SHS_INFO *shsInfo)
 {
     int count;
-    uint32 lowBitcount = shsInfo->countLo, highBitcount = shsInfo->countHi;
+    uint32_t lowBitcount = shsInfo->countLo, highBitcount = shsInfo->countHi;
 
     /* Compute number of bytes mod 64 */
     count = ( int ) ( ( shsInfo->countLo >> 3 ) & 0x3F );
 
     /* Set the first char of padding to 0x80.  This is safe since there is
        always at least one byte free */
-    ( ( uint8 * ) shsInfo->data )[ count++ ] = 0x80;
+    ( ( uint8_t * ) shsInfo->data )[ count++ ] = 0x80;
 
     /* Pad out to 56 mod 64 */
     if( count > 56 )
@@ -343,14 +343,14 @@ void main()
     {
     SHS_INFO shsInfo;
     time_t endTime, startTime;
-    uint8 data[ TEST_BLOCK_SIZE ];
+    uint8_t data[ TEST_BLOCK_SIZE ];
     long i;
 
     /* Test output data (this is the only test data given in the SHS
        document, but chances are if it works for this it'll work for
        anything) */
     shsInit( &shsInfo );
-    shsUpdate( &shsInfo, ( uint8 * ) "abc", 3 );
+    shsUpdate( &shsInfo, ( uint8_t * ) "abc", 3 );
     shsFinal( &shsInfo );
     if( shsInfo.digest[ 0 ] != 0x0164B8A9L ||
     shsInfo.digest[ 1 ] != 0x14CD2A5EL ||

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -57,7 +57,7 @@ cFCOCompare::~cFCOCompare()
 ///////////////////////////////////////////////////////////////////////////////
 // Compare
 ///////////////////////////////////////////////////////////////////////////////
-uint32 cFCOCompare::Compare(const iFCO* pFco1, const iFCO* pFco2)
+uint32_t cFCOCompare::Compare(const iFCO* pFco1, const iFCO* pFco2)
 {
     ASSERT(pFco1 != 0);
     ASSERT(pFco2 != 0);
@@ -74,7 +74,7 @@ uint32 cFCOCompare::Compare(const iFCO* pFco1, const iFCO* pFco2)
     const cFCOPropVector& v1  = pFco1->GetPropSet()->GetValidVector();
     const cFCOPropVector& v2  = pFco2->GetPropSet()->GetValidVector();
 
-    uint32 result = 0;
+    uint32_t result = 0;
 
     mInvalidProps.SetSize(v1.GetSize());
     mUnequalProps.SetSize(v1.GetSize());

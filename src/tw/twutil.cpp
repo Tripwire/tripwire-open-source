@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -80,9 +80,9 @@ int _getch(void);
 
 
 // constants
-static const char*  POLICY_FILE_MAGIC_8BYTE = "#POLTXT\n";
-static const char*  CONFIG_FILE_MAGIC_8BYTE = "#CFGTXT\n";
-static const uint32 CURRENT_FIXED_VERSION   = 0x02020000;
+static const char*    POLICY_FILE_MAGIC_8BYTE = "#POLTXT\n";
+static const char*    CONFIG_FILE_MAGIC_8BYTE = "#CFGTXT\n";
+static const uint32_t CURRENT_FIXED_VERSION   = 0x02020000;
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -661,7 +661,11 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
         throw eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE);
 
     // check 8 byte header
-    if (nstring.mString.compare(0, 8 * sizeof(byte), CONFIG_FILE_MAGIC_8BYTE) != 0)
+#if !ARCHAIC_STL    
+    if (nstring.mString.compare(0, 8 * sizeof(uint8_t), CONFIG_FILE_MAGIC_8BYTE) != 0)
+#else
+    if (_tcsncmp(nstring.mString.c_str(), CONFIG_FILE_MAGIC_8BYTE,  8 * sizeof(uint8_t)) != 0) 
+#endif      
         ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE));
 
     // remove 8 byte header
@@ -716,7 +720,11 @@ void cTWUtil::ReadPolicyText(const TCHAR* filename, std::string& polText, const 
     ReadObject(filename, NULL, nstring, cPolicyFile::GetFileHeaderID(), pPublicKey, bEncrypted);
 
     // check 8 byte header
-    if (nstring.mString.compare(0, 8 * sizeof(byte), POLICY_FILE_MAGIC_8BYTE) != 0)
+#if !ARCHAIC_STL    
+    if (nstring.mString.compare(0, 8 * sizeof(uint8_t), POLICY_FILE_MAGIC_8BYTE) != 0)
+#else
+    if (_tcsncmp(nstring.mString.c_str(), POLICY_FILE_MAGIC_8BYTE, 8 * sizeof(uint8_t)) != 0)
+#endif      
         ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE));
 
     // remove 8 byte header
@@ -762,11 +770,9 @@ cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyTy
 
         passphrase = usePassphrase;
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
-        pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
+        pPrivateKey = keyFile.GetPrivateKey((int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
         if (pPrivateKey)
             return pPrivateKey;
@@ -804,11 +810,9 @@ cTWUtil::CreatePrivateKey(cKeyFile& keyFile, const WCHAR16* usePassphrase, KeyTy
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep(nSecs);
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
-        pPrivateKey = keyFile.GetPrivateKey((int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
+        pPrivateKey = keyFile.GetPrivateKey((int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16));
 
         if (pPrivateKey)
             break;
@@ -840,11 +844,9 @@ void cTWUtil::CreatePrivateKey(
 
         passphrase = usePassphrase;
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
-        if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
+        if (proxy.AquireKey(keyFile, (int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
             return;
 
         // if we got here, then a passphrase was provided on the command line that
@@ -880,11 +882,9 @@ void cTWUtil::CreatePrivateKey(
         // sleep to hinder brute force (dictionary, etc.) attacks
         iFSServices::GetInstance()->Sleep(nSecs);
 
-#ifndef WORDS_BIGENDIAN
-        passphrase.swapbytes();
-#endif
+        TSS_SwapBytes(passphrase);
 
-        if (proxy.AquireKey(keyFile, (int8*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
+        if (proxy.AquireKey(keyFile, (int8_t*)passphrase.data(), passphrase.length() * sizeof(WCHAR16)))
             return;
 
         // tell the user that they entered the wrong passphrase
@@ -1150,7 +1150,7 @@ TSTRING cTWUtil::GetSystemName()
 
 TSTRING cTWUtil::GetIPAddress()
 {
-    uint32 ipaddress;
+    uint32_t ipaddress;
     if (iFSServices::GetInstance()->GetIPAddress(ipaddress) == false)
         return TSS_GetString(cTW, tw::STR_IP_UNKNOWN);
 
@@ -1221,7 +1221,11 @@ bool cTWUtil::ConfirmYN(const TCHAR* prompt)
         for (x = 0; s[x] && iswctype(s[x], wctype("space")); x++)
             ;
 #else
+#if !ARCHAIC_STL
         for (x = 0; s[x] && std::isspace<TCHAR>(s[x], std::locale()); x++)
+#else
+        for (x = 0; s[x] && isspace(s[x]); x++)
+#endif	  
             ;
 #endif
 

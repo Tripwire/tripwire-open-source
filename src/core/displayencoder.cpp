@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -479,7 +479,7 @@ TSTRING cCharEncoderUtil::CharStringToHexValue(const TSTRING& str)
 
     for (at = str.begin(); at < str.end(); at++)
     {
-        strOut += char_to_hex(*at);
+        strOut += char_to_hex(*at); 
     }
 
     return strOut;
@@ -501,25 +501,38 @@ TSTRING cCharEncoderUtil::HexValueToCharString(const TSTRING& str)
 
 TCHAR cCharEncoderUtil::hex_to_char(TSTRING::const_iterator first, TSTRING::const_iterator last)
 {
-    static const TCHAR max_char = std::numeric_limits<TCHAR>::max();
-    static const TCHAR min_char = std::numeric_limits<TCHAR>::min();
-
+    static const TCHAR max_char = TSS_TCHAR_MAX;
+    static const TCHAR min_char = TSS_TCHAR_MIN;
+    
     if (first + TCHAR_AS_HEX__IN_TCHARS != last)
-        ThrowAndAssert(eBadHexConversion());
+    {
+        ThrowAndAssert(eBadHexConversion(TSTRING(first,last)));
+    }
 
-    TISTRINGSTREAM ss(TSTRING(first, last));
-    ss.imbue(std::locale::classic());
+#if ARCHAIC_STL
+    TSTRING in(first, last);
+    TISTRINGSTREAM ss(in.c_str());
+#else
+    TISTRINGSTREAM ss(TSTRING(first,last));
+#endif
+
+    tss_classic_locale(ss);
+    
     ss.fill(_T('0'));
-    ss.setf(std::ios_base::hex, std::ios_base::basefield);
-
+    ss.setf(std::ios::hex, std::ios::basefield);
+    
     unsigned long ch;
     ss >> ch;
 
     if (ss.bad() || ss.fail())
+    {      
         ThrowAndAssert(eBadHexConversion(TSTRING(first, last)));
-    if ((TCHAR)ch > max_char || (TCHAR)ch < min_char)
+    }	
+    if ((TCHAR)ch > TSS_TCHAR_MAX || (TCHAR)ch < TSS_TCHAR_MIN)
+    {
         ThrowAndAssert(eBadHexConversion(TSTRING(first, last)));
-
+    }
+    
     return (TCHAR)ch;
 }
 
@@ -527,17 +540,21 @@ TCHAR cCharEncoderUtil::hex_to_char(TSTRING::const_iterator first, TSTRING::cons
 TSTRING cCharEncoderUtil::char_to_hex(TCHAR ch)
 {
     TOSTRINGSTREAM ss;
-
-    ss.imbue(std::locale::classic());
+    tss_classic_locale(ss);
+    ss.setf(std::ios::hex, std::ios::basefield);
+    
     ss.fill(_T('0'));
     ss.width(TCHAR_AS_HEX__IN_TCHARS);
-    ss.setf(std::ios_base::hex, std::ios_base::basefield);
 
     ss << tss::util::char_to_size(ch);
 
-    if (ss.bad() || ss.fail() || ss.str().length() != TCHAR_AS_HEX__IN_TCHARS)
+    tss_mkstr(out, ss);
+    
+    if (ss.bad() || ss.fail() || out.length() != TCHAR_AS_HEX__IN_TCHARS)
+    {
         ThrowAndAssert(eBadHexConversion(TSTRING(1, ch)));
-    return ss.str();
+    }
+    return out;
 }
 
 TSTRING cCharEncoderUtil::DecodeHexToChar(TSTRING::const_iterator* pcur, const TSTRING::const_iterator end)
@@ -551,8 +568,10 @@ TSTRING cCharEncoderUtil::DecodeHexToChar(TSTRING::const_iterator* pcur, const T
     }
 
     if (n != TCHAR_AS_HEX__IN_TCHARS)
-        ThrowAndAssert(eBadDecoderInput());
-
+    {
+      ThrowAndAssert(eBadDecoderInput());
+    }
+    
     // convert hex numbers
     return HexValueToCharString(str);
 }
@@ -734,10 +753,10 @@ void cEncoder::ValidateSchema() const
 bool cEncoder::OnlyOneCatagoryPerChar() const
 {
     // TODO:BAM - man, is there a better way to do this?
-    TCHAR   ch = std::numeric_limits<TCHAR>::min();
+    TCHAR   ch = TSS_TCHAR_MIN;
     TSTRING ach(1, ch);
 
-    if (ch != std::numeric_limits<TCHAR>::max())
+    if (ch != TSS_TCHAR_MAX)
     {
         do
         {
@@ -755,7 +774,7 @@ bool cEncoder::OnlyOneCatagoryPerChar() const
                 }
             }
             ch++;
-        } while (ch != std::numeric_limits<TCHAR>::max());
+        } while (ch != TSS_TCHAR_MAX);
     }
     return true;
 }

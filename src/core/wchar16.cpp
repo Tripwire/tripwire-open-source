@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -52,6 +52,7 @@ int wchar16len(const WCHAR16* s)
     return i;
 }
 
+#if NEED_DBSTRING_IMPL
 //=============================================================================
 // class wc16_string
 //
@@ -114,15 +115,19 @@ wc16_string::~wc16_string()
         mpData->Release();
 }
 
-void wc16_string::operator=(const wc16_string& rhs)
+wc16_string& wc16_string::operator=(const wc16_string& rhs)
 {
-    if (mpData)
-        mpData->Release();
+    if (this != &rhs)
+    {
+        if (mpData)
+            mpData->Release();
 
-    mpData = rhs.mpData;
+        mpData = rhs.mpData;
 
-    if (mpData)
-        mpData->AddRef();
+        if (mpData)
+            mpData->AddRef();
+    }
+    return *this;
 }
 
 
@@ -327,3 +332,22 @@ void wc16_string_impl::CopyString(const wc16_string_impl& rhs)
 
     memcpy(this->pString, rhs.pString, newlen * sizeof(WCHAR16));
 }
+#endif
+
+namespace tss
+{
+void swapbytes(wc16_string& str)
+{
+#if NEED_DBSTRING_IMPL
+    str.swapbytes();
+#else
+    size_t len = str.length();
+    for (size_t x=0; x < len; x++)
+    {
+        WCHAR16 current = str[x];
+        str[x] = ((current >> 8) | ((current & 0xFF) << 8));
+    }
+#endif
+}
+}
+

@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 // 
@@ -56,9 +56,9 @@
 #include "md5.h"
 
 /* forward declaration */
-static void Transform (uint32*, uint32*);
+static void Transform (uint32_t*, uint32_t*);
 
-static uint8 PADDING[64] = {
+static uint8_t PADDING[64] = {
   0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -85,22 +85,22 @@ static uint8 PADDING[64] = {
 /* FF, GG, HH, and II transformations for rounds 1, 2, 3, and 4 */
 /* Rotation is separate from addition to prevent recomputation */
 #define FF(a, b, c, d, x, s, ac) \
-  {(a) += F ((b), (c), (d)) + (x) + (uint32)(ac); \
+  {(a) += F ((b), (c), (d)) + (x) + (uint32_t)(ac); \
    (a) = ROTATE_LEFT ((a), (s)); \
    (a) += (b); \
   }
 #define GG(a, b, c, d, x, s, ac) \
-  {(a) += G ((b), (c), (d)) + (x) + (uint32)(ac); \
+  {(a) += G ((b), (c), (d)) + (x) + (uint32_t)(ac); \
    (a) = ROTATE_LEFT ((a), (s)); \
    (a) += (b); \
   }
 #define HH(a, b, c, d, x, s, ac) \
-  {(a) += H ((b), (c), (d)) + (x) + (uint32)(ac); \
+  {(a) += H ((b), (c), (d)) + (x) + (uint32_t)(ac); \
    (a) = ROTATE_LEFT ((a), (s)); \
    (a) += (b); \
   }
 #define II(a, b, c, d, x, s, ac) \
-  {(a) += I ((b), (c), (d)) + (x) + (uint32)(ac); \
+  {(a) += I ((b), (c), (d)) + (x) + (uint32_t)(ac); \
    (a) = ROTATE_LEFT ((a), (s)); \
    (a) += (b); \
   }
@@ -109,22 +109,22 @@ static uint8 PADDING[64] = {
    mdContext. All fields are set to zero.  */
 void MD5Init (MD5_CTX* mdContext)
 {
-  mdContext->i[0] = mdContext->i[1] = (uint32)0;
+  mdContext->i[0] = mdContext->i[1] = (uint32_t)0;
 
   /* Load magic initialization constants.
    */
-  mdContext->buf[0] = (uint32)0x67452301;
-  mdContext->buf[1] = (uint32)0xefcdab89;
-  mdContext->buf[2] = (uint32)0x98badcfe;
-  mdContext->buf[3] = (uint32)0x10325476;
+  mdContext->buf[0] = (uint32_t)0x67452301;
+  mdContext->buf[1] = (uint32_t)0xefcdab89;
+  mdContext->buf[2] = (uint32_t)0x98badcfe;
+  mdContext->buf[3] = (uint32_t)0x10325476;
 }
 
 /* The routine MD5Update updates the message-digest context to
    account for the presence of each of the characters inBuf[0..inLen-1]
    in the message whose digest is being computed.  */
-void MD5Update (MD5_CTX* mdContext, uint8* inBuf, unsigned int inLen)
+void MD5Update (MD5_CTX* mdContext, uint8_t* inBuf, unsigned int inLen)
 {
-  uint32 in[16];
+  uint32_t in[16];
   int mdi;
   unsigned int i, ii;
 
@@ -133,15 +133,15 @@ void MD5Update (MD5_CTX* mdContext, uint8* inBuf, unsigned int inLen)
 
   /* update number of bits */
 #ifndef UNICOS
-  if ((mdContext->i[0] + ((uint32)inLen << 3)) < mdContext->i[0])
+  if ((mdContext->i[0] + ((uint32_t)inLen << 3)) < mdContext->i[0])
 #else
-  if (((mdContext->i[0]+((uint32)inLen << 3)) & 0xffffffff) < mdContext->i[0])
+  if (((mdContext->i[0]+((uint32_t)inLen << 3)) & 0xffffffff) < mdContext->i[0])
 #endif
 
     mdContext->i[1]++;
 
-  mdContext->i[0] += ((uint32)inLen << 3);
-  mdContext->i[1] += ((uint32)inLen >> 29);
+  mdContext->i[0] += ((uint32_t)inLen << 3);
+  mdContext->i[1] += ((uint32_t)inLen >> 29);
 
   while (inLen--) {
     /* add new character to buffer, increment mdi */
@@ -150,10 +150,10 @@ void MD5Update (MD5_CTX* mdContext, uint8* inBuf, unsigned int inLen)
     /* transform if necessary */
     if (mdi == 0x40) {
       for (i = 0, ii = 0; i < 16; i++, ii += 4)
-        in[i] = (((uint32)mdContext->in[ii+3]) << 24) |
-                (((uint32)mdContext->in[ii+2]) << 16) |
-                (((uint32)mdContext->in[ii+1]) << 8) |
-                ((uint32)mdContext->in[ii]);
+        in[i] = (((uint32_t)mdContext->in[ii+3]) << 24) |
+                (((uint32_t)mdContext->in[ii+2]) << 16) |
+                (((uint32_t)mdContext->in[ii+1]) << 8) |
+                ((uint32_t)mdContext->in[ii]);
       Transform (mdContext->buf, in);
       mdi = 0;
     }
@@ -164,7 +164,7 @@ void MD5Update (MD5_CTX* mdContext, uint8* inBuf, unsigned int inLen)
    ends with the desired message digest in mdContext->digest[0...15].  */
 void MD5Final (MD5_CTX* mdContext)
 {
-  uint32 in[16];
+  uint32_t in[16];
   int mdi;
   unsigned int i, ii;
   unsigned int padLen;
@@ -182,28 +182,28 @@ void MD5Final (MD5_CTX* mdContext)
 
   /* append length in bits and transform */
   for (i = 0, ii = 0; i < 14; i++, ii += 4)
-    in[i] = (((uint32)mdContext->in[ii+3]) << 24) |
-            (((uint32)mdContext->in[ii+2]) << 16) |
-            (((uint32)mdContext->in[ii+1]) << 8) |
-            ((uint32)mdContext->in[ii]);
+    in[i] = (((uint32_t)mdContext->in[ii+3]) << 24) |
+            (((uint32_t)mdContext->in[ii+2]) << 16) |
+            (((uint32_t)mdContext->in[ii+1]) << 8) |
+            ((uint32_t)mdContext->in[ii]);
   Transform (mdContext->buf, in);
 
   /* store buffer in digest */
   for (i = 0, ii = 0; i < 4; i++, ii += 4) {
-    mdContext->digest[ii] = (uint8)(mdContext->buf[i] & 0xFF);
+    mdContext->digest[ii] = (uint8_t)(mdContext->buf[i] & 0xFF);
     mdContext->digest[ii+1] =
-      (uint8)((mdContext->buf[i] >> 8) & 0xFF);
+      (uint8_t)((mdContext->buf[i] >> 8) & 0xFF);
     mdContext->digest[ii+2] =
-      (uint8)((mdContext->buf[i] >> 16) & 0xFF);
+      (uint8_t)((mdContext->buf[i] >> 16) & 0xFF);
     mdContext->digest[ii+3] =
-      (uint8)((mdContext->buf[i] >> 24) & 0xFF);
+      (uint8_t)((mdContext->buf[i] >> 24) & 0xFF);
   }
 }
 
 /* Basic MD5 step. Transforms buf based on in.  */
-static void Transform (uint32* buf, uint32* in)
+static void Transform (uint32_t* buf, uint32_t* in)
 {
-  uint32 a = buf[0], b = buf[1], c = buf[2], d = buf[3];
+  uint32_t a = buf[0], b = buf[1], c = buf[2], d = buf[3];
 
   /* Round 1 */
 #define S11 7

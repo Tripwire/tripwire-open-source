@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -51,7 +51,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // TestFileExists
@@ -111,7 +110,7 @@ bool cFileUtil::IsDir(const TSTRING& fileName)
     {
         iFSServices::GetInstance()->Stat(fileName, s);
     }
-    catch (eFSServices)
+    catch (const eFSServices&)
     {
         return false;
     }
@@ -126,7 +125,7 @@ bool cFileUtil::IsRegularFile(const TSTRING& fileName)
     {
         iFSServices::GetInstance()->Stat(fileName, s);
     }
-    catch (eFSServices)
+    catch (const eFSServices&)
     {
         return false;
     }
@@ -207,7 +206,7 @@ bool cFileUtil::BackupFile(const TSTRING& filename, bool printWarningOnFailure) 
         throw eFileWrite(filename, iFSServices::GetInstance()->GetErrString());
     }
 
-#if IS_DOS_DJGPP
+#if USES_DOS_DEVICE_PATH
     TSTRING backup_filename = cDosPath::BackupName(cDosPath::AsNative(filename));
 #else
     TSTRING backup_filename = filename;
@@ -243,7 +242,7 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
     {
         BUF_SIZE = 4096
     };
-    int8 buf[BUF_SIZE];
+    int8_t buf[BUF_SIZE];
     int  nBytesRead;
 
     cFile srcFile, destFile;
@@ -264,8 +263,13 @@ bool cFileUtil::Copy(const TSTRING& src_path, const TSTRING& dest_path)
 
     // restore permissions and ownership
     // don't worry if it fails. it's not mission-critical.
+#if HAVE_CHMOD    
     chmod(dest_path.c_str(), srcStat.st_mode);
+#endif
+    
+#if HAVE_CHOWN    
     chown(dest_path.c_str(), srcStat.st_uid, srcStat.st_gid);
+#endif
 
     srcFile.Close();
     destFile.Close();

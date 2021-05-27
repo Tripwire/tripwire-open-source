@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -96,11 +96,11 @@ public:
     {
         mNumStarts = mStartTime = mTotalTime = 0;
     }
-    uint32 GetTotalTime() const
+    uint32_t GetTotalTime() const
     {
         return mTotalTime;
     }
-    uint32 GetNumTimesStarted() const
+    uint32_t GetNumTimesStarted() const
     {
         return mNumStarts;
     }
@@ -110,10 +110,10 @@ public:
     }
 
 private:
-    TSTRING mName;
-    uint32  mTotalTime;
-    uint32  mStartTime;
-    uint32  mNumStarts;
+    TSTRING   mName;
+    uint32_t  mTotalTime;
+    uint32_t  mStartTime;
+    uint32_t  mNumStarts;
 };
 
 

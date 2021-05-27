@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2019 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -56,13 +56,13 @@ private:
 TSTRING mFilename;
 
 public:
-eFileError(const TSTRING& filename, const TSTRING& description, uint32 flags = 0);
+eFileError(const TSTRING& filename, const TSTRING& description, uint32_t flags = 0);
 
 explicit eFileError(const eFileError& rhs) : eError(rhs)
 {
     mFilename = rhs.mFilename;
 }
-eFileError(const TSTRING& msg, uint32 flags = 0) : eError(msg, flags)
+eFileError(const TSTRING& msg, uint32_t flags = 0) : eError(msg, flags)
 {
 }
 
@@ -75,7 +75,7 @@ TSS_END_EXCEPTION()
 
 #    define TSS_FILE_EXCEPTION(except, base)                                                               \
         TSS_BEGIN_EXCEPTION(except, base)                                                                  \
-        except(const TSTRING& filename, const TSTRING& msg, uint32 flags = 0) : base(filename, msg, flags) \
+        except(const TSTRING& filename, const TSTRING& msg, uint32_t flags = 0) : base(filename, msg, flags) \
         {                                                                                                  \
         }                                                                                                  \
         TSS_END_EXCEPTION()

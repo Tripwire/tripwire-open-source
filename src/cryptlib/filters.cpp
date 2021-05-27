@@ -51,7 +51,7 @@ void BlockFilterBase::ProcessBuf()
     inBufSize=0;
 }
 
-void BlockFilterBase::Put(const byte *inString, unsigned int length)
+void BlockFilterBase::Put(const uint8_t *inString, unsigned int length)
 {
     while (length--)
         BlockFilterBase::Put(*inString++);
@@ -75,7 +75,7 @@ void BlockDecryptionFilter::InputFinished()
     inBufSize=0;
 }
 
-void StreamCipherFilter::Put(const byte *inString, unsigned int length)
+void StreamCipherFilter::Put(const uint8_t *inString, unsigned int length)
 {
     SecByteBlock temp(length);
     cipher.ProcessString(temp, inString, length);
@@ -89,13 +89,13 @@ void HashFilter::InputFinished()
     outQueue->Put(buf, hash.DigestSize());
 }
 
-BufferedTransformation *Insert(const byte *in, unsigned int length, BufferedTransformation *outQueue)
+BufferedTransformation *Insert(const uint8_t *in, unsigned int length, BufferedTransformation *outQueue)
 {
     outQueue->Put(in, length);
     return outQueue;
 }
 
-unsigned int Extract(Source *source, byte *out, unsigned int length)
+unsigned int Extract(Source *source, uint8_t *out, unsigned int length)
 {
     while (source->MaxRetrieveable() < length && source->Pump(1));
     return source->Get(out, length);

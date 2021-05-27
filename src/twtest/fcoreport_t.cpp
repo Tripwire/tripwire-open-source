@@ -1,6 +1,6 @@
 //
 // The developer of the original code and/or files is Tripwire, Inc.
-// Portions created by Tripwire, Inc. are copyright (C) 2000-2018 Tripwire,
+// Portions created by Tripwire, Inc. are copyright (C) 2000-2021 Tripwire,
 // Inc. Tripwire is a registered trademark of Tripwire, Inc.  All rights
 // reserved.
 //
@@ -103,10 +103,12 @@ void TestFCOReport()
     cFSObject*     newChangedFCO = new cFSObject(cFCOName(_T("/etc/changed_file")));
     cFCOPropVector changedPropVector;
 
+    /*
     //Calculate the time taken to generate the test report:
     time_t* dummy_arg = NULL;
     time_t  time_finish;
-    //time_t    time_begin = time(dummy_arg);
+    time_t  time_begin = time(dummy_arg);
+    */
 
     {
         cFCOReport report;
@@ -122,10 +124,12 @@ void TestFCOReport()
         it.GetRemovedSet()->Insert(removedFCO);
         report.AddChangedFCO(it, oldChangedFCO, newChangedFCO, changedPropVector);
 
+        /*
         //Store the time taken to generate the test report:
         time_finish = time(dummy_arg);
-        //report.SetCreationTime( (int64)difftime(time_finish, time_begin));
-        //d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
+        report.SetCreationTime( (int64_t)difftime(time_finish, time_begin));
+        d.TraceDebug("Report calculation time = %I64i seconds.\n", report.GetCreationTime());
+        */
 
         d.TraceDebug("Before serializing report:\n");
         TraceReport(report, d);
