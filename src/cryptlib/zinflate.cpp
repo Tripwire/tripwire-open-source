@@ -74,7 +74,7 @@ Inflator::Inflator(BufferedTransformation *output, BufferedTransformation *bypas
     afterEnd = false;
 }
 
-void Inflator::Put(const byte *inString, unsigned int length)
+void Inflator::Put(const ibyte *inString, unsigned int length)
 {
     if (afterEnd)
         AccessPort(1).Put(inString, length);
@@ -89,7 +89,7 @@ void Inflator::Put(const byte *inString, unsigned int length)
         {
             flush_output(wp);
             if (bk>=8)  // undo too much lookahead
-                AccessPort(1).Put(byte(bb>>(bk-=8)));
+                AccessPort(1).Put(ibyte(bb>>(bk-=8)));
 
             inQueue.TransferTo(AccessPort(1));
         }
@@ -104,7 +104,7 @@ void Inflator::InputFinished()
     flush_output(wp);
 
     if (bk>=8)  // undo too much lookahead
-        AccessPort(1).Put(byte(bb>>(bk-=8)));
+        AccessPort(1).Put(ibyte(bb>>(bk-=8)));
 
     inQueue.TransferTo(AccessPort(1));
 }
@@ -183,9 +183,9 @@ const word16 Inflator::mask_bits[] = {
     0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
 };
 
-byte Inflator::NEXTBYTE()
+ibyte Inflator::NEXTBYTE()
 {
-    byte b;
+    ibyte b;
     if (!inQueue.Get(b))
 #ifdef THROW_EXCEPTIONS
         throw UnexpectedEndErr();
@@ -380,8 +380,8 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
         if (h)
         {
           x[h] = i;             /* save pattern for backing up */
-          r.b = (byte)l;         /* bits to dump before this table */
-          r.e = (byte)(16 + j);  /* bits in this table */
+          r.b = (ibyte)l;         /* bits to dump before this table */
+          r.e = (ibyte)(16 + j);  /* bits in this table */
           r.v.t = q;            /* pointer to this table */
           j = i >> (w - l);     /* (get around Turbo C bug) */
           u[h-1][j] = r;        /* connect to last table */
@@ -389,18 +389,18 @@ int Inflator::huft_build(unsigned *b, unsigned n, unsigned s, const word16 *d, c
       }
 
       /* set up table entry in r */
-      r.b = (byte)(k - w);
+      r.b = (ibyte)(k - w);
       if (p >= v + n)
         r.e = 99;               /* out of values--invalid code */
       else if (*p < s)
       {
-        r.e = (byte)(*p < 256 ? 16 : 15);    /* 256 is end-of-block code */
+        r.e = (ibyte)(*p < 256 ? 16 : 15);    /* 256 is end-of-block code */
         r.v.n = (word16)(*p);             /* simple code is just the value */
     p++;                           /* one compiler does not like *p++ */
       }
       else
       {
-        r.e = (byte)e[*p - s];   /* non-simple--look up in lists */
+        r.e = (ibyte)e[*p - s];   /* non-simple--look up in lists */
         r.v.n = d[*p++ - s];
       }
 
@@ -485,7 +485,7 @@ int Inflator::inflate_codes(huft *tl, huft *td, int bl, int bd)
     DUMPBITS(t->b)
     if (e == 16)                /* then it's a literal */
     {
-      slide[w++] = (byte)t->v.n;
+      slide[w++] = (ibyte)t->v.n;
       Tracevv((stderr, "%c", slide[w-1]));
       if (w == WSIZE)
       {
@@ -591,7 +591,7 @@ int Inflator::inflate_stored()
   while (n--)
   {
     NEEDBITS(8)
-    slide[w++] = (byte)b;
+    slide[w++] = (ibyte)b;
     if (w == WSIZE)
     {
       flush_output(w);

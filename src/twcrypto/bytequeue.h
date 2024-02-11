@@ -56,21 +56,21 @@ public:
         return CurrentSize();
     }
 
-    void Put(byte inByte);
-    void Put(const byte* inString, unsigned int length);
+    void Put(ibyte inByte);
+    void Put(const ibyte* inString, unsigned int length);
 
     // both functions returns the number of bytes actually retrived
-    unsigned int Get(byte& outByte);
-    unsigned int Get(byte* outString, unsigned int getMax);
+    unsigned int Get(ibyte& outByte);
+    unsigned int Get(ibyte* outString, unsigned int getMax);
 
-    unsigned int Peek(byte& outByte) const;
+    unsigned int Peek(ibyte& outByte) const;
 
     void CopyTo(BufferedTransformation& target) const;
-    void CopyTo(byte* target) const;
+    void CopyTo(ibyte* target) const;
 
     cByteQueue& operator=(const cByteQueue& rhs);
     bool        operator==(const cByteQueue& rhs) const;
-    byte        operator[](unsigned long i) const;
+    ibyte        operator[](unsigned long i) const;
 
 private:
     void CopyFrom(const cByteQueue& copy);

@@ -63,13 +63,13 @@ void BitOutput::bi_windup()
 
 void BitOutput::bi_putsh(word16 x)
 {
-    outQ.Put((byte)x);
-    outQ.Put(byte(x>>8));
+    outQ.Put((ibyte)x);
+    outQ.Put(ibyte(x>>8));
 }
 
 /* Copy a stored block to the zip file, storing first the length and its
    one's complement if requested. */
-void BitOutput::copy_block(byte *buf, unsigned int len, int header)
+void BitOutput::copy_block(ibyte *buf, unsigned int len, int header)
 {
    /* align on byte boundary */
    bi_windup();

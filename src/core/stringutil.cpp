@@ -84,10 +84,10 @@
 class tss_hash_key_convert
 {
 public:
-    const byte* operator()(const wc16_string& s, int* const pcbKeyLen)
+    const ibyte* operator()(const wc16_string& s, int* const pcbKeyLen)
     {
         *pcbKeyLen = sizeof(WCHAR16) * s.length();
-        return (byte*)s.c_str();
+        return (ibyte*)s.c_str();
     }
 };
 

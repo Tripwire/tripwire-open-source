@@ -82,7 +82,7 @@
 
 // Make sure these typedefs are correct for your computer
 
-typedef unsigned char byte;
+typedef unsigned char ibyte;
 typedef unsigned short word16;
 #if SIZEOF_INT == 4
  typedef unsigned int word32;

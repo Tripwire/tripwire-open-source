@@ -17,7 +17,7 @@ public:
     void LoadPrecomputation(BufferedTransformation &storedPrecomputation);
     void SavePrecomputation(BufferedTransformation &storedPrecomputation) const;
 
-    void Encrypt(RandomNumberGenerator &rng, const byte *plainText, unsigned int plainTextLength, byte *cipherText);
+    void Encrypt(RandomNumberGenerator &rng, const ibyte *plainText, unsigned int plainTextLength, ibyte *cipherText);
 
     unsigned int MaxPlainTextLength() const {return STDMIN(255U, modulusLen-3);}
     unsigned int CipherTextLength() const {return 2*modulusLen;}
@@ -45,7 +45,7 @@ public:
     ElGamalCryptoPrivateKey(BufferedTransformation &bt);
     void DEREncode(BufferedTransformation &bt) const;
 
-    unsigned int Decrypt(const byte *cipherText, byte *plainText);
+    unsigned int Decrypt(const ibyte *cipherText, ibyte *plainText);
 
 protected:
     void RawDecrypt(const Integer &a, const Integer &b, Integer &m) const;
@@ -65,7 +65,7 @@ public:
     void LoadPrecomputation(BufferedTransformation &storedPrecomputation);
     void SavePrecomputation(BufferedTransformation &storedPrecomputation) const;
 
-    bool Verify(const byte *message, unsigned int messageLen, const byte *signature);
+    bool Verify(const ibyte *message, unsigned int messageLen, const ibyte *signature);
 
     // message length for signature is unlimited, but only message digests should be signed
     unsigned int MaxMessageLength() const {return 0xffff;}
@@ -97,7 +97,7 @@ public:
     ElGamalSigPrivateKey(BufferedTransformation &bt);
     void DEREncode(BufferedTransformation &bt) const;
 
-    void Sign(RandomNumberGenerator &rng, const byte *message, unsigned int messageLen, byte *signature);
+    void Sign(RandomNumberGenerator &rng, const ibyte *message, unsigned int messageLen, ibyte *signature);
 
     const Integer& GetParameterX() { return x; }
 

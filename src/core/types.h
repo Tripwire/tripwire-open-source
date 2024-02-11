@@ -45,7 +45,7 @@
 // standard TSS types
 //-----------------------------------------------------------------------------
 
-typedef unsigned char byte; // platform-independent
+typedef unsigned char ibyte; // platform-independent
 
 typedef signed char    int8;
 typedef short          int16;

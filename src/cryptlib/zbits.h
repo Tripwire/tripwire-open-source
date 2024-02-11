@@ -11,7 +11,7 @@ public:
     void send_bits  (unsigned value, int length);
     void bi_windup  (void);
     void bi_putsh   (unsigned short);
-    void copy_block (byte *buf, unsigned len, int header);
+    void copy_block (ibyte *buf, unsigned len, int header);
 
 private:
     BufferedTransformation &outQ;

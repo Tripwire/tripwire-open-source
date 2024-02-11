@@ -661,7 +661,7 @@ void cTWUtil::ReadConfigText(const TCHAR* filename, TSTRING& configText, cArchiv
         throw eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE);
 
     // check 8 byte header
-    if (nstring.mString.compare(0, 8 * sizeof(byte), CONFIG_FILE_MAGIC_8BYTE) != 0)
+    if (nstring.mString.compare(0, 8 * sizeof(ibyte), CONFIG_FILE_MAGIC_8BYTE) != 0)
         ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE));
 
     // remove 8 byte header
@@ -716,7 +716,7 @@ void cTWUtil::ReadPolicyText(const TCHAR* filename, std::string& polText, const 
     ReadObject(filename, NULL, nstring, cPolicyFile::GetFileHeaderID(), pPublicKey, bEncrypted);
 
     // check 8 byte header
-    if (nstring.mString.compare(0, 8 * sizeof(byte), POLICY_FILE_MAGIC_8BYTE) != 0)
+    if (nstring.mString.compare(0, 8 * sizeof(ibyte), POLICY_FILE_MAGIC_8BYTE) != 0)
         ThrowAndAssert(eSerializerInputStreamFmt(_T(""), filename, eSerializer::TY_FILE));
 
     // remove 8 byte header

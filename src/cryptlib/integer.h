@@ -62,10 +62,10 @@ public:
         Integer(const char *str);
 
         /// convert from big-endian byte array
-        Integer(const byte *encodedInteger, unsigned int byteCount, Signedness s=UNSIGNED);
+        Integer(const ibyte *encodedInteger, unsigned int byteCount, Signedness s=UNSIGNED);
 
         /// convert from Basic Encoding Rules encoded byte array
-        Integer(const byte *BEREncodedInteger);
+        Integer(const ibyte *BEREncodedInteger);
 
         /// convert from BER encoded byte array stored in a BufferedTransformation object
         Integer(BufferedTransformation &bt);
@@ -104,10 +104,10 @@ public:
             if outputLen < MinEncodedSize, the most significant bytes will be dropped
             if outputLen > MinEncodedSize, the most significant bytes will be padded
         */
-        unsigned int Encode(byte *output, unsigned int outputLen, Signedness=UNSIGNED) const;
+        unsigned int Encode(ibyte *output, unsigned int outputLen, Signedness=UNSIGNED) const;
 
         /// encode integer using Distinguished Encoding Rules, returns size of output
-        unsigned int DEREncode(byte *output) const;
+        unsigned int DEREncode(ibyte *output) const;
         /// encode using DER, put result into a BufferedTransformation object
         unsigned int DEREncode(BufferedTransformation &bt) const;
 
@@ -121,7 +121,7 @@ public:
         /// return the n-th bit, n=0 being the least significant bit
         bool GetBit(unsigned int n) const;
         /// return the n-th byte
-        byte GetByte(unsigned int n) const;
+        ibyte GetByte(unsigned int n) const;
 
         ///
         bool IsNegative() const {return sign == NEGATIVE;}
@@ -161,10 +161,10 @@ public:
         Integer&  operator>>=(unsigned int);
 
         ///
-        void Decode(const byte *input, unsigned int inputLen, Signedness=UNSIGNED);
+        void Decode(const ibyte *input, unsigned int inputLen, Signedness=UNSIGNED);
 
         ///
-        void BERDecode(const byte *input);
+        void BERDecode(const ibyte *input);
         ///
         void BERDecode(BufferedTransformation &bt);
 
@@ -178,7 +178,7 @@ public:
         /// set the n-th bit to value
         void SetBit(unsigned int n, bool value=1);
         /// set the n-th byte to value
-        void SetByte(unsigned int n, byte value);
+        void SetByte(unsigned int n, ibyte value);
 
         ///
         void Negate();
