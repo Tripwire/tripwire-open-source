@@ -7,10 +7,10 @@
 class DES : public BlockTransformation
 {
 public:
-    DES(const byte *userKey, CipherDir);
+    DES(const ibyte *userKey, CipherDir);
 
-    void ProcessBlock(const byte *inBlock, byte * outBlock);
-    void ProcessBlock(byte * inoutBlock)
+    void ProcessBlock(const ibyte *inBlock, ibyte * outBlock);
+    void ProcessBlock(ibyte * inoutBlock)
         {DES::ProcessBlock(inoutBlock, inoutBlock);}
 
     enum {KEYLENGTH=8, BLOCKSIZE=8};
@@ -25,25 +25,25 @@ protected:
 class DESEncryption : public DES
 {
 public:
-    DESEncryption(const byte * userKey)
+    DESEncryption(const ibyte * userKey)
         : DES (userKey, ENCRYPTION) {}
 };
 
 class DESDecryption : public DES
 {
 public:
-    DESDecryption(const byte * userKey)
+    DESDecryption(const ibyte * userKey)
         : DES (userKey, DECRYPTION) {}
 };
 
 class DES_EDE_Encryption : public BlockTransformation
 {
 public:
-    DES_EDE_Encryption(const byte * userKey)
+    DES_EDE_Encryption(const ibyte * userKey)
         : e(userKey, ENCRYPTION), d(userKey + DES::KEYLENGTH, DECRYPTION) {}
 
-    void ProcessBlock(const byte *inBlock, byte * outBlock);
-    void ProcessBlock(byte * inoutBlock);
+    void ProcessBlock(const ibyte *inBlock, ibyte * outBlock);
+    void ProcessBlock(ibyte * inoutBlock);
 
     enum {KEYLENGTH=16, BLOCKSIZE=8};
     unsigned int BlockSize() const {return BLOCKSIZE;}
@@ -55,11 +55,11 @@ private:
 class DES_EDE_Decryption : public BlockTransformation
 {
 public:
-    DES_EDE_Decryption(const byte * userKey)
+    DES_EDE_Decryption(const ibyte * userKey)
         : d(userKey, DECRYPTION), e(userKey + DES::KEYLENGTH, ENCRYPTION) {}
 
-    void ProcessBlock(const byte *inBlock, byte * outBlock);
-    void ProcessBlock(byte * inoutBlock);
+    void ProcessBlock(const ibyte *inBlock, ibyte * outBlock);
+    void ProcessBlock(ibyte * inoutBlock);
 
     enum {KEYLENGTH=16, BLOCKSIZE=8};
     unsigned int BlockSize() const {return BLOCKSIZE;}
@@ -71,12 +71,12 @@ private:
 class TripleDES_Encryption : public BlockTransformation
 {
 public:
-    TripleDES_Encryption(const byte * userKey)
+    TripleDES_Encryption(const ibyte * userKey)
         : e1(userKey, ENCRYPTION), d(userKey + DES::KEYLENGTH, DECRYPTION),
           e2(userKey + 2*DES::KEYLENGTH, ENCRYPTION) {}
 
-    void ProcessBlock(const byte *inBlock, byte * outBlock);
-    void ProcessBlock(byte * inoutBlock);
+    void ProcessBlock(const ibyte *inBlock, ibyte * outBlock);
+    void ProcessBlock(ibyte * inoutBlock);
 
     enum {KEYLENGTH=24, BLOCKSIZE=8};
     unsigned int BlockSize() const {return BLOCKSIZE;}
@@ -88,12 +88,12 @@ private:
 class TripleDES_Decryption : public BlockTransformation
 {
 public:
-    TripleDES_Decryption(const byte * userKey)
+    TripleDES_Decryption(const ibyte * userKey)
         : d1(userKey + 2*DES::KEYLENGTH, DECRYPTION), e(userKey + DES::KEYLENGTH, ENCRYPTION),
           d2(userKey, DECRYPTION) {}
 
-    void ProcessBlock(const byte *inBlock, byte * outBlock);
-    void ProcessBlock(byte * inoutBlock);
+    void ProcessBlock(const ibyte *inBlock, ibyte * outBlock);
+    void ProcessBlock(ibyte * inoutBlock);
 
     enum {KEYLENGTH=24, BLOCKSIZE=8};
     unsigned int BlockSize() const {return BLOCKSIZE;}

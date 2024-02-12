@@ -31,8 +31,8 @@ inline unsigned int bitsToWords(unsigned int bitCount)
     return ((bitCount+WORD_BITS-1)/(WORD_BITS));
 }
 
-void xorbuf(byte *buf, const byte *mask, unsigned int count);
-void xorbuf(byte *output, const byte *input, const byte *mask, unsigned int count);
+void xorbuf(ibyte *buf, const ibyte *mask, unsigned int count);
+void xorbuf(ibyte *output, const ibyte *input, const ibyte *mask, unsigned int count);
 
 template <class T> inline T rotl(T x, unsigned int y)
 {
@@ -116,7 +116,7 @@ template <class T> void byteReverse(T *out, const T *in, unsigned int byteCount)
     #ifdef WORDS_BIGENDIAN
     #error MSVC big endian GETBYTE not implemented
     #else
-    #define GETBYTE(x, y) (((byte *)&(x))[y])
+    #define GETBYTE(x, y) (((ibyte *)&(x))[y])
     #endif
 #else
     #define GETBYTE(x, y) (unsigned int)(((x)>>(8*(y)))&255)
@@ -262,7 +262,7 @@ template <class T> void SecBlock<T>::swap(SecBlock<T> &b)
     std::swap(ptr, b.ptr);
 }
 
-typedef SecBlock<byte> SecByteBlock;
+typedef SecBlock<ibyte> SecByteBlock;
 typedef SecBlock<word> SecWordBlock;
 
 #endif // MISC_H

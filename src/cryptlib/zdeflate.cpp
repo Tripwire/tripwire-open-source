@@ -175,7 +175,7 @@ Deflator::Deflator(int deflate_level, BufferedTransformation *outQ)
    prev_length = MIN_MATCH-1;
 }
 
-void Deflator::Put(const byte *inString, unsigned int length)
+void Deflator::Put(const ibyte *inString, unsigned int length)
 {
     if (deflate_level <= 3)
         fast_deflate(inString, length);
@@ -205,8 +205,8 @@ void Deflator::InputFinished()
 int Deflator::longest_match(IPos cur_match)
 {
    unsigned chain_length = max_chain_length;   /* max hash chain length */
-   register byte *scan = window + strstart;     /* current string */
-   register byte *match;                        /* matched string */
+   register ibyte *scan = window + strstart;     /* current string */
+   register ibyte *match;                        /* matched string */
    register int len;                           /* length of current match */
    int best_len = prev_length;                 /* best match length so far */
    IPos limit = strstart > (IPos)MAX_DIST ? strstart - (IPos)MAX_DIST : NIL;
@@ -223,13 +223,13 @@ int Deflator::longest_match(IPos cur_match)
 #ifdef UNALIGNED_OK
    /* Compare two bytes at a time. Note: this is not always beneficial.
       Try with and without -DUNALIGNED_OK to check. */
-   register byte *strend = window + strstart + MAX_MATCH - 1;
+   register ibyte *strend = window + strstart + MAX_MATCH - 1;
    register word16 scan_start = *(word16*)scan;
    register word16 scan_end   = *(word16*)(scan+best_len-1);
 #else
-   register byte *strend = window + strstart + MAX_MATCH;
-   register byte scan_end1 = scan[best_len-1];
-   register byte scan_end  = scan[best_len];
+   register ibyte *strend = window + strstart + MAX_MATCH;
+   register ibyte scan_end1 = scan[best_len-1];
+   register ibyte scan_end  = scan[best_len];
 #endif
 
    /* Do not waste too much time if we already have a good match: */
@@ -350,7 +350,7 @@ int length;
  * IN assertion: lookahead < MIN_LOOKAHEAD.
  * Note: call with either lookahead == 0 or length == 0 is valid
  */
-unsigned Deflator::fill_window(const byte *buffer, unsigned int length)
+unsigned Deflator::fill_window(const ibyte *buffer, unsigned int length)
 {
    register unsigned n, m;
    unsigned more = length;
@@ -382,7 +382,7 @@ unsigned Deflator::fill_window(const byte *buffer, unsigned int length)
       if ((more += WSIZE) > length) more = length;
    }
    if (more) {
-      memcpy((byte*)window+strstart+lookahead, buffer, more);
+      memcpy((ibyte*)window+strstart+lookahead, buffer, more);
       lookahead += more;
    }
    return more;
@@ -390,15 +390,13 @@ unsigned Deflator::fill_window(const byte *buffer, unsigned int length)
 
 /* Flush the current block, with given end-of-file flag.
    IN assertion: strstart is set to the end of the current match. */
-#define FLUSH_BLOCK(eof) flush_block(block_start >= 0L ?\
-        window+block_start : \
-        (byte *)0, (long)strstart - block_start, (eof))
+#define FLUSH_BLOCK(eof) flush_block(block_start >= 0L ? window+block_start : (ibyte *)0, (long)strstart - block_start, (eof))
 
 /* Processes a new input block.
  * This function does not perform lazy evaluationof matches and inserts
  * new strings in the dictionary only for unmatched strings or for short
  * matches. It is used only for the fast compression options. */
-int Deflator::fast_deflate(const byte *buffer, unsigned int length)
+int Deflator::fast_deflate(const ibyte *buffer, unsigned int length)
 {
    IPos hash_head; /* head of the hash chain */
    int flush;      /* set if current block must be flushed */
@@ -486,7 +484,7 @@ int Deflator::fast_deflate(const byte *buffer, unsigned int length)
 /* Same as above, but achieves better compression. We use a lazy
  * evaluation for matches: a match is finally adopted only if there is
  * no better match at the next window position.  */
-int Deflator::lazy_deflate(const byte *buffer, unsigned int length)
+int Deflator::lazy_deflate(const ibyte *buffer, unsigned int length)
 {
    IPos hash_head;          /* head of hash chain */
    IPos prev_match;         /* previous match */

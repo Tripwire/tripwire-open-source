@@ -31,7 +31,7 @@ void SHA::HashBlock(const word32 *input)
 #endif
 }
 
-void SHA::Final(byte *hash)
+void SHA::Final(ibyte *hash)
 {
     PadLastBlock(56);
     CorrectEndianess(data, data, 56);

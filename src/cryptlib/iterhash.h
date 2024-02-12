@@ -15,12 +15,12 @@ template <class T> class IteratedHash : public virtual HashModule
 public:
     IteratedHash(unsigned int blockSize, unsigned int digestSize);
     ~IteratedHash();
-    void Update(const byte *input, unsigned int length);
+    void Update(const ibyte *input, unsigned int length);
 
     typedef T HashWordType;
 
 protected:
-    void PadLastBlock(unsigned int lastBlockSize, byte padFirst=0x80);
+    void PadLastBlock(unsigned int lastBlockSize, ibyte padFirst=0x80);
     virtual void Init() =0;
     virtual void HashBlock(const T *input) =0;
 
@@ -39,7 +39,7 @@ template <class T> IteratedHash<T>::~IteratedHash()
 {
 }
 
-template <class T> void IteratedHash<T>::Update(const byte *input, unsigned int len)
+template <class T> void IteratedHash<T>::Update(const ibyte *input, unsigned int len)
 {
     word32 tmp = countLo;
     if ((countLo = tmp + ((word32)len << 3)) < tmp)
@@ -53,7 +53,7 @@ template <class T> void IteratedHash<T>::Update(const byte *input, unsigned int 
     {
         if ((num+len) >= blockSize)
         {
-            memcpy((byte *)data.ptr+num, input, blockSize-num);
+            memcpy((ibyte *)data.ptr+num, input, blockSize-num);
             HashBlock(data);
             input += (blockSize-num);
             len-=(blockSize - num);
@@ -62,7 +62,7 @@ template <class T> void IteratedHash<T>::Update(const byte *input, unsigned int 
         }
         else
         {
-            memcpy((byte *)data.ptr+num, input, len);
+            memcpy((ibyte *)data.ptr+num, input, len);
             return;
         }
     }
@@ -91,16 +91,16 @@ template <class T> void IteratedHash<T>::Update(const byte *input, unsigned int 
     memcpy(data, input, len);
 }
 
-template <class T> void IteratedHash<T>::PadLastBlock(unsigned int lastBlockSize, byte padFirst)
+template <class T> void IteratedHash<T>::PadLastBlock(unsigned int lastBlockSize, ibyte padFirst)
 {
     unsigned int num = (unsigned int)(countLo >> 3) & (blockSize-1);
     assert(num < blockSize);
-    ((byte *)data.ptr)[num++]=padFirst;
+    ((ibyte *)data.ptr)[num++]=padFirst;
     if (num <= lastBlockSize)
-        memset((byte *)data.ptr+num, 0, lastBlockSize-num);
+        memset((ibyte *)data.ptr+num, 0, lastBlockSize-num);
     else
     {
-        memset((byte *)data.ptr+num, 0, blockSize-num);
+        memset((ibyte *)data.ptr+num, 0, blockSize-num);
         HashBlock(data);
         memset(data, 0, lastBlockSize);
     }

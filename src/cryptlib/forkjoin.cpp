@@ -49,13 +49,13 @@ void Fork::Close()
         outPorts[i]->Close();
 }
 
-void Fork::Put(byte inByte)
+void Fork::Put(ibyte inByte)
 {
     for (unsigned int i=0; i<numberOfPorts; i++)
         outPorts[i]->Put(inByte);
 }
 
-void Fork::Put(const byte *inString, unsigned int length)
+void Fork::Put(const ibyte *inString, unsigned int length)
 {
     for (unsigned int i=0; i<numberOfPorts; i++)
         outPorts[i]->Put(inString, length);
@@ -95,13 +95,13 @@ void Join::NotifyClose(unsigned int /* id */)
 
 // ********************************************************
 
-void Interface::Put(byte inByte)
+void Interface::Put(ibyte inByte)
 {
     bq.Put(inByte);
     parent.NotifyInput(id, 1);
 }
 
-void Interface::Put(const byte *inString, unsigned int length)
+void Interface::Put(const ibyte *inString, unsigned int length)
 {
     bq.Put(inString, length);
     parent.NotifyInput(id, length);
@@ -127,17 +127,17 @@ void Interface::Attach(BufferedTransformation *bt)
     parent.Attach(bt);
 }
 
-unsigned int Interface::Get(byte &outByte) 
+unsigned int Interface::Get(ibyte &outByte) 
 {
     return parent.Get(outByte);
 }
 
-unsigned int Interface::Get(byte *outString, unsigned int getMax)
+unsigned int Interface::Get(ibyte *outString, unsigned int getMax)
 {
     return parent.Get(outString, getMax);
 }
 
-unsigned int Interface::Peek(byte &outByte) const
+unsigned int Interface::Peek(ibyte &outByte) const
 {
     return parent.Peek(outByte);
 }

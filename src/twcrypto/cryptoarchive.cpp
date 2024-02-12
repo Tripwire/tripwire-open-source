@@ -66,10 +66,10 @@ public:
     cCryptoSink(cArchive* pDestArchive, iCipher* pCipher);
     ~cCryptoSink();
 
-    virtual void Put(const byte* inString, unsigned int length);
+    virtual void Put(const ibyte* inString, unsigned int length);
     virtual void InputFinished();
 
-    virtual void Put(byte inByte)
+    virtual void Put(ibyte inByte)
     {
         Put(&inByte, 1);
     }
@@ -171,7 +171,7 @@ int cCryptoArchive::Write(const void* pSrc, int count)
         throw eArchiveInvalidOp();
     }
 
-    mpDeflator->Put((byte*)pSrc, count);
+    mpDeflator->Put((ibyte*)pSrc, count);
 
     return count;
 }
@@ -210,13 +210,13 @@ int cCryptoArchive::Read(void* pDest, int count)
             if ((int)mpInflatedBytes->CurrentSize() < count) // RAD: Cast to int
             {
                 len = mpInflatedBytes->CurrentSize();
-                mpInflatedBytes->Get((byte*)pDest, len);
+                mpInflatedBytes->Get((ibyte*)pDest, len);
                 return len;
             }
         }
     }
 
-    len = mpInflatedBytes->Get((byte*)pDest, count);
+    len = mpInflatedBytes->Get((ibyte*)pDest, count);
     ASSERT(len == count);
 
     return len;
@@ -278,7 +278,7 @@ cCryptoSink::~cCryptoSink()
     delete [] mpBuffer;
 }
 
-void cCryptoSink::Put(const byte* inString, unsigned int length)
+void cCryptoSink::Put(const ibyte* inString, unsigned int length)
 {
     if (mpBuffer == 0)
     {
@@ -400,7 +400,7 @@ unsigned int cCryptoSource::Pump(unsigned int size)
         if (bytesToCopy > nSize - i)
             bytesToCopy = nSize - i;
 
-        outQueue->Put((byte*)(mpBuffer + mBufferUsed), bytesToCopy);
+        outQueue->Put((ibyte*)(mpBuffer + mBufferUsed), bytesToCopy);
 
         mBufferUsed += bytesToCopy;
         i += bytesToCopy;

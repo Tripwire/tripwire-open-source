@@ -75,7 +75,7 @@ const int CodeTree::extra_dbits[] /* extra bits for each distance code */
 const int CodeTree::extra_blbits[]/* extra bits for each bit length code */
    = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7};
 
-const byte CodeTree::bl_order[]
+const ibyte CodeTree::bl_order[]
    = {16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15};
 /* The lengths of the bit length codes are sent in order of decreasing
  * probability, to avoid transmitting the lengths for unused bit length codes.
@@ -136,21 +136,21 @@ CodeTree::CodeTree(int deflate_level, BufferedTransformation &outQ)
    for (code=0; code < LENGTH_CODES-1; code++) {
       base_length[code] = length;
       for (n=0; n < (1U<<extra_lbits[code]); n++) {
-         length_code[length++] = (byte)code;
+         length_code[length++] = (ibyte)code;
       }
    }
    assert (length == 256);
     /* Note that the length 255 (match length 258) can be represented
        in two different ways: code 284 + 5 bits or code 285, so we
        overwrite length_code[255] to use the best encoding:     */
-   length_code[length-1] = (byte)code;
+   length_code[length-1] = (ibyte)code;
 
    /* Initialize the mapping dist (0..32K) -> dist code (0..29) */
    dist = 0;
    for (code=0 ; code < 16; code++) {
       base_dist[code] = dist;
       for (n=0; n < (1U<<extra_dbits[code]); n++) {
-         dist_code[dist++] = (byte)code;
+         dist_code[dist++] = (ibyte)code;
       }
    }
    assert (dist == 256);
@@ -158,7 +158,7 @@ CodeTree::CodeTree(int deflate_level, BufferedTransformation &outQ)
    for (; code < D_CODES; code++) {
       base_dist[code] = dist << 7;
       for (n=0; n < (1U<<(extra_dbits[code]-7)); n++) {
-         dist_code[256 + dist++] = (byte)code;
+         dist_code[256 + dist++] = (ibyte)code;
       }
    }
    assert (dist == 256);
@@ -444,7 +444,7 @@ void CodeTree::build_tree(tree_desc *desc)
 
         /* Create a new node father of n and m */
         tree[node].Freq = tree[n].Freq + tree[m].Freq;
-        depth[(unsigned int)node] = (byte) (MAX(depth[(unsigned int)n], depth[(unsigned int)m]) + 1);
+        depth[(unsigned int)node] = (ibyte) (MAX(depth[(unsigned int)n], depth[(unsigned int)m]) + 1);
         tree[n].Dad = tree[m].Dad = node;
 #ifdef DUMP_BL_TREE
         if (tree == bl_tree) {
@@ -627,7 +627,7 @@ void CodeTree::send_all_trees(int lcodes, int dcodes, int blcodes)
  * trees or store, and output the encoded block to the zip file. This function
  * returns the total compressed length for the file so far.
  */
-word32 CodeTree::flush_block(byte *buf, word32 stored_len, int eof)
+word32 CodeTree::flush_block(ibyte *buf, word32 stored_len, int eof)
 {
    word32 opt_lenb, static_lenb; /* opt_len and static_len in bytes */
    int max_blindex;  /* index of last bit length code of non zero freq */
@@ -712,7 +712,7 @@ word32 CodeTree::flush_block(byte *buf, word32 stored_len, int eof)
    Return true if the current block must be flushed. */
 int CodeTree::ct_tally (int dist, int lc)
 {
-   l_buf[last_lit++] = (byte)lc;
+   l_buf[last_lit++] = (ibyte)lc;
    if (dist == 0) {
       /* lc is the unmatched char */
       dyn_ltree[(unsigned int)lc].Freq++;
@@ -765,7 +765,7 @@ void CodeTree::compress_block(ct_data *ltree, ct_data *dtree)
    unsigned lx = 0;    /* running index in l_buf */
    unsigned dx = 0;    /* running index in d_buf */
    unsigned fx = 0;    /* running index in flag_buf */
-   byte flag = 0;       /* current flags */
+   ibyte flag = 0;       /* current flags */
    unsigned code;      /* the code to send */
    int extra;          /* number of extra bits to send */
 

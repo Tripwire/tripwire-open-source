@@ -1159,12 +1159,12 @@ long Integer::ConvertToLong() const
     return sign==POSITIVE ? value : -long(value);
 }
 
-Integer::Integer(const byte *encodedInteger, unsigned int byteCount, Signedness s)
+Integer::Integer(const ibyte *encodedInteger, unsigned int byteCount, Signedness s)
 {
     Decode(encodedInteger, byteCount, s);
 }
 
-Integer::Integer(const byte *BEREncodedInteger)
+Integer::Integer(const ibyte *BEREncodedInteger)
 {
     BERDecode(BEREncodedInteger);
 }
@@ -1241,15 +1241,15 @@ void Integer::SetBit(unsigned int n, bool value)
     }
 }
 
-byte Integer::GetByte(unsigned int n) const
+ibyte Integer::GetByte(unsigned int n) const
 {
     if (n/WORD_SIZE >= reg.size)
         return 0;
     else
-        return byte(reg[n/WORD_SIZE] >> ((n%WORD_SIZE)*8));
+        return ibyte(reg[n/WORD_SIZE] >> ((n%WORD_SIZE)*8));
 }
 
-void Integer::SetByte(unsigned int n, byte value)
+void Integer::SetByte(unsigned int n, ibyte value)
 {
     reg.CleanGrow(RoundupSize(bytesToWords(n+1)));
     reg[n/WORD_SIZE] &= ~(word(0xff) << 8*(n%WORD_SIZE));
@@ -1360,7 +1360,7 @@ unsigned int Integer::BitCount() const
         return 0;
 }
 
-void Integer::Decode(const byte *input, unsigned int inputLen, Signedness s)
+void Integer::Decode(const ibyte *input, unsigned int inputLen, Signedness s)
 {
     sign = ((s==SIGNED) && (input[0] & 0x80)) ? NEGATIVE : POSITIVE;
 
@@ -1395,7 +1395,7 @@ unsigned int Integer::MinEncodedSize(Signedness signedness) const
     return outputLen;
 }
 
-unsigned int Integer::Encode(byte *output, unsigned int outputLen, Signedness signedness) const
+unsigned int Integer::Encode(ibyte *output, unsigned int outputLen, Signedness signedness) const
 {
     if (signedness == UNSIGNED || NotNegative())
     {
@@ -1412,7 +1412,7 @@ unsigned int Integer::Encode(byte *output, unsigned int outputLen, Signedness si
     return outputLen;
 }
 
-unsigned int Integer::DEREncode(byte *output) const
+unsigned int Integer::DEREncode(ibyte *output) const
 {
     unsigned int i=0;
     output[i++] = INTEGER;
@@ -1435,7 +1435,7 @@ unsigned int Integer::DEREncode(BufferedTransformation &bt) const
     return 1+lengthBytes+bc;
 }
 
-void Integer::BERDecode(const byte *input)
+void Integer::BERDecode(const ibyte *input)
 {
     if (*input++ != INTEGER)
         BERDecodeError();
@@ -1456,7 +1456,7 @@ void Integer::BERDecode(const byte *input)
 
 void Integer::BERDecode(BufferedTransformation &bt)
 {
-    byte b;
+    ibyte b;
     if (!bt.Get(b) || b != INTEGER)
         BERDecodeError();
 
@@ -1475,7 +1475,7 @@ void Integer::Randomize(RandomNumberGenerator &rng, unsigned int nbits)
     const unsigned int nbytes = nbits/8 + 1;
     SecByteBlock buf(nbytes);
     rng.GetBlock(buf, nbytes);
-    buf[(unsigned int)0] = (byte)Crop(buf[(unsigned int)0], nbits % 8);
+    buf[(unsigned int)0] = (ibyte)Crop(buf[(unsigned int)0], nbits % 8);
     Decode(buf, nbytes, UNSIGNED);
 }
 

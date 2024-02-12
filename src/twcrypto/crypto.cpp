@@ -135,7 +135,7 @@ void cIDEA::SetKey(iCipher::EncryptionDir dir, const cHashedKey128& key)
     ASSERT(mpData);
 
     delete mpData->mpIDEA;
-    mpData->mpIDEA = new IDEA((byte*)key.GetKey(), dir == iCipher::ENCRYPT ? ENCRYPTION : DECRYPTION);
+    mpData->mpIDEA = new IDEA((ibyte*)key.GetKey(), dir == iCipher::ENCRYPT ? ENCRYPTION : DECRYPTION);
 }
 
 // return the size of data block this crypter works on
@@ -159,7 +159,7 @@ void cIDEA::ProcessBlock(const void* indata, void* outdata)
         ThrowAndAssert(eInternal(_T("Key not set in symmetric encryption.")));
     }
 
-    mpData->mpIDEA->ProcessBlock((byte*)indata, (byte*)outdata);
+    mpData->mpIDEA->ProcessBlock((ibyte*)indata, (ibyte*)outdata);
 }
 
 #endif // _IDEA_ENCRYPTION
@@ -203,14 +203,14 @@ void cTripleDES::SetKey(iCipher::EncryptionDir dir, const cHashedKey192& key)
         delete mpData->mpEncryptor;
         delete mpData->mpDecryptor;
         mpData->mpDecryptor = 0;
-        mpData->mpEncryptor = new TripleDES_Encryption((byte*)key.GetKey());
+        mpData->mpEncryptor = new TripleDES_Encryption((ibyte*)key.GetKey());
     }
     else
     {
         delete mpData->mpEncryptor;
         delete mpData->mpDecryptor;
         mpData->mpEncryptor = 0;
-        mpData->mpDecryptor = new TripleDES_Decryption((byte*)key.GetKey());
+        mpData->mpDecryptor = new TripleDES_Decryption((ibyte*)key.GetKey());
     }
 }
 
@@ -240,9 +240,9 @@ void cTripleDES::ProcessBlock(const void* indata, void* outdata)
     }
 
     if (mpData->mpEncryptor)
-        mpData->mpEncryptor->ProcessBlock((byte*)indata, (byte*)outdata);
+        mpData->mpEncryptor->ProcessBlock((ibyte*)indata, (ibyte*)outdata);
     else
-        mpData->mpDecryptor->ProcessBlock((byte*)indata, (byte*)outdata);
+        mpData->mpDecryptor->ProcessBlock((ibyte*)indata, (ibyte*)outdata);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -274,7 +274,7 @@ cRSAPrivateKey::cRSAPrivateKey(void* pDataStream)
     int32 i32;
     int16 i16;
 
-    byte* pIn = (byte*)pDataStream;
+    ibyte* pIn = (ibyte*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
@@ -343,7 +343,7 @@ void cRSAPrivateKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterDQ().IsPositive());
     ASSERT(mpData->mpKey->GetTrapdoorFunction().GetParameterU().IsPositive());
 
-    byte* pOut = (byte*)pDataStream;
+    ibyte* pOut = (ibyte*)pDataStream;
     int16 i16;
     int32 i32;
 
@@ -407,7 +407,7 @@ cRSAPublicKey::cRSAPublicKey(void* pDataStream)
     int16   i16;
     int32   i32;
 
-    byte* pIn = (byte*)pDataStream;
+    ibyte* pIn = (ibyte*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
@@ -465,7 +465,7 @@ void cRSAPublicKey::Write(void* pDataStream) const
 
     int16 i16;
     int32 i32;
-    byte* pOut = (byte*)pDataStream;
+    ibyte* pOut = (ibyte*)pDataStream;
 
     i16 = tw_htons(mpData->mKeyLength);
     memcpy(pOut, &i16, sizeof(i16));
@@ -551,8 +551,8 @@ void cRSA::Init(KeySize keysize)
                            (keysize == KEY512) ? 512 : (keysize == KEY1024) ? 1024 : (keysize == KEY2048) ? 2048 : 256;
 
     // Create a random seed and a key
-    byte seed[MD5::DATASIZE];
-    byte deskey[TripleDES_Encryption::KEYLENGTH];
+    ibyte seed[MD5::DATASIZE];
+    ibyte deskey[TripleDES_Encryption::KEYLENGTH];
     RandomizeBytes((int8*)seed, MD5::DATASIZE);
     RandomizeBytes((int8*)deskey, TripleDES_Encryption::KEYLENGTH);
 
@@ -648,14 +648,14 @@ void cRSA::ProcessBlock(const void* indata, void* outdata)
         ASSERT(mpData->mpPublicKey->mpData->mpKey->MaxPlainTextLength() == GetBlockSizePlain());
         ASSERT(mpData->mpPublicKey->mpData->mpKey->CipherTextLength() == GetBlockSizeCipher());
         mpData->mpPublicKey->mpData->mpKey->Encrypt(
-            *mpData->mpRNG, (const byte*)indata, GetBlockSizePlain(), (byte*)outdata);
+            *mpData->mpRNG, (const ibyte*)indata, GetBlockSizePlain(), (ibyte*)outdata);
         break;
     }
     case cRSA_i::DECRYPT:
     {
         ASSERT(mpData->mpPrivateKey);
         ASSERT(mpData->mpPrivateKey->mpData->mpKey->CipherTextLength() == GetBlockSizeCipher());
-        l = mpData->mpPrivateKey->mpData->mpKey->Decrypt((const byte*)indata, (byte*)outdata);
+        l = mpData->mpPrivateKey->mpData->mpKey->Decrypt((const ibyte*)indata, (ibyte*)outdata);
         if (l != GetBlockSizePlain())
             throw eArchiveCrypto();
         break;
@@ -666,14 +666,14 @@ void cRSA::ProcessBlock(const void* indata, void* outdata)
         ASSERT(mpData->mpPrivateKey->mpData->mpKey->MaxMessageLength() == GetBlockSizePlain());
         ASSERT(mpData->mpPrivateKey->mpData->mpKey->SignatureLength() == GetBlockSizeCipher());
         mpData->mpPrivateKey->mpData->mpKey->Sign(
-            *mpData->mpRNG, (const byte*)indata, GetBlockSizePlain(), (byte*)outdata);
+            *mpData->mpRNG, (const ibyte*)indata, GetBlockSizePlain(), (ibyte*)outdata);
         break;
     }
     case cRSA_i::VERIFY:
     {
         ASSERT(mpData->mpPublicKey);
         ASSERT(mpData->mpPublicKey->mpData->mpKey->SignatureLength() == GetBlockSizeCipher());
-        l = mpData->mpPublicKey->mpData->mpKey->Recover((const byte*)indata, (byte*)outdata);
+        l = mpData->mpPublicKey->mpData->mpKey->Recover((const ibyte*)indata, (ibyte*)outdata);
         if (l != GetBlockSizePlain())
             throw eArchiveCrypto();
         break;
@@ -740,7 +740,7 @@ cElGamalSigPrivateKey::cElGamalSigPrivateKey(void* pDataStream)
     int16  i16;
     uint32 magicNum;
 
-    byte* pIn = (byte*)pDataStream;
+    ibyte* pIn = (ibyte*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
@@ -802,7 +802,7 @@ void cElGamalSigPrivateKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
     ASSERT(mpData->mpKey->GetParameterX().IsPositive());
 
-    byte* pOut = (byte*)pDataStream;
+    ibyte* pOut = (ibyte*)pDataStream;
     int16 i16;
     int32 i32;
 
@@ -857,7 +857,7 @@ cElGamalSigPublicKey::cElGamalSigPublicKey(void* pDataStream)
     int32   i32;
     uint32  magicNum;
 
-    byte* pIn = (byte*)pDataStream;
+    ibyte* pIn = (ibyte*)pDataStream;
 
     memcpy(&i16, pIn, sizeof(i16));
     mpData->mKeyLength = tw_ntohs(i16);
@@ -927,7 +927,7 @@ void cElGamalSigPublicKey::Write(void* pDataStream) const
     ASSERT(mpData->mpKey->GetParameterG().IsPositive());
     ASSERT(mpData->mpKey->GetParameterY().IsPositive());
 
-    byte* pOut = (byte*)pDataStream;
+    ibyte* pOut = (ibyte*)pDataStream;
     int16 i16;
     int32 i32;
 
@@ -1038,8 +1038,8 @@ void cElGamalSig::Init(KeySize keysize)
                            (keysize == KEY512) ? 512 : (keysize == KEY1024) ? 1024 : (keysize == KEY2048) ? 2048 : 256;
 
     // Create a random seed and a key
-    byte seed[SHA::DATASIZE];
-    byte deskey[TripleDES_Encryption::KEYLENGTH];
+    ibyte seed[SHA::DATASIZE];
+    ibyte deskey[TripleDES_Encryption::KEYLENGTH];
     RandomizeBytes((int8*)seed, SHA::DATASIZE);
     RandomizeBytes((int8*)deskey, TripleDES_Encryption::KEYLENGTH);
 
@@ -1109,11 +1109,11 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
 
         memmove(outdata, indata, PLAIN_BLOCK_SIZE);
 
-        mpData->mSHA.CalculateDigest((byte*)shaSig, (byte*)outdata, PLAIN_BLOCK_SIZE);
+        mpData->mSHA.CalculateDigest((ibyte*)shaSig, (ibyte*)outdata, PLAIN_BLOCK_SIZE);
 
         RandomizeBytes((int8*)outdata + PLAIN_BLOCK_SIZE, GetBlockSizeCipher() - PLAIN_BLOCK_SIZE);
         mpData->mpPrivateKey->mpData->mpKey->Sign(
-            *mpData->mpRNG, (const byte*)shaSig, SHA::DIGESTSIZE, (byte*)outdata + PLAIN_BLOCK_SIZE);
+            *mpData->mpRNG, (const ibyte*)shaSig, SHA::DIGESTSIZE, (ibyte*)outdata + PLAIN_BLOCK_SIZE);
 
         /*
                 Integer m((const byte*)indata, PLAIN_BLOCK_SIZE);
@@ -1136,7 +1136,7 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
         ASSERT(mpData->mpPublicKey != 0);
         ASSERT((int)mpData->mpPublicKey->mpData->mpKey->SignatureLength() + PLAIN_BLOCK_SIZE <= GetBlockSizeCipher());
 
-        mpData->mSHA.CalculateDigest((byte*)shaSig, (byte*)indata, PLAIN_BLOCK_SIZE);
+        mpData->mSHA.CalculateDigest((ibyte*)shaSig, (ibyte*)indata, PLAIN_BLOCK_SIZE);
 
         /*
                 const byte* signature = (const byte *)indata + PLAIN_BLOCK_SIZE;
@@ -1151,7 +1151,7 @@ void cElGamalSig::ProcessBlock(const void* indata, void* outdata)
             */
 
         if (mpData->mpPublicKey->mpData->mpKey->Verify(
-                (const byte*)shaSig, SHA::DIGESTSIZE, (const byte*)indata + PLAIN_BLOCK_SIZE) == false)
+                (const ibyte*)shaSig, SHA::DIGESTSIZE, (const ibyte*)indata + PLAIN_BLOCK_SIZE) == false)
             throw eArchiveCrypto();
         memmove(outdata, indata, PLAIN_BLOCK_SIZE);
         break;
@@ -1194,7 +1194,7 @@ cHashedKey128::cHashedKey128(const TSTRING& data)
     SHA sha;
 
     ASSERT(SHA::DIGESTSIZE >= KEYLEN);
-    sha.CalculateDigest((byte*)mKey, (byte*)data.data(), data.length() * sizeof(TCHAR));
+    sha.CalculateDigest((ibyte*)mKey, (ibyte*)data.data(), data.length() * sizeof(TCHAR));
 }
 
 cHashedKey128::cHashedKey128(void* pData, int dataLen)
@@ -1203,7 +1203,7 @@ cHashedKey128::cHashedKey128(void* pData, int dataLen)
 
     ASSERT(SHA::DIGESTSIZE >= KEYLEN);
     ASSERT(SHA::DIGESTSIZE <= BUFSIZE);
-    sha.CalculateDigest((byte*)mKey, (byte*)pData, dataLen);
+    sha.CalculateDigest((ibyte*)mKey, (ibyte*)pData, dataLen);
 }
 
 cHashedKey128::~cHashedKey128()
@@ -1221,8 +1221,8 @@ cHashedKey192::cHashedKey192(const TSTRING& data)
     ASSERT(SHA::DIGESTSIZE == 20);
     ASSERT(40 >= KEYLEN);
 
-    byte localKey[40];
-    sha.CalculateDigest(localKey, (byte*)data.data(), data.length() * sizeof(TCHAR));
+    ibyte localKey[40];
+    sha.CalculateDigest(localKey, (ibyte*)data.data(), data.length() * sizeof(TCHAR));
     sha.CalculateDigest(localKey + 20, localKey, 20);
     memcpy(mKey, localKey, KEYLEN);
 }
@@ -1234,8 +1234,8 @@ cHashedKey192::cHashedKey192(void* pData, int dataLen)
     ASSERT(SHA::DIGESTSIZE == 20);
     ASSERT(40 >= KEYLEN);
 
-    byte localKey[40];
-    sha.CalculateDigest(localKey, (byte*)pData, dataLen);
+    ibyte localKey[40];
+    sha.CalculateDigest(localKey, (ibyte*)pData, dataLen);
     sha.CalculateDigest(localKey + 20, localKey, 20);
     memcpy(mKey, localKey, KEYLEN);
 }
@@ -1303,6 +1303,6 @@ void RandomizeBytes(int8* destbuf, int len)
 
     int i;
     for (i = 0; i < len; ++i)
-        destbuf[i] = (byte)((rand() * 256 / RAND_MAX) ^ 0xdc); // 0xdc came from random.org
+        destbuf[i] = (ibyte)((rand() * 256 / RAND_MAX) ^ 0xdc); // 0xdc came from random.org
 #endif
 }

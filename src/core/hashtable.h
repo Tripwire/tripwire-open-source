@@ -91,20 +91,20 @@ template<> inline bool cDefaultCompare<TSTRING>::operator()(const TSTRING& lhs, 
 template<class T> class cDefaultConvert
 {
 public:
-    const byte* operator()(const T& obj, int* const pcbKeyLen)
+    const ibyte* operator()(const T& obj, int* const pcbKeyLen)
     {
         // HACK!  TODO: in the interest of time, I've left this as it is.....
         *pcbKeyLen = sizeof(TCHAR) * _tcslen(obj);
-        return (byte*)obj;
+        return (ibyte*)obj;
     }
 };
 /////////////////////////////////////////////////////////
 // specialization for TSTRINGS
 /////////////////////////////////////////////////////////
-template<> inline const byte* cDefaultConvert<TSTRING>::operator()(const TSTRING& obj, int* const pcbKeyLen)
+template<> inline const ibyte* cDefaultConvert<TSTRING>::operator()(const TSTRING& obj, int* const pcbKeyLen)
 {
     *pcbKeyLen = sizeof(TCHAR) * obj.length();
-    return (byte*)obj.c_str();
+    return (ibyte*)obj.c_str();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -510,7 +510,7 @@ uint32 cHashTable<KEY_TYPE, VAL_TYPE, COMPARE_OP, CONVERTER>::Hash(const KEY_TYP
 {
     CONVERTER   converter;
     int         len;
-    const byte* pb = converter(key, &len); //locates key
+    const ibyte* pb = converter(key, &len); //locates key
     uint32      hindex;
 
     hindex = *pb;
