@@ -1551,20 +1551,20 @@ std::istream& operator>>(std::istream& in, Integer &a)
     return in;
 }
 
-ostream& operator<<(ostream& out, const Integer &a)
+std::ostream& operator<<(std::ostream& out, const Integer &a)
 {
     // Get relevant conversion specifications from ostream.
-    long f = out.flags() & ios::basefield;  // Get base digits.
+    long f = out.flags() & std::ios::basefield;  // Get base digits.
     int base, block;
     char suffix;
     switch(f)
     {
-    case ios::oct :
+    case std::ios::oct :
         base = 8;
         block = 8;
         suffix = 'o';
         break;
-    case ios::hex :
+    case std::ios::hex :
         base = 16;
         block = 4;
         suffix = 'h';

@@ -3,7 +3,9 @@
 #include "algebra.h"
 
 #include <vector>
-USING_NAMESPACE(std)
+using std::vector;
+using std::pair;
+using std::swap;
 
 template <class T> void ExponentiationPrecomputation<T>::Precompute(const Element &base, unsigned int maxExpBits)
 {
